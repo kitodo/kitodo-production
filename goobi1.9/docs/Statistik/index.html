@@ -1,0 +1,248 @@
+<html>
+ <head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Produktionsstatistik</title>
+  <meta name="Generator" Content="Created with nqDoc (www.nqdoc.com). Registered to intranda software.">
+  <link href="nqdoc.css" type="text/css" rel="stylesheet">
+ </head>
+ <body>
+  <h1>Produktionsstatistik</h1>
+    
+  <br>&copy;2009
+   <div class="abstract">
+   <i>
+    <p>Der folgende Teil enth&auml;lt Anleitungen zum Einsatz der Produktionsstatistik.</p>
+   </i>
+  </div>
+  <ol>
+   <li>
+    <a href="#1.">Erweiterte Filterm&ouml;glichkeiten</a>
+   </li>
+   <li>
+    <a href="#2.">Allgemeines</a>
+   </li>
+   <li>
+    <a href="#3.">Produktion Statistiken</a>
+   </li>
+   <li>
+    <a href="#4.">Datenquelle History</a>
+   </li>
+   <li>
+    <a href="#5.">Migration vorhandener Datenbest&auml;nde / Scheduling</a>
+   </li>
+   <li>
+    <a href="#6.">Unit-Tests</a>
+   </li>
+   <li>
+    <a href="#7.">Technische Anforderungen</a>
+   </li>
+   <li>
+    <a href="#8.">Abh&auml;ngigkeiten</a>
+   </li>
+  </ol>
+  <div class="chapter">
+   <h1>
+    <a name="1."></a>1. Erweiterte Filterm&ouml;glichkeiten</h1>
+   <p>Im Verlauf der Erstellung der zus&auml;tzlichen statistischen Auswertungen wurde die Filtersyntax in Bezug auf den Schrittfilter &uuml;berarbeitet. Zus&auml;tzlich zu dem bisher vorhanden Filter "step:&lt;Reihenfolgenummer&gt;" wurde nun die M&ouml;glichkeit geschaffen auf Vorg&auml;nge zuzugreifen, in denen ein bestimmter Schritt oder eine Auswahl von Schritten in einem bestimmten Statium sind.</p>
+   <p>Die Filter Keywords sind:</p>
+   <ol>
+    <li>
+     <p>stepLocked -&gt; Schritt ist geschlossen</p>
+    </li>
+    <li>
+     <p>stepOpen -&gt; Schritt ist offen</p>
+    </li>
+    <li>
+     <p>stepInWork -&gt; Schritt wird bearbeitet</p>
+    </li>
+    <li>
+     <p>stepDone -&gt; Schritt ist abgeschlossen</p>
+    </li>
+   </ol>
+   <h3 class="title">Filter Key Words</h3>
+   <p>Diese Keywords m&uuml;ssen entweder durch Zahlenangaben </p>
+   <p>(&lt;n&gt;, &lt;n-m&gt;, &lt;-n&gt; oder &lt;n-&gt;)</p>
+   <p>oder durch die Angabe eines Schrittbezeichners weiter definiert werden.</p>
+   <p>Der Filter kann zum Beispiel "stepDone:7" oder "stepDone:Qualit&auml;tskontrolle" hei&szlig;en.</p>
+   <p>Im Folgenden wird das Filterrgebnis anhand einer Reihe von Beispielen erl&auml;utert:</p>
+   <ul>
+    <li>
+     <p>stepDone:5 gibt als Ergebnis alle Vorg&auml;nge zur&uuml;ck, in denen der Schritt 5 abgeschlossen ist.</p>
+    </li>
+    <li>
+     <p>stepDone:5-10 gibt als Ergebnis alle Vorg&auml;nge zur&uuml;ck, in denen einer oder mehrere Schritte von 5-10 abgeschlossen sind.</p>
+    </li>
+    <li>
+     <p>stepOpen:-10 gibt als Ergebniss alle Vorg&auml;nge zur&uuml;ck, in denen einer der Schritte bis 10 auf offen gesetzt ist.</p>
+    </li>
+    <li>
+     <p>stepInWork: 4- gibt als Ergebnis alle Vorg&auml;nge zur&uuml;ck, in denen sich einer der Schritte 4 und h&ouml;her in Bearbeitung befindet.</p>
+    </li>
+    <li>
+     <p>stepLocked:Qualit&auml;tskontrolle gibt als Ergebnis alle Vorg&auml;nge zur&uuml;ck, in denen der Schritt Qualit&auml;tskontrolle geschlossen ist.</p>
+    </li>
+   </ul>
+   <h3 class="title">Beispiele f&uuml;r den step Filter</h3>
+   <p>Wie in den Beispielen ersichtlich werden bei Angabe eines Zahlenbereiches die eingeschlossenen Zahlen durch ODER miteinander verkn&uuml;pft.</p>
+   <p>Das Keyword wird unabh&auml;ngig von Gro&szlig;-/Kleinschreibung erkannt.</p>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="2."></a>2. Allgemeines</h1>
+   <p>Hier folgen Hinweise, die f&uuml;r alle Teile der Produktionsstatistiken zutreffen.</p>
+   <p>&nbsp;</p>
+   <div class="caution">
+    <p>Bitte beachten Sie bei der Anwendung dieser in der Version 1.5.1 eingef&uuml;hrten statistischen Methoden, dass einige statistisch auswertbare Daten erst ab dem Zeitpunkt der Installation vorliegen und somit eine Auswertung vergangener Verl&auml;ufe verf&auml;lschen k&ouml;nnen. Dies gilt insbesondere bei der Ermittlung des Speicherbedarfs. W&auml;hrend bei den anderen statistischen Fragen durch ein automatisch laufendes Migrationsscript auch alte Datenbest&auml;nde f&uuml;r die Statistik aufbereitet werden k&ouml;nnen, ist dies f&uuml;r den ben&ouml;tigten Storageverbrauch im Zeitverlauf nicht m&ouml;glich.</p>
+   </div>
+   <div class="caution">
+    <p>Gez&auml;hlte Images: Bitte beachten Sie, dass f&uuml;r die Z&auml;hlung der pro Vorgang zugeh&ouml;rigen Images der orig-Ordner verwendet wird. Dabei wurde auf bestehende Z&auml;hlmechanismen zur&uuml;ckgegriffen, die lediglich dann eine manuelle Z&auml;hlung im Dateisystem laufen lassen, wenn bisher keine Images zu einem Vorgang gez&auml;hlt wurden. Ist hingegen die gecachte Anzahl an Images gr&ouml;&szlig;er als Null, wird dieser gecachte Wert f&uuml;r die Pr&auml;senstation in der Statistik verwendet.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="2.1"></a>2.1 Erstellen des Filters und Zugang zur Statistik</h2>
+    <p>Mit folgender Illustration wird gezeigt, wie die Produktionsstatistiken aufgerufen werden k&ouml;nnen.</p>
+    <img src="picts/settingFilter.png"><h3 class="title">Filter setzen</h3>
+    <p>Nach dem Anklicken der Statistischen Auswertung erscheint das folgende Men&uuml;:</p>
+    <img src="picts/statisticsMenu.png"><h3 class="title">Statistik Men&uuml;</h3>
+    <p>Die Auswahlm&ouml;glichkeiten der Produktionsstatistik sind hier rot umrahmt.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="2.2"></a>2.2 Weitere Eingrenzungsm&ouml;glichkeiten</h2>
+    <p>Nachdem Sie auf eines der umrahmten Auswahlm&ouml;glichkeiten geklickt haben wird im Fenster weiter unten ein Eingabebereich f&uuml;r weitere Eingrenzungen ge&ouml;ffnet:</p>
+    <img src="picts/statisticsAdditionalRestrictions.png"><h3 class="title">weitere Eingrenzungen</h3>
+    <p>Die hier gezeigte Ansicht ist die Standardauswahl. Hier hat man die M&ouml;glichkeit auf das vorhandene Trefferset (hier im Beispiel proj:mdpl) durch Einstellungen in der oberen Zeile zeitliche Einschr&auml;nkungen dr&uuml;ber zu legen in dem entweder ein Zeitraum von/bis bis oder von oder letzte &lt;X&gt; Tage, Wochen, Monate, Quartale oder Jahre anzugeben.</p>
+    <p>In der unteren Zeile gibt man an, wie die statistische Auswertung &uuml;ber den gew&auml;hlten Zeitraum erfolgen soll. Es geht hierbei um die Z&auml;hlung der Vorg&auml;nge, die in den ausgew&auml;hlten zeitlichen Intervallen (Tage, Wochen, Monate, Quartale oder Jahre) aufsummiert und angezeigt werden. </p>
+    <p>Die Angabe B&auml;nde, Seiten, Seiten &amp; B&auml;nde im Feld Anzeige ist nur f&uuml;r die Produktionsstatistik relevant und hat auf die anderen Statistiken keine Auswirkung. Im Feld Ausgabe wird noch festgelegt, ob die Daten nur als Tabelle oder als Chart oder als Chart &amp; Tabelle angezeigt wird. Die Mittelwertkennlinie kann man ausw&auml;hlen, wird aber nur im Chart angezeigt.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="2.3"></a>2.3 Chart Anzeige</h2>
+    <p>In der Chart Anzeige werden die Daten in einem S&auml;ulendiagramm oder Kreisdiagramm dargestellt. In dem Beispiel steht jede S&auml;ule f&uuml;r einen Zeitraum w&auml;hrend die H&ouml;he jeder S&auml;ule entsprechend der Markierungen auf der Y -Achse f&uuml;r die in diesen Zeitraum fallenden abgeschlossenen Einheiten (hier B&auml;nde) steht.</p>
+    <img src="picts/statisticsChartProduktionsstatistik.png"><h3 class="title">S&auml;ulendiagramm</h3>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="2.4"></a>2.4 Tabellen Anzeige</h2>
+    <p>Bei der Anzeigem&ouml;glichkeit Tabelle werden die Daten in einer Tabelle ausgegeben, die per Copy und Paste z.B. in eine Tabellenkalkulation transferiert werden kann.</p>
+    <img src="picts/statisticsTableProduktionsstatistik.png"><h3 class="title">Tabellenansicht</h3>
+   </div>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="3."></a>3. Produktion Statistiken</h1>
+   <p>Im folgenden werden die neuen Statistiken n&auml;her erl&auml;utert.</p>
+   <div class="section">
+    <h2>
+     <a name="3.1"></a>3.1 Produktionsstatistik</h2>
+    <p>In der Produktionsstatistik wird die Verteilung der Fertigstellungen &uuml;ber die gew&auml;hlten Intervalle bezogen auf das Trefferset ermittelt. In Bezug auf die Zuverl&auml;ssigkeit dieser Statistik gibt es folgende Einschr&auml;nkungen zu machen:</p>
+    <ol>
+     <li>
+      <p>Wenn per Hand der Filter "stepDone" gesetzt wird, wird f&uuml;r die Statistik automatisch angenommen, dass der dort angegebene Wert den Abschluss der Produktion definiert.</p>
+     </li>
+     <li>
+      <p>Wenn der Filter "stepDone" nicht gesetzt wurde, wird zun&auml;chst ermittelt, welcher Schritt (Reihenfolge) als h&ouml;chster Schritt abgeschlossen ist. Dieser Wert wird dann f&uuml;r die weitere Verarbeitung als der Schritt angenommen, mit dem die Produktion als abgeschlossen gilt.</p>
+     </li>
+    </ol>
+    <h3 class="title"></h3>
+    <p>Je nach dem k&ouml;nnen so hier bei Unachtsamkeit durch Fehleingaben Statistiken erstellt werden, die nicht ganz dem entsprechen was dargestellt werden soll.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="3.2"></a>3.2 Produktionsdurchsatz</h2>
+    <p>In der Statistik zum Produktionsdurchsatz erfolgt eine auf das Trefferset und die weiteren Einschr&auml;nkungen bezogene Gegen&uuml;berstellung von offenen zu geschlossenen Schritten. Was in dieser Statistik konkret gez&auml;hlt wird sind wieviele Vorg&auml;nge in einem bestimmten Schritt in einem bestimmten Zeitraum auf offen gesetzt wurden und wieviele in einem bestimmten Zeitpunkt auf geschlossen (d.h. fertig bearbeitet) gesetzt wurden. Hier wird zum einen je eine Tabelle &uuml;ber alle Schritte mit der Verteilung auf die gew&auml;hlten Zeitintervalle f&uuml;r das &Ouml;ffnen und f&uuml;r das Abschlie&szlig;en der Schritte angezeigt. Dann wird f&uuml;r jeden vorhanden Schritt in einem S&auml;ulendiagramm eine Gegen&uuml;berstellung innerhalb eines zeitlichen Intervalls von offen zu geschlossen gesetzten Schritten angezeigt.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="3.3"></a>3.3 Storagerechner</h2>
+    <p>In der Statistik "Storagerechner" wird &uuml;ber das Trefferset die Entwicklung des Speicherbedarfs innerhalb der ausgew&auml;hlten Zeitintervalle ermittelt. Dazu wird in regelm&auml;&szlig;gen zeitlichen Abst&auml;nden eine Bestandaufnahme gemacht. Angezeigt werden jeweils die Differenzen zum vorherigen Zeitraum. Daher kann (wie in der Abbildung unten) auch ein negativer Wert angezeigt werden, wenn z.B. &uuml;berfl&uuml;ssige Bilddaten gel&ouml;scht werden. Die Angaben erfolgen in Gigabyte.</p>
+    <img src="picts/statisticsStorage.png"><h3 class="title">Storage</h3>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="3.4"></a>3.4 Fehlertracking</h2>
+    <p>In der Statistik zum Fehlertracking wird die Anzahl der Korrekturmeldungen an vorherige Schritte im Workflow angezeigt.</p>
+   </div>
+   <div class="section">
+    <h2>
+     <a name="3.5"></a>3.5 Projektzugeh&ouml;rigkeit</h2>
+    <p>Bei der Statistik Projektzugeh&ouml;rigkeit wird &uuml;ber das Trefferset die Anzahl der Vorg&auml;nge f&uuml;r jedes im Trefferset vertretenes Projekt angezeigt. Die Diagrammansicht erfolgt in einem Tortendiagramm (siehe Abbildung).</p>
+    <img src="picts/statisticsProjectAssociation.png"><h3 class="title">Projektzugeh&ouml;rigkeit</h3>
+   </div>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="4."></a>4. Datenquelle History</h1>
+   <p>F&uuml;r die granulare Auswertung des Produktionsverlaufes f&uuml;r diese Statistiken wurde in Goobi eine zentrale History eingef&uuml;hrt. Diese erlaubt w&auml;hrend der laufenden Produktion eine Erfassung entscheidender statistisch relevanter Daten. Sie enth&auml;lt typisierte HistoryEvents und l&auml;&szlig;t sich daher auch f&uuml;r langfristig steigende statistische Anspr&uuml;che beliebig ausbauen. Derzeitig existieren folgende HistoryEvent-Typen, die sich zusammen mit den jeweilig zugewiesenen Werten und Timestamps beliebig statistisch auswerten lassen.</p>
+   <ul>
+    <li>
+     <p>storageDifference - 1</p>
+    </li>
+    <li>
+     <p>imagesWorkDiff - 2</p>
+    </li>
+    <li>
+     <p>imagesMasterDiff - 3</p>
+    </li>
+    <li>
+     <p>metadataDiff - 4</p>
+    </li>
+    <li>
+     <p>docstructDiff - 5</p>
+    </li>
+    <li>
+     <p>stepDone - 6</p>
+    </li>
+    <li>
+     <p>stepOpen - 7</p>
+    </li>
+    <li>
+     <p>stepInWork - 8</p>
+    </li>
+    <li>
+     <p>stepError - 9</p>
+    </li>
+   </ul>
+   <h3 class="title">HistoryEvent Typen</h3>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="5."></a>5. Migration vorhandener Datenbest&auml;nde / Scheduling</h1>
+   <p>Da gr&ouml;&szlig;ere &Auml;nderungen im Dateisystem an der Workflowumgebung vorbei w&auml;hrend der Arbeiten auftreten k&ouml;nnen, findet eine Aktualisierung der History-Eintr&auml;ge nicht nur w&auml;hrend der Arbeit mit der Worflow-Oberfl&auml;che statt. Es wurde dar&uuml;ber hinaus auch eine M&ouml;glichkeit des Schedulings bereitgestellt, die es erlaubt dass eine t&auml;gliche Aktualisierung der History zu einem konfigurierbaren Zeitpunkt stattfinden kann. Diese Aktualisierung gew&auml;hrleistet dabei nicht nur eine History-Aktualsierung f&uuml;r T&auml;tigkeiten, die an Goobi vorbei (z.B. im Dateisystem) stattgefunden haben, sondern erlaubt ebenso, dass ein paralleler Betrieb von Goobi 1.5.1 mit vorherigen Versionen, die diese History noch nicht beinhalten, m&ouml;glich wird, ohne auf statistische Auswertungen verzichten zu m&uuml;ssen.</p>
+   <p>&nbsp;</p>
+   <p>Die Konfiguration des Schedulings erfolgt &uuml;ber die zentrale Goobi-Konfigurationsdatei <em class="methodname">GoobiConfig.properties</em> durch den Parameter <em class="methodname">storageCalculationSchedule</em>
+   
+   </p>
+   <pre># time in milliseconds, when to start automatic storage calculation each day
+# if no automatic storage calculation should be started, set to -1 here
+# sample: 0 means midnight 
+storageCalculationSchedule=60000</pre>
+   <h3 class="title">Scheduling Konfiguration</h3>
+   <p>Der hier angegebene Wert definiert, wann die automatisierte Z&auml;hlung stattfinden soll. Die Angabe erfolgt in Millisekunden seit Mitternacht. "0" entspricht somit "0:00". "60000" entspr&auml;che "0:01" etc. Wird der Wert hingegen auf "-1" gesetzt, findet keine automatische Z&auml;hlung statt. Wird der Wert in der Konfigurationsdatei im laufenden Betrieb von Goobi ge&auml;ndert, muss der Scheduler manuell gestartet werden. Dies l&auml;&szlig;t sich &uuml;ber den Befehl <em class="methodname">Restart automatic job manager</em> aus dem Administrativen Bereich <em class="methodname">Scripte</em> erledigen.</p>
+   <p>&nbsp;</p>
+   <p>Neben der automatischen Z&auml;hlung zu einer konfigurierbaren Zeit besteht aus der Administrationsoberfl&auml;che im Bereich <em class="methodname">Scripte</em> ausserdem die M&ouml;glichkeit, eine Aktualisierung der History manuell anzustossen. Diese dauert je nach in Goobi eingebundenem und verwendetem Storage und Datenbankinhalt ggf. etwas l&auml;nger und wird durch die Anzeige eines Ajax-Reload-Icons animiert visualisiert.</p>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="6."></a>6. Unit-Tests</h1>
+   <p>Um die Methoden, die im Kontext der Programmierung der hier beschriebenen statistischen Methoden Tests unterziehen zu k&ouml;nnen, wurden JUnit-Tests implementiert. Diese finden sich unterhalb des Ordners test. Um die Tests gegen eine Datenbank laufen zu lassen, wurde ein Beispiel-Dump f&uuml;r eine Datenbank erzeugt. Diese findet sich im Ordner test/ressouce und wird von einer kurzen Readme-Datei begleitet. Der Dump erzeugt eine Beispieldatenbank namens 'testdata'. Die Unit-Tests schalten w&auml;hrend des Testablaufs dann automatisch auf diese Testdatenbank um, um die dortigen Inhalte zu pr&uuml;fen.</p>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="7."></a>7. Technische Anforderungen</h1>
+   <p>Die technischen Anforderungen an Goobi sind durch die Integration der Statistikbereiche nicht ver&auml;ndert worden.</p>
+  </div>
+  <div class="chapter">
+   <h1>
+    <a name="8."></a>8. Abh&auml;ngigkeiten</h1>
+   <p>Zur Realisierung des Schedulings wurde auf das OpenSource-Scheduling-Framework Quartz von <em class="methodname">https://quartz.dev.java.net/</em> zugegriffen. Dieses unterliegt der Apache License, die unter http://www.apache.org/licenses/LICENSE-2.0 abgerufen werden kann und sich ausserdem im Goobi-Repository befindet.</p>
+   <p>&nbsp;</p>
+   <p>Zur Anzeige der speziellen Diagramme f&uuml;r die Auswertung wurde auf das OpenSource-Diagramm-Projekt intranda charts von http://code.google.com/p/intrandachart/ zugegriffen. Dieses unterliegt der Apache License 2.0, die unter http://www.apache.org/licenses/LICENSE-2.0 abgerufen werden kann und sich ausserdem im Goobi-Repository befindet.</p>
+   <p>&nbsp;</p>
+   <p>Zur Anzeige von Kreisdiagrammen f&uuml;r die Auswertung wurde auf das OpenSource-Diagramm-Projekt <em class="methodname">JFreeChart </em>von http://www.jfree.org/jfreechart/ zugegriffen. Dieses unterliegt der GNU Lesser General Public License, die unter http://www.gnu.org/licenses/lgpl.html abgerufen werden kann und sich ausserdem im Goobi-Repository befindet.</p>
+  </div>
+  <div id="footer">&copy;
+      2009
+      </div>
+ </body>
+</html>

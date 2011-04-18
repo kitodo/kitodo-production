@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF:RDF xmlns:AGORA="GDZ:DMSDB-Semantics" xmlns:RDF="http://www.w3c.org/RDF"><AGORA:DocStrct AGORA:Type="AGORA:Periodical"><AGORA:DocStrct AGORA:Type="AGORA:PeriodicalVolume"><AGORA:RefImageSetRange><AGORA:RefImageSet RDF:HREF="#Imageset001"/><AGORA:ImageSetPageStart>9999</AGORA:ImageSetPageStart><AGORA:ImageSetPageEnd>0</AGORA:ImageSetPageEnd></AGORA:RefImageSetRange></AGORA:DocStrct></AGORA:DocStrct><AGORA:ImageSet/></RDF:RDF>

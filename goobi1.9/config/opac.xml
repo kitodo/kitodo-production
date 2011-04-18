@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opacCatalogues>
+	<doctypes>
+		<type title="monograph" isPeriodical="false" isMultiVolume="false"
+			isContainedWork="false">
+			<label language="de">Monographie</label>
+			<label language="en">Monograph</label>
+			<mapping>Aa</mapping>
+			<mapping>Oa</mapping>
+		</type>
+		<type title="periodical" isPeriodical="true" isMultiVolume="false"
+			isContainedWork="false">
+			<label language="de">Zeitschrift</label>
+			<label language="en">Periodical</label>
+			<mapping>Ab</mapping>
+			<mapping>Ob</mapping>
+		</type>
+		<type title="multivolume" isPeriodical="false" isMultiVolume="true"
+			isContainedWork="false">
+			<label language="de">Mehrbändiges Werk</label>
+			<label language="en">Multivolume work</label>
+			<mapping>Of</mapping>
+			<mapping>Af</mapping>
+			<mapping>OF</mapping>
+			<mapping>AF</mapping>
+		</type>
+		<type title="ContainedWork" isPeriodical="false" isMultiVolume="false"
+			isContainedWork="true">
+			<label language="de">Beigefügtes Werk</label>
+			<label language="en">Contained work</label>
+			<mapping>Aj</mapping>
+			<mapping>Oj</mapping>
+		</type>
+	</doctypes>
+	<catalogue title="SUB">
+		<config
+			description="Niedersächsische Staats- und Universitätsbibliothek Göttingen"
+			address="opac.sub.uni-goettingen.de" port="80" database="1"
+			iktlist="IKTLIST-SUB.xml" />
+		<specialmapping type="ContainedWork">Xy</specialmapping>
+		<beautify>
+			<setvalue tag="002@" subtag="0" value="newSampleValue">
+				<condition tag="009Q" subtag="z" value="LF" />
+				<condition tag="013H" subtag="0" value="hand" />
+			</setvalue>
+			<setvalue tag="001X" subtag="0"
+				value="anotherSampleValueWithoutConditions" />
+		</beautify>
+	</catalogue>
+	<catalogue title="GBV">
+		<config description="Gemeinsamer Bibliotheksverbund" address="gso.gbv.de"
+			port="80" database="2.1" iktlist="IKTLIST-GBV.xml" />
+	</catalogue>
+	<catalogue title="JAL">
+		<config description="Johannes a Lasco Bibliothek Emden"
+			address="emdbs2.fho-emden.de" port="8080" database="1" iktlist="IKTLIST-JAL.xml" />
+	</catalogue>
+	<catalogue title="SWB">
+		<config
+			description="Südwestdeutscher Bibliotheksverbund Baden-Württemberg, Saarland, Sachsen (SWB)"
+			address="pollux.bsz-bw.de" port="80" database="2.1" iktlist="IKTLIST-SWB.xml" />
+	</catalogue>
+	<catalogue title="HEBIS">
+		<config description="HeBIS-Verbundkatalog" address="cbsopac.rz.uni-frankfurt.de"
+			port="80" database="2.1" iktlist="IKTLIST-HEBIS.xml" />
+	</catalogue>
+	<catalogue title="DNB">
+		<config description="Deutsche Nationalbibliothek" address="dispatch.opac.d-nb.de"
+			port="80" database="4.1" iktlist="IKTLIST-DNB.xml" />
+	</catalogue>
+	<catalogue title="ZDB">
+		<config description="Zeitschriftendatenbank (ZDB)" address="dispatch.opac.d-nb.de"
+			port="80" database="1.1" iktlist="IKTLIST-ZDB.xml" />
+	</catalogue>
+	<catalogue title="GEO_GUIDE">
+		<config description="GEO-GUIDE" address="gso4.gbv.de" port="80"
+			database="8.4" iktlist="IKTLIST-GEO-GUIDE.xml" />
+	</catalogue>
+	<catalogue title="VKI">
+		<config description="VKI" address="gso.gbv.de" port="80"
+			database="1.85" iktlist="IKTLIST-VKI.xml" />
+	</catalogue>
+	<catalogue title="VKI_AALG">
+		<config description="VKI-AALG" address="gso.gbv.de" port="80"
+			database="8.2" iktlist="IKTLIST-VKI_AALG.xml" />
+	</catalogue>
+	<catalogue title="OLC_MATH">
+		<config description="OLC-MATH" address="gso.gbv.de" port="80"
+			database="2.77" iktlist="IKTLIST-OLC.xml" />
+	</catalogue>
+	<catalogue title="VKI_AAC">
+		<config description="VKI-AAC" address="gso.gbv.de" port="80"
+			database="2.97" iktlist="IKTLIST-VKI_AAC.xml" />
+	</catalogue>
+	<catalogue title="VKI_AACOLC">
+		<config description="VKI-AAC+OLC" address="gso.gbv.de" port="80"
+			database="2.297" iktlist="IKTLIST-VKI_AACOLC.xml" />
+	</catalogue>
+	<catalogue title="TIB">
+		<config
+			description="Technische Informationsbibliothek und Universitätsbibliothek Hannover"
+			address="opc4.tib.uni-hannover.de" port="8080" database="1"
+			iktlist="IKTLIST-TIB.xml" />
+	</catalogue>
+	<catalogue title="SBB">
+		<config description="Staatsbibliothek zu Berlin" address="stabikat.de"
+			port="80" database="1" iktlist="IKTLIST-SBB.xml" charset="UTF-8" />
+	</catalogue>
+</opacCatalogues>

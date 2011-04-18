@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DigitalCollections>
+    <project>
+     <name>DigiWunschbuch</name>
+     <name>GDZ</name>
+     <name>Jalb</name>
+     <name>Olms Reprints</name>
+     <name>Testprojekt</name>
+    <DigitalCollection>Autobiographica</DigitalCollection>
+    <DigitalCollection>DigiWunschbuch</DigitalCollection>
+    <DigitalCollection>Itineraria</DigitalCollection>
+    <DigitalCollection>Maps</DigitalCollection>
+    <DigitalCollection>Mathematica</DigitalCollection>
+    <DigitalCollection>Nordamericana</DigitalCollection>
+    <DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+    <DigitalCollection>Sibirica</DigitalCollection>
+    <DigitalCollection>Varia</DigitalCollection>
+    <DigitalCollection>Zoologica</DigitalCollection>
+    </project>
+    <project>
+     <name>Digizeitschriften</name>
+    <DigitalCollection>020 Librarianship</DigitalCollection>
+    <DigitalCollection>200 Religion</DigitalCollection>
+    <DigitalCollection>300 Sociology</DigitalCollection>
+    <DigitalCollection>330 Economics</DigitalCollection>
+    <DigitalCollection>340 Law</DigitalCollection>
+    <DigitalCollection>370 Education</DigitalCollection>
+    <DigitalCollection>400 Philology</DigitalCollection>
+    <DigitalCollection>420 English_Languages</DigitalCollection>
+    <DigitalCollection>430 Germanic_Languages</DigitalCollection>
+    <DigitalCollection>440 Romance_Languages</DigitalCollection>
+    <DigitalCollection>500 Sciences</DigitalCollection>
+    <DigitalCollection>510 Mathematics</DigitalCollection>
+    <DigitalCollection>550 Geology</DigitalCollection>
+    <DigitalCollection>700 Arts</DigitalCollection>
+    <DigitalCollection>780 Musicology</DigitalCollection>
+    <DigitalCollection>900 History </DigitalCollection>
+    </project>
+  <project>
+   <name>UB-MannheimDigizeit</name>
+   <DigitalCollection>330 Economics</DigitalCollection>
+  </project>
+ <project>
+  <name>Olms-Online</name>
+  <DigitalCollection>Altertumswissenschaft</DigitalCollection>
+  <DigitalCollection>Altertumswissenschaft/Allgemeine Antike</DigitalCollection>
+  <DigitalCollection>Altertumswissenschaft/Römische Antike </DigitalCollection>
+  <DigitalCollection>Bibliographie</DigitalCollection>
+  <DigitalCollection>Buchkundliche Arbeiten</DigitalCollection>
+  <DigitalCollection>Deutsche Literaturklassiker</DigitalCollection>
+  <DigitalCollection>Esperanto</DigitalCollection>
+  <DigitalCollection>Frauenliteratur</DigitalCollection>
+  <DigitalCollection>Frühe Frauenliteratur in Deutschland</DigitalCollection>
+  <DigitalCollection>Geographie/Allgemein</DigitalCollection>
+  <DigitalCollection>Germanistik</DigitalCollection>
+  <DigitalCollection>Germanistik/Mittelalter</DigitalCollection>
+  <DigitalCollection>Germanistik/Neuzeit</DigitalCollection>
+  <DigitalCollection>Geschichte der Naturwissenschaft, Mathematik &amp; Technologie</DigitalCollection>
+   <DigitalCollection>Geschichtswissenschaft/Altertum</DigitalCollection>
+   <DigitalCollection>Humanismus &amp; Renaissance</DigitalCollection>
+  <DigitalCollection>Judaica/Hebraica</DigitalCollection>
+  <DigitalCollection>Jus/Jura &amp; Politikwissenschaft &amp; Wirtschaft &amp; Soziologie</DigitalCollection>
+     <DigitalCollection>Kunstgeschichte</DigitalCollection>
+     <DigitalCollection>Literaturwissenschaft</DigitalCollection>
+     <DigitalCollection>Mediävistik</DigitalCollection>
+     <DigitalCollection>Medizingeschichte</DigitalCollection>
+     <DigitalCollection>Musikwissenschaft</DigitalCollection>
+     <DigitalCollection>Nachantikes Latein</DigitalCollection>
+     <DigitalCollection>Philosophie</DigitalCollection>
+     <DigitalCollection>Philosophie/Neuzeit (bis Kant)</DigitalCollection>
+     <DigitalCollection>Religion</DigitalCollection>
+     <DigitalCollection>Religion/Allgemein</DigitalCollection>
+     <DigitalCollection>Religion/Die christlichen Kirchen der Neuzeit</DigitalCollection>
+     <DigitalCollection>Romanistik </DigitalCollection>
+     <DigitalCollection>Slavistik</DigitalCollection>
+     <DigitalCollection>Sprachwissenschaft</DigitalCollection>
+     <DigitalCollection>Sprichwort</DigitalCollection>
+     <DigitalCollection>Technikgeschichte</DigitalCollection>
+     <DigitalCollection>Theaterwissenschaft</DigitalCollection>
+     <DigitalCollection>Volkskunde</DigitalCollection>
+     <DigitalCollection>Volkskunde/Sage, Mythologie</DigitalCollection>
+     <DigitalCollection>Volkskunde/Schwank, Märchen</DigitalCollection>
+     <DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+ </project>
+</DigitalCollections>

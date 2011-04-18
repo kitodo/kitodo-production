@@ -1,0 +1,53 @@
+package org.goobi.production.enums;
+
+public enum ImportReturnValue {
+
+	ExportFinished(0, "Export finished"),
+	InvalidData(1, "Invalid data"),
+	NoData(2, "No data found"),
+	DataAllreadyExists(3, "Data already exists"),
+	WriteError(4, "Data could not be written")
+	;
+
+	private int id;
+	private String value;
+
+	private ImportReturnValue(int id, String title) {
+		this.setId(id);
+		this.setValue(title);
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setValue(String title) {
+		this.value = title;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public static ImportReturnValue getByValue(String title) {
+		for (ImportReturnValue t : ImportReturnValue.values()) {
+			if (t.getValue().equals(title)) {
+				return t;
+			}
+		}
+		return null;
+	}
+
+	public static ImportReturnValue getById(int id) {
+		for (ImportReturnValue t : ImportReturnValue.values()) {
+			if (t.getId() == id) {
+				return t;
+			}
+		}
+		return null;
+	}
+}

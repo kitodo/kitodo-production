@@ -1,0 +1,7 @@
+These are old TODOs, the main source of tasks / improvements ist Jira <https://jira.bibforge.org>.
+Send patches for this file if you have further ideas.
+
+- Use a data source on application container level
+- Integrate Apache DS für LDAP testing
+- Use Hibernate annotations
+- Add checks for configuration on initialisation

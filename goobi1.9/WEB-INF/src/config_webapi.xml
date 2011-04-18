@@ -1,0 +1,13 @@
+<config_webapi>
+	<credentials ip="0:0:0:0:0:0:0:1" password="test">
+		<command name="addStep"/>
+		<command name="deleteProcess"/>
+		<command name="addProcess"/>
+	</credentials>
+	<credentials ip="127.0.0.1" password="test">
+		<command name="addStep"/>
+		<command name="deleteProcess"/>
+		<command name="addProcess"/>
+		<command name="closeStep"/>
+	</credentials>
+</config_webapi>

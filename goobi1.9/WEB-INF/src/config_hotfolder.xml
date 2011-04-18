@@ -1,0 +1,14 @@
+<config_hotfolder>
+
+	<!-- 
+	name: name of hotfolder, needs to bee unique
+	folder: folder
+	template: id of goobi workflow 
+	updateStrategy: ignore, update, error - default is ignore
+	collection: optional DigitalCollections
+	 -->
+	<hotfolder name="Digiwunschbuch" folder="C:/Temp/test/" template="944" updateStrategy="ignore" collection=""/>
+
+
+
+</config_hotfolder>

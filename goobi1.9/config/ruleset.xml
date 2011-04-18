@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<displayRules xmlns="http://meta.goobi.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://meta.goobi.org/displayRules http://www.goobi.org/fileadmin/groups/goobi/schemas/displayRules-0.1.xsd">
+
+<!-- 
+	This file defines the ruleset for display types of metadata in metadata editor. 
+	It is used by org.goobi.api.display.helper.DisplayRules and defines whether a given metadatum is displayed as dopdown list with one or
+	more selections, input field or textarea.
+	The file should be stored in your goobi configuration folder.
+	You can define your own rules by manipulating this file. The Syntax is: 
+
+	<ruleSet>
+		<context projectName="your Project">
+		defines for which project the definition will be used
+
+			<bind>create or edit</bind>
+		bindstate create is used if you create a new metadatum, edit is used, when metadatum allready exists
+
+			<select tns:ref="some metadatum">
+				<item tns:selected="true or false">
+					<label>some label</label>
+					<value>some value</value>
+				</item>
+				<item tns:selected="true or false">
+						....
+		The tag select defines a list of items for a selection list with more than one selections. Each item is presented with a label, that will be 
+		presented in the UI and a value that will be stored in metadatum. With attribute tns:selected you can define, whether an item is preselected 
+		or not.
+			<select1 tns:ref="some metadatum">
+				<item tns:selected="true or false">
+					<label>some label</label>
+					<value>some value</value>
+				</item>
+				<item tns:selected="true or false">
+					.....
+		The	select1 tag defines a list of items for a selection list with only one possible selection. 
+
+			<input tns:ref="some metadatum">
+				<label>some label</label>
+			</input>
+		The input tag defines that this metadatum is displayed as input field with the defined label.
+
+			<textarea tns:ref="some metadatum">
+				<label>some label</label>
+			</textarea>
+		The textarea tag defines that the metadatum is displayed as textarea with defined label.
+		</context>	
+	</ruleSet>
+
+	For each project you have to define the display rules for metadata again.
+-->
+
+	
+	<ruleSet>
+		<context projectName="DigiWunschBuch">
+			<bind>create</bind>
+			<select tns:ref="TitleDocMain">
+				<item tns:selected="true">
+					<label>Universität und Technische Hochschule</label>
+					<value>Universität und Technische Hochschule</value>
+				</item>
+				<item tns:selected="false">
+					<label>Open Access Zeitschriften</label>
+					<value>free</value>
+				</item>
+				<item tns:selected="false">
+					<label>english</label>
+					<value>en</value>
+				</item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Wirtschaftswissenschaften</label>
+					<value>Economics</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Altägypthisches Seminar GAU</label>
+					<value>GAU</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftFürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>gesperrt</label>
+					<value>gesperrt</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value/>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Rechtswissenschaften</label>
+					<value>Law</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mathematik</label>
+					<value>Mathematics</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck Schnupper</label>
+					<value>MohrSiebeckSchnupper</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>Schäffer-PoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select>
+		
+			<select1 tns:ref="TitleDocMainShort">
+				<item tns:selected="true">
+					<label>Universität und Technische Hochschule</label>
+					<value>Universität und Technische Hochschule</value>
+				</item>
+				<item tns:selected="false">
+					<label>Open Access Zeitschriften</label>
+					<value>free</value>
+				</item>
+				<item tns:selected="false">
+					<label>english</label>
+					<value>en</value>
+				</item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Wirtschaftswissenschaften</label>
+					<value>Economics</value>
+				</item>
+			</select1>			
+			
+			<input tns:ref="DocLanguage">
+				<label>DocLanguage</label>
+			</input>
+			<textarea tns:ref="singleDigCollection">
+				<label>Varia</label>
+			</textarea>
+				
+			<select1 tns:ref="Sponsorship">
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Wirtschaftswissenschaften</label>
+					<value>Economics</value>
+				</item>
+			</select1>	
+				
+		</context>
+			<context projectName="DigiWunschBuch">
+			<bind>edit</bind>
+			<select tns:ref="TitleDocMain">
+				<item tns:selected="true">
+					<label>Universität und Technische Hochschule</label>
+					<value>Universität und Technische Hochschule</value>
+				</item>
+				<item tns:selected="false">
+					<label>Open Access Zeitschriften</label>
+					<value>free</value>
+				</item>
+				<item tns:selected="false">
+					<label>english</label>
+					<value>en</value>
+				</item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Wirtschaftswissenschaften</label>
+					<value>Economics</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Altägypthisches Seminar GAU</label>
+					<value>GAU</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftFürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>gesperrt</label>
+					<value>gesperrt</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value/>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Rechtswissenschaften</label>
+					<value>Law</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mathematik</label>
+					<value>Mathematics</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck Schnupper</label>
+					<value>MohrSiebeckSchnupper</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>Schäffer-PoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select>
+
+			<input tns:ref="DocLanguage">
+				<label>DocLanguage</label>
+			</input>
+			<textarea tns:ref="singleDigCollection">
+				<label>Varia</label>
+			</textarea>
+				
+			<select1 tns:ref="Sponsorship">
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Wirtschaftswissenschaften</label>
+					<value>Economics</value>
+				</item>
+			</select1>	
+				
+		</context>
+	</ruleSet>
+</displayRules>
