@@ -49,7 +49,7 @@ public class Projekt implements Serializable {
 	private Date endDate;
 	private Integer numberOfPages;
 	private Integer numberOfVolumes;
-	private Boolean projectIsArchived = true;
+	private Boolean projectIsArchived = false;
 
 	public Projekt() {
 		prozesse = new HashSet<Prozess>();
