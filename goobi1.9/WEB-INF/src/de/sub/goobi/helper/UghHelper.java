@@ -184,23 +184,26 @@ public class UghHelper {
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
 
 	public String convertLanguage(String inLanguage) {
-		/* Pfad zur Datei ermitteln */
-		FacesContext context = FacesContext.getCurrentInstance();
-		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opaclanguages.txt";
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
-		try {
-			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
-			BufferedReader in = new BufferedReader(isr);
-			String str;
-			while ((str = in.readLine()) != null)
-				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
-					in.close();
-					return str.split(" ")[0];
-				}
-			in.close();
-		} catch (IOException e) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (context != null) {
+			try {
+				HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+				String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
+						+ "opaclanguages.txt";
+				FileInputStream fis = new FileInputStream(filename);
+				InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+				BufferedReader in = new BufferedReader(isr);
+				String str;
+				while ((str = in.readLine()) != null)
+					if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
+						in.close();
+						return str.split(" ")[0];
+					}
+				in.close();
+
+			} catch (IOException e) {
+			}
 		}
 		return inLanguage;
 	}
