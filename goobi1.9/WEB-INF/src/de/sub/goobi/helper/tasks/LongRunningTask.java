@@ -7,124 +7,132 @@ import de.sub.goobi.helper.Helper;
 
 public class LongRunningTask extends Thread {
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
-	   
+
 	private int statusProgress = 0;
-   private String statusMessage = "";
-   private String longMessage ="";
-   private String title = "MasterTask";
-   private Prozess prozess;
-   private boolean isSingleThread = true;
-   
-   public void initialize(Prozess inProzess){
-      prozess = inProzess;
-   }
+	private String statusMessage = "";
+	private String longMessage = "";
+	private String title = "MasterTask";
+	private Prozess prozess;
+	private boolean isSingleThread = true;
 
-   public void execute() {
-      statusProgress = 1;
-      statusMessage = "running";
-      isSingleThread = false;
-      run();
-   }
+	public void initialize(Prozess inProzess) {
+		prozess = inProzess;
+	}
 
-   public void cancel() {
-      statusMessage = "stopping";
-      this.interrupt();
-   }
+	public void execute() {
+		statusProgress = 1;
+		statusMessage = "running";
+		isSingleThread = false;
+		run();
+	}
 
-   protected void stopped() {
-      statusMessage = "stopped";
-      statusProgress = -1;
-   }
+	public void cancel() {
+		statusMessage = "stopping";
+		this.interrupt();
+	}
 
-   @Override
-   public void run() {
-      /* ---------------------
-       * Simulierung einer lang laufenden Aufgabe
-      * -------------------*/
-      for (int i = 0; i < 100; i++) {
-         /* prüfen, ob der Thread unterbrochen wurde,
-          * wenn ja, stopped() */
-         if (this.isInterrupted()) {
-            stopped();
-            return;
-         }
-         /* lang dauernde Schleife zur Simulierung einer langen Aufgabe */
-         for (double j = 0; j < 10000000; j++) {
-         }
-         setStatusProgress(i);
-      }
-      setStatusMessage("done");
-      setStatusProgress(100);
-   }
+	protected void stopped() {
+		statusMessage = "stopped";
+		statusProgress = -1;
+	}
 
-   /**
-    * Prozess-Getter 
-    * ================================================================*/
-   public Prozess getProzess() {
-      return prozess;
-   }
+	@Override
+	public void run() {
+		/*
+		 * --------------------- Simulierung einer lang laufenden Aufgabe
+		 * -------------------
+		 */
+		for (int i = 0; i < 100; i++) {
+			/*
+			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
+			 */
+			if (this.isInterrupted()) {
+				stopped();
+				return;
+			}
+			/* lang dauernde Schleife zur Simulierung einer langen Aufgabe */
+			for (double j = 0; j < 10000000; j++) {
+			}
+			setStatusProgress(i);
+		}
+		setStatusMessage("done");
+		setStatusProgress(100);
+	}
 
-   /**
-    * Status des Tasks in Angabe von Prozent
-    * ================================================================*/
-   public int getStatusProgress() {
-      return statusProgress;
-   }
+	/**
+	 * Prozess-Getter
+	 * ================================================================
+	 */
+	public Prozess getProzess() {
+		return prozess;
+	}
 
-   /**
-    * Meldung über den aktuellen Task 
-    * ================================================================*/
-   public String getStatusMessage() {
-      return statusMessage;
-   }
+	/**
+	 * Status des Tasks in Angabe von Prozent
+	 * ================================================================
+	 */
+	public int getStatusProgress() {
+		return statusProgress;
+	}
 
-   /**
-    * Titel des aktuellen Task 
-    * ================================================================*/
-   public String getTitle() {
-      return title;
-   }
+	/**
+	 * Meldung über den aktuellen Task
+	 * ================================================================
+	 */
+	public String getStatusMessage() {
+		return statusMessage;
+	}
 
-   /**
-    * Setter für Fortschritt nur für vererbte Klassen
-    * ================================================================*/
-   protected void setStatusProgress(int statusProgress) {
-      this.statusProgress = statusProgress;
-   }
+	/**
+	 * Titel des aktuellen Task
+	 * ================================================================
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-   /**
-    * Setter für Statusmeldung nur für vererbte Klassen
-    * ================================================================*/
-   protected void setStatusMessage(String statusMessage) {
-      this.statusMessage = statusMessage;
-      if (!isSingleThread){
-         Helper.setMeldung(statusMessage);
-         logger.debug(statusMessage);
-      }
-   }
+	/**
+	 * Setter für Fortschritt nur für vererbte Klassen
+	 * ================================================================
+	 */
+	protected void setStatusProgress(int statusProgress) {
+		this.statusProgress = statusProgress;
+	}
 
-   /**
-    * Setter für Titel nur für vererbte Klassen
-    * ================================================================*/
-   protected void setTitle(String title) {
-      this.title = title;
-   }
+	/**
+	 * Setter für Statusmeldung nur für vererbte Klassen
+	 * ================================================================
+	 */
+	protected void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+		if (!isSingleThread) {
+			Helper.setMeldung(statusMessage);
+			logger.debug(statusMessage);
+		}
+	}
 
-   /**
-    * Setter für Prozess nur für vererbte Klassen
-    * ================================================================*/
-   protected void setProzess(Prozess prozess) {
-      this.prozess = prozess;
-   }
+	/**
+	 * Setter für Titel nur für vererbte Klassen
+	 * ================================================================
+	 */
+	protected void setTitle(String title) {
+		this.title = title;
+	}
 
-   public String getLongMessage() {
-      return longMessage;
-   }
+	/**
+	 * Setter für Prozess nur für vererbte Klassen
+	 * ================================================================
+	 */
+	protected void setProzess(Prozess prozess) {
+		this.prozess = prozess;
+	}
 
-   public void setLongMessage(String inlongMessage) {
-      this.longMessage = inlongMessage;
-   }
-   
-   
+	public String getLongMessage() {
+		return longMessage;
+	}
+
+	public void setLongMessage(String inlongMessage) {
+		this.longMessage = inlongMessage;
+	}
 
 }

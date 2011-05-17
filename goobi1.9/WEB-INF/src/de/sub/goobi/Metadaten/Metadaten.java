@@ -1630,14 +1630,14 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = iopac.OpacToDocStruct(opacSuchfeld, tok, opacKatalog, myPrefs);
+				Fileformat addrdf = iopac.OpacToDocStruct(opacSuchfeld, tok, opacKatalog, myPrefs, false);
 				if (addrdf != null) {
 					myDocStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
 					MetadatenalsTree3Einlesen1();
 				} else
 					Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
 			} catch (Exception e) {
-				Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
+//				Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
 			}
 		}
 		return "Metadaten3links";
@@ -1653,7 +1653,7 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = iopac.OpacToDocStruct(opacSuchfeld, tok, opacKatalog, myPrefs);
+				Fileformat addrdf = iopac.OpacToDocStruct(opacSuchfeld, tok, opacKatalog, myPrefs, false);
 				if (addrdf != null) {
 
 					/* die Liste aller erlaubten Metadatenelemente erstellen */
@@ -1676,8 +1676,8 @@ public class Metadaten {
 				} else
 					Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
 			} catch (Exception e) {
-				myLogger.error(e);
-				Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
+//				myLogger.error(e);
+//				Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
 			}
 		}
 		MetadatenalsBeanSpeichern(myDocStruct);

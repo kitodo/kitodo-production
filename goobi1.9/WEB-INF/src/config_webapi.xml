@@ -3,11 +3,13 @@
 		<command name="addStep"/>
 		<command name="deleteProcess"/>
 		<command name="addProcess"/>
+		<command name="help"/>
 	</credentials>
 	<credentials ip="127.0.0.1" password="test">
 		<command name="addStep"/>
 		<command name="deleteProcess"/>
 		<command name="addProcess"/>
 		<command name="closeStep"/>
+		<command name="help"/>
 	</credentials>
 </config_webapi>

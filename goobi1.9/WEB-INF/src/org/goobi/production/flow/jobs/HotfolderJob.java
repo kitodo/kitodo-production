@@ -31,7 +31,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.cli.CommandLineInterface;
-import org.hibernate.Hibernate;
 
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
@@ -69,14 +68,18 @@ public class HotfolderJob extends AbstractGoobiJob {
 	 */
 	@Override
 	public void execute() {
+		// logger.error("TEST123");
 		if (ConfigMain.getBooleanParameter("runHotfolder", false)) {
 			logger.trace("1");
 			List<GoobiHotfolder> hotlist = GoobiHotfolder.getInstances();
 			logger.trace("2");
 			for (GoobiHotfolder hot : hotlist) {
 				logger.trace("3");
-				// GoobiHotfolder hot = new GoobiHotfolder(new File(ConfigMain.getParameter("GoobiHotfolder", "/opt/digiverso/goobi/hotfolder")));
-				// templateId = ConfigMain.getIntParameter("GoobiHotfolderId", 944);
+				// GoobiHotfolder hot = new GoobiHotfolder(new
+				// File(ConfigMain.getParameter("GoobiHotfolder",
+				// "/opt/digiverso/goobi/hotfolder")));
+				// templateId = ConfigMain.getIntParameter("GoobiHotfolderId",
+				// 944);
 				List<File> list = hot.getCurrentFiles();
 				logger.trace("4");
 				long size = getSize(list);
@@ -99,9 +102,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 							HashMap<String, Integer> failedData = new HashMap<String, Integer>();
 							logger.trace("12");
 							for (String filename : metsfiles) {
-
+								logger.debug("found file: " + filename);
 								logger.trace("13");
-								// TODO updateStrategy
+
 								int returnValue = CommandLineInterface.generateProcess(filename, template, hot.getFolderAsFile(),
 										hot.getCollection(), hot.getUpdateStrategy());
 								logger.trace("14");
@@ -109,6 +112,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 									logger.trace("15");
 									failedData.put(filename, returnValue);
 									logger.trace("16");
+								} else {
+									logger.debug("finished file: " + filename);
 								}
 							}
 							if (!failedData.isEmpty()) {
@@ -126,16 +131,13 @@ public class HotfolderJob extends AbstractGoobiJob {
 						logger.trace("19");
 					}
 				} catch (InterruptedException e) {
-					// TODO: handle exception
+					logger.error(e);
 					logger.trace("20");
-				}
-
-				/*
-				 * läuft schon ein Import, abbrechen läuft keiner: - ist was drin, dann größe ermitteln - eine minute warten - wenn größe anders,
-				 * abbruch - wenn größe gleich, feuer
-				 */catch (DAOException e) {
-					// TODO Auto-generated catch block
+				} catch (DAOException e) {
+					logger.error(e);
 					logger.trace("21");
+				} catch (Exception e) {
+					logger.error(e);
 				}
 			}
 		}

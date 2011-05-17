@@ -101,8 +101,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
          return;
       }
       setStatusProgress(80);
-      /* delete all in ProcessDataDirectory */
-      Helper.deleteInDir(new File(fileIn.getAbsolutePath()));
+   // WELLCOME
+      Helper.deleteDataInDir(new File(fileIn.getAbsolutePath()));
 
       /* ---------------------
        * xml-Datei schreiben

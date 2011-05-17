@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -16,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.Import.Record;
+import org.goobi.production.cli.CommandLineInterface;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
@@ -23,11 +23,8 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
+import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
@@ -36,12 +33,10 @@ import de.sub.goobi.helper.Helper;
 // TODO FIXME alle Meldungen durch  messages-Meldungen ersetzen
 public class MassImportForm {
 	private static final Logger logger = Logger.getLogger(MassImportForm.class);
-	private Helper help = new Helper();
-
 	private Prozess template;
 	private List<Prozess> processes;
 	private List<String> digitalCollections;
-//	private List<String> possibleDigitalCollections;
+	// private List<String> possibleDigitalCollections;
 	// private List<String> recordList = new ArrayList<String>();
 	private List<String> ids = new ArrayList<String>();
 	private ImportFormat format = null;
@@ -66,7 +61,7 @@ public class MassImportForm {
 	}
 
 	public String Prepare() {
-//		initializePossibleDigitalCollections();
+		// initializePossibleDigitalCollections();
 		return "MassImport";
 	}
 
@@ -76,100 +71,132 @@ public class MassImportForm {
 	 * 
 	 */
 
-//	@SuppressWarnings("unchecked")
-//	private void initializePossibleDigitalCollections() {
-//		possibleDigitalCollections = new ArrayList<String>();
-//		String filename = help.getGoobiConfigDirectory() + "digitalCollections.xml";
-//		if (!(new File(filename).exists())) {
-//			Helper.setFehlerMeldung("File not found: ", filename);
-//			return;
-//		}
-//
-//		try {
-//			SAXBuilder builder = new SAXBuilder();
-//			Document doc = builder.build(new File(filename));
-//			Element root = doc.getRootElement();
-//			List<Element> projekte = root.getChildren();
-//			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-//				Element projekt = (Element) iter.next();
-//				List<Element> projektnamen = projekt.getChildren("name");
-//				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-//					Element projektname = (Element) iterator.next();
-//					if (projektname.getText().equalsIgnoreCase(template.getProjekt().getTitel())) {
-//						List<Element> myCols = projekt.getChildren("DigitalCollection");
-//						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-//							Element col = (Element) it2.next();
-//							possibleDigitalCollections.add(col.getText());
-//						}
-//					}
-//				}
-//			}
-//		} catch (JDOMException e1) {
-//			logger.error("error while parsing digital collections", e1);
-//			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-//		} catch (IOException e1) {
-//			logger.error("error while parsing digital collections", e1);
-//			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-//		}
-//	}
+	// @SuppressWarnings("unchecked")
+	// private void initializePossibleDigitalCollections() {
+	// possibleDigitalCollections = new ArrayList<String>();
+	// String filename = help.getGoobiConfigDirectory() +
+	// "digitalCollections.xml";
+	// if (!(new File(filename).exists())) {
+	// Helper.setFehlerMeldung("File not found: ", filename);
+	// return;
+	// }
+	//
+	// try {
+	// SAXBuilder builder = new SAXBuilder();
+	// Document doc = builder.build(new File(filename));
+	// Element root = doc.getRootElement();
+	// List<Element> projekte = root.getChildren();
+	// for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
+	// Element projekt = (Element) iter.next();
+	// List<Element> projektnamen = projekt.getChildren("name");
+	// for (Iterator<Element> iterator = projektnamen.iterator();
+	// iterator.hasNext();) {
+	// Element projektname = (Element) iterator.next();
+	// if
+	// (projektname.getText().equalsIgnoreCase(template.getProjekt().getTitel()))
+	// {
+	// List<Element> myCols = projekt.getChildren("DigitalCollection");
+	// for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+	// Element col = (Element) it2.next();
+	// possibleDigitalCollections.add(col.getText());
+	// }
+	// }
+	// }
+	// }
+	// } catch (JDOMException e1) {
+	// logger.error("error while parsing digital collections", e1);
+	// Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+	// } catch (IOException e1) {
+	// logger.error("error while parsing digital collections", e1);
+	// Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+	// }
+	// }
 
 	public void convertData() {
 		if (testForData()) {
 			HashMap<String, ImportReturnValue> answer = new HashMap<String, ImportReturnValue>();
+			// HashMap<String, Fileformat> meta = new HashMap<String,
+			// Fileformat>();
 			// found list with ids
 			Prefs prefs = template.getRegelsatz().getPreferences();
+			String tempfolder = ConfigMain.getParameter("tempfolder");
 			if (StringUtils.isNotEmpty(idList)) {
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
-				if (getHotfolderPathForPlugin(template.getId()) != null) {
-					plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
-					plugin.setPrefs(prefs);
-					List<String> ids = plugin.splitIds(idList);
-					List<Record> recordList = new ArrayList<Record>();
-					for (String id : ids) {
-						Record r = new Record();
-						r.setData(id);
-						r.setId(id);
-						recordList.add(r);
-					}
-
-					answer = plugin.generateFiles(recordList);
-				} else {
-					Helper.setFehlerMeldung("hotfolder for template " + template.getTitel() + " does not exist");
+				// if (getHotfolderPathForPlugin(template.getId()) != null) {
+				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
+				plugin.setImportFolder(tempfolder);
+				plugin.setPrefs(prefs);
+				List<String> ids = plugin.splitIds(idList);
+				List<Record> recordList = new ArrayList<Record>();
+				for (String id : ids) {
+					Record r = new Record();
+					r.setData(id);
+					r.setId(id);
+					recordList.add(r);
 				}
+
+				answer = plugin.generateFiles(recordList);
+				// meta = plugin.generateMetadata(recordList);
+				// } else {
+				// Helper.setFehlerMeldung("hotfolder for template " +
+				// template.getTitel() + " does not exist");
+				// }
 			} else if (importFile != null) {
 				// uploaded file
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
-				if (getHotfolderPathForPlugin(template.getId()) != null) {
-					plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
-					plugin.setPrefs(prefs);
-					plugin.setFile(importFile);
-					List<Record> recordList = plugin.generateRecordsFromFile();
-					answer = plugin.generateFiles(recordList);
+				// if (getHotfolderPathForPlugin(template.getId()) != null) {
+				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
+				plugin.setImportFolder(tempfolder);
 
-				} else {
-					Helper.setFehlerMeldung("hotfolder for template " + template.getTitel() + " does not exist");
-				}
+				plugin.setPrefs(prefs);
+				plugin.setFile(importFile);
+				List<Record> recordList = plugin.generateRecordsFromFile();
+				answer = plugin.generateFiles(recordList);
+				// meta = plugin.generateMetadata(recordList);
+				// } else {
+				// Helper.setFehlerMeldung("hotfolder for template " +
+				// template.getTitel() + " does not exist");
+				// }
 			}
 			// found list with records
 			else if (StringUtils.isNotEmpty(records)) {
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
-				if (getHotfolderPathForPlugin(template.getId()) != null) {
-					plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
-					plugin.setPrefs(prefs);
-					List<Record> recordList = plugin.splitRecords(records);
-					answer = plugin.generateFiles(recordList);
-				} else {
-					Helper.setFehlerMeldung("hotfolder for template " + template.getTitel() + " does not exist");
-				}
+				// if (getHotfolderPathForPlugin(template.getId()) != null) {
+				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
+				plugin.setImportFolder(tempfolder);
+
+				plugin.setPrefs(prefs);
+				List<Record> recordList = plugin.splitRecords(records);
+				answer = plugin.generateFiles(recordList);
+				// meta = plugin.generateMetadata(recordList);
+				// } else {
+				// Helper.setFehlerMeldung("hotfolder for template " +
+				// template.getTitel() + " does not exist");
+				// }
 			}
 
-			for (Entry<String, ImportReturnValue> bla : answer.entrySet()) {
-				if (bla.getValue().equals(ImportReturnValue.ExportFinished)) {
-					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + bla.getKey());
+			// for (Entry<String, ImportReturnValue> bla : answer.entrySet()) {
+			// if (bla.getValue().equals(ImportReturnValue.ExportFinished)) {
+			// Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() +
+			// " for " + bla.getKey());
+			// } else {
+			// Helper.setFehlerMeldung(bla.getValue() + " for " + bla.getKey());
+			// }
+			// }
+
+			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {
+				if (data.getValue().equals(ImportReturnValue.ExportFinished)) {
+					int returnValue = CommandLineInterface.generateProcess(data.getKey(), template, new File(tempfolder), null, "error");
+					if (returnValue > 0) {
+						Helper.setFehlerMeldung("import failed for " + data.getKey() + ", process generation failed with error code " + returnValue);
+					}
+					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + data.getKey());
 				} else {
-					Helper.setFehlerMeldung(bla.getValue() + " for " + bla.getKey());
+					Helper.setFehlerMeldung("import failed for " + data.getKey() + " error code is: " + data.getValue());
 				}
+
 			}
+
 		}
 
 		// missing data
@@ -261,7 +288,7 @@ public class MassImportForm {
 
 	public String getHotfolderPathForPlugin(int pluginId) {
 		for (GoobiHotfolder hotfolder : GoobiHotfolder.getInstances()) {
-			if (hotfolder.getTemplate()==pluginId) {
+			if (hotfolder.getTemplate() == pluginId) {
 				return hotfolder.getFolderAsString();
 			}
 		}
@@ -371,20 +398,22 @@ public class MassImportForm {
 	 * @param possibleDigitalCollection
 	 *            the possibleDigitalCollection to set
 	 */
-//	public void setPossibleDigitalCollection(List<String> possibleDigitalCollection) {
-//		this.possibleDigitalCollections = possibleDigitalCollection;
-//	}
-//
-//	/**
-//	 * @return the possibleDigitalCollection
-//	 */
-//	public List<String> getPossibleDigitalCollection() {
-//		return possibleDigitalCollections;
-//	}
-//
-//	public void setPossibleDigitalCollections(List<String> possibleDigitalCollections) {
-//		this.possibleDigitalCollections = possibleDigitalCollections;
-//	}
+	// public void setPossibleDigitalCollection(List<String>
+	// possibleDigitalCollection) {
+	// this.possibleDigitalCollections = possibleDigitalCollection;
+	// }
+	//
+	// /**
+	// * @return the possibleDigitalCollection
+	// */
+	// public List<String> getPossibleDigitalCollection() {
+	// return possibleDigitalCollections;
+	// }
+	//
+	// public void setPossibleDigitalCollections(List<String>
+	// possibleDigitalCollections) {
+	// this.possibleDigitalCollections = possibleDigitalCollections;
+	// }
 
 	public void setProcesses(List<Prozess> processes) {
 		this.processes = processes;

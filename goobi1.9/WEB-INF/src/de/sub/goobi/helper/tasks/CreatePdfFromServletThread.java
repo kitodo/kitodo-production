@@ -153,7 +153,6 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				File tempMets = new File(metsURL.toString());
 				tempMets.delete();
 			}
-			//TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.error("Error while creating pdf for " + this.getProzess().getTitel(), e);
 			setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: " + e.getMessage());

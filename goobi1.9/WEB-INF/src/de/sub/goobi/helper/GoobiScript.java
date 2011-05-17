@@ -169,14 +169,16 @@ public class GoobiScript {
 			ProcessSwapOutTask task = new ProcessSwapOutTask();
 			task.initialize(p);
 			LongRunningTaskManager.getInstance().addTask(task);
-
-			// try {
-			// ProcessSwapper ps = ProcessSwapper.getInstance();
-			// ps.swapOut(p);
-			// } catch (Exception e) {
-			// Helper.setFehlerMeldung("Fehler bei Auslagerung", e);
-			// break;
-			// }
+			// WELLCOME
+			LongRunningTaskManager.getInstance().executeTask(task);
+			
+//			 try {
+//			 ProcessSwapper ps = ProcessSwapper.getInstance();
+//			 ps.swapOut(p);
+//			 } catch (Exception e) {
+//			 Helper.setFehlerMeldung("Fehler bei Auslagerung", e);
+//			 break;
+//			 }
 		}
 	}
 
@@ -189,7 +191,8 @@ public class GoobiScript {
 			ProcessSwapInTask task = new ProcessSwapInTask();
 			task.initialize(p);
 			LongRunningTaskManager.getInstance().addTask(task);
-
+			// WELLCOME
+			LongRunningTaskManager.getInstance().executeTask(task);
 			// try {
 			// ProcessSwapper ps = ProcessSwapper.getInstance();
 			// ps.swapIn(p);

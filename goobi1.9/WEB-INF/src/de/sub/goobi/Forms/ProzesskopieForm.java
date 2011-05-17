@@ -263,9 +263,9 @@ public class ProzesskopieForm {
 		readProjectConfigs();
 		try {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
-			myRdf = myImportOpac.OpacToDocStruct(opacSuchfeld, opacSuchbegriff, opacKatalog, prozessKopie.getRegelsatz().getPreferences());
-			if (myImportOpac.getOpacDocType() != null)
-				docType = myImportOpac.getOpacDocType().getTitle();
+			myRdf = myImportOpac.OpacToDocStruct(opacSuchfeld, opacSuchbegriff, opacKatalog, prozessKopie.getRegelsatz().getPreferences(), true);
+			if (myImportOpac.getOpacDocType(true) != null)
+				docType = myImportOpac.getOpacDocType(true).getTitle();
 			atstsl = myImportOpac.getAtstsl();
 			fillFieldsFromMetadataFile();
 			/* über die Treffer informieren */

@@ -61,7 +61,7 @@ public class Helper implements Serializable, Observer {
 	 * 
 	 * @return Paramter als String
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static String getRequestParameter(String Parameter) {
 		/* einen bestimmten übergebenen Parameter ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -142,7 +142,8 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control übergeben
+	 * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
+	 * übergeben
 	 */
 	private static void setMeldung(String control, String meldung, String beschreibung, boolean nurInfo) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -161,7 +162,8 @@ public class Helper implements Serializable, Observer {
 			}
 			return;
 		}
-//		ResourceBundle bundle = ResourceBundle.getBundle("Messages.messages", context.getViewRoot().getLocale());
+		// ResourceBundle bundle = ResourceBundle.getBundle("Messages.messages",
+		// context.getViewRoot().getLocale());
 		String msg = "";
 		String beschr = "";
 		try {
@@ -192,7 +194,9 @@ public class Helper implements Serializable, Observer {
 
 	// public static Object getManagedBean(String name) {
 	// FacesContext context = FacesContext.getCurrentInstance();
-	// Object obj = context.getApplication().getVariableResolver().resolveVariable(context, name);
+	// Object obj =
+	// context.getApplication().getVariableResolver().resolveVariable(context,
+	// name);
 	// return obj;
 	// }
 	public static Object getManagedBeanValue(String expr) {
@@ -205,7 +209,8 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static Session getHibernateSession() {
-		// TODO: Fix for Hibernate-Session-Management, replaced with older version here
+		// TODO: Fix for Hibernate-Session-Management, replaced with older
+		// version here
 		// Session s;
 		// try {
 		// s = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -233,7 +238,8 @@ public class Helper implements Serializable, Observer {
 	/* Helferklassen für kopieren von Verzeichnissen und Dateien */
 
 	/**
-	 * simple call of console command without any feedback, error handling or return value
+	 * simple call of console command without any feedback, error handling or
+	 * return value
 	 * ================================================================
 	 */
 	// TODO: Don't use this to create /pages/imagesTemp/
@@ -246,7 +252,8 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Call scripts from console and give back error messages and return value of the called script
+	 * Call scripts from console and give back error messages and return value
+	 * of the called script
 	 * 
 	 */
 	public static Integer callShell2(String command) throws IOException, InterruptedException {
@@ -279,29 +286,39 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * NOCH FEHLERHAFT enhanced call of script with error messages and return value of script, call it with special encoding
+	 * NOCH FEHLERHAFT enhanced call of script with error messages and return
+	 * value of script, call it with special encoding
 	 * ================================================================
 	 */
 	// TODO: Remove this method
 	/*
-	 * public int callShell3(String command) throws IOException, InterruptedException { myLogger.debug("execute Shellcommand callShell3: " + command);
-	 * if (command == null || command.length() == 0) return 1;
+	 * public int callShell3(String command) throws IOException,
+	 * InterruptedException { myLogger.debug("execute Shellcommand callShell3: "
+	 * + command); if (command == null || command.length() == 0) return 1;
 	 * 
-	 * StringTokenizer strtok = new StringTokenizer(command, " "); Process process = Runtime.getRuntime().exec(strtok.nextToken());
+	 * StringTokenizer strtok = new StringTokenizer(command, " "); Process
+	 * process = Runtime.getRuntime().exec(strtok.nextToken());
 	 * 
-	 * // set encoding BufferedWriter outCommand = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
-	 * outCommand.write(strtok.hasMoreTokens() ? strtok.nextToken() : ""); outCommand.flush();
+	 * // set encoding BufferedWriter outCommand = new BufferedWriter(new
+	 * OutputStreamWriter(process.getOutputStream(), "UTF-8"));
+	 * outCommand.write(strtok.hasMoreTokens() ? strtok.nextToken() : "");
+	 * outCommand.flush();
 	 * 
-	 * Scanner scanner = new Scanner(process.getInputStream()); while (scanner.hasNextLine()) { String myLine = scanner.nextLine();
-	 * setMeldung(myLine); } scanner.close(); scanner = new Scanner(process.getErrorStream()); while (scanner.hasNextLine()) {
-	 * setFehlerMeldung(scanner.nextLine()); } scanner.close(); int rueckgabe = process.waitFor(); return rueckgabe; }
+	 * Scanner scanner = new Scanner(process.getInputStream()); while
+	 * (scanner.hasNextLine()) { String myLine = scanner.nextLine();
+	 * setMeldung(myLine); } scanner.close(); scanner = new
+	 * Scanner(process.getErrorStream()); while (scanner.hasNextLine()) {
+	 * setFehlerMeldung(scanner.nextLine()); } scanner.close(); int rueckgabe =
+	 * process.waitFor(); return rueckgabe; }
 	 */
 
-	// TODO: Move the Stuff below in a class for interaction with a local file system
+	// TODO: Move the Stuff below in a class for interaction with a local file
+	// system
 
 	public void createUserDirectory(String inDirPath, String inUser) throws IOException, InterruptedException {
 		/*
-		 * -------------------------------- Create directory with script --------------------------------
+		 * -------------------------------- Create directory with script
+		 * --------------------------------
 		 */
 		String command = ConfigMain.getParameter("script_createDirUserHome") + " ";
 		command += inUser + " " + inDirPath;
@@ -310,7 +327,8 @@ public class Helper implements Serializable, Observer {
 
 	public void createMetaDirectory(String inDirPath) throws IOException, InterruptedException {
 		/*
-		 * -------------------------------- Create directory with script --------------------------------
+		 * -------------------------------- Create directory with script
+		 * --------------------------------
 		 */
 		String command = ConfigMain.getParameter("script_createDirMeta") + " ";
 		command += inDirPath;
@@ -321,7 +339,8 @@ public class Helper implements Serializable, Observer {
 		bundle = ResourceBundle.getBundle("Messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		File file = new File(ConfigMain.getParameter("localMessages"));
 		if (file.exists()) {
-			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
+			// Load local message bundle from file system only if file exists;
+			// if value not exists in bundle, use default bundle from classpath
 
 			try {
 				URL resourceURL = file.toURI().toURL();
@@ -331,11 +350,11 @@ public class Helper implements Serializable, Observer {
 			}
 		}
 
-
 	}
 
 	public static String getTranslation(String dbTitel) {
-		// running instance of ResourceBundle doesn't respond on user language changes, workaround by instanciating it every time
+		// running instance of ResourceBundle doesn't respond on user language
+		// changes, workaround by instanciating it every time
 		// SprachbundleLaden();
 
 		try {
@@ -395,7 +414,8 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Copies src file to dst file. If the dst file does not exist, it is created
+	 * Copies src file to dst file. If the dst file does not exist, it is
+	 * created
 	 */
 	public static void copyFile(File src, File dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
@@ -413,8 +433,9 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
-	 * to delete and returns false.
+	 * Deletes all files and subdirectories under dir. Returns true if all
+	 * deletions were successful. If a deletion fails, the method stops
+	 * attempting to delete and returns false.
 	 */
 	public static boolean deleteDir(File dir) {
 		if (!dir.exists())
@@ -448,10 +469,31 @@ public class Helper implements Serializable, Observer {
 		return true;
 	}
 
+	// WELLCOME
 	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
+	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
-	// TODO: Replace this method with two, one for the file stuff and another one for the checksum
+	public static boolean deleteDataInDir(File dir) {
+		if (dir.exists() && dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++) {
+				if (!children[i].endsWith(".xml")) {
+					boolean success = deleteDir(new File(dir, children[i]));
+					if (!success) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
+	 * will be created.
+	 */
+	// TODO: Replace this method with two, one for the file stuff and another
+	// one for the checksum
 	public static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int goobipathlength, Element inRoot) throws IOException {
 		if (srcDir.isDirectory()) {
 			if (!dstDir.exists()) {
@@ -479,7 +521,8 @@ public class Helper implements Serializable, Observer {
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
-			// String suffix = ConfigMin.getParameter("ImageSuffix", "\\.[Tt][Ii][Ff][Ff]?");
+			// String suffix = ConfigMin.getParameter("ImageSuffix",
+			// "\\.[Tt][Ii][Ff][Ff]?");
 			// return name.matches(prefix + suffix);
 			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
 				fileOk = true;

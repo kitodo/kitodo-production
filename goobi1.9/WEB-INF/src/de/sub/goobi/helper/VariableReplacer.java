@@ -248,7 +248,7 @@ public class VariableReplacer {
 			case FIRSTCHILD:
 				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
 				if (resultFirst == null) {
-					logger.warn("Can not replace firstChild-variable for METS: " + metadata);
+					logger.info("Can not replace firstChild-variable for METS: " + metadata);
 					result = "";
 					// help.setFehlerMeldung("Can not replace firstChild-variable for METS: " + metadata);
 				} else

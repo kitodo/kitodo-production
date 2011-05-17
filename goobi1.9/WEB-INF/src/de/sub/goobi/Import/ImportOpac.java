@@ -1,5 +1,6 @@
 package de.sub.goobi.Import;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -12,6 +13,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -49,7 +51,7 @@ public class ImportOpac {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public Fileformat OpacToDocStruct(String inSuchfeld, String inSuchbegriff, String inKatalog, Prefs inPrefs) throws Exception {
+	public Fileformat OpacToDocStruct(String inSuchfeld, String inSuchbegriff, String inKatalog, Prefs inPrefs, boolean verbose) throws Exception {
 		/*
 		 * -------------------------------- Katalog auswählen
 		 * --------------------------------
@@ -58,8 +60,9 @@ public class ImportOpac {
 		if (coc == null)
 			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in opac.xml");
 		Catalogue cat = new Catalogue(coc.getDescription(), coc.getAddress(), coc.getPort(), coc.getCbs(), coc.getDatabase());
-		Helper.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
-
+		if (verbose) {
+			Helper.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
+		}
 		GetOpac myOpac = new GetOpac(cat);
 		myOpac.setData_character_encoding(coc.getCharset());
 		Query myQuery = new Query(inSuchbegriff, inSuchfeld);
@@ -90,7 +93,7 @@ public class ImportOpac {
 		 * --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (getOpacDocType().isMultiVolume()) {
+		if (getOpacDocType(verbose).isMultiVolume()) {
 			/* Sammelband-PPN ermitteln */
 			String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
 			if (multiVolumePpn != "") {
@@ -139,7 +142,7 @@ public class ImportOpac {
 		 * ist, dann übergeordnetes Werk --------------------------------
 		 */
 		// if (isContainedWork()) {
-		if (getOpacDocType().isContainedWork()) {
+		if (getOpacDocType(verbose).isContainedWork()) {
 			/* PPN des übergeordneten Werkes ermitteln */
 			String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
 			if (ueberGeordnetePpn != "") {
@@ -198,7 +201,7 @@ public class ImportOpac {
 		DocStruct dsBoundBook = dd.createDocStruct(dst);
 		dd.setPhysicalDocStruct(dsBoundBook);
 		/* Inhalt des RDF-Files überprüfen und ergänzen */
-		checkMyOpacResult(ff.getDigitalDocument(), inPrefs, myFirstHit);
+		checkMyOpacResult(ff.getDigitalDocument(), inPrefs, myFirstHit, verbose);
 		// rdftemp.write("D:/PicaRdf.xml");
 		return ff;
 	}
@@ -265,7 +268,7 @@ public class ImportOpac {
 	 * ####################################################
 	 */
 
-	private void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit) {
+	private void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
 		UghHelper ughhelp = new UghHelper();
 		DocStruct topstruct = inDigDoc.getLogicalDocStruct();
 		DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
@@ -277,7 +280,7 @@ public class ImportOpac {
 		 * xml und docstruct ermitteln --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (getOpacDocType().isMultiVolume()) {
+		if (getOpacDocType(verbose).isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
 			} catch (RuntimeException e) {
@@ -446,7 +449,7 @@ public class ImportOpac {
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (getOpacDocType().isPeriodical()) {
+		if (getOpacDocType(verbose).isPeriodical()) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
@@ -635,20 +638,26 @@ public class ImportOpac {
 	// else
 	// return false;
 	// }
-	public ConfigOpacDoctype getOpacDocType() {
+	public ConfigOpacDoctype getOpacDocType(boolean verbose) {
 		try {
 			ConfigOpac co = new ConfigOpac();
 			ConfigOpacDoctype cod = co.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
 			if (cod == null) {
-				Helper.setFehlerMeldung("Unbekannte Gattung: ", gattung);
+				if (verbose) {
+					Helper.setFehlerMeldung("Unbekannte Gattung: ", gattung);
+				}
 				cod = new ConfigOpac().getAllDoctypes().get(0);
 				gattung = cod.getMappings().get(0);
-				Helper.setFehlerMeldung("changed docttype: ", gattung + " - " + cod.getTitle());
+				if (verbose) {
+					Helper.setFehlerMeldung("changed docttype: ", gattung + " - " + cod.getTitle());
+				}
 			}
 			return cod;
 		} catch (IOException e) {
 			myLogger.error("OpacDoctype unknown", e);
-			Helper.setFehlerMeldung("OpacDoctype unknown", e);
+			if (verbose) {
+				Helper.setFehlerMeldung("OpacDoctype unknown", e);
+			}
 			return null;
 		}
 	}

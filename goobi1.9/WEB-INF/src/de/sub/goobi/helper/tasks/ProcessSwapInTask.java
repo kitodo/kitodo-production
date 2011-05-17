@@ -102,7 +102,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 			Element el = (Element) it.next();
 			crcMap.put(el.getAttribute("path").getValue(), el.getAttribute("crc32").getValue());
 		}
-		Helper.deleteInDir(fileIn);
+		Helper.deleteDataInDir(fileIn);
 
 		/*
 		 * --------------------- Dateien kopieren und Checksummen ermitteln -------------------
