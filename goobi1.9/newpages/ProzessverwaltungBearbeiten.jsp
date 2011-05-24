@@ -54,7 +54,7 @@
 								<%-- Schritte --%>
 								<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
 
-								<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null && not ProzessverwaltungForm.myProzess.istTemplate}">
+								<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
 									<%-- Vorlagen --%>
 									<f:subview id="subVorlage" rendered="#{ProzessverwaltungForm.myProzess.vorlagenSize != 0}">
 										<%@include file="inc_Prozessverwaltung/prozess_box_Vorlagen.jsp"%>
