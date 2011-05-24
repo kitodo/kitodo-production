@@ -24,7 +24,6 @@ import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 
-import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
@@ -46,7 +45,7 @@ public class MassImportForm {
 	private List<String> usablePluginsForRecords = new ArrayList<String>();
 	private List<String> usablePluginsForIDs = new ArrayList<String>();
 	private List<String> usablePluginsForFiles = new ArrayList<String>();
-	private ImportPluginLoader ipl = new ImportPluginLoader();
+	private final ImportPluginLoader ipl = new ImportPluginLoader();
 	private String currentPlugin = "";
 	private File importFile = null;
 
@@ -151,6 +150,7 @@ public class MassImportForm {
 				plugin.setPrefs(prefs);
 				plugin.setFile(importFile);
 				List<Record> recordList = plugin.generateRecordsFromFile();
+
 				answer = plugin.generateFiles(recordList);
 				// meta = plugin.generateMetadata(recordList);
 				// } else {
@@ -215,8 +215,9 @@ public class MassImportForm {
 		ByteArrayInputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
-			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + System.currentTimeMillis();
-			inputStream = new ByteArrayInputStream((byte[]) uploadedFile.getBytes());
+			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + uploadedFile.getName();
+
+			inputStream = new ByteArrayInputStream(uploadedFile.getBytes());
 			outputStream = new FileOutputStream(filename);
 
 			byte[] buf = new byte[1024];

@@ -1835,7 +1835,7 @@ public class Metadaten {
 	/**
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
-	@SuppressWarnings("unchecked")
+
 	public String SeitenVonChildrenUebernehmen() {
 		if (!SperrungAktualisieren())
 			return "SperrungAbgelaufen";
@@ -1843,13 +1843,13 @@ public class Metadaten {
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
 		myDocStruct.getAllReferences("to").removeAll(myDocStruct.getAllReferences("to"));
 		if (myDocStruct.getAllChildren() != null) {
-			for (Iterator iter = myDocStruct.getAllChildren().iterator(); iter.hasNext();) {
+			for (Iterator<DocStruct> iter = myDocStruct.getAllChildren().iterator(); iter.hasNext();) {
 				DocStruct child = (DocStruct) iter.next();
 				List<Reference> childRefs = child.getAllReferences("to");
 				for (Reference toAdd : childRefs) {
 					boolean match = false;
 					for (Reference ref : myDocStruct.getAllReferences("to")) {
-						if (ref.getTarget().getIdentifier().equals(toAdd.getTarget().getIdentifier())) {
+						if (ref.getTarget().equals(toAdd.getTarget())) {
 							match = true;
 							break;
 						}

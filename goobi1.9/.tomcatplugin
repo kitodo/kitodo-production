@@ -7,5 +7,5 @@
     <updateXml>true</updateXml>
     <warLocation>C:\Users\rsehr\goobi.war</warLocation>
     <extraInfo></extraInfo>
-    <webPath>Goobi18</webPath>
+    <webPath>Goobi19</webPath>
 </tomcatProjectProperties>
