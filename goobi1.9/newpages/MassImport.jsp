@@ -95,7 +95,16 @@
 														<h:outputText
 															value="#{MassImportForm.template.projekt.titel}" />
 														<h:outputText value="#{MassImportForm.template.titel}" />
-
+														
+														<h:outputLabel for="digitaleKollektionen"
+															value="#{msgs.digitaleKollektionen}:" />
+														<h:selectManyListbox id="digitaleKollektionen"
+															value="#{MassImportForm.digitalCollections}"
+															styleClass="processMassImport" size="5">
+															<si:selectItems
+																value="#{MassImportForm.possibleDigitalCollection}"
+																var="step" itemLabel="#{step}" itemValue="#{step}" />
+														</h:selectManyListbox>
 
 														<h:outputLabel for="plugins" value="#{msgs.importplugin}:" />
 														<h:selectOneMenu id="plugins"
@@ -124,6 +133,16 @@
 															value="#{MassImportForm.template.projekt.titel}" />
 														<h:outputText value="#{MassImportForm.template.titel}" />
 											
+											<h:outputLabel for="digitaleKollektionen"
+															value="#{msgs.digitaleKollektionen}:" />
+														<h:selectManyListbox id="digitaleKollektionen"
+															value="#{MassImportForm.digitalCollections}"
+															styleClass="processMassImport" size="5">
+															<si:selectItems
+																value="#{MassImportForm.possibleDigitalCollection}"
+																var="step" itemLabel="#{step}" itemValue="#{step}" />
+														</h:selectManyListbox>
+														
 														<h:outputLabel for="plugins2" value="#{msgs.importplugin}:" />
 														<h:selectOneMenu id="plugins2"
 															value="#{MassImportForm.currentPlugin}"
@@ -149,7 +168,15 @@
 															value="#{MassImportForm.template.projekt.titel}" />
 														<h:outputText value="#{MassImportForm.template.titel}" />
 
-													
+													<h:outputLabel for="digitaleKollektionen"
+															value="#{msgs.digitaleKollektionen}:" />
+														<h:selectManyListbox id="digitaleKollektionen"
+															value="#{MassImportForm.digitalCollections}"
+															styleClass="processMassImport" size="5">
+															<si:selectItems
+																value="#{MassImportForm.possibleDigitalCollection}"
+																var="step" itemLabel="#{step}" itemValue="#{step}" />
+														</h:selectManyListbox>
 
 														<h:outputLabel for="plugins3" value="#{msgs.importplugin}:" />
 														<h:selectOneMenu id="plugins3"

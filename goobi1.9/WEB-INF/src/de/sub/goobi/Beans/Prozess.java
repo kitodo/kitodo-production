@@ -72,7 +72,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
-	private MetadatenSperrung msp = new MetadatenSperrung();
+	private final MetadatenSperrung msp = new MetadatenSperrung();
 	Helper help = new Helper();
 
 	public static String DIRECTORY_PREFIX = "orig";
@@ -99,6 +99,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * Getter und Setter
 	 */
 
+	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -219,6 +220,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
 		FilenameFilter filterVerz = new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return (name.endsWith("_" + DIRECTORY_SUFFIX) && !name.startsWith(DIRECTORY_PREFIX + "_"));
 			}
@@ -282,6 +284,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 			FilenameFilter filterVerz = new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String name) {
 					return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
 				}
@@ -345,7 +348,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public String getPdfDirectory() throws SwapException, DAOException, IOException, InterruptedException {
 		return getOcrDirectory() + titel + "_pdf" + File.separator;
 	}
-	
+
 	public String getSourceDirectory() throws SwapException, DAOException, IOException, InterruptedException {
 		return getProcessDataDirectory() + "source" + File.separator;
 	}
@@ -359,8 +362,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * #####################################################
+	 * ##################################################### ## ## Helper ##
+	 * #####################################################
+	 * ####################################################
 	 */
 
 	public Projekt getProjekt() {
@@ -538,7 +543,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * Auswertung des Fortschritts
 	 */
 
-
 	public String getFortschritt() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -628,7 +632,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return (int) abgeschlossen2;
 	}
 
-
 	public String getMetadataFilePath() throws IOException, InterruptedException, SwapException, DAOException {
 		return getProcessDataDirectory() + "meta.xml";
 	}
@@ -692,7 +695,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 							Long lastModified = data.lastModified();
 							File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
 							data.renameTo(newFile);
-							if (lastModified > 0) {
+							if (lastModified > 0L) {
 								newFile.setLastModified(lastModified);
 							}
 						}
@@ -700,7 +703,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 							Long lastModified = data.lastModified();
 							File newFile = new File(data.toString() + ".1");
 							data.renameTo(newFile);
-							if (lastModified > 0) {
+							if (lastModified > 0L) {
 								newFile.setLastModified(lastModified);
 							}
 						}
@@ -792,7 +795,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner Benutzergruppe zugewiesen ist
+	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner
+	 * Benutzergruppe zugewiesen ist
 	 * ================================================================
 	 */
 	public boolean getContainsUnreachableSteps() {
@@ -804,7 +808,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * check if there is one task in edit mode, where the user has the rights to write to image folder
+	 * check if there is one task in edit mode, where the user has the rights to
+	 * write to image folder
 	 * ================================================================
 	 */
 	public boolean isImageFolderInUse() {
@@ -817,7 +822,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * get user of task in edit mode with rights to write to image folder ================================================================
+	 * get user of task in edit mode with rights to write to image folder
+	 * ================================================================
 	 */
 	public Benutzer getImageFolderInUseUser() {
 		for (Schritt s : getSchritteList()) {
@@ -829,8 +835,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null Values (thats why Boolean) and
-	 * MyFaces seams not to like Boolean (thats why boolean for the GUI) ================================================================
+	 * here differet Getters and Setters for the same value, because Hibernate
+	 * does not like bit-Fields with null Values (thats why Boolean) and MyFaces
+	 * seams not to like Boolean (thats why boolean for the GUI)
+	 * ================================================================
 	 */
 	public Boolean isSwappedOutHibernate() {
 		return swappedOut;
@@ -858,10 +866,12 @@ public class Prozess implements Serializable, IGoobiEntity {
 		this.wikifield = wikifield;
 	}
 
+	@Override
 	public Status getStatus() {
 		return Status.getProcessStatus(this);
 	}
 
+	@Override
 	public List<IGoobiProperty> getProperties() {
 		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
 		returnlist.addAll(getEigenschaftenList());
@@ -869,10 +879,12 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return returnlist;
 	}
 
+	@Override
 	public void addProperty(IGoobiProperty toAdd) {
 		eigenschaften.add((Prozesseigenschaft) toAdd);
 	}
 
+	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
@@ -890,6 +902,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return displayProperties;
 	}
 
+	@Override
 	public void refreshProperties() {
 		displayProperties = null;
 	}

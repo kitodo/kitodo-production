@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -23,6 +24,10 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
@@ -35,7 +40,7 @@ public class MassImportForm {
 	private Prozess template;
 	private List<Prozess> processes;
 	private List<String> digitalCollections;
-	// private List<String> possibleDigitalCollections;
+	private List<String> possibleDigitalCollections;
 	// private List<String> recordList = new ArrayList<String>();
 	private List<String> ids = new ArrayList<String>();
 	private ImportFormat format = null;
@@ -48,6 +53,7 @@ public class MassImportForm {
 	private final ImportPluginLoader ipl = new ImportPluginLoader();
 	private String currentPlugin = "";
 	private File importFile = null;
+	private final Helper help = new Helper();
 
 	private UploadedFile uploadedFile = null;
 
@@ -60,7 +66,7 @@ public class MassImportForm {
 	}
 
 	public String Prepare() {
-		// initializePossibleDigitalCollections();
+		initializePossibleDigitalCollections();
 		return "MassImport";
 	}
 
@@ -70,46 +76,42 @@ public class MassImportForm {
 	 * 
 	 */
 
-	// @SuppressWarnings("unchecked")
-	// private void initializePossibleDigitalCollections() {
-	// possibleDigitalCollections = new ArrayList<String>();
-	// String filename = help.getGoobiConfigDirectory() +
-	// "digitalCollections.xml";
-	// if (!(new File(filename).exists())) {
-	// Helper.setFehlerMeldung("File not found: ", filename);
-	// return;
-	// }
-	//
-	// try {
-	// SAXBuilder builder = new SAXBuilder();
-	// Document doc = builder.build(new File(filename));
-	// Element root = doc.getRootElement();
-	// List<Element> projekte = root.getChildren();
-	// for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-	// Element projekt = (Element) iter.next();
-	// List<Element> projektnamen = projekt.getChildren("name");
-	// for (Iterator<Element> iterator = projektnamen.iterator();
-	// iterator.hasNext();) {
-	// Element projektname = (Element) iterator.next();
-	// if
-	// (projektname.getText().equalsIgnoreCase(template.getProjekt().getTitel()))
-	// {
-	// List<Element> myCols = projekt.getChildren("DigitalCollection");
-	// for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-	// Element col = (Element) it2.next();
-	// possibleDigitalCollections.add(col.getText());
-	// }
-	// }
-	// }
-	// }
-	// } catch (JDOMException e1) {
-	// logger.error("error while parsing digital collections", e1);
-	// Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-	// } catch (IOException e1) {
-	// logger.error("error while parsing digital collections", e1);
-	// Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-	// }
-	// }
+	@SuppressWarnings("unchecked")
+	private void initializePossibleDigitalCollections() {
+		possibleDigitalCollections = new ArrayList<String>();
+		String filename = help.getGoobiConfigDirectory() + "digitalCollections.xml";
+		if (!(new File(filename).exists())) {
+			Helper.setFehlerMeldung("File not found: ", filename);
+			return;
+		}
+
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			Document doc = builder.build(new File(filename));
+			Element root = doc.getRootElement();
+			List<Element> projekte = root.getChildren();
+			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
+				Element projekt = iter.next();
+				List<Element> projektnamen = projekt.getChildren("name");
+				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
+					Element projektname = iterator.next();
+					if (projektname.getText().equalsIgnoreCase(template.getProjekt().getTitel())) {
+						List<Element> myCols = projekt.getChildren("DigitalCollection");
+						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+							Element col = it2.next();
+							possibleDigitalCollections.add(col.getText());
+						}
+					}
+				}
+			}
+		} catch (JDOMException e1) {
+			logger.error("error while parsing digital collections", e1);
+			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+		} catch (IOException e1) {
+			logger.error("error while parsing digital collections", e1);
+			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+		}
+	}
 
 	public void convertData() {
 		if (testForData()) {
@@ -131,6 +133,7 @@ public class MassImportForm {
 					Record r = new Record();
 					r.setData(id);
 					r.setId(id);
+					r.setCollections(digitalCollections);
 					recordList.add(r);
 				}
 
@@ -150,7 +153,9 @@ public class MassImportForm {
 				plugin.setPrefs(prefs);
 				plugin.setFile(importFile);
 				List<Record> recordList = plugin.generateRecordsFromFile();
-
+				for (Record r : recordList) {
+					r.setCollections(digitalCollections);
+				}
 				answer = plugin.generateFiles(recordList);
 				// meta = plugin.generateMetadata(recordList);
 				// } else {
@@ -167,6 +172,9 @@ public class MassImportForm {
 
 				plugin.setPrefs(prefs);
 				List<Record> recordList = plugin.splitRecords(records);
+				for (Record r : recordList) {
+					r.setCollections(digitalCollections);
+				}
 				answer = plugin.generateFiles(recordList);
 				// meta = plugin.generateMetadata(recordList);
 				// } else {
@@ -399,22 +407,20 @@ public class MassImportForm {
 	 * @param possibleDigitalCollection
 	 *            the possibleDigitalCollection to set
 	 */
-	// public void setPossibleDigitalCollection(List<String>
-	// possibleDigitalCollection) {
-	// this.possibleDigitalCollections = possibleDigitalCollection;
-	// }
-	//
-	// /**
-	// * @return the possibleDigitalCollection
-	// */
-	// public List<String> getPossibleDigitalCollection() {
-	// return possibleDigitalCollections;
-	// }
-	//
-	// public void setPossibleDigitalCollections(List<String>
-	// possibleDigitalCollections) {
-	// this.possibleDigitalCollections = possibleDigitalCollections;
-	// }
+	public void setPossibleDigitalCollection(List<String> possibleDigitalCollection) {
+		this.possibleDigitalCollections = possibleDigitalCollection;
+	}
+
+	/**
+	 * @return the possibleDigitalCollection
+	 */
+	public List<String> getPossibleDigitalCollection() {
+		return possibleDigitalCollections;
+	}
+
+	public void setPossibleDigitalCollections(List<String> possibleDigitalCollections) {
+		this.possibleDigitalCollections = possibleDigitalCollections;
+	}
 
 	public void setProcesses(List<Prozess> processes) {
 		this.processes = processes;

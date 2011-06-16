@@ -1,6 +1,5 @@
 package de.sub.goobi.Import;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -13,7 +12,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -216,7 +214,7 @@ public class ImportOpac {
 	private String getGattung(Element inHit) {
 
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-			Element tempElement = (Element) iter.next();
+			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
 			// System.out.println(feldname);
 			if (feldname.equals("002@"))
@@ -230,7 +228,7 @@ public class ImportOpac {
 		String rueckgabe = "";
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
-			Element subElement = (Element) iter.next();
+			Element subElement = iter.next();
 			if (subElement.getAttributeValue("code").equals(attributeValue))
 				rueckgabe = subElement.getValue();
 		}
@@ -247,7 +245,7 @@ public class ImportOpac {
 	@SuppressWarnings("unchecked")
 	private String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-			Element tempElement = (Element) iter.next();
+			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
 			// System.out.println(feldname);
 			if (feldname.equals(inFeldName))
@@ -526,7 +524,7 @@ public class ImportOpac {
 	@SuppressWarnings("unchecked")
 	private Element getElementFromChildren(Element inHit, String inTagName) {
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
-			Element myElement = (Element) iter2.next();
+			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 			// System.out.println(feldname);
 			/*
@@ -552,7 +550,7 @@ public class ImportOpac {
 		/* jetzt auch alle Attribute übernehmen */
 		if (inHit.getAttributes() != null) {
 			for (Iterator<Attribute> iter = inHit.getAttributes().iterator(); iter.hasNext();) {
-				Attribute att = (Attribute) iter.next();
+				Attribute att = iter.next();
 				myElement.getAttributes().add(new Attribute(att.getName(), att.getValue()));
 			}
 		}
@@ -560,7 +558,7 @@ public class ImportOpac {
 		if (inHit.getChildren() != null) {
 
 			for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-				Element ele = (Element) iter.next();
+				Element ele = iter.next();
 				myElement.addContent(getCopyFromJdomElement(ele));
 			}
 		}
@@ -571,7 +569,7 @@ public class ImportOpac {
 	private String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
 
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
-			Element myElement = (Element) iter2.next();
+			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 			/*
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
@@ -588,7 +586,7 @@ public class ImportOpac {
 		String rueckgabe = "";
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
-			Element subElement = (Element) iter.next();
+			Element subElement = iter.next();
 			if (subElement.getAttributeValue("code").equals(attributeValue))
 				rueckgabe = subElement.getValue();
 		}

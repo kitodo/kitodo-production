@@ -1,4 +1,5 @@
 package org.goobi.api.display.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -41,13 +42,13 @@ public final class ConfigDispayRules {
 	private static ConfigDispayRules instance = new ConfigDispayRules();
 	private static XMLConfiguration config;
 	private static String configPfad;
-	private Helper helper = new Helper();
-	private HashMap<String, HashMap<String, HashMap<String,HashMap <String, ArrayList<Item>>>>> allValues = new HashMap<String, HashMap<String, HashMap<String,HashMap <String, ArrayList<Item>>>>>();
-	
+	private final Helper helper = new Helper();
+	private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>>();
 
 	/**
 	 * 
 	 * reads given xml file into XMLConfiguration
+	 * 
 	 * @throws ConfigurationException
 	 */
 
@@ -58,56 +59,55 @@ public final class ConfigDispayRules {
 			config.setReloadingStrategy(new FileChangedReloadingStrategy());
 			getDisplayItems();
 		} catch (ConfigurationException e) {
-			/* no configuration file found, default configuration (textarea) 
+			/*
+			 * no configuration file found, default configuration (textarea)
 			 * will be used, nothing to do here
 			 */
-		} 
+		}
 	}
 
 	public static ConfigDispayRules getInstance() {
 		return instance;
 	}
 
-
-
 	/**
 	 * 
 	 * creates hierarchical HashMap with values for each element of given data
 	 */
-	private synchronized void getDisplayItems () {
+	private synchronized void getDisplayItems() {
 		if (allValues.isEmpty() && config != null) {
 			int countRuleSet = config.getMaxIndex("ruleSet");
 			for (int i = 0; i <= countRuleSet; i++) {
-				HashMap<String,HashMap <String, ArrayList<Item>>> itemsByType = new HashMap<String, HashMap<String,ArrayList<Item>>>();
-				HashMap<String, HashMap<String,HashMap <String, ArrayList<Item>>>> bindstate = new HashMap<String, HashMap<String,HashMap<String,ArrayList<Item>>>>();  
-				int projectContext = config.getMaxIndex("ruleSet(" + i + ").context"); 
-				for (int j = 0; j<= projectContext; j++) {
+				int projectContext = config.getMaxIndex("ruleSet(" + i + ").context");
+				for (int j = 0; j <= projectContext; j++) {
+					HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = new HashMap<String, HashMap<String, ArrayList<Item>>>();
+					HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bindstate = new HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>();
 					String projectName = config.getString("ruleSet(" + i + ").context(" + j + ")[@projectName]");
 					String bind = config.getString("ruleSet(" + i + ").context(" + j + ").bind");
 					int countSelect1 = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").select1");
 					int countSelect = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").select");
 					int countTextArea = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").textarea");
 					int countInput = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").input");
-					HashMap <String, ArrayList<Item>> select1 = new HashMap <String, ArrayList<Item>>();
-					HashMap <String, ArrayList<Item>> select = new HashMap <String, ArrayList<Item>>();
-					HashMap <String, ArrayList<Item>> input = new HashMap <String, ArrayList<Item>>();
-					HashMap <String, ArrayList<Item>> textarea = new HashMap <String, ArrayList<Item>>();
-					for (int k =0; k<= countSelect1; k++) {	
+					HashMap<String, ArrayList<Item>> select1 = new HashMap<String, ArrayList<Item>>();
+					HashMap<String, ArrayList<Item>> select = new HashMap<String, ArrayList<Item>>();
+					HashMap<String, ArrayList<Item>> input = new HashMap<String, ArrayList<Item>>();
+					HashMap<String, ArrayList<Item>> textarea = new HashMap<String, ArrayList<Item>>();
+					for (int k = 0; k <= countSelect1; k++) {
 						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select1(" + k + ")[@tns:ref]");
 						ArrayList<Item> items = getSelect1ByElementName(projectName, bind, elementName);
 						select1.put(elementName, items);
-					}		
-					for (int k =0; k<= countSelect; k++) {
+					}
+					for (int k = 0; k <= countSelect; k++) {
 						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select(" + k + ")[@tns:ref]");
-						ArrayList<Item> items = getSelectByElementName(projectName, bind, elementName);	
+						ArrayList<Item> items = getSelectByElementName(projectName, bind, elementName);
 						select.put(elementName, items);
-					}	
-					for (int k =0; k<= countTextArea; k++) {
+					}
+					for (int k = 0; k <= countTextArea; k++) {
 						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").textarea(" + k + ")[@tns:ref]");
 						ArrayList<Item> items = getTextareaByElementName(projectName, bind, elementName);
 						textarea.put(elementName, items);
-					}		
-					for (int k =0; k<= countInput; k++) {
+					}
+					for (int k = 0; k <= countInput; k++) {
 						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").input(" + k + ")[@tns:ref]");
 						ArrayList<Item> items = getInputByElementName(projectName, bind, elementName);
 						input.put(elementName, items);
@@ -115,41 +115,76 @@ public final class ConfigDispayRules {
 					itemsByType.put("select1", select1);
 					itemsByType.put("select", select);
 					itemsByType.put("input", input);
-					itemsByType.put("textarea",textarea);
+					itemsByType.put("textarea", textarea);
 					bindstate.put(bind, itemsByType);
 					allValues.put(projectName, bindstate);
 				}
-			}   
+			}
 		}
+		// for (Entry<String, HashMap<String, HashMap<String, HashMap<String,
+		// ArrayList<Item>>>>> bla : allValues.entrySet()) {
+		// System.out.println("proj:" + bla.getKey());
+		// for (Entry<String, HashMap<String, HashMap<String, ArrayList<Item>>>>
+		// blub : bla.getValue().entrySet()) {
+		// System.out.println("  bindstate: " + blub.getKey());
+		// for (Entry<String, HashMap<String, ArrayList<Item>>> qwertzu :
+		// blub.getValue().entrySet()) {
+		// System.out.println("    type: " + qwertzu.getKey());
+		// for (Entry<String, ArrayList<Item>> qwer :
+		// qwertzu.getValue().entrySet()) {
+		// System.out.println("      element: " + qwer.getKey());
+		// }
+		// }
+		// }
+		// }
 	}
-
-
 
 	/**
 	 * 
-	 * @param project name of project as String
-	 * @param bind create or edit
-	 * @param elementName name of the select1 element  
-	 * @return ArrayList with all items and its values of given select1 element. 
+	 * @param project
+	 *            name of project as String
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of the select1 element
+	 * @return ArrayList with all items and its values of given select1 element.
 	 */
 
 	private ArrayList<Item> getSelect1ByElementName(String project, String bind, String elementName) {
-		ArrayList<Item> listOfItems = new ArrayList<Item>(); 
-		int count = config.getMaxIndex("ruleSet.context");  
-		for (int i = 0; i<= count; i++) {
+		ArrayList<Item> listOfItems = new ArrayList<Item>();
+		int count = config.getMaxIndex("ruleSet.context");
+		for (int i = 0; i <= count; i++) {
 			String myProject = config.getString("ruleSet.context(" + i + ")[@projectName]");
 			String myBind = config.getString("ruleSet.context(" + i + ").bind");
-			if (myProject.equals(project)&& myBind.equals(bind)){
+			if (myProject.equals(project) && myBind.equals(bind)) {
 				int type = config.getMaxIndex("ruleSet.context(" + i + ").select1");
-				for (int j = 0;j<= type; j++) {
-					String myElementName = config.getString("ruleSet.context(" + i + ").select1("+j+")[@tns:ref]");	
+				for (int j = 0; j <= type; j++) {
+					String myElementName = config.getString("ruleSet.context(" + i + ").select1(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						int item = config.getMaxIndex("ruleSet.context(" + i + ").select1("+j+").item");
+						int item = config.getMaxIndex("ruleSet.context(" + i + ").select1(" + j + ").item");
 						for (int k = 0; k <= item; k++) {
-							Item myItem = new Item(
-									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").label"), // the displayed value 
-									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").value"), // the internal value, which will be taken if label is selected
-									config.getBoolean("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ")[@tns:selected]")); // indicates whether given item is preselected or not 
+							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").label"), // the
+																																			// displayed
+																																			// value
+									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").value"), // the
+																																// internal
+																																// value,
+																																// which
+																																// will
+																																// be
+																																// taken
+																																// if
+																																// label
+																																// is
+																																// selected
+									config.getBoolean("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ")[@tns:selected]")); // indicates
+																																		// whether
+																																		// given
+																																		// item
+																																		// is
+																																		// preselected
+																																		// or
+																																		// not
 							listOfItems.add(myItem);
 						}
 					}
@@ -161,31 +196,52 @@ public final class ConfigDispayRules {
 
 	/**
 	 * 
-	 * @param project name of project as String
-	 * @param bind create or edit
-	 * @param elementName name of the select element  
-	 * @return ArrayList with all items and its values of given select1 element. 
+	 * @param project
+	 *            name of project as String
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of the select element
+	 * @return ArrayList with all items and its values of given select1 element.
 	 */
 	private ArrayList<Item> getSelectByElementName(String project, String bind, String elementName) {
-		ArrayList<Item> listOfItems = new ArrayList<Item>(); 
-		int count = config.getMaxIndex("ruleSet.context");		   
-		for (int i = 0; i<= count; i++) {
+		ArrayList<Item> listOfItems = new ArrayList<Item>();
+		int count = config.getMaxIndex("ruleSet.context");
+		for (int i = 0; i <= count; i++) {
 			String myProject = config.getString("ruleSet.context(" + i + ")[@projectName]");
 			String myBind = config.getString("ruleSet.context(" + i + ").bind");
-			if (myProject.equals(project)&& myBind.equals(bind)){
+			if (myProject.equals(project) && myBind.equals(bind)) {
 				int type = config.getMaxIndex("ruleSet.context(" + i + ").select");
 
-				for (int j = 0;j<= type; j++) {
-					String myElementName = config.getString("ruleSet.context(" + i + ").select("+j+")[@tns:ref]");	
+				for (int j = 0; j <= type; j++) {
+					String myElementName = config.getString("ruleSet.context(" + i + ").select(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						int item = config.getMaxIndex("ruleSet.context(" + i + ").select("+j+").item");
+						int item = config.getMaxIndex("ruleSet.context(" + i + ").select(" + j + ").item");
 
 						for (int k = 0; k <= item; k++) {
-							Item myItem = new Item(
-									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").label"), // the displayed value 
-									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").value"), // the internal value, which will be taken if label is selected
-									config.getBoolean("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ")[@tns:selected]")); // indicates whether given item is preselected or not 
-							listOfItems.add(myItem);   
+							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").label"), // the
+																																			// displayed
+																																			// value
+									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").value"), // the
+																															// internal
+																															// value,
+																															// which
+																															// will
+																															// be
+																															// taken
+																															// if
+																															// label
+																															// is
+																															// selected
+									config.getBoolean("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ")[@tns:selected]")); // indicates
+																																		// whether
+																																		// given
+																																		// item
+																																		// is
+																																		// preselected
+																																		// or
+																																		// not
+							listOfItems.add(myItem);
 						}
 					}
 				}
@@ -196,57 +252,64 @@ public final class ConfigDispayRules {
 
 	/**
 	 * 
-	 * @param project name of project as String
-	 * @param bind create or edit
-	 * @param elementName name of the input element  
+	 * @param project
+	 *            name of project as String
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of the input element
 	 * @return item of given input element.
 	 */
 
 	private ArrayList<Item> getInputByElementName(String project, String bind, String elementName) {
-		ArrayList<Item> listOfItems = new ArrayList<Item>(); 
+		ArrayList<Item> listOfItems = new ArrayList<Item>();
 		int count = config.getMaxIndex("ruleSet.context");
-		for (int i = 0; i<= count; i++) {
+		for (int i = 0; i <= count; i++) {
 			String myProject = config.getString("ruleSet.context(" + i + ")[@projectName]");
 			String myBind = config.getString("ruleSet.context(" + i + ").bind");
-			if (myProject.equals(project)&& myBind.equals(bind)){
+			if (myProject.equals(project) && myBind.equals(bind)) {
 				int type = config.getMaxIndex("ruleSet.context(" + i + ").input");
 
-				for (int j = 0;j<= type; j++) {
-					String myElementName = config.getString("ruleSet.context(" + i + ").input("+j+")[@tns:ref]");	
+				for (int j = 0; j <= type; j++) {
+					String myElementName = config.getString("ruleSet.context(" + i + ").input(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(
-								config.getString("ruleSet.context(" + i + ").input(" + j + ").label"), // the displayed value 
+						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").input(" + j + ").label"), // the
+																														// displayed
+																														// value
 								config.getString("ruleSet.context(" + i + ").input(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
-				}	
+				}
 			}
 		}
 		return listOfItems;
 	}
 
 	/**
-	 * @param project name of project as String
-	 * @param bind create or edit
-	 * @param elementName name of the textarea element   
+	 * @param project
+	 *            name of project as String
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of the textarea element
 	 * @return item of given textarea element.
 	 */
 
-
 	private ArrayList<Item> getTextareaByElementName(String project, String bind, String elementName) {
-		ArrayList<Item> listOfItems = new ArrayList<Item>(); 
+		ArrayList<Item> listOfItems = new ArrayList<Item>();
 		int count = config.getMaxIndex("ruleSet.context");
-		for (int i = 0; i<= count; i++) {
+		for (int i = 0; i <= count; i++) {
 			String myProject = config.getString("ruleSet.context(" + i + ")[@projectName]");
 			String myBind = config.getString("ruleSet.context(" + i + ").bind");
-			if (myProject.equals(project)&& myBind.equals(bind)){
+			if (myProject.equals(project) && myBind.equals(bind)) {
 				int type = config.getMaxIndex("ruleSet.context(" + i + ").textarea");
 
-				for (int j = 0;j<= type; j++) {
-					String myElementName = config.getString("ruleSet.context(" + i + ").textarea("+j+")[@tns:ref]");	
+				for (int j = 0; j <= type; j++) {
+					String myElementName = config.getString("ruleSet.context(" + i + ").textarea(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(
-								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the displayed value 
+						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the
+																															// displayed
+																															// value
 								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -256,40 +319,41 @@ public final class ConfigDispayRules {
 		return listOfItems;
 	}
 
-
 	/**
 	 * 
-	 * @param project project of element
-	 * @param bind create or edit
-	 * @param elementName name of element
+	 * @param project
+	 *            project of element
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of element
 	 * @return returns type of element
 	 */
 
-
-	public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName){
+	public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName) {
 		synchronized (allValues) {
 			if (allValues.isEmpty() && config != null) {
 				getDisplayItems();
 			} else if (config == null) {
-			
+
 				return DisplayType.textarea;
 			}
-			HashMap<String, HashMap<String,HashMap <String, ArrayList<Item>>>> bind = allValues.get(myproject);
+			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = allValues.get(myproject);
 			if (bind == null) {
 				return DisplayType.textarea;
 			}
-			HashMap<String,HashMap <String, ArrayList<Item>>> itemsByType = bind.get(mybind);
+			HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = bind.get(mybind);
 			if (itemsByType == null) {
-			
+
 				return DisplayType.textarea;
 			}
-			Set<String>itemTypes = itemsByType.keySet();
+			Set<String> itemTypes = itemsByType.keySet();
 			for (String type : itemTypes) {
-				HashMap <String, ArrayList<Item>> typeList = itemsByType.get(type);
+				HashMap<String, ArrayList<Item>> typeList = itemsByType.get(type);
 				Set<String> names = typeList.keySet();
-				for (String name : names) {	
+				for (String name : names) {
 					if (name.equals(myelementName)) {
-				
+
 						return DisplayType.getByTitle(type);
 					}
 				}
@@ -298,12 +362,15 @@ public final class ConfigDispayRules {
 		return DisplayType.textarea;
 	}
 
-
 	/**
-	 * @param project name of project as String
-	 * @param bind create or edit
-	 * @param elementName name of the element  
-	 * @param displayType type of the element
+	 * @param project
+	 *            name of project as String
+	 * @param bind
+	 *            create or edit
+	 * @param elementName
+	 *            name of the element
+	 * @param displayType
+	 *            type of the element
 	 * @return ArrayList with all values of given element
 	 */
 
@@ -316,17 +383,17 @@ public final class ConfigDispayRules {
 				values.add(new Item(myelementName, "", false));
 				return values;
 			}
-			HashMap<String, HashMap<String,HashMap <String, ArrayList<Item>>>> bind = allValues.get(myproject);
+			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = allValues.get(myproject);
 			if (bind.isEmpty()) {
 				values.add(new Item(myelementName, "", false));
 				return values;
 			}
-			HashMap<String,HashMap <String, ArrayList<Item>>> itemsByType = bind.get(mybind);
+			HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = bind.get(mybind);
 			if (itemsByType.isEmpty()) {
 				values.add(new Item(myelementName, "", false));
 				return values;
 			}
-			HashMap <String, ArrayList<Item>> typeList = itemsByType.get(mydisplayType.getTitle());
+			HashMap<String, ArrayList<Item>> typeList = itemsByType.get(mydisplayType.getTitle());
 			if (typeList.isEmpty()) {
 				values.add(new Item(myelementName, "", false));
 				return values;
@@ -338,19 +405,19 @@ public final class ConfigDispayRules {
 			}
 		}
 		return values;
-		
+
 	}
 
 	/**
-	 * refreshes the hierarchical HashMap with values from xml file. If HashMap is used by another thread, 
-	 * the function will wait until 
+	 * refreshes the hierarchical HashMap with values from xml file. If HashMap
+	 * is used by another thread, the function will wait until
 	 * 
 	 */
-	
+
 	public void refresh() {
 		if (config != null && !allValues.isEmpty()) {
 			synchronized (allValues) {
-				allValues.clear(); 
+				allValues.clear();
 				getDisplayItems();
 			}
 		}
