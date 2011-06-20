@@ -116,8 +116,13 @@ public final class ConfigDispayRules {
 					itemsByType.put("select", select);
 					itemsByType.put("input", input);
 					itemsByType.put("textarea", textarea);
-					bindstate.put(bind, itemsByType);
-					allValues.put(projectName, bindstate);
+					if (allValues.get(projectName) == null) {
+						bindstate.put(bind, itemsByType);
+						allValues.put(projectName, bindstate);
+					} else {
+						bindstate = allValues.get(projectName);
+						bindstate.put(bind, itemsByType);
+					}
 				}
 			}
 		}
