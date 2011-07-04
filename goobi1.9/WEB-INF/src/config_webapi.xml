@@ -4,6 +4,8 @@
 		<command name="deleteProcess"/>
 		<command name="addProcess"/>
 		<command name="help"/>
+		<command name="ucc"/>
+		<command name="ucc_upload"/>
 	</credentials>
 	<credentials ip="127.0.0.1" password="test">
 		<command name="addStep"/>
@@ -11,5 +13,7 @@
 		<command name="addProcess"/>
 		<command name="closeStep"/>
 		<command name="help"/>
+		<command name="ucc"/>
+		<command name="ucc_upload"/>
 	</credentials>
 </config_webapi>

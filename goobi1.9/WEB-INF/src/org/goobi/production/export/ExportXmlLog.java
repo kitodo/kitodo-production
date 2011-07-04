@@ -25,6 +25,7 @@ package org.goobi.production.export;
  * exception statement from your version.
  */
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,7 +54,8 @@ import de.sub.goobi.Beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 /**
- * This class provides xml logfile generation. After the the generation the file will be written to user home directory
+ * This class provides xml logfile generation. After the the generation the file
+ * will be written to user home directory
  * 
  * @author Robert Sehr
  * 
@@ -76,6 +78,10 @@ public class ExportXmlLog implements IProcessDataExport {
 		startExport(p, new FileOutputStream(destination), null);
 	}
 
+	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
+		startExport(p, new FileOutputStream(dest), null);
+	}
+
 	/**
 	 * This method exports the production metadata as xml to a given stream.
 	 * 
@@ -86,6 +92,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @throws IOException
 	 * @throws ExportFileException
 	 */
+	@Override
 	public void startExport(Prozess process, OutputStream os, String xslt) throws IOException {
 		try {
 			Document doc = createDocument(process);
@@ -159,11 +166,13 @@ public class ExportXmlLog implements IProcessDataExport {
 			} else {
 				property.setAttribute("value", "");
 			}
-			// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
+			// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
+			// prop.getLabelAsHashMap();
 			// Set<Locale> lang = labelMap.keySet();
 			// for (Locale l : lang) {
 			Element label = new Element("label", xmlns);
-			// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
+			// label.setAttribute("lang",
+			// l.getLanguage(),Namespace.XML_NAMESPACE);
 			// label.setText(labelMap.get(l));
 			label.setText(prop.getTitel());
 			property.addContent(label);
@@ -219,11 +228,13 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
+				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
+				// prop.getLabelAsHashMap();
 				// Set<Locale> lang = labelMap.keySet();
 				// for (Locale l : lang) {
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
+				// label.setAttribute("lang",
+				// l.getLanguage(),Namespace.XML_NAMESPACE);
 				// label.setText(labelMap.get(l));
 				label.setText(prop.getTitel());
 				property.addContent(label);
@@ -259,11 +270,13 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
+				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
+				// prop.getLabelAsHashMap();
 				// Set<Locale> lang = labelMap.keySet();
 				// for (Locale l : lang) {
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
+				// label.setAttribute("lang",
+				// l.getLanguage(),Namespace.XML_NAMESPACE);
 				// label.setText(labelMap.get(l));
 				label.setText(prop.getTitel());
 				property.addContent(label);
@@ -272,9 +285,9 @@ public class ExportXmlLog implements IProcessDataExport {
 				templateProperties.add(property);
 				if (prop.getTitel().equals("Signatur")) {
 					Element secondProperty = new Element("property", xmlns);
-					secondProperty.setAttribute("propertyIdentifier", prop.getTitel()+"Encoded");
+					secondProperty.setAttribute("propertyIdentifier", prop.getTitel() + "Encoded");
 					if (prop.getWert() != null) {
-						secondProperty.setAttribute("value", "vorl:"+replacer(prop.getWert()));
+						secondProperty.setAttribute("value", "vorl:" + replacer(prop.getWert()));
 						Element secondLabel = new Element("label", xmlns);
 						secondLabel.setText(prop.getTitel());
 						secondProperty.addContent(secondLabel);
@@ -310,11 +323,13 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
+				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
+				// prop.getLabelAsHashMap();
 				// Set<Locale> lang = labelMap.keySet();
 				// for (Locale l : lang) {
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
+				// label.setAttribute("lang",
+				// l.getLanguage(),Namespace.XML_NAMESPACE);
 				// label.setText(labelMap.get(l));
 				label.setText(prop.getTitel());
 				property.addContent(label);
@@ -339,7 +354,8 @@ public class ExportXmlLog implements IProcessDataExport {
 	}
 
 	/**
-	 * This method transforms the xml log using a xslt file and opens a new window with the output file
+	 * This method transforms the xml log using a xslt file and opens a new
+	 * window with the output file
 	 * 
 	 * @param out
 	 *            ServletOutputStream
