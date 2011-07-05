@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Vorlage" table="vorlagen">
+		<id name="id" column="VorlagenID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="herkunft" column="Herkunft" type="string"/>
+		
+		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="ProzesseID"/>
+		
+		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
+			<key column="vorlagenID"/>
+			<one-to-many class="de.sub.goobi.Beans.Vorlageeigenschaft" not-found="ignore"/>
+		</set>
+		
+	</class>
+
+</hibernate-mapping>

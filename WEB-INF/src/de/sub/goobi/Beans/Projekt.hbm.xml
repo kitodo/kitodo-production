@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Projekt" table="Projekte">
+		<id name="id" column="ProjekteID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="titel" column="Titel" type="string"/>
+		
+		<property name="useDmsImport" column="useDmsImport"/>
+		<property name="dmsImportTimeOut" column="dmsImportTimeOut" type="integer"/>
+		<property name="dmsImportRootPath" column="dmsImportRootPath" type="string"/>
+		<property name="dmsImportImagesPath" column="dmsImportImagesPath" type="string"/>
+		<property name="dmsImportSuccessPath" column="dmsImportSuccessPath" type="string"/>
+		<property name="dmsImportErrorPath" column="dmsImportErrorPath" type="string"/>
+		<property name="dmsImportCreateProcessFolderHibernate" column="dmsImportCreateProcessFolder"/>
+		
+		<!-- 
+		<property name="metsFormatDmsExportHibernate" column="metsFormatDmsExport"/>
+		<property name="metsFormatInternalHibernate" column="metsFormatInternal"/>
+		 -->
+		 
+		<property name="fileFormatInternal" column="fileFormatInternal" type="string"/>
+        <property name="fileFormatDmsExport" column="fileFormatDmsExport" type="string"/>
+        
+		<property name="metsRightsOwner" column="metsRightsOwner" type="string"/>
+		<property name="metsRightsOwnerLogo" column="metsRightsOwnerLogo" type="string"/>
+		<property name="metsRightsOwnerSite" column="metsRightsOwnerSite" type="string"/>
+		<property name="metsRightsOwnerMail" column="metsRightsOwnerMail" type="string"/>
+		<property name="metsDigiprovReference" column="metsDigiprovReference" type="string"/>
+		<property name="metsDigiprovPresentation" column="metsDigiprovPresentation" type="string"/>
+		<property name="metsDigiprovReferenceAnchor" column="metsDigiprovReferenceAnchor" type="string"/>
+		<property name="metsDigiprovPresentationAnchor" column="metsDigiprovPresentationAnchor" type="string"/>
+		<property name="metsPointerPath" column="metsPointerPath" type="string"/>
+		<property name="metsPointerPathAnchor" column="metsPointerPathAnchor" type="string"/>
+		<property name="metsPurl" column="metsPurl" type="string"/>
+		<property name="metsContentIDs" column="metsContentIDs" type="string"/>
+		
+		<set name="filegroups" cascade="all,delete-orphan" inverse="true">
+            <key column="ProjekteID"/>
+            <one-to-many class="de.sub.goobi.Beans.ProjectFileGroup" not-found="ignore"/>
+        </set>
+        
+        <set name="benutzer" table="projektbenutzer" inverse="true">
+			<key column="ProjekteID"/>
+			<many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer" not-found="ignore"/>
+		</set>
+		
+		<set name="prozesse" cascade="all,delete-orphan" inverse="true">
+			<key column="ProjekteID"/>
+			<one-to-many class="de.sub.goobi.Beans.Prozess" not-found="ignore"/>
+		</set>
+	</class>
+
+</hibernate-mapping>

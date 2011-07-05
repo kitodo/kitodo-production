@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Prozesseigenschaft" table="prozesseeigenschaften">
+		<id name="id" column="prozesseeigenschaftenID" type="integer">
+			<generator class="native" />
+		</id>
+
+		<property name="titel" column="Titel" type="string" />
+		<property name="wert" column="Wert" type="string" />
+		<property name="istObligatorisch" column="IstObligatorisch" />
+		<property name="datentyp" column="DatentypenID" type="integer" />
+		<property name="auswahl" column="Auswahl" type="string" />
+				
+		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="prozesseID" not-found="ignore"/>
+		
+	</class>
+
+</hibernate-mapping>

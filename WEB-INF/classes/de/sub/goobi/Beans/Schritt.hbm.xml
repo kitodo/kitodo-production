@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Schritt" table="schritte">
+		<!--  <cache usage="read-write"/> -->
+		<id name="id" column="SchritteID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="titel" column="Titel" type="string"/>
+		<property name="prioritaet" column="Prioritaet" type="integer"/>
+		<property name="reihenfolge" column="Reihenfolge" type="integer"/>
+		<property name="bearbeitungsstatus" column="Bearbeitungsstatus" type="integer"/>
+		<property name="editType" column="edittype" type="integer"/>
+		<property name="bearbeitungszeitpunkt" column="BearbeitungsZeitpunkt" type="timestamp"/>
+		<property name="bearbeitungsbeginn" column="BearbeitungsBeginn" type="timestamp"/>
+		<property name="bearbeitungsende" column="BearbeitungsEnde" type="timestamp"/>
+		<!-- 	<property name="typ" column="Typ" type="integer"/>  -->
+		<property name="homeverzeichnisNutzen" column="homeverzeichnisNutzen" type="short"/>
+		
+		<property name="typMetadaten" column="typMetadaten" />
+		<property name="typAutomatisch" column="typAutomatisch" />
+		<property name="typImportFileUpload" column="typImportFileUpload" />
+		<property name="typExportRus" column="typExportRus" />
+		<property name="typImagesLesen" column="typImagesLesen" />
+		<property name="typImagesSchreiben" column="typImagesSchreiben" />
+		<property name="typExportDMS" column="typExportDMS" />
+		<property name="typBeimAnnehmenModul" column="typBeimAnnehmenModul" />
+		<property name="typBeimAnnehmenAbschliessen" column="typBeimAnnehmenAbschliessen" />
+		<property name="typBeimAnnehmenModulUndAbschliessen" column="typBeimAnnehmenModulUndAbschliessen" />
+		<property name="typScriptStep" column="typScriptStep" type="boolean"/>
+		<property name="scriptname1" column="scriptName1" type="string"/>
+		<property name="typAutomatischScriptpfad" column="typAutomatischScriptpfad" type="string"/>
+		<property name="scriptname2" column="scriptName2" type="string"/>
+		<property name="typAutomatischScriptpfad2" column="typAutomatischScriptpfad2" type="string"/>
+		<property name="scriptname3" column="scriptName3" type="string"/>
+		<property name="typAutomatischScriptpfad3" column="typAutomatischScriptpfad3" type="string"/>
+		<property name="scriptname4" column="scriptName4" type="string"/>
+		<property name="typAutomatischScriptpfad4" column="typAutomatischScriptpfad4" type="string"/>
+		<property name="scriptname5" column="scriptName5" type="string"/>
+		<property name="typAutomatischScriptpfad5" column="typAutomatischScriptpfad5" type="string"/>
+		<property name="typBeimAbschliessenVerifizieren" column="typBeimAbschliessenVerifizieren" />
+		<property name="typModulName" column="typModulName" type="string"/>
+		
+		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.Beans.Benutzer" column="BearbeitungsBenutzerID" not-found="ignore"/>
+		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="ProzesseID" not-found="ignore"/>
+		
+		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
+			<key column="schritteID"/>
+			<one-to-many class="de.sub.goobi.Beans.Schritteigenschaft" not-found="ignore"/>
+		</set>
+		
+		<set name="benutzer" table="schritteberechtigtebenutzer">
+		    <key column="schritteID"/>
+		    <many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer" not-found="ignore"/>
+		</set>
+		
+		<set name="benutzergruppen" table="schritteberechtigtegruppen">
+		    <key column="schritteID"/>
+		    <many-to-many column="BenutzerGruppenID" class="de.sub.goobi.Beans.Benutzergruppe" not-found="ignore"/>
+		</set>
+
+			</class>
+
+</hibernate-mapping>

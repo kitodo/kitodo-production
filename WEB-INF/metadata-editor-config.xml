@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN" "http://java.sun.com/dtd/web-facesconfig_1_0.dtd">
+
+<faces-config>
+	
+	<!-- ###################  Navigation  ######################## -->
+	
+	<!-- Navigation für Benutzerverwaltung-BenutzerGruppe -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>Metadaten</from-outcome>
+			<to-view-id>/pages/Metadaten2.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Navigation für Metadaten3links -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>Metadaten3links</from-outcome>
+			<to-view-id>/pages/Metadaten3links.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Navigation für Metadaten2rechts -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>Metadaten2rechts</from-outcome>
+			<to-view-id>/pages/Metadaten2rechts.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Metadatenbearbeitung gesperrt -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>SperrungAbgelaufen</from-outcome>
+			<to-view-id>/pages/MetadatenGesperrt.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ###################  Managed Beans  ######################## -->
+	
+	<!-- Bean für Sessions -->
+	<managed-bean>
+		<managed-bean-name>SessionForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Forms.SessionForm </managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- Bean für Metadaten -->
+	<managed-bean>
+		<managed-bean-name>Metadaten</managed-bean-name>
+		<managed-bean-class>de.sub.goobi.Metadaten.Metadaten </managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+		
+	<!-- Bean für Metadaten-Sperrung -->
+	<managed-bean>
+		<managed-bean-name>MetadatenSperrung</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Metadaten.MetadatenSperrung </managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- Bean für lang laufende (administrative) Aufgaben -->
+	<managed-bean>
+		<managed-bean-name>LongRunningTasksForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Forms.LongRunningTasksForm </managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- Bean für Import -->
+	<managed-bean>
+		<managed-bean-name>Import</managed-bean-name>
+		<managed-bean-class>de.sub.goobi.Import.Import </managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+</faces-config>
