@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 
 import de.sub.goobi.Beans.Regelsatz;
@@ -139,7 +138,7 @@ public class HelperForm {
 		List<SelectItem> myPrefs = new ArrayList<SelectItem>();
 		List<Regelsatz> temp = new RegelsatzDAO().search("from Regelsatz ORDER BY titel");
 		for (Iterator<Regelsatz> iter = temp.iterator(); iter.hasNext();) {
-			Regelsatz an = (Regelsatz) iter.next();
+			Regelsatz an = iter.next();
 			myPrefs.add(new SelectItem(an, an.getTitel(), null));
 		}
 		return myPrefs;
@@ -205,6 +204,7 @@ public class HelperForm {
 		String filename = session.getServletContext().getRealPath("/css") + File.separator;
 		File cssDir = new File(filename);
 		FilenameFilter filter = new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return (name.endsWith(".css"));
 			}
@@ -233,6 +233,7 @@ public class HelperForm {
 		String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
 		File cssDir = new File(filename);
 		FilenameFilter filter = new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return (name.endsWith(".css"));
 			}
@@ -280,4 +281,15 @@ public class HelperForm {
 		return value;
 	}
 
+	public boolean getIsIE() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		// System.out.println(request.getHeader("User-Agent"));
+
+		if (request.getHeader("User-Agent").contains("MSIE")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
