@@ -49,7 +49,7 @@
 		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.Beans.Benutzer" column="BearbeitungsBenutzerID"/>
 		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="ProzesseID"/>
 		
-		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
+		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="schritteeigenschaftenID">
 			<key column="schritteID"/>
 			<one-to-many class="de.sub.goobi.Beans.Schritteigenschaft"/>
 		</set>

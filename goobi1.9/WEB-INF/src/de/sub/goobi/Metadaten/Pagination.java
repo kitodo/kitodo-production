@@ -91,9 +91,11 @@ public class Pagination {
 	 * @param paginationScope
 	 *            scope of pagination ( all pages = 1,only selected pages = 2)
 	 * @param paginationType
-	 *            type of pagination label (arabic = 1, roman = 2, uncounted = 3)
+	 *            type of pagination label (arabic = 1, roman = 2, uncounted =
+	 *            3)
 	 * @param paginationMode
-	 *            type of pagination (pages = 1, columns = 2, foliation = 3, foliation rectoVerso = 4, pagination rectoVerso = 5)
+	 *            type of pagination (pages = 1, columns = 2, foliation = 3,
+	 *            foliation rectoVerso = 4, pagination rectoVerso = 5)
 	 * @param paginationStartValue
 	 *            start value
 	 */
@@ -149,7 +151,11 @@ public class Pagination {
 			}
 
 			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
+				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
+				} else {
+					nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
+				}
 			}
 			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
@@ -200,8 +206,7 @@ public class Pagination {
 			return "v";
 		}
 	}
-	
-	
+
 	private String getRectoVersoSuffixForSelectedPages(double number) {
 		if (((number * 2) % 2) == 0) {
 			return "v";
@@ -308,7 +313,7 @@ public class Pagination {
 	}
 
 	public void setAllSelectedPages(String[] selectedPages) {
-		this.allSelectedPages = selectedPages;
+		allSelectedPages = selectedPages;
 
 	}
 
@@ -318,7 +323,7 @@ public class Pagination {
 	}
 
 	public void setPaginationMode(int numberOfPagesPerImage) {
-		this.paginationMode = numberOfPagesPerImage;
+		paginationMode = numberOfPagesPerImage;
 
 	}
 
@@ -356,12 +361,16 @@ public class Pagination {
 			}
 
 			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				// if (paginationType.equals(PAGINATION_UNCOUNTED)) {
-				// if (i == 1) {
-				nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
-				// } else {
-				// nextPaginationLabel = getRectoVersoSuffixForFoliation(i + 1);
-				// }
+				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+					nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
+				} else {
+					// if (i == 1) {
+					nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
+					// } else {
+					// nextPaginationLabel = getRectoVersoSuffixForFoliation(i +
+					// 1);
+					// }
+				}
 			}
 			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
