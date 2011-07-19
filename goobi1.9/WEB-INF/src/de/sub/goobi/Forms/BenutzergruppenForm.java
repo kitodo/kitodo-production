@@ -1,11 +1,15 @@
 package de.sub.goobi.Forms;
 
+import java.util.HashSet;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
+import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
+import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
@@ -33,6 +37,14 @@ public class BenutzergruppenForm extends BasisForm {
 
 	public String Loeschen() {
 		try {
+			if (myBenutzergruppe.getBenutzerList().size() > 0) {
+				myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
+				dao.save(myBenutzergruppe);
+			}
+			if (myBenutzergruppe.getSchritteList().size() > 0) {
+				myBenutzergruppe.setSchritte(new HashSet<Schritt>());
+				dao.save(myBenutzergruppe);
+			}
 			dao.remove(myBenutzergruppe);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
@@ -43,10 +55,10 @@ public class BenutzergruppenForm extends BasisForm {
 
 	public String FilterKein() {
 		try {
-			//	HibernateUtil.clearSession();
+			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			// session.flush();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzergruppe.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
@@ -62,13 +74,12 @@ public class BenutzergruppenForm extends BasisForm {
 		return zurueck;
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##                                                                                              
-	 ##                                                Getter und Setter                         
-	 ##                                                                                                    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * #####################################################
+	 * ##################################################### ## ## Getter und
+	 * Setter ## #####################################################
+	 * ####################################################
+	 */
 
 	public Benutzergruppe getMyBenutzergruppe() {
 		return myBenutzergruppe;
