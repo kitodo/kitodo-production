@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~    - http://gdz.sub.uni-goettingen.de
+  ~    - http://www.goobi.org
+  ~    - http://launchpad.net/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+  ~ should have received a copy of the GNU General Public License along with this
+  ~ program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+  ~ Suite 330, Boston, MA 02111-1307 USA
+  -->
+
+<!-- TODOLOG
+	2009-04-08, Stefan E. Funk
+		- Können alle Projekte mit Collection "none" in einen <project>-Tag
+			geschrieben werden? NEIN! Offenbar nicht.
+-->
+
+<!-- CHANGELOG
+	2010-12-01, Timo Schleier
+		- Sammlung "Göttinger Universitätsgeschichte - Portraits" hinzugefügt
+	2010-02-24, Timo Schleier
+		- Test-Sammlung für EFRE hinzugefügt
+	2010-02-24, Stefan E. Funk
+		- Changed VD18-Test to VD_18-Test.
+	2009-09-30, Stefan E. Funk
+		- Neue Kollektion "Bucherhaltung" hinzugefügt.
+	2009-09-16, Stefan E. Funk
+		- Projekt Mathe_Muenster hinzugefügt.
+	2009-07-31, Stefan E. Funk
+		- ergänzt um Projekt ZVDD-Test.
+	2009-06-29, Stefan E. Funk
+		- Kollektion "none" für TU-BS-Pharmazie angelegt.
+	2009-05-26, Stefan E. Funk
+		- Kollektion VD18 erstellt.
+	2009-05-25, Stefan E. Funk
+		- Kollektion VD18-Test erstellt.
+	2009-04-08, Stefan E. Funk
+		- Kollektion DTA aus ScanDienstleistung_online_Eigenwerke erstellt.
+	2009-03-24, Stefan E. Funk
+		- Changed ZVDD to VD17-mets-import-test.
+	2008-12-02, Stefan E. Funk
+		- Projekt ZVDD hinzugefügt.
+	2008-11-12, Stefan E. Funk
+		- Projekt SIMPLE hinzugefügt.
+	2008-10-02, Stefan E. Funk
+		- Projekt MPDL umbenannt in MPDL_ZFN.
+		- Ergänzt um Projekt MPDL_Sengbusch.
+	2008-09-18, Stefan E. Funk
+		- Ergänzt um Projekt MPDL.
+		- Kosmetische Änderungen minorischer Art.
+-->
+
+<DigitalCollections>
+	 <project>
+                 <name>GoettingerUniversitaetsgeschichte_GedruckteWerke</name>
+                 <DigitalCollection>GöttingerUniversitätsgeschichte-GedruckteWerke</DigitalCollection>
+        </project>
+                         
+
+	<project>
+		<name>Ezoolo2</name>
+		<DigitalCollection>Zoologica</DigitalCollection>
+	</project>
+        <project>
+                <name>ARCHAEO18</name>
+                <DigitalCollection>Archaeo18</DigitalCollection>
+ 		<DigitalCollection>Antiquitates_und_Archaeologia</DigitalCollection>
+  		<DigitalCollection>Antiquitates_und_Archaeologia_ARCHAEO18</DigitalCollection>
+        </project>
+  	<project>
+  		<name>Blumenbach-Online</name>
+  	        <DigitalCollection>Blumenbachiana</DigitalCollection>
+  	 </project>
+  	<project>
+                  <name>EMTO-FernUniHagen</name>
+                  <DigitalCollection>Varia</DigitalCollection>
+        </project>
+                                                         
+
+	<project>
+		<name>TIB_Hannover_2007</name>
+		<name>ScanDienstleistung_nichtOnline_Fremdwerke</name>
+		<name>ScanDienstleistung_nichtOnline_Eigenwerke</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>
+
+	<project>
+		<name>DRQEdit_Speer</name>
+		<DigitalCollection>Juridica</DigitalCollection>
+	</project>
+
+	<project>
+		<name>BKG_Geodaesie</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>
+
+	<project>
+		<name>DigiWunschbuch</name>
+		<name>GDZ</name>
+		<name>Jalb</name>
+		<name>Olms-Reprints</name>
+		<name>Testprojekt</name>
+		<name>ScanDienstleistung_Online</name>
+		<name>ScanDienstleistung_online_Eigenwerke</name>
+		<name>MassenDigiMathe</name>
+		<name>Mathe_Arnold</name>
+		<name>DTA</name>
+		<name>Mathe_Muenster</name>
+		<DigitalCollection>Autobiographica</DigitalCollection>
+		<DigitalCollection>DigiWunschbuch</DigitalCollection>
+		<DigitalCollection>Itineraria</DigitalCollection>
+		<DigitalCollection>Manuscriptae</DigitalCollection>
+		<DigitalCollection>Maps</DigitalCollection>
+		<DigitalCollection>Mathematica</DigitalCollection>
+		<DigitalCollection>Nordamericana</DigitalCollection>
+		<DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+		<DigitalCollection>Sibirica</DigitalCollection>
+		<DigitalCollection>Varia</DigitalCollection>
+		<DigitalCollection>Zoologica</DigitalCollection>
+	</project>
+
+	<project>
+		<name>Digizeitschriften</name>
+        <name>Digizeitschriften_preview_import</name>
+		<DigitalCollection>020 Librarianship</DigitalCollection>
+		<DigitalCollection>100 Philosophy</DigitalCollection>
+		<DigitalCollection>200 Religion</DigitalCollection>
+		<DigitalCollection>296 Jewish_Studies</DigitalCollection>
+		<DigitalCollection>300 Sociology</DigitalCollection>
+		<DigitalCollection>330 Economics</DigitalCollection>
+		<DigitalCollection>340 Law</DigitalCollection>
+		<DigitalCollection>370 Education</DigitalCollection>
+		<DigitalCollection>400 Philology</DigitalCollection>
+		<DigitalCollection>420 English_Languages</DigitalCollection>
+		<DigitalCollection>430 Germanic_Languages</DigitalCollection>
+		<DigitalCollection>440 Romance_Languages</DigitalCollection>
+		<DigitalCollection>500 Sciences</DigitalCollection>
+		<DigitalCollection>510 Mathematics</DigitalCollection>
+		<DigitalCollection>550 Geology</DigitalCollection>
+		<DigitalCollection>609 History of Technology</DigitalCollection>
+		<DigitalCollection>700 Arts</DigitalCollection>
+		<DigitalCollection>780 Musicology</DigitalCollection>
+		<DigitalCollection>900 History </DigitalCollection>
+		<DigitalCollection>962 Egyptology</DigitalCollection>
+		<DigitalCollection>953 Oriental Studies</DigitalCollection>
+	</project>
+
+	<project>
+		<name>UB-MannheimDigizeit</name>
+		<DigitalCollection>330 Economics</DigitalCollection>
+	</project>
+
+	<project>
+		<name>Olms-Online</name>
+		<DigitalCollection>Altertumswissenschaft</DigitalCollection>
+		<DigitalCollection>Altertumswissenschaft/Allgemeine Antike</DigitalCollection>
+		<DigitalCollection>Altertumswissenschaft/Römische Antike </DigitalCollection>
+		<DigitalCollection>Bibliographie</DigitalCollection>
+		<DigitalCollection>Biologie</DigitalCollection>
+		<DigitalCollection>Buchkundliche Arbeiten</DigitalCollection>
+		<DigitalCollection>Deutsche Literaturklassiker</DigitalCollection>
+		<DigitalCollection>Esperanto</DigitalCollection>
+		<DigitalCollection>Frauenliteratur</DigitalCollection>
+		<DigitalCollection>Frühe Frauenliteratur in Deutschland</DigitalCollection>
+		<DigitalCollection>Geographie/Allgemein</DigitalCollection>
+		<DigitalCollection>Germanistik</DigitalCollection>
+		<DigitalCollection>Germanistik/Mittelalter</DigitalCollection>
+		<DigitalCollection>Germanistik/Neuzeit</DigitalCollection>
+		<DigitalCollection>Geschichte der Naturwissenschaft, Mathematik &amp; Technologie</DigitalCollection>
+		<DigitalCollection>Geschichtswissenschaft/Altertum</DigitalCollection>
+		<DigitalCollection>Humanismus &amp; Renaissance</DigitalCollection>
+		<DigitalCollection>Judaica/Hebraica</DigitalCollection>
+		<DigitalCollection>Jus/Jura &amp; Politikwissenschaft &amp; Wirtschaft &amp;
+			Soziologie</DigitalCollection>
+		<DigitalCollection>Kunstgeschichte</DigitalCollection>
+		<DigitalCollection>Literaturwissenschaft</DigitalCollection>
+		<DigitalCollection>Mediävistik</DigitalCollection>
+		<DigitalCollection>Medizingeschichte</DigitalCollection>
+		<DigitalCollection>Messkataloge</DigitalCollection>
+		<DigitalCollection>Musikwissenschaft</DigitalCollection>
+		<DigitalCollection>Nachantikes Latein</DigitalCollection>
+		<DigitalCollection>Philosophie</DigitalCollection>
+		<DigitalCollection>Philosophie/Neuzeit (bis Kant)</DigitalCollection>
+		<DigitalCollection>Religion</DigitalCollection>
+		<DigitalCollection>Religion/Allgemein</DigitalCollection>
+		<DigitalCollection>Religion/Die christlichen Kirchen der Neuzeit</DigitalCollection>
+		<DigitalCollection>Romanistik </DigitalCollection>
+		<DigitalCollection>Slavistik</DigitalCollection>
+		<DigitalCollection>Sprachwissenschaft</DigitalCollection>
+		<DigitalCollection>Sprichwort</DigitalCollection>
+		<DigitalCollection>Technikgeschichte</DigitalCollection>
+		<DigitalCollection>Theaterwissenschaft</DigitalCollection>
+		<DigitalCollection>Volkskunde</DigitalCollection>
+		<DigitalCollection>Volkskunde/Sage, Mythologie</DigitalCollection>
+		<DigitalCollection>Volkskunde/Schwank, Märchen</DigitalCollection>
+		<DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+	</project>
+
+	<project>
+		<name>RezensZss</name>
+		<DigitalCollection>Rezensionszeitschriften</DigitalCollection>
+	</project>
+
+	<project>
+		<name>VD17</name>
+		<name>VD17_II</name>
+		<DigitalCollection>VD17-nova</DigitalCollection>
+	</project>
+
+	<project>
+		<name>VD17-mets-import-test</name>
+		<DigitalCollection>VD17-nova</DigitalCollection>
+	</project>
+
+	<project>
+		<name>VD_18-Test</name>
+		<DigitalCollection>VD18 digital</DigitalCollection>
+	</project>
+
+	<project>
+		<name>VD18</name>
+		<DigitalCollection>VD18 digital</DigitalCollection>
+	</project>
+	
+	<project>
+		<name>ZVDD-Test</name>
+		<DigitalCollection>ZVDD-Test</DigitalCollection>
+	</project>
+	
+	<project>
+		<name>MPDL_ZFN</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>
+
+	<project>
+		<name>TU-BS-Pharmazie</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>
+	
+	<project>
+		<name>MPDL_Sengbusch</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>
+
+	<project>
+		<name>SIMPLE</name>
+		<DigitalCollection>none</DigitalCollection>
+	</project>		
+	
+	<project>
+		<name>Bucherhaltung MWK</name>
+		<DigitalCollection>Bucherhaltung</DigitalCollection>
+		<DigitalCollection>Autobiographica</DigitalCollection>
+		<DigitalCollection>Itineraria</DigitalCollection>
+		<DigitalCollection>Manuscriptae</DigitalCollection>
+		<DigitalCollection>Maps</DigitalCollection>
+		<DigitalCollection>Mathematica</DigitalCollection>
+		<DigitalCollection>Nordamericana</DigitalCollection>
+		<DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+		<DigitalCollection>Sibirica</DigitalCollection>
+		<DigitalCollection>Varia</DigitalCollection>
+		<DigitalCollection>Zoologica</DigitalCollection>
+	</project>
+  	<project>
+                  <name>Reproauftraege</name>
+                  <DigitalCollection>Bucherhaltung</DigitalCollection>
+                  <DigitalCollection>Autobiographica</DigitalCollection>
+                  <DigitalCollection>Itineraria</DigitalCollection>
+                  <DigitalCollection>Manuscriptae</DigitalCollection>
+                  <DigitalCollection>Maps</DigitalCollection>
+                  <DigitalCollection>Mathematica</DigitalCollection>
+                  <DigitalCollection>Nordamericana</DigitalCollection>
+                  <DigitalCollection>Wissenschaftsgeschichte</DigitalCollection>
+                  <DigitalCollection>Sibirica</DigitalCollection>
+                  <DigitalCollection>Varia</DigitalCollection>
+                  <DigitalCollection>Zoologica</DigitalCollection>
+        </project>
+                        	
+	<project>
+		<name>EFRE_Test</name>
+		<DigitalCollection>EFRE-Testsammlung</DigitalCollection>
+	</project>
+	
+	<project>
+		<name>GoettingerUniversitaetsgeschichte_Portraits</name>
+		<DigitalCollection>Göttinger Universitätsgeschichte - Portraits</DigitalCollection>
+	</project>
+	
+</DigitalCollections>
