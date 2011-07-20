@@ -20,7 +20,7 @@
 		<property name="hibernate.connection.url">
 			jdbc:mysql://localhost/goobi
 		</property>
-		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.username">goobi</property>
 		<property name="hibernate.connection.password">goobi</property>
 
 		<!-- connection pool -->
