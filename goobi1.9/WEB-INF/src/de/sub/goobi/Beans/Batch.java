@@ -11,6 +11,7 @@ import org.goobi.production.api.property.xmlbasedprovider.Status;
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.helper.enums.StepStatus;
 
 public class Batch implements Serializable, IGoobiEntity {
 
@@ -21,6 +22,7 @@ public class Batch implements Serializable, IGoobiEntity {
 	private Projekt projekt;
 	private Set<BatchProperty> properties;
 	private DisplayPropertyList displayProperties;
+	private Projekt project;
 
 	public Batch() {
 		title = "";
@@ -108,4 +110,37 @@ public class Batch implements Serializable, IGoobiEntity {
 		return batchId;
 	}
 
+	public void addProcessToBatch(Prozess p) {
+		batchList.add(p);
+	}
+
+	public void removeProcessFromBatch(Prozess p) {
+		batchList.remove(p);
+	}
+
+	public String getWorkflowStatus() {
+		String stepname = "";
+		int order = 0;
+		for (Prozess p : batchList) {
+			for (Schritt s : p.getSchritteList()) {
+				if (order <= s.getReihenfolge()) {
+					if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
+						order = s.getReihenfolge();
+						stepname = s.getTitel();
+						break;
+					}
+				}
+			}
+		}
+		return stepname;
+
+	}
+
+	public Projekt getProject() {
+		return project;
+	}
+
+	public void setProject(Projekt project) {
+		this.project = project;
+	}
 }

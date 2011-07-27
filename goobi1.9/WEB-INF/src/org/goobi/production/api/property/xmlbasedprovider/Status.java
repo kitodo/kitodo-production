@@ -86,48 +86,50 @@ public class Status {
 	}
 
 	public static Status getProjectStatus(Projekt inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getTitel());
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getTitel());
+		return myStatus;
 	}
 	
 	public static Status getBatchStatus(Batch inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getProjekt().getTitel());
-		myHappyStatus.setBatch(inEntity.getTitle());
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getProjekt().getTitel());
+		myStatus.setBatch(String.valueOf(inEntity.getId()));
+		return myStatus;
 	}
 
 	public static Status getProcessStatus(Prozess inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getProjekt().getTitel());
-		myHappyStatus.setProcess(inEntity.getTitel());
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getProjekt().getTitel());
+		myStatus.setProcess(inEntity.getTitel());
+		return myStatus;
 	}
 
 	public static Status getStepStatus(Schritt inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
-		myHappyStatus.setProcess(inEntity.getProzess().getTitel());
-		myHappyStatus.setStep(inEntity.getTitel());
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
+		myStatus.setProcess(inEntity.getProzess().getTitel());
+		myStatus.setStep(inEntity.getTitel());
+		return myStatus;
 	}
 
 	public static Status getResourceStatusFromEntity(Vorlage inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
-		myHappyStatus.setProcess(inEntity.getProzess().getTitel());
-		myHappyStatus.setProductionResource(String.valueOf(inEntity.getId()));
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
+		myStatus.setProcess(inEntity.getProzess().getTitel());
+		myStatus.setProductionResource(String.valueOf(inEntity.getId()));
+		return myStatus;
 	}
 
 	public static Status getProductStatusFromEntity(Werkstueck inEntity) {
-		Status myHappyStatus = new Status();
-		myHappyStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
-		myHappyStatus.setProcess(inEntity.getProzess().getTitel());
-		myHappyStatus.setProduct(String.valueOf(inEntity.getId()));
-		return myHappyStatus;
+		Status myStatus = new Status();
+		myStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
+		myStatus.setProcess(inEntity.getProzess().getTitel());
+		myStatus.setProduct(String.valueOf(inEntity.getId()));
+		return myStatus;
 	}
+	
+
 
 	public void setBatch(String batch) {
 		this.batch = batch;
