@@ -119,15 +119,11 @@ public class MassImportForm {
 	public void convertData() {
 		if (testForData()) {
 			HashMap<String, ImportReturnValue> answer = new HashMap<String, ImportReturnValue>();
-			// HashMap<String, Fileformat> meta = new HashMap<String,
-			// Fileformat>();
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			if (StringUtils.isNotEmpty(this.idList)) {
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				// if (getHotfolderPathForPlugin(template.getId()) != null) {
-				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 				plugin.setPrefs(prefs);
 				List<String> ids = plugin.splitIds(this.idList);
@@ -141,16 +137,9 @@ public class MassImportForm {
 				}
 
 				answer = plugin.generateFiles(recordList);
-				// meta = plugin.generateMetadata(recordList);
-				// } else {
-				// Helper.setFehlerMeldung("hotfolder for template " +
-				// template.getTitel() + " does not exist");
-				// }
 			} else if (this.importFile != null) {
 				// uploaded file
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				// if (getHotfolderPathForPlugin(template.getId()) != null) {
-				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 
 				plugin.setPrefs(prefs);
@@ -160,17 +149,10 @@ public class MassImportForm {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = plugin.generateFiles(recordList);
-				// meta = plugin.generateMetadata(recordList);
-				// } else {
-				// Helper.setFehlerMeldung("hotfolder for template " +
-				// template.getTitel() + " does not exist");
-				// }
 			}
 			// found list with records
 			else if (StringUtils.isNotEmpty(this.records)) {
 				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				// if (getHotfolderPathForPlugin(template.getId()) != null) {
-				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 
 				plugin.setPrefs(prefs);
@@ -179,21 +161,8 @@ public class MassImportForm {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = plugin.generateFiles(recordList);
-				// meta = plugin.generateMetadata(recordList);
-				// } else {
-				// Helper.setFehlerMeldung("hotfolder for template " +
-				// template.getTitel() + " does not exist");
-				// }
 			}
 
-			// for (Entry<String, ImportReturnValue> bla : answer.entrySet()) {
-			// if (bla.getValue().equals(ImportReturnValue.ExportFinished)) {
-			// Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() +
-			// " for " + bla.getKey());
-			// } else {
-			// Helper.setFehlerMeldung(bla.getValue() + " for " + bla.getKey());
-			// }
-			// }
 			Batch b = new Batch();
 			
 			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {

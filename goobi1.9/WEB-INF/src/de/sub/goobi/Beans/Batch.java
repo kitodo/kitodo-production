@@ -89,6 +89,9 @@ public class Batch implements Serializable, IGoobiEntity {
 		
 	}
 
+	public int getListSize() {
+		return getBatchList().size();
+	}
 	
 
 	@Override

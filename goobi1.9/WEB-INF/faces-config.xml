@@ -78,6 +78,8 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	
+	
 	<!-- Alle Benutzergruppen als Popup für die Bearbeitung der Benutzer-->
 	<navigation-rule>
 		<navigation-case>
@@ -234,11 +236,21 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	
+	
 	<!-- Aktuelle Schritte - Bearbeiten -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>AktuelleSchritteBearbeiten</from-outcome>
 			<to-view-id>/newpages/AktuelleSchritteBearbeiten.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>BatchesAll</from-outcome>
+			<to-view-id>/newpages/BatchesAll.jsp</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -459,6 +471,11 @@
        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>BatchForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Forms.BatchForm </managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 </faces-config>
 
