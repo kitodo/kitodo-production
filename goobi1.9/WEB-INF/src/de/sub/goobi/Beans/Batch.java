@@ -2,39 +2,72 @@ package de.sub.goobi.Beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.goobi.production.flow.helper.BatchDisplayItem;
 
+import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
-import de.sub.goobi.helper.enums.StepStatus;
 
 public class Batch implements Serializable, IGoobiEntity {
 
 	private static final long serialVersionUID = -8503827557959453247L;
 	private Integer batchId;
 	private String title;
-	private List<Prozess> batchList = new ArrayList<Prozess>();
-	private Projekt projekt;
+//	private List<Prozess> batchList = new ArrayList<Prozess>();
 	private Set<BatchProperty> properties;
 	private DisplayPropertyList displayProperties;
 	private Projekt project;
+	private List<BatchDisplayItem> stepList = new ArrayList<BatchDisplayItem>();
+	private Set<Prozess> processes;
 
 	public Batch() {
-		title = "";
-		properties = new HashSet<BatchProperty>();
+		this.title = "";
+		this.properties = new HashSet<BatchProperty>();
+		this.processes = new HashSet<Prozess>();
 	}
 
-	public void setBatchId(Integer batchId) {
+	
+	private void generateWorkflowStatus() {
+
+		for (Prozess p : this.processes) {
+			for (Schritt s : p.getSchritteList()) {
+				boolean match = false;
+				for (BatchDisplayItem bdi : this.stepList) {
+					if (s.getTitel().equals(bdi.getStepTitle())) {
+						if (s.getReihenfolge() < bdi.getStepOrder()) {
+							bdi.setStepOrder(s.getReihenfolge());
+						}
+						if (s.getBearbeitungsstatusEnum().getValue() < bdi.getStepStatus().getValue()) {
+							bdi.setStepStatus(s.getBearbeitungsstatusEnum());
+						}
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
+					BatchDisplayItem bdi = new BatchDisplayItem(s);
+					this.stepList.add(bdi);
+				}
+				
+			}
+		}
+		Collections.sort(this.stepList);
+	}
+
+	public void setId(Integer batchId) {
 		this.batchId = batchId;
 	}
 
-	public Integer getBatchId() {
-		return batchId;
+	@Override
+	public Integer getId() {
+		return this.batchId;
 	}
 
 	public void setTitle(String title) {
@@ -42,24 +75,21 @@ public class Batch implements Serializable, IGoobiEntity {
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
-	public void setBatchList(List<Prozess> batchList) {
-		this.batchList = batchList;
-	}
+	
 
 	public List<Prozess> getBatchList() {
-		return batchList;
+		List<Prozess> temp = new ArrayList<Prozess>();
+		if (this.processes != null) {
+			temp.addAll(this.processes);
+		}
+		return temp;
+		
 	}
 
-	public void setProjekt(Projekt projekt) {
-		this.projekt = projekt;
-	}
-
-	public Projekt getProjekt() {
-		return projekt;
-	}
+	
 
 	@Override
 	public Status getStatus() {
@@ -72,75 +102,116 @@ public class Batch implements Serializable, IGoobiEntity {
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
 	}
+	
+	
 
 	public List<BatchProperty> getEigenschaftenList() {
-		if (properties == null) {
+		if (this.properties == null) {
 			return new ArrayList<BatchProperty>();
 		} else {
-			return new ArrayList<BatchProperty>(properties);
+			return new ArrayList<BatchProperty>(this.properties);
 		}
 	}
 
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		properties.add((BatchProperty) toAdd);
+		this.properties.add((BatchProperty) toAdd);
 
 	}
 
 	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
-		properties.remove(toRemove);
+		this.properties.remove(toRemove);
 		toRemove.setOwningEntity(null);
 	}
 
 	public DisplayPropertyList getDisplayProperties() {
-		if (displayProperties == null) {
-			displayProperties = new DisplayPropertyList(this);
+		if (this.displayProperties == null) {
+			this.displayProperties = new DisplayPropertyList(this);
 		}
-		return displayProperties;
+		return this.displayProperties;
 	}
 
 	@Override
 	public void refreshProperties() {
-		displayProperties = null;
+		this.displayProperties = null;
 	}
 
-	@Override
-	public Integer getId() {
-		return batchId;
-	}
+
 
 	public void addProcessToBatch(Prozess p) {
-		batchList.add(p);
+		p.setBatch(this);
+		this.processes.add(p);
 	}
 
 	public void removeProcessFromBatch(Prozess p) {
-		batchList.remove(p);
-	}
-
-	public String getWorkflowStatus() {
-		String stepname = "";
-		int order = 0;
-		for (Prozess p : batchList) {
-			for (Schritt s : p.getSchritteList()) {
-				if (order <= s.getReihenfolge()) {
-					if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
-						order = s.getReihenfolge();
-						stepname = s.getTitel();
-						break;
-					}
-				}
-			}
-		}
-		return stepname;
-
+		p.setBatch(null);
+		this.processes.remove(p);
 	}
 
 	public Projekt getProject() {
-		return project;
+		return this.project;
 	}
 
 	public void setProject(Projekt project) {
 		this.project = project;
+	}
+
+	public List<BatchDisplayItem> getStepList() {
+		if (this.stepList.size() == 0) {
+			generateWorkflowStatus();
+		}
+		return this.stepList;
+	}
+
+	public void setStepList(List<BatchDisplayItem> stepList) {
+		this.stepList = stepList;
+	}
+
+	
+//	public static void main(String[] args) throws DAOException {
+//		Batch b = new Batch();
+//		ProzessDAO pd = new ProzessDAO();
+//		Prozess kleiuniv = pd.get(1165);
+//		b.addProcessToBatch(kleiuniv);
+//		b.addProcessToBatch(pd.get(30582));
+//		b.addProcessToBatch(pd.get(20945));
+//		b.addProcessToBatch(pd.get(20466));
+//		b.addProcessToBatch(pd.get(17999));
+//		b.addProcessToBatch(pd.get(13937));
+//		b.generateWorkflowStatus();
+//		b.setProject(kleiuniv.getProjekt());
+//		for (BatchDisplayItem bdi : b.stepList) {
+//			System.out.println(bdi.getStepTitle() + "    "  + bdi.getStepOrder() + "    "  + bdi.getStepStatus().getTitle());
+//		}
+//		BatchDAO dao = new BatchDAO();
+//		dao.save(b);
+//		
+//	}
+	
+//	public static void main(String[] args) throws DAOException {
+//		BatchDAO dao = new BatchDAO();
+//		Batch b = dao.get(2);
+//		for (Prozess p : b.getBatchList()) {
+//			System.out.println(p.getTitel());
+//		}
+//	}
+
+
+	public Set<Prozess> getProcesses() {
+		return this.processes;
+	}
+
+
+	public void setProcesses(Set<Prozess> processes) {
+		this.processes = processes;
+	}
+	
+	public Set<BatchProperty> getEigenschaften() {
+		return this.properties;
+	}
+
+	public void setEigenschaften(Set<BatchProperty> eigenschaften) {
+		this.properties = eigenschaften;
 	}
 }

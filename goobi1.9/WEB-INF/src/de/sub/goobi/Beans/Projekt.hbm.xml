@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Projekt" table="pmrojekte">
+	<class name="de.sub.goobi.Beans.Projekt" table="Projekte">
 		<id name="id" column="ProjekteID" type="integer">
 			<generator class="native"/>
 		</id>

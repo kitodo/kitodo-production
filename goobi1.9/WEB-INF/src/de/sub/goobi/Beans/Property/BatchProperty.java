@@ -1,4 +1,4 @@
-package de.sub.goobi.Beans;
+package de.sub.goobi.Beans.Property;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,8 +7,7 @@ import java.util.List;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.Beans.Property.IGoobiEntity;
-import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.helper.enums.PropertyType;
 
 public class BatchProperty implements Serializable, IGoobiProperty {
@@ -27,55 +26,67 @@ public class BatchProperty implements Serializable, IGoobiProperty {
 	private List<String> valueList;
 	
 	
+	@Override
 	public String getAuswahl() {
-		return auswahl;
+		return this.auswahl;
 	}
 
+	@Override
 	public void setAuswahl(String auswahl) {
 		this.auswahl = auswahl;
 	}
 
+	@Override
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
+	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
+	@Override
 	public Boolean isIstObligatorisch() {
-		if (istObligatorisch == null) {
-			istObligatorisch = false;
+		if (this.istObligatorisch == null) {
+			this.istObligatorisch = false;
 		}
-		return istObligatorisch;
+		return this.istObligatorisch;
 	}
 
+	@Override
 	public void setIstObligatorisch(Boolean istObligatorisch) {
 		this.istObligatorisch = istObligatorisch;
 	}
 
+	@Override
 	public String getTitel() {
-		return titel;
+		return this.titel;
 	}
 
+	@Override
 	public void setTitel(String titel) {
 		this.titel = titel;
 	}
 
+	@Override
 	public String getWert() {
-		return wert;
+		return this.wert;
 	}
 
+	@Override
 	public void setWert(String wert) {
 		this.wert = wert;
 	}
 
+	@Override
 	public void setCreationDate(Date creation) {
 		this.creationDate = creation;
 	}
 
+	@Override
 	public Date getCreationDate() {
-		return creationDate;
+		return this.creationDate;
 	}
 
 	/**
@@ -87,7 +98,7 @@ public class BatchProperty implements Serializable, IGoobiProperty {
 	 */
 	@SuppressWarnings("unused")
 	private Integer getDatentyp() {
-		return datentyp;
+		return this.datentyp;
 	}
 
 	/**
@@ -107,6 +118,7 @@ public class BatchProperty implements Serializable, IGoobiProperty {
 	 * @param inType
 	 *            as {@link PropertyType}
 	 */
+	@Override
 	public void setType(PropertyType inType) {
 		this.datentyp = inType.getId();
 	}
@@ -116,53 +128,59 @@ public class BatchProperty implements Serializable, IGoobiProperty {
 	 * 
 	 * @return current datentyp
 	 */
+	@Override
 	public PropertyType getType() {
-		if (datentyp == null) {
-			datentyp = PropertyType.String.getId();
+		if (this.datentyp == null) {
+			this.datentyp = PropertyType.String.getId();
 		}
-		return PropertyType.getById(datentyp);
+		return PropertyType.getById(this.datentyp);
 	}
 
 	public List<String> getValueList() {
-		if (valueList == null) {
-			valueList = new ArrayList<String>();
+		if (this.valueList == null) {
+			this.valueList = new ArrayList<String>();
 		}
-		return valueList;
+		return this.valueList;
 	}
 
 	public void setValueList(List<String> valueList) {
 		this.valueList = valueList;
 	}
 
-	public Batch getProzess() {
-		return batch;
+	public Batch getBatch() {
+		return this.batch;
 	}
 
-	public void setProzess(Batch prozess) {
+	public void setBatch(Batch prozess) {
 		this.batch = prozess;
 	}
 
+	@Override
 	public Status getStatus() {
-		return Status.getBatchStatus(batch);
+		return Status.getBatchStatus(this.batch);
 	}
 
+	@Override
 	public IGoobiEntity getOwningEntity() {
 
-		return batch;
+		return this.batch;
 	}
 
+	@Override
 	public void setOwningEntity(IGoobiEntity inEntity) {
 		this.batch = (Batch) inEntity;
 
 	}
 
+	@Override
 	public Integer getContainer() {
-		if (container == null) {
+		if (this.container == null) {
 			return 0;
 		}
-		return container;
+		return this.container;
 	}
 
+	@Override
 	public void setContainer(Integer order) {
 		if (order == null) {
 			order = 0;
@@ -172,11 +190,11 @@ public class BatchProperty implements Serializable, IGoobiProperty {
 	
 	@Override
 	public String getNormalizedTitle() {
-		return titel.replace(" ", "_").trim();
+		return this.titel.replace(" ", "_").trim();
 	}
 
 	@Override
 	public String getNormalizedValue() {
-		return wert.replace(" ", "_").trim();
+		return this.wert.replace(" ", "_").trim();
 	}
 }

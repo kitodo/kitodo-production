@@ -68,6 +68,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
+	private Batch batch;
 
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
@@ -85,13 +86,13 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private String wikifield;
 
 	public Prozess() {
-		swappedOut = false;
-		titel = "";
-		istTemplate = false;
-		inAuswahllisteAnzeigen = false;
-		eigenschaften = new HashSet<Prozesseigenschaft>();
-		schritte = new HashSet<Schritt>();
-		erstellungsdatum = new Date();
+		this.swappedOut = false;
+		this.titel = "";
+		this.istTemplate = false;
+		this.inAuswahllisteAnzeigen = false;
+		this.eigenschaften = new HashSet<Prozesseigenschaft>();
+		this.schritte = new HashSet<Schritt>();
+		this.erstellungsdatum = new Date();
 
 	}
 
@@ -101,7 +102,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	@Override
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -109,7 +110,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String getSortHelperStatus() {
-		return sortHelperStatus;
+		return this.sortHelperStatus;
 	}
 
 	public void setSortHelperStatus(String sortHelperStatus) {
@@ -117,9 +118,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isIstTemplate() {
-		if (istTemplate == null)
-			istTemplate = Boolean.valueOf(false);
-		return istTemplate;
+		if (this.istTemplate == null) {
+			this.istTemplate = Boolean.valueOf(false);
+		}
+		return this.istTemplate;
 	}
 
 	public void setIstTemplate(boolean istTemplate) {
@@ -127,15 +129,15 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String getTitel() {
-		return titel;
+		return this.titel;
 	}
 
 	public void setTitel(String inTitel) {
-		titel = inTitel.trim();
+		this.titel = inTitel.trim();
 	}
 
 	public Set<Schritt> getSchritte() {
-		return schritte;
+		return this.schritte;
 	}
 
 	public void setSchritte(Set<Schritt> schritte) {
@@ -143,10 +145,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<HistoryEvent> getHistory() {
-		if (history == null) {
-			history = new HashSet<HistoryEvent>();
+		if (this.history == null) {
+			this.history = new HashSet<HistoryEvent>();
 		}
-		return history;
+		return this.history;
 	}
 
 	public void setHistory(Set<HistoryEvent> history) {
@@ -154,7 +156,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Vorlage> getVorlagen() {
-		return vorlagen;
+		return this.vorlagen;
 	}
 
 	public void setVorlagen(Set<Vorlage> vorlagen) {
@@ -162,7 +164,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Werkstueck> getWerkstuecke() {
-		return werkstuecke;
+		return this.werkstuecke;
 	}
 
 	public void setWerkstuecke(Set<Werkstueck> werkstuecke) {
@@ -170,7 +172,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String getAusgabename() {
-		return ausgabename;
+		return this.ausgabename;
 	}
 
 	public void setAusgabename(String ausgabename) {
@@ -178,7 +180,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Prozesseigenschaft> getEigenschaften() {
-		return eigenschaften;
+		return this.eigenschaften;
 	}
 
 	public void setEigenschaften(Set<Prozesseigenschaft> eigenschaften) {
@@ -191,8 +193,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Benutzer getBenutzerGesperrt() {
 		Benutzer rueckgabe = null;
-		if (MetadatenSperrung.isLocked(id.intValue())) {
-			String benutzerID = msp.getLockBenutzer(id.intValue());
+		if (MetadatenSperrung.isLocked(this.id.intValue())) {
+			String benutzerID = this.msp.getLockBenutzer(this.id.intValue());
 			try {
 				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
 			} catch (Exception e) {
@@ -203,11 +205,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public long getMinutenGesperrt() {
-		return msp.getLockSekunden(id.longValue()) / 60;
+		return this.msp.getLockSekunden(this.id.longValue()) / 60;
 	}
 
 	public long getSekundenGesperrt() {
-		return msp.getLockSekunden(id.longValue()) % 60;
+		return this.msp.getLockSekunden(this.id.longValue()) % 60;
 	}
 
 	/*
@@ -235,8 +237,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 			}
 		}
 
-		if (tifOrdner.equals(""))
-			tifOrdner = titel + "_" + DIRECTORY_SUFFIX;
+		if (tifOrdner.equals("")) {
+			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
+		}
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
 
@@ -296,7 +299,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 				origOrdner = verzeichnisse[i];
 			}
 			if (origOrdner.equals("")) {
-				origOrdner = DIRECTORY_PREFIX + "_" + titel + "_" + DIRECTORY_SUFFIX;
+				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
@@ -310,8 +313,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
-		if (!new File(pfad).exists())
+		if (!new File(pfad).exists()) {
 			new Helper().createMetaDirectory(pfad);
+		}
 		return pfad;
 	}
 
@@ -323,10 +327,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 			pst.initialize(this);
 			pst.execute();
 			if (pst.getStatusProgress() == -1) {
-				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists())
+				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists()) {
 					throw new SwapException(pst.getStatusMessage());
-				else
+				} else {
 					setSwappedOutGui(false);
+				}
 				new ProzessDAO().save(this);
 			}
 		}
@@ -338,15 +343,15 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String getTxtDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + titel + "_txt" + File.separator;
+		return getOcrDirectory() + this.titel + "_txt" + File.separator;
 	}
 
 	public String getWordDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + titel + "_wc" + File.separator;
+		return getOcrDirectory() + this.titel + "_wc" + File.separator;
 	}
 
 	public String getPdfDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + titel + "_pdf" + File.separator;
+		return getOcrDirectory() + this.titel + "_pdf" + File.separator;
 	}
 
 	public String getSourceDirectory() throws SwapException, DAOException, IOException, InterruptedException {
@@ -354,10 +359,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
-		String pfad = help.getGoobiDataDirectory() + id.intValue() + File.separator;
+		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
-		if (!new File(pfad).exists())
+		if (!new File(pfad).exists()) {
 			new Helper().createMetaDirectory(pfad);
+		}
 		return pfad;
 	}
 
@@ -369,15 +375,23 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 */
 
 	public Projekt getProjekt() {
-		return projekt;
+		return this.projekt;
 	}
 
 	public void setProjekt(Projekt projekt) {
 		this.projekt = projekt;
 	}
+	
+	public Batch getBatch() {
+		return this.batch;
+	}
+	
+	public void setBatch(Batch batch) {
+		this.batch = batch;
+	}
 
 	public Regelsatz getRegelsatz() {
-		return regelsatz;
+		return this.regelsatz;
 	}
 
 	public void setRegelsatz(Regelsatz regelsatz) {
@@ -385,81 +399,88 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getSchritteSize() {
-		if (schritte == null)
+		if (this.schritte == null) {
 			return 0;
-		else
-			return schritte.size();
+		} else {
+			return this.schritte.size();
+		}
 	}
 
 	public List<Schritt> getSchritteList() {
 		List<Schritt> temp = new ArrayList<Schritt>();
-		if (schritte != null)
-			temp.addAll(schritte);
+		if (this.schritte != null) {
+			temp.addAll(this.schritte);
+		}
 		return temp;
 	}
 
 	public int getHistorySize() {
-		if (history == null)
+		if (this.history == null) {
 			return 0;
-		else
-			return history.size();
+		} else {
+			return this.history.size();
+		}
 	}
 
 	public List<HistoryEvent> getHistoryList() {
 		List<HistoryEvent> temp = new ArrayList<HistoryEvent>();
-		if (history != null)
-			temp.addAll(history);
+		if (this.history != null) {
+			temp.addAll(this.history);
+		}
 		return temp;
 	}
 
 	public int getEigenschaftenSize() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return 0;
-		else
-			return eigenschaften.size();
+		} else {
+			return this.eigenschaften.size();
+		}
 	}
 
 	public List<Prozesseigenschaft> getEigenschaftenList() {
-		if (eigenschaften == null) {
+		if (this.eigenschaften == null) {
 			return new ArrayList<Prozesseigenschaft>();
 		} else {
-			return new ArrayList<Prozesseigenschaft>(eigenschaften);
+			return new ArrayList<Prozesseigenschaft>(this.eigenschaften);
 		}
 	}
 
 	public int getWerkstueckeSize() {
-		if (werkstuecke == null)
+		if (this.werkstuecke == null) {
 			return 0;
-		else
-			return werkstuecke.size();
+		} else {
+			return this.werkstuecke.size();
+		}
 	}
 
 	public List<Werkstueck> getWerkstueckeList() {
-		if (werkstuecke == null)
+		if (this.werkstuecke == null) {
 			return new ArrayList<Werkstueck>();
-		else
-			return new ArrayList<Werkstueck>(werkstuecke);
+		} else {
+			return new ArrayList<Werkstueck>(this.werkstuecke);
+		}
 	}
 
 	public int getVorlagenSize() {
-		if (vorlagen == null) {
-			vorlagen = new HashSet<Vorlage>();
+		if (this.vorlagen == null) {
+			this.vorlagen = new HashSet<Vorlage>();
 		}
-		return vorlagen.size();
+		return this.vorlagen.size();
 	}
 
 	public List<Vorlage> getVorlagenList() {
-		if (vorlagen == null) {
-			vorlagen = new HashSet<Vorlage>();
+		if (this.vorlagen == null) {
+			this.vorlagen = new HashSet<Vorlage>();
 		}
-		return new ArrayList<Vorlage>(vorlagen);
+		return new ArrayList<Vorlage>(this.vorlagen);
 	}
 
 	public Integer getSortHelperArticles() {
-		if (sortHelperArticles == null) {
-			sortHelperArticles = 0;
+		if (this.sortHelperArticles == null) {
+			this.sortHelperArticles = 0;
 		}
-		return sortHelperArticles;
+		return this.sortHelperArticles;
 	}
 
 	public void setSortHelperArticles(Integer sortHelperArticles) {
@@ -467,10 +488,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Integer getSortHelperImages() {
-		if (sortHelperImages == null) {
-			sortHelperImages = 0;
+		if (this.sortHelperImages == null) {
+			this.sortHelperImages = 0;
 		}
-		return sortHelperImages;
+		return this.sortHelperImages;
 	}
 
 	public void setSortHelperImages(Integer sortHelperImages) {
@@ -478,10 +499,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Integer getSortHelperMetadata() {
-		if (sortHelperMetadata == null) {
-			sortHelperMetadata = 0;
+		if (this.sortHelperMetadata == null) {
+			this.sortHelperMetadata = 0;
 		}
-		return sortHelperMetadata;
+		return this.sortHelperMetadata;
 	}
 
 	public void setSortHelperMetadata(Integer sortHelperMetadata) {
@@ -489,10 +510,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Integer getSortHelperDocstructs() {
-		if (sortHelperDocstructs == null) {
-			sortHelperDocstructs = 0;
+		if (this.sortHelperDocstructs == null) {
+			this.sortHelperDocstructs = 0;
 		}
-		return sortHelperDocstructs;
+		return this.sortHelperDocstructs;
 	}
 
 	public void setSortHelperDocstructs(Integer sortHelperDocstructs) {
@@ -500,7 +521,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isInAuswahllisteAnzeigen() {
-		return inAuswahllisteAnzeigen;
+		return this.inAuswahllisteAnzeigen;
 	}
 
 	public void setInAuswahllisteAnzeigen(boolean inAuswahllisteAnzeigen) {
@@ -508,7 +529,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isPanelAusgeklappt() {
-		return panelAusgeklappt;
+		return this.panelAusgeklappt;
 	}
 
 	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
@@ -517,14 +538,15 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Schritt getAktuellerSchritt() {
 		for (Schritt step : getSchritteList()) {
-			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN || step.getBearbeitungsstatusEnum() == StepStatus.INWORK)
+			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN || step.getBearbeitungsstatusEnum() == StepStatus.INWORK) {
 				return step;
+			}
 		}
 		return null;
 	}
 
 	public boolean isSelected() {
-		return (selected == null ? false : selected);
+		return (this.selected == null ? false : this.selected);
 	}
 
 	public void setSelected(boolean selected) {
@@ -532,7 +554,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Date getErstellungsdatum() {
-		return erstellungsdatum;
+		return this.erstellungsdatum;
 	}
 
 	public void setErstellungsdatum(Date erstellungsdatum) {
@@ -548,20 +570,22 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
 
-		for (Schritt step : schritte) {
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE)
+		for (Schritt step : this.schritte) {
+			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
-			else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED)
+			} else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 				offen++;
-			else
+			} else {
 				inBearbeitung++;
+			}
 		}
 		double offen2 = 0;
 		double inBearbeitung2 = 0;
 		double abgeschlossen2 = 0;
 
-		if ((offen + inBearbeitung + abgeschlossen) == 0)
+		if ((offen + inBearbeitung + abgeschlossen) == 0) {
 			offen = 1;
+		}
 
 		offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
 		inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
@@ -576,16 +600,18 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
 
-		for (Schritt step : schritte) {
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE)
+		for (Schritt step : this.schritte) {
+			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
-			else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED)
+			} else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 				offen++;
-			else
+			} else {
 				inBearbeitung++;
+			}
 		}
-		if ((offen + inBearbeitung + abgeschlossen) == 0)
+		if ((offen + inBearbeitung + abgeschlossen) == 0) {
 			offen = 1;
+		}
 		return (offen * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
@@ -594,16 +620,18 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
 
-		for (Schritt step : schritte) {
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE)
+		for (Schritt step : this.schritte) {
+			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
-			else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED)
+			} else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 				offen++;
-			else
+			} else {
 				inBearbeitung++;
+			}
 		}
-		if ((offen + inBearbeitung + abgeschlossen) == 0)
+		if ((offen + inBearbeitung + abgeschlossen) == 0) {
 			offen = 1;
+		}
 		return (inBearbeitung * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
@@ -612,16 +640,18 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
 
-		for (Schritt step : schritte) {
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE)
+		for (Schritt step : this.schritte) {
+			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
-			else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED)
+			} else if (step.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 				offen++;
-			else
+			} else {
 				inBearbeitung++;
+			}
 		}
-		if ((offen + inBearbeitung + abgeschlossen) == 0)
+		if ((offen + inBearbeitung + abgeschlossen) == 0) {
 			offen = 1;
+		}
 		double offen2 = 0;
 		double inBearbeitung2 = 0;
 		double abgeschlossen2 = 0;
@@ -654,16 +684,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
 			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
-			ff = new MetsModsImportExport(regelsatz.getPreferences());
+			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
 		} else if (type.equals("mets")) {
 			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
-			ff = new MetsMods(regelsatz.getPreferences());
+			ff = new MetsMods(this.regelsatz.getPreferences());
 		} else if (type.equals("xstream")) {
 			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
-			ff = new XStream(regelsatz.getPreferences());
+			ff = new XStream(this.regelsatz.getPreferences());
 		} else {
 			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
-			ff = new RDFFile(regelsatz.getPreferences());
+			ff = new RDFFile(this.regelsatz.getPreferences());
 		}
 		ff.read(getMetadataFilePath());
 		return ff;
@@ -726,7 +756,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private void storeDefaultMetaFile(File f) throws IOException {
 		// boolean ok = false;
 		/* wenn Verzeichnis angelegt wurde, jetzt die xml-Datei anlegen */
-		File fstandard = new java.io.File(help.getGoobiDataDirectory() + "standard.xml");
+		File fstandard = new java.io.File(this.help.getGoobiDataDirectory() + "standard.xml");
 
 		if (!fstandard.exists()) {
 			URL standardURL = Helper.class.getResource("standard.xml");
@@ -745,24 +775,25 @@ public class Prozess implements Serializable, IGoobiEntity {
 			} catch (IOException e) {
 				throw new IOException("Fehler beim Anlegen der Metdaten-Datei meta.xml (IOException): " + e.getMessage());
 			}
-		} else
+		} else {
 			throw new IOException("Fehler beim Anlegen der Metadaten-Datei, standard.xml nicht vorhanden (" + fstandard.getAbsolutePath() + ")");
+		}
 	}
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
-		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
+		switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
 		case METS:
-			ff = new MetsMods(regelsatz.getPreferences());
+			ff = new MetsMods(this.regelsatz.getPreferences());
 			break;
 
 		case RDF:
-			ff = new RDFFile(regelsatz.getPreferences());
+			ff = new RDFFile(this.regelsatz.getPreferences());
 			break;
 
 		default:
-			ff = new XStream(regelsatz.getPreferences());
+			ff = new XStream(this.regelsatz.getPreferences());
 			break;
 		}
 		createBackupFile();
@@ -782,16 +813,17 @@ public class Prozess implements Serializable, IGoobiEntity {
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
 			myLogger.debug("current template.xml file type: " + type);
 			if (type.equals("mets")) {
-				ff = new MetsMods(regelsatz.getPreferences());
+				ff = new MetsMods(this.regelsatz.getPreferences());
 			} else if (type.equals("xstream")) {
-				ff = new XStream(regelsatz.getPreferences());
+				ff = new XStream(this.regelsatz.getPreferences());
 			} else {
-				ff = new RDFFile(regelsatz.getPreferences());
+				ff = new RDFFile(this.regelsatz.getPreferences());
 			}
 			ff.read(getTemplateFilePath());
 			return ff;
-		} else
+		} else {
 			throw new IOException("File does not exist: " + getTemplateFilePath());
+		}
 	}
 
 	/**
@@ -801,8 +833,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 */
 	public boolean getContainsUnreachableSteps() {
 		for (Schritt s : getSchritteList()) {
-			if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0)
+			if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -841,25 +874,26 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * ================================================================
 	 */
 	public Boolean isSwappedOutHibernate() {
-		return swappedOut;
+		return this.swappedOut;
 	}
 
 	public void setSwappedOutHibernate(Boolean inSwappedOut) {
-		swappedOut = inSwappedOut;
+		this.swappedOut = inSwappedOut;
 	}
 
 	public boolean isSwappedOutGui() {
-		if (swappedOut == null)
-			swappedOut = false;
-		return swappedOut;
+		if (this.swappedOut == null) {
+			this.swappedOut = false;
+		}
+		return this.swappedOut;
 	}
 
 	public void setSwappedOutGui(boolean inSwappedOut) {
-		swappedOut = inSwappedOut;
+		this.swappedOut = inSwappedOut;
 	}
 
 	public String getWikifield() {
-		return wikifield;
+		return this.wikifield;
 	}
 
 	public void setWikifield(String wikifield) {
@@ -881,7 +915,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		eigenschaften.add((Prozesseigenschaft) toAdd);
+		this.eigenschaften.add((Prozesseigenschaft) toAdd);
 	}
 
 	@Override
@@ -896,25 +930,25 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 */
 
 	public DisplayPropertyList getDisplayProperties() {
-		if (displayProperties == null) {
-			displayProperties = new DisplayPropertyList(this);
+		if (this.displayProperties == null) {
+			this.displayProperties = new DisplayPropertyList(this);
 		}
-		return displayProperties;
+		return this.displayProperties;
 	}
 
 	@Override
 	public void refreshProperties() {
-		displayProperties = null;
+		this.displayProperties = null;
 	}
 
 	public String downloadDocket() {
-		myLogger.debug("generate run note for process " + id);
+		myLogger.debug("generate run note for process " + this.id);
 		String rootpath = ConfigMain.getParameter("xsltFolder");
 		File xsltfile = new File(rootpath, "docket.xsl");
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-			String fileName = titel + ".pdf";
+			String fileName = this.titel + ".pdf";
 			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
 			String contentType = servletContext.getMimeType(fileName);
 			response.setContentType(contentType);

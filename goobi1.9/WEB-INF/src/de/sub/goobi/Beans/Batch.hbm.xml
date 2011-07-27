@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Batch" table="batches">
+		<id name="id" column="batchID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<many-to-one name="project" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
+		
+		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
+			<key column="batchID"/>
+			<one-to-many class="de.sub.goobi.Beans.Property.BatchProperty"/>
+		</set>
+
+        <set name="processes" cascade="all,delete-orphan" inverse="true"
+        	lazy="true">
+        	<key column="batchID" />
+        	<one-to-many class="de.sub.goobi.Beans.Prozess" />
+        </set>
+	</class>
+
+</hibernate-mapping>

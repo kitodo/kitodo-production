@@ -50,7 +50,7 @@ public class Status {
 	}
 
 	public String getProject() {
-		return project;
+		return this.project;
 	}
 
 	public void setProcess(String process) {
@@ -58,7 +58,7 @@ public class Status {
 	}
 
 	public String getProcess() {
-		return process;
+		return this.process;
 	}
 
 	public void setStep(String step) {
@@ -66,7 +66,7 @@ public class Status {
 	}
 
 	public String getStep() {
-		return step;
+		return this.step;
 	}
 
 	public void setProduct(String digitalDocument) {
@@ -74,7 +74,7 @@ public class Status {
 	}
 
 	public String getProduct() {
-		return product;
+		return this.product;
 	}
 
 	public void setProductionResource(String original) {
@@ -82,7 +82,7 @@ public class Status {
 	}
 
 	public String getProductionResource() {
-		return productionResource;
+		return this.productionResource;
 	}
 
 	public static Status getProjectStatus(Projekt inEntity) {
@@ -93,7 +93,7 @@ public class Status {
 	
 	public static Status getBatchStatus(Batch inEntity) {
 		Status myStatus = new Status();
-		myStatus.setProject(inEntity.getProjekt().getTitel());
+		myStatus.setProject(inEntity.getProject().getTitel());
 		myStatus.setBatch(String.valueOf(inEntity.getId()));
 		return myStatus;
 	}
@@ -136,7 +136,7 @@ public class Status {
 	}
 
 	public String getBatch() {
-		return batch;
+		return this.batch;
 	}
 
 }

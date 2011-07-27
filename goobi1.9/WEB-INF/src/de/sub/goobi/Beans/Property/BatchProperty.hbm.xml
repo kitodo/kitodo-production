@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.Beans.Property.BatchProperty" table="batchproperties">
+		<id name="id" column="batchpropertyID" type="integer">
+			<generator class="native" />
+		</id>
+
+		<property name="titel" column="Titel" type="string" />
+		<property name="wert" column="Wert" type="string" />
+		<property name="istObligatorisch" column="IstObligatorisch" />
+		<property name="datentyp" column="DatentypenID" type="integer" />
+		<property name="auswahl" column="Auswahl" type="string" />
+		<property name="creationDate" column="creationDate" type="timestamp"/>
+				
+		<many-to-one name="batch" class="de.sub.goobi.Beans.Batch" column="batchID"/>
+		
+	</class>
+
+</hibernate-mapping>

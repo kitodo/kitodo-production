@@ -37,6 +37,7 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
@@ -45,6 +46,7 @@ import de.sub.goobi.Beans.Vorlage;
 import de.sub.goobi.Beans.Vorlageeigenschaft;
 import de.sub.goobi.Beans.Werkstueck;
 import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
@@ -127,6 +129,8 @@ public class PropertyTemplate {
 			prop = new Vorlageeigenschaft();
 		} else if (myEntity instanceof Werkstueck) {
 			prop = new Werkstueckeigenschaft();
+		} else if (myEntity instanceof Batch) {
+			prop = new BatchProperty();
 		}
 		prop.setOwningEntity(myEntity);
 		prop.setTitel(myName);
