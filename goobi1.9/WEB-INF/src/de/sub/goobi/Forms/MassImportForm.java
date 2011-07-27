@@ -30,9 +30,12 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
 
 // TODO FIXME alle Meldungen durch  messages-Meldungen ersetzen
 public class MassImportForm {
@@ -60,9 +63,9 @@ public class MassImportForm {
 	public MassImportForm() {
 
 		// usablePlugins = ipl.getTitles();
-		setUsablePluginsForRecords(ipl.getPluginsForType(ImportType.Record));
-		setUsablePluginsForIDs(ipl.getPluginsForType(ImportType.ID));
-		setUsablePluginsForFiles(ipl.getPluginsForType(ImportType.FILE));
+		setUsablePluginsForRecords(this.ipl.getPluginsForType(ImportType.Record));
+		setUsablePluginsForIDs(this.ipl.getPluginsForType(ImportType.ID));
+		setUsablePluginsForFiles(this.ipl.getPluginsForType(ImportType.FILE));
 	}
 
 	public String Prepare() {
@@ -78,8 +81,8 @@ public class MassImportForm {
 
 	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
-		possibleDigitalCollections = new ArrayList<String>();
-		String filename = help.getGoobiConfigDirectory() + "digitalCollections.xml";
+		this.possibleDigitalCollections = new ArrayList<String>();
+		String filename = this.help.getGoobiConfigDirectory() + "digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
@@ -95,11 +98,11 @@ public class MassImportForm {
 				List<Element> projektnamen = projekt.getChildren("name");
 				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 					Element projektname = iterator.next();
-					if (projektname.getText().equalsIgnoreCase(template.getProjekt().getTitel())) {
+					if (projektname.getText().equalsIgnoreCase(this.template.getProjekt().getTitel())) {
 						List<Element> myCols = projekt.getChildren("DigitalCollection");
 						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 							Element col = it2.next();
-							possibleDigitalCollections.add(col.getText());
+							this.possibleDigitalCollections.add(col.getText());
 						}
 					}
 				}
@@ -119,21 +122,21 @@ public class MassImportForm {
 			// HashMap<String, Fileformat> meta = new HashMap<String,
 			// Fileformat>();
 			// found list with ids
-			Prefs prefs = template.getRegelsatz().getPreferences();
+			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
-			if (StringUtils.isNotEmpty(idList)) {
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
+			if (StringUtils.isNotEmpty(this.idList)) {
+				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
 				// if (getHotfolderPathForPlugin(template.getId()) != null) {
 				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 				plugin.setPrefs(prefs);
-				List<String> ids = plugin.splitIds(idList);
+				List<String> ids = plugin.splitIds(this.idList);
 				List<Record> recordList = new ArrayList<Record>();
 				for (String id : ids) {
 					Record r = new Record();
 					r.setData(id);
 					r.setId(id);
-					r.setCollections(digitalCollections);
+					r.setCollections(this.digitalCollections);
 					recordList.add(r);
 				}
 
@@ -143,18 +146,18 @@ public class MassImportForm {
 				// Helper.setFehlerMeldung("hotfolder for template " +
 				// template.getTitel() + " does not exist");
 				// }
-			} else if (importFile != null) {
+			} else if (this.importFile != null) {
 				// uploaded file
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
+				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
 				// if (getHotfolderPathForPlugin(template.getId()) != null) {
 				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 
 				plugin.setPrefs(prefs);
-				plugin.setFile(importFile);
+				plugin.setFile(this.importFile);
 				List<Record> recordList = plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
-					r.setCollections(digitalCollections);
+					r.setCollections(this.digitalCollections);
 				}
 				answer = plugin.generateFiles(recordList);
 				// meta = plugin.generateMetadata(recordList);
@@ -164,16 +167,16 @@ public class MassImportForm {
 				// }
 			}
 			// found list with records
-			else if (StringUtils.isNotEmpty(records)) {
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, currentPlugin);
+			else if (StringUtils.isNotEmpty(this.records)) {
+				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
 				// if (getHotfolderPathForPlugin(template.getId()) != null) {
 				// plugin.setImportFolder(getHotfolderPathForPlugin(template.getId()));
 				plugin.setImportFolder(tempfolder);
 
 				plugin.setPrefs(prefs);
-				List<Record> recordList = plugin.splitRecords(records);
+				List<Record> recordList = plugin.splitRecords(this.records);
 				for (Record r : recordList) {
-					r.setCollections(digitalCollections);
+					r.setCollections(this.digitalCollections);
 				}
 				answer = plugin.generateFiles(recordList);
 				// meta = plugin.generateMetadata(recordList);
@@ -191,10 +194,11 @@ public class MassImportForm {
 			// Helper.setFehlerMeldung(bla.getValue() + " for " + bla.getKey());
 			// }
 			// }
-
+			Batch b = new Batch();
+			
 			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {
 				if (data.getValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = CommandLineInterface.generateProcess(data.getKey(), template, new File(tempfolder), null, "error");
+					int returnValue = CommandLineInterface.generateProcess(data.getKey(), this.template, new File(tempfolder), null, "error", b);
 					if (returnValue > 0) {
 						Helper.setFehlerMeldung("import failed for " + data.getKey() + ", process generation failed with error code " + returnValue);
 					}
@@ -204,6 +208,13 @@ public class MassImportForm {
 				}
 
 			}
+			if (b.getBatchList().size()> 0) {
+				try {
+					new BatchDAO().save(b);
+				} catch (DAOException e) {
+					// TODO
+				}
+			}
 
 		}
 
@@ -211,9 +222,9 @@ public class MassImportForm {
 		else {
 			Helper.setFehlerMeldung("missingData");
 		}
-		idList = null;
-		importFile = null;
-		records = "";
+		this.idList = null;
+		this.importFile = null;
+		this.records = "";
 	}
 
 	/**
@@ -223,9 +234,9 @@ public class MassImportForm {
 		ByteArrayInputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
-			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + uploadedFile.getName();
+			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + this.uploadedFile.getName();
 
-			inputStream = new ByteArrayInputStream(uploadedFile.getBytes());
+			inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
 			outputStream = new FileOutputStream(filename);
 
 			byte[] buf = new byte[1024];
@@ -234,8 +245,8 @@ public class MassImportForm {
 				outputStream.write(buf, 0, len);
 			}
 
-			importFile = new File(filename);
-			Helper.setMeldung("File '" + uploadedFile.getName() + "' successfully uploaded, press 'Save' now...");
+			this.importFile = new File(filename);
+			Helper.setMeldung("File '" + this.uploadedFile.getName() + "' successfully uploaded, press 'Save' now...");
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			Helper.setFehlerMeldung("Upload failed");
@@ -260,7 +271,7 @@ public class MassImportForm {
 	}
 
 	public UploadedFile getUploadedFile() {
-		return uploadedFile;
+		return this.uploadedFile;
 	}
 
 	public void setUploadedFile(UploadedFile uploadedFile) {
@@ -277,7 +288,7 @@ public class MassImportForm {
 		// if (format == null) {
 		// return false;
 		// }
-		if (StringUtils.isEmpty(idList) && StringUtils.isEmpty(records) && (importFile == null)) {
+		if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)) {
 			return false;
 		}
 		return true;
@@ -311,8 +322,8 @@ public class MassImportForm {
 	 */
 
 	public String getCurrentFormat() {
-		if (format != null) {
-			return format.getTitle();
+		if (this.format != null) {
+			return this.format.getTitle();
 		} else {
 			return "";
 		}
@@ -324,7 +335,7 @@ public class MassImportForm {
 	 *            current format
 	 */
 	public void setCurrentFormat(String formatTitle) {
-		format = ImportFormat.getTypeFromTitle(formatTitle);
+		this.format = ImportFormat.getTypeFromTitle(formatTitle);
 	}
 
 	/**
@@ -339,7 +350,7 @@ public class MassImportForm {
 	 * @return the idList
 	 */
 	public String getIdList() {
-		return idList;
+		return this.idList;
 	}
 
 	/**
@@ -354,7 +365,7 @@ public class MassImportForm {
 	 * @return the records
 	 */
 	public String getRecords() {
-		return records;
+		return this.records;
 	}
 
 	/**
@@ -369,7 +380,7 @@ public class MassImportForm {
 	 * @return the process
 	 */
 	public List<Prozess> getProcess() {
-		return processes;
+		return this.processes;
 	}
 
 	/**
@@ -385,7 +396,7 @@ public class MassImportForm {
 	 * @return the template
 	 */
 	public Prozess getTemplate() {
-		return template;
+		return this.template;
 	}
 
 	/**
@@ -400,7 +411,7 @@ public class MassImportForm {
 	 * @return the digitalCollections
 	 */
 	public List<String> getDigitalCollections() {
-		return digitalCollections;
+		return this.digitalCollections;
 	}
 
 	/**
@@ -415,7 +426,7 @@ public class MassImportForm {
 	 * @return the possibleDigitalCollection
 	 */
 	public List<String> getPossibleDigitalCollection() {
-		return possibleDigitalCollections;
+		return this.possibleDigitalCollections;
 	}
 
 	public void setPossibleDigitalCollections(List<String> possibleDigitalCollections) {
@@ -438,7 +449,7 @@ public class MassImportForm {
 	 * @return the ids
 	 */
 	public List<String> getIds() {
-		return ids;
+		return this.ids;
 	}
 
 	/**
@@ -453,10 +464,10 @@ public class MassImportForm {
 	 * @return the format
 	 */
 	public String getFormat() {
-		if (format == null) {
+		if (this.format == null) {
 			return "";
 		}
-		return format.getTitle();
+		return this.format.getTitle();
 	}
 
 	// /**
@@ -486,7 +497,7 @@ public class MassImportForm {
 	 * @return the currentPlugin
 	 */
 	public String getCurrentPlugin() {
-		return currentPlugin;
+		return this.currentPlugin;
 	}
 
 	/**
@@ -501,7 +512,7 @@ public class MassImportForm {
 	 * @return the usablePluginsForRecords
 	 */
 	public List<String> getUsablePluginsForRecords() {
-		return usablePluginsForRecords;
+		return this.usablePluginsForRecords;
 	}
 
 	/**
@@ -516,7 +527,7 @@ public class MassImportForm {
 	 * @return the usablePluginsForIDs
 	 */
 	public List<String> getUsablePluginsForIDs() {
-		return usablePluginsForIDs;
+		return this.usablePluginsForIDs;
 	}
 
 	/**
@@ -531,6 +542,6 @@ public class MassImportForm {
 	 * @return the usablePluginsForFiles
 	 */
 	public List<String> getUsablePluginsForFiles() {
-		return usablePluginsForFiles;
+		return this.usablePluginsForFiles;
 	}
 }

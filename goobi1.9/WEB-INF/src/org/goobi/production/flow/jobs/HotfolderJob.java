@@ -32,7 +32,9 @@ import org.apache.log4j.Logger;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.cli.CommandLineInterface;
 
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -101,12 +103,18 @@ public class HotfolderJob extends AbstractGoobiJob {
 							logger.trace("11");
 							HashMap<String, Integer> failedData = new HashMap<String, Integer>();
 							logger.trace("12");
+							
+							
+							
+							Batch batch = new Batch();	
+							
+							
 							for (String filename : metsfiles) {
 								logger.debug("found file: " + filename);
 								logger.trace("13");
 
 								int returnValue = CommandLineInterface.generateProcess(filename, template, hot.getFolderAsFile(),
-										hot.getCollection(), hot.getUpdateStrategy());
+										hot.getCollection(), hot.getUpdateStrategy(), batch);
 								logger.trace("14");
 								if (returnValue != 0) {
 									logger.trace("15");
@@ -124,6 +132,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 									logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
 								}
 							}
+							new BatchDAO().save(batch); 
 						} else {
 							logger.trace("18");
 							return;
