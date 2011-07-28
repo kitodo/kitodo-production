@@ -254,6 +254,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>BatchesEdit</from-outcome>
+			<to-view-id>/newpages/BatchesEdit.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- Projekte -->
 	<navigation-rule>
 		<navigation-case>

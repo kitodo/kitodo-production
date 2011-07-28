@@ -57,26 +57,26 @@ public class GoobiScript {
 	 * Starten des Scripts ================================================================
 	 */
 	public void execute(List<Prozess> inProzesse, String inScript) {
-		myParameters = new HashMap<String, String>();
+		this.myParameters = new HashMap<String, String>();
 		/*
 		 * -------------------------------- alle Suchparameter zerlegen und erfassen --------------------------------
 		 */
 		StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken();
-			if (tok.indexOf(":") == -1)
+			if (tok.indexOf(":") == -1) {
 				Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
-			else {
+			} else {
 				String myKey = tok.substring(0, tok.indexOf(":"));
 				String myValue = tok.substring(tok.indexOf(":") + 1);
-				myParameters.put(myKey, myValue);
+				this.myParameters.put(myKey, myValue);
 			}
 		}
 
 		/*
 		 * -------------------------------- die passende Methode mit den richtigen Parametern übergeben --------------------------------
 		 */
-		if (myParameters.get("action") == null) {
+		if (this.myParameters.get("action") == null) {
 			Helper
 					.setFehlerMeldung(
 							"goobiScriptfield",
@@ -88,45 +88,47 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Aufruf der richtigen Methode über den Parameter --------------------------------
 		 */
-		if (myParameters.get("action").equals("swapSteps")) {
+		if (this.myParameters.get("action").equals("swapSteps")) {
 			swapSteps(inProzesse);
-		} else if (myParameters.get("action").equals("swapProzessesOut")) {
+		} else if (this.myParameters.get("action").equals("swapProzessesOut")) {
 			swapOutProzesses(inProzesse);
-		} else if (myParameters.get("action").equals("swapProzessesIn")) {
+		} else if (this.myParameters.get("action").equals("swapProzessesIn")) {
 			swapInProzesses(inProzesse);
-		} else if (myParameters.get("action").equals("importFromFileSystem")) {
+		} else if (this.myParameters.get("action").equals("importFromFileSystem")) {
 			importFromFileSystem(inProzesse);
-		} else if (myParameters.get("action").equals("addUser")) {
+		} else if (this.myParameters.get("action").equals("addUser")) {
 			adduser(inProzesse);
-		} else if (myParameters.get("action").equals("tiffWriter")) {
+		} else if (this.myParameters.get("action").equals("tiffWriter")) {
 			writeTiffHeader(inProzesse);
-		} else if (myParameters.get("action").equals("addUserGroup")) {
+		} else if (this.myParameters.get("action").equals("addUserGroup")) {
 			addusergroup(inProzesse);
-		} else if (myParameters.get("action").equals("setTaskProperty")) {
+		} else if (this.myParameters.get("action").equals("setTaskProperty")) {
 			setTaskProperty(inProzesse);
-		} else if (myParameters.get("action").equals("deleteStep")) {
+		} else if (this.myParameters.get("action").equals("deleteStep")) {
 			deleteStep(inProzesse);
-		} else if (myParameters.get("action").equals("addStep")) {
+		} else if (this.myParameters.get("action").equals("addStep")) {
 			addStep(inProzesse);
-		} else if (myParameters.get("action").equals("setStepNumber")) {
+		} else if (this.myParameters.get("action").equals("setStepNumber")) {
 			setStepNumber(inProzesse);
-		} else if (myParameters.get("action").equals("setStepStatus")) {
+		} else if (this.myParameters.get("action").equals("setStepStatus")) {
 			setStepStatus(inProzesse);
-		} else if (myParameters.get("action").equals("addShellScriptToStep")) {
+		} else if (this.myParameters.get("action").equals("addShellScriptToStep")) {
 			addShellScriptToStep(inProzesse);
-		} else if (myParameters.get("action").equals("addModuleToStep")) {
+		} else if (this.myParameters.get("action").equals("addModuleToStep")) {
 			addModuleToStep(inProzesse);
-		} else if (myParameters.get("action").equals("updateImagePath")) {
+		} else if (this.myParameters.get("action").equals("updateImagePath")) {
 			updateImagePath(inProzesse);
-		} else if (myParameters.get("action").equals("deleteTiffHeaderFile")) {
+		} else if (this.myParameters.get("action").equals("deleteTiffHeaderFile")) {
 			deleteTiffHeaderFile(inProzesse);
-		} else if (myParameters.get("action").equals("setRuleset")) {
+		} else if (this.myParameters.get("action").equals("setRuleset")) {
 			setRuleset(inProzesse);
-		} else if (myParameters.get("action").equals("exportDms")) {
-			exportDms(inProzesse, myParameters.get("exportImages"), true);
-		} else if (myParameters.get("action").equals("doit")) { 
+		} else if (this.myParameters.get("action").equals("exportDms")) {
+			exportDms(inProzesse, this.myParameters.get("exportImages"), true);
+		} else if (this.myParameters.get("action").equals("export")) {
+			exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.getBoolean(this.myParameters.get("exportOcr")));
+		} else if (this.myParameters.get("action").equals("doit")) { 
 			exportDms(inProzesse, "false", false);
-		} else if (myParameters.get("action").equals("doit2")) { 
+		} else if (this.myParameters.get("action").equals("doit2")) { 
 			exportDms(inProzesse, "false", true);
 		}
 		else {
@@ -210,24 +212,24 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("sourcefolder") == null || myParameters.get("sourcefolder").equals("")) {
+		if (this.myParameters.get("sourcefolder") == null || this.myParameters.get("sourcefolder").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "missing parameter: ", "sourcefolder");
 			return;
 		}
 
-		File sourceFolder = new File(myParameters.get("sourcefolder"));
+		File sourceFolder = new File(this.myParameters.get("sourcefolder"));
 		if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
-			Helper.setFehlerMeldung("goobiScriptfield", "Directory " + myParameters.get("sourcefolder") + " does not exisist");
+			Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
 			return;
 		}
 		try {
 
 			for (Prozess p : inProzesse) {
 				File imagesFolder = new File(p.getImagesOrigDirectory());
-				if (imagesFolder.list().length > 0)
+				if (imagesFolder.list().length > 0) {
 					Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue()
 							+ "] has allready data in image folder");
-				else {
+				} else {
 					File sourceFolderProzess = new File(sourceFolder, p.getTitel());
 					if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
 						Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
@@ -253,7 +255,7 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("ruleset") == null || myParameters.get("ruleset").equals("")) {
+		if (this.myParameters.get("ruleset") == null || this.myParameters.get("ruleset").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "ruleset");
 			return;
 		}
@@ -261,12 +263,12 @@ public class GoobiScript {
 		try {
 			RegelsatzDAO rdao = new RegelsatzDAO();
 			ProzessDAO pdao = new ProzessDAO();
-			List<Regelsatz> rulesets = rdao.search("from Regelsatz where titel='" + myParameters.get("ruleset") + "'");
+			List<Regelsatz> rulesets = rdao.search("from Regelsatz where titel='" + this.myParameters.get("ruleset") + "'");
 			if (rulesets == null || rulesets.size() == 0) {
 				Helper.setFehlerMeldung("goobiScriptfield", "Could not found ruleset: ", "ruleset");
 				return;
 			}
-			Regelsatz regelsatz = (Regelsatz) rulesets.get(0);
+			Regelsatz regelsatz = rulesets.get(0);
 
 			for (Prozess p : inProzesse) {
 				p.setRegelsatz(regelsatz);
@@ -285,30 +287,30 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("swap1nr") == null || myParameters.get("swap1nr").equals("")) {
+		if (this.myParameters.get("swap1nr") == null || this.myParameters.get("swap1nr").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1nr");
 			return;
 		}
-		if (myParameters.get("swap2nr") == null || myParameters.get("swap2nr").equals("")) {
+		if (this.myParameters.get("swap2nr") == null || this.myParameters.get("swap2nr").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2nr");
 			return;
 		}
-		if (myParameters.get("swap1title") == null || myParameters.get("swap1title").equals("")) {
+		if (this.myParameters.get("swap1title") == null || this.myParameters.get("swap1title").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1title");
 			return;
 		}
-		if (myParameters.get("swap2title") == null || myParameters.get("swap2title").equals("")) {
+		if (this.myParameters.get("swap2title") == null || this.myParameters.get("swap2title").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2title");
 			return;
 		}
 		int reihenfolge1;
 		int reihenfolge2;
 		try {
-			reihenfolge1 = Integer.parseInt(myParameters.get("swap1nr"));
-			reihenfolge2 = Integer.parseInt(myParameters.get("swap2nr"));
+			reihenfolge1 = Integer.parseInt(this.myParameters.get("swap1nr"));
+			reihenfolge2 = Integer.parseInt(this.myParameters.get("swap2nr"));
 		} catch (NumberFormatException e1) {
-			Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ", myParameters.get("swap1nr") + " - "
-					+ myParameters.get("swap2nr"));
+			Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ", this.myParameters.get("swap1nr") + " - "
+					+ this.myParameters.get("swap2nr"));
 			return;
 		}
 
@@ -323,11 +325,13 @@ public class GoobiScript {
 			Schritt s1 = null;
 			Schritt s2 = null;
 			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
-				if (s.getTitel().equals(myParameters.get("swap1title")) && s.getReihenfolge().intValue() == reihenfolge1)
+				Schritt s = iterator.next();
+				if (s.getTitel().equals(this.myParameters.get("swap1title")) && s.getReihenfolge().intValue() == reihenfolge1) {
 					s1 = s;
-				if (s.getTitel().equals(myParameters.get("swap2title")) && s.getReihenfolge().intValue() == reihenfolge2)
+				}
+				if (s.getTitel().equals(this.myParameters.get("swap2title")) && s.getReihenfolge().intValue() == reihenfolge2) {
 					s2 = s;
+				}
 			}
 			if (s1 != null && s2 != null) {
 				StepStatus statustemp = s1.getBearbeitungsstatusEnum();
@@ -358,7 +362,7 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
@@ -370,8 +374,8 @@ public class GoobiScript {
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
 				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
-					Schritt s = (Schritt) iterator.next();
-					if (s.getTitel().equals(myParameters.get("steptitle"))) {
+					Schritt s = iterator.next();
+					if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
 						proz.getSchritte().remove(s);
 						try {
 							sdao.save(proz);
@@ -395,16 +399,16 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
-		if (myParameters.get("number") == null || myParameters.get("number").equals("")) {
+		if (this.myParameters.get("number") == null || this.myParameters.get("number").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
 			return;
 		}
 
-		if (!StringUtils.isNumeric(myParameters.get("number"))) {
+		if (!StringUtils.isNumeric(this.myParameters.get("number"))) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
 			return;
 		}
@@ -415,8 +419,8 @@ public class GoobiScript {
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
 			Schritt s = new Schritt();
-			s.setTitel(myParameters.get("steptitle"));
-			s.setReihenfolge(Integer.parseInt(myParameters.get("number")));
+			s.setTitel(this.myParameters.get("steptitle"));
+			s.setReihenfolge(Integer.parseInt(this.myParameters.get("number")));
 			s.setProzess(proz);
 			if (proz.getSchritte() == null) {
 				proz.setSchritte(new HashSet<Schritt>());
@@ -440,12 +444,12 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
 			return;
 		}
 
-		if (myParameters.get("script") == null || myParameters.get("script").equals("")) {
+		if (this.myParameters.get("script") == null || this.myParameters.get("script").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
 			return;
 		}
@@ -457,9 +461,9 @@ public class GoobiScript {
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
 				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
-					Schritt s = (Schritt) iterator.next();
-					if (s.getTitel().equals(myParameters.get("steptitle"))) {
-						s.setTypAutomatischScriptpfad(myParameters.get("script"));
+					Schritt s = iterator.next();
+					if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
+						s.setTypAutomatischScriptpfad(this.myParameters.get("script"));
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
@@ -482,12 +486,12 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
-		if (myParameters.get("module") == null || myParameters.get("module").equals("")) {
+		if (this.myParameters.get("module") == null || this.myParameters.get("module").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "module");
 			return;
 		}
@@ -499,9 +503,9 @@ public class GoobiScript {
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
 				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
-					Schritt s = (Schritt) iterator.next();
-					if (s.getTitel().equals(myParameters.get("steptitle"))) {
-						s.setTypModulName(myParameters.get("module"));
+					Schritt s = iterator.next();
+					if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
+						s.setTypModulName(this.myParameters.get("module"));
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
@@ -524,23 +528,23 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
-		if (myParameters.get("property") == null || myParameters.get("property").equals("")) {
+		if (this.myParameters.get("property") == null || this.myParameters.get("property").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "property");
 			return;
 		}
 
-		if (myParameters.get("value") == null || myParameters.get("value").equals("")) {
+		if (this.myParameters.get("value") == null || this.myParameters.get("value").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "value");
 			return;
 		}
 
-		String property = myParameters.get("property");
-		String value = myParameters.get("value");
+		String property = this.myParameters.get("property");
+		String value = this.myParameters.get("value");
 
 		if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
 				&& !property.equals("exportdms")) {
@@ -561,19 +565,24 @@ public class GoobiScript {
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
 				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
-					Schritt s = (Schritt) iterator.next();
-					if (s.getTitel().equals(myParameters.get("steptitle"))) {
+					Schritt s = iterator.next();
+					if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
 
-						if (property.equals("metadata"))
+						if (property.equals("metadata")) {
 							s.setTypMetadaten(Boolean.parseBoolean(value));
-						if (property.equals("readimages"))
+						}
+						if (property.equals("readimages")) {
 							s.setTypImagesLesen(Boolean.parseBoolean(value));
-						if (property.equals("writeimages"))
+						}
+						if (property.equals("writeimages")) {
 							s.setTypImagesSchreiben(Boolean.parseBoolean(value));
-						if (property.equals("validate"))
+						}
+						if (property.equals("validate")) {
 							s.setTypBeimAbschliessenVerifizieren(Boolean.parseBoolean(value));
-						if (property.equals("exportdms"))
+						}
+						if (property.equals("exportdms")) {
 							s.setTypExportDMS(Boolean.parseBoolean(value));
+						}
 
 						try {
 							sdao.save(proz);
@@ -597,18 +606,18 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
-		if (myParameters.get("status") == null || myParameters.get("status").equals("")) {
+		if (this.myParameters.get("status") == null || this.myParameters.get("status").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "status");
 			return;
 		}
 
-		if (!myParameters.get("status").equals("0") && !myParameters.get("status").equals("1") && !myParameters.get("status").equals("2")
-				&& !myParameters.get("status").equals("3")) {
+		if (!this.myParameters.get("status").equals("0") && !this.myParameters.get("status").equals("1") && !this.myParameters.get("status").equals("2")
+				&& !this.myParameters.get("status").equals("3")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ", "(possible: 0=closed, 1=open, 2=in work, 3=finished");
 			return;
 		}
@@ -619,9 +628,9 @@ public class GoobiScript {
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
 			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
-				if (s.getTitel().equals(myParameters.get("steptitle"))) {
-					s.setBearbeitungsstatusAsString(myParameters.get("status"));
+				Schritt s = iterator.next();
+				if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
+					s.setBearbeitungsstatusAsString(this.myParameters.get("status"));
 					try {
 						sdao.save(s);
 					} catch (DAOException e) {
@@ -643,17 +652,17 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
-		if (myParameters.get("number") == null || myParameters.get("number").equals("")) {
+		if (this.myParameters.get("number") == null || this.myParameters.get("number").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
 			return;
 		}
 
-		if (!StringUtils.isNumeric(myParameters.get("number"))) {
+		if (!StringUtils.isNumeric(this.myParameters.get("number"))) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
 			return;
 		}
@@ -664,9 +673,9 @@ public class GoobiScript {
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
 			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
-				if (s.getTitel().equals(myParameters.get("steptitle"))) {
-					s.setReihenfolge(Integer.parseInt(myParameters.get("number")));
+				Schritt s = iterator.next();
+				if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
+					s.setReihenfolge(Integer.parseInt(this.myParameters.get("number")));
 					try {
 						sdao.save(s);
 					} catch (DAOException e) {
@@ -688,22 +697,22 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
-		if (myParameters.get("username") == null || myParameters.get("username").equals("")) {
+		if (this.myParameters.get("username") == null || this.myParameters.get("username").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "username");
 			return;
 		}
 		/* prüfen, ob ein solcher Benutzer existiert */
 		Benutzer myUser = null;
 		try {
-			List<Benutzer> treffer = new BenutzerDAO().search("from Benutzer where login='" + myParameters.get("username") + "'");
-			if (treffer != null && treffer.size() > 0)
-				myUser = (Benutzer) treffer.get(0);
-			else {
-				Helper.setFehlerMeldung("goobiScriptfield", "Unknown user: ", myParameters.get("username"));
+			List<Benutzer> treffer = new BenutzerDAO().search("from Benutzer where login='" + this.myParameters.get("username") + "'");
+			if (treffer != null && treffer.size() > 0) {
+				myUser = treffer.get(0);
+			} else {
+				Helper.setFehlerMeldung("goobiScriptfield", "Unknown user: ", this.myParameters.get("username"));
 				return;
 			}
 		} catch (DAOException e) {
@@ -718,8 +727,8 @@ public class GoobiScript {
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
 			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
-				if (s.getTitel().equals(myParameters.get("steptitle"))) {
+				Schritt s = iterator.next();
+				if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
 					Set<Benutzer> myBenutzer = s.getBenutzer();
 					if (myBenutzer == null) {
 						myBenutzer = new HashSet<Benutzer>();
@@ -749,22 +758,22 @@ public class GoobiScript {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
-		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
+		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
-		if (myParameters.get("group") == null || myParameters.get("group").equals("")) {
+		if (this.myParameters.get("group") == null || this.myParameters.get("group").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "group");
 			return;
 		}
 		/* prüfen, ob ein solcher Benutzer existiert */
 		Benutzergruppe myGroup = null;
 		try {
-			List<Benutzergruppe> treffer = new BenutzergruppenDAO().search("from Benutzergruppe where titel='" + myParameters.get("group") + "'");
-			if (treffer != null && treffer.size() > 0)
-				myGroup = (Benutzergruppe) treffer.get(0);
-			else {
-				Helper.setFehlerMeldung("goobiScriptfield", "Unknown group: ", myParameters.get("group"));
+			List<Benutzergruppe> treffer = new BenutzergruppenDAO().search("from Benutzergruppe where titel='" + this.myParameters.get("group") + "'");
+			if (treffer != null && treffer.size() > 0) {
+				myGroup = treffer.get(0);
+			} else {
+				Helper.setFehlerMeldung("goobiScriptfield", "Unknown group: ", this.myParameters.get("group"));
 				return;
 			}
 		} catch (DAOException e) {
@@ -778,8 +787,8 @@ public class GoobiScript {
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
 			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
-				if (s.getTitel().equals(myParameters.get("steptitle"))) {
+				Schritt s = iterator.next();
+				if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
 					Set<Benutzergruppe> myBenutzergruppe = s.getBenutzergruppen();
 					if (myBenutzergruppe == null) {
 						myBenutzergruppe = new HashSet<Benutzergruppe>();
@@ -808,8 +817,9 @@ public class GoobiScript {
 		for (Prozess proz : inProzesse) {
 			try {
 				File tiffheaderfile = new File(proz.getImagesDirectory() + "tiffwriter.conf");
-				if (tiffheaderfile.exists())
+				if (tiffheaderfile.exists()) {
 					tiffheaderfile.delete();
+				}
 				Helper.setMeldung("goobiScriptfield", "TiffHeaderFile deleted: ", proz.getTitel());
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("goobiScriptfield", "Error while deleting TiffHeader", e);

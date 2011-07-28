@@ -14,7 +14,9 @@ import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
 
 public class Batch implements Serializable, IGoobiEntity {
 
@@ -27,7 +29,13 @@ public class Batch implements Serializable, IGoobiEntity {
 	private Projekt project;
 	private List<BatchDisplayItem> stepList = new ArrayList<BatchDisplayItem>();
 	private Set<Prozess> processes;
+	private Benutzer user;
 
+
+	
+//	zeitdesaf_PPN602167531_0093
+//	sttb_8_cod_ms_hist_lit__48x_21
+	
 	public Batch() {
 		this.title = "";
 		this.properties = new HashSet<BatchProperty>();
@@ -45,7 +53,6 @@ public class Batch implements Serializable, IGoobiEntity {
 	}
 	
 	private void generateWorkflowStatus() {
-
 		for (Prozess p : this.processes) {
 			for (Schritt s : p.getSchritteList()) {
 				boolean match = false;
@@ -57,6 +64,10 @@ public class Batch implements Serializable, IGoobiEntity {
 						if (s.getBearbeitungsstatusEnum().getValue() < bdi.getStepStatus().getValue()) {
 							bdi.setStepStatus(s.getBearbeitungsstatusEnum());
 						}
+						if (!s.getAllScripts().isEmpty()) {
+							bdi.setScripts(s.getAllScripts());
+						}
+						bdi.setExportDMS(s.isTypExportDMS());
 						match = true;
 						break;
 					}
@@ -65,7 +76,6 @@ public class Batch implements Serializable, IGoobiEntity {
 					BatchDisplayItem bdi = new BatchDisplayItem(s);
 					this.stepList.add(bdi);
 				}
-				
 			}
 		}
 		Collections.sort(this.stepList);
@@ -202,13 +212,17 @@ public class Batch implements Serializable, IGoobiEntity {
 //		
 //	}
 	
-//	public static void main(String[] args) throws DAOException {
-//		BatchDAO dao = new BatchDAO();
-//		Batch b = dao.get(2);
+	public static void main(String[] args) throws DAOException {
+		BatchDAO dao = new BatchDAO();
+		Batch b = dao.get(2);
+		for (String s : b.getCurrentStep().getScriptnames())
+		 {
+			System.out.println(s);
 //		for (Prozess p : b.getBatchList()) {
 //			System.out.println(p.getTitel());
 //		}
-//	}
+		}
+	}
 
 
 	public Set<Prozess> getProcesses() {
@@ -227,4 +241,13 @@ public class Batch implements Serializable, IGoobiEntity {
 	public void setEigenschaften(Set<BatchProperty> eigenschaften) {
 		this.properties = eigenschaften;
 	}
+
+	public Benutzer getUser() {
+		return this.user;
+	}
+
+	public void setUser(Benutzer user) {
+		this.user = user;
+	}
+		
 }

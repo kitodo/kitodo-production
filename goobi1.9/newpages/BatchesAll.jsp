@@ -10,7 +10,7 @@
 							Alle Aktuellen Schritte in der �?bersicht
 
 	#########################################--%>
-<a4j:keepAlive beanName="AktuelleSchritteForm"/>
+<a4j:keepAlive beanName="BatchForm"/>
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="inc/head.jsp"%>

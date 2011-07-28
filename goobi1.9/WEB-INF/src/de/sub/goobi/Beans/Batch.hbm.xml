@@ -11,6 +11,7 @@
 		</id>
 		
 		<many-to-one name="project" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
+		<many-to-one name="user" class="de.sub.goobi.Beans.Benutzer" column="userID"/>
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
 			<key column="batchID"/>

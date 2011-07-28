@@ -110,41 +110,30 @@
 		</f:facet>
 
 		<h:commandLink id="take"
+		rendered="#{item.currentStep.stepStatus == 'OPEN'}"
 			action="#{BatchForm.BatchDurchBenutzerUebernehmen}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{BatchForm.batch}" value="#{item}" />
 		</h:commandLink>
-
-		<%-- 
-			
-		<h:commandLink id="take"
-			action="#{AktuelleSchritteForm.SchrittDurchBenutzerUebernehmen}"
-			rendered="#{item.bearbeitungsstatusEnum == 'OPEN'}"
-			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
-			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}"
-				value="#{item}" />
-		</h:commandLink>
-
 		
-		<h:commandLink action="AktuelleSchritteBearbeiten" id="view1"
-			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}"
-			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
+		<h:commandLink action="BatchesEdit" id="view1"
+			rendered="#{item.currentStep.stepStatus == 'INWORK' && item.user.id == LoginForm.myBenutzer.id}"
+			title="#{msgs.inBearbeitungDurch}: #{item.user!=null && item.user.id!=0 ? item.user.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
-			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}"
+			<x:updateActionListener property="#{BatchForm.batch}"
 				value="#{item}" />
 		</h:commandLink>
 
 		
-		<h:commandLink action="AktuelleSchritteBearbeiten" id="view2"
-			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id}"
-			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
+		<h:commandLink action="BatchesEdit" id="view2"
+			rendered="#{item.currentStep.stepStatus == 'INWORK' && item.user.id != LoginForm.myBenutzer.id}"
+			title="#{msgs.inBearbeitungDurch}: #{item.user!=null && item.user.id!=0 ? item.user.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin3b.gif" />
-			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}"
+			<x:updateActionListener property="#{BatchForm.batch}"
 				value="#{item}" />
 		</h:commandLink>
-		--%>
+		
 
 	</x:column>
 
