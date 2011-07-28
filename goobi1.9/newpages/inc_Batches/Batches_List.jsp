@@ -74,19 +74,19 @@
 		<h:panelGroup>
 			<x:dataTable var="batchDisplayItem" value="#{item.stepList}">
 				<x:column>
-					<h:outputText value="#{batchDisplayItem.stepOrder}"/>
+					<h:outputText value="#{batchDisplayItem.stepOrder}" />
 				</x:column>
 				<x:column>
-					<h:outputText value="#{batchDisplayItem.stepTitle}"/>
+					<h:outputText value="#{batchDisplayItem.stepTitle}" />
 				</x:column>
 				<x:column>
-					<h:outputText value="#{batchDisplayItem.stepStatus}"/>
+					<h:outputText value="#{batchDisplayItem.stepStatus}" />
 				</x:column>
 			</x:dataTable>
 		</h:panelGroup>
 	</x:column>
 
-<%-- batch project --%>
+	<%-- batch project --%>
 	<x:column style="text-align:center">
 		<f:facet name="header">
 			<h:outputText value="#{msgs.project}" />
@@ -94,20 +94,28 @@
 		<h:outputText value="#{item.project.titel}" />
 	</x:column>
 
+<%-- batch currentStep --%>
+	<x:column style="text-align:center">
+		<f:facet name="header">
+			<h:outputText value="#{msgs.currentStep}" />
+		</f:facet>
+		<h:outputText value="#{item.currentStep.stepTitle} #{item.currentStep.stepOrder} #{item.currentStep.stepStatus}" />
+	</x:column>
 
+
+	<%--actions --%>
 	<x:column style="text-align:center">
 		<f:facet name="header">
 			<h:outputText value="#{msgs.auswahl}" />
 		</f:facet>
-		
+
 		<h:commandLink id="take"
 			action="#{BatchForm.BatchDurchBenutzerUebernehmen}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
-			<x:updateActionListener property="#{BatchForm.batch}"
-				value="#{item}" />
+			<x:updateActionListener property="#{BatchForm.batch}" value="#{item}" />
 		</h:commandLink>
-		
+
 		<%-- 
 			
 		<h:commandLink id="take"
@@ -137,7 +145,7 @@
 				value="#{item}" />
 		</h:commandLink>
 		--%>
-		
+
 	</x:column>
 
 

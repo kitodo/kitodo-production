@@ -14,6 +14,7 @@ import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.helper.enums.StepStatus;
 
 public class Batch implements Serializable, IGoobiEntity {
 
@@ -33,6 +34,15 @@ public class Batch implements Serializable, IGoobiEntity {
 		this.processes = new HashSet<Prozess>();
 	}
 
+	public BatchDisplayItem getCurrentStep() {
+		for (BatchDisplayItem bdi : getStepList()) {
+			if (bdi.getStepStatus().equals(StepStatus.OPEN)|| bdi.getStepStatus().equals(StepStatus.INWORK)){
+				return bdi;
+			}
+		}
+		// TODO nullpointer in gui?
+		return null;		
+	}
 	
 	private void generateWorkflowStatus() {
 

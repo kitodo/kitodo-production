@@ -968,4 +968,17 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return "";
 	}
+	
+	
+	public Schritt getFirstOpenStep() {
+		
+		for (Schritt s : getSchritteList()) {
+			if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN) || s.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	
 }

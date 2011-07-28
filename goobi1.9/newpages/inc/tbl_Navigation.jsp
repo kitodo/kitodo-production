@@ -119,6 +119,21 @@
 								value="22" />
 						</h:commandLink>
 
+						<%-- batches --%>
+						<h:commandLink styleClass="mlink"
+							rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)|| (LoginForm.maximaleBerechtigung == 3)}"
+							action="#{BatchForm.FilterAlleStart}"
+							style="#{NavigationForm.aktuell == '44' ? 'font-weight: bold;':'font-weight:normal ;'}">
+							<h:panelGroup rendered="#{NavigationForm.aktuell == '44'}">
+								<f:verbatim>&#8250; </f:verbatim>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.batches}" />
+							<x:updateActionListener property="#{BatchForm.filter}"
+								value="" />
+							<x:updateActionListener property="#{NavigationForm.aktuell}"
+								value="44" />
+						</h:commandLink>
+
 						<%-- neuen Vorgang anlegen --%>
 						<h:commandLink styleClass="mlink" id="newProcess"
 							rendered="#{LoginForm.maximaleBerechtigung == 2}"
