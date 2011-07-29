@@ -249,5 +249,4 @@ public class Batch implements Serializable, IGoobiEntity {
 	public void setUser(Benutzer user) {
 		this.user = user;
 	}
-		
 }

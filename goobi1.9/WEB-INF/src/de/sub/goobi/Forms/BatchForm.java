@@ -2,6 +2,7 @@ package de.sub.goobi.Forms;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -234,8 +235,8 @@ public class BatchForm extends BasisForm {
 				if (propList.size() > 0) {
 					for (PropertyTemplate prop : propList) {
 						if (prop.isIstObligatorisch() && (prop.getWert() == null || prop.getWert().equals(""))) {
-							Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " " + Helper.getTranslation("bei Vorgang ") + p.getTitel()
-									+ " " + Helper.getTranslation("requiredValue"));
+							Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " "
+									+ Helper.getTranslation("bei Vorgang ") + p.getTitel() + " " + Helper.getTranslation("requiredValue"));
 							return "";
 						}
 					}
@@ -296,4 +297,27 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	public List<Prozess> getAllActiveProcesses() {
+		List<Prozess> answer = new ArrayList<Prozess>();
+		BatchDisplayItem bdi = this.batch.getCurrentStep();
+		for (Prozess p : this.batch.getBatchList()) {
+			Schritt currentStep = p.getFirstOpenStep();
+			if (currentStep.getTitel().equals(bdi.getStepTitle()) && currentStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)
+					&& currentStep.getBearbeitungsbenutzer().equals(this.batch.getUser())) {
+				answer.add(p);
+			}
+		}
+		return answer;
+	}
+
+	
+	private Integer process = null;
+	
+	public void setProcess(Integer title) {
+		this.process = title;
+	}
+	
+	public Integer getProcess() {
+		return this.process;
+	}
 }

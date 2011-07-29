@@ -7,6 +7,19 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
 	prefix="si"%>
 
+<script type="text/javascript">
+	function loadData() {
+
+		var url = document.getElementById('select').value;
+
+		//	document.getElementById('searchForm:test').value = '#{navigationHelper.searchUrl}/' + url + '/1/';
+		if (url != undefined) {
+			alert(url);
+		}
+		alert('bla');
+	}
+</script>
+
 <h:panelGroup
 	rendered="#{BatchForm.batch.user.id == LoginForm.myBenutzer.id}">
 
@@ -67,24 +80,25 @@
 							<h:outputText value="#{msgs.importDms}" />
 						</h:commandLink>
 
-						<%-- TODO hier vielleicht mit einer dropdown Liste arbeiten?
-
-						<h:commandLink id="action10"
-							rendered="#{BatchForm.batch.typMetadaten && BatchForm.batch.prozess.benutzerGesperrt == null}"
-							action="#{Metadaten.XMLlesen}"
+						<%-- TODO hier vielleicht mit einer dropdown Liste arbeiten?--%>
+						<x:selectOneMenu forceId="true" id="select"
+							value="#{BatchForm.process}">
+							<si:selectItems id="pcid11"
+								value="#{BatchForm.allActiveProcesses}" var="item"
+								itemLabel="#{item.titel}" itemValue="#{item.id}" />
+						</x:selectOneMenu>
+						<%-- 	rendered="#{BatchForm.batch.typMetadaten && BatchForm.batch.prozess.benutzerGesperrt == null}" --%>
+						<h:commandLink id="action10" action="#{Metadaten.XMLlesen}"
 							title="#{msgs.metadatenBearbeiten}">
 							<h:graphicImage value="/newpages/images/buttons/view1.gif"
 								style="margin-left:7px;margin-right:10px;vertical-align:middle" />
 							<h:outputText value="#{msgs.metadatenBearbeiten}" />
-							<x:updateActionListener
-								value="#{BatchForm.batch.bearbeitungszeitpunktNow}"
-								property="#{BatchForm.batch.bearbeitungszeitpunktNow}"></x:updateActionListener>
-							<f:param name="ProzesseID" value="#{BatchForm.batch.prozess.id}" />
+							<f:param name="ProzesseID" value="#{BatchForm.process}" />
 							<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
-							<f:param name="zurueck" value="AktuelleSchritteBearbeiten" />
+							<f:param name="zurueck" value="BatchesEdit" />
 						</h:commandLink>
-						--%>
-						
+
+
 						<%-- Bearbeitung abbrechen-Schaltknopf --%>
 						<h:commandLink id="action11"
 							action="#{BatchForm.BatchDurchBenutzerZurueckgeben}"
@@ -94,6 +108,10 @@
 								style="margin-right:3px;vertical-align:middle" />
 							<h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}" />
 						</h:commandLink>
+
+
+
+
 
 						<%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke 
 						<h:panelGroup>
