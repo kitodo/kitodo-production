@@ -1,9 +1,5 @@
-/*
- * Created on Oct 27, 2004
- */
 package de.sub.goobi.helper;
 
-//TODO: What's the licence of this file?
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,7 +17,6 @@ import de.sub.goobi.Forms.LoginForm;
  * @author Gavin King
  * @author Eric Broyles
  */
-@SuppressWarnings("unchecked")
 public class Page implements Serializable { //implements Iterator
 	private static final long serialVersionUID = -290320409344472392L;
 	//TODO: Use generics
@@ -83,19 +78,20 @@ public class Page implements Serializable { //implements Iterator
 	public Page(Criteria criteria, int page) {
 		this.page = page;
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null)
+		if (login.getMyBenutzer() == null) {
 			this.pageSize = 10;
-		else
+		} else {
 			this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();
+		}
 		this.criteria = criteria;
 		try {
 
 			if (criteria instanceof PaginatingCriteria) {
-				totalResults = ((PaginatingCriteria) criteria).count();
+				this.totalResults = ((PaginatingCriteria) criteria).count();
 			} else {
 				//this case should be avoided, especially if dealing with a large number of Objects
 				logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by PaginatingCriteria, if performance or memory is going down");
-				totalResults = criteria.list().size();
+				this.totalResults = criteria.list().size();
 			}
 			//    	     ScrollableResults scrollableResults = criteria.scroll();
 			//         scrollableResults.last();
@@ -121,9 +117,10 @@ public class Page implements Serializable { //implements Iterator
 		 * (i.e. the first page is page 0).
 		 */
 		//      double totalResults = new Integer(getTotalResults()).doubleValue();
-		int rueckgabe = new Double(Math.floor(totalResults / pageSize)).intValue();
-		if (totalResults % pageSize == 0)
+		int rueckgabe = new Double(Math.floor(this.totalResults / this.pageSize)).intValue();
+		if (this.totalResults % this.pageSize == 0) {
 			rueckgabe--;
+		}
 		return rueckgabe;
 	}
 
@@ -136,14 +133,14 @@ public class Page implements Serializable { //implements Iterator
 		 * class was constructed, we now trim it down to the pageSize if a next
 		 * page exists.
 		 */
-		return hasNextPage() ? results.subList(0, pageSize) : results;
+		return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
 	}
 
 	
 
 	//TODO: Use generics
 	public List getCompleteList() {
-		return criteria.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+		return this.criteria.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 	}
 
 	
@@ -157,19 +154,19 @@ public class Page implements Serializable { //implements Iterator
 		//									"Failed to get last row number from scollable results: "
 		//											+ e.getMessage());
 		//		}
-		return totalResults;
+		return this.totalResults;
 	}
 
 	
 
 	public int getFirstResultNumber() {
-		return page * pageSize + 1;
+		return this.page * this.pageSize + 1;
 	}
 
 	
 
 	public int getLastResultNumber() {
-		int fullPage = getFirstResultNumber() + pageSize - 1;
+		int fullPage = getFirstResultNumber() + this.pageSize - 1;
 		return getTotalResults() < fullPage ? getTotalResults() : fullPage;
 	}
 
@@ -195,10 +192,10 @@ public class Page implements Serializable { //implements Iterator
 		 * page exists.
 		 */
 		try {
-			results = criteria.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
-			return hasNextPage() ? results.subList(0, pageSize) : results;
+			this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
+			return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
 		} catch (HibernateException e) {
-			return results;
+			return this.results;
 		}
 	}
 
@@ -213,31 +210,31 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	public boolean isFirstPage() {
-		return page == 0;
+		return this.page == 0;
 	}
 
 	
 
 	public boolean isLastPage() {
-		return page >= getLastPageNumber();
+		return this.page >= getLastPageNumber();
 	}
 
 	
 
 	public boolean hasNextPage() {
-		return results.size() > pageSize;
+		return this.results.size() > this.pageSize;
 	}
 
 	
 
 	public boolean hasPreviousPage() {
-		return page > 0;
+		return this.page > 0;
 	}
 
 	
 
 	public Long getPageNumberCurrent() {
-		return Long.valueOf(page + 1);
+		return Long.valueOf(this.page + 1);
 	}
 
 	
@@ -249,44 +246,47 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	public String cmdMoveFirst() {
-		page = 0;
+		this.page = 0;
 		return "";
 	}
 
 	
 
 	public String cmdMovePrevious() {
-		if (!isFirstPage())
-			page--;
+		if (!isFirstPage()) {
+			this.page--;
+		}
 		return "";
 	}
 
 	
 
 	public String cmdMoveNext() {
-		if (!isLastPage())
-			page++;
+		if (!isLastPage()) {
+			this.page++;
+		}
 		return "";
 	}
 
 	
 
 	public String cmdMoveLast() {
-		page = getLastPageNumber();
+		this.page = getLastPageNumber();
 		return "";
 	}
 
 	
 
 	public void setTxtMoveTo(int neueSeite) {
-		if (neueSeite > 0 && neueSeite <= getLastPageNumber() + 1)
-			page = neueSeite - 1;
+		if (neueSeite > 0 && neueSeite <= getLastPageNumber() + 1) {
+			this.page = neueSeite - 1;
+		}
 	}
 
 	
 
 	public int getTxtMoveTo() {
-		return page + 1;
+		return this.page + 1;
 	}
 
 	/*

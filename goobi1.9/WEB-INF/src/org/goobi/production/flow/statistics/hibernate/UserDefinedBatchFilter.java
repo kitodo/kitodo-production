@@ -199,8 +199,6 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 		PaginatingCriteria crit = new PaginatingCriteria(Batch.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		//crit.createCriteria("projekt", "proj");
-		//FilterHelper.limitToUserAccessRights(crit);
 		
 		/*
 		 * -------------------------------- 

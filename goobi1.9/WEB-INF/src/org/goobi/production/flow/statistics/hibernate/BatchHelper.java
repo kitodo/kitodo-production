@@ -31,17 +31,18 @@ import java.util.List;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.IlikeExpression;
-import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
@@ -52,10 +53,10 @@ import de.sub.goobi.helper.exceptions.DAOException;
 /**
  * class provides methods used by implementations of IEvaluableFilter
  * 
- * @author Wulf Riebensahm
+ * @author Robert Sehr
  * 
  */
-class BatchHelper {
+public class BatchHelper {
 
 	private static final Logger logger = Logger.getLogger(BatchHelper.class);
 
@@ -82,6 +83,84 @@ class BatchHelper {
 				con.add(dis);
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void limitToUserAssignedSteps(Conjunction con) {
+		/* show only open Steps or those in use by current user */
+
+		Session session = Helper.getHibernateSession();
+		/* identify current user */
+		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		if (login.getMyBenutzer() == null) {
+			return;
+		}
+		/* init id-list, preset with item 0 */
+		List<Integer> idList = new ArrayList<Integer>();
+		idList.add(Integer.valueOf(0));
+
+		/*
+		 * -------------------------------- hits by user groups
+		 * --------------------------------
+		 */
+		Criteria critGroups = session.createCriteria(Schritt.class);
+
+		critGroups.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+
+		/* only processes which are not templates */
+		Criteria temp = critGroups.createCriteria("prozess", "proz");
+		critGroups.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
+
+		/* only assigned projects */
+		temp.createCriteria("projekt", "proj").createCriteria("benutzer", "projektbenutzer");
+		critGroups.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
+
+		/*
+		 * only steps assigned to the user groups the current user is member of
+		 */
+		critGroups.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
+		critGroups.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
+
+		/* collecting the hits */
+		critGroups.setProjection(Projections.id());
+		for (Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+			idList.add((Integer) it.next());
+		}
+
+		/*
+		 * -------------------------------- Users only
+		 * --------------------------------
+		 */
+		Criteria critUser = session.createCriteria(Schritt.class);
+
+		critUser.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+
+		/* exclude templates */
+		Criteria temp2 = critUser.createCriteria("prozess", "proz");
+		critUser.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
+
+		/* check project assignment */
+		temp2.createCriteria("projekt", "proj").createCriteria("benutzer", "projektbenutzer");
+		critUser.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
+
+		/* only steps where the user is assigned to */
+		critUser.createCriteria("benutzer", "nutzer");
+		critUser.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
+
+		/* collecting the hits */
+		// TODO: Try to avoid Iterators, use for loops instead
+		critUser.setProjection(Projections.id());
+		for (Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+			idList.add((Integer) it.next());
+		}
+
+		/*
+		 * -------------------------------- only taking the hits by restricting
+		 * to the ids --------------------------------
+		 */
+		con.add(Restrictions.in("id", idList));
 	}
 
 	/**
@@ -112,48 +191,7 @@ class BatchHelper {
 		return Integer.parseInt(strArray[1]);
 	}
 
-	/**
-	 * This function analyzes the parameters on a step filter and returns a
-	 * StepFilter enum to direct further processing it reduces the necessity to
-	 * apply some filter keywords
-	 * 
-	 * @param String
-	 *            parameters
-	 * @author Wulf Riebensahm
-	 * @return StepFilter
-	 ****************************************************************************/
-	protected static StepFilter getStepFilter(String parameters) {
 
-		if (parameters.contains("-")) {
-			String[] strArray = parameters.split("-");
-			if (!(strArray.length < 2)) {
-				if (strArray[0].length() == 0) {
-					return StepFilter.max;
-				} else {
-					return StepFilter.range;
-				}
-			} else {
-				return StepFilter.min;
-			}
-		} else if (!parameters.contains("-")) {
-			try {
-				// check if parseInt throws an exception
-				Integer.parseInt(parameters);
-				return StepFilter.exact;
-			} catch (NumberFormatException e) {
-				return StepFilter.name;
-			}
-		}
-		return StepFilter.unknown;
-	}
-
-	/**
-	 * This enum represents the result of parsing the step<modifier>: filter
-	 * Restrictions
-	 ****************************************************************************/
-	protected static enum StepFilter {
-		exact, range, min, max, name, unknown
-	}
 
 	/**
 	 * Filter processes for done steps range
@@ -167,8 +205,8 @@ class BatchHelper {
 	 ****************************************************************************/
 	protected static void filterStepRange(Conjunction con, String parameters, StepStatus inStatus) {
 		con.add(Restrictions.and(
-				Restrictions.and(Restrictions.ge("steps.reihenfolge", FilterHelper.getStepStart(parameters)),
-						Restrictions.le("steps.reihenfolge", FilterHelper.getStepEnd(parameters))),
+				Restrictions.and(Restrictions.ge("steps.reihenfolge", BatchHelper.getStepStart(parameters)),
+						Restrictions.le("steps.reihenfolge", BatchHelper.getStepEnd(parameters))),
 				Restrictions.eq("steps.bearbeitungsstatus", inStatus.getValue().intValue())));
 	}
 
@@ -204,7 +242,7 @@ class BatchHelper {
 		if (con == null) {
 			con = Restrictions.conjunction();
 		}
-		con.add(Restrictions.and(Restrictions.ge("steps.reihenfolge", FilterHelper.getStepStart(parameters)),
+		con.add(Restrictions.and(Restrictions.ge("steps.reihenfolge", BatchHelper.getStepStart(parameters)),
 				Restrictions.eq("steps.bearbeitungsstatus", inStatus.getValue().intValue())));
 	}
 
@@ -222,7 +260,7 @@ class BatchHelper {
 		if (con == null) {
 			con = Restrictions.conjunction();
 		}
-		con.add(Restrictions.and(Restrictions.le("steps.reihenfolge", FilterHelper.getStepEnd(parameters)),
+		con.add(Restrictions.and(Restrictions.le("steps.reihenfolge", BatchHelper.getStepEnd(parameters)),
 				Restrictions.eq("steps.bearbeitungsstatus", inStatus.getValue().intValue())));
 	}
 
@@ -237,7 +275,7 @@ class BatchHelper {
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
 	protected static void filterStepExact(Conjunction con, String parameters, StepStatus inStatus) {
-		con.add(Restrictions.and(Restrictions.eq("steps.reihenfolge", FilterHelper.getStepStart(parameters)),
+		con.add(Restrictions.and(Restrictions.eq("steps.reihenfolge", BatchHelper.getStepStart(parameters)),
 				Restrictions.eq("steps.bearbeitungsstatus", inStatus.getValue().intValue())));
 	}
 
@@ -371,7 +409,7 @@ class BatchHelper {
 	 */
 	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit) {
 		boolean flagSetCritProjects = false;
-	
+
 		// keeping a reference to the passed criteria
 		Criteria inCrit = crit;
 		@SuppressWarnings("unused")
@@ -387,28 +425,23 @@ class BatchHelper {
 		// conjunctions collecting conditions
 		Conjunction conjWorkPiece = null;
 		Conjunction conjProjects = null;
-		Conjunction conjSteps = null;
+//		Conjunction conjSteps = null;
 		Conjunction conjProcesses = null;
 		Conjunction conjTemplates = null;
 		Conjunction conjUsers = null;
 		Conjunction conjStepProperties = null;
 		Conjunction conjProcessProperties = null;
 
-	
-			conjProjects = Restrictions.conjunction();
-			limitToUserAccessRights(conjProjects);
-			// in case nothing is set here it needs to be removed again
-			// happens if user has admin rights
-			if (conjProjects.toString().equals("()")) {
-				conjProjects = null;
-				flagSetCritProjects = true;
-			}
-		
+		conjProjects = Restrictions.conjunction();
+		limitToUserAccessRights(conjProjects);
+		// in case nothing is set here it needs to be removed again
+		// happens if user has admin rights
+		if (conjProjects.toString().equals("()")) {
+			conjProjects = null;
+			flagSetCritProjects = true;
+		}
 
-		
-
-		
-		List<String> aliases = new ArrayList<String>();
+//		List<String> aliases = new ArrayList<String>();
 		// this is needed for evaluating a filter string
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
@@ -417,82 +450,82 @@ class BatchHelper {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
-				FilterHelper.filterProcessProperty(conjProcessProperties, tok);
+				BatchHelper.filterProcessProperty(conjProcessProperties, tok);
 			} else if (tok.startsWith("stepeig:")) {
 				if (conjStepProperties == null) {
 					conjStepProperties = Restrictions.conjunction();
 				}
-				FilterHelper.filterStepProperty(conjStepProperties, tok);
-			}
-
-			// search over steps
-			// original filter, is left here for compatibility reason
-			// doesn't fit into new keyword scheme
-			else if (tok.startsWith("step:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				message = message + createHistoricFilter(conjSteps, tok, false);
-
-			} else if (tok.toLowerCase().startsWith("stepinwork:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				message = message + (createStepFilters(null, conjSteps, tok, 11, StepStatus.INWORK));
-
-				// new keyword stepLocked implemented
-			} else if (tok.toLowerCase().startsWith("steplocked:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				message = message + (createStepFilters(null, conjSteps, tok, 11, StepStatus.LOCKED));
-
-				// new keyword stepOpen implemented
-			} else if (tok.toLowerCase().startsWith("stepopen:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				message = message + (createStepFilters(null, conjSteps, tok, 9, StepStatus.OPEN));
-
-				// new keyword stepDone implemented
-			} else if (tok.toLowerCase().startsWith("stepdone:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				message = message + (createStepFilters(null, conjSteps, tok, 9, StepStatus.DONE));
-
-				// new keyword stepDoneTitle implemented, replacing so far
-				// undocumented
-			} else if (tok.toLowerCase().startsWith("stepdonetitle:")) {
-				if (conjSteps == null) {
-					conjSteps = Restrictions.conjunction();
-				}
-				String stepTitel = tok.substring("stepDoneTitle:".length());
-				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE);
+				BatchHelper.filterStepProperty(conjStepProperties, tok);
+//			}
+//
+//			// search over steps
+//			// original filter, is left here for compatibility reason
+//			// doesn't fit into new keyword scheme
+//			else if (tok.startsWith("step:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				message = message + createHistoricFilter(conjSteps, tok, false);
+//
+//			} else if (tok.toLowerCase().startsWith("stepinwork:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				message = message + (createStepFilters(null, conjSteps, tok, 11, StepStatus.INWORK));
+//
+//				// new keyword stepLocked implemented
+//			} else if (tok.toLowerCase().startsWith("steplocked:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				message = message + (createStepFilters(null, conjSteps, tok, 11, StepStatus.LOCKED));
+//
+//				// new keyword stepOpen implemented
+//			} else if (tok.toLowerCase().startsWith("stepopen:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				message = message + (createStepFilters(null, conjSteps, tok, 9, StepStatus.OPEN));
+//
+//				// new keyword stepDone implemented
+//			} else if (tok.toLowerCase().startsWith("stepdone:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				message = message + (createStepFilters(null, conjSteps, tok, 9, StepStatus.DONE));
+//
+//				// new keyword stepDoneTitle implemented, replacing so far
+//				// undocumented
+//			} else if (tok.toLowerCase().startsWith("stepdonetitle:")) {
+//				if (conjSteps == null) {
+//					conjSteps = Restrictions.conjunction();
+//				}
+//				String stepTitel = tok.substring("stepDoneTitle:".length());
+//				BatchHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE);
 
 			} else if (tok.toLowerCase().startsWith("stepdoneuser:")) {
 				if (conjUsers == null) {
 					conjUsers = Restrictions.conjunction();
 				}
-				FilterHelper.filterStepDoneUser(conjUsers, tok);
+				BatchHelper.filterStepDoneUser(conjUsers, tok);
 
 			} else if (tok.startsWith("proj:")) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
-				FilterHelper.filterProject(conjProjects, tok);
+				BatchHelper.filterProject(conjProjects, tok);
 
 			} else if (tok.startsWith("vorl:")) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
-				FilterHelper.filterScanTemplate(conjTemplates, tok);
+				BatchHelper.filterScanTemplate(conjTemplates, tok);
 
 			} else if (tok.startsWith("idin:")) {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
-				FilterHelper.filterIds(conjProcesses, tok);
+				BatchHelper.filterIds(conjProcesses, tok);
 
 			} else if (tok.startsWith("proc:")) {
 				if (conjProcesses == null) {
@@ -504,7 +537,7 @@ class BatchHelper {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
-				FilterHelper.filterWorkpiece(conjWorkPiece, tok);
+				BatchHelper.filterWorkpiece(conjWorkPiece, tok);
 
 			} else if (tok.startsWith("-")) {
 
@@ -527,194 +560,100 @@ class BatchHelper {
 
 		if (conjProcesses != null) {
 
-					critProcess = crit.createCriteria("prozess", "proc");
-					// crit.createAlias("proc.ProjekteID", "projID");
-				
-				if (conjProcesses != null) {
-					// inCrit.add(conjProcesses);
-					critProcess.add(conjProcesses);
-				}
-		
+			critProcess = crit.createCriteria("prozess", "proc");
+			// crit.createAlias("proc.ProjekteID", "projID");
+
+			if (conjProcesses != null) {
+				// inCrit.add(conjProcesses);
+				critProcess.add(conjProcesses);
+			}
+
 		}
 
 	
-		if (conjSteps != null) {
-			
-				crit.createCriteria("schritte", "steps");
-				crit.add(conjSteps);
-			
-		}
-
 		if (conjTemplates != null) {
-			
-				crit.createCriteria("vorlagen", "vorl");
-				crit.createAlias("vorl.eigenschaften", "vorleig");
-				inCrit.add(conjTemplates);
-			
+
+			crit.createCriteria("vorlagen", "vorl");
+			crit.createAlias("vorl.eigenschaften", "vorleig");
+			inCrit.add(conjTemplates);
+
 		}
 
 		if (conjProcessProperties != null) {
-			
 
-				inCrit.createAlias("eigenschaften", "prozesseig");
-				inCrit.add(conjProcessProperties);
-			
+			inCrit.createAlias("eigenschaften", "prozesseig");
+			inCrit.add(conjProcessProperties);
+
 		}
 
 		if (conjStepProperties != null) {
-		
-				Criteria stepCrit =  session.createCriteria(Prozess.class);
-				stepCrit.createCriteria("schritte", "steps");
-				stepCrit.createAlias("steps.eigenschaften", "schritteig");
-				stepCrit.add(conjStepProperties);
-				stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-				List<Integer> myIds = new ArrayList<Integer>();
-			
-		   	    for (Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(
-						    Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-						   Prozess p =  it.next();
-						   myIds.add(p.getId());
-		   	    }
-		   	    crit.add(Restrictions.in("id", myIds));
-			
+
+			Criteria stepCrit = session.createCriteria(Prozess.class);
+			stepCrit.createCriteria("schritte", "steps");
+			stepCrit.createAlias("steps.eigenschaften", "schritteig");
+			stepCrit.add(conjStepProperties);
+			stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			List<Integer> myIds = new ArrayList<Integer>();
+
+			for (Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+				Prozess p = it.next();
+				myIds.add(p.getId());
+			}
+			crit.add(Restrictions.in("id", myIds));
+
 		}
 
 		if (conjWorkPiece != null) {
-				critProcess.createCriteria("werkstuecke", "werk");
-				critProcess.createAlias("werk.eigenschaften", "werkeig");
-				critProcess.add(conjWorkPiece);
-		
+			critProcess.createCriteria("werkstuecke", "werk");
+			critProcess.createAlias("werk.eigenschaften", "werkeig");
+			critProcess.add(conjWorkPiece);
+
 		}
 		if (conjUsers != null) {
-			
-				critProcess.createCriteria("bearbeitungsbenutzer", "user");
-				critProcess.add(conjUsers);
-	
+
+			critProcess.createCriteria("bearbeitungsbenutzer", "user");
+			critProcess.add(conjUsers);
+
 		}
 		return message;
 	}
 
-	/**
-	 * 
-	 * @param conjSteps
-	 * @param filterPart
-	 * @return
-	 */
-	private static String createHistoricFilter(Conjunction conjSteps, String filterPart, Boolean stepCriteria) {
-		/* filtering by a certain minimal status */
-		Integer stepReihenfolge;
-		String stepTitle = filterPart.substring(5);
-		// if the criteria is build on steps the table need not be identified
-		String tableIdentifier;
-		if (stepCriteria) {
-			tableIdentifier = "";
-		} else {
-			tableIdentifier = "steps.";
-		}
-		try {
-			stepReihenfolge = Integer.parseInt(stepTitle);
-		} catch (NumberFormatException e) {
-			stepTitle = filterPart.substring(5);
-			if (stepTitle.startsWith("-")) {
-				stepTitle = stepTitle.substring(1);
-				conjSteps.add(Restrictions.and(Restrictions.not(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%")),
-						Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
-				return "";
-			} else {
-				conjSteps.add(Restrictions.and(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%"),
-						Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
-				return "";
-			}
-		}
-		conjSteps.add(Restrictions.and(Restrictions.eq(tableIdentifier + "reihenfolge", stepReihenfolge),
-				Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
-		return "";
-	}
+//	/**
+//	 * 
+//	 * @param conjSteps
+//	 * @param filterPart
+//	 * @return
+//	 */
+//	private static String createHistoricFilter(Conjunction conjSteps, String filterPart, Boolean stepCriteria) {
+//		/* filtering by a certain minimal status */
+//		Integer stepReihenfolge;
+//		String stepTitle = filterPart.substring(5);
+//		// if the criteria is build on steps the table need not be identified
+//		String tableIdentifier;
+//		if (stepCriteria) {
+//			tableIdentifier = "";
+//		} else {
+//			tableIdentifier = "steps.";
+//		}
+//		try {
+//			stepReihenfolge = Integer.parseInt(stepTitle);
+//		} catch (NumberFormatException e) {
+//			stepTitle = filterPart.substring(5);
+//			if (stepTitle.startsWith("-")) {
+//				stepTitle = stepTitle.substring(1);
+//				conjSteps.add(Restrictions.and(Restrictions.not(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%")),
+//						Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
+//				return "";
+//			} else {
+//				conjSteps.add(Restrictions.and(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%"),
+//						Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
+//				return "";
+//			}
+//		}
+//		conjSteps.add(Restrictions.and(Restrictions.eq(tableIdentifier + "reihenfolge", stepReihenfolge),
+//				Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
+//		return "";
+//	}
 
-	/************************************************************************************
-	 * @param flagCriticalQuery
-	 * @param crit
-	 * @param parameters
-	 * @return
-	 ************************************************************************************/
-	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart, int filterPartTitleLength,
-			StepStatus inStatus) {
-		// extracting the substring into parameter (filter parameters e.g. 5,
-		// -5,
-		// 5-10, 5- or "Qualitätssicherung")
-		String parameters = filterPart.substring(filterPartTitleLength);
-		String message = "";
-		/*
-		 * -------------------------------- Analyzing the parameters and what
-		 * user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
-		 * Qualitätssicherung ->name) handling the filter according to the
-		 * parameters --------------------------------
-		 */
-
-		switch (FilterHelper.getStepFilter(parameters)) {
-
-		case exact:
-			try {
-				FilterHelper.filterStepExact(con, parameters, inStatus);
-				returnParameters.setStepDone(FilterHelper.getStepStart(parameters));
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				logger.error(e);
-				message = "filterpart '" + filterPart.substring(filterPartTitleLength) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case max:
-			try {
-				FilterHelper.filterStepMax(con, parameters, inStatus);
-				returnParameters.setCriticalQuery();
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPartTitleLength) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case min:
-			try {
-				FilterHelper.filterStepMin(con, parameters, inStatus);
-				returnParameters.setCriticalQuery();
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPartTitleLength) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case name:
-			/* filter for a specific done step by it's name (Titel) */
-			// myObservable.setMessage("Filter 'stepDone:" + parameters
-			// + "' is not yet implemented and will be ignored!");
-			try {
-				FilterHelper.filterStepName(con, parameters, inStatus);
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPartTitleLength) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case range:
-			try {
-				FilterHelper.filterStepRange(con, parameters, inStatus);
-				returnParameters.setCriticalQuery();
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPartTitleLength) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case unknown:
-			message = message + ("Filter '" + filterPart + "' is not known!\n");
-		}
-		return message;
-	}
 
 }
