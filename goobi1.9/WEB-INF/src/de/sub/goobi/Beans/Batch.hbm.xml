@@ -9,7 +9,7 @@
 		<id name="id" column="batchID" type="integer">
 			<generator class="native"/>
 		</id>
-		
+		<property name="stepTitle" column="stepTitle" type="string"/>
 		<many-to-one name="project" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
 		<many-to-one name="user" class="de.sub.goobi.Beans.Benutzer" column="userID"/>
 		

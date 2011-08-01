@@ -39,10 +39,10 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
@@ -85,83 +85,76 @@ public class BatchHelper {
 		}
 	}
 
-	private static void limitToUserAssignedSteps(Conjunction con) {
-		/* show only open Steps or those in use by current user */
-
+	protected static void limitToUserAssignedSteps(Conjunction con) {
+		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		Benutzer aktuellerNutzer = null;
 		Session session = Helper.getHibernateSession();
-		/* identify current user */
-		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null) {
-			return;
+		try {
+			aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
+		} catch (DAOException e) {
+			logger.warn("DAOException", e);
 		}
-		/* init id-list, preset with item 0 */
-		List<Integer> idList = new ArrayList<Integer>();
-		idList.add(Integer.valueOf(0));
+		if (aktuellerNutzer != null) {
+			if (loginForm.getMaximaleBerechtigung() > 1) {
+				List<Integer> idList = new ArrayList<Integer>();
+				idList.add(Integer.valueOf(0));
+				// usergroups only
+				Criteria critBatch = session.createCriteria(Batch.class);
+				Criteria critProj = critBatch.createCriteria("project", "proj");
+				// project
+				critProj.createCriteria("benutzer", "projektbenutzer");
+				critBatch.add(Restrictions.eq("projektbenutzer.id", aktuellerNutzer.getId()));
+				
+				// template
+				Criteria critProc = critBatch.createCriteria("processes", "proz");
+				critBatch.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
 
-		/*
-		 * -------------------------------- hits by user groups
-		 * --------------------------------
-		 */
-		Criteria critGroups = session.createCriteria(Schritt.class);
+				// only open steps
+				Criteria critStep = critProc.createCriteria("schritte", "step");
+				critBatch.add(Restrictions.or(Restrictions.eq("step.bearbeitungsstatus", Integer.valueOf(1)),
+						Restrictions.like("step.bearbeitungsstatus", Integer.valueOf(2))));
+				critBatch.add(Restrictions.eqProperty("step.titel", "stepTitle"));
+				
+				// only usergroups
+				critStep.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
+				critBatch.add(Restrictions.eq("gruppennutzer.id", aktuellerNutzer.getId()));
+				critBatch.setProjection(Projections.id());
+				for (@SuppressWarnings("unchecked")
+				Iterator<Object> it = critBatch.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+					idList.add((Integer) it.next());
+				}
+				
+				
+				
+				//	Users only
 
-		critGroups.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+				Criteria critUser = session.createCriteria(Batch.class);
+				Criteria critUserProj = critUser.createCriteria("project", "project");
+				// project
+				critUserProj.createCriteria("benutzer", "projektbenutzer");
+				critUser.add(Restrictions.eq("projektbenutzer.id", aktuellerNutzer.getId()));
+				
+				// template
+				Criteria critUserProc = critUser.createCriteria("processes", "proz");
+				critUser.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
 
-		/* only processes which are not templates */
-		Criteria temp = critGroups.createCriteria("prozess", "proz");
-		critGroups.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
+				// only open steps
+				Criteria critUserStep = critUserProc.createCriteria("schritte", "step");
+				critUser.add(Restrictions.or(Restrictions.eq("step.bearbeitungsstatus", Integer.valueOf(1)),
+						Restrictions.like("step.bearbeitungsstatus", Integer.valueOf(2))));
+				critUser.add(Restrictions.eqProperty("step.titel", "stepTitle"));
+				critUserStep.createCriteria("benutzer", "nutzer");
+				critUserStep.add(Restrictions.eq("nutzer.id", aktuellerNutzer.getId()));
 
-		/* only assigned projects */
-		temp.createCriteria("projekt", "proj").createCriteria("benutzer", "projektbenutzer");
-		critGroups.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
-
-		/*
-		 * only steps assigned to the user groups the current user is member of
-		 */
-		critGroups.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
-		critGroups.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
-
-		/* collecting the hits */
-		critGroups.setProjection(Projections.id());
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			idList.add((Integer) it.next());
+				
+				critUser.setProjection(Projections.id());
+				for (@SuppressWarnings("unchecked")
+				Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+					idList.add((Integer) it.next());
+				}
+				con.add(Restrictions.in("id", idList));
+			}
 		}
-
-		/*
-		 * -------------------------------- Users only
-		 * --------------------------------
-		 */
-		Criteria critUser = session.createCriteria(Schritt.class);
-
-		critUser.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
-
-		/* exclude templates */
-		Criteria temp2 = critUser.createCriteria("prozess", "proz");
-		critUser.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
-
-		/* check project assignment */
-		temp2.createCriteria("projekt", "proj").createCriteria("benutzer", "projektbenutzer");
-		critUser.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
-
-		/* only steps where the user is assigned to */
-		critUser.createCriteria("benutzer", "nutzer");
-		critUser.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
-
-		/* collecting the hits */
-		// TODO: Try to avoid Iterators, use for loops instead
-		critUser.setProjection(Projections.id());
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			idList.add((Integer) it.next());
-		}
-
-		/*
-		 * -------------------------------- only taking the hits by restricting
-		 * to the ids --------------------------------
-		 */
-		con.add(Restrictions.in("id", idList));
 	}
 
 	/**
@@ -432,13 +425,21 @@ public class BatchHelper {
 		Conjunction conjUsers = null;
 		Conjunction conjStepProperties = null;
 		Conjunction conjProcessProperties = null;
-
+		
+		Conjunction conBatchUsers = Restrictions.conjunction();
+		
+		limitToUserAssignedSteps(conBatchUsers);
+		
 		conjProjects = Restrictions.conjunction();
 		limitToUserAccessRights(conjProjects);
 		// in case nothing is set here it needs to be removed again
 		// happens if user has admin rights
 		if (conjProjects.toString().equals("()")) {
 			conjProjects = null;
+//			flagSetCritProjects = true;
+		}
+		if (conBatchUsers.toString().equals("()")) {
+			conBatchUsers = null;
 //			flagSetCritProjects = true;
 		}
 
@@ -617,6 +618,11 @@ public class BatchHelper {
 			critProcess.add(conjUsers);
 
 		}
+		
+		if (conBatchUsers != null) {
+			inCrit.add(conBatchUsers);
+		}
+		
 		return message;
 	}
 

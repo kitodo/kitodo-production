@@ -14,9 +14,7 @@ import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
-import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 public class Batch implements Serializable, IGoobiEntity {
 
@@ -30,6 +28,7 @@ public class Batch implements Serializable, IGoobiEntity {
 	private List<BatchDisplayItem> stepList = new ArrayList<BatchDisplayItem>();
 	private Set<Prozess> processes;
 	private Benutzer user;
+	private String stepTitle = null;
 
 
 	
@@ -45,10 +44,10 @@ public class Batch implements Serializable, IGoobiEntity {
 	public BatchDisplayItem getCurrentStep() {
 		for (BatchDisplayItem bdi : getStepList()) {
 			if (bdi.getStepStatus().equals(StepStatus.OPEN)|| bdi.getStepStatus().equals(StepStatus.INWORK)){
+				this.stepTitle = bdi.getStepTitle();
 				return bdi;
 			}
 		}
-		// TODO nullpointer in gui?
 		return null;		
 	}
 	
@@ -212,17 +211,14 @@ public class Batch implements Serializable, IGoobiEntity {
 //		
 //	}
 	
-	public static void main(String[] args) throws DAOException {
-		BatchDAO dao = new BatchDAO();
-		Batch b = dao.get(2);
-		for (String s : b.getCurrentStep().getScriptnames())
-		 {
-			System.out.println(s);
-//		for (Prozess p : b.getBatchList()) {
-//			System.out.println(p.getTitel());
+//	public static void main(String[] args) throws DAOException {
+//		BatchDAO dao = new BatchDAO();
+//		Batch b = dao.get(2);
+//		for (String s : b.getCurrentStep().getScriptnames())
+//		 {
+//			System.out.println(s);
 //		}
-		}
-	}
+//	}
 
 
 	public Set<Prozess> getProcesses() {
@@ -248,5 +244,13 @@ public class Batch implements Serializable, IGoobiEntity {
 
 	public void setUser(Benutzer user) {
 		this.user = user;
+	}
+
+	public String getStepTitle() {
+		return this.stepTitle;
+	}
+
+	public void setStepTitle(String stepTitle) {
+		this.stepTitle = stepTitle;
 	}
 }
