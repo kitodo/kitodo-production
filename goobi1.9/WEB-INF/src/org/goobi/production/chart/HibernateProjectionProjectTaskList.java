@@ -54,13 +54,14 @@ import de.sub.goobi.helper.enums.StepStatus;
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {
 	private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
 	
+	@Override
 	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
 		calculate(inProject, myTaskList, countImages, inMax);
 		return myTaskList;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
 
 		Session session = Helper.getHibernateSession();
@@ -120,7 +121,7 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 						myTaskList.add(pt);
 					}
 
-					if (StepStatus.DONE.getValue().equals((Integer)  row[FieldList.stepStatus.getFieldLocation()])) {
+					if (StepStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
 						if (countImages) {
 							pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
 						} else {

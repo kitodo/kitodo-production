@@ -60,6 +60,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
 		this.timeGrouping = timeGrouping;
 	}
@@ -68,7 +69,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();
@@ -90,8 +91,8 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 		}
 
 		// adding time restrictions
-		String natSQL = new SQLStorage(timeFilterFrom, timeFilterTo,
-				timeGrouping, IDlist).getSQL();
+		String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, IDlist).getSQL();
 
 		Session session = Helper.getHibernateSession();
 
@@ -101,6 +102,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 		query.addScalar("storage", Hibernate.DOUBLE);
 		query.addScalar("intervall", Hibernate.STRING);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
@@ -139,7 +141,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 		// a list of DataTables is expected as return Object, even if there is only one 
 		// Data Table as it is here in this implementation
 		dtbl.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+				.getTranslation(this.timeGrouping.getSingularTitle()));
 		allTables.add(dtbl);
 		return allTables;
 	}
@@ -148,6 +150,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 	}
 
@@ -155,6 +158,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
+	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
 		this.timeFilterFrom = timeFrom;
 		this.timeFilterTo = timeTo;
@@ -164,6 +168,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		//		return false;
 		return inRenderer instanceof ChartRenderer;
@@ -173,6 +178,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
+	@Override
 	public String getNumberFormatPattern() {
 		return "#.####";
 	}

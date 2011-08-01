@@ -8,7 +8,6 @@ package de.sub.goobi.helper.servletfilter;
  * http://www.opensource.org/licenses/artistic-license.php
  */
 
-import de.sub.goobi.helper.Helper;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -27,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.LazyInitializationException;
+
+import de.sub.goobi.helper.Helper;
 
 /**
  * Use this filter to synchronize requests to your web application and reduce the maximum load that each individual user can put on your web
@@ -60,21 +61,22 @@ public class RequestControlFilter implements Filter {
 	 *            Configuration from web.xml file
 	 * @throws ServletException
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void init(FilterConfig config) throws ServletException {
 
 		// parse all of the initialization parameters, collecting the exclude
 		// patterns and the max wait parameters
 		Enumeration enumeration = config.getInitParameterNames();
-		excludePatterns = new LinkedList();
-		maxWaitDurations = new HashMap();
+		this.excludePatterns = new LinkedList();
+		this.maxWaitDurations = new HashMap();
 		while (enumeration.hasMoreElements()) {
 			String paramName = (String) enumeration.nextElement();
 			String paramValue = config.getInitParameter(paramName);
 			if (paramName.startsWith("excludePattern")) {
 				// compile the pattern only this once
 				Pattern excludePattern = Pattern.compile(paramValue);
-				excludePatterns.add(excludePattern);
+				this.excludePatterns.add(excludePattern);
 			} else if (paramName.startsWith("maxWaitMilliseconds.")) {
 				// the delay gets parsed from the parameter name
 				String durationString = paramName.substring("maxWaitMilliseconds.".length());
@@ -87,7 +89,7 @@ public class RequestControlFilter implements Filter {
 				// compile the corresponding pattern, and store it with this
 				// delay in the map
 				Pattern waitPattern = Pattern.compile(paramValue);
-				maxWaitDurations.put(waitPattern, duration);
+				this.maxWaitDurations.put(waitPattern, duration);
 			}
 		}
 	}
@@ -95,6 +97,7 @@ public class RequestControlFilter implements Filter {
 	/**
 	 * Called with the filter is no longer needed.
 	 */
+	@Override
 	public void destroy() {
 		// there is nothing to do
 	}
@@ -112,6 +115,7 @@ public class RequestControlFilter implements Filter {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
@@ -270,14 +274,14 @@ public class RequestControlFilter implements Filter {
 	private long getMaxWaitTime(HttpServletRequest request) {
 		// look for a Pattern that matches the request's path
 		String path = request.getRequestURI();
-		Iterator<Pattern> patternIter = maxWaitDurations.keySet().iterator();
+		Iterator<Pattern> patternIter = this.maxWaitDurations.keySet().iterator();
 		while (patternIter.hasNext()) {
-			Pattern p = (Pattern) patternIter.next();
+			Pattern p = patternIter.next();
 			Matcher m = p.matcher(path);
 			if (m.matches()) {
 				// this pattern matches. At most, how long can this request
 				// wait?
-				Long maxDuration = (Long) maxWaitDurations.get(p);
+				Long maxDuration = this.maxWaitDurations.get(p);
 				return maxDuration.longValue();
 			}
 		}
@@ -297,9 +301,9 @@ public class RequestControlFilter implements Filter {
 		// iterate through the exclude patterns. If one matches this path,
 		// then the request is excluded.
 		String path = request.getRequestURI();
-		Iterator<Pattern> patternIter = excludePatterns.iterator();
+		Iterator<Pattern> patternIter = this.excludePatterns.iterator();
 		while (patternIter.hasNext()) {
-			Pattern p = (Pattern) patternIter.next();
+			Pattern p = patternIter.next();
 			Matcher m = p.matcher(path);
 			if (m.matches()) {
 				// at least one of the patterns excludes this request

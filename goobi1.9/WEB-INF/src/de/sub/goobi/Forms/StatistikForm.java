@@ -127,8 +127,8 @@ public class StatistikForm {
 	 * @throws DAOException
 	 */
 	public int getDummy() {
-		n++;
-		return new Random().nextInt(n);
+		this.n++;
+		return new Random().nextInt(this.n);
 	}
 
 	
@@ -155,8 +155,9 @@ public class StatistikForm {
 	private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
 		/* aktuellen Benutzer ermitteln */
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null)
+		if (login.getMyBenutzer() == null) {
 			return 0;
+		}
 
 		try {
 			//	  HibernateUtil.clearSession();
@@ -170,13 +171,16 @@ public class StatistikForm {
 			 * die Treffer der Benutzergruppen
 			 * --------------------------------*/
 			Criteria critGruppen = session.createCriteria(Schritt.class);
-			if (!inOffen && !inBearbeitet)
+			if (!inOffen && !inBearbeitet) {
 				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
 						.valueOf(2))));
-			if (inOffen)
+			}
+			if (inOffen) {
 				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
-			if (inBearbeitet)
+			}
+			if (inBearbeitet) {
 				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critGruppen.createCriteria("prozess", "proz");
@@ -188,7 +192,7 @@ public class StatistikForm {
 
 			/* die Treffer sammeln */
 			for (Iterator<Schritt> iter = critGruppen.list().iterator(); iter.hasNext();) {
-				Schritt step = (Schritt) iter.next();
+				Schritt step = iter.next();
 				trefferListe.add(step.getId());
 			}
 
@@ -196,13 +200,16 @@ public class StatistikForm {
 			 * Treffer der Benutzer
 			 * --------------------------------*/
 			Criteria critBenutzer = session.createCriteria(Schritt.class);
-			if (!inOffen && !inBearbeitet)
+			if (!inOffen && !inBearbeitet) {
 				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
 						.valueOf(2))));
-			if (inOffen)
+			}
+			if (inOffen) {
 				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
-			if (inBearbeitet)
+			}
+			if (inBearbeitet) {
 				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critBenutzer.createCriteria("prozess", "proz");
@@ -213,8 +220,8 @@ public class StatistikForm {
 			critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
-			for (Iterator iter = critBenutzer.list().iterator(); iter.hasNext();) {
-				Schritt step = (Schritt) iter.next();
+			for (Iterator<Schritt> iter = critBenutzer.list().iterator(); iter.hasNext();) {
+				Schritt step = iter.next();
 				trefferListe.add(step.getId());
 			}
 

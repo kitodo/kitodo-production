@@ -5,10 +5,10 @@ package org.goobi.production.flow.statistics.hibernate;
  * mass digitization.
  * 
  * Visit the websites for more information. 
- *   - http://gdz.sub.uni-goettingen.de 
+ *   - http://digiverso.com 
  *   - http://www.intranda.com 
  * 
- * Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ),
+ * Copyright 2011, intranda GmbH, Göttingen
  * 
  * This program is free software; you can redistribute it and/or modify it under the 
  * terms of the GNU General Public License as published by the Free Software Foundation; 
@@ -85,7 +85,6 @@ public class BatchHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void limitToUserAssignedSteps(Conjunction con) {
 		/* show only open Steps or those in use by current user */
 
@@ -124,7 +123,8 @@ public class BatchHelper {
 
 		/* collecting the hits */
 		critGroups.setProjection(Projections.id());
-		for (Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (@SuppressWarnings("unchecked")
+		Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			idList.add((Integer) it.next());
 		}
 
@@ -152,7 +152,8 @@ public class BatchHelper {
 		/* collecting the hits */
 		// TODO: Try to avoid Iterators, use for loops instead
 		critUser.setProjection(Projections.id());
-		for (Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (@SuppressWarnings("unchecked")
+		Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			idList.add((Integer) it.next());
 		}
 
@@ -408,7 +409,7 @@ public class BatchHelper {
 	 *         expression
 	 */
 	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit) {
-		boolean flagSetCritProjects = false;
+//		boolean flagSetCritProjects = false;
 
 		// keeping a reference to the passed criteria
 		Criteria inCrit = crit;
@@ -438,7 +439,7 @@ public class BatchHelper {
 		// happens if user has admin rights
 		if (conjProjects.toString().equals("()")) {
 			conjProjects = null;
-			flagSetCritProjects = true;
+//			flagSetCritProjects = true;
 		}
 
 //		List<String> aliases = new ArrayList<String>();
@@ -595,7 +596,8 @@ public class BatchHelper {
 			stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			List<Integer> myIds = new ArrayList<Integer>();
 
-			for (Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+			for (@SuppressWarnings("unchecked")
+			Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 				Prozess p = it.next();
 				myIds.add(p.getId());
 			}

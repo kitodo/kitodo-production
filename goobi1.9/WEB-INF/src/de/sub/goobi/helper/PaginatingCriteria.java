@@ -54,12 +54,12 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @param clazz
 	 * @param session
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public PaginatingCriteria(Class clazz, Session session) {
-		criteria = session.createCriteria(clazz);
-		clone = session.createCriteria(clazz);
-		clone.setProjection(Projections.rowCount());
-		myClassName = clazz.getName();
+		this.criteria = session.createCriteria(clazz);
+		this.clone = session.createCriteria(clazz);
+		this.clone.setProjection(Projections.rowCount());
+		this.myClassName = clazz.getName();
 	}
 	
 	/**
@@ -77,8 +77,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#getAlias()
 	 * @return String
 	 */
+	@Override
 	public String getAlias() {
-		return criteria.getAlias();
+		return this.criteria.getAlias();
 	}
 
 	/**
@@ -86,8 +87,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @param projection
 	 * @return Criteria
 	 */
+	@Override
 	public Criteria setProjection(Projection projection) {
-		return criteria.setProjection(projection);
+		return this.criteria.setProjection(projection);
 	}
 
 	/**
@@ -96,9 +98,10 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#add(org.hibernate.criterion.Criterion)
 	 */
+	@Override
 	public Criteria add(Criterion criterion) {
-		clone.add(criterion);
-		return criteria.add(criterion);
+		this.clone.add(criterion);
+		return this.criteria.add(criterion);
 	}
 
 	/**
@@ -106,8 +109,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#addOrder(org.hibernate.criterion.Order)
 	 */
+	@Override
 	public Criteria addOrder(Order order) {
-		return criteria.addOrder(order);
+		return this.criteria.addOrder(order);
 	}
 
 	/**
@@ -116,10 +120,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setFetchMode(java.lang.String, org.hibernate.FetchMode)
 	 */
+	@Override
 	public Criteria setFetchMode(String associationPath, FetchMode mode) 
             throws HibernateException {
-		clone.setFetchMode(associationPath, mode);
-		return criteria.setFetchMode(associationPath, mode);
+		this.clone.setFetchMode(associationPath, mode);
+		return this.criteria.setFetchMode(associationPath, mode);
 	}
 
 	/**
@@ -127,8 +132,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setLockMode(org.hibernate.LockMode)
 	 */
+	@Override
 	public Criteria setLockMode(LockMode lockMode) {
-		return criteria.setLockMode(lockMode);
+		return this.criteria.setLockMode(lockMode);
 	}
 
 	/**
@@ -137,9 +143,10 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setLockMode(java.lang.String, org.hibernate.LockMode)
 	 */
+	@Override
 	public Criteria setLockMode(String alias, LockMode lockMode) {
-		clone.setLockMode(alias, lockMode);
-		return criteria.setLockMode(alias, lockMode);
+		this.clone.setLockMode(alias, lockMode);
+		return this.criteria.setLockMode(alias, lockMode);
 	}
 
 	/**
@@ -148,11 +155,12 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Criteria createAlias(String associationPath, String alias) 
             throws HibernateException {
 		return new PaginatingCriteria(
-                    criteria.createAlias(associationPath, alias), 
-                    clone.createAlias(associationPath, alias)
+                    this.criteria.createAlias(associationPath, alias), 
+                    this.clone.createAlias(associationPath, alias)
                 );
 	}
 
@@ -163,10 +171,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public Criteria createAlias(String arg0, String arg1, int arg2) throws HibernateException {
 	    return new PaginatingCriteria(
-                criteria.createAlias(arg0, arg1, arg2), 
-                clone.createAlias(arg0, arg1, arg2)
+                this.criteria.createAlias(arg0, arg1, arg2), 
+                this.clone.createAlias(arg0, arg1, arg2)
             );
 	}
 
@@ -175,10 +184,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String)
 	 */
+	@Override
 	public Criteria createCriteria(String associationPath) throws HibernateException {
 	    return new PaginatingCriteria(
-                criteria.createCriteria(associationPath), 
-                clone.createCriteria(associationPath)
+                this.criteria.createCriteria(associationPath), 
+                this.clone.createCriteria(associationPath)
             );
 	}
 
@@ -188,10 +198,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, int)
 	 */
+	@Override
 	public Criteria createCriteria(String arg0, int arg1) throws HibernateException {
 	    return new PaginatingCriteria(
-                criteria.createCriteria(arg0, arg1), 
-                clone.createCriteria(arg0, arg1)
+                this.criteria.createCriteria(arg0, arg1), 
+                this.clone.createCriteria(arg0, arg1)
             );
 	}
 
@@ -201,10 +212,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Criteria createCriteria(String associationPath, String alias) throws HibernateException {
 	    return new PaginatingCriteria(
-                criteria.createCriteria(associationPath, alias), 
-                clone.createCriteria(associationPath, alias)
+                this.criteria.createCriteria(associationPath, alias), 
+                this.clone.createCriteria(associationPath, alias)
             );
 	}
 
@@ -215,10 +227,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public Criteria createCriteria(String arg0, String arg1, int arg2) throws HibernateException {
 	    return new PaginatingCriteria(
-                criteria.createCriteria(arg0, arg1, arg2), 
-                clone.createCriteria(arg0, arg1, arg2)
+                this.criteria.createCriteria(arg0, arg1, arg2), 
+                this.clone.createCriteria(arg0, arg1, arg2)
             );
 	}
 
@@ -227,10 +240,11 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setResultTransformer(org.hibernate.transform.ResultTransformer)
 	 */
+	@Override
 	public Criteria setResultTransformer(ResultTransformer resultTransformer) {
 	    return new PaginatingCriteria(
-                criteria.setResultTransformer(resultTransformer), 
-                clone.setResultTransformer(resultTransformer)
+                this.criteria.setResultTransformer(resultTransformer), 
+                this.clone.setResultTransformer(resultTransformer)
             );
 	}
 
@@ -239,8 +253,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setMaxResults(int)
 	 */
+	@Override
 	public Criteria setMaxResults(int maxResults) {
-		return criteria.setMaxResults(maxResults);
+		return this.criteria.setMaxResults(maxResults);
 	}
 
 	/**
@@ -248,8 +263,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setFirstResult(int)
 	 */
+	@Override
 	public Criteria setFirstResult(int firstResult) {
-		return criteria.setFirstResult(firstResult);
+		return this.criteria.setFirstResult(firstResult);
 	}
 
 	/**
@@ -257,8 +273,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setFetchSize(int)
 	 */
+	@Override
 	public Criteria setFetchSize(int fetchSize) {
-		return criteria.setFetchSize(fetchSize);
+		return this.criteria.setFetchSize(fetchSize);
 	}
 
 	/**
@@ -266,9 +283,10 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setTimeout(int)
 	 */
+	@Override
 	public Criteria setTimeout(int timeout) {
-		clone.setTimeout(timeout);
-		return criteria.setTimeout(timeout);
+		this.clone.setTimeout(timeout);
+		return this.criteria.setTimeout(timeout);
 	}
 
 	/**
@@ -276,8 +294,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setCacheable(boolean)
 	 */
+	@Override
 	public Criteria setCacheable(boolean cacheable) {
-		return criteria.setCacheable(cacheable);
+		return this.criteria.setCacheable(cacheable);
 	}
 
 	/**
@@ -285,8 +304,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setCacheRegion(java.lang.String)
 	 */
+	@Override
 	public Criteria setCacheRegion(String cacheRegion) {
-		return criteria.setCacheRegion(cacheRegion);
+		return this.criteria.setCacheRegion(cacheRegion);
 	}
 
 	/**
@@ -295,9 +315,10 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setComment(java.lang.String)
 	 */
+	@Override
 	public Criteria setComment(String comment) {
-		clone.setComment(comment);
-		return criteria.setComment(comment);
+		this.clone.setComment(comment);
+		return this.criteria.setComment(comment);
 	}
 
 	/**
@@ -305,8 +326,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setFlushMode(org.hibernate.FlushMode)
 	 */
+	@Override
 	public Criteria setFlushMode(FlushMode flushMode) {
-		return criteria.setFlushMode(flushMode);
+		return this.criteria.setFlushMode(flushMode);
 	}
 
 	/**
@@ -314,34 +336,38 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return Criteria
 	 * @see Criteria#setCacheMode(org.hibernate.CacheMode)
 	 */
+	@Override
 	public Criteria setCacheMode(CacheMode cacheMode) {
-		return criteria.setCacheMode(cacheMode);
+		return this.criteria.setCacheMode(cacheMode);
 	}
 
 	/**
 	 * @return List
 	 * @see Criteria#list()
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("rawtypes")
 	public List list() throws HibernateException {
-		return criteria.list();
+		return this.criteria.list();
 	}
 
 	/**
 	 * @return ScrollableResults
 	 * @see Criteria#scroll()
 	 */
+	@Override
 	public ScrollableResults scroll() throws HibernateException {
-		return criteria.scroll();
+		return this.criteria.scroll();
 	}
 
 	/**
 	 * @return ScrollableResults
 	 * @see Criteria#scroll(org.hibernate.ScrollMode)
 	 */
+	@Override
 	public ScrollableResults scroll(ScrollMode scrollMode) 
             throws HibernateException {
-		return criteria.scroll(scrollMode);
+		return this.criteria.scroll(scrollMode);
 	}
 
 	/**
@@ -349,8 +375,9 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @throws HibernateException
 	 * @see Criteria#uniqueResult()
 	 */
+	@Override
 	public Object uniqueResult() throws HibernateException {
-		return criteria.uniqueResult();
+		return this.criteria.uniqueResult();
 	}
 	
 	/**
@@ -362,7 +389,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#uniqueResult()
 	 */
 	public Integer count() throws HibernateException {
-		return (Integer) clone.uniqueResult();
+		return (Integer) this.clone.uniqueResult();
 	}
 	
 	
@@ -372,7 +399,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return String
 	 */
 	public String getClassName(){
-		return myClassName;
+		return this.myClassName;
 	}
 
 }

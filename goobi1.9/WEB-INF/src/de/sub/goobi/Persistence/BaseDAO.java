@@ -52,7 +52,7 @@ public abstract class BaseDAO implements Serializable {
 	 *            the id of the class type
 	 * @throws DAOException
 	 */
-	@SuppressWarnings( { "unchecked", "deprecation" })
+	@SuppressWarnings( { "deprecation", "rawtypes" })
 	protected void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -80,7 +80,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @return Object may be null if object with ID doesn't exist
 	 * @throws DAOException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	protected Object retrieveObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -99,7 +99,7 @@ public abstract class BaseDAO implements Serializable {
 	/**
 	 * Mein eigener Entwurf für Rückgabe der Objekte
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected List retrieveObjs(String query) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -112,7 +112,7 @@ public abstract class BaseDAO implements Serializable {
 	/**
 	 * Mein eigener Entwurf für maximale Anzahl bei Rückgabe der Objekte
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected List retrieveObjs(String query, int first, int max) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();

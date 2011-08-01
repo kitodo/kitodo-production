@@ -71,7 +71,7 @@ public class StatQuestThroughput implements
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
-		return flagIncludeLoops;
+		return this.flagIncludeLoops;
 	}
 
 	/**
@@ -89,6 +89,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
 		this.timeGrouping = timeGrouping;
 	}
@@ -97,6 +98,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 */
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();
@@ -112,7 +114,7 @@ public class StatQuestThroughput implements
 
 		//gathering IDs from the filter passed by dataSource
 		try {
-			myIDlist = originalFilter.getIDList();
+			this.myIDlist = originalFilter.getIDList();
 		} catch (UnsupportedOperationException e) {
 		}
 
@@ -124,7 +126,7 @@ public class StatQuestThroughput implements
 		// Data Table as it is here in this implementation
 		DataTable tableStepOpenAndDone = getAllSteps(HistoryEventType.stepOpen);
 		tableStepOpenAndDone.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+				.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle()
 				+ " (" + Helper.getTranslation("openSteps") + ")");
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
@@ -134,7 +136,7 @@ public class StatQuestThroughput implements
 
 		tableStepOpenAndDone = getAllSteps(HistoryEventType.stepDone);
 		tableStepOpenAndDone.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+				.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle()
 				+ " (" + Helper.getTranslation("doneSteps") + ")");
 		tableStepOpenAndDone.setShowableInChart(false);
@@ -220,7 +222,7 @@ public class StatQuestThroughput implements
 			
 			//inverting the orientation
 			tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
-			tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(timeGrouping
+			tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping
 					.getSingularTitle()));
 
 			//Dates may not be all in the right order because of it's composition from 2 tables
@@ -236,6 +238,7 @@ public class StatQuestThroughput implements
 	}
 
 	private class DataTableComparator implements Comparator<DataRow>{
+		@Override
 		public int compare(DataRow o1, DataRow o2) {
 			return o1.getName().compareTo(o2.getName());
 		}
@@ -245,6 +248,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 	}
 
@@ -252,6 +256,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
+	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
 		this.timeFilterFrom = timeFrom;
 		this.timeFilterTo = timeTo;
@@ -262,6 +267,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		return inRenderer instanceof ChartRenderer;
 	}
@@ -270,6 +276,7 @@ public class StatQuestThroughput implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
+	@Override
 	public String getNumberFormatPattern() {
 		return "#";
 	}
@@ -283,15 +290,15 @@ public class StatQuestThroughput implements
 
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(timeFilterFrom, timeFilterTo,
-				timeGrouping, myIDlist).getSQL(requestedType, null, true, flagIncludeLoops);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true, this.flagIncludeLoops);
 
 		// this one is supposed to make sure, that all possible headers will be thrown out in the first row to build header columns
-		String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(timeFilterFrom,
-				timeFilterTo, null, myIDlist).getSQL(requestedType, null, true, true);
+		String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom,
+				this.timeFilterTo, null, this.myIDlist).getSQL(requestedType, null, true, true);
 
-		myLogger.trace(natSQL);
-		myLogger.trace(headerFromSQL);
+		this.myLogger.trace(natSQL);
+		this.myLogger.trace(headerFromSQL);
 
 		return buildDataTableFromSQL(natSQL, headerFromSQL);
 	}
@@ -307,10 +314,10 @@ public class StatQuestThroughput implements
 			HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequests(timeFilterFrom, timeFilterTo,
-				timeGrouping, myIDlist).getSQL(requestedType, step, true, flagIncludeLoops);
+		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).getSQL(requestedType, step, true, this.flagIncludeLoops);
 
-		myLogger.trace(natSQL);
+		this.myLogger.trace(natSQL);
 
 		return buildDataTableFromSQL(natSQL, null);
 	}
@@ -325,7 +332,7 @@ public class StatQuestThroughput implements
 	 * 				read in first in order to get a certain sorting 
 	 * @return DataTable
 	 */
-	@SuppressWarnings("unchecked")
+
 	//TODO Remove redundant code
 	private DataTable buildDataTableFromSQL(String natSQL, String headerFromSQL) {
 		Session session = Helper.getHibernateSession();
@@ -342,6 +349,7 @@ public class StatQuestThroughput implements
 			headerQuery.addScalar("stepOrder", Hibernate.DOUBLE);
 			headerQuery.addScalar("intervall", Hibernate.STRING);
 
+			@SuppressWarnings("rawtypes")
 			List headerList = headerQuery.list();
 			for (Object obj : headerList) {
 				Object[] objArr = (Object[]) obj;
@@ -371,6 +379,7 @@ public class StatQuestThroughput implements
 		query.addScalar("stepOrder", Hibernate.DOUBLE);
 		query.addScalar("intervall", Hibernate.STRING);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		DataTable dtbl = new DataTable("");
@@ -439,12 +448,11 @@ public class StatQuestThroughput implements
 	 * 
 	 * @param requestedType
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer getMaxStepCount(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(timeFilterFrom, timeFilterTo,
-				timeGrouping, myIDlist).SQLMaxStepOrder(requestedType);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).SQLMaxStepOrder(requestedType);
 
 		Session session = Helper.getHibernateSession();
 		SQLQuery query = session.createSQLQuery(natSQL);
@@ -452,6 +460,7 @@ public class StatQuestThroughput implements
 		//needs to be there otherwise an exception is thrown
 		query.addScalar("maxStep", Hibernate.DOUBLE);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		if (list != null && list.size() > 0 && list.get(0) != null) {
@@ -467,12 +476,11 @@ public class StatQuestThroughput implements
 	 * 
 	 * @param requestedType
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer getMinStepCount(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(timeFilterFrom, timeFilterTo,
-				timeGrouping, myIDlist).SQLMinStepOrder(requestedType);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).SQLMinStepOrder(requestedType);
 
 		Session session = Helper.getHibernateSession();
 		SQLQuery query = session.createSQLQuery(natSQL);
@@ -480,6 +488,7 @@ public class StatQuestThroughput implements
 		//needs to be there otherwise an exception is thrown
 		query.addScalar("minStep", Hibernate.DOUBLE);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		if (list != null && list.size() > 0 && list.get(0) != null) {

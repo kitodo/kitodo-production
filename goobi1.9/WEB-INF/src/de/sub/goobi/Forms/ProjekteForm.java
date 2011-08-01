@@ -80,6 +80,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	// making sure its cleaned up
+	@Override
 	public void finalize() {
 		this.Cancel();
 	}
@@ -106,11 +107,11 @@ public class ProjekteForm extends BasisForm {
 	 */
 	private void commitFileGroups() {
 		// resetting the List of new fileGroups
-		newFileGroups = new ArrayList<Integer>();
+		this.newFileGroups = new ArrayList<Integer>();
 		// deleting the fileGroups marked for deletion
-		deleteFileGroups(deletedFileGroups);
+		deleteFileGroups(this.deletedFileGroups);
 		// resetting the List of fileGroups marked for deletion
-		deletedFileGroups = new ArrayList<Integer>();
+		this.deletedFileGroups = new ArrayList<Integer>();
 	}
 
 	/**
@@ -120,19 +121,19 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public String Cancel() {
 		// flushing new fileGroups
-		deleteFileGroups(newFileGroups);
+		deleteFileGroups(this.newFileGroups);
 		// resetting the List of new fileGroups
-		newFileGroups = new ArrayList<Integer>();
+		this.newFileGroups = new ArrayList<Integer>();
 		// resetting the List of fileGroups marked for deletion
-		deletedFileGroups = new ArrayList<Integer>();
-		projectProgressImage = null;
-		projectStatImages = null;
-		projectStatVolumes = null;
+		this.deletedFileGroups = new ArrayList<Integer>();
+		this.projectProgressImage = null;
+		this.projectStatImages = null;
+		this.projectStatVolumes = null;
 		return "ProjekteAlle";
 	}
 
 	public String Neu() {
-		myProjekt = new Projekt();
+		this.myProjekt = new Projekt();
 		return "ProjekteBearbeiten";
 	}
 
@@ -140,7 +141,7 @@ public class ProjekteForm extends BasisForm {
 		// call this to make saving and deleting permanent
 		this.commitFileGroups();
 		try {
-			dao.save(myProjekt);
+			this.dao.save(this.myProjekt);
 			return "ProjekteAlle";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -154,7 +155,7 @@ public class ProjekteForm extends BasisForm {
 		myLogger.trace("Apply wird aufgerufen...");
 		this.commitFileGroups();
 		try {
-			dao.save(myProjekt);
+			this.dao.save(this.myProjekt);
 			return "";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -165,7 +166,7 @@ public class ProjekteForm extends BasisForm {
 
 	public String Loeschen() {
 		try {
-			dao.remove(myProjekt);
+			this.dao.remove(this.myProjekt);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete", e.getMessage());
 			myLogger.error(e.getMessage());
@@ -182,7 +183,7 @@ public class ProjekteForm extends BasisForm {
 			// session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Projekt.class);
 			crit.addOrder(Order.asc("titel"));
-			page = new Page(crit, 0);
+			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("could not read", he.getMessage());
 			myLogger.error(he.getMessage());
@@ -193,33 +194,35 @@ public class ProjekteForm extends BasisForm {
 
 	public String FilterKeinMitZurueck() {
 		FilterKein();
-		return zurueck;
+		return this.zurueck;
 	}
 
 	public String filegroupAdd() {
-		myFilegroup = new ProjectFileGroup();
-		myFilegroup.setProject(myProjekt);
-		newFileGroups.add(myFilegroup.getId());
-		return zurueck;
+		this.myFilegroup = new ProjectFileGroup();
+		this.myFilegroup.setProject(this.myProjekt);
+		this.newFileGroups.add(this.myFilegroup.getId());
+		return this.zurueck;
 	}
 
 	public String filegroupSave() {
-		if (myProjekt.getFilegroups() == null)
-			myProjekt.setFilegroups(new HashSet<ProjectFileGroup>());
-		if (!myProjekt.getFilegroups().contains(myFilegroup))
-			myProjekt.getFilegroups().add(myFilegroup);
+		if (this.myProjekt.getFilegroups() == null) {
+			this.myProjekt.setFilegroups(new HashSet<ProjectFileGroup>());
+		}
+		if (!this.myProjekt.getFilegroups().contains(this.myFilegroup)) {
+			this.myProjekt.getFilegroups().add(this.myFilegroup);
+		}
 
 		return "jeniaClosePopupFrameWithAction";
 	}
 
 	public String filegroupEdit() {
-		return zurueck;
+		return this.zurueck;
 	}
 
 	public String filegroupDelete() {
 		// to be deleted fileGroups ids are listed
 		// and deleted after a commit
-		deletedFileGroups.add(myFilegroup.getId());
+		this.deletedFileGroups.add(this.myFilegroup.getId());
 		// original line
 		// myProjekt.getFilegroups().remove(myFilegroup);
 		return "ProjekteBearbeiten";
@@ -230,7 +233,7 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	public Projekt getMyProjekt() {
-		return myProjekt;
+		return this.myProjekt;
 	}
 
 	public void setMyProjekt(Projekt inProjekt) {
@@ -246,9 +249,9 @@ public class ProjekteForm extends BasisForm {
 	 * @return modified ArrayList
 	 */
 	public ArrayList<ProjectFileGroup> getFileGroupList() {
-		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(myProjekt.getFilegroupsList());
+		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(this.myProjekt.getFilegroupsList());
 
-		for (Integer id : deletedFileGroups) {
+		for (Integer id : this.deletedFileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
 				if (f.getId() == id) {
 					filteredFileGroupList.remove(f);
@@ -260,7 +263,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	public ProjectFileGroup getMyFilegroup() {
-		return myFilegroup;
+		return this.myFilegroup;
 	}
 
 	public void setMyFilegroup(ProjectFileGroup myFilegroup) {
@@ -273,8 +276,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	public StatisticsManager getStatisticsManager1() {
-		if (statisticsManager1 == null) {
-			statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(myProjekt.getId()), FacesContext
+		if (this.statisticsManager1 == null) {
+			this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(this.myProjekt.getId()), FacesContext
 					.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager1;
@@ -285,8 +288,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return instance of {@link StatisticsMode.THROUGHPUT} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager2() {
-		if (statisticsManager2 == null) {
-			statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(myProjekt.getId()), FacesContext
+		if (this.statisticsManager2 == null) {
+			this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(this.myProjekt.getId()), FacesContext
 					.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager2;
@@ -297,8 +300,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return instance of {@link StatisticsMode.CORRECTIONS} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager3() {
-		if (statisticsManager3 == null) {
-			statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(myProjekt.getId()), FacesContext
+		if (this.statisticsManager3 == null) {
+			this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(this.myProjekt.getId()), FacesContext
 					.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager3;
@@ -309,8 +312,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return instance of {@link StatisticsMode.STORAGE} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager4() {
-		if (statisticsManager4 == null) {
-			statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(myProjekt.getId()), FacesContext
+		if (this.statisticsManager4 == null) {
+			this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(this.myProjekt.getId()), FacesContext
 					.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager4;
@@ -320,9 +323,9 @@ public class ProjekteForm extends BasisForm {
 	 * generates values for count of volumes and images for statistics
 	 */
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void GenerateValuesForStatistics() {
-		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", myProjekt));
+		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", this.myProjekt));
 		ProjectionList pl = Projections.projectionList();
 		pl.add(Projections.sum("sortHelperImages"));
 		pl.add(Projections.count("sortHelperImages"));
@@ -335,8 +338,8 @@ public class ProjekteForm extends BasisForm {
 			images = (Integer) row[0];
 			volumes = (Integer) row[1];
 		}
-		myProjekt.setNumberOfPages(images);
-		myProjekt.setNumberOfVolumes(volumes);
+		this.myProjekt.setNumberOfPages(images);
+		this.myProjekt.setNumberOfVolumes(volumes);
 	}
 
 	/**
@@ -345,8 +348,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return Integer of calculation
 	 */
 	public Integer getCalcImagesPerVolume() {
-		int volumes = myProjekt.getNumberOfVolumes();
-		int pages = myProjekt.getNumberOfPages();
+		int volumes = this.myProjekt.getNumberOfVolumes();
+		int pages = this.myProjekt.getNumberOfPages();
 		if (volumes == 0) {
 			return pages;
 		}
@@ -360,8 +363,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return String of duration
 	 */
 	public Integer getCalcDuration() {
-		DateTime start = new DateTime(myProjekt.getStartDate().getTime());
-		DateTime end = new DateTime(myProjekt.getEndDate().getTime());
+		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
+		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 		return Months.monthsBetween(start, end).getMonths();
 	}
 
@@ -372,13 +375,13 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	public Integer getCalcThroughputPerYear() {
-		DateTime start = new DateTime(myProjekt.getStartDate().getTime());
-		DateTime end = new DateTime(myProjekt.getEndDate().getTime());
+		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
+		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 		int years = Years.yearsBetween(start, end).getYears();
 		if (years < 1) {
 			years = 1;
 		}
-		return myProjekt.getNumberOfVolumes() / years;
+		return this.myProjekt.getNumberOfVolumes() / years;
 	}
 
 	/**
@@ -387,13 +390,13 @@ public class ProjekteForm extends BasisForm {
 	 * @return calculation
 	 */
 	public Integer getCalcThroughputPagesPerYear() {
-		DateTime start = new DateTime(myProjekt.getStartDate().getTime());
-		DateTime end = new DateTime(myProjekt.getEndDate().getTime());
+		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
+		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 		int years = Years.yearsBetween(start, end).getYears();
 		if (years < 1) {
 			years = 1;
 		}
-		return myProjekt.getNumberOfPages() / years;
+		return this.myProjekt.getNumberOfPages() / years;
 	}
 
 	/**
@@ -407,7 +410,7 @@ public class ProjekteForm extends BasisForm {
 		if (month < 1) {
 			month = 1;
 		}
-		return myProjekt.getNumberOfVolumes() * 3 / month;
+		return this.myProjekt.getNumberOfVolumes() * 3 / month;
 	}
 
 	/**
@@ -420,7 +423,7 @@ public class ProjekteForm extends BasisForm {
 		if (month < 1) {
 			month = 1;
 		}
-		return myProjekt.getNumberOfPages() * 3 / month;
+		return this.myProjekt.getNumberOfPages() * 3 / month;
 	}
 
 	/**
@@ -433,7 +436,7 @@ public class ProjekteForm extends BasisForm {
 		if (month < 1) {
 			month = 1;
 		}
-		return myProjekt.getNumberOfVolumes() / month;
+		return this.myProjekt.getNumberOfVolumes() / month;
 	}
 
 	/**
@@ -446,12 +449,12 @@ public class ProjekteForm extends BasisForm {
 		if (month < 1) {
 			month = 1;
 		}
-		return myProjekt.getNumberOfPages() / month;
+		return this.myProjekt.getNumberOfPages() / month;
 	}
 
 	private Double getThroughputPerDay() {
-		DateTime start = new DateTime(myProjekt.getStartDate().getTime());
-		DateTime end = new DateTime(myProjekt.getEndDate().getTime());
+		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
+		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 		Weeks weeks = Weeks.weeksBetween(start, end);
 		myLogger.trace(weeks.getWeeks());
 		int days = (weeks.getWeeks() * 5);
@@ -459,7 +462,7 @@ public class ProjekteForm extends BasisForm {
 		if (days < 1) {
 			days = 1;
 		}
-		double back = (double) myProjekt.getNumberOfVolumes() / (double) days;
+		double back = (double) this.myProjekt.getNumberOfVolumes() / (double) days;
 		return back;
 	}
 
@@ -480,15 +483,15 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	private Double getThroughputPagesPerDay() {
-		DateTime start = new DateTime(myProjekt.getStartDate().getTime());
-		DateTime end = new DateTime(myProjekt.getEndDate().getTime());
+		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
+		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 
 		Weeks weeks = Weeks.weeksBetween(start, end);
 		int days = (weeks.getWeeks() * 5);
 		if (days < 1) {
 			days = 1;
 		}
-		double back = (double) myProjekt.getNumberOfPages() / (double) days;
+		double back = (double) this.myProjekt.getNumberOfPages() / (double) days;
 		return back;
 	}
 
@@ -506,17 +509,17 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 
-			if (projectProgressData == null) { // initialize datasource with default selection
+			if (this.projectProgressData == null) { // initialize datasource with default selection
 				this.projectProgressData = new StatQuestProjectProgressData();
 			}
-			synchronized (projectProgressData) {
+			synchronized (this.projectProgressData) {
 			try {
 
 				this.projectProgressData.setCommonWorkflow(this.myProjekt.getWorkFlow());
 				this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
 				this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
 				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt().getEndDate());
-				this.projectProgressData.setDataSource(new UserProjectFilter(myProjekt.getId()));
+				this.projectProgressData.setDataSource(new UserProjectFilter(this.myProjekt.getId()));
 
 				if (this.projectProgressImage == null) {
 					this.projectProgressImage = "";
@@ -534,10 +537,10 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	public Boolean getIsProgressCalculated() {
-		if (projectProgressData == null) {
+		if (this.projectProgressData == null) {
 			return false;
 		}
-		return projectProgressData.isDataComplete();
+		return this.projectProgressData.isDataComplete();
 	}
 
 	/**
@@ -580,11 +583,11 @@ public class ProjekteForm extends BasisForm {
 
 	public String getProjectStatImages() throws IOException, InterruptedException {
 		// return getProjectStatVolumes();
-		if (projectStatImages == null) {
-			projectStatImages = System.currentTimeMillis() + "images.png";
-			calcProjectStats(projectStatImages, true);
+		if (this.projectStatImages == null) {
+			this.projectStatImages = System.currentTimeMillis() + "images.png";
+			calcProjectStats(this.projectStatImages, true);
 		}
-		return projectStatImages;
+		return this.projectStatImages;
 	}
 
 	/**
@@ -595,30 +598,30 @@ public class ProjekteForm extends BasisForm {
 	 */
 
 	public String getProjectStatVolumes() throws IOException, InterruptedException {
-		if (projectStatVolumes == null) {
-			projectStatVolumes = System.currentTimeMillis() + "volumes.png";
-			calcProjectStats(projectStatVolumes, false);
+		if (this.projectStatVolumes == null) {
+			this.projectStatVolumes = System.currentTimeMillis() + "volumes.png";
+			calcProjectStats(this.projectStatVolumes, false);
 		}
-		return projectStatVolumes;
+		return this.projectStatVolumes;
 	}
 
 	private synchronized void calcProjectStats(String inName, Boolean countImages) throws IOException {
 		int width = 750;
-		Date start = myProjekt.getStartDate();
-		Date end = myProjekt.getEndDate();
+		Date start = this.myProjekt.getStartDate();
+		Date end = this.myProjekt.getEndDate();
 
 		Integer inMax;
 		if (countImages) {
-			inMax = myProjekt.getNumberOfPages();
+			inMax = this.myProjekt.getNumberOfPages();
 		} else {
-			inMax = myProjekt.getNumberOfVolumes();
+			inMax = this.myProjekt.getNumberOfVolumes();
 		}
 
-		ProjectStatusDataTable pData = new ProjectStatusDataTable(myProjekt.getTitel(), start, end);
+		ProjectStatusDataTable pData = new ProjectStatusDataTable(this.myProjekt.getTitel(), start, end);
 
 		IProvideProjectTaskList ptl = new WorkflowProjectTaskList();
 
-		List<? extends IProjectTask> tasklist = ptl.calculateProjectTasks(myProjekt, countImages, inMax);
+		List<? extends IProjectTask> tasklist = ptl.calculateProjectTasks(this.myProjekt, countImages, inMax);
 		for (IProjectTask pt : tasklist) {
 			pData.addTask(pt);
 		}
@@ -646,7 +649,7 @@ public class ProjekteForm extends BasisForm {
 	}
 	
 	public StatisticsRenderingElement getMyCurrentTable() {
-		return myCurrentTable;
+		return this.myCurrentTable;
 	}
 	
 	public void CreateExcel() {
@@ -667,7 +670,7 @@ public class ProjekteForm extends BasisForm {
 				response.setHeader("Content-Disposition",
 						"attachment;filename=\"export.xls\"");
 				ServletOutputStream out = response.getOutputStream();
-				HSSFWorkbook wb = (HSSFWorkbook) myCurrentTable.getExcelRenderer().getRendering();
+				HSSFWorkbook wb = (HSSFWorkbook) this.myCurrentTable.getExcelRenderer().getRendering();
 				wb.write(out);
 				out.flush();
 				facesContext.responseComplete();

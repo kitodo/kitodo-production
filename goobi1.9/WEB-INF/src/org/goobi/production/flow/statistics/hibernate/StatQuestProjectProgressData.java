@@ -80,7 +80,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
-		return flagIncludeLoops;
+		return this.flagIncludeLoops;
 	}
 	
 	public String getErrMessage(){
@@ -95,15 +95,15 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	public Boolean isDataComplete(){
 //		this.resetErrorList();
 		Boolean error = false;
-		if (timeFilterFrom==null ){
+		if (this.timeFilterFrom==null ){
 			logger.debug("time from is not set");
 			error = true;
 		}
-		if (timeFilterTo==null ){
+		if (this.timeFilterTo==null ){
 			logger.debug("time to is not set");
 			error = true;
 		}
-		if (requiredDailyOutput==null ){
+		if (this.requiredDailyOutput==null ){
 			logger.debug("daily output is not set");
 			error = true;
 		}
@@ -111,7 +111,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 			logger.debug("terminating step is not set");
 			error = true;
 		}
-		if (myIDlist ==null ){
+		if (this.myIDlist ==null ){
 			logger.debug("processes filter is not set");
 			error = true;
 		}
@@ -199,7 +199,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	public void setDataSource(IDataSource inSource){
 		//gathering IDs from the filter passed by dataSource
 		try {
-			myIDlist = ((IEvaluableFilter) inSource).getIDList();
+			this.myIDlist = ((IEvaluableFilter) inSource).getIDList();
 		} catch (UnsupportedOperationException e) {
 			logger.warn(e);
 		}
@@ -217,7 +217,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	
 	public DataRow getRefRow(){
 		if (this.flagReferenceCurve){
-			return this.referenceCurve(this.getDataRow(terminatingStep));
+			return this.referenceCurve(this.getDataRow(this.terminatingStep));
 		}else{
 			return this.requiredOutput();
 		}
@@ -255,7 +255,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		DataTable tableStepCompleted = getAllSteps(HistoryEventType.stepDone);
 
-		tableStepCompleted.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
+		tableStepCompleted.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
 
 		// show in line graph
@@ -273,6 +273,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 	}
 
@@ -280,6 +281,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
+	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
 		this.timeFilterFrom = timeFrom;
 		this.timeFilterTo = timeTo;
@@ -290,6 +292,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		return inRenderer instanceof ChartRenderer;
 	}
@@ -298,6 +301,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
+	@Override
 	public String getNumberFormatPattern() {
 		return "#";
 	}
@@ -310,8 +314,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestByName(timeFilterFrom, timeFilterTo, timeGrouping, myIDlist).getSQL(requestedType, null, true,
-				flagIncludeLoops);
+		String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true,
+				this.flagIncludeLoops);
 
 		return buildDataTableFromSQL(natSQL);
 	}
@@ -326,7 +330,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * 				read in first in order to get a certain sorting 
 	 * @return DataTable
 	 */
-	@SuppressWarnings("unchecked")
 	private DataTable buildDataTableFromSQL(String natSQL) {
 		Session session = Helper.getHibernateSession();
 
@@ -349,6 +352,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		query.addScalar("stepName", Hibernate.STRING);
 		query.addScalar("intervall", Hibernate.STRING);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		DataTable dtbl = new DataTable("");
@@ -449,7 +453,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 	
 	public void setSelectedSteps(List<String> inSteps){
-		isDirty=true;
+		this.isDirty=true;
 		if (inSteps.contains(Helper.getTranslation("selectAll"))) {
 			this.selectedSteps = new ArrayList<String>();
 			for (StepInformation steps : this.commonWorkFlow) {
@@ -494,7 +498,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	public DataTable getSelectedTable(){
 		getDataTable();
-		DataTable returnTable = new DataTable(terminatingStep);
+		DataTable returnTable = new DataTable(this.terminatingStep);
 		returnTable.addDataRow(this.getRefRow());
 		for (String stepTitle: this.selectedSteps){
 			returnTable.addDataRow(this.getDataRow(stepTitle));
@@ -503,6 +507,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return returnTable;
 	}
 
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 		return null;
 	}
@@ -519,6 +524,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeUnit) {
 		this.isDirty = true;
 		this.timeGrouping = timeUnit;

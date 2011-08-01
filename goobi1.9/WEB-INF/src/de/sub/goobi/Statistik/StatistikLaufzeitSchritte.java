@@ -12,8 +12,8 @@ import de.sub.goobi.Beans.Schritt;
 
 public class StatistikLaufzeitSchritte {
 
-	@SuppressWarnings("unchecked")
-	public static Dataset getDiagramm(List inProzesse) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Dataset getDiagramm( List inProzesse) {
 		DefaultCategoryDataset categoryDataSet = new DefaultCategoryDataset();
 		for (Prozess proz : (List<Prozess>) inProzesse) {
 			for (Schritt step : proz.getSchritteList()) {
@@ -40,8 +40,9 @@ public class StatistikLaufzeitSchritte {
 			
 			int summe = differenz.get(Calendar.DAY_OF_YEAR);
 			return summe;
-		} else
+		} else {
 			return 1;
+		}
 	}
 
 }

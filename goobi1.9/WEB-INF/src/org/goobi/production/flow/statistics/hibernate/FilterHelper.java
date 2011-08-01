@@ -32,7 +32,6 @@ import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.IlikeExpression;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
-import de.sub.goobi.Forms.LoginForm;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
@@ -45,6 +44,7 @@ import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
@@ -93,8 +93,9 @@ class FilterHelper {
 		Session session = Helper.getHibernateSession();
 		/* identify current user */
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null)
+		if (login.getMyBenutzer() == null) {
 			return;
+		}
 		/* init id-list, preset with item 0 */
 		List<Integer> idList = new ArrayList<Integer>();
 		idList.add(Integer.valueOf(0));
@@ -105,14 +106,15 @@ class FilterHelper {
 		 */
 		Criteria critGroups = session.createCriteria(Schritt.class);
 
-		if (stepOpenOnly)
+		if (stepOpenOnly) {
 			critGroups.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
-		else if (userAssignedStepsOnly) {
+		} else if (userAssignedStepsOnly) {
 			critGroups.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
 			critGroups.add(Restrictions.eq("bearbeitungsbenutzer.id", login.getMyBenutzer().getId()));
-		} else
+		} else {
 			critGroups.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
 					Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+		}
 
 		/* only processes which are not templates */
 		Criteria temp = critGroups.createCriteria("prozess", "proz");
@@ -141,14 +143,15 @@ class FilterHelper {
 		 */
 		Criteria critUser = session.createCriteria(Schritt.class);
 
-		if (stepOpenOnly)
+		if (stepOpenOnly) {
 			critUser.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
-		else if (userAssignedStepsOnly) {
+		} else if (userAssignedStepsOnly) {
 			critUser.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
 			critUser.add(Restrictions.eq("bearbeitungsbenutzer.id", login.getMyBenutzer().getId()));
-		} else
+		} else {
 			critUser.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
 					Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+		}
 
 		/* exclude templates */
 		Criteria temp2 = critUser.createCriteria("prozess", "proz");
@@ -537,7 +540,7 @@ class FilterHelper {
 				conjProcesses.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
 			}
 		}
-		List<String> aliases = new ArrayList<String>();
+//		List<String> aliases = new ArrayList<String>();
 		// this is needed for evaluating a filter string
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
@@ -728,7 +731,8 @@ class FilterHelper {
 				stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 				List<Integer> myIds = new ArrayList<Integer>();
 			
-		   	    for (Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(
+		   	    for (@SuppressWarnings("unchecked")
+				Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(
 						    Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 						   Prozess p =  it.next();
 						   myIds.add(p.getId());

@@ -20,6 +20,7 @@ import de.sub.goobi.Forms.LoginForm;
 public class Page implements Serializable { //implements Iterator
 	private static final long serialVersionUID = -290320409344472392L;
 	//TODO: Use generics
+	@SuppressWarnings("rawtypes")
 	private List results;
 	private int pageSize;
 	private int page;
@@ -127,6 +128,7 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	//TODO: Use generics
+	@SuppressWarnings("rawtypes")
 	public List getList() {
 		/*
 		 * Since we retrieved one more than the specified pageSize when the
@@ -139,6 +141,7 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	//TODO: Use generics
+	@SuppressWarnings("rawtypes")
 	public List getCompleteList() {
 		return this.criteria.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 	}
@@ -185,6 +188,7 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	//TODO: Use generics
+	@SuppressWarnings("rawtypes")
 	public List getListReload() {
 		/*
 		 * Since we retrieved one more than the specified pageSize when the

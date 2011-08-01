@@ -85,8 +85,8 @@ public class FireburnDataImport {
 
 	public FireburnDataImport() {
 		try {
-			connection = connectToDB();
-			stmt = connection.createStatement();
+			this.connection = connectToDB();
+			this.stmt = this.connection.createStatement();
 		} catch (ClassNotFoundException e) {
 			logger.error(e);
 		} catch (SQLException e) {
@@ -271,7 +271,7 @@ public class FireburnDataImport {
 	private String getProcessId(String title) throws ClassNotFoundException, SQLException {
 		String retString = null;
 		String sqlstring = "SELECT ProzesseID FROM prozesse WHERE Titel='" + title + "'";
-		ResultSet rs = stmt.executeQuery(sqlstring);
+		ResultSet rs = this.stmt.executeQuery(sqlstring);
 		while (rs.next()) {
 			retString = rs.getString("ProzesseID");
 		}
@@ -293,7 +293,7 @@ public class FireburnDataImport {
 		if (weId != null) {
 			// search prozessID
 			String sql = "SELECT ProzesseID FROM werkstuecke WHERE WerkstueckeID='" + weId + "';";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = this.stmt.executeQuery(sql);
 			String processId = null;
 			if (rs.next()) {
 				processId = rs.getString("prozesseID");
@@ -318,7 +318,7 @@ public class FireburnDataImport {
 		String vorlagenId = getVorlagenId(p);
 		if (vorlagenId != null) {
 			String sql = "SELECT ProzesseID FROM vorlagen WHERE VorlagenID='" + vorlagenId + "';";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = this.stmt.executeQuery(sql);
 			String processId = null;
 			if (rs.next()) {
 				processId = rs.getString("prozesseID");
@@ -356,7 +356,7 @@ public class FireburnDataImport {
 		// Search with short ppn
 		// -----------------------------------------------------------------------
 		String sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + ppn + "';";
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = this.stmt.executeQuery(sql);
 
 		if (rs.next()) {
 			String weId = rs.getString("werkstueckeID");
@@ -367,7 +367,7 @@ public class FireburnDataImport {
 		// -----------------------------------------------------------------------
 		else {
 			sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + fullppn + "';";
-			rs = stmt.executeQuery(sql);
+			rs = this.stmt.executeQuery(sql);
 			if (rs.next()) {
 				String weId = rs.getString("werkstueckeID");
 				logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
@@ -403,7 +403,7 @@ public class FireburnDataImport {
 		// Search with short ppn
 		// -----------------------------------------------------------------------
 		String sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + ppn + "';";
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = this.stmt.executeQuery(sql);
 		if (rs.next()) {
 			String vorlagenId = rs.getString("vorlagenID");
 			logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
@@ -413,7 +413,7 @@ public class FireburnDataImport {
 		// -----------------------------------------------------------------------
 		else {
 			sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + fullppn + "';";
-			rs = stmt.executeQuery(sql);
+			rs = this.stmt.executeQuery(sql);
 			if (rs.next()) {
 				String vorlagenId = rs.getString("vorlagenID");
 				logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
@@ -445,7 +445,7 @@ public class FireburnDataImport {
 
 		+ "('" + processId + "','" + size + "','" + p.size + "',false,'5',false,'" + p.date + "')" + ";";
 		// Execute the insert statement
-		stmt.executeUpdate(sql);
+		this.stmt.executeUpdate(sql);
 		// logger.debug(sql);
 		logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
 
@@ -461,7 +461,7 @@ public class FireburnDataImport {
 	 * @throws JDOMException
 	 * @throws ParseException
 	 *****************************************************************************************/
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private ArrayList<FireburnProperty> loadDataFromXml(String filename) throws JDOMException, IOException, ParseException {
 		ArrayList<FireburnProperty> returnList = new ArrayList<FireburnProperty>();
 		Document doc = new SAXBuilder().build(new File(filename));

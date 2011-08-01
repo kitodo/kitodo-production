@@ -62,12 +62,13 @@ public class StatQuestCorrections implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
 		this.timeGrouping = timeGrouping;
 	}
 
 	private TimeUnit getTimeUnit() {
-		if (timeGrouping == null) {
+		if (this.timeGrouping == null) {
 			throw new NullPointerException(
 					"The called method in StatQuestCorrection requires that TimeUnit was set");
 		}
@@ -78,7 +79,7 @@ public class StatQuestCorrections implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();
@@ -100,7 +101,7 @@ public class StatQuestCorrections implements
 		}
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequests(timeFilterFrom, timeFilterTo,
+		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
 				getTimeUnit(), IDlist).getSQL(HistoryEventType.stepError, null,
 				false, false);
 
@@ -112,6 +113,7 @@ public class StatQuestCorrections implements
 		query.addScalar("stepCount", Hibernate.DOUBLE);
 		query.addScalar("intervall", Hibernate.STRING);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
@@ -158,6 +160,7 @@ public class StatQuestCorrections implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 	}
 
@@ -165,6 +168,7 @@ public class StatQuestCorrections implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
+	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
 		this.timeFilterFrom = timeFrom;
 		this.timeFilterTo = timeTo;
@@ -175,10 +179,12 @@ public class StatQuestCorrections implements
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		return inRenderer instanceof ChartRenderer;
 	}
 
+	@Override
 	public String getNumberFormatPattern() {
 		return "#";
 	}

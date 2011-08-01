@@ -759,7 +759,7 @@ public class Metadaten {
 	 * ##################################################### ####################################################
 	 */
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private String MetadatenalsTree3Einlesen1() {
 		HashMap map;
 		TreeNodeStruct3 knoten;
@@ -837,7 +837,7 @@ public class Metadaten {
 			OberKnoten.setExpanded(true);
 		}
 
-		int zaehler = 0;
+//		int zaehler = 0;
 		/*
 		 * -------------------------------- vom aktuellen Strukturelement alle Kinder in den Tree packen --------------------------------
 		 */
@@ -850,7 +850,7 @@ public class Metadaten {
 					label = kind.getType().getName();
 				}
 				TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
-				zaehler++;
+//				zaehler++;
 				OberKnoten.addChild(tns);
 				// MetadatenDebuggen(kind);
 				MetadatenalsTree3Einlesen2(kind, tns);
@@ -891,7 +891,7 @@ public class Metadaten {
 	// myLogger.info(md.getType().getName() + ": " + md.getValue());
 	// }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setMyStrukturelement(DocStruct inStruct) {
 		this.modusHinzufuegen = false;
 		this.modusHinzufuegenPerson = false;
@@ -981,7 +981,6 @@ public class Metadaten {
 	 * @throws TypeNotAllowedAsChildException
 	 *             ============================================================== ==
 	 */
-	@SuppressWarnings("unchecked")
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 		// myLogger.warn("eingefügt wird: " + neuesElementWohin);
 		// myLogger.warn("eingefügt wird was: " + addDocStructType1 + " - " +
@@ -1010,11 +1009,11 @@ public class Metadaten {
 				myLogger.debug("das gewählte Element kann den Vater nicht ermitteln");
 				return "Metadaten3links";
 			}
-			List alleDS = new ArrayList();
+			List<DocStruct> alleDS = new ArrayList<DocStruct>();
 
 			/* alle Elemente des Parents durchlaufen */
-			for (Iterator iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-				DocStruct tempDS = (DocStruct) iter.next();
+			for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
+				DocStruct tempDS = iter.next();
 
 				/* wenn das aktuelle Element das gesuchte ist */
 				if (tempDS == this.myDocStruct) {
@@ -1024,13 +1023,13 @@ public class Metadaten {
 			}
 
 			/* anschliessend alle Childs entfernen */
-			for (Iterator iter = alleDS.iterator(); iter.hasNext();) {
-				parent.removeChild((DocStruct) iter.next());
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.removeChild(iter.next());
 			}
 
 			/* anschliessend die neue Childliste anlegen */
-			for (Iterator iter = alleDS.iterator(); iter.hasNext();) {
-				parent.addChild((DocStruct) iter.next());
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.addChild(iter.next());
 			}
 			// myStrukturelement =ds;
 		}
@@ -1046,11 +1045,11 @@ public class Metadaten {
 				myLogger.debug("das gewählte Element kann den Vater nicht ermitteln");
 				return "Metadaten3links";
 			}
-			List alleDS = new ArrayList();
+			List<DocStruct> alleDS = new ArrayList<DocStruct>();
 
 			/* alle Elemente des Parents durchlaufen */
-			for (Iterator iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-				DocStruct tempDS = (DocStruct) iter.next();
+			for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
+				DocStruct tempDS = iter.next();
 				alleDS.add(tempDS);
 				/* wenn das aktuelle Element das gesuchte ist */
 				if (tempDS == this.myDocStruct) {
@@ -1059,13 +1058,13 @@ public class Metadaten {
 			}
 
 			/* anschliessend alle Childs entfernen */
-			for (Iterator iter = alleDS.iterator(); iter.hasNext();) {
-				parent.removeChild((DocStruct) iter.next());
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.removeChild(iter.next());
 			}
 
 			/* anschliessend die neue Childliste anlegen */
-			for (Iterator iter = alleDS.iterator(); iter.hasNext();) {
-				parent.addChild((DocStruct) iter.next());
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.addChild(iter.next());
 			}
 			// myStrukturelement =ds;
 		}
@@ -1081,17 +1080,17 @@ public class Metadaten {
 				myLogger.debug("das gewählte Element kann den Vater nicht ermitteln");
 				return "Metadaten3links";
 			}
-			List alleDS = new ArrayList();
+			List<DocStruct> alleDS = new ArrayList<DocStruct>();
 			alleDS.add(ds);
 
 			if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
 				alleDS.addAll(parent.getAllChildren());
-				parent.getAllChildren().retainAll(new ArrayList());
+				parent.getAllChildren().retainAll(new ArrayList<DocStruct>());
 			}
 
 			/* anschliessend die neue Childliste anlegen */
-			for (Iterator iter = alleDS.iterator(); iter.hasNext();) {
-				parent.addChild((DocStruct) iter.next());
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.addChild(iter.next());
 			}
 			// myStrukturelement =ds;
 		}
@@ -1189,7 +1188,6 @@ public class Metadaten {
 	/**
 	 * alle Seiten des aktuellen Strukturelements ermitteln ================================================================
 	 */
-	@SuppressWarnings("unchecked")
 	private void StructSeitenErmitteln(DocStruct inStrukturelement) {
 		if (inStrukturelement == null) {
 			return;
@@ -1201,11 +1199,11 @@ public class Metadaten {
 			/*
 			 * -------------------------------- Referenzen sortieren --------------------------------
 			 */
-			Collections.sort(listReferenzen, new Comparator() {
+			Collections.sort(listReferenzen, new Comparator<Reference>() {
 				@Override
-				public int compare(final Object o1, final Object o2) {
-					final Reference r1 = (Reference) o1;
-					final Reference r2 = (Reference) o2;
+				public int compare(final Reference o1, final Reference o2) {
+					final Reference r1 = o1;
+					final Reference r2 = o2;
 					Integer page1 = 0;
 					Integer page2 = 0;
 
@@ -2373,7 +2371,7 @@ public class Metadaten {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void TreeDurchlaufen(TreeNodeStruct3 inTreeStruct) {
 		DocStruct temp = inTreeStruct.getStruct();
 		if (inTreeStruct.getStruct() == this.myDocStruct) {

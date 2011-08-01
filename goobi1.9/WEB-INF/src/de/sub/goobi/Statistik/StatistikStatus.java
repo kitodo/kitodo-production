@@ -10,7 +10,7 @@ import de.sub.goobi.Beans.Schritt;
 
 public class StatistikStatus {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Dataset getDiagramm(List inProzesse) {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		for (Prozess proz : (List<Prozess>) inProzesse) {
@@ -21,10 +21,11 @@ public class StatistikStatus {
 				String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
 					.getTitel());
 				//               if (kurztitel.length()>60) kurztitel = kurztitel.substring(0,60) + "...";
-				if (dataset.getIndex(kurztitel) != -1)
+				if (dataset.getIndex(kurztitel) != -1) {
 					dataset.setValue(kurztitel, dataset.getValue(kurztitel).intValue() + 1);
-				else
+				} else {
 					dataset.setValue(kurztitel, 1);
+				}
 			}
 		}
 		return dataset;

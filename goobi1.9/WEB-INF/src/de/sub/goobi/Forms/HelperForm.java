@@ -157,10 +157,11 @@ public class HelperForm {
 	public List<String> getFileFormatsInternalOnly() {
 		ArrayList<String> ffs = new ArrayList<String>();
 		for (MetadataFormat ffh : MetadataFormat.values()) {
-			if (ffh.isUsableForInternal())
+			if (ffh.isUsableForInternal()) {
 				if (!ffh.equals(MetadataFormat.RDF)) {
 					ffs.add(ffh.getName());
 				}
+			}
 		}
 		return ffs;
 	}
@@ -182,7 +183,7 @@ public class HelperForm {
 		return reqUrl;
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "rawtypes", "unused" })
 	public boolean getMessagesExist() {
 		boolean rueck = false;
 		FacesContext context = FacesContext.getCurrentInstance();

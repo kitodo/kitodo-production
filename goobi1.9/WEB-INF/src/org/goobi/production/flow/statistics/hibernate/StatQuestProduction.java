@@ -71,7 +71,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 ****************************************************************************/
-	@SuppressWarnings("unchecked")
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		// contains an intger representing "reihenfolge" in schritte, as defined for this request
@@ -109,9 +109,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		String natSQL = "";
 		// adding time restrictions
 		if (stepname == null) {
-			natSQL = new ImprovedSQLProduction(timeFilterFrom, timeFilterTo, timeGrouping, IDlist).getSQL(exactStepDone);
+			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(exactStepDone);
 		} else {
-			natSQL = new ImprovedSQLProduction(timeFilterFrom, timeFilterTo, timeGrouping, IDlist).getSQL(stepname);
+			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(stepname);
 		}
 		Session session = Helper.getHibernateSession();
 
@@ -122,6 +122,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		query.addScalar("pages", Hibernate.INTEGER);
 		query.addScalar("intervall", Hibernate.STRING);
 
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
 		StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
@@ -203,8 +204,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 		// a list of DataTables is expected as return Object, even if there is only one
 		// Data Table as it is here in this implementation
-		dtblChart.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
-		dtbl.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
+		dtblChart.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
+		dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 
 		dtblChart.setShowableInTable(false);
 		dtbl.setShowableInChart(false);
@@ -220,6 +221,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
+	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
 		this.timeFilterFrom = timeFrom;
 		this.timeFilterTo = timeTo;
@@ -230,6 +232,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
 		this.timeGrouping = timeGrouping;
 	}
@@ -239,6 +242,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 		this.cu = cu;
 	}
@@ -248,6 +252,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		return inRenderer instanceof ChartRenderer;
 	}
@@ -257,6 +262,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
+	@Override
 	public String getNumberFormatPattern() {
 		return "#";
 	}

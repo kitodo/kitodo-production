@@ -54,19 +54,20 @@ public class ImportOpac {
 		 * -------------------------------- Katalog auswählen
 		 * --------------------------------
 		 */
-		coc = new ConfigOpac().getCatalogueByName(inKatalog);
-		if (coc == null)
+		this.coc = new ConfigOpac().getCatalogueByName(inKatalog);
+		if (this.coc == null) {
 			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in opac.xml");
-		Catalogue cat = new Catalogue(coc.getDescription(), coc.getAddress(), coc.getPort(), coc.getCbs(), coc.getDatabase());
+		}
+		Catalogue cat = new Catalogue(this.coc.getDescription(), this.coc.getAddress(), this.coc.getPort(), this.coc.getCbs(), this.coc.getDatabase());
 		if (verbose) {
-			Helper.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
+			Helper.setMeldung(null, "verwendeter Katalog: ", this.coc.getDescription());
 		}
 		GetOpac myOpac = new GetOpac(cat);
-		myOpac.setData_character_encoding(coc.getCharset());
+		myOpac.setData_character_encoding(this.coc.getCharset());
 		Query myQuery = new Query(inSuchbegriff, inSuchfeld);
 		/* im Notfall ohne Treffer sofort aussteigen */
-		hitcount = myOpac.getNumberOfHits(myQuery);
-		if (hitcount == 0) {
+		this.hitcount = myOpac.getNumberOfHits(myQuery);
+		if (this.hitcount == 0) {
 			return null;
 		}
 
@@ -77,14 +78,14 @@ public class ImportOpac {
 		 */
 		Node myHitlist = myOpac.retrievePicaNode(myQuery, 1);
 		/* Opac-Beautifier aufrufen */
-		myHitlist = coc.executeBeautifier(myHitlist);
+		myHitlist = this.coc.executeBeautifier(myHitlist);
 		Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 		Element myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
 		/* von dem Treffer den Dokumententyp ermitteln */
-		gattung = getGattung(myFirstHit);
+		this.gattung = getGattung(myFirstHit);
 
-		myLogger.debug("Gattung: " + gattung);
+		myLogger.debug("Gattung: " + this.gattung);
 		/*
 		 * -------------------------------- wenn der Treffer ein Volume eines
 		 * Multivolume-Bandes ist, dann das Sammelwerk überordnen
@@ -102,7 +103,7 @@ public class ImportOpac {
 				if (myOpac.getNumberOfHits(myQuery) == 1) {
 					Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1);
 					/* Opac-Beautifier aufrufen */
-					myParentHitlist = coc.executeBeautifier(myParentHitlist);
+					myParentHitlist = this.coc.executeBeautifier(myParentHitlist);
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
@@ -150,7 +151,7 @@ public class ImportOpac {
 				if (myOpac.getNumberOfHits(myQuery) == 1) {
 					Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1);
 					/* Opac-Beautifier aufrufen */
-					myParentHitlist = coc.executeBeautifier(myParentHitlist);
+					myParentHitlist = this.coc.executeBeautifier(myParentHitlist);
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 					Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
@@ -166,10 +167,11 @@ public class ImportOpac {
 					 */
 					if (myFirstHitParent.getChildren() != null) {
 
-						for (Iterator iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
-							Element ele = (Element) iter.next();
-							if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null)
+						for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
+							Element ele = iter.next();
+							if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
 								myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
+							}
 						}
 					}
 				}
@@ -217,8 +219,9 @@ public class ImportOpac {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
 			// System.out.println(feldname);
-			if (feldname.equals("002@"))
+			if (feldname.equals("002@")) {
 				return getSubelementValue(tempElement, "0");
+			}
 		}
 		return "";
 	}
@@ -229,8 +232,9 @@ public class ImportOpac {
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = iter.next();
-			if (subElement.getAttributeValue("code").equals(attributeValue))
+			if (subElement.getAttributeValue("code").equals(attributeValue)) {
 				rueckgabe = subElement.getValue();
+			}
 		}
 		return rueckgabe;
 	}
@@ -248,14 +252,15 @@ public class ImportOpac {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
 			// System.out.println(feldname);
-			if (feldname.equals(inFeldName))
+			if (feldname.equals(inFeldName)) {
 				return getSubelementValue(tempElement, inSubElement);
+			}
 		}
 		return "";
 	}
 
 	public int getHitcount() {
-		return hitcount;
+		return this.hitcount;
 	}
 
 	/*
@@ -292,10 +297,11 @@ public class ImportOpac {
 		 */
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
-		if (gattung.toLowerCase().startsWith("o"))
+		if (this.gattung.toLowerCase().startsWith("o")) {
 			ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
-		else
+		} else {
 			ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
+		}
 
 		/*
 		 * -------------------------------- wenn es ein multivolume ist, dann
@@ -304,10 +310,11 @@ public class ImportOpac {
 		if (topstructChild != null && mySecondHit != null) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
 			ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
-			if (gattung.toLowerCase().startsWith("o"))
+			if (this.gattung.toLowerCase().startsWith("o")) {
 				ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
-			else
+			} else {
 				ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
+			}
 		}
 
 		/*
@@ -319,16 +326,18 @@ public class ImportOpac {
 		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
 		 * Stelle nachsehen (vor allem bei Contained-Work)
 		 */
-		if (myTitle == null || myTitle.length() == 0)
+		if (myTitle == null || myTitle.length() == 0) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
+		}
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
 		/*
 		 * -------------------------------- Sorting-Titel mit
 		 * Umlaut-Konvertierung --------------------------------
 		 */
-		if (myTitle.indexOf("@") != -1)
+		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
+		}
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
 		/*
@@ -346,8 +355,9 @@ public class ImportOpac {
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
-			if (sortingTitleMulti.indexOf("@") != -1)
+			if (sortingTitleMulti.indexOf("@") != -1) {
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
+			}
 			ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
 			// sortingTitle = sortingTitleMulti;
 		}
@@ -403,8 +413,9 @@ public class ImportOpac {
 		 * --------------------------------
 		 */
 		String sig = getElementFieldValue(myFirstHit, "209A", "c");
-		if (sig.length() > 0)
+		if (sig.length() > 0) {
 			sig = "<" + sig + ">";
+		}
 		sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
 		sig += getElementFieldValue(myFirstHit, "209A", "a");
 		ughhelp.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
@@ -412,8 +423,9 @@ public class ImportOpac {
 			myLogger.debug("Signatur part 1: " + sig);
 			myLogger.debug(myFirstHit.getChildren());
 			sig = getElementFieldValue(myFirstHit, "209A/01", "c");
-			if (sig.length() > 0)
+			if (sig.length() > 0) {
 				sig = "<" + sig + ">";
+			}
 			sig += getElementFieldValue(myFirstHit, "209A/01", "f") + " ";
 			sig += getElementFieldValue(myFirstHit, "209A/01", "a");
 			if (mySecondHit != null) {
@@ -440,7 +452,7 @@ public class ImportOpac {
 		if (autor == null || autor.equals("")) {
 			autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
 		}
-		atstsl = createAtstsl(myTitle, autor);
+		this.atstsl = createAtstsl(myTitle, autor);
 
 		/*
 		 * -------------------------------- bei Zeitschriften noch ein
@@ -469,16 +481,18 @@ public class ImportOpac {
 		String myAtsTsl = "";
 		if (autor != null && !autor.equals("")) {
 			/* autor */
-			if (autor.length() > 4)
+			if (autor.length() > 4) {
 				myAtsTsl = autor.substring(0, 4);
-			else
+			} else {
 				myAtsTsl = autor;
 			/* titel */
+			}
 
-			if (myTitle.length() > 4)
+			if (myTitle.length() > 4) {
 				myAtsTsl += myTitle.substring(0, 4);
-			else
+			} else {
 				myAtsTsl += myTitle;
+			}
 		}
 
 		/*
@@ -493,22 +507,25 @@ public class ImportOpac {
 			while (tokenizer.hasMoreTokens()) {
 				String tok = tokenizer.nextToken();
 				if (counter == 1) {
-					if (tok.length() > 4)
+					if (tok.length() > 4) {
 						myAtsTsl += tok.substring(0, 4);
-					else
+					} else {
 						myAtsTsl += tok;
+					}
 				}
 				if (counter == 2 || counter == 3) {
-					if (tok.length() > 2)
+					if (tok.length() > 2) {
 						myAtsTsl += tok.substring(0, 2);
-					else
+					} else {
 						myAtsTsl += tok;
+					}
 				}
 				if (counter == 4) {
-					if (tok.length() > 1)
+					if (tok.length() > 1) {
 						myAtsTsl += tok.substring(0, 1);
-					else
+					} else {
 						myAtsTsl += tok;
+					}
 				}
 				counter++;
 			}
@@ -531,8 +548,9 @@ public class ImportOpac {
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
 			 * Attribut zurückgeben
 			 */
-			if (feldname.equals(inTagName))
+			if (feldname.equals(inTagName)) {
 				return myElement;
+			}
 		}
 		return null;
 	}
@@ -575,8 +593,9 @@ public class ImportOpac {
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
 			 * Attribut zurückgeben
 			 */
-			if (feldname.equals(inFieldName))
+			if (feldname.equals(inFieldName)) {
 				return getFieldValue(myElement, inAttributeName);
+			}
 		}
 		return "";
 	}
@@ -587,14 +606,15 @@ public class ImportOpac {
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = iter.next();
-			if (subElement.getAttributeValue("code").equals(attributeValue))
+			if (subElement.getAttributeValue("code").equals(attributeValue)) {
 				rueckgabe = subElement.getValue();
+			}
 		}
 		return rueckgabe;
 	}
 
 	public String getAtstsl() {
-		return atstsl;
+		return this.atstsl;
 	}
 
 	/*
@@ -639,15 +659,15 @@ public class ImportOpac {
 	public ConfigOpacDoctype getOpacDocType(boolean verbose) {
 		try {
 			ConfigOpac co = new ConfigOpac();
-			ConfigOpacDoctype cod = co.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
+			ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
 			if (cod == null) {
 				if (verbose) {
-					Helper.setFehlerMeldung("Unbekannte Gattung: ", gattung);
+					Helper.setFehlerMeldung("Unbekannte Gattung: ", this.gattung);
 				}
 				cod = new ConfigOpac().getAllDoctypes().get(0);
-				gattung = cod.getMappings().get(0);
+				this.gattung = cod.getMappings().get(0);
 				if (verbose) {
-					Helper.setFehlerMeldung("changed docttype: ", gattung + " - " + cod.getTitle());
+					Helper.setFehlerMeldung("changed docttype: ", this.gattung + " - " + cod.getTitle());
 				}
 			}
 			return cod;

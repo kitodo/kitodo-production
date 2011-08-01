@@ -15,20 +15,20 @@ public class TreeNode {
    protected List<TreeNode> children;
 
    public TreeNode() {
-      children = new ArrayList<TreeNode>();
+      this.children = new ArrayList<TreeNode>();
    }
 
    public TreeNode(boolean expanded, String label, String id) {
       this.expanded = expanded;
       this.label = label;
       this.id = id;
-      children = new ArrayList<TreeNode>();
+      this.children = new ArrayList<TreeNode>();
    }
 
    
 
    public void addChild(TreeNode inNode) {
-      children.add(inNode);
+      this.children.add(inNode);
    }
 
    
@@ -66,9 +66,9 @@ public class TreeNode {
    
    
 
-   @SuppressWarnings({ "unused", "unchecked" })
+   @SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 	private List getChildrenAsList(List inList, int niveau,List inStriche,boolean VaterIstLetzter) {
-      for (Iterator<TreeNode> it = children.iterator(); it.hasNext();) {
+      for (Iterator<TreeNode> it = this.children.iterator(); it.hasNext();) {
          TreeNode kind = it.next();
          HashMap map = new HashMap();
          map.put("node", kind);
@@ -81,15 +81,16 @@ public class TreeNode {
          map.put("striche", striche);
          
          inList.add(map);
-         if (kind.expanded && kind.getHasChildren())
-            kind.getChildrenAsList(inList, niveau + 1, striche,!it.hasNext());
+         if (kind.expanded && kind.getHasChildren()) {
+			kind.getChildrenAsList(inList, niveau + 1, striche,!it.hasNext());
+		}
       }
        return inList;
    }
 
    
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"} )
 	private List getChildrenAsListMitStrichen(List inList, int niveau, TreeNode inNode, boolean istLetzter,
          boolean VaterIstLetzter, List inStriche) {
 
@@ -117,7 +118,7 @@ public class TreeNode {
    
    
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List getChildrenAsListAlle(List inList, int niveau, TreeNode inNode, boolean istLetzter,
          boolean VaterIstLetzter, List inStriche) {
 
@@ -152,7 +153,7 @@ public class TreeNode {
     ####################################################*/
 
    public List<TreeNode> getChildren() {
-      return children;
+      return this.children;
    }
 
 	public void setChildren(List<TreeNode> children) {
@@ -160,7 +161,7 @@ public class TreeNode {
    }
 
    public boolean isExpanded() {
-      return expanded;
+      return this.expanded;
    }
 
    public void setExpanded(boolean expanded) {
@@ -168,7 +169,7 @@ public class TreeNode {
    }
 
    public String getId() {
-      return id;
+      return this.id;
    }
 
    public void setId(String id) {
@@ -176,7 +177,7 @@ public class TreeNode {
    }
    
    public boolean isSelected() {
-      return selected;
+      return this.selected;
    }
 
    public void setSelected(boolean selected) {
@@ -184,7 +185,7 @@ public class TreeNode {
    }
 
    public String getLabel() {
-      return label;
+      return this.label;
    }
 
    public void setLabel(String label) {
@@ -192,10 +193,11 @@ public class TreeNode {
    }
 
    public boolean getHasChildren() {
-      if (children == null || children.size() == 0)
-         return false;
-      else
-         return true;
+      if (this.children == null || this.children.size() == 0) {
+		return false;
+	} else {
+		return true;
+	}
    }
 
 }

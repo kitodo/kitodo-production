@@ -71,18 +71,19 @@ public class AdministrationForm implements Serializable {
 	 * Passwort eingeben
 	 */
 	public String Weiter() {
-		passwort = new MD5(passwort).getMD5();
+		this.passwort = new MD5(this.passwort).getMD5();
 		String adminMd5 = ConfigMain.getParameter("superadminpassword");
-		istPasswortRichtig = (passwort.equals(adminMd5));
-		if (!istPasswortRichtig)
+		this.istPasswortRichtig = (this.passwort.equals(adminMd5));
+		if (!this.istPasswortRichtig) {
 			Helper.setFehlerMeldung("wrong passworwd", "");
+		}
 		return "";
 	}
 
 	/* =============================================================== */
 
 	public String getPasswort() {
-		return passwort;
+		return this.passwort;
 	}
 
 	public void setPasswort(String passwort) {
@@ -116,7 +117,7 @@ public class AdministrationForm implements Serializable {
 	}
 
 	public boolean isIstPasswortRichtig() {
-		return istPasswortRichtig;
+		return this.istPasswortRichtig;
 	}
 	
 	public void createIndex () {
@@ -377,9 +378,9 @@ public class AdministrationForm implements Serializable {
 					gdzfile = p.readMetadataFile();
 
 					MetadataType mdt = ughhelp.getMetadataType(myPrefs, "pathimagefiles");
-					List alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
+					List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 					if (alleMetadaten != null && alleMetadaten.size() > 0) {
-						Metadata md = (Metadata) alleMetadaten.get(0);
+						Metadata md = alleMetadaten.get(0);
 						myLogger.debug(md.getValue());
 
 					
@@ -390,8 +391,9 @@ public class AdministrationForm implements Serializable {
 						}
 						p.writeMetadataFile(gdzfile);
 						Helper.setMeldung(null, "", "Image path set: " + p.getTitel() + ": ./" + p.getTitel() + DIRECTORY_SUFFIX);
-					} else
+					} else {
 						Helper.setMeldung(null, "", "No Image path available: " + p.getTitel());
+					}
 				} catch (ReadException e) {
 					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("ReadException: " + p.getTitel(), e);
@@ -446,8 +448,9 @@ public class AdministrationForm implements Serializable {
 					Fileformat gdzfile = p.readMetadataFile();
 					DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
 					DocStruct dsFirst = null;
-					if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0)
-						dsFirst = (DocStruct) dsTop.getAllChildren().get(0);
+					if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0) {
+						dsFirst = dsTop.getAllChildren().get(0);
+					}
 
 					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDDigital");
 					MetadataType mdtPpnAnalog = ughhelp.getMetadataType(myPrefs, "CatalogIDSource");
@@ -457,7 +460,7 @@ public class AdministrationForm implements Serializable {
 					if (dsFirst != null) {
 						alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnDigital);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
-							Metadata md = (Metadata) alleMetadaten.get(0);
+							Metadata md = alleMetadaten.get(0);
 							myLogger.debug(md.getValue());
 							if (!md.getValue().endsWith(myBandnr)) {
 								md.setValue(md.getValue() + myBandnr);
@@ -468,7 +471,7 @@ public class AdministrationForm implements Serializable {
 						/* analoge PPN korrigieren */
 						alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnAnalog);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
-							Metadata md1 = (Metadata) alleMetadaten.get(0);
+							Metadata md1 = alleMetadaten.get(0);
 							myLogger.debug(md1.getValue());
 							if (!md1.getValue().endsWith(myBandnr)) {
 								md1.setValue(md1.getValue() + myBandnr);
@@ -486,10 +489,11 @@ public class AdministrationForm implements Serializable {
 						if (myCollections != null && myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 							
-								if (myKollektionenTitel.contains(md.getValue()))
+								if (myKollektionenTitel.contains(md.getValue())) {
 									dsTop.removeMetadata(md);
-								else
+								} else {
 									myKollektionenTitel.add(md.getValue());
+								}
 							}
 						}
 					}
@@ -499,10 +503,11 @@ public class AdministrationForm implements Serializable {
 						if (myCollections != null && myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 //								Metadata md = (Metadata) it.next();
-								if (myKollektionenTitel.contains(md.getValue()))
+								if (myKollektionenTitel.contains(md.getValue())) {
 									dsFirst.removeMetadata(md);
-								else
+								} else {
 									myKollektionenTitel.add(md.getValue());
+								}
 							}
 						}
 					}
@@ -563,7 +568,7 @@ public class AdministrationForm implements Serializable {
 						List<? extends Metadata> alleMetadaten = dsTop.getAllMetadataByType(mdtPpnDigital);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
 							for (Iterator<? extends Metadata> it = alleMetadaten.iterator(); it.hasNext();) {
-								Metadata md = (Metadata) it.next();
+								Metadata md = it.next();
 								if (!md.getValue().startsWith("PPN")) {
 									md.setValue("PPN" + md.getValue());
 									p.writeMetadataFile(gdzfile);
@@ -608,7 +613,7 @@ public class AdministrationForm implements Serializable {
 
 		/* alle Prozesse durchlaufen */
 		for (Iterator<Prozess> iter = crit.list().iterator(); iter.hasNext();) {
-			Prozess p = (Prozess) iter.next();
+			Prozess p = iter.next();
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
@@ -621,8 +626,9 @@ public class AdministrationForm implements Serializable {
 					Fileformat gdzfile = p.readMetadataFile();
 					DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
 					DocStruct dsFirst = null;
-					if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0)
-						dsFirst = (DocStruct) dsTop.getAllChildren().get(0);
+					if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0) {
+						dsFirst = dsTop.getAllChildren().get(0);
+					}
 
 					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDDigital");
 
@@ -644,11 +650,12 @@ public class AdministrationForm implements Serializable {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
-								Metadata md = (Metadata) it.next();
-								if (myKollektionenTitel.contains(md.getValue()))
+								Metadata md = it.next();
+								if (myKollektionenTitel.contains(md.getValue())) {
 									dsTop.removeMetadata(md);
-								else
+								} else {
 									myKollektionenTitel.add(md.getValue());
+								}
 							}
 						}
 					}
@@ -657,11 +664,12 @@ public class AdministrationForm implements Serializable {
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
-								Metadata md = (Metadata) it.next();
-								if (myKollektionenTitel.contains(md.getValue()))
+								Metadata md = it.next();
+								if (myKollektionenTitel.contains(md.getValue())) {
 									dsFirst.removeMetadata(md);
-								else
+								} else {
 									myKollektionenTitel.add(md.getValue());
+								}
 							}
 						}
 					}
@@ -696,7 +704,7 @@ public class AdministrationForm implements Serializable {
 	
 
 	public boolean isRusFullExport() {
-		return rusFullExport;
+		return this.rusFullExport;
 	}
 
 	public void setRusFullExport(boolean rusFullExport) {

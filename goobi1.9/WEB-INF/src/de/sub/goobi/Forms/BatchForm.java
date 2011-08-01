@@ -320,6 +320,7 @@ public class BatchForm extends BasisForm {
 						 * alle Schritte zwischen dem aktuellen und dem
 						 * Korrekturschritt wieder schliessen
 						 */
+						@SuppressWarnings("unchecked")
 						List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
 								.add(Restrictions.le("reihenfolge", currentStep.getReihenfolge()))
 								.add(Restrictions.gt("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge"))
@@ -357,6 +358,7 @@ public class BatchForm extends BasisForm {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Schritt> getPreviousStepsForProblemReporting() {
 		List<Schritt> alleVorherigenSchritte = null;
 		BatchDisplayItem bdi = this.batch.getCurrentStep();
@@ -378,7 +380,7 @@ public class BatchForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Schritt> getNextStepsForProblemSolution() {
 		List<Schritt> alleNachfolgendenSchritte = null;
-		BatchDisplayItem bdi = this.batch.getCurrentStep();
+//		BatchDisplayItem bdi = this.batch.getCurrentStep();
 		for (Prozess p : this.batch.getBatchList()) {
 			if (p.getId() == this.process) {
 				Schritt currentStep = p.getFirstOpenStep();
