@@ -3,9 +3,12 @@ package de.sub.goobi.Metadaten;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. - http://gdz.sub.uni-goettingen.de - http://www.intranda.com
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
  * 
- * Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ),
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -124,48 +127,48 @@ public class Pagination {
 		}
 
 		// set "uncounted" pagination value
-		if (paginationType.equals(PAGINATION_UNCOUNTED)) {
-			paginationStartValue = "uncounted";
+		if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
+			this.paginationStartValue = "uncounted";
 		}
 
 		// set all selected pages to start value
-		if (paginationScope == SELECTED_PAGES) {
+		if (this.paginationScope == SELECTED_PAGES) {
 			setSelectedPagesToPaginationStartValue();
 			return null;
 		}
 
 		// determining first page number
-		int firstPageNumber = Integer.parseInt(allSelectedPages[0]);
+		int firstPageNumber = Integer.parseInt(this.allSelectedPages[0]);
 
 		// determine pagination base
 		int paginationBaseValue = getPaginationBaseValue();
 
 		double currentPageNumber = firstPageNumber;
 
-		for (int i = firstPageNumber; i < newPaginated.length; i++) {
+		for (int i = firstPageNumber; i < this.newPaginated.length; i++) {
 			String nextPaginationLabel = "";
-			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO || paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
+			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO || this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				nextPaginationLabel = getNextPaginationLabel(firstPageNumber, paginationBaseValue, currentPageNumber);
 			} else {
 				nextPaginationLabel = getNextPaginationLabel(firstPageNumber, paginationBaseValue, currentPageNumber);
 			}
 
-			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
+				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
 					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
 				} else {
 					nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
 				}
 			}
-			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
-				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+			if (this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
+				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
 					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
 				} else {
 					nextPaginationLabel += getRectoVersoSuffixForPagination(currentPageNumber);
 				}
 			}
 
-			newPaginated[i].setWert(nextPaginationLabel);
+			this.newPaginated[i].setWert(nextPaginationLabel);
 
 			currentPageNumber = getNextPageNumber(currentPageNumber);
 		}
@@ -175,21 +178,21 @@ public class Pagination {
 
 	private String getNextPaginationLabel(int firstPageNumber, int paginationBaseValue, double currentPageNumber) {
 		String actualPaginationLabel;
-		if (paginationType.equals(PAGINATION_ARABIC)) {
+		if (this.paginationType.equals(PAGINATION_ARABIC)) {
 			actualPaginationLabel = String.valueOf(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
-		} else if (paginationType.equals(PAGINATION_ROMAN)) {
+		} else if (this.paginationType.equals(PAGINATION_ROMAN)) {
 			RomanNumeral r = new RomanNumeral();
 			r.setValue(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
 			actualPaginationLabel = r.toString();
-		} else if (paginationType.equals(PAGINATION_ARABIC_BRACKET)) {
+		} else if (this.paginationType.equals(PAGINATION_ARABIC_BRACKET)) {
 			actualPaginationLabel = String.valueOf(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
 			actualPaginationLabel = "[" + actualPaginationLabel + "]";
-		} else if (paginationType.equals(PAGINATION_ROMAN_BRACKET)) {
+		} else if (this.paginationType.equals(PAGINATION_ROMAN_BRACKET)) {
 			RomanNumeral r = new RomanNumeral();
 			r.setValue(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
 			actualPaginationLabel = "[" + r.toString() + "]";
 		} else {
-			actualPaginationLabel = paginationStartValue;
+			actualPaginationLabel = this.paginationStartValue;
 		}
 
 		return actualPaginationLabel;
@@ -216,7 +219,7 @@ public class Pagination {
 	}
 
 	private double getNextPageNumber(double currentPageNumber) {
-		switch (paginationMode) {
+		switch (this.paginationMode) {
 		case COUNTING_PAGINATION:
 		case COUNTING_FOLIATION_RECTOVERSO:
 			currentPageNumber++;
@@ -236,11 +239,11 @@ public class Pagination {
 
 		int paginationBaseValue = 1;
 
-		if (paginationType.equals(PAGINATION_ARABIC) || paginationType.equals(PAGINATION_ARABIC_BRACKET)) {
-			paginationBaseValue = Integer.parseInt(paginationStartValue);
-		} else if (paginationType.equals(PAGINATION_ROMAN) || paginationType.equals(PAGINATION_ROMAN_BRACKET)) {
+		if (this.paginationType.equals(PAGINATION_ARABIC) || this.paginationType.equals(PAGINATION_ARABIC_BRACKET)) {
+			paginationBaseValue = Integer.parseInt(this.paginationStartValue);
+		} else if (this.paginationType.equals(PAGINATION_ROMAN) || this.paginationType.equals(PAGINATION_ROMAN_BRACKET)) {
 			RomanNumeral r = new RomanNumeral();
-			r.setValue(paginationStartValue);
+			r.setValue(this.paginationStartValue);
 			paginationBaseValue = r.intValue();
 		}
 
@@ -249,36 +252,36 @@ public class Pagination {
 	}
 
 	public String[] getAllSelectedPages() {
-		return allSelectedPages;
+		return this.allSelectedPages;
 	}
 
 	public Metadatum[] getNewPaginated() {
-		return newPaginated;
+		return this.newPaginated;
 	}
 
 	public int getPaginationMode() {
-		return paginationMode;
+		return this.paginationMode;
 	}
 
 	public int getPaginationScope() {
-		return paginationScope;
+		return this.paginationScope;
 	}
 
 	public String getPaginationStartValue() {
-		return paginationStartValue;
+		return this.paginationStartValue;
 	}
 
 	public String getPaginationType() {
-		return paginationType;
+		return this.paginationType;
 	}
 
 	private boolean isSelectionEmpty() {
-		return allSelectedPages == null || allSelectedPages.length == 0;
+		return this.allSelectedPages == null || this.allSelectedPages.length == 0;
 	}
 
 	private boolean isValidArabicNumber() {
 		try {
-			Integer.parseInt(paginationStartValue);
+			Integer.parseInt(this.paginationStartValue);
 			return true;
 		} catch (NumberFormatException nfe) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", nfe.getMessage());
@@ -288,12 +291,12 @@ public class Pagination {
 
 	private boolean isValidPaginationStartValue() {
 		// arabic numbers
-		if (paginationType.equals(PAGINATION_ARABIC)) {
+		if (this.paginationType.equals(PAGINATION_ARABIC)) {
 			return isValidArabicNumber();
 		}
 
 		// roman numbers
-		if (paginationType.equals(PAGINATION_ROMAN)) {
+		if (this.paginationType.equals(PAGINATION_ROMAN)) {
 			return isValidRomanNumber();
 		}
 
@@ -303,8 +306,8 @@ public class Pagination {
 	private boolean isValidRomanNumber() {
 		try {
 			RomanNumeral roman = new RomanNumeral();
-			paginationStartValue = paginationStartValue.toUpperCase();
-			roman.setValue(paginationStartValue);
+			this.paginationStartValue = this.paginationStartValue.toUpperCase();
+			roman.setValue(this.paginationStartValue);
 			return true;
 		} catch (NumberFormatException nfe) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", nfe.getMessage());
@@ -313,7 +316,7 @@ public class Pagination {
 	}
 
 	public void setAllSelectedPages(String[] selectedPages) {
-		allSelectedPages = selectedPages;
+		this.allSelectedPages = selectedPages;
 
 	}
 
@@ -323,7 +326,7 @@ public class Pagination {
 	}
 
 	public void setPaginationMode(int numberOfPagesPerImage) {
-		paginationMode = numberOfPagesPerImage;
+		this.paginationMode = numberOfPagesPerImage;
 
 	}
 
@@ -343,25 +346,25 @@ public class Pagination {
 	}
 
 	private void setSelectedPagesToPaginationStartValue() {
-		int firstPageNumber = Integer.parseInt(allSelectedPages[0]);
+		int firstPageNumber = Integer.parseInt(this.allSelectedPages[0]);
 		int paginationBaseValue = getPaginationBaseValue();
 		double currentPageNumber = firstPageNumber;
 
-		if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
+		if (this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 			currentPageNumber = currentPageNumber + 0.5;
 		}
 
-		for (int i = 0; i < allSelectedPages.length; i++) {
-			int aktuelleID = Integer.parseInt(allSelectedPages[i]);
+		for (int i = 0; i < this.allSelectedPages.length; i++) {
+			int aktuelleID = Integer.parseInt(this.allSelectedPages[i]);
 			String nextPaginationLabel = "";
-			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO || paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
+			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO || this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				nextPaginationLabel = getNextPaginationLabel(firstPageNumber, paginationBaseValue, currentPageNumber);
 			} else {
 				nextPaginationLabel = getNextPaginationLabel(firstPageNumber, paginationBaseValue, currentPageNumber);
 			}
 
-			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
+				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
 					nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
 				} else {
 					// if (i == 1) {
@@ -372,14 +375,14 @@ public class Pagination {
 					// }
 				}
 			}
-			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
-				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
+			if (this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
+				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
 					nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
 				} else {
 					nextPaginationLabel += getRectoVersoSuffixForSelectedPages(currentPageNumber);
 				}
 			}
-			newPaginated[aktuelleID].setWert(nextPaginationLabel);
+			this.newPaginated[aktuelleID].setWert(nextPaginationLabel);
 
 			currentPageNumber = getNextPageNumber(currentPageNumber);
 		}

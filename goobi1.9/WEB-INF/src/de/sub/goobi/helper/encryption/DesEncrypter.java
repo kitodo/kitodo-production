@@ -1,8 +1,32 @@
 package de.sub.goobi.helper.encryption;
 
-//TODO: Check the licence of this file
-// Stolen from http://www.exampledepot.com/egs/javax.crypto/DesString.html
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +56,7 @@ public class DesEncrypter {
 
 	/* =============================================================== */
 	public DesEncrypter() {
-		Initialise(pass);
+		Initialise(this.pass);
 	}
 
 	/* =============================================================== */
@@ -44,15 +68,15 @@ public class DesEncrypter {
 	private void Initialise(String passPhrase) {
 		try {
 			// Create the key
-			KeySpec keySpec = new PBEKeySpec(passPhrase.toCharArray(), salt, iterationCount);
+			KeySpec keySpec = new PBEKeySpec(passPhrase.toCharArray(), this.salt, this.iterationCount);
 			SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
-			ecipher = Cipher.getInstance(key.getAlgorithm());
-			dcipher = Cipher.getInstance(key.getAlgorithm());
+			this.ecipher = Cipher.getInstance(key.getAlgorithm());
+			this.dcipher = Cipher.getInstance(key.getAlgorithm());
 			// Prepare the parameter to the ciphers
-			AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
+			AlgorithmParameterSpec paramSpec = new PBEParameterSpec(this.salt, this.iterationCount);
 			// Create the ciphers
-			ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
-			dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
+			this.ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+			this.dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
 		} catch (InvalidAlgorithmParameterException e) {
 		} catch (InvalidKeySpecException e) {
 		} catch (NoSuchPaddingException e) {
@@ -63,15 +87,17 @@ public class DesEncrypter {
 
 	/* =============================================================== */
 	public String encrypt(String str) {
-		if (str == null)
+		if (str == null) {
 			str = "";
+		}
 		try {
 			// Encode the string into bytes using utf-8
 			byte[] utf8 = str.getBytes("UTF8");
-			if (ecipher == null)
-				Initialise(pass);
+			if (this.ecipher == null) {
+				Initialise(this.pass);
+			}
 			// Encrypt
-			byte[] enc = ecipher.doFinal(utf8);
+			byte[] enc = this.ecipher.doFinal(utf8);
 			// Encode bytes to base64 to get a string
 			return new String(Base64.encodeBase64(enc));
 		} catch (BadPaddingException e) {
@@ -90,7 +116,7 @@ public class DesEncrypter {
 			// Decode base64 to get bytes
 			byte[] dec = Base64.decodeBase64(str.getBytes("UTF8"));
 			// Decrypt
-			byte[] utf8 = dcipher.doFinal(dec);
+			byte[] utf8 = this.dcipher.doFinal(dec);
 			// Decode using utf-8
 			return new String(utf8, "UTF8");
 		} catch (BadPaddingException e) {

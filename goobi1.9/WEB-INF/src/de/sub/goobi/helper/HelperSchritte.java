@@ -27,8 +27,33 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-//TODO: Check if some methods can declared static
-public class HelperSchritte {
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */public class HelperSchritte {
 	SchrittDAO dao = new SchrittDAO();
 	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritte.class);
@@ -91,8 +116,9 @@ public class HelperSchritte {
 			// TODO: Don't use iterators, use for loops instead
 			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
 				Schritt myStep = iter.next();
-				if (reihenfolge == 0)
+				if (reihenfolge == 0) {
 					reihenfolge = myStep.getReihenfolge().intValue();
+				}
 
 				if (reihenfolge == myStep.getReihenfolge().intValue() && myStep.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 					/*
@@ -111,8 +137,9 @@ public class HelperSchritte {
 						automatischeSchritte.add(myStep);
 					}
 					System.out.println("opened: " + myStep.getTitel());
-				} else
+				} else {
 					break;
+				}
 			}
 		}
 
@@ -177,16 +204,17 @@ public class HelperSchritte {
 	 */
 	public void executeScript(Schritt mySchritt, String script, boolean fullautomatic) throws SwapException {
 
-		if (script == null || script.length() == 0)
+		if (script == null || script.length() == 0) {
 			return;
+		}
 
-		if (script.equals("copyOrig"))
+		if (script.equals("copyOrig")) {
 			try {
 				copyOrig(mySchritt, fullautomatic);
 			} catch (DAOException e1) {
 				logger.error(e1);
 			}
-		else {
+		} else {
 			script = script.replace("{", "(").replace("}", ")");
 			DigitalDocument dd = null;
 			try {
@@ -214,10 +242,11 @@ public class HelperSchritte {
 				logger.info("Calling the shell: " + script);
 				int rueckgabe = Helper.callShell2(script);
 				if (fullautomatic) {
-					if (rueckgabe == 0)
+					if (rueckgabe == 0) {
 						closeStep(mySchritt, fullautomatic);
-					else
+					} else {
 						abortStep(mySchritt, fullautomatic);
+					}
 				}
 			} catch (IOException e) {
 				Helper.setFehlerMeldung("IOException: ", e.getMessage());
@@ -245,13 +274,15 @@ public class HelperSchritte {
 			CopyFile.copyDirectory(ausgang, ziel);
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException: ", e.getMessage());
-			if (fullautomatic)
+			if (fullautomatic) {
 				abortStep(mySchritt, true);
+			}
 			return;
 		} catch (InterruptedException e) {
 			Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
-			if (fullautomatic)
+			if (fullautomatic) {
 				abortStep(mySchritt, false);
+			}
 			return;
 		}
 		if (fullautomatic) {
@@ -276,7 +307,7 @@ public class HelperSchritte {
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
 		mySchritt.setBearbeitungsstatusEnum(StepStatus.OPEN);
 		try {
-			dao.save(mySchritt);
+			this.dao.save(mySchritt);
 		} catch (DAOException e) {
 			logger.error(e);
 		}
@@ -287,10 +318,10 @@ public class HelperSchritte {
 	 */
 	private void closeStep(Schritt mySchritt, boolean automatic) {
 		try {
-			Schritt temp = dao.get(mySchritt.getId());
+			Schritt temp = this.dao.get(mySchritt.getId());
 			temp.setEditTypeEnum(StepEditType.AUTOMATIC);
 			temp.setBearbeitungsstatusEnum(StepStatus.DONE);
-			dao.save(temp);
+			this.dao.save(temp);
 			SchrittAbschliessen(temp, automatic);
 		} catch (DAOException e) {
 			logger.error(e);
@@ -308,8 +339,9 @@ public class HelperSchritte {
 	public static void updateEditing(Schritt mySchritt) {
 		mySchritt.setBearbeitungszeitpunkt(new Date());
 		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null)
+		if (ben != null) {
 			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 
 	}
 }

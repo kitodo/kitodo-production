@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,12 +94,12 @@ public class Schritt implements Serializable, IGoobiEntity {
 
 	
 	public Schritt() {
-		titel = "";
-		eigenschaften = new HashSet<Schritteigenschaft>();
-		benutzer = new HashSet<Benutzer>();
-		benutzergruppen = new HashSet<Benutzergruppe>();
-		prioritaet = Integer.valueOf(0);
-		reihenfolge = Integer.valueOf(0);
+		this.titel = "";
+		this.eigenschaften = new HashSet<Schritteigenschaft>();
+		this.benutzer = new HashSet<Benutzer>();
+		this.benutzergruppen = new HashSet<Benutzergruppe>();
+		this.prioritaet = Integer.valueOf(0);
+		this.reihenfolge = Integer.valueOf(0);
 		setBearbeitungsstatusEnum(StepStatus.LOCKED);
 	}
 
@@ -86,11 +112,11 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 ####################################################*/
 
 	public Date getBearbeitungsbeginn() {
-		return bearbeitungsbeginn;
+		return this.bearbeitungsbeginn;
 	}
 
 	public String getBearbeitungsbeginnAsFormattedString() {
-		return Helper.getDateAsFormattedString(bearbeitungsbeginn);
+		return Helper.getDateAsFormattedString(this.bearbeitungsbeginn);
 	}
 
 	public void setBearbeitungsbeginn(Date bearbeitungsbeginn) {
@@ -98,25 +124,25 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getStartDate() {
-		if (bearbeitungsbeginn != null) {
-			return formatter.format(bearbeitungsbeginn);
+		if (this.bearbeitungsbeginn != null) {
+			return this.formatter.format(this.bearbeitungsbeginn);
 		}
 		return "";
 	}
 	
 	public Date getBearbeitungsende() {
-		return bearbeitungsende;
+		return this.bearbeitungsende;
 	}
 	
 	public String getEndDate() {
-		if (bearbeitungsende != null) {
-			return formatter.format(bearbeitungsende);
+		if (this.bearbeitungsende != null) {
+			return this.formatter.format(this.bearbeitungsende);
 		}
 		return "";
 	}
 
 	public String getBearbeitungsendeAsFormattedString() {
-		return Helper.getDateAsFormattedString(bearbeitungsende);
+		return Helper.getDateAsFormattedString(this.bearbeitungsende);
 	}
 
 	public void setBearbeitungsende(Date bearbeitungsende) {
@@ -131,7 +157,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 */
 	@SuppressWarnings("unused")
 	private Integer getEditType() {
-		return editType;
+		return this.editType;
 	}
 	
 	/**
@@ -160,7 +186,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * @return current bearbeitungsstatus
 	 */
 	public StepEditType getEditTypeEnum(){
-		return StepEditType.getTypeFromValue(editType);
+		return StepEditType.getTypeFromValue(this.editType);
 	}
 	
 	/**
@@ -171,7 +197,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 */
 	@SuppressWarnings("unused")
 	private Integer getBearbeitungsstatus() {
-		return bearbeitungsstatus;
+		return this.bearbeitungsstatus;
 	}
 
 	/**
@@ -200,15 +226,15 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * @return current bearbeitungsstatus
 	 */
 	public StepStatus getBearbeitungsstatusEnum(){
-		return StepStatus.getStatusFromValue(bearbeitungsstatus);
+		return StepStatus.getStatusFromValue(this.bearbeitungsstatus);
 	}
 
 	public String getBearbeitungszeitpunktAsFormattedString() {
-		return Helper.getDateAsFormattedString(bearbeitungszeitpunkt);
+		return Helper.getDateAsFormattedString(this.bearbeitungszeitpunkt);
 	}
 
 	public Date getBearbeitungszeitpunkt() {
-		return bearbeitungszeitpunkt;
+		return this.bearbeitungszeitpunkt;
 	}
 
 	public void setBearbeitungszeitpunkt(Date bearbeitungszeitpunkt) {
@@ -225,15 +251,16 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Benutzer getBearbeitungsbenutzer() {
-		return bearbeitungsbenutzer;
+		return this.bearbeitungsbenutzer;
 	}
 
 	public void setBearbeitungsbenutzer(Benutzer bearbeitungsbenutzer) {
 		this.bearbeitungsbenutzer = bearbeitungsbenutzer;
 	}
 
+	@Override
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -241,7 +268,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Integer getPrioritaet() {
-		return prioritaet;
+		return this.prioritaet;
 	}
 
 	public void setPrioritaet(Integer prioritaet) {
@@ -253,15 +280,15 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * which are not directly related to priorities
 	 */
 	public Boolean isCorrectionStep(){
-		return (prioritaet==10);
+		return (this.prioritaet==10);
 	}
 
 	public void setCorrectionStep(){
-		prioritaet=10;
+		this.prioritaet=10;
 	}
 	
 	public Prozess getProzess() {
-		return prozess;
+		return this.prozess;
 	}
 
 	public void setProzess(Prozess prozess) {
@@ -269,7 +296,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Integer getReihenfolge() {
-		return reihenfolge;
+		return this.reihenfolge;
 	}
 
 	public void setReihenfolge(Integer reihenfolge) {
@@ -277,15 +304,15 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTitelLokalisiert() {
-		return Helper.getTranslation(titel);
+		return Helper.getTranslation(this.titel);
 	}
 
 	public String getTitel() {
-		return titel;
+		return this.titel;
 	}
 	
 	public String getNormalizedTitle() {
-		return titel.replace(" ", "_");
+		return this.titel.replace(" ", "_");
 	}
 
 	public void setTitel(String titel) {
@@ -301,7 +328,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	//   }
 
 	public boolean isPanelAusgeklappt() {
-		return panelAusgeklappt;
+		return this.panelAusgeklappt;
 	}
 
 	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
@@ -309,9 +336,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Schritteigenschaft> getEigenschaften() {
-		if (eigenschaften == null)
-			eigenschaften = new HashSet<Schritteigenschaft>();
-		return eigenschaften;
+		if (this.eigenschaften == null) {
+			this.eigenschaften = new HashSet<Schritteigenschaft>();
+		}
+		return this.eigenschaften;
 	}
 
 	public void setEigenschaften(Set<Schritteigenschaft> eigenschaften) {
@@ -319,7 +347,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Benutzer> getBenutzer() {
-		return benutzer;
+		return this.benutzer;
 	}
 
 	public void setBenutzer(Set<Benutzer> benutzer) {
@@ -327,7 +355,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Benutzergruppe> getBenutzergruppen() {
-		return benutzergruppen;
+		return this.benutzergruppen;
 	}
 
 	public void setBenutzergruppen(Set<Benutzergruppe> benutzergruppen) {
@@ -343,56 +371,64 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 ####################################################*/
 
 	public int getEigenschaftenSize() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return 0;
-		else
-			return eigenschaften.size();
+		} else {
+			return this.eigenschaften.size();
+		}
 	}
 
 	public List<Schritteigenschaft> getEigenschaftenList() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return new ArrayList<Schritteigenschaft>();
-		return new ArrayList<Schritteigenschaft>(eigenschaften);
+		}
+		return new ArrayList<Schritteigenschaft>(this.eigenschaften);
 	}
 
 	public int getBenutzerSize() {
-		if (benutzer == null)
+		if (this.benutzer == null) {
 			return 0;
-		else
-			return benutzer.size();
+		} else {
+			return this.benutzer.size();
+		}
 	}
 
 	public List<Benutzer> getBenutzerList() {
-		if (benutzer == null)
+		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
-		return new ArrayList<Benutzer>(benutzer);
+		}
+		return new ArrayList<Benutzer>(this.benutzer);
 	}
 
 	public int getBenutzergruppenSize() {
-		if (benutzergruppen == null)
+		if (this.benutzergruppen == null) {
 			return 0;
-		else
-			return benutzergruppen.size();
+		} else {
+			return this.benutzergruppen.size();
+		}
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
-		if (benutzergruppen == null)
+		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
-		return new ArrayList<Benutzergruppe>(benutzergruppen);
+		}
+		return new ArrayList<Benutzergruppe>(this.benutzergruppen);
 	}
 
 	public void setBearbeitungsstatusUp() {
-		if (getBearbeitungsstatusEnum() != StepStatus.DONE)
-			bearbeitungsstatus = Integer.valueOf(bearbeitungsstatus.intValue() + 1);
+		if (getBearbeitungsstatusEnum() != StepStatus.DONE) {
+			this.bearbeitungsstatus = Integer.valueOf(this.bearbeitungsstatus.intValue() + 1);
+		}
 	}
 
 	public void setBearbeitungsstatusDown() {
-		if (getBearbeitungsstatusEnum() != StepStatus.LOCKED)
-			bearbeitungsstatus = Integer.valueOf(bearbeitungsstatus.intValue() - 1);
+		if (getBearbeitungsstatusEnum() != StepStatus.LOCKED) {
+			this.bearbeitungsstatus = Integer.valueOf(this.bearbeitungsstatus.intValue() - 1);
+		}
 	}
 
 	public short getHomeverzeichnisNutzen() {
-		return homeverzeichnisNutzen;
+		return this.homeverzeichnisNutzen;
 	}
 
 	public void setHomeverzeichnisNutzen(short homeverzeichnisNutzen) {
@@ -400,7 +436,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypExportRus() {
-		return typExportRus;
+		return this.typExportRus;
 	}
 
 	public void setTypExportRus(boolean typExportRus) {
@@ -408,7 +444,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypImagesLesen() {
-		return typImagesLesen;
+		return this.typImagesLesen;
 	}
 
 	public void setTypImagesLesen(boolean typImagesLesen) {
@@ -416,17 +452,18 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypImagesSchreiben() {
-		return typImagesSchreiben;
+		return this.typImagesSchreiben;
 	}
 
 	public void setTypImagesSchreiben(boolean typImagesSchreiben) {
 		this.typImagesSchreiben = typImagesSchreiben;
-		if (typImagesSchreiben)
+		if (typImagesSchreiben) {
 			this.typImagesLesen = true;
+		}
 	}
 
 	public boolean isTypExportDMS() {
-		return typExportDMS;
+		return this.typExportDMS;
 	}
 
 	public void setTypExportDMS(boolean typExportDMS) {
@@ -434,7 +471,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypImportFileUpload() {
-		return typImportFileUpload;
+		return this.typImportFileUpload;
 	}
 
 	public void setTypImportFileUpload(boolean typImportFileUpload) {
@@ -442,7 +479,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypMetadaten() {
-		return typMetadaten;
+		return this.typMetadaten;
 	}
 
 	public void setTypMetadaten(boolean typMetadaten) {
@@ -450,7 +487,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypBeimAnnehmenAbschliessen() {
-		return typBeimAnnehmenAbschliessen;
+		return this.typBeimAnnehmenAbschliessen;
 	}
 
 	public void setTypBeimAnnehmenAbschliessen(boolean typBeimAnnehmenAbschliessen) {
@@ -458,7 +495,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypBeimAnnehmenModul() {
-		return typBeimAnnehmenModul;
+		return this.typBeimAnnehmenModul;
 	}
 
 	public void setTypBeimAnnehmenModul(boolean typBeimAnnehmenModul) {
@@ -466,7 +503,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypBeimAnnehmenModulUndAbschliessen() {
-		return typBeimAnnehmenModulUndAbschliessen;
+		return this.typBeimAnnehmenModulUndAbschliessen;
 	}
 
 	public void setTypBeimAnnehmenModulUndAbschliessen(boolean typBeimAnnehmenModulUndAbschliessen) {
@@ -474,7 +511,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypAutomatisch() {
-		return typAutomatisch;
+		return this.typAutomatisch;
 	}
 
 	public void setTypAutomatisch(boolean typAutomatisch) {
@@ -482,7 +519,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isTypBeimAbschliessenVerifizieren() {
-		return typBeimAbschliessenVerifizieren;
+		return this.typBeimAbschliessenVerifizieren;
 	}
 
 	public void setTypBeimAbschliessenVerifizieren(boolean typBeimAbschliessenVerifizieren) {
@@ -490,7 +527,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTypModulName() {
-		return typModulName;
+		return this.typModulName;
 	}
 
 	public void setTypModulName(String typModulName) {
@@ -500,7 +537,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 
 
 	public boolean isSelected() {
-		return selected;
+		return this.selected;
 	}
 
 	public void setSelected(boolean selected) {
@@ -519,15 +556,16 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * @return Rückgabe des Schritttitels sowie (sofern vorhanden) den Benutzer mit vollständigem Namen
 	 */
 	public String getTitelMitBenutzername() {
-		String rueckgabe = titel;
-		if (bearbeitungsbenutzer != null && bearbeitungsbenutzer.getId() != null
-				&& bearbeitungsbenutzer.getId().intValue() != 0)
-			rueckgabe += " (" + bearbeitungsbenutzer.getNachVorname() + ")";
+		String rueckgabe = this.titel;
+		if (this.bearbeitungsbenutzer != null && this.bearbeitungsbenutzer.getId() != null
+				&& this.bearbeitungsbenutzer.getId().intValue() != 0) {
+			rueckgabe += " (" + this.bearbeitungsbenutzer.getNachVorname() + ")";
+		}
 		return rueckgabe;
 	}
 
 	public String getBearbeitungsstatusAsString() {
-		return String.valueOf(bearbeitungsstatus.intValue());
+		return String.valueOf(this.bearbeitungsstatus.intValue());
 	}
 
 	public void setBearbeitungsstatusAsString(String inbearbeitungsstatus) {
@@ -539,10 +577,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Boolean getTypScriptStep() {
-		if (typScriptStep==null) {
+		if (this.typScriptStep==null) {
 			this.typScriptStep = false;
 		}
-		return typScriptStep;
+		return this.typScriptStep;
 	}
 
 	public void setScriptname1(String scriptname1) {
@@ -550,12 +588,12 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getScriptname1() {
-		return scriptname1;
+		return this.scriptname1;
 	}
 	
 	
 	public String getTypAutomatischScriptpfad() {
-		return typAutomatischScriptpfad;
+		return this.typAutomatischScriptpfad;
 	}
 
 	public void setTypAutomatischScriptpfad(String typAutomatischScriptpfad) {
@@ -568,7 +606,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 
 	
 	public String getScriptname2() {
-		return scriptname2;
+		return this.scriptname2;
 	}
 
 	public void setTypAutomatischScriptpfad2(String typAutomatischScriptpfad2) {
@@ -576,7 +614,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTypAutomatischScriptpfad2() {
-		return typAutomatischScriptpfad2;
+		return this.typAutomatischScriptpfad2;
 	}
 
 	public void setScriptname3(String scriptname3) {
@@ -584,7 +622,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getScriptname3() {
-		return scriptname3;
+		return this.scriptname3;
 	}
 
 	public void setTypAutomatischScriptpfad3(String typAutomatischScriptpfad3) {
@@ -592,7 +630,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTypAutomatischScriptpfad3() {
-		return typAutomatischScriptpfad3;
+		return this.typAutomatischScriptpfad3;
 	}
 
 	public void setScriptname4(String scriptname4) {
@@ -600,7 +638,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getScriptname4() {
-		return scriptname4;
+		return this.scriptname4;
 	}
 
 	public void setTypAutomatischScriptpfad4(String typAutomatischScriptpfad4) {
@@ -608,7 +646,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTypAutomatischScriptpfad4() {
-		return typAutomatischScriptpfad4;
+		return this.typAutomatischScriptpfad4;
 	}
 
 	public void setScriptname5(String scriptname5) {
@@ -616,7 +654,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getScriptname5() {
-		return scriptname5;
+		return this.scriptname5;
 	}
 
 	public void setTypAutomatischScriptpfad5(String typAutomatischScriptpfad5) {
@@ -624,45 +662,45 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTypAutomatischScriptpfad5() {
-		return typAutomatischScriptpfad5;
+		return this.typAutomatischScriptpfad5;
 	}
 	
 	public ArrayList<String> getAllScriptPaths() {
 		ArrayList<String> answer = new ArrayList<String>();
-		if (typAutomatischScriptpfad != null) {
-			answer.add(typAutomatischScriptpfad);
+		if (this.typAutomatischScriptpfad != null) {
+			answer.add(this.typAutomatischScriptpfad);
 		}
-		if (typAutomatischScriptpfad2 != null) {
-			answer.add(typAutomatischScriptpfad2);
+		if (this.typAutomatischScriptpfad2 != null) {
+			answer.add(this.typAutomatischScriptpfad2);
 		}
-		if (typAutomatischScriptpfad3 != null) {
-			answer.add(typAutomatischScriptpfad3);
+		if (this.typAutomatischScriptpfad3 != null) {
+			answer.add(this.typAutomatischScriptpfad3);
 		}
-		if (typAutomatischScriptpfad4 != null) {
-			answer.add(typAutomatischScriptpfad4);
+		if (this.typAutomatischScriptpfad4 != null) {
+			answer.add(this.typAutomatischScriptpfad4);
 		}
-		if (typAutomatischScriptpfad5 != null) {
-			answer.add(typAutomatischScriptpfad5);
+		if (this.typAutomatischScriptpfad5 != null) {
+			answer.add(this.typAutomatischScriptpfad5);
 		}
 		return answer;
 	}
 	
 	public HashMap<String, String> getAllScripts(){
 		HashMap<String,String> answer = new HashMap<String, String>();
-		if (typAutomatischScriptpfad != null && !typAutomatischScriptpfad.equals("")) {
-			answer.put(scriptname1, typAutomatischScriptpfad);
+		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
+			answer.put(this.scriptname1, this.typAutomatischScriptpfad);
 		}
-		if (typAutomatischScriptpfad2 != null && !typAutomatischScriptpfad2.equals("")) {
-			answer.put(scriptname2, typAutomatischScriptpfad2);
+		if (this.typAutomatischScriptpfad2 != null && !this.typAutomatischScriptpfad2.equals("")) {
+			answer.put(this.scriptname2, this.typAutomatischScriptpfad2);
 		}
-		if (typAutomatischScriptpfad3 != null && !typAutomatischScriptpfad3.equals("")) {
-			answer.put(scriptname3, typAutomatischScriptpfad3);
+		if (this.typAutomatischScriptpfad3 != null && !this.typAutomatischScriptpfad3.equals("")) {
+			answer.put(this.scriptname3, this.typAutomatischScriptpfad3);
 		}
-		if (typAutomatischScriptpfad4 != null && !typAutomatischScriptpfad4.equals("")) {
-			answer.put(scriptname4, typAutomatischScriptpfad4);
+		if (this.typAutomatischScriptpfad4 != null && !this.typAutomatischScriptpfad4.equals("")) {
+			answer.put(this.scriptname4, this.typAutomatischScriptpfad4);
 		}
-		if (typAutomatischScriptpfad5 != null && !typAutomatischScriptpfad5.equals("")) {
-			answer.put(scriptname5, typAutomatischScriptpfad5);
+		if (this.typAutomatischScriptpfad5 != null && !this.typAutomatischScriptpfad5.equals("")) {
+			answer.put(this.scriptname5, this.typAutomatischScriptpfad5);
 		}		
 		return answer;
 	}
@@ -675,61 +713,65 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		int size = keyList.size();
 		if (size > 0){
-			scriptname1 = keyList.get(0);
-			typAutomatischScriptpfad = paths.get(keyList.get(0));
+			this.scriptname1 = keyList.get(0);
+			this.typAutomatischScriptpfad = paths.get(keyList.get(0));
 		}
 		if (size > 1){
-			scriptname2 = keyList.get(1);
-			typAutomatischScriptpfad2 = paths.get(keyList.get(1));
+			this.scriptname2 = keyList.get(1);
+			this.typAutomatischScriptpfad2 = paths.get(keyList.get(1));
 		}
 		if (size > 2){
-			scriptname3 = keyList.get(2);
-			typAutomatischScriptpfad3 = paths.get(keyList.get(2));
+			this.scriptname3 = keyList.get(2);
+			this.typAutomatischScriptpfad3 = paths.get(keyList.get(2));
 		}
 		if (size > 3){
-			scriptname4 = keyList.get(3);
-			typAutomatischScriptpfad4 = paths.get(keyList.get(3));
+			this.scriptname4 = keyList.get(3);
+			this.typAutomatischScriptpfad4 = paths.get(keyList.get(3));
 		}
 		if (size > 4){
-			scriptname5 = keyList.get(4);
-			typAutomatischScriptpfad5 = paths.get(keyList.get(4));
+			this.scriptname5 = keyList.get(4);
+			this.typAutomatischScriptpfad5 = paths.get(keyList.get(4));
 		}
 	}
 	
 	public String getListOfPaths(){
 		String answer = "";
-		if (scriptname1!=null){
-			answer+=scriptname1;
+		if (this.scriptname1!=null){
+			answer+=this.scriptname1;
 		}
-		if (scriptname2!=null){
-			answer= answer+"; "+scriptname2;
+		if (this.scriptname2!=null){
+			answer= answer+"; "+this.scriptname2;
 		}
-		if (scriptname3!=null){
-			answer= answer+"; "+scriptname3;
+		if (this.scriptname3!=null){
+			answer= answer+"; "+this.scriptname3;
 		}		
-		if (scriptname4!=null){
-			answer= answer+"; "+scriptname4;
+		if (this.scriptname4!=null){
+			answer= answer+"; "+this.scriptname4;
 		}
-		if (scriptname5!=null){
-			answer= answer+"; "+scriptname5;
+		if (this.scriptname5!=null){
+			answer= answer+"; "+this.scriptname5;
 		}
 		return answer;
 		
 	}
+	@Override
 	public Status getStatus() {
 		return Status.getStepStatus(this);
 	}
 	
+	@Override
 	public List<IGoobiProperty> getProperties() {
 		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
 	}
+	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		eigenschaften.add((Schritteigenschaft) toAdd);
+		this.eigenschaften.add((Schritteigenschaft) toAdd);
 	}
 	
 	
+	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
@@ -741,14 +783,15 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * @return instance of {@link DisplayPropertyList}
 	 */
 	public DisplayPropertyList getDisplayProperties() {
-		if (displayProperties == null) {
-			displayProperties = new DisplayPropertyList(this);
+		if (this.displayProperties == null) {
+			this.displayProperties = new DisplayPropertyList(this);
 		}
-		return displayProperties;
+		return this.displayProperties;
 	}
 	
+	@Override
 	public void refreshProperties() {
-		displayProperties = null;
+		this.displayProperties = null;
 		getDisplayProperties();
 		
 	}

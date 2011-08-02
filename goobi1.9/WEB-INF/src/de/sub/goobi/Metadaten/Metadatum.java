@@ -1,5 +1,31 @@
 package de.sub.goobi.Metadaten;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,19 +68,19 @@ public class Metadatum {
     * Allgemeiner Konstruktor ()
     */
    public Metadatum(Metadata m, int inID, Prefs inPrefs, Prozess inProcess) {
-      md = m;
-      identifier = inID;
-      myPrefs = inPrefs;
-      myProcess = inProcess;
+      this.md = m;
+      this.identifier = inID;
+      this.myPrefs = inPrefs;
+      this.myProcess = inProcess;
       for (BindState state : BindState.values()) {
-    	  myValues.put(state.getTitle(), new DisplayCase(myProcess, state.getTitle(), md.getType().getName()));    	  
+    	  this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));    	  
       }
    }
 
    public ArrayList<Item> getWert() {
-	   String value = md.getValue();
+	   String value = this.md.getValue();
 	   if (value != null) {
-		   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
+		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
 			   if (i.getValue().equals(value)) {
 				  i.setIsSelected(true);
 			   } else {
@@ -62,27 +88,27 @@ public class Metadatum {
 			   }	   
 		   }
 	   }
-      return  myValues.get(Modes.getBindState().getTitle()).getItemList();
+      return  this.myValues.get(Modes.getBindState().getTitle()).getItemList();
    }
 
    public void setWert(String inWert) {
-      md.setValue(inWert.trim());
+      this.md.setValue(inWert.trim());
    }
 
    
 
    public String getTyp() {
-	   String label = md.getType().getLanguage((String) Helper
+	   String label = this.md.getType().getLanguage((String) Helper
                .getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
        if (label == null) {
-    	   label = md.getType().getName();
+    	   label = this.md.getType().getName();
        }
        return label;
    }
 
    public void setTyp(String inTyp) {
-      MetadataType mdt = myPrefs.getMetadataTypeByName(inTyp);
-      md.setType(mdt);
+      MetadataType mdt = this.myPrefs.getMetadataTypeByName(inTyp);
+      this.md.setType(mdt);
    }
 
    /*#####################################################
@@ -94,7 +120,7 @@ public class Metadatum {
     ####################################################*/
 
    public int getIdentifier() {
-      return identifier;
+      return this.identifier;
    }
 
    public void setIdentifier(int identifier) {
@@ -102,7 +128,7 @@ public class Metadatum {
    }
 
    public Metadata getMd() {
-      return md;
+      return this.md;
    }
 
    public void setMd(Metadata md) {
@@ -119,30 +145,30 @@ public class Metadatum {
 	
 	
    public String getOutputType() {
-	   return myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
+	   return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
    }
 	
    
    
    public List<SelectItem> getItems() {
-	   items = new ArrayList<SelectItem>();
-	   selectedItems = new ArrayList<String>();
-	   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		   items.add(new SelectItem(i.getLabel()));
+	   this.items = new ArrayList<SelectItem>();
+	   this.selectedItems = new ArrayList<String>();
+	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+		   this.items.add(new SelectItem(i.getLabel()));
 		   if (i.getIsSelected()) {
-			   selectedItems.add(i.getLabel());
+			   this.selectedItems.add(i.getLabel());
 		   }
 	   }
-	   return items;
+	   return this.items;
    }
 
    public void setItems(List<SelectItem> items) {
-	   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 		   i.setIsSelected(false);
 	   }
 	   String val = "";
 	   for (SelectItem sel : items) {
-		   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 			   if (i.getLabel().equals(sel.getValue())) {
 				   i.setIsSelected(true);
 				   val += i.getValue();
@@ -156,47 +182,47 @@ public class Metadatum {
    
    
    public List<String> getSelectedItems() {
-	   selectedItems = new ArrayList<String>();
-	   String values = md.getValue();
+	   this.selectedItems = new ArrayList<String>();
+	   String values = this.md.getValue();
 	   while (values != null && values != "" && values.length() != 0) {
 		   int semicolon = values.indexOf(";");
 		   if (semicolon != -1) {
 			   String value = values.substring(0, semicolon);
-			   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
+			   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
 				   if (i.getValue().equals(value)){
-					   selectedItems.add(i.getLabel());
+					   this.selectedItems.add(i.getLabel());
 					   i.setIsSelected(true);
 				   }
 			   }
 			   int length = values.length(); 
 			   values = values.substring(semicolon+1, length);
 		   } else {
-			   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
+			   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
 				   if (i.getValue().equals(values)){
-					   selectedItems.add(i.getLabel());
+					   this.selectedItems.add(i.getLabel());
 					   i.setIsSelected(true);
 				   }
 			   }
 			   values = "";
 		   }
 	   }
-       return selectedItems;
+       return this.selectedItems;
    }
 
    
    public void setSelectedItems(List<String> selectedItems) {
-	   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 		   i.setIsSelected(false);
 	   }
 	   for (String sel : selectedItems) {
-		   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 			   if (i.getLabel().equals(sel)) {
 				   i.setIsSelected(true);
 			   }
 		   }
 	   }	   
 	  String val = "";
-	  for (Item i :myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+	  for (Item i :this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 		  if (i.getIsSelected()) {
 			  val += i.getValue() + ";";
 		  }
@@ -206,9 +232,9 @@ public class Metadatum {
 	   
    
    public String getSelectedItem() {
-	   String value = md.getValue();
+	   String value = this.md.getValue();
 	   if (value != "") {
-		   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
+		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
 			   if (i.getValue().equals(value)){
 				   i.setIsSelected(true);
 				   return i.getLabel();
@@ -220,10 +246,10 @@ public class Metadatum {
 
    
    public void setSelectedItem(String selectedItem) {
-	   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
+	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
 		   i.setIsSelected(false);
 	   }
-	   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 		   if (i.getLabel().equals(selectedItem)) {
 			   setWert(i.getValue());
 		   }
@@ -237,7 +263,7 @@ public class Metadatum {
    
    
    public String getValue(){
-	   return md.getValue();
+	   return this.md.getValue();
    }
    
 }

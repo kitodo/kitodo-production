@@ -1,5 +1,31 @@
 package de.sub.goobi.helper;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,20 +59,8 @@ import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.config.ConfigMain;
 
-//TODO: Check if more method can be made static
 public class Helper implements Serializable, Observer {
 
-	// Pictures of the "Helper" also known as Tree-Man
-	// From http://monsterbrains.blogspot.com/
-	// http://i35.tinypic.com/20jmwes.jpg
-	// http://i38.tinypic.com/9jezh5.jpg
-	// Comic Reference
-	// http://katzundgoldt.de/port_laestiges_serviceunt_1.htm Panel 5
-	// References to the original
-	// http://upload.wikimedia.org/wikipedia/commons/9/91/Bosch_Jardin_des_delices_detail.jpg
-	// http://en.wikipedia.org/wiki/The_Garden_of_Earthly_Delights
-	// http://www.abcgallery.com/B/bosch/bosch1.html
-	// http://www.mesart.com/artworksps.jsp.que.artist.eq.678.amp.series.eq.4634.shtml
 
 	private static final Logger myLogger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;
@@ -76,17 +90,17 @@ public class Helper implements Serializable, Observer {
 
 	// TODO: Get rid of this - create a API for application properties
 	public String getGoobiDataDirectory() {
-		if (myMetadatenVerzeichnis == null) {
-			myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
+		if (this.myMetadatenVerzeichnis == null) {
+			this.myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
 		}
-		return myMetadatenVerzeichnis;
+		return this.myMetadatenVerzeichnis;
 	}
 
 	public String getGoobiConfigDirectory() {
-		if (myConfigVerzeichnis == null) {
-			myConfigVerzeichnis = ConfigMain.getParameter("KonfigurationVerzeichnis");
+		if (this.myConfigVerzeichnis == null) {
+			this.myConfigVerzeichnis = ConfigMain.getParameter("KonfigurationVerzeichnis");
 		}
-		return myConfigVerzeichnis;
+		return this.myConfigVerzeichnis;
 	}
 
 	public static String getStacktraceAsString(Exception inException) {
@@ -391,6 +405,7 @@ public class Helper implements Serializable, Observer {
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+	@Override
 	public void update(Observable o, Object arg) {
 		if (!(arg instanceof String)) {
 			Helper.setFehlerMeldung("Usernotification failed by object: '" + arg.toString()
@@ -438,8 +453,9 @@ public class Helper implements Serializable, Observer {
 	 * attempting to delete and returns false.
 	 */
 	public static boolean deleteDir(File dir) {
-		if (!dir.exists())
+		if (!dir.exists()) {
 			return true;
+		}
 		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
@@ -514,10 +530,11 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public FilenameFilter getFilter() {
-		return imageNameFilter;
+		return this.imageNameFilter;
 	}
 
 	FilenameFilter imageNameFilter = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");

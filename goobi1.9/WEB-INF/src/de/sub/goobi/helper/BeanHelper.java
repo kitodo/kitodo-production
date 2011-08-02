@@ -1,7 +1,32 @@
 package de.sub.goobi.helper;
 
-//TODO: Get rid of the Iterators, use for loops
-import java.util.ArrayList;
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +54,9 @@ public class BeanHelper {
 		eig.setWert(inWert);
 		eig.setProzess(inProzess);
 		Set<Prozesseigenschaft> eigenschaften = inProzess.getEigenschaften();
-		if (eigenschaften == null)
+		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Prozesseigenschaft>();
+		}
 		eigenschaften.add(eig);
 	}
 
@@ -42,8 +68,9 @@ public class BeanHelper {
 		eig.setWert(inWert);
 		eig.setSchritt(inSchritt);
 		Set<Schritteigenschaft> eigenschaften = inSchritt.getEigenschaften();
-		if (eigenschaften == null)
+		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Schritteigenschaft>();
+		}
 		eigenschaften.add(eig);
 	}
 
@@ -55,8 +82,9 @@ public class BeanHelper {
 		eig.setWert(inWert);
 		eig.setVorlage(inVorlage);
 		Set<Vorlageeigenschaft> eigenschaften = inVorlage.getEigenschaften();
-		if (eigenschaften == null)
+		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Vorlageeigenschaft>();
+		}
 		eigenschaften.add(eig);
 	}
 
@@ -68,8 +96,9 @@ public class BeanHelper {
 		eig.setWert(inWert);
 		eig.setWerkstueck(inWerkstueck);
 		Set<Werkstueckeigenschaft> eigenschaften = inWerkstueck.getEigenschaften();
-		if (eigenschaften == null)
+		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Werkstueckeigenschaft>();
+		}
 		eigenschaften.add(eig);
 	}
 
@@ -239,8 +268,9 @@ public class BeanHelper {
 		String Eigenschaft = "";
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft))
+				if (eigenschaft.getTitel().equals(inEigenschaft)) {
 					Eigenschaft = eigenschaft.getWert();
+				}
 			}
 		}
 		return Eigenschaft;
@@ -250,8 +280,9 @@ public class BeanHelper {
 		String Eigenschaft = "";
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft))
+				if (eigenschaft.getTitel().equals(inEigenschaft)) {
 					Eigenschaft = eigenschaft.getWert();
+				}
 			}
 		}
 		return Eigenschaft;
@@ -260,8 +291,9 @@ public class BeanHelper {
 	public void WerkstueckEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft))
+				if (eigenschaft.getTitel().equals(inEigenschaft)) {
 					eigenschaft.setWert(inWert);
+				}
 			}
 		}
 	}
@@ -269,8 +301,9 @@ public class BeanHelper {
 	public void ScanvorlagenEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft))
+				if (eigenschaft.getTitel().equals(inEigenschaft)) {
 					eigenschaft.setWert(inWert);
+				}
 			}
 		}
 	}
@@ -278,8 +311,9 @@ public class BeanHelper {
 	public void WerkstueckEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert))
+				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert)) {
 					myWerkstueck.getEigenschaften().remove(eigenschaft);
+				}
 			}
 		}
 	}
@@ -287,8 +321,9 @@ public class BeanHelper {
 	public void ScanvorlagenEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert))
+				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert)) {
 					myVorlage.getEigenschaften().remove(eigenschaft);
+				}
 			}
 		}
 	}
@@ -298,10 +333,11 @@ public class BeanHelper {
 			List<String> einzelstuecke = new ArrayList<String>();
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
 				/* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
-				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert()))
+				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert())) {
 					myWerkstueck.getEigenschaften().remove(eigenschaft);
-				else
+				} else {
 					einzelstuecke.add(eigenschaft.getTitel() + "|" + eigenschaft.getWert());
+				}
 			}
 		}
 	}
@@ -311,10 +347,11 @@ public class BeanHelper {
 			List<String> einzelstuecke = new ArrayList<String>();
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
 				/* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
-				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert()))
+				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert())) {
 					myVorlage.getEigenschaften().remove(eigenschaft);
-				else
+				} else {
 					einzelstuecke.add(eigenschaft.getTitel() + "|" + eigenschaft.getWert());
+				}
 			}
 		}
 	}

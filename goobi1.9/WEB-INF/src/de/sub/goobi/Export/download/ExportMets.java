@@ -1,5 +1,31 @@
 package de.sub.goobi.Export.download;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -92,14 +118,14 @@ public class ExportMets {
 		/*
 		 * -------------------------------- Read Document --------------------------------
 		 */
-		myPrefs = myProzess.getRegelsatz().getPreferences();
+		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		String atsPpnBand = myProzess.getTitel();
 		Fileformat gdzfile = myProzess.readMetadataFile();
 
 		/* nur beim Rusdml-Projekt die Metadaten aufbereiten */
 		ConfigProjects cp = new ConfigProjects(myProzess.getProjekt());
 		if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-			ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProzess, myPrefs, gdzfile);
+			ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProzess, this.myPrefs, gdzfile);
 			atsPpnBand = expcorr.correctionStart();
 		}
 
@@ -120,7 +146,7 @@ public class ExportMets {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
-			help.createUserDirectory(target, myBenutzer.getLogin());
+			this.help.createUserDirectory(target, myBenutzer.getLogin());
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
@@ -146,7 +172,7 @@ public class ExportMets {
 	protected void writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile) throws PreferencesException, WriteException,
 			IOException, InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 
-		MetsModsImportExport mm = new MetsModsImportExport(myPrefs);
+		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		String imageFolderPath = myProzess.getImagesDirectory();
 		File imageFolder = new File(imageFolderPath);
 		/*
@@ -156,7 +182,7 @@ public class ExportMets {
 		if (dd.getFileSet() == null) {
 			Helper.setMeldung(myProzess.getTitel() + ": digital document does not contain images; temporarily adding them for mets file creation");
 
-			MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
+			MetadatenImagesHelper mih = new MetadatenImagesHelper(this.myPrefs, dd);
 			mih.createPagination(myProzess);
 		}
 
@@ -164,7 +190,7 @@ public class ExportMets {
 		 * get the topstruct element of the digital document depending on anchor property
 		 */
 		DocStruct topElement = dd.getLogicalDocStruct();
-		if (myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
+		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
 				throw new PreferencesException(myProzess.getTitel()
 						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
@@ -210,7 +236,7 @@ public class ExportMets {
 			 */
 			// Replace all pathes with the given VariableReplacer, also the file
 			// group pathes!
-			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), myPrefs, myProzess, null);
+			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
 			Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
 			if (myFilegroups != null && myFilegroups.size() > 0) {
 				for (ProjectFileGroup pfg : myFilegroups) {
@@ -247,7 +273,7 @@ public class ExportMets {
 			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 			ArrayList<String> images = new ArrayList<String>();
 			try {
-				images = new MetadatenImagesHelper(myPrefs, dd).getImageFiles(myProzess);
+				images = new MetadatenImagesHelper(this.myPrefs, dd).getImageFiles(myProzess);
 				dd.overrideContentFiles(images);
 			} catch (IndexOutOfBoundsException e) {
 				myLogger.error(e);				

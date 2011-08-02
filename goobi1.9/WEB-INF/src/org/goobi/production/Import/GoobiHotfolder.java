@@ -1,5 +1,31 @@
 package org.goobi.production.Import;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URI;
@@ -40,9 +66,10 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return a list with all xml files in GoobiHotfolder
 	 */
 
+	@Override
 	public List<File> getCurrentFiles() {
 		List<File> files = new ArrayList<File>();
-		File[] data = folder.listFiles();
+		File[] data = this.folder.listFiles();
 		if (data != null) {
 			files = Arrays.asList(data);
 		}
@@ -55,8 +82,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return a list with all filenames containing the name in GoobiHotfolder
 	 */
 
+	@Override
 	public List<String> getFilesByName(String name) {
-		List<String> files = Arrays.asList(folder.list());
+		List<String> files = Arrays.asList(this.folder.list());
 		List<String> answer = new ArrayList<String>();
 		for (String file : files) {
 			if (file.contains(name) && !file.contains("anchor")) {
@@ -72,8 +100,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return a list with all filenames matching the filter
 	 */
 
+	@Override
 	public List<String> getFileNamesByFilter(FilenameFilter filter) {
-		return Arrays.asList(folder.list(filter));
+		return Arrays.asList(this.folder.list(filter));
 	}
 
 	/**
@@ -82,20 +111,24 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return a list with all file matching the filter
 	 */
 
+	@Override
 	public List<File> getFilesByFilter(FilenameFilter filter) {
-		return Arrays.asList(folder.listFiles(filter));
+		return Arrays.asList(this.folder.listFiles(filter));
 	}
 
+	@Override
 	public String getFolderAsString() {
-		return folder.getAbsolutePath() + File.separator;
+		return this.folder.getAbsolutePath() + File.separator;
 	}
 
+	@Override
 	public File getFolderAsFile() {
-		return folder;
+		return this.folder;
 	}
 
+	@Override
 	public URI getFolderAsUri() {
-		return folder.toURI();
+		return this.folder.toURI();
 	}
 
 	/**
@@ -103,6 +136,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 
 	public static FilenameFilter Filter = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			if (!name.contains("anchor") && name.endsWith(".xml")) {
 				return true;
@@ -182,7 +216,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -196,7 +230,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return the template
 	 */
 	public Integer getTemplate() {
-		return template;
+		return this.template;
 	}
 
 	/**
@@ -210,7 +244,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return the updateStrategy
 	 */
 	public String getUpdateStrategy() {
-		return updateStrategy;
+		return this.updateStrategy;
 	}
 
 	/**
@@ -224,6 +258,6 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * @return the collection
 	 */
 	public String getCollection() {
-		return collection;
+		return this.collection;
 	}
 }

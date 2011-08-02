@@ -1,5 +1,31 @@
 package de.sub.goobi.Export.download;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -42,15 +68,17 @@ public class TiffHeader {
 	 */
 	public TiffHeader(Prozess inProzess) {
 		if (inProzess.getWerkstueckeSize() > 0) {
-			Werkstueck myWerkstueck = (Werkstueck) inProzess.getWerkstueckeList().get(0);
+			Werkstueck myWerkstueck = inProzess.getWerkstueckeList().get(0);
 			if (myWerkstueck.getEigenschaftenSize() > 0) {
 				for (Werkstueckeigenschaft eig : myWerkstueck.getEigenschaftenList()) {
 					// Werkstueckeigenschaft eig = (Werkstueckeigenschaft) iter.next();
 
-					if (eig.getTitel().equals("TifHeaderDocumentname"))
-						tifHeader_documentname = eig.getWert();
-					if (eig.getTitel().equals("TifHeaderImagedescription"))
-						tifHeader_imagedescription = eig.getWert();
+					if (eig.getTitel().equals("TifHeaderDocumentname")) {
+						this.tifHeader_documentname = eig.getWert();
+					}
+					if (eig.getTitel().equals("TifHeaderImagedescription")) {
+						this.tifHeader_imagedescription = eig.getWert();
+					}
 
 					// if (eig.getTitel().equals("PPN digital"))
 					// PPNdigital = eig.getWert();
@@ -67,7 +95,8 @@ public class TiffHeader {
 					// if (eig.getTitel().equals("DocType"))
 					// DocType = eig.getWert();
 					if (eig.getTitel().equals("Artist"))
-						Artist = eig.getWert();
+					 {
+						this.Artist = eig.getWert();
 					// if (eig.getTitel().equals("Erscheinungsort"))
 					// Ort = eig.getWert();
 					// if (eig.getTitel().equals("Verlag"))
@@ -78,6 +107,7 @@ public class TiffHeader {
 					// Haupttitel = eig.getWert();
 					// if (eig.getTitel().equals("Erscheinungsjahr"))
 					// Jahr = eig.getWert();
+					}
 				}
 			}
 
@@ -91,7 +121,7 @@ public class TiffHeader {
 	 * Rückgabe des kompletten Tiff-Headers
 	 */
 	public String getImageDescription() {
-		return tifHeader_imagedescription;
+		return this.tifHeader_imagedescription;
 		// StringBuffer strBuf = new StringBuffer();
 		// strBuf.append("|<RUSDML>|");
 		//
@@ -190,7 +220,7 @@ public class TiffHeader {
 	 * Rückgabe des kompletten Tiff-Headers
 	 */
 	private String getDocumentName() {
-		return tifHeader_documentname;
+		return this.tifHeader_documentname;
 		// StringBuffer strBuf = new StringBuffer();
 		// if (DocType.equals("Monographie")) {
 		// if (ATS != null && ATS.length() > 0)
@@ -229,7 +259,7 @@ public class TiffHeader {
 		// strBuf.append("#CheckNames=no" + lineBreak);
 		// strBuf.append("#CheckNames=yes" + lineBreak);
 		strBuf.append("#" + lineBreak);
-		strBuf.append("Artist=" + Artist + lineBreak);
+		strBuf.append("Artist=" + this.Artist + lineBreak);
 		strBuf.append("Documentname=" + getDocumentName() + lineBreak);
 		strBuf.append("ImageDescription=" + getImageDescription() + lineBreak);
 		// strBuf.append("#ResolutionX=200" + lineBreak);

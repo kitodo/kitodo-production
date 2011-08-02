@@ -1,6 +1,32 @@
 package de.sub.goobi.Import;
 
-//TODO: Is this still needed?
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +70,7 @@ public class ImportZentralblatt {
 	 * Allgemeiner Konstruktor ()
 	 */
 	public ImportZentralblatt() {
-		help = new Helper();
+		this.help = new Helper();
 	}
 
 	/**
@@ -58,10 +84,10 @@ public class ImportZentralblatt {
 	protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
 			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
 		myLogger.debug("ParsenZentralblatt() - Start");
-		myPrefs = inProzess.getRegelsatz().getPreferences();
+		this.myPrefs = inProzess.getRegelsatz().getPreferences();
 		String prozessID = String.valueOf(inProzess.getId().intValue());
 		String line;
-		Trennzeichen = ":";
+		this.Trennzeichen = ":";
 		boolean istAbsatz = false;
 		boolean istErsterTitel = true;
 		LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
@@ -70,9 +96,9 @@ public class ImportZentralblatt {
 		 * -------------------------------- Vorbereitung der Dokumentenstruktur --------------------------------
 		 */
 		DigitalDocument dd = new DigitalDocument();
-		DocStructType dst = myPrefs.getDocStrctTypeByName("Periodical");
+		DocStructType dst = this.myPrefs.getDocStrctTypeByName("Periodical");
 		DocStruct dsPeriodical = dd.createDocStruct(dst);
-		dst = myPrefs.getDocStrctTypeByName("PeriodicalVolume");
+		dst = this.myPrefs.getDocStrctTypeByName("PeriodicalVolume");
 		DocStruct dsPeriodicalVolume = dd.createDocStruct(dst);
 		dsPeriodical.addChild(dsPeriodicalVolume);
 
@@ -92,12 +118,13 @@ public class ImportZentralblatt {
 
 				/* prüfen ob der String korrekte xml-Zeichen enth�lt */
 				String xmlTauglich = xmlTauglichkeitPruefen(line);
-				if (xmlTauglich.length() > 0)
+				if (xmlTauglich.length() > 0) {
 					throw new WrongImportFileException("Parsingfehler (nicht druckbares Zeichen) der Importdatei in der Zeile <br/>" + xmlTauglich);
+				}
 
 				/* wenn es gerade ein neuer Absatz ist, diesen als neuen Artikel in die Liste übernehmen */
 				if (!istAbsatz) {
-					DocStructType dstLocal = myPrefs.getDocStrctTypeByName("Article");
+					DocStructType dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
 					DocStruct ds = dd.createDocStruct(dstLocal);
 					listArtikel.add(ds);
 					// myLogger.debug("---------------          neuer Artikel          ----------------");
@@ -106,7 +133,7 @@ public class ImportZentralblatt {
 				}
 
 				/* Position des Trennzeichens ermitteln */
-				int posTrennzeichen = line.indexOf(Trennzeichen);
+				int posTrennzeichen = line.indexOf(this.Trennzeichen);
 				/* wenn kein Trennzeichen vorhanden, Parsingfehler */
 				if (posTrennzeichen == -1) {
 					myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>" + HtmlTagsMaskieren(line));
@@ -115,30 +142,34 @@ public class ImportZentralblatt {
 				} else {
 					String myLeft = line.substring(0, posTrennzeichen).trim();
 					String myRight = line.substring(posTrennzeichen + 1, line.length()).trim();
-					ParsenArtikel((DocStruct) listArtikel.getLast(), myLeft, myRight, istErsterTitel);
+					ParsenArtikel(listArtikel.getLast(), myLeft, myRight, istErsterTitel);
 
 					/* wenn es ein Titel war, ist der nächste nicht mehr der erste Titel */
-					if (myLeft.equals("TI"))
+					if (myLeft.equals("TI")) {
 						istErsterTitel = false;
+					}
 
 					/* wenn es gerade der Zeitschriftenname ist, die Zeitschrift benennen */
-					if (myLeft.equals("J"))
+					if (myLeft.equals("J")) {
 						ParsenAllgemein(dsPeriodical, myLeft, myRight);
+					}
 
 					/* wenn es gerade eine Jahresangabe ist, dann für den aktuellen Band */
-					if (myLeft.equals("Y"))
+					if (myLeft.equals("Y")) {
 						ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
+					}
 
 					/* wenn es gerade eine Jahresangabe ist, dann für den aktuellen Band */
-					if (myLeft.equals("V"))
+					if (myLeft.equals("V")) {
 						ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
+					}
 
 					/*
 					 * wenn es gerade die Heftnummer ist, dann jetzt dem richtigen Heft zuordnen und dieses ggf. noch vorher anlegen
 					 */
 					if (myLeft.equals("I")) {
 						DocStruct dsPeriodicalIssue = ParsenHeftzuordnung(dsPeriodicalVolume, myRight, dd);
-						dsPeriodicalIssue.addChild((DocStruct) listArtikel.getLast());
+						dsPeriodicalIssue.addChild(listArtikel.getLast());
 					}
 				}
 			}
@@ -147,7 +178,7 @@ public class ImportZentralblatt {
 		/*
 		 * -------------------------------- physischer Baum (Seiten) --------------------------------
 		 */
-		dst = myPrefs.getDocStrctTypeByName("BoundBook");
+		dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
 		DocStruct dsBoundBook = dd.createDocStruct(dst);
 
 		/*
@@ -157,13 +188,13 @@ public class ImportZentralblatt {
 		dd.setLogicalDocStruct(dsPeriodical);
 		dd.setPhysicalDocStruct(dsBoundBook);
 		try {
-			Fileformat gdzfile = new XStream(myPrefs);
+			Fileformat gdzfile = new XStream(this.myPrefs);
 			gdzfile.setDigitalDocument(dd);
 
 			/*
 			 * -------------------------------- Datei am richtigen Ort speichern --------------------------------
 			 */
-			gdzfile.write(help.getGoobiDataDirectory() + prozessID + File.separator + "meta.xml");
+			gdzfile.write(this.help.getGoobiDataDirectory() + prozessID + File.separator + "meta.xml");
 		} catch (PreferencesException e) {
 			Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
 			myLogger.error(e);
@@ -179,8 +210,9 @@ public class ImportZentralblatt {
 
 			if (!isValidXMLChar(c)) {
 				rueckgabe = HtmlTagsMaskieren(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
-				if (laenge > i)
+				if (laenge > i) {
 					rueckgabe += HtmlTagsMaskieren(text.substring(i + 1, laenge));
+				}
 				break;
 			}
 		}
@@ -216,7 +248,7 @@ public class ImportZentralblatt {
 	private DocStruct ParsenHeftzuordnung(DocStruct dsPeriodicalVolume, String myRight, DigitalDocument inDigitalDocument)
 			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		DocStructType dst;
-		MetadataType mdt = myPrefs.getMetadataTypeByName("CurrentNo");
+		MetadataType mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
 		DocStruct dsPeriodicalIssue = null;
 		/* erstmal prüfen, ob das Heft schon existiert */
 		List<DocStruct> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
@@ -225,13 +257,14 @@ public class ImportZentralblatt {
 				// myLogger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
 				Metadata myMD1 = dsIntern.getAllMetadataByType(mdt).get(0);
 				// myLogger.debug("und der Wert ist: " + myMD1.getValue());
-				if (myMD1.getValue().equals(myRight))
+				if (myMD1.getValue().equals(myRight)) {
 					dsPeriodicalIssue = dsIntern;
+				}
 			}
 		}
 		/* wenn das Heft nicht gefunden werden konnte, jetzt anlegen */
 		if (dsPeriodicalIssue == null) {
-			dst = myPrefs.getDocStrctTypeByName("PeriodicalIssue");
+			dst = this.myPrefs.getDocStrctTypeByName("PeriodicalIssue");
 			dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
 			Metadata myMD = new Metadata(mdt);
 			// myMD.setType(mdt);
@@ -268,7 +301,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- Zeitschriftenname --------------------------------
 		 */
 		if (myLeft.equals("J")) {
-			mdt = myPrefs.getMetadataTypeByName("TitleDocMain");
+			mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
 			List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
 			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
 			if (myList.size() == 0) {
@@ -279,9 +312,10 @@ public class ImportZentralblatt {
 			} else {
 				/* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
 				md = myList.get(0);
-				if (!myRight.equals(md.getValue()))
+				if (!myRight.equals(md.getValue())) {
 					throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('" + md.getValue() + "' & '"
 							+ myRight + "')");
+				}
 			}
 			return;
 		}
@@ -290,7 +324,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- Jahrgang --------------------------------
 		 */
 		if (myLeft.equals("Y")) {
-			mdt = myPrefs.getMetadataTypeByName("PublicationYear");
+			mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
 			List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
 
 			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
@@ -319,7 +353,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- Bandnummer --------------------------------
 		 */
 		if (myLeft.equals("V")) {
-			mdt = myPrefs.getMetadataTypeByName("CurrentNo");
+			mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
 			List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
 
 			/* wenn noch keine Bandnummer vergeben wurde, dann jetzt */
@@ -331,9 +365,10 @@ public class ImportZentralblatt {
 
 				/* wurde schon eine Bandnummer vergeben, prüfen, ob dieser genauso lautet */
 				md = myList.get(0);
-				if (!myRight.equals(md.getValue()))
+				if (!myRight.equals(md.getValue())) {
 					throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('" + md.getValue() + "' & '" + myRight
 							+ "')");
+				}
 			}
 			return;
 		}
@@ -378,10 +413,11 @@ public class ImportZentralblatt {
 		 * -------------------------------- Titel --------------------------------
 		 */
 		if (myLeft.equals("TI")) {
-			if (istErsterTitel)
-				mdt = myPrefs.getMetadataTypeByName("TitleDocMain");
-			else
-				mdt = myPrefs.getMetadataTypeByName("MainTitleTranslated");
+			if (istErsterTitel) {
+				mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
+			} else {
+				mdt = this.myPrefs.getMetadataTypeByName("MainTitleTranslated");
+			}
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -392,7 +428,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- Sprache --------------------------------
 		 */
 		if (myLeft.equals("LA")) {
-			mdt = myPrefs.getMetadataTypeByName("DocLanguage");
+			mdt = this.myPrefs.getMetadataTypeByName("DocLanguage");
 			md = new Metadata(mdt);
 			md.setValue(myRight.toLowerCase());
 			inStruct.addMetadata(md);
@@ -403,7 +439,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLIdentifier --------------------------------
 		 */
 		if (myLeft.equals("AN")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLIdentifier");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -414,7 +450,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLPageNumber --------------------------------
 		 */
 		if (myLeft.equals("P")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLPageNumber");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -425,7 +461,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLSource --------------------------------
 		 */
 		if (myLeft.equals("SO")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLSource");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -436,7 +472,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLAbstract --------------------------------
 		 */
 		if (myLeft.equals("AB")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLAbstract");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -447,7 +483,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLReviewAuthor --------------------------------
 		 */
 		if (myLeft.equals("RV")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -458,7 +494,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLCita --------------------------------
 		 */
 		if (myLeft.equals("CI")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLCita");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -469,7 +505,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLTempID --------------------------------
 		 */
 		if (myLeft.equals("DE")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLTempID");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -480,7 +516,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLReviewLink --------------------------------
 		 */
 		if (myLeft.equals("SI")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLReviewLink");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -491,7 +527,7 @@ public class ImportZentralblatt {
 		 * -------------------------------- ZBLIntern --------------------------------
 		 */
 		if (myLeft.equals("XX")) {
-			mdt = myPrefs.getMetadataTypeByName("ZBLIntern");
+			mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
 			md = new Metadata(mdt);
 			md.setValue(myRight);
 			inStruct.addMetadata(md);
@@ -504,7 +540,7 @@ public class ImportZentralblatt {
 		if (myLeft.equals("KW")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
 			while (tokenizer.hasMoreTokens()) {
-				md = new Metadata(myPrefs.getMetadataTypeByName("Keyword"));
+				md = new Metadata(this.myPrefs.getMetadataTypeByName("Keyword"));
 				String myTok = tokenizer.nextToken();
 				md.setValue(myTok.trim());
 				inStruct.addMetadata(md);
@@ -518,11 +554,12 @@ public class ImportZentralblatt {
 		if (myLeft.equals("AU")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
 			while (tokenizer.hasMoreTokens()) {
-				Person p = new Person(myPrefs.getMetadataTypeByName("ZBLAuthor"));
+				Person p = new Person(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
 				String myTok = tokenizer.nextToken();
 
-				if (myTok.indexOf(",") == -1)
+				if (myTok.indexOf(",") == -1) {
 					throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+				}
 
 				p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
 				p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
@@ -538,11 +575,12 @@ public class ImportZentralblatt {
 		if (myLeft.equals("NH")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
 			while (tokenizer.hasMoreTokens()) {
-				Person p = new Person(myPrefs.getMetadataTypeByName("AuthorVariation"));
+				Person p = new Person(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
 				String myTok = tokenizer.nextToken();
 
-				if (myTok.indexOf(",") == -1)
+				if (myTok.indexOf(",") == -1) {
 					throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+				}
 
 				p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
 				p.setFirstname(myTok.substring(myTok.indexOf(",") + 1, myTok.length()).trim());
@@ -558,7 +596,7 @@ public class ImportZentralblatt {
 		if (myLeft.equals("CC")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight);
 			while (tokenizer.hasMoreTokens()) {
-				md = new Metadata(myPrefs.getMetadataTypeByName("ClassificationMSC"));
+				md = new Metadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"));
 				String myTok = tokenizer.nextToken();
 				md.setValue(myTok.trim());
 				inStruct.addMetadata(md);

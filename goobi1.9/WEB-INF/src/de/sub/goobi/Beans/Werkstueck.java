@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +48,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	private boolean panelAusgeklappt = true;
 
 	public Werkstueck() {
-		eigenschaften = new HashSet<Werkstueckeigenschaft>();
+		this.eigenschaften = new HashSet<Werkstueckeigenschaft>();
 	}
 
 	/*
@@ -30,8 +56,9 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 * ##################################################### ####################################################
 	 */
 
+	@Override
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -39,7 +66,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	}
 
 	public Prozess getProzess() {
-		return prozess;
+		return this.prozess;
 	}
 
 	public void setProzess(Prozess prozess) {
@@ -47,7 +74,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	}
 
 	public boolean isPanelAusgeklappt() {
-		return panelAusgeklappt;
+		return this.panelAusgeklappt;
 	}
 
 	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
@@ -55,7 +82,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Werkstueckeigenschaft> getEigenschaften() {
-		return eigenschaften;
+		return this.eigenschaften;
 	}
 
 	public void setEigenschaften(Set<Werkstueckeigenschaft> eigenschaften) {
@@ -68,33 +95,39 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 */
 
 	public int getEigenschaftenSize() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return 0;
-		else
-			return eigenschaften.size();
+		} else {
+			return this.eigenschaften.size();
+		}
 	}
 
 	public List<Werkstueckeigenschaft> getEigenschaftenList() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return new ArrayList<Werkstueckeigenschaft>();
-		return new ArrayList<Werkstueckeigenschaft>(eigenschaften);
+		}
+		return new ArrayList<Werkstueckeigenschaft>(this.eigenschaften);
 	}
 
+	@Override
 	public Status getStatus() {
 		return Status.getProductStatusFromEntity(this);
 	}
 
+	@Override
 	public List<IGoobiProperty> getProperties() {
 		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
 	}
 	
+	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		eigenschaften.add((Werkstueckeigenschaft) toAdd);
+		this.eigenschaften.add((Werkstueckeigenschaft) toAdd);
 	}
 	
 	
+	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
@@ -106,13 +139,14 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 * @return instance of {@link DisplayPropertyList}
 	 */
 	public DisplayPropertyList getDisplayProperties() {
-		if (displayProperties == null) {
-			displayProperties = new DisplayPropertyList(this);
+		if (this.displayProperties == null) {
+			this.displayProperties = new DisplayPropertyList(this);
 		}
-		return displayProperties;
+		return this.displayProperties;
 	}
 	
+	@Override
 	public void refreshProperties() {
-		displayProperties = null;
+		this.displayProperties = null;
 	}
 }

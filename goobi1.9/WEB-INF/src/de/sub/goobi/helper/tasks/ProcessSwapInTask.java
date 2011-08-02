@@ -1,5 +1,31 @@
 package de.sub.goobi.helper.tasks;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,6 +52,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 	/**
 	 * Aufruf als Thread ================================================================
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void run() {
 		setStatusProgress(5);
@@ -34,9 +61,9 @@ public class ProcessSwapInTask extends LongRunningTask {
 		ProzessDAO dao = new ProzessDAO();
 		String processDirectory = "";
 
-		if (ConfigMain.getBooleanParameter("useSwapping"))
+		if (ConfigMain.getBooleanParameter("useSwapping")) {
 			swapPath = ConfigMain.getParameter("swapPath", "");
-		else {
+		} else {
 			setStatusMessage("swapping not activated");
 			setStatusProgress(-1);
 			return;
@@ -99,7 +126,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 
 		// TODO: Don't use Iterators
 		for (Iterator<Element> it = rootOld.getChildren("file").iterator(); it.hasNext();) {
-			Element el = (Element) it.next();
+			Element el = it.next();
 			crcMap.put(el.getAttribute("path").getValue(), el.getAttribute("crc32").getValue());
 		}
 		Helper.deleteDataInDir(fileIn);
@@ -132,12 +159,13 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusMessage("checking checksums");
 		// TODO: Don't use Iterators
 		for (Iterator<Element> it = root.getChildren("file").iterator(); it.hasNext();) {
-			Element el = (Element) it.next();
+			Element el = it.next();
 			String newPath = el.getAttribute("path").getValue();
 			String newCrc = el.getAttribute("crc32").getValue();
 			if (crcMap.containsKey(newPath)) {
-				if (!crcMap.get(newPath).equals(newCrc))
+				if (!crcMap.get(newPath).equals(newCrc)) {
 					setLongMessage(getLongMessage() + "File " + newPath + " has different checksum<br/>");
+				}
 				crcMap.remove(newPath);
 			}
 		}
@@ -147,10 +175,11 @@ public class ProcessSwapInTask extends LongRunningTask {
 		 * --------------------- prüfen, ob noch Dateien fehlen -------------------
 		 */
 		setStatusMessage("checking missing files");
-		if (crcMap.size() > 0)
+		if (crcMap.size() > 0) {
 			for (String myFile : crcMap.keySet()) {
 				setLongMessage(getLongMessage() + "File " + myFile + " is missing<br/>");
 			}
+		}
 
 		setStatusProgress(90);
 

@@ -1,5 +1,31 @@
 package de.sub.goobi.Metadaten;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -50,8 +76,8 @@ public class MetadatenImagesHelper {
 	private int myLastImage = 0;
 
 	public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
-		myPrefs = inPrefs;
-		mydocument = inDocument;
+		this.myPrefs = inPrefs;
+		this.mydocument = inDocument;
 	}
 
 	/**
@@ -71,20 +97,20 @@ public class MetadatenImagesHelper {
 	 */
 	public void createPagination(Prozess inProzess) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
 			DAOException {
-		DocStruct physicaldocstruct = mydocument.getPhysicalDocStruct();
+		DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
 		/*-------------------------------- 
 		 * der physische Baum wird nur
 		 * angelegt, wenn er noch nicht existierte
 		 * --------------------------------*/
 		if (physicaldocstruct == null) {
-			DocStructType dst = myPrefs.getDocStrctTypeByName("BoundBook");
-			physicaldocstruct = mydocument.createDocStruct(dst);
+			DocStructType dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
+			physicaldocstruct = this.mydocument.createDocStruct(dst);
 
 			/*-------------------------------- 
 			 * Probleme mit dem FilePath
 			 * -------------------------------- */
-			MetadataType MDTypeForPath = myPrefs.getMetadataTypeByName("pathimagefiles");
+			MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
 				// mdForPath.setType(MDTypeForPath);
@@ -98,7 +124,7 @@ public class MetadatenImagesHelper {
 			} catch (MetadataTypeNotAllowedException e1) {
 			} catch (DocStructHasNoTypeException e1) {
 			}
-			mydocument.setPhysicalDocStruct(physicaldocstruct);
+			this.mydocument.setPhysicalDocStruct(physicaldocstruct);
 		}
 
 		checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());
@@ -106,7 +132,7 @@ public class MetadatenImagesHelper {
 		/*------------------------------- 
 		 * retrieve existing pages/images
 		 * -------------------------------*/
-		DocStructType newPage = myPrefs.getDocStrctTypeByName("page");
+		DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
 		List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
 		if (oldPages == null) {
 			oldPages = new ArrayList<DocStruct>();
@@ -115,9 +141,9 @@ public class MetadatenImagesHelper {
 		/*-------------------------------- 
 		 * add new page/images if necessary
 		 * --------------------------------*/
-		if (oldPages.size() < myLastImage) {
-			for (int i = oldPages.size(); i < myLastImage; i++) {
-				DocStruct dsPage = mydocument.createDocStruct(newPage);
+		if (oldPages.size() < this.myLastImage) {
+			for (int i = oldPages.size(); i < this.myLastImage; i++) {
+				DocStruct dsPage = this.mydocument.createDocStruct(newPage);
 				try {
 
 					/*
@@ -125,7 +151,7 @@ public class MetadatenImagesHelper {
 					 * --------------------------------
 					 */
 					physicaldocstruct.addChild(dsPage);
-					MetadataType mdt = myPrefs.getMetadataTypeByName("physPageNumber");
+					MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
 					Metadata mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
@@ -135,7 +161,7 @@ public class MetadatenImagesHelper {
 					 * -------------------------------- die logischen Seitennummern anlegen, die der Benutzer auch ändern kann
 					 * --------------------------------
 					 */
-					mdt = myPrefs.getMetadataTypeByName("logicalPageNumber");
+					mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
 					mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
@@ -151,8 +177,8 @@ public class MetadatenImagesHelper {
 			}
 		}
 
-		else if (oldPages.size() > myLastImage) {
-			MetadataType mdt = myPrefs.getMetadataTypeByName("physPageNumber");
+		else if (oldPages.size() > this.myLastImage) {
+			MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
 			for (DocStruct page : oldPages) {
 				List<? extends Metadata> mdts = page.getAllMetadataByType(mdt);
 				if (mdts.size() != 1) {
@@ -162,7 +188,7 @@ public class MetadatenImagesHelper {
 				/*
 				 * delete page DocStruct, if physical pagenumber higher than last imagenumber
 				 */
-				if (Integer.parseInt(mdts.get(0).getValue()) > myLastImage) {
+				if (Integer.parseInt(mdts.get(0).getValue()) > this.myLastImage) {
 					physicaldocstruct.removeChild(page);
 					List<Reference> refs = new ArrayList<Reference>(page.getAllFromReferences());
 					for (ugh.dl.Reference ref : refs) {
@@ -252,7 +278,7 @@ public class MetadatenImagesHelper {
 	 */
 	public boolean checkIfImagesValid(Prozess inProzess, String folder) throws IOException, InterruptedException, SwapException, DAOException {
 		boolean isValid = true;
-		myLastImage = 0;
+		this.myLastImage = 0;
 
 		/*-------------------------------- 
 		 * alle Bilder durchlaufen und dafür
@@ -267,7 +293,7 @@ public class MetadatenImagesHelper {
 			}
 
 			// ArrayList<String> images = getImageFiles(inProzess);
-			myLastImage = dateien.length;
+			this.myLastImage = dateien.length;
 			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 				List<String> filesDirs = Arrays.asList(dateien);
 				Collections.sort(filesDirs);
@@ -277,7 +303,7 @@ public class MetadatenImagesHelper {
 				String curFile = null;
 				try {
 					for (Iterator<String> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
-						curFile = (String) iterator.next();
+						curFile = iterator.next();
 						int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
 						if (curFileNumber != counter + myDiff) {
 							Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] expected Image " + (counter + myDiff) + " but found File "
@@ -301,6 +327,7 @@ public class MetadatenImagesHelper {
 
 	private class GoobiImageFileComparator implements Comparator<String> {
 
+		@Override
 		public int compare(String s1, String s2) {
 			String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
 			s1 = s1.substring(0, s1.lastIndexOf("."));
@@ -398,6 +425,7 @@ public class MetadatenImagesHelper {
 	 */
 
 	public static FilenameFilter filter = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			boolean validImage = false;
 			// jpeg

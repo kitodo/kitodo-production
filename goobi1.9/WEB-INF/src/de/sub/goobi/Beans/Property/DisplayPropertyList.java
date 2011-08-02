@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans.Property;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +58,7 @@ public class DisplayPropertyList {
 	 */
 
 	public DisplayPropertyList(IGoobiEntity inEntity) {
-		owningEntity = inEntity;
+		this.owningEntity = inEntity;
 	}
 
 	/**
@@ -40,12 +66,12 @@ public class DisplayPropertyList {
 	 * @return list of {@link PropertyTemplate}s
 	 */
 	public List<PropertyTemplate> getPropertyTemplatesAsList() {
-		if (owningEntity.getId() != null) {
-			if (myPropTemplateCollection == null || myPropTemplateCollection.size() == 0) {
-				myPropTemplateCollection = buildTemplatesCollections();
+		if (this.owningEntity.getId() != null) {
+			if (this.myPropTemplateCollection == null || this.myPropTemplateCollection.size() == 0) {
+				this.myPropTemplateCollection = buildTemplatesCollections();
 			}
 		}
-		return myPropTemplateCollection;
+		return this.myPropTemplateCollection;
 	}
 
 	/**
@@ -62,9 +88,9 @@ public class DisplayPropertyList {
 	 */
 	private List<PropertyTemplate> buildTemplatesCollections() {
 		// getting the templates from XML
-		List<PropertyTemplate> defaultTemplates = getDefaultProperties(owningEntity);
+		List<PropertyTemplate> defaultTemplates = getDefaultProperties(this.owningEntity);
 		// getting the properties from the Entity
-		List<IGoobiProperty> realProps =  owningEntity.getProperties();
+		List<IGoobiProperty> realProps =  this.owningEntity.getProperties();
 		List<PropertyTemplate> returnList = new ArrayList<PropertyTemplate>();
 
 		// iterating through the templates list and properties and finding matches
@@ -120,11 +146,11 @@ public class DisplayPropertyList {
 		}
 
 		for (PropertyTemplate pt : returnList) {
-			if (!containers.contains(pt.getContainer())) {
-				containers.add(pt.getContainer());
+			if (!this.containers.contains(pt.getContainer())) {
+				this.containers.add(pt.getContainer());
 			}
 		}
-		Collections.sort(containers);
+		Collections.sort(this.containers);
 		return returnList;
 	}
 
@@ -177,7 +203,7 @@ public class DisplayPropertyList {
 	 * @return
 	 */
 	public PropertyTemplate getCurrentProperty() {
-		return currentPropertyTemplate;
+		return this.currentPropertyTemplate;
 	}
 
 	/**
@@ -196,13 +222,13 @@ public class DisplayPropertyList {
 	 */
 	public String deleteProperty() {
 		// removing property from Set in entity
-		currentPropertyTemplate.getOwningEntity().removeProperty(currentPropertyTemplate.getProperty());
-		currentPropertyTemplate.getProperty().setOwningEntity(null);
-		currentPropertyTemplate = null;
-		owningEntity.refreshProperties();
+		this.currentPropertyTemplate.getOwningEntity().removeProperty(this.currentPropertyTemplate.getProperty());
+		this.currentPropertyTemplate.getProperty().setOwningEntity(null);
+		this.currentPropertyTemplate = null;
+		this.owningEntity.refreshProperties();
 
 		try {
-			dao.save(owningEntity);
+			this.dao.save(this.owningEntity);
 		} catch (DAOException e) {
 			logger.error("dao exception: " + e);
 		}
@@ -216,9 +242,9 @@ public class DisplayPropertyList {
 	 */
 
 	public String createNewProperty() {
-		currentPropertyTemplate = new PropertyTemplate(owningEntity, "");
-		currentPropertyTemplate.setType(PropertyType.String);
-		currentPropertyTemplate.setRequired(false);
+		this.currentPropertyTemplate = new PropertyTemplate(this.owningEntity, "");
+		this.currentPropertyTemplate.setType(PropertyType.String);
+		this.currentPropertyTemplate.setRequired(false);
 		return "";
 	}
 
@@ -229,17 +255,17 @@ public class DisplayPropertyList {
 	 */
 
 	public String duplicateProperty() {
-		if (currentPropertyTemplate != null) {
-			PropertyTemplate pt = currentPropertyTemplate.copy(0);
+		if (this.currentPropertyTemplate != null) {
+			PropertyTemplate pt = this.currentPropertyTemplate.copy(0);
 			try {
 				pt.getOwningEntity().addProperty(pt.getProperty());
-				dao.save(pt.getProperty());
+				this.dao.save(pt.getProperty());
 			} catch (DAOException e) {
 				logger.error("dao-exception occured", e);
 			}
-			owningEntity = currentPropertyTemplate.getOwningEntity();
-			myPropTemplateCollection = buildTemplatesCollections();
-			owningEntity.refreshProperties();
+			this.owningEntity = this.currentPropertyTemplate.getOwningEntity();
+			this.myPropTemplateCollection = buildTemplatesCollections();
+			this.owningEntity.refreshProperties();
 		}
 		return "";
 	}
@@ -251,7 +277,7 @@ public class DisplayPropertyList {
 	 */
 
 	public String duplicateContainer() {
-		Integer currentContainer = currentPropertyTemplate.getContainer();
+		Integer currentContainer = this.currentPropertyTemplate.getContainer();
 		List<PropertyTemplate> plist = new ArrayList<PropertyTemplate>();
 		// search for all properties in container
 		for (PropertyTemplate pt : getPropertyTemplatesAsList()) {
@@ -263,7 +289,7 @@ public class DisplayPropertyList {
 		boolean search = true;
 		int newContainerNumber = 1;
 		while (search) {
-			if (!containers.contains(newContainerNumber)) {
+			if (!this.containers.contains(newContainerNumber)) {
 				search = false;
 			} else {
 				newContainerNumber++;
@@ -274,14 +300,14 @@ public class DisplayPropertyList {
 			PropertyTemplate newProp = pt.copy(newContainerNumber);
 			try {
 				newProp.getOwningEntity().addProperty(newProp.getProperty());
-				dao.save(newProp.getProperty());
+				this.dao.save(newProp.getProperty());
 			} catch (DAOException e) {
 				logger.error("dao-exception occured", e);
 			}
 		}
-		owningEntity = currentPropertyTemplate.getOwningEntity();
-		myPropTemplateCollection = buildTemplatesCollections();
-		owningEntity.refreshProperties();
+		this.owningEntity = this.currentPropertyTemplate.getOwningEntity();
+		this.myPropTemplateCollection = buildTemplatesCollections();
+		this.owningEntity.refreshProperties();
 		return "";
 	}
 
@@ -298,7 +324,7 @@ public class DisplayPropertyList {
 	 */
 	public List<Integer> getContainers() {
 		getPropertyTemplatesAsList();
-		return containers;
+		return this.containers;
 	}
 
 	// public List<PropertyTemplate> getPropertiesForContainer() {
@@ -321,6 +347,7 @@ public class DisplayPropertyList {
 
 	private static class CompareProps implements Comparator<PropertyTemplate> {
 
+		@Override
 		public int compare(PropertyTemplate o1, PropertyTemplate o2) {
 
 			return new Integer(o1.getContainer()).compareTo(new Integer(o2.getContainer()));

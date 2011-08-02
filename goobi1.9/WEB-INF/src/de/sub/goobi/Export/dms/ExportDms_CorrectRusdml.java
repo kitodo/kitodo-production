@@ -1,5 +1,31 @@
 package de.sub.goobi.Export.dms;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,36 +57,38 @@ public class ExportDms_CorrectRusdml {
 	private static final Logger logger = Logger.getLogger(ExportDms_CorrectRusdml.class);
 
 	public ExportDms_CorrectRusdml(Prozess inProzess, Prefs inPrefs, Fileformat inGdzfile) throws PreferencesException {
-		myPrefs = inPrefs;
-		mydocument = inGdzfile.getDigitalDocument();
-		myProzess = inProzess;
+		this.myPrefs = inPrefs;
+		this.mydocument = inGdzfile.getDigitalDocument();
+		this.myProzess = inProzess;
 	}
 
 	/* =============================================================== */
 
 	public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException {
 		String atsPpnBand;
-		DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
-		docStructsOhneSeiten = new ArrayList<DocStruct>();
+		DocStruct logicalTopstruct = this.mydocument.getLogicalDocStruct();
+		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
 
 		/*
 		 * -------------------------------- Prozesseigenschaften ermitteln --------------------------------
 		 */
-		atsPpnBand = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "ATS") + bhelp.WerkstueckEigenschaftErmitteln(myProzess, "TSL") + "_";
-		String ppn = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
-		if (!ppn.startsWith("PPN"))
+		atsPpnBand = this.bhelp.WerkstueckEigenschaftErmitteln(this.myProzess, "ATS") + this.bhelp.WerkstueckEigenschaftErmitteln(this.myProzess, "TSL") + "_";
+		String ppn = this.bhelp.WerkstueckEigenschaftErmitteln(this.myProzess, "PPN digital");
+		if (!ppn.startsWith("PPN")) {
 			ppn = "PPN" + ppn;
+		}
 		atsPpnBand += ppn;
-		String bandnummer = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
-		if (bandnummer != null && bandnummer.length() > 0)
-			atsPpnBand += "_" + bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
+		String bandnummer = this.bhelp.WerkstueckEigenschaftErmitteln(this.myProzess, "Band");
+		if (bandnummer != null && bandnummer.length() > 0) {
+			atsPpnBand += "_" + this.bhelp.WerkstueckEigenschaftErmitteln(this.myProzess, "Band");
+		}
 
 		/*
 		 * -------------------------------- DocStruct rukursiv durchlaufen und die Metadaten prüfen --------------------------------
 		 */
 		RusdmlDocStructPagesAuswerten(logicalTopstruct);
-		RusdmlPathImageFilesKorrigieren(mydocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
-		RusdmlAddMissingMetadata(logicalTopstruct, myProzess);
+		RusdmlPathImageFilesKorrigieren(this.mydocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
+		RusdmlAddMissingMetadata(logicalTopstruct, this.myProzess);
 
 		return atsPpnBand;
 	}
@@ -83,13 +111,14 @@ public class ExportDms_CorrectRusdml {
 		RusdmlCheckMetadata(inStruct);
 
 		/* hat das Docstruct keine Bilder, wird es in die Liste genommen */
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor())
-			docStructsOhneSeiten.add(inStruct);
+		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+			this.docStructsOhneSeiten.add(inStruct);
+		}
 
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
 		if (inStruct.getAllChildren() != null) {
 			for (Iterator<DocStruct> iter = inStruct.getAllChildren().iterator(); iter.hasNext();) {
-				DocStruct child = (DocStruct) iter.next();
+				DocStruct child = iter.next();
 				RusdmlDocStructPagesAuswerten(child);
 				/* dem DocStruct alle Seiten der Kinder zuweisen */
 				// inStruct.getAllReferences("to").addAll(child.getAllReferences("to"));
@@ -136,38 +165,50 @@ public class ExportDms_CorrectRusdml {
 					language = meta.getValue();
 				}
 
-				if (meta.getType().getName().equals("RUSPublisher"))
+				if (meta.getType().getName().equals("RUSPublisher")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("RUSPlaceOfPublication"))
+				}
+				if (meta.getType().getName().equals("RUSPlaceOfPublication")) {
 					inStruct.getAllMetadata().remove(meta);
+				}
 				if (meta.getType().getName().equals("RUSPublicationHouse"))
+				 {
 					inStruct.getAllMetadata().remove(meta);
 				// if (meta.getType().getName().equals("RUSKeyword"))
 				// inStruct.getAllMetadata().remove(meta);
+				}
 
-				if (meta.getType().getName().equals("ZBLSource"))
+				if (meta.getType().getName().equals("ZBLSource")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLIntern"))
+				}
+				if (meta.getType().getName().equals("ZBLIntern")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLPageNumber"))
+				}
+				if (meta.getType().getName().equals("ZBLPageNumber")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLReviewLink"))
+				}
+				if (meta.getType().getName().equals("ZBLReviewLink")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLReviewAuthor"))
+				}
+				if (meta.getType().getName().equals("ZBLReviewAuthor")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLCita"))
+				}
+				if (meta.getType().getName().equals("ZBLCita")) {
 					inStruct.getAllMetadata().remove(meta);
-				if (meta.getType().getName().equals("ZBLTempID"))
+				}
+				if (meta.getType().getName().equals("ZBLTempID")) {
 					inStruct.getAllMetadata().remove(meta);
+				}
 
 				/*
 				 * den Abstrakt des ZBLs übernehmen, aber nur die 255 ersten Zeichen
 				 */
 				if (meta.getType().getName().equals("ZBLAbstract")) {
-					MetadataType mdt = myPrefs.getMetadataTypeByName("Abstract");
+					MetadataType mdt = this.myPrefs.getMetadataTypeByName("Abstract");
 					meta.setType(mdt);
-					if (meta.getValue().length() > 255)
+					if (meta.getValue().length() > 255) {
 						meta.setValue(meta.getValue().substring(0, 254));
+					}
 				}
 			}
 		}
@@ -176,9 +217,9 @@ public class ExportDms_CorrectRusdml {
 		 * -------------------------------- nachdem alle Metadaten durchlaufen wurden, jetzt abhängig vom Sprachcode den richtigen MainTitle zuweisen
 		 * --------------------------------
 		 */
-		MetadataType mdt_org = myPrefs.getMetadataTypeByName("TitleDocMain");
+		MetadataType mdt_org = this.myPrefs.getMetadataTypeByName("TitleDocMain");
 		Metadata meta_org = new Metadata(mdt_org);
-		MetadataType mdt_trans = myPrefs.getMetadataTypeByName("MainTitleTranslated");
+		MetadataType mdt_trans = this.myPrefs.getMetadataTypeByName("MainTitleTranslated");
 		Metadata meta_trans = new Metadata(mdt_trans);
 		if (language.equals("ru")) {
 			meta_org.setValue(titelRu);
@@ -188,10 +229,12 @@ public class ExportDms_CorrectRusdml {
 			meta_org.setValue(titelOther);
 		}
 
-		if (meta_org.getValue() != null && meta_org.getValue().length() > 0)
+		if (meta_org.getValue() != null && meta_org.getValue().length() > 0) {
 			inStruct.addMetadata(meta_org);
-		if (meta_trans.getValue() != null && meta_trans.getValue().length() > 0)
+		}
+		if (meta_trans.getValue() != null && meta_trans.getValue().length() > 0) {
 			inStruct.addMetadata(meta_trans);
+		}
 	}
 
 	/* =============================================================== */
@@ -205,7 +248,7 @@ public class ExportDms_CorrectRusdml {
 		if (inStruct.getAllPersons() != null) {
 			List<Person> kopie = new ArrayList<Person>(inStruct.getAllPersons());
 			for (Iterator<Person> iter = kopie.iterator(); iter.hasNext();) {
-				Metadata meta = (Metadata) iter.next();
+				Metadata meta = iter.next();
 				if (meta.getType().getName().equals("ZBLAuthor")) {
 					inStruct.getAllPersons().remove(meta);
 				}
@@ -225,7 +268,7 @@ public class ExportDms_CorrectRusdml {
 		 * -------------------------------- generell ausführen --------------------------------
 		 */
 		if (inStruct.getType().getName().equals("Illustration")) {
-			DocStructType dst = myPrefs.getDocStrctTypeByName("Figure");
+			DocStructType dst = this.myPrefs.getDocStrctTypeByName("Figure");
 			inStruct.setType(dst);
 		}
 	}
@@ -233,15 +276,16 @@ public class ExportDms_CorrectRusdml {
 	/* =============================================================== */
 
 	private void RusdmlPathImageFilesKorrigieren(DocStruct phys, String inNeuerWert) throws ExportFileException {
-		MetadataType MDTypeForPath = myPrefs.getMetadataTypeByName("pathimagefiles");
+		MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
 		List<? extends Metadata> alleMetadaten = phys.getAllMetadataByType(MDTypeForPath);
 		if (alleMetadaten.size() > 0) {
 			for (Metadata meta : alleMetadaten) {
 				// Metadata meta = (Metadata) iter.next();
 				meta.setValue(inNeuerWert);
 			}
-		} else
+		} else {
 			throw new ExportFileException("Exportfehler: Imagepfad noch nicht gesetzt");
+		}
 	}
 
 	/* =============================================================== */
@@ -260,9 +304,10 @@ public class ExportDms_CorrectRusdml {
 		/*
 		 * -------------------------------- bei fehlender digitaler PPN: Fehlermeldung und raus --------------------------------
 		 */
-		String PPN = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
-		if (PPN.length() == 0)
+		String PPN = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
+		if (PPN.length() == 0) {
 			throw new ExportFileException("Exportfehler: Keine PPN digital vorhanden");
+		}
 		RusdmlAddMissingMetadata(inTopStruct, myProzess, PPN);
 
 		// /* --------------------------------
@@ -475,11 +520,11 @@ public class ExportDms_CorrectRusdml {
 		/*
 		 * -------------------------------- Eigenschaften aus dem Werkstück holen --------------------------------
 		 */
-		String Titel = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Haupttitel");
-		String Verlag = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Verlag");
-		String Ort = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Erscheinungsort");
-		String ISSN = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "ISSN");
-		String BandNummer = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
+		String Titel = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Haupttitel");
+		String Verlag = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Verlag");
+		String Ort = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Erscheinungsort");
+		String ISSN = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "ISSN");
+		String BandNummer = this.bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
 
 		/*
 		 * -------------------------------- die Metadaten erzeugen --------------------------------
@@ -491,19 +536,19 @@ public class ExportDms_CorrectRusdml {
 		Metadata mdPPNBand = null;
 		Metadata mdSorting = null;
 		try {
-			Metadata mdTitel = new Metadata(myPrefs.getMetadataTypeByName("TitleDocMain"));
+			Metadata mdTitel = new Metadata(this.myPrefs.getMetadataTypeByName("TitleDocMain"));
 			mdTitel.setValue(Titel);
-			mdVerlag = new Metadata(myPrefs.getMetadataTypeByName("PublisherName"));
+			mdVerlag = new Metadata(this.myPrefs.getMetadataTypeByName("PublisherName"));
 			mdVerlag.setValue(Verlag);
-			mdOrt = new Metadata(myPrefs.getMetadataTypeByName("PlaceOfPublication"));
+			mdOrt = new Metadata(this.myPrefs.getMetadataTypeByName("PlaceOfPublication"));
 			mdOrt.setValue(Ort);
-			mdISSN = new Metadata(myPrefs.getMetadataTypeByName("ISSN"));
+			mdISSN = new Metadata(this.myPrefs.getMetadataTypeByName("ISSN"));
 			mdISSN.setValue(ISSN);
-			mdPPN = new Metadata(myPrefs.getMetadataTypeByName("CatalogIDDigital"));
+			mdPPN = new Metadata(this.myPrefs.getMetadataTypeByName("CatalogIDDigital"));
 			mdPPN.setValue("PPN" + PPN);
-			mdPPNBand = new Metadata(myPrefs.getMetadataTypeByName("CatalogIDDigital"));
+			mdPPNBand = new Metadata(this.myPrefs.getMetadataTypeByName("CatalogIDDigital"));
 			mdPPNBand.setValue("PPN" + PPN + "_" + BandNummer);
-			mdSorting = new Metadata(myPrefs.getMetadataTypeByName("CurrentNoSorting"));
+			mdSorting = new Metadata(this.myPrefs.getMetadataTypeByName("CurrentNoSorting"));
 		} catch (MetadataTypeNotAllowedException e1) {
 			logger.error(e1);
 		}
@@ -516,7 +561,7 @@ public class ExportDms_CorrectRusdml {
 		/*
 		 * -------------------------------- die Metadaten der Zeitschrift zuweisen --------------------------------
 		 */
-		inTopStruct.getAllMetadataByType(myPrefs.getMetadataTypeByName("TitleDocMain")).get(0).setValue(Titel);
+		inTopStruct.getAllMetadataByType(this.myPrefs.getMetadataTypeByName("TitleDocMain")).get(0).setValue(Titel);
 
 		try {
 			inTopStruct.addMetadata(mdVerlag);
@@ -565,8 +610,9 @@ public class ExportDms_CorrectRusdml {
 
 	private void RusdmlUmlauteDemaskieren1(Metadata meta) {
 		String neuerWert = meta.getValue();
-		if (neuerWert == null)
+		if (neuerWert == null) {
 			return;
+		}
 		neuerWert = neuerWert.replaceAll("\\\\star", "\u002a");
 		neuerWert = neuerWert.replaceAll("\\\\times", "\u00d7");
 		neuerWert = neuerWert.replaceAll("\\\\div", "\u00f7");

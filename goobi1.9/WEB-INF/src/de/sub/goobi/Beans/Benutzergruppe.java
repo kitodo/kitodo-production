@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,8 +50,8 @@ public class Benutzergruppe implements Serializable {
 	private boolean panelAusgeklappt = false;
 
 	public Benutzergruppe() {
-		schritte = new HashSet<Schritt>();
-		benutzer = new HashSet<Benutzer>();
+		this.schritte = new HashSet<Schritt>();
+		this.benutzer = new HashSet<Benutzer>();
 	}
 
 	/*
@@ -34,7 +60,7 @@ public class Benutzergruppe implements Serializable {
 	 */
 
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -42,12 +68,12 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public Integer getBerechtigung() {
-		if (berechtigung == null) {
-			berechtigung = 4;
-		} else if (berechtigung == 3) {
-			berechtigung = 4;
+		if (this.berechtigung == null) {
+			this.berechtigung = 4;
+		} else if (this.berechtigung == 3) {
+			this.berechtigung = 4;
 		}
-		return berechtigung;
+		return this.berechtigung;
 	}
 
 	public void setBerechtigung(int berechtigung) {
@@ -55,12 +81,12 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public String getBerechtigungAsString() {
-		if (berechtigung == null) {
-			berechtigung = 4;
-		} else if (berechtigung == 3) {
-			berechtigung = 4;
+		if (this.berechtigung == null) {
+			this.berechtigung = 4;
+		} else if (this.berechtigung == 3) {
+			this.berechtigung = 4;
 		}
-		return String.valueOf(berechtigung.intValue());
+		return String.valueOf(this.berechtigung.intValue());
 	}
 
 	public void setBerechtigungAsString(String berechtigung) {
@@ -68,10 +94,11 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public String getTitel() {
-		if (titel == null)
+		if (this.titel == null) {
 			return "";
-		else
-			return titel;
+		} else {
+			return this.titel;
+		}
 	}
 
 	public void setTitel(String titel) {
@@ -79,7 +106,7 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public Set<Benutzer> getBenutzer() {
-		return benutzer;
+		return this.benutzer;
 	}
 
 	public void setBenutzer(Set<Benutzer> benutzer) {
@@ -87,14 +114,15 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public List<Benutzer> getBenutzerList() {
-		if (benutzer == null)
+		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
-		else
-			return new ArrayList<Benutzer>(benutzer);
+		} else {
+			return new ArrayList<Benutzer>(this.benutzer);
+		}
 	}
 
 	public Set<Schritt> getSchritte() {
-		return schritte;
+		return this.schritte;
 	}
 
 	public void setSchritte(Set<Schritt> schritte) {
@@ -102,20 +130,22 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public int getSchritteSize() {
-		if (schritte == null)
+		if (this.schritte == null) {
 			return 0;
-		else
-			return schritte.size();
+		} else {
+			return this.schritte.size();
+		}
 	}
 
 	public List<Schritt> getSchritteList() {
-		if (schritte == null)
-			schritte = new HashSet<Schritt>();
-		return new ArrayList<Schritt>(schritte);
+		if (this.schritte == null) {
+			this.schritte = new HashSet<Schritt>();
+		}
+		return new ArrayList<Schritt>(this.schritte);
 	}
 
 	public boolean isPanelAusgeklappt() {
-		return panelAusgeklappt;
+		return this.panelAusgeklappt;
 	}
 
 	public void setPanelAusgeklappt(boolean panelAusgeklappt) {

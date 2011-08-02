@@ -1,5 +1,4 @@
 package org.goobi.production.flow.statistics.hibernate;
-//TODO: Extract names of database fields
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of 
  * mass digitization.
@@ -76,7 +75,7 @@ public class SQLStepRequests extends SQLGenerator {
 		
 		String subQuery = "";
 		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+				this.myTimeFrom, this.myTimeTo, "timeLimiter");
 		String outerWhereClause = "";
 
 		if (outerWhereClauseTimeFrame.length() > 0) {
@@ -86,11 +85,11 @@ public class SQLStepRequests extends SQLGenerator {
 		//inner table -> alias "table_1"
 		String innerWhereClause;
 
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(history.type="
 					+ typeSelection.getValue().toString() + ")  AND ("
-					+ myIdsCondition + ") ";
+					+ this.myIdsCondition + ") ";
 		} else {
 			innerWhereClause = "(history.type="
 					+ typeSelection.getValue().toString() + ") ";
@@ -103,12 +102,12 @@ public class SQLStepRequests extends SQLGenerator {
 		}
 
 		subQuery = "(SELECT numericvalue AS 'stepOrder', "
-				+ getIntervallExpression(myTimeUnit, "history.date")
+				+ getIntervallExpression(this.myTimeUnit, "history.date")
 				+ " "
 				+ "AS 'intervall', " + timeLimiter + " AS 'timeLimiter', history.stringvalue AS 'stepName' "
 				+ "FROM history WHERE " + innerWhereClause + groupInnerSelect + ") AS table_1";
 
-		mySql = "SELECT count(table_1.stepOrder) AS 'stepCount', table_1.intervall AS 'intervall' "
+		this.mySql = "SELECT count(table_1.stepOrder) AS 'stepCount', table_1.intervall AS 'intervall' "
 				+ addedListing(stepOrderGrouping)
 				+ "FROM "
 				+ subQuery
@@ -119,7 +118,7 @@ public class SQLStepRequests extends SQLGenerator {
 				+ " ORDER BY  table_1.intervall"
 				+ addedSorting(stepOrderGrouping);
 
-		return mySql;
+		return this.mySql;
 	}
 
 	/** Method is purposfully not implemented. Method getSQL is overloaded   
@@ -184,17 +183,17 @@ public class SQLStepRequests extends SQLGenerator {
 
 		String timeRestriction;
 		String innerWhereClause = null;
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(history.type="
 					+ eventSelection.getValue().toString() + ")  AND ("
-					+ myIdsCondition + ") ";
+					+ this.myIdsCondition + ") ";
 		} else {
 			innerWhereClause = "(history.type="
 					+ eventSelection.getValue().toString() + ") ";
 		}
 
-		timeRestriction = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo,
+		timeRestriction = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo,
 				"history.date");
 
 		if (timeRestriction.length() > 0) {
@@ -215,17 +214,17 @@ public class SQLStepRequests extends SQLGenerator {
 
 		String timeRestriction;
 		String innerWhereClause = null;
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(history.type="
 					+ eventSelection.getValue().toString() + ")  AND ("
-					+ myIdsCondition + ") ";
+					+ this.myIdsCondition + ") ";
 		} else {
 			innerWhereClause = "(history.type="
 					+ eventSelection.getValue().toString() + ") ";
 		}
 
-		timeRestriction = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo,
+		timeRestriction = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo,
 				"history.date");
 
 		if (timeRestriction.length() > 0) {

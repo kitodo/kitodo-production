@@ -1,5 +1,31 @@
 package de.sub.goobi.Metadaten;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.util.ArrayList;
 
 import ugh.dl.DocStruct;
@@ -30,7 +56,7 @@ public class TreeNodeStruct3 extends TreeNode {
 		this.label = label;
 		this.id = id;
 		//TODO: Use generics
-		children = new ArrayList<TreeNode>();
+		this.children = new ArrayList<TreeNode>();
 	}
 
 	/* =============================================================== */
@@ -43,7 +69,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	/* =============================================================== */
 
 	public String getIdentifier() {
-		return identifier;
+		return this.identifier;
 	}
 
 	public void setIdentifier(String identifier) {
@@ -51,7 +77,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getMainTitle() {
-		return mainTitle;
+		return this.mainTitle;
 	}
 
 	public void setMainTitle(String mainTitle) {
@@ -59,7 +85,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getPpnDigital() {
-		return ppnDigital;
+		return this.ppnDigital;
 	}
 
 	public void setPpnDigital(String ppnDigital) {
@@ -67,7 +93,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getFirstImage() {
-		return firstImage;
+		return this.firstImage;
 	}
 
 	public void setFirstImage(String firstImage) {
@@ -75,7 +101,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getLastImage() {
-		return lastImage;
+		return this.lastImage;
 	}
 
 	public void setLastImage(String lastImage) {
@@ -83,7 +109,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public DocStruct getStruct() {
-		return struct;
+		return this.struct;
 	}
 
 	public void setStruct(DocStruct struct) {
@@ -91,7 +117,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getZblNummer() {
-		return zblNummer;
+		return this.zblNummer;
 	}
 
 	public void setZblNummer(String zblNummer) {
@@ -99,7 +125,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getDescription() {
-		return label;
+		return this.label;
 	}
 
 	public void setDescription(String description) {
@@ -107,7 +133,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public boolean isEinfuegenErlaubt() {
-		return einfuegenErlaubt;
+		return this.einfuegenErlaubt;
 	}
 
 	public void setEinfuegenErlaubt(boolean einfuegenErlaubt) {
@@ -115,7 +141,7 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getZblSeiten() {
-		return zblSeiten;
+		return this.zblSeiten;
 	}
 
 	public void setZblSeiten(String zblSeiten) {

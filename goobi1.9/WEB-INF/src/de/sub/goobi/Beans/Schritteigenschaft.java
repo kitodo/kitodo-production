@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,62 +50,74 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 	private Integer container;
 
 	public Schritteigenschaft() {
-		istObligatorisch = false;
-		datentyp = PropertyType.String.getId();
-		creationDate = new Date();
+		this.istObligatorisch = false;
+		this.datentyp = PropertyType.String.getId();
+		this.creationDate = new Date();
 	}
 
 	private List<String> valueList;
 
+	@Override
 	public String getAuswahl() {
-		return auswahl;
+		return this.auswahl;
 	}
 
+	@Override
 	public void setAuswahl(String auswahl) {
 		this.auswahl = auswahl;
 	}
 
+	@Override
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
+	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
+	@Override
 	public Boolean isIstObligatorisch() {
-		if (istObligatorisch == null) {
-			istObligatorisch = false;
+		if (this.istObligatorisch == null) {
+			this.istObligatorisch = false;
 		}
-		return istObligatorisch;
+		return this.istObligatorisch;
 	}
 
+	@Override
 	public void setIstObligatorisch(Boolean istObligatorisch) {
 		this.istObligatorisch = istObligatorisch;
 	}
 
+	@Override
 	public String getTitel() {
-		return titel;
+		return this.titel;
 	}
 
+	@Override
 	public void setTitel(String titel) {
 		this.titel = titel;
 	}
 
+	@Override
 	public String getWert() {
-		return wert;
+		return this.wert;
 	}
 
+	@Override
 	public void setWert(String wert) {
 		this.wert = wert;
 	}
 
+	@Override
 	public void setCreationDate(Date creation) {
 		this.creationDate = creation;
 	}
 
+	@Override
 	public Date getCreationDate() {
-		return creationDate;
+		return this.creationDate;
 	}
 
 	/**
@@ -91,7 +129,7 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 	 */
 	@SuppressWarnings("unused")
 	private Integer getDatentyp() {
-		return datentyp;
+		return this.datentyp;
 	}
 
 	/**
@@ -111,6 +149,7 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 	 * @param inType
 	 *            as {@link PropertyType}
 	 */
+	@Override
 	public void setType(PropertyType inType) {
 		this.datentyp = inType.getId();
 	}
@@ -120,18 +159,19 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 	 * 
 	 * @return current datentyp
 	 */
+	@Override
 	public PropertyType getType() {
-		if (datentyp == null) {
-			datentyp = PropertyType.String.getId();
+		if (this.datentyp == null) {
+			this.datentyp = PropertyType.String.getId();
 		}
-		return PropertyType.getById(datentyp);
+		return PropertyType.getById(this.datentyp);
 	}
 
 	public List<String> getValueList() {
-		if (valueList == null) {
-			valueList = new ArrayList<String>();
+		if (this.valueList == null) {
+			this.valueList = new ArrayList<String>();
 		}
-		return valueList;
+		return this.valueList;
 	}
 
 	public void setValueList(List<String> valueList) {
@@ -140,33 +180,38 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 
 
 	public Schritt getSchritt() {
-		return schritt;
+		return this.schritt;
 	}
 
 	public void setSchritt(Schritt schritt) {
 		this.schritt = schritt;
 	}
 
+	@Override
 	public Status getStatus() {
-		return Status.getStepStatus(schritt);
+		return Status.getStepStatus(this.schritt);
 	}
 
+	@Override
 	public IGoobiEntity getOwningEntity() {
 
-		return schritt;
+		return this.schritt;
 	}
 
+	@Override
 	public void setOwningEntity(IGoobiEntity inEntity) {
 		this.schritt = (Schritt) inEntity;
 	}
 	
+	@Override
 	public Integer getContainer() {
-		if (container == null) {
+		if (this.container == null) {
 			return 0;
 		}
-		return container;
+		return this.container;
 	}
 
+	@Override
 	public void setContainer(Integer order) {
 		if (order == null) {
 			order = 0;
@@ -176,11 +221,11 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 
 	@Override
 	public String getNormalizedTitle() {
-		return titel.replace(" ", "_").trim();
+		return this.titel.replace(" ", "_").trim();
 	}
 
 	@Override
 	public String getNormalizedValue() {
-		return wert.replace(" ", "_").trim();
+		return this.wert.replace(" ", "_").trim();
 	}
 }

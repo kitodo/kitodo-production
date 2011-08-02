@@ -1,5 +1,31 @@
 package de.unigoettingen.sub.search.opac;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -174,7 +200,7 @@ public class GetOpac {
 	 **********************************************************************/
 	public int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query);
-		return lastOpacResult.getNumberOfHits();
+		return this.lastOpacResult.getNumberOfHits();
 	}
 
 	/************************************************************************
@@ -292,17 +318,17 @@ public class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress()
-				 + cat.getPort()+ cat.getCbs();
+		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress()
+				 + this.cat.getPort()+ this.cat.getCbs();
 
 		// if we can not use the cached result
-		if (!lastQuery.equals(querySummary)) {
+		if (!this.lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
 			getResult(query);
 		}
 
 		// make sure that upper limit of requested hits is not to high
-		int maxNumberOfHits = lastOpacResult.getNumberOfHits();
+		int maxNumberOfHits = this.lastOpacResult.getNumberOfHits();
 		if (end > maxNumberOfHits) {
 			end = maxNumberOfHits;
 		}
@@ -363,10 +389,10 @@ public class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort()+ cat.getCbs();
+		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress() + this.cat.getPort()+ this.cat.getCbs();
 
 		// if we can not use the cached result
-		if (!lastQuery.equals(querySummary)) {
+		if (!this.lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
 			getResult(query);
 		}
@@ -378,7 +404,7 @@ public class GetOpac {
 		result.appendChild(picaPlusRaw.createTextNode("\n"));
 
 		// make sure that upper limit of requested hits is not to high
-		int maxNumberOfHits = lastOpacResult.getNumberOfHits() + 1;
+		int maxNumberOfHits = this.lastOpacResult.getNumberOfHits() + 1;
 		if (end > maxNumberOfHits) {
 			end = maxNumberOfHits;
 		}
@@ -446,8 +472,8 @@ public class GetOpac {
 	private String retrievePicaTitle(int numberOfHits) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + cat.getDataBase() + PICAPLUS_XML_URL + data_character_encoding + SET_ID_URL
-				+ lastOpacResult.getSet() + SESSIONID_URL + URLEncoder.encode(lastOpacResult.getSessionId(), URL_CHARACTER_ENCODING)
+		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.data_character_encoding + SET_ID_URL
+				+ this.lastOpacResult.getSet() + SESSIONID_URL + URLEncoder.encode(this.lastOpacResult.getSessionId(), URL_CHARACTER_ENCODING)
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber);
 	}
 
@@ -469,7 +495,7 @@ public class GetOpac {
 
 		// return more than the first 10 hits
 		for (int i = 10; i < numberOfHits; i += 10) {
-			String tmpSearch = retrieveDataFromOPAC("/XML=1.0" + DATABASE_URL + cat.getDataBase() + SET_ID_URL + search.getSet() + SESSIONID_URL
+			String tmpSearch = retrieveDataFromOPAC("/XML=1.0" + DATABASE_URL + this.cat.getDataBase() + SET_ID_URL + search.getSet() + SESSIONID_URL
 					+ search.getSessionId() + "/TTL=" + (i - 9) + SHOW_NEXT_HITS_URL + (i + 1));
 			search = parseOpacResponse(tmpSearch);
 			result[0].addAll(search.getOpacResponseItemPpns());
@@ -493,26 +519,26 @@ public class GetOpac {
 	public OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort()+ cat.getCbs();
+		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress() + this.cat.getPort()+ this.cat.getCbs();
 
-		if (verbose) {
+		if (this.verbose) {
 			System.out.println("Searching the opac for " + query.getQueryUrl());
 		}
 
-		if (lastQuery.equals(querySummary)) {
-			if (verbose) {
+		if (this.lastQuery.equals(querySummary)) {
+			if (this.verbose) {
 				System.out.println("Using cached result because last query was: " + querySummary);
 			}
-			return lastOpacResult;
+			return this.lastOpacResult;
 		}
-		result = retrieveDataFromOPAC(DATABASE_URL + cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA + data_character_encoding
-				+ SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl());
+		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA + this.data_character_encoding
+				+ SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl());
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
 
 		// Caching query, result and sessionID
-		lastQuery = querySummary;
-		lastOpacResult = opacResult;
+		this.lastQuery = querySummary;
+		this.lastOpacResult = opacResult;
 
 		return opacResult;
 	}
@@ -676,7 +702,7 @@ public class GetOpac {
 			Transformer transformer = tFac.newTransformer();
 			StreamResult output = new StreamResult(System.out);
 
-			transformer.setOutputProperty(OutputKeys.ENCODING, data_character_encoding);
+			transformer.setOutputProperty(OutputKeys.ENCODING, this.data_character_encoding);
 			transformer.transform(source, output);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -695,9 +721,9 @@ public class GetOpac {
 	private String retrieveDataFromOPAC(String url) throws IOException {
 
 		// if (verbose){
-		System.out.println("Retrieving URL: http://" + cat.getServerAddress() + ":" + cat.getPort()  + url + cat.getCbs());
+		System.out.println("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
 		// }
-		GetMethod opacRequest = new GetMethod("http://" + cat.getServerAddress() + ":" + cat.getPort() + url + cat.getCbs());
+		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
 
 		try {
 			this.opacClient.executeMethod(opacRequest);
@@ -725,7 +751,7 @@ public class GetOpac {
 	}
 
 	public Catalogue getCat() {
-		return cat;
+		return this.cat;
 	}
 
 	public void setCat(Catalogue opac) {
@@ -756,11 +782,11 @@ public class GetOpac {
 	}
 
 	public void sortByRelevance() {
-		sorting = SORT_BY_RELEVANCE;
+		this.sorting = SORT_BY_RELEVANCE;
 	}
 
 	public void sortByYearOfPublishing() {
-		sorting = SORT_BY_YEAR_OF_PUBLISHING;
+		this.sorting = SORT_BY_YEAR_OF_PUBLISHING;
 	}
 
 }

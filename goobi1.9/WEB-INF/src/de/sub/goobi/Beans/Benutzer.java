@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -39,10 +65,10 @@ public class Benutzer implements Serializable {
 	// private String lastFilter = null;
 
 	public Benutzer() {
-		benutzergruppen = new HashSet<Benutzergruppe>();
-		projekte = new HashSet<Projekt>();
-		schritte = new HashSet<Schritt>();
-		eigenschaften = new HashSet<Benutzereigenschaft>();
+		this.benutzergruppen = new HashSet<Benutzergruppe>();
+		this.projekte = new HashSet<Projekt>();
+		this.schritte = new HashSet<Schritt>();
+		this.eigenschaften = new HashSet<Benutzereigenschaft>();
 	}
 
 	/*
@@ -54,7 +80,7 @@ public class Benutzer implements Serializable {
 	 */
 
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -62,7 +88,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getLogin() {
-		return login;
+		return this.login;
 	}
 
 	public void setLogin(String login) {
@@ -70,7 +96,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getNachname() {
-		return nachname;
+		return this.nachname;
 	}
 
 	public void setNachname(String nachname) {
@@ -78,7 +104,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getPasswort() {
-		return passwort;
+		return this.passwort;
 	}
 
 	public void setPasswort(String inpasswort) {
@@ -87,7 +113,7 @@ public class Benutzer implements Serializable {
 
 	public String getPasswortCrypt() {
 		DesEncrypter encrypter = new DesEncrypter();
-		String decrypted = encrypter.decrypt(passwort);
+		String decrypted = encrypter.decrypt(this.passwort);
 		return decrypted;
 	}
 
@@ -98,7 +124,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public boolean isIstAktiv() {
-		return istAktiv;
+		return this.istAktiv;
 	}
 
 	public void setIstAktiv(boolean istAktiv) {
@@ -110,19 +136,19 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getIsVisible() {
-		return isVisible;
+		return this.isVisible;
 	}
 
 	public String getStandort() {
-		return standort;
+		return this.standort;
 	}
 
 	public void setStandort(String instandort) {
-		standort = instandort;
+		this.standort = instandort;
 	}
 
 	public String getVorname() {
-		return vorname;
+		return this.vorname;
 	}
 
 	public void setVorname(String vorname) {
@@ -136,7 +162,7 @@ public class Benutzer implements Serializable {
 			return Integer.valueOf(100);
 		}
 
-		return tabellengroesse;
+		return this.tabellengroesse;
 	}
 
 	public void setTabellengroesse(Integer tabellengroesse) {
@@ -147,7 +173,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public boolean isMitMassendownload() {
-		return mitMassendownload;
+		return this.mitMassendownload;
 	}
 
 	public void setMitMassendownload(boolean mitMassendownload) {
@@ -155,7 +181,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public LdapGruppe getLdapGruppe() {
-		return ldapGruppe;
+		return this.ldapGruppe;
 	}
 
 	public void setLdapGruppe(LdapGruppe ldapGruppe) {
@@ -167,7 +193,7 @@ public class Benutzer implements Serializable {
 	 Zweck: Set für Benutzergruppen
 	 ---------------------------------------------------------------------------------------------------------*/
 	public Set<Benutzergruppe> getBenutzergruppen() {
-		return benutzergruppen;
+		return this.benutzergruppen;
 	}
 
 	public void setBenutzergruppen(Set<Benutzergruppe> benutzergruppen) {
@@ -175,17 +201,19 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getBenutzergruppenSize() {
-		if (benutzergruppen == null)
+		if (this.benutzergruppen == null) {
 			return 0;
-		else
-			return benutzergruppen.size();
+		} else {
+			return this.benutzergruppen.size();
+		}
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
-		if (benutzergruppen == null)
+		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
-		else
-			return new ArrayList<Benutzergruppe>(benutzergruppen);
+		} else {
+			return new ArrayList<Benutzergruppe>(this.benutzergruppen);
+		}
 	}
 
 	/*---------------------------------------------------------------------------------------------------------
@@ -194,7 +222,7 @@ public class Benutzer implements Serializable {
 	 ---------------------------------------------------------------------------------------------------------*/
 
 	public Set<Schritt> getSchritte() {
-		return schritte;
+		return this.schritte;
 	}
 
 	public void setSchritte(Set<Schritt> schritte) {
@@ -202,17 +230,19 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getSchritteSize() {
-		if (schritte == null)
+		if (this.schritte == null) {
 			return 0;
-		else
-			return schritte.size();
+		} else {
+			return this.schritte.size();
+		}
 	}
 
 	public List<Schritt> getSchritteList() {
-		if (schritte == null)
+		if (this.schritte == null) {
 			return new ArrayList<Schritt>();
-		else
-			return new ArrayList<Schritt>(schritte);
+		} else {
+			return new ArrayList<Schritt>(this.schritte);
+		}
 	}
 
 	/*---------------------------------------------------------------------------------------------------------
@@ -220,7 +250,7 @@ public class Benutzer implements Serializable {
 	 Zweck: Set für BearbeitungsSchritte
 	 ---------------------------------------------------------------------------------------------------------*/
 	public Set<Schritt> getBearbeitungsschritte() {
-		return bearbeitungsschritte;
+		return this.bearbeitungsschritte;
 	}
 
 	public void setBearbeitungsschritte(Set<Schritt> bearbeitungsschritte) {
@@ -228,16 +258,18 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getBearbeitungsschritteSize() {
-		if (bearbeitungsschritte == null)
+		if (this.bearbeitungsschritte == null) {
 			return 0;
-		else
-			return bearbeitungsschritte.size();
+		} else {
+			return this.bearbeitungsschritte.size();
+		}
 	}
 
 	public List<Schritt> getBearbeitungsschritteList() {
-		if (bearbeitungsschritte == null)
-			bearbeitungsschritte = new HashSet<Schritt>();
-		return new ArrayList<Schritt>(bearbeitungsschritte);
+		if (this.bearbeitungsschritte == null) {
+			this.bearbeitungsschritte = new HashSet<Schritt>();
+		}
+		return new ArrayList<Schritt>(this.bearbeitungsschritte);
 	}
 
 	/*---------------------------------------------------------------------------------------------------------
@@ -246,7 +278,7 @@ public class Benutzer implements Serializable {
 	 ---------------------------------------------------------------------------------------------------------*/
 
 	public Set<Projekt> getProjekte() {
-		return projekte;
+		return this.projekte;
 	}
 
 	public void setProjekte(Set<Projekt> projekte) {
@@ -254,22 +286,23 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getProjekteSize() {
-		if (projekte == null)
+		if (this.projekte == null) {
 			return 0;
-		else
-			return projekte.size();
+		} else {
+			return this.projekte.size();
+		}
 	}
 
 	public List<Projekt> getProjekteList() {
-		if (projekte == null)
+		if (this.projekte == null) {
 			return new ArrayList<Projekt>();
-		else {
-			return new ArrayList<Projekt>(projekte);
+		} else {
+			return new ArrayList<Projekt>(this.projekte);
 		}
 	}
 
 	public boolean isConfVorgangsdatumAnzeigen() {
-		return confVorgangsdatumAnzeigen;
+		return this.confVorgangsdatumAnzeigen;
 	}
 
 	public void setConfVorgangsdatumAnzeigen(boolean confVorgangsdatumAnzeigen) {
@@ -277,7 +310,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getMetadatenSprache() {
-		return metadatenSprache;
+		return this.metadatenSprache;
 	}
 
 	public void setMetadatenSprache(String metadatenSprache) {
@@ -303,13 +336,13 @@ public class Benutzer implements Serializable {
 				// return passwort.equals(inPasswort);
 				DesEncrypter encrypter = new DesEncrypter();
 				String encoded = encrypter.encrypt(inPasswort);
-				return passwort.equals(encoded);
+				return this.passwort.equals(encoded);
 			}
 		}
 	}
 
 	public String getNachVorname() {
-		return nachname + ", " + vorname;
+		return this.nachname + ", " + this.vorname;
 	}
 
 	/**
@@ -327,25 +360,29 @@ public class Benutzer implements Serializable {
 			Ldap myldap = new Ldap();
 			rueckgabe = myldap.getUserHomeDirectory(this);
 		} else {
-			rueckgabe = ConfigMain.getParameter("dir_Users") + login;
+			rueckgabe = ConfigMain.getParameter("dir_Users") + this.login;
 		}
 
-		if (rueckgabe.equals(""))
+		if (rueckgabe.equals("")) {
 			return "";
+		}
 
-		if (!rueckgabe.endsWith(File.separator))
+		if (!rueckgabe.endsWith(File.separator)) {
 			rueckgabe += File.separator;
+		}
 		/* wenn das Verzeichnis nicht "" ist, aber noch nicht existiert, dann jetzt anlegen */
 		File homePath = new File(rueckgabe);
-		if (!homePath.exists())
-			new Helper().createUserDirectory(rueckgabe, login);
+		if (!homePath.exists()) {
+			new Helper().createUserDirectory(rueckgabe, this.login);
+		}
 		return rueckgabe;
 	}
 
 	public Integer getSessiontimeout() {
-		if (sessiontimeout == null)
-			sessiontimeout = 7200;
-		return sessiontimeout;
+		if (this.sessiontimeout == null) {
+			this.sessiontimeout = 7200;
+		}
+		return this.sessiontimeout;
 	}
 
 	public void setSessiontimeout(Integer sessiontimeout) {
@@ -357,16 +394,18 @@ public class Benutzer implements Serializable {
 	}
 
 	public void setSessiontimeoutInMinutes(Integer sessiontimeout) {
-		if (sessiontimeout.intValue() < 5)
+		if (sessiontimeout.intValue() < 5) {
 			this.sessiontimeout = 5 * 60;
-		else
+		} else {
 			this.sessiontimeout = sessiontimeout * 60;
+		}
 	}
 
 	public String getCss() {
-		if (css == null || css.length() == 0)
-			css = "/css/default.css";
-		return css;
+		if (this.css == null || this.css.length() == 0) {
+			this.css = "/css/default.css";
+		}
+		return this.css;
 	}
 
 	public void setCss(String css) {
@@ -381,7 +420,7 @@ public class Benutzer implements Serializable {
 	 * @return set of all properties
 	 */
 	public Set<Benutzereigenschaft> getEigenschaften() {
-		return eigenschaften;
+		return this.eigenschaften;
 	}
 
 	/**
@@ -399,10 +438,11 @@ public class Benutzer implements Serializable {
 	 */
 	
 	public int getEigenschaftenSize() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return 0;
-		else
-			return eigenschaften.size();
+		} else {
+			return this.eigenschaften.size();
+		}
 	}
 
 	/**
@@ -410,10 +450,11 @@ public class Benutzer implements Serializable {
 	 * @return List of all properties
 	 */
 	public List<Benutzereigenschaft> getEigenschaftenList() {
-		if (eigenschaften == null)
+		if (this.eigenschaften == null) {
 			return new ArrayList<Benutzereigenschaft>();
-		else
-			return new ArrayList<Benutzereigenschaft>(eigenschaften);
+		} else {
+			return new ArrayList<Benutzereigenschaft>(this.eigenschaften);
+		}
 	}
 
 	/**
@@ -439,11 +480,11 @@ public class Benutzer implements Serializable {
 	 */
 	
 	public void addFilter(String inFilter) {
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Benutzereigenschaft>();
+		if (this.eigenschaften == null) {
+			this.eigenschaften = new HashSet<Benutzereigenschaft>();
 		}
 		// no double entries here
-		for (Benutzereigenschaft be : eigenschaften) {
+		for (Benutzereigenschaft be : this.eigenschaften) {
 			if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
 				return;
 			}
@@ -452,7 +493,7 @@ public class Benutzer implements Serializable {
 		be.setBenutzer(this);
 		be.setTitel("_filter");
 		be.setWert(inFilter);
-		eigenschaften.add(be);
+		this.eigenschaften.add(be);
 	}
 
 	
@@ -461,10 +502,10 @@ public class Benutzer implements Serializable {
 	 * @param inFilter the filter to remove
 	 */
 	public void removeFilter(String inFilter) {
-		if (eigenschaften != null) {
-			for (Benutzereigenschaft be : eigenschaften) {
+		if (this.eigenschaften != null) {
+			for (Benutzereigenschaft be : this.eigenschaften) {
 				if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
-					eigenschaften.remove(be);
+					this.eigenschaften.remove(be);
 					return;
 				}
 			}

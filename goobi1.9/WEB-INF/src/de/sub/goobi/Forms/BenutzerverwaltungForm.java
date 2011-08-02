@@ -1,5 +1,31 @@
 package de.sub.goobi.Forms;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,16 +72,16 @@ public class BenutzerverwaltungForm extends BasisForm {
 	private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
 	
 	public String Neu() {
-		myClass = new Benutzer();
-		myClass.setVorname("");
-		myClass.setNachname("");
-		myClass.setLogin("");
-		myClass.setPasswortCrypt("Passwort");
+		this.myClass = new Benutzer();
+		this.myClass.setVorname("");
+		this.myClass.setNachname("");
+		this.myClass.setLogin("");
+		this.myClass.setPasswortCrypt("Passwort");
 		return "BenutzerBearbeiten";
 	}
 
 	public String FilterKein() {
-		filter = null;
+		this.filter = null;
 		try {
 			//	HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
@@ -63,11 +89,12 @@ public class BenutzerverwaltungForm extends BasisForm {
 				session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
-			if (hideInactiveUsers)
+			if (this.hideInactiveUsers) {
 				crit.add(Restrictions.eq("istAktiv", true));
+			}
 			crit.addOrder(Order.asc("nachname"));
 			crit.addOrder(Order.asc("vorname"));
-			page = new Page(crit, 0);
+			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
@@ -77,7 +104,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	public String FilterKeinMitZurueck() {
 		FilterKein();
-		return zurueck;
+		return this.zurueck;
 	}
 
 	/**
@@ -91,18 +118,19 @@ public class BenutzerverwaltungForm extends BasisForm {
 				session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
-			if (hideInactiveUsers)
+			if (this.hideInactiveUsers) {
 				crit.add(Restrictions.eq("istAktiv", true));
+			}
 
-			if (filter != null || filter.length() != 0) {
+			if (this.filter != null || this.filter.length() != 0) {
 				Disjunction ex = Restrictions.disjunction();
-				ex.add(Restrictions.like("vorname", "%" + filter + "%"));
-				ex.add(Restrictions.like("nachname", "%" + filter + "%"));
+				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
+				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
 			crit.addOrder(Order.asc("vorname"));
-			page = new Page(crit, 0);
+			this.page = new Page(crit, 0);
 			//calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
@@ -113,17 +141,18 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	public String Speichern() {
 		Session session = Helper.getHibernateSession();
-		session.evict(myClass);
-		String bla = myClass.getLogin();
+		session.evict(this.myClass);
+		String bla = this.myClass.getLogin();
 
-		if (!LoginValide(bla))
+		if (!LoginValide(bla)) {
 			return "";
+		}
 
-		Integer blub = myClass.getId();
+		Integer blub = this.myClass.getId();
 		try {
 			/* prüfen, ob schon ein anderer Benutzer mit gleichem Login existiert */
-			if (dao.count("from Benutzer where login='" + bla + "'AND BenutzerID<>" + blub) == 0) {
-				dao.save(myClass);
+			if (this.dao.count("from Benutzer where login='" + bla + "'AND BenutzerID<>" + blub) == 0) {
+				this.dao.save(this.myClass);
 				return "BenutzerAlle";
 			} else {
 				Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
@@ -142,8 +171,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher matcher = pattern.matcher(inLogin);
 		valide = matcher.matches();
-		if (!valide)
+		if (!valide) {
 			Helper.setFehlerMeldung("", Helper.getTranslation("loginNotValid"));
+		}
 
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -155,11 +185,12 @@ public class BenutzerverwaltungForm extends BasisForm {
 			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
 			BufferedReader in = new BufferedReader(isr);
 			String str;
-			while ((str = in.readLine()) != null)
+			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
 					valide = false;
 					Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
 				}
+			}
 			in.close();
 		} catch (IOException e) {
 		}
@@ -167,10 +198,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String Loeschen() {
-		myClass.setBenutzergruppen(new HashSet<Benutzergruppe>());
-		myClass.setProjekte(new HashSet<Projekt>());
-		myClass.setIstAktiv(false);
-		myClass.setIsVisible("deleted");
+		this.myClass.setBenutzergruppen(new HashSet<Benutzergruppe>());
+		this.myClass.setProjekte(new HashSet<Projekt>());
+		this.myClass.setIstAktiv(false);
+		this.myClass.setIsVisible("deleted");
 		return "BenutzerAlle";
 	}
 
@@ -178,19 +209,20 @@ public class BenutzerverwaltungForm extends BasisForm {
 		int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
 		Set<Benutzergruppe> neu = new HashSet<Benutzergruppe>();
-		for (Iterator<Benutzergruppe> iter = myClass.getBenutzergruppen().iterator(); iter.hasNext();) {
-			Benutzergruppe element = (Benutzergruppe) iter.next();
-			if (element.getId().intValue() != gruppenID)
+		for (Iterator<Benutzergruppe> iter = this.myClass.getBenutzergruppen().iterator(); iter.hasNext();) {
+			Benutzergruppe element = iter.next();
+			if (element.getId().intValue() != gruppenID) {
 				neu.add(element);
+			}
 		}
-		myClass.setBenutzergruppen(neu);
+		this.myClass.setBenutzergruppen(neu);
 		return "";
 	}
 
 	public String ZuGruppeHinzufuegen() {
 		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
-			myClass.getBenutzergruppen().add(new BenutzergruppenDAO().get(gruppenID));
+			this.myClass.getBenutzergruppen().add(new BenutzergruppenDAO().get(gruppenID));
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
@@ -201,19 +233,20 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String AusProjektLoeschen() {
 		int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
 		Set<Projekt> neu = new HashSet<Projekt>();
-		for (Iterator<Projekt> iter = myClass.getProjekte().iterator(); iter.hasNext();) {
-			Projekt element = (Projekt) iter.next();
-			if (element.getId().intValue() != projektID)
+		for (Iterator<Projekt> iter = this.myClass.getProjekte().iterator(); iter.hasNext();) {
+			Projekt element = iter.next();
+			if (element.getId().intValue() != projektID) {
 				neu.add(element);
+			}
 		}
-		myClass.setProjekte(neu);
+		this.myClass.setProjekte(neu);
 		return "";
 	}
 
 	public String ZuProjektHinzufuegen() {
 		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
-			myClass.getProjekte().add(new ProjektDAO().get(projektID));
+			this.myClass.getProjekte().add(new ProjektDAO().get(projektID));
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
@@ -230,14 +263,14 @@ public class BenutzerverwaltungForm extends BasisForm {
 	 ####################################################*/
 
 	public Benutzer getMyClass() {
-		return myClass;
+		return this.myClass;
 	}
 
 	public void setMyClass(Benutzer inMyClass) {
 		Helper.getHibernateSession().flush();
 		Helper.getHibernateSession().clear();
 		try {
-			myClass = new BenutzerDAO().get(inMyClass.getId());
+			this.myClass = new BenutzerDAO().get(inMyClass.getId());
 		} catch (DAOException e) {
 			this.myClass = inMyClass;
 		}
@@ -252,20 +285,22 @@ public class BenutzerverwaltungForm extends BasisForm {
 	 ####################################################*/
 
 	public Integer getLdapGruppeAuswahl() {
-		if (myClass.getLdapGruppe() != null)
-			return myClass.getLdapGruppe().getId();
-		else
+		if (this.myClass.getLdapGruppe() != null) {
+			return this.myClass.getLdapGruppe().getId();
+		} else {
 			return Integer.valueOf(0);
+		}
 	}
 
 	public void setLdapGruppeAuswahl(Integer inAuswahl) {
-		if (inAuswahl.intValue() != 0)
+		if (inAuswahl.intValue() != 0) {
 			try {
-				myClass.setLdapGruppe(new LdapGruppenDAO().get(inAuswahl));
+				this.myClass.setLdapGruppe(new LdapGruppenDAO().get(inAuswahl));
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("Error on writing to database", "");
 				logger.error(e);
 			}
+		}
 	}
 
 	public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
@@ -285,8 +320,8 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String LdapKonfigurationSchreiben() {
 		Ldap myLdap = new Ldap();
 		try {
-			myLdap.createNewUser(myClass, myClass.getPasswortCrypt());
-			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + myClass.getNachVorname(), "");
+			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());
+			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + this.myClass.getNachVorname(), "");
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
 		}
@@ -294,7 +329,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public boolean isHideInactiveUsers() {
-		return hideInactiveUsers;
+		return this.hideInactiveUsers;
 	}
 
 	public void setHideInactiveUsers(boolean hideInactiveUsers) {

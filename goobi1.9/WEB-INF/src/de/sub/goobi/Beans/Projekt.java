@@ -1,5 +1,31 @@
 package de.sub.goobi.Beans;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,16 +78,16 @@ public class Projekt implements Serializable {
 	private Boolean projectIsArchived = false;
 
 	public Projekt() {
-		prozesse = new HashSet<Prozess>();
-		benutzer = new HashSet<Benutzer>();
-		useDmsImport = false;
-		dmsImportTimeOut = 0;
-		dmsImportImagesPath = "";
-		dmsImportRootPath = "";
-		dmsImportSuccessPath = "";
-		dmsImportCreateProcessFolder = false;
-		fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
-		fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
+		this.prozesse = new HashSet<Prozess>();
+		this.benutzer = new HashSet<Benutzer>();
+		this.useDmsImport = false;
+		this.dmsImportTimeOut = 0;
+		this.dmsImportImagesPath = "";
+		this.dmsImportRootPath = "";
+		this.dmsImportSuccessPath = "";
+		this.dmsImportCreateProcessFolder = false;
+		this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
+		this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
 	}
 
 	/*
@@ -72,7 +98,7 @@ public class Projekt implements Serializable {
 	 */
 
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Integer id) {
@@ -80,7 +106,7 @@ public class Projekt implements Serializable {
 	}
 
 	public Set<Benutzer> getBenutzer() {
-		return benutzer;
+		return this.benutzer;
 	}
 
 	public void setBenutzer(Set<Benutzer> benutzer) {
@@ -88,7 +114,7 @@ public class Projekt implements Serializable {
 	}
 
 	public Set<Prozess> getProzesse() {
-		return prozesse;
+		return this.prozesse;
 	}
 
 	public void setProzesse(Set<Prozess> prozesse) {
@@ -96,7 +122,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getTitel() {
-		return titel;
+		return this.titel;
 	}
 
 	public void setTitel(String titel) {
@@ -104,7 +130,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getDmsImportImagesPath() {
-		return dmsImportImagesPath;
+		return this.dmsImportImagesPath;
 	}
 
 	public void setDmsImportImagesPath(String dmsImportImagesPath) {
@@ -112,7 +138,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getDmsImportRootPath() {
-		return dmsImportRootPath;
+		return this.dmsImportRootPath;
 	}
 
 	public void setDmsImportRootPath(String dmsImportRootPath) {
@@ -120,7 +146,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getDmsImportSuccessPath() {
-		return dmsImportSuccessPath;
+		return this.dmsImportSuccessPath;
 	}
 
 	public void setDmsImportSuccessPath(String dmsImportSuccessPath) {
@@ -128,7 +154,7 @@ public class Projekt implements Serializable {
 	}
 
 	public Integer getDmsImportTimeOut() {
-		return dmsImportTimeOut;
+		return this.dmsImportTimeOut;
 	}
 
 	public void setDmsImportTimeOut(Integer dmsImportTimeOut) {
@@ -136,7 +162,7 @@ public class Projekt implements Serializable {
 	}
 
 	public boolean isUseDmsImport() {
-		return useDmsImport;
+		return this.useDmsImport;
 	}
 
 	public void setUseDmsImport(boolean useDmsImport) {
@@ -144,7 +170,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getDmsImportErrorPath() {
-		return dmsImportErrorPath;
+		return this.dmsImportErrorPath;
 	}
 
 	public void setDmsImportErrorPath(String dmsImportErrorPath) {
@@ -158,29 +184,30 @@ public class Projekt implements Serializable {
 	 * ================================================================
 	 */
 	public boolean isDmsImportCreateProcessFolder() {
-		if (dmsImportCreateProcessFolder == null)
-			dmsImportCreateProcessFolder = false;
-		return dmsImportCreateProcessFolder;
+		if (this.dmsImportCreateProcessFolder == null) {
+			this.dmsImportCreateProcessFolder = false;
+		}
+		return this.dmsImportCreateProcessFolder;
 	}
 
 	public void setDmsImportCreateProcessFolder(boolean inFolder) {
-		dmsImportCreateProcessFolder = inFolder;
+		this.dmsImportCreateProcessFolder = inFolder;
 	}
 
 	public Boolean isDmsImportCreateProcessFolderHibernate() {
-		return dmsImportCreateProcessFolder;
+		return this.dmsImportCreateProcessFolder;
 	}
 
 	public void setDmsImportCreateProcessFolderHibernate(Boolean inFolder) {
-		dmsImportCreateProcessFolder = inFolder;
+		this.dmsImportCreateProcessFolder = inFolder;
 	}
 
 	public boolean isDeleteAble() {
-		return prozesse.size() == 0;
+		return this.prozesse.size() == 0;
 	}
 
 	public Set<ProjectFileGroup> getFilegroups() {
-		return filegroups;
+		return this.filegroups;
 	}
 
 	public void setFilegroups(Set<ProjectFileGroup> filegroups) {
@@ -188,13 +215,14 @@ public class Projekt implements Serializable {
 	}
 
 	public ArrayList<ProjectFileGroup> getFilegroupsList() {
-		if (filegroups == null)
-			filegroups = new HashSet<ProjectFileGroup>();
-		return new ArrayList<ProjectFileGroup>(filegroups);
+		if (this.filegroups == null) {
+			this.filegroups = new HashSet<ProjectFileGroup>();
+		}
+		return new ArrayList<ProjectFileGroup>(this.filegroups);
 	}
 
 	public String getMetsRightsOwner() {
-		return metsRightsOwner;
+		return this.metsRightsOwner;
 	}
 
 	public void setMetsRightsOwner(String metsRightsOwner) {
@@ -202,7 +230,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsRightsOwnerLogo() {
-		return metsRightsOwnerLogo;
+		return this.metsRightsOwnerLogo;
 	}
 
 	public void setMetsRightsOwnerLogo(String metsRightsOwnerLogo) {
@@ -210,7 +238,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsRightsOwnerSite() {
-		return metsRightsOwnerSite;
+		return this.metsRightsOwnerSite;
 	}
 
 	public void setMetsRightsOwnerSite(String metsRightsOwnerSite) {
@@ -221,7 +249,7 @@ public class Projekt implements Serializable {
 	 * @return the metsRigthsOwnerMail
 	 */
 	public String getMetsRightsOwnerMail() {
-		return metsRightsOwnerMail;
+		return this.metsRightsOwnerMail;
 	}
 
 	/**
@@ -233,7 +261,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsDigiprovReference() {
-		return metsDigiprovReference;
+		return this.metsDigiprovReference;
 	}
 
 	public void setMetsDigiprovReference(String metsDigiprovReference) {
@@ -241,7 +269,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsDigiprovReferenceAnchor() {
-		return metsDigiprovReferenceAnchor;
+		return this.metsDigiprovReferenceAnchor;
 	}
 
 	public void setMetsDigiprovReferenceAnchor(String metsDigiprovReferenceAnchor) {
@@ -249,7 +277,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsDigiprovPresentation() {
-		return metsDigiprovPresentation;
+		return this.metsDigiprovPresentation;
 	}
 
 	public void setMetsDigiprovPresentation(String metsDigiprovPresentation) {
@@ -257,7 +285,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsDigiprovPresentationAnchor() {
-		return metsDigiprovPresentationAnchor;
+		return this.metsDigiprovPresentationAnchor;
 	}
 
 	public void setMetsDigiprovPresentationAnchor(String metsDigiprovPresentationAnchor) {
@@ -277,7 +305,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsPointerPathAnchor() {
-		return metsPointerPathAnchor;
+		return this.metsPointerPathAnchor;
 	}
 
 	public void setMetsPurl(String metsPurl) {
@@ -285,7 +313,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsPurl() {
-		return metsPurl;
+		return this.metsPurl;
 	}
 
 	public void setMetsContentIDs(String contentIDs) {
@@ -293,11 +321,11 @@ public class Projekt implements Serializable {
 	}
 
 	public String getMetsContentIDs() {
-		return metsContentIDs;
+		return this.metsContentIDs;
 	}
 
 	public String getFileFormatInternal() {
-		return fileFormatInternal;
+		return this.fileFormatInternal;
 	}
 
 	public void setFileFormatInternal(String fileFormatInternal) {
@@ -305,7 +333,7 @@ public class Projekt implements Serializable {
 	}
 
 	public String getFileFormatDmsExport() {
-		return fileFormatDmsExport;
+		return this.fileFormatDmsExport;
 	}
 
 	public void setFileFormatDmsExport(String fileFormatDmsExport) {
@@ -334,10 +362,10 @@ public class Projekt implements Serializable {
 	 */
 
 	public Integer getNumberOfVolumes() {
-		if (numberOfVolumes == null) {
-			numberOfVolumes = 0;
+		if (this.numberOfVolumes == null) {
+			this.numberOfVolumes = 0;
 		}
-		return numberOfVolumes;
+		return this.numberOfVolumes;
 	}
 
 	/**
@@ -356,10 +384,10 @@ public class Projekt implements Serializable {
 	 * @return the NumberOfPages
 	 *************************************************************************************/
 	public Integer getNumberOfPages() {
-		if (numberOfPages == null) {
-			numberOfPages = 0;
+		if (this.numberOfPages == null) {
+			this.numberOfPages = 0;
 		}
-		return numberOfPages;
+		return this.numberOfPages;
 	}
 
 	/**************************************************************************************
@@ -378,10 +406,10 @@ public class Projekt implements Serializable {
 	 * @return the StartDate
 	 *************************************************************************************/
 	public Date getStartDate() {
-		if (startDate == null) {
-			startDate = new Date();
+		if (this.startDate == null) {
+			this.startDate = new Date();
 		}
-		return startDate;
+		return this.startDate;
 	}
 
 	/**************************************************************************************
@@ -400,10 +428,10 @@ public class Projekt implements Serializable {
 	 * @return the EndDate
 	 *************************************************************************************/
 	public Date getEndDate() {
-		if (endDate == null) {
-			endDate = new Date();
+		if (this.endDate == null) {
+			this.endDate = new Date();
 		}
-		return endDate;
+		return this.endDate;
 	}
 
 	/**************************************************************************************
@@ -424,6 +452,6 @@ public class Projekt implements Serializable {
 	}
 
 	public Boolean getProjectIsArchived() {
-		return projectIsArchived;
+		return this.projectIsArchived;
 	}
 }

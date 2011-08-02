@@ -1,5 +1,31 @@
 package de.sub.goobi.Export.dms;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.IOException;
 
@@ -41,7 +67,7 @@ public class ExportDms extends ExportMets {
 	}
 
 	public ExportDms(boolean exportImages) {
-		exportWithImages = exportImages;
+		this.exportWithImages = exportImages;
 	}
 
 	public void setExportFulltext(boolean exportFulltext) {
@@ -65,14 +91,15 @@ public class ExportDms extends ExportMets {
 	 * @throws SwapException
 	 * @throws TypeNotAllowedForParentException
 	 */
+	@Override
 	public void startExport(Prozess myProzess, String inZielVerzeichnis)
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, DocStructHasNoTypeException,
 			MetadataTypeNotAllowedException, ExportFileException,
 			UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
-		myPrefs = myProzess.getRegelsatz().getPreferences();
-		cp = new ConfigProjects(myProzess.getProjekt());
+		this.myPrefs = myProzess.getRegelsatz().getPreferences();
+		this.cp = new ConfigProjects(myProzess.getProjekt());
 		String atsPpnBand = myProzess.getTitel();
 
 		/*
@@ -86,15 +113,15 @@ public class ExportDms extends ExportMets {
 			switch (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport())) {
 			case METS:
-				newfile = new MetsModsImportExport(myPrefs);
+				newfile = new MetsModsImportExport(this.myPrefs);
 				break;
 
 			case METS_AND_RDF:
-				newfile = new RDFFile(myPrefs);
+				newfile = new RDFFile(this.myPrefs);
 				break;
 
 			default:
-				newfile = new RDFFile(myPrefs);
+				newfile = new RDFFile(this.myPrefs);
 				break;
 			}
 
@@ -117,8 +144,9 @@ public class ExportDms extends ExportMets {
 
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierung mv = new MetadatenVerifizierung();
-			if (!mv.validate(gdzfile, myPrefs, myProzess))
+			if (!mv.validate(gdzfile, this.myPrefs, myProzess)) {
 				return;
+			}
 		}
 
 		/*
@@ -166,8 +194,9 @@ public class ExportDms extends ExportMets {
 					return;
 				}
 
-				if (!benutzerHome.exists())
+				if (!benutzerHome.exists()) {
 					benutzerHome.mkdir();
+				}
 			}
 
 		} else {
@@ -188,12 +217,12 @@ public class ExportDms extends ExportMets {
 		 * --------------------------------
 		 */
 		try {
-			if (exportWithImages) {
+			if (this.exportWithImages) {
 				imageDownload(myProzess, benutzerHome, atsPpnBand,
 						DIRECTORY_SUFFIX);
 				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
 						DIRECTORY_SUFFIX);
-			}else if (exportFulltext){
+			}else if (this.exportFulltext){
 				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
 						DIRECTORY_SUFFIX);
 			}
@@ -247,10 +276,10 @@ public class ExportDms extends ExportMets {
 					myLogger.error(myProzess.getTitel() + ": error on export",
 							e);
 				}
-				if (agoraThread.rueckgabe.length() > 0)
+				if (agoraThread.rueckgabe.length() > 0) {
 					Helper.setFehlerMeldung(myProzess.getTitel() + ": ",
 							agoraThread.rueckgabe);
-				else {
+				} else {
 					Helper.setMeldung(null, myProzess.getTitel() + ": ",
 							"Export finished");
 					/* Success-Ordner wieder löschen */
@@ -383,8 +412,9 @@ public class ExportDms extends ExportMets {
 
 			/* bei Agora-Import einfach den Ordner anlegen */
 			if (myProzess.getProjekt().isUseDmsImport()) {
-				if (!zielTif.exists())
+				if (!zielTif.exists()) {
 					zielTif.mkdir();
+				}
 			} else {
 				/*
 				 * wenn kein Agora-Import, dann den Ordner mit

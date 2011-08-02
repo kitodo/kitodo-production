@@ -2,9 +2,12 @@ package org.goobi.production.flow.statistics.hibernate;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. - http://gdz.sub.uni-goettingen.de - http://www.intranda.com
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
  * 
- * Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ),
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -47,22 +50,23 @@ class ImprovedSQLProduction extends SQLGenerator {
 	 * 
 	 * @return String
 	 **********************************************************************/
+	@Override
 	public String getSQL() {
 		
 
 		super.setMyIdFieldName("prozesse.prozesseid");
 		String subQuery = "";
 		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+				this.myTimeFrom, this.myTimeTo, "timeLimiter");
 		String outerWhereClause = "";
 
 		//inner table -> alias "table_1"
 		String innerWhereClause;
 
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(bearbeitungsende IS NOT NULL AND ("
-					+ myIdsCondition + ")) ";
+					+ this.myIdsCondition + ")) ";
 		} else {
 			innerWhereClause = "(bearbeitungsende IS NOT NULL) ";
 		}
@@ -72,19 +76,19 @@ class ImprovedSQLProduction extends SQLGenerator {
 
 		subQuery = "(SELECT prozesse.prozesseid AS singleProcess, "
 				+ "prozesse.sortHelperImages AS pages, "
-				+ getIntervallExpression(myTimeUnit, "BearbeitungsEnde")
+				+ getIntervallExpression(this.myTimeUnit, "BearbeitungsEnde")
 				+ " "
 				+ "AS intervall, BearbeitungsEnde AS timeLimiter "
 				+ "FROM  schritte inner join prozesse on schritte.prozesseid=prozesse.prozesseid "
 				+ "WHERE " + innerWhereClause
 				+ "GROUP BY prozesse.prozesseid) AS table_1";
 
-		mySql = "SELECT count(table_1.singleProcess) AS volumes, "
+		this.mySql = "SELECT count(table_1.singleProcess) AS volumes, "
 				+ "sum(table_1.pages) AS pages, table_1.intervall " + "FROM "
 				+ subQuery + " " + outerWhereClause + " GROUP BY intervall "
 				+ "ORDER BY timeLimiter";
 	
-		return mySql;
+		return this.mySql;
 	}
 	
 	/* (non-Javadoc)
@@ -100,7 +104,7 @@ class ImprovedSQLProduction extends SQLGenerator {
 		String subQuery = "";
 		String outerWhereClause = "";
 		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+				this.myTimeFrom, this.myTimeTo, "timeLimiter");
 
 		if (outerWhereClauseTimeFrame.length() > 0) {
 			outerWhereClause = "WHERE".concat(outerWhereClauseTimeFrame);
@@ -110,31 +114,31 @@ class ImprovedSQLProduction extends SQLGenerator {
 		String innerWhereClause = " h.type=6 AND h.numericvalue=" + stepDone.toString();
 
 		// adding ids to conditions if exist
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			innerWhereClause = "WHERE ".concat(innerWhereClause).concat(
-					" AND (" + myIdsCondition + ")");
+					" AND (" + this.myIdsCondition + ")");
 		} else {
 			innerWhereClause = "WHERE ".concat(innerWhereClause);
 		}
 		
 		// building the inner SQL
 		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
-				+ getIntervallExpression(myTimeUnit, "h.date")
+				+ getIntervallExpression(this.myTimeUnit, "h.date")
 				+ "  AS intervall from history h "
 				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  "
 				+ innerWhereClause + "GROUP BY h.processID order by h.date) AS table_1";
 
 		// building complete query
-		mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
+		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
 				+ subQuery + " " + outerWhereClause + " GROUP BY intervall ";
-		return mySql;
+		return this.mySql;
 	}
 
 	public String getSQL(String stepname) {
 		String subQuery = "";
 		String outerWhereClause = "";
 		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+				this.myTimeFrom, this.myTimeTo, "timeLimiter");
 
 		if (outerWhereClauseTimeFrame.length() > 0) {
 			outerWhereClause = "WHERE".concat(outerWhereClauseTimeFrame);
@@ -144,23 +148,23 @@ class ImprovedSQLProduction extends SQLGenerator {
 		String innerWhereClause = " h.type=6 AND h.stringvalue like '%" + stepname + "%' ";
 
 		// adding ids to conditions if exist
-		if (myIdsCondition != null) {
+		if (this.myIdsCondition != null) {
 			innerWhereClause = "WHERE ".concat(innerWhereClause).concat(
-					" AND " + myIdsCondition );
+					" AND " + this.myIdsCondition );
 		} else {
 			innerWhereClause = "WHERE ".concat(innerWhereClause);
 		}
 		
 		// building the inner SQL
 		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
-				+ getIntervallExpression(myTimeUnit, "h.date")
+				+ getIntervallExpression(this.myTimeUnit, "h.date")
 				+ "  AS intervall from history h "
 				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  "
 				+ innerWhereClause + " GROUP BY h.processID order by h.date) AS table_1";
 
 		// building complete query
-		mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
+		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
 				+ subQuery + " " + outerWhereClause + " GROUP BY intervall ";
-		return mySql;
+		return this.mySql;
 	}
 }

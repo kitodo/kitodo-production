@@ -1,5 +1,31 @@
 package de.sub.goobi.helper;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,11 +79,11 @@ public class VariableReplacer {
 	}
 
 	public VariableReplacer(DigitalDocument inDigitalDocument, Prefs inPrefs, Prozess p, Schritt s) {
-		dd = inDigitalDocument;
-		prefs = inPrefs;
-		uhelp = new UghHelper();
+		this.dd = inDigitalDocument;
+		this.prefs = inPrefs;
+		this.uhelp = new UghHelper();
 		// help = new Helper();
-		process = p;
+		this.process = p;
 		this.step = s;
 	}
 
@@ -73,7 +99,7 @@ public class VariableReplacer {
 		/*
 		 * replace metadata, usage: $(meta.firstchild.METADATANAME)
 		 */
-		for (MatchResult r : findRegexMatches(namespaceMeta, inString)) {
+		for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
 			if (r.group(1).toLowerCase().startsWith("firstchild.")) {
 				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
 			} else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
@@ -85,13 +111,13 @@ public class VariableReplacer {
 
 		// replace paths and files
 		try {
-			String processpath = process.getProcessDataDirectory().replace("\\", "/");
-			String tifpath = process.getImagesTifDirectory().replace("\\", "/");
-			String imagepath = process.getImagesDirectory().replace("\\", "/");
-			String origpath = process.getImagesOrigDirectory().replace("\\", "/");
-			String metaFile = process.getMetadataFilePath().replace("\\", "/");
+			String processpath = this.process.getProcessDataDirectory().replace("\\", "/");
+			String tifpath = this.process.getImagesTifDirectory().replace("\\", "/");
+			String imagepath = this.process.getImagesDirectory().replace("\\", "/");
+			String origpath = this.process.getImagesOrigDirectory().replace("\\", "/");
+			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
 			;
-			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + process.getRegelsatz().getDatei();
+			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
 			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
 			if (tifpath.endsWith(File.separator)) {
@@ -142,10 +168,10 @@ public class VariableReplacer {
 				inString = inString.replace("(processpath)", processpath);
 			}
 			if (inString.contains("(processtitle)")) {
-				inString = inString.replace("(processtitle)", process.getTitel());
+				inString = inString.replace("(processtitle)", this.process.getTitel());
 			}
 			if (inString.contains("(processid)")) {
-				inString = inString.replace("(processid)", String.valueOf(process.getId().intValue()));
+				inString = inString.replace("(processid)", String.valueOf(this.process.getId().intValue()));
 			}
 			if (inString.contains("(metaFile)")) {
 				inString = inString.replace("(metaFile)", metaFile);
@@ -154,9 +180,9 @@ public class VariableReplacer {
 				inString = inString.replace("(prefs)", myprefs);
 			}
 
-			if (step != null) {
-				String stepId = String.valueOf(step.getId());
-				String stepname = step.getTitel();
+			if (this.step != null) {
+				String stepId = String.valueOf(this.step.getId());
+				String stepname = this.step.getTitel();
 
 				inString = inString.replace("(stepid)", stepId);
 				inString = inString.replace("(stepname)", stepname);
@@ -166,7 +192,7 @@ public class VariableReplacer {
 
 			for (MatchResult r : findRegexMatches("\\(product\\.([\\w]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
-				for (Werkstueck ws : process.getWerkstueckeList()) {
+				for (Werkstueck ws : this.process.getWerkstueckeList()) {
 					for (Werkstueckeigenschaft we : ws.getEigenschaftenList()) {
 						if (we.getTitel().equalsIgnoreCase(propertyTitle)) {
 							inString = inString.replace(r.group(), we.getWert());
@@ -180,7 +206,7 @@ public class VariableReplacer {
 
 			for (MatchResult r : findRegexMatches("\\(template\\.([\\w.]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
-				for (Vorlage v : process.getVorlagenList()) {
+				for (Vorlage v : this.process.getVorlagenList()) {
 					for (Vorlageeigenschaft ve : v.getEigenschaftenList()) {
 						if (ve.getTitel().equalsIgnoreCase(propertyTitle)) {
 							inString = inString.replace(r.group(), ve.getWert());
@@ -194,7 +220,7 @@ public class VariableReplacer {
 
 			for (MatchResult r : findRegexMatches("\\(process\\.([\\w.]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
-				for (Prozesseigenschaft pe : process.getEigenschaftenList()) {
+				for (Prozesseigenschaft pe : this.process.getEigenschaftenList()) {
 					if (pe.getTitel().equalsIgnoreCase(propertyTitle)) {
 						inString = inString.replace(r.group(), pe.getWert());
 						break;
@@ -221,17 +247,18 @@ public class VariableReplacer {
 	 * ================================================================
 	 */
 	private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
-		if (dd != null) {
+		if (this.dd != null) {
 			/* TopStruct und FirstChild ermitteln */
-			DocStruct topstruct = dd.getLogicalDocStruct();
+			DocStruct topstruct = this.dd.getLogicalDocStruct();
 			DocStruct firstchildstruct = null;
-			if (topstruct.getAllChildren() != null && topstruct.getAllChildren().size() > 0)
+			if (topstruct.getAllChildren() != null && topstruct.getAllChildren().size() > 0) {
 				firstchildstruct = topstruct.getAllChildren().get(0);
+			}
 
 			/* MetadataType ermitteln und ggf. Fehler melden */
 			MetadataType mdt;
 			try {
-				mdt = uhelp.getMetadataType(prefs, metadata);
+				mdt = this.uhelp.getMetadataType(this.prefs, metadata);
 			} catch (UghHelperException e) {
 				Helper.setFehlerMeldung(e);
 				return "";
@@ -251,8 +278,9 @@ public class VariableReplacer {
 					logger.info("Can not replace firstChild-variable for METS: " + metadata);
 					result = "";
 					// help.setFehlerMeldung("Can not replace firstChild-variable for METS: " + metadata);
-				} else
+				} else {
 					result = resultFirst;
+				}
 				break;
 
 			case TOPSTRUCT:
@@ -260,8 +288,9 @@ public class VariableReplacer {
 					result = "";
 					logger.warn("Can not replace topStruct-variable for METS: " + metadata);
 					// help.setFehlerMeldung("Can not replace topStruct-variable for METS: " + metadata);
-				} else
+				} else {
 					result = resultTop;
+				}
 				break;
 
 			case ALL:
@@ -289,10 +318,11 @@ public class VariableReplacer {
 	 */
 	private String getMetadataValue(DocStruct inDocstruct, MetadataType mdt) {
 		List<? extends Metadata> mds = inDocstruct.getAllMetadataByType(mdt);
-		if (mds.size() > 0)
+		if (mds.size() > 0) {
 			return ((Metadata) mds.get(0)).getValue();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	/**

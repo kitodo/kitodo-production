@@ -1,5 +1,31 @@
 package de.unigoettingen.sub.search.opac;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,7 +64,7 @@ public class ConfigOpacCatalogue {
 		this.database = database;
 		this.iktlist = iktlist;
 		this.port = port;
-		beautifySetList = inBeautifySetList;
+		this.beautifySetList = inBeautifySetList;
 	}
 
 	// Constructor that also takes a charset, a quick hack for DPD-81
@@ -51,39 +77,40 @@ public class ConfigOpacCatalogue {
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public String getAddress() {
-		return address;
+		return this.address;
 	}
 
 	public String getDatabase() {
-		return database;
+		return this.database;
 	}
 
 	public String getIktlist() {
-		return iktlist;
+		return this.iktlist;
 	}
 
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 
 	public String getCharset() {
-		return charset;
+		return this.charset;
 	}
 
 	@SuppressWarnings("unchecked")
 	public Node executeBeautifier(Node myHitlist) {
 		/* Ausgabe des Opac-Ergebnissen in Datei */
 
-		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite())
+		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite()) {
 			debugMyNode(myHitlist, ConfigMain.getParameter("debugFolder") + "/opacBeautifyBefore.xml");
+		}
 
 		/*
 		 * --------------------- aus dem Dom-Node ein JDom-Object machen -------------------
@@ -116,8 +143,9 @@ public class ConfigOpacCatalogue {
 
 		/* Ausgabe des überarbeiteten Opac-Ergebnisses */
 		// debugMyNode(myHitlist, "D:/temp_opac2.xml");
-		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite())
+		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite()) {
 			debugMyNode(myHitlist, ConfigMain.getParameter("debugFolder") + "/opacBeautifyAfter.xml");
+		}
 		return myHitlist;
 	}
 
@@ -127,7 +155,7 @@ public class ConfigOpacCatalogue {
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
 		// myLogger.debug("executeBeautifier(Node) - ----------------- " + el.getName());
-		for (ConfigOpacCatalogueBeautifier beautifier : beautifySetList) {
+		for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
 			Element elementToChange = null;
 			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
 			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<ConfigOpacCatalogueBeautifierElement>(beautifier
@@ -145,8 +173,9 @@ public class ConfigOpacCatalogue {
 					String subtag = subfield.getAttributeValue("code");
 					String value = subfield.getText();
 
-					if (beautifier.getTagElementToChange().getTag().equals(tag) && beautifier.getTagElementToChange().getSubtag().equals(subtag))
+					if (beautifier.getTagElementToChange().getTag().equals(tag) && beautifier.getTagElementToChange().getSubtag().equals(subtag)) {
 						elementToChange = subfield;
+					}
 					/*
 					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus der Liste der Beautifier
 					 * entfernen
@@ -199,7 +228,7 @@ public class ConfigOpacCatalogue {
 	 * @return the cbs
 	 */
 	public String getCbs() {
-		return cbs;
+		return this.cbs;
 	}
 
 }

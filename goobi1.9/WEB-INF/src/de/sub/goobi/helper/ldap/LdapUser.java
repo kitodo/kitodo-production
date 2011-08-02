@@ -1,5 +1,31 @@
 package de.sub.goobi.helper.ldap;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
@@ -48,7 +74,7 @@ public class LdapUser implements DirContext {
 	 * Constructor of LdapUser
 	 */
 	public LdapUser() {
-		myAttrs = new BasicAttributes(true);
+		this.myAttrs = new BasicAttributes(true);
 	}
 
 	/**
@@ -65,53 +91,55 @@ public class LdapUser implements DirContext {
 			InterruptedException {
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 
-			type = inUser.getLogin();
+			this.type = inUser.getLogin();
 			LdapGruppe lp = inUser.getLdapGruppe();
-			if (lp.getObjectClasses() == null)
+			if (lp.getObjectClasses() == null) {
 				throw new NamingException("no objectclass defined");
+			}
 
 			/* ObjectClasses */
 			Attribute oc = new BasicAttribute("objectclass");
 			StringTokenizer tokenizer = new StringTokenizer(lp.getObjectClasses(), ",");
-			while (tokenizer.hasMoreTokens())
+			while (tokenizer.hasMoreTokens()) {
 				oc.add(tokenizer.nextToken());
-			myAttrs.put(oc);
+			}
+			this.myAttrs.put(oc);
 
-			myAttrs.put("uid", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
-			myAttrs.put("cn", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
-			myAttrs.put("displayName", ReplaceVariables(lp.getDisplayName(), inUser, inUidNumber));
-			myAttrs.put("description", ReplaceVariables(lp.getDescription(), inUser, inUidNumber));
-			myAttrs.put("gecos", ReplaceVariables(lp.getGecos(), inUser, inUidNumber));
-			myAttrs.put("loginShell", ReplaceVariables(lp.getLoginShell(), inUser, inUidNumber));
-			myAttrs.put("sn", ReplaceVariables(lp.getSn(), inUser, inUidNumber));
-			myAttrs.put("homeDirectory", ReplaceVariables(lp.getHomeDirectory(), inUser, inUidNumber));
+			this.myAttrs.put("uid", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
+			this.myAttrs.put("cn", ReplaceVariables(lp.getUid(), inUser, inUidNumber));
+			this.myAttrs.put("displayName", ReplaceVariables(lp.getDisplayName(), inUser, inUidNumber));
+			this.myAttrs.put("description", ReplaceVariables(lp.getDescription(), inUser, inUidNumber));
+			this.myAttrs.put("gecos", ReplaceVariables(lp.getGecos(), inUser, inUidNumber));
+			this.myAttrs.put("loginShell", ReplaceVariables(lp.getLoginShell(), inUser, inUidNumber));
+			this.myAttrs.put("sn", ReplaceVariables(lp.getSn(), inUser, inUidNumber));
+			this.myAttrs.put("homeDirectory", ReplaceVariables(lp.getHomeDirectory(), inUser, inUidNumber));
 
-			myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
-			myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
-			myAttrs.put("sambaPrimaryGroupSID", ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
-			myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
+			this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
+			this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPrimaryGroupSID", ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
+			this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
-			myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
-			myAttrs.put("sambaPasswordHistory", ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
-			myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
-			myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPasswordHistory", ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
+			this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
+			this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
 
-			myAttrs.put("uidNumber", inUidNumber);
-			myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
+			this.myAttrs.put("uidNumber", inUidNumber);
+			this.myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
 
 			/*
 			 * -------------------------------- Samba passwords --------------------------------
 			 */
 			/* LanMgr */
 			try {
-				myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
+				this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
 			} catch (Exception e) {
 				myLogger.error(e);
 			}
 			/* NTLM */
 			try {
 				byte hmm[] = MD4.mdfour(inPassword.getBytes("UnicodeLittleUnmarked"));
-				myAttrs.put("sambaNTPassword", toHexString(hmm));
+				this.myAttrs.put("sambaNTPassword", toHexString(hmm));
 			} catch (UnsupportedEncodingException e) {
 				myLogger.error(e);
 			}
@@ -123,7 +151,7 @@ public class LdapUser implements DirContext {
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
 			md.update(inPassword.getBytes());
 			String digestBase64 = new String(Base64.encodeBase64(md.digest()));
-			myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 		}
 	}
 	
@@ -138,8 +166,9 @@ public class LdapUser implements DirContext {
 	 * @return String with replaced variables
 	 */
 	private String ReplaceVariables(String inString, Benutzer inUser, String inUidNumber) {
-		if (inString == null)
+		if (inString == null) {
 			return "";
+		}
 		String rueckgabe = inString.replaceAll("\\{login\\}", inUser.getLogin());
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
@@ -228,17 +257,20 @@ public class LdapUser implements DirContext {
 		return retString.toString().toUpperCase();
 	}
 
+	@Override
 	public Attributes getAttributes(String name) throws NamingException {
 		if (!name.equals("")) {
 			throw new NameNotFoundException();
 		}
-		return (Attributes) myAttrs.clone();
+		return (Attributes) this.myAttrs.clone();
 	}
 
+	@Override
 	public Attributes getAttributes(Name name) throws NamingException {
 		return getAttributes(name.toString());
 	}
 
+	@Override
 	public Attributes getAttributes(String name, String[] ids) throws NamingException {
 		if (!name.equals("")) {
 			throw new NameNotFoundException();
@@ -247,7 +279,7 @@ public class LdapUser implements DirContext {
 		Attributes answer = new BasicAttributes(true);
 		Attribute target;
 		for (int i = 0; i < ids.length; i++) {
-			target = myAttrs.get(ids[i]);
+			target = this.myAttrs.get(ids[i]);
 			if (target != null) {
 				answer.put(target);
 			}
@@ -255,217 +287,270 @@ public class LdapUser implements DirContext {
 		return answer;
 	}
 
+	@Override
 	public Attributes getAttributes(Name name, String[] ids) throws NamingException {
 		return getAttributes(name.toString(), ids);
 	}
 
+	@Override
 	public String toString() {
-		return type;
+		return this.type;
 	}
 
 	// not used for this example
 
+	@Override
 	public Object lookup(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Object lookup(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void bind(Name name, Object obj) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void bind(String name, Object obj) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rebind(Name name, Object obj) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rebind(String name, Object obj) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void unbind(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void unbind(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rename(Name oldName, Name newName) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rename(String oldName, String newName) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void destroySubcontext(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void destroySubcontext(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Context createSubcontext(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Context createSubcontext(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Object lookupLink(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Object lookupLink(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NameParser getNameParser(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NameParser getNameParser(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public String composeName(String name, String prefix) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Name composeName(Name name, Name prefix) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Object addToEnvironment(String propName, Object propVal) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Object removeFromEnvironment(String propName) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public Hashtable<?, ?> getEnvironment() throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void close() throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	// -- DirContext
+	@Override
 	public void modifyAttributes(Name name, int mod_op, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void modifyAttributes(String name, int mod_op, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void modifyAttributes(Name name, ModificationItem[] mods) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void modifyAttributes(String name, ModificationItem[] mods) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void bind(Name name, Object obj, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void bind(String name, Object obj, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rebind(Name name, Object obj, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public void rebind(String name, Object obj, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext createSubcontext(Name name, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext createSubcontext(String name, Attributes attrs) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext getSchema(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext getSchema(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext getSchemaClassDefinition(Name name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public DirContext getSchemaClassDefinition(String name) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(Name name, String filter, SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
+	@Override
 	public String getNameInNamespace() throws NamingException {
 		throw new OperationNotSupportedException();
 	}

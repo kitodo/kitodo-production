@@ -1,9 +1,34 @@
 package de.sub.goobi.helper.encryption;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-//TODO: What's the licence of this file?
 
 
 /**
@@ -33,10 +58,11 @@ public class MD5 {
     * @return
     */
    public String getMD5() {
-      if (text == null)
-         return null;
-      else
-         return makeMD5();
+      if (this.text == null) {
+		return null;
+	} else {
+		return makeMD5();
+	}
    }
 
    /**
@@ -47,10 +73,11 @@ public class MD5 {
    public String getMD5(String text) {
       this.text = text;
 
-      if (text == null)
-         return null;
-      else
-         return makeMD5();
+      if (text == null) {
+		return null;
+	} else {
+		return makeMD5();
+	}
    }
 
    /**
@@ -63,7 +90,7 @@ public class MD5 {
 
       try {
          md = MessageDigest.getInstance("MD5"); // getting a 'MD5-Instance'
-         encryptMsg = md.digest(text.getBytes()); // solving the MD5-Hash
+         encryptMsg = md.digest(this.text.getBytes()); // solving the MD5-Hash
       } catch (NoSuchAlgorithmException e) {
       }
 
@@ -90,9 +117,9 @@ public class MD5 {
          }
          strBuf.append(swap); // appending swap to get complete hash-key
       }
-      hash = strBuf.toString(); // String with the MD5-Hash
+      this.hash = strBuf.toString(); // String with the MD5-Hash
 
-      return hash; // returns the MD5-Hash
+      return this.hash; // returns the MD5-Hash
    }
 
    /**
@@ -108,7 +135,7 @@ public class MD5 {
     * @return Returns the text.
     */
    public String getText() {
-      return text;
+      return this.text;
    }
 
    /**
@@ -116,7 +143,7 @@ public class MD5 {
     * @return Returns the hash.
     */
    public String getHash() {
-      return hash;
+      return this.hash;
    }
 
 }

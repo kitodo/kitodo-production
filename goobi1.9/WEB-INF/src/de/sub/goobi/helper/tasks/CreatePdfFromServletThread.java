@@ -1,5 +1,31 @@
 package de.sub.goobi.helper.tasks;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +42,6 @@ import java.util.Collections;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.Beans.Prozess;
@@ -50,9 +75,10 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	 * Aufruf als Thread
 	 * ================================================================
 	 */
+	@Override
 	public void run() {
 		setStatusProgress(30);
-		if (this.getProzess() == null || targetFolder == null || internalServletPath == null) {
+		if (this.getProzess() == null || this.targetFolder == null || this.internalServletPath == null) {
 			setStatusMessage("parameters for temporary and final folder and internal servlet path not defined");
 			setStatusProgress(-1);
 			return;
@@ -66,7 +92,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
 			new File("");
 			File tempPdf = File.createTempFile(this.getProzess().getTitel(), ".pdf");
-			File finalPdf = new File(targetFolder, this.getProzess().getTitel() + ".pdf");
+			File finalPdf = new File(this.targetFolder, this.getProzess().getTitel() + ".pdf");
 			Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
 			
 			/* --------------------------------
@@ -74,12 +100,12 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 
 			
-			if (new MetadatenVerifizierung().validate(this.getProzess()) && metsURL != null) {
+			if (new MetadatenVerifizierung().validate(this.getProzess()) && this.metsURL != null) {
 				/* if no contentserverurl defined use internal goobiContentServerServlet */
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
-						contentServerUrl = internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
+						contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
 					}
-				goobiContentServerUrl = new URL(contentServerUrl + metsURL);		
+				goobiContentServerUrl = new URL(contentServerUrl + this.metsURL);		
 			
 				/* --------------------------------
 				 * mets data does not exist or is invalid
@@ -87,7 +113,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				
 			} else {
 				if (contentServerUrl == null || contentServerUrl.length() == 0) {
-					contentServerUrl = internalServletPath + "/cs/cs?action=pdf&images=";
+					contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
 				}
 				String url = "";
 				FilenameFilter filter = MetadatenImagesHelper.filter;
@@ -149,8 +175,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			Helper.copyFile(tempPdf, finalPdf);
 			logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
 			tempPdf.delete();
-			if (metsURL != null) {
-				File tempMets = new File(metsURL.toString());
+			if (this.metsURL != null) {
+				File tempMets = new File(this.metsURL.toString());
 				tempMets.delete();
 			}
 		} catch (Exception e) {
@@ -163,7 +189,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 			Writer output = null;
 			String text = "error while pdf creation: " + e.getMessage();
-			File file = new File(targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
+			File file = new File(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
 			try {
 				output = new BufferedWriter(new FileWriter(file));
 				output.write(text);
@@ -213,7 +239,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	}
 
 	public URL getMetsURL() {
-		return metsURL;
+		return this.metsURL;
 	}
 
 	public void setMetsURL(URL metsURL) {

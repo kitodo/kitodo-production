@@ -1,5 +1,31 @@
 package de.unigoettingen.sub.search.opac;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ * 			- http://digiverso.com 
+ * 			- http://www.intranda.com
+ * 
+ * Copyright 2011, intranda GmbH, Göttingen
+ * 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -80,8 +106,8 @@ public class Catalogue {
     
 	public Catalogue(String opac) throws IOException{
 		super();
-		picaToKey = new HashMap<String, String>();
-		picaToDescription = new HashMap<String, String>();
+		this.picaToKey = new HashMap<String, String>();
+		this.picaToDescription = new HashMap<String, String>();
 		this.catalogue = opac;
 		if (opac.equals(GBV_OPAC)){
 			setGbv();
@@ -118,8 +144,8 @@ public class Catalogue {
 	}
 	
 	public Catalogue(String description, String serverAddress, int port, String cbs, String database) throws IOException{
-       picaToKey = new HashMap<String, String>();
-       picaToDescription = new HashMap<String, String>();
+       this.picaToKey = new HashMap<String, String>();
+       this.picaToDescription = new HashMap<String, String>();
        this.description = description;
        this.serverAddress = serverAddress;
        this.port = port;
@@ -146,7 +172,7 @@ public class Catalogue {
         //try to use local list
         try {
         		File iktlistFile = new File(DIR + this.iktList);
-            if (verbose){
+            if (this.verbose){
                 System.out.println("Trying to load the IKTLIST from the file: "+
                 		iktlistFile.getAbsolutePath());            
             }
@@ -167,9 +193,9 @@ public class Catalogue {
         } //we didn't succeed retrieving the search item list from the local file
         //so lets get it from the server
         catch(Exception e) {
-    	String requestUrl = "http://"+ serverAddress + ":" + port + "/" + 
-    		dataBase + IKTLIST;
-            if (verbose){
+    	String requestUrl = "http://"+ this.serverAddress + ":" + this.port + "/" + 
+    		this.dataBase + IKTLIST;
+            if (this.verbose){
 //                System.err.println("Loading the IKTLIST failed, requesting it from opac");            
                 System.out.println("Retrieving IKTLIST for opac " + 
                 		this.description + ": " + requestUrl);
@@ -189,7 +215,7 @@ public class Catalogue {
      * @param iktList The search key list as xml string
      **********************************************************************/
     private void parseIktList(String iktList){
-        if (verbose){
+        if (this.verbose){
             System.out.println("Parsing the IKTLIST: " + iktList);
         }
         
@@ -209,9 +235,9 @@ public class Catalogue {
             
         //go through all keys and put them into their hashmap
         for (int i = 0; i < keys.getLength(); i++) {
-            picaToKey.put(((Element) keys.item(i)).getAttribute("mnemonic"),
+            this.picaToKey.put(((Element) keys.item(i)).getAttribute("mnemonic"),
                           keys.item(i).getFirstChild().getNodeValue());
-            picaToDescription.put(((Element) keys.item(i)).getAttribute("mnemonic"),
+            this.picaToDescription.put(((Element) keys.item(i)).getAttribute("mnemonic"),
                                   ((Element) keys.item(i)).getAttribute("description").toString());
         }
     }
@@ -339,31 +365,31 @@ public class Catalogue {
 	}
 
 	public String getCatalogue() {
-		return catalogue;
+		return this.catalogue;
 	}
 
 	public String getDataBase() {
-		return dataBase;
+		return this.dataBase;
 	}
 
 	public String getIktList() {
-		return iktList;
+		return this.iktList;
 	}
 
 	public HashMap<String, String> getPicaToDescription() {
-		return picaToDescription;
+		return this.picaToDescription;
 	}
 
 	public HashMap<String, String> getPicaToKey() {
-		return picaToKey;
+		return this.picaToKey;
 	}
 
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 
 	public String getServerAddress() {
-		return serverAddress;
+		return this.serverAddress;
 	}
 	
 	public String getCharset () {
@@ -380,24 +406,24 @@ public class Catalogue {
     public String iktListToString(){
 
         //get hashmap iterator
-        Iterator<String> iktListIterator = picaToKey.keySet().iterator();
+        Iterator<String> iktListIterator = this.picaToKey.keySet().iterator();
         StringBuffer result = new StringBuffer();
         //while we have another pica key
         while (iktListIterator.hasNext()) {
-            String picaMnemonic = (String) iktListIterator.next();
+            String picaMnemonic = iktListIterator.next();
             result.append(picaMnemonic + " (" +
-                                 picaToDescription.get(picaMnemonic) +
-                                 "): " + picaToKey.get(picaMnemonic) + "\n");
+                                 this.picaToDescription.get(picaMnemonic) +
+                                 "): " + this.picaToKey.get(picaMnemonic) + "\n");
         }
         return result.toString();
     }
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public boolean isVerbose() {
-		return verbose;
+		return this.verbose;
 	}
 
 	public void setVerbose(boolean verbose) {
@@ -406,7 +432,7 @@ public class Catalogue {
 
 	//eingefügt cm 8.5.2007
 	public String getIktNr (String key) {
-		return (String) picaToKey.get(key);
+		return this.picaToKey.get(key);
 	}
 
 	/**
@@ -420,7 +446,7 @@ public class Catalogue {
 	 * @return the cbs
 	 */
 	public String getCbs() {
-		return cbs;
+		return this.cbs;
 	}
 	
 
