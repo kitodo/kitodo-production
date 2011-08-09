@@ -94,7 +94,7 @@
 							<h:panelGroup>
 								<h:selectOneMenu value="#{SearchForm.status}">
 									<si:selectItems value="#{SearchForm.stepstatus}"
-										var="stepstatus" itemLabel="#{stepstatus}" itemValue="#{stepstatus}" />
+										var="stepstatus" itemLabel="#{stepstatus.title}" itemValue="#{stepstatus.searchString}" />
 								</h:selectOneMenu>								
 								<h:selectOneMenu value="#{SearchForm.stepname}">
 									<si:selectItems value="#{SearchForm.stepTitles}"

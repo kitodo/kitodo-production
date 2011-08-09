@@ -44,7 +44,7 @@ public class SearchForm {
 	private String stepPropertyValue = "";
 
 	private List<String> stepTitles = new ArrayList<String>(); // step:
-	private List<String> stepstatus = new ArrayList<String>();
+	private List<StepStatus> stepstatus = new ArrayList<StepStatus>();
 	private String status = "";
 	private String stepname = "";
 
@@ -57,7 +57,7 @@ public class SearchForm {
 
 	public SearchForm() {
 		for (StepStatus s : StepStatus.values()) {
-			this.stepstatus.add(s.getSearchString());
+			this.stepstatus.add(s);
 		}
 //long start = System.currentTimeMillis();
 		Session session = Helper.getHibernateSession();
@@ -178,11 +178,11 @@ public class SearchForm {
 		this.stepTitles = stepTitles;
 	}
 
-	public List<String> getStepstatus() {
+	public List<StepStatus> getStepstatus() {
 		return this.stepstatus;
 	}
 
-	public void setStepstatus(List<String> stepstatus) {
+	public void setStepstatus(List<StepStatus> stepstatus) {
 		this.stepstatus = stepstatus;
 	}
 
