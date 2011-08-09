@@ -375,8 +375,13 @@ class FilterHelper {
 	 ****************************************************************************/
 	protected static void filterScanTemplate(Conjunction con, String tok) {
 		/* Filtering by signature */
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
-		con.add(Restrictions.like("vorleig.wert", "%" + tok.substring(5) + "%"));
+		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
+		if (ts.length > 1) {
+			con.add(Restrictions.and(Restrictions.like("vorleig.wert", "%" + ts[1] + "%"), Restrictions.like("vorleig.titel", "%" + ts[0] + "%")));
+		} else {
+			// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
+			con.add(Restrictions.like("vorleig.wert", "%" + tok.substring(5) + "%"));
+		}
 	}
 
 	protected static void filterStepProperty(Conjunction con, String tok) {
@@ -440,8 +445,15 @@ class FilterHelper {
 	 ****************************************************************************/
 	protected static void filterWorkpiece(Conjunction con, String tok) {
 		/* filter according signature */
+		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
+		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 
-		con.add(Restrictions.like("werkeig.wert", "%" + tok.substring(5) + "%"));
+		if (ts.length > 1) {
+			con.add(Restrictions.and(Restrictions.like("werkeig", "%" + ts[1] + "%"), Restrictions.like("werkeig.titel", "%" + ts[0] + "%")));
+		} else {
+
+			con.add(Restrictions.like("werkeig.wert", "%" + tok.substring(5) + "%"));
+		}
 	}
 
 	/**
@@ -464,8 +476,8 @@ class FilterHelper {
 	 * @return String used to pass on error messages about errors in the filter
 	 *         expression
 	 */
-	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate, Parameters returnParameters,
-			Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
+	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
+			Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
 
 		// for ordering the lists there are some
 		// criteria, which needs to be added even no
@@ -540,7 +552,7 @@ class FilterHelper {
 				conjProcesses.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
 			}
 		}
-//		List<String> aliases = new ArrayList<String>();
+		// List<String> aliases = new ArrayList<String>();
 		// this is needed for evaluating a filter string
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
@@ -660,9 +672,9 @@ class FilterHelper {
 		if (conjProcesses != null || flagSteps) {
 			if (!flagProcesses) {
 
-					critProcess = crit.createCriteria("prozess", "proc");
-					// crit.createAlias("proc.ProjekteID", "projID");
-				
+				critProcess = crit.createCriteria("prozess", "proc");
+				// crit.createAlias("proc.ProjekteID", "projID");
+
 				if (conjProcesses != null) {
 					// inCrit.add(conjProcesses);
 					critProcess.add(conjProcesses);
@@ -676,8 +688,8 @@ class FilterHelper {
 
 		if (flagSteps) {
 
-				critProject = critProcess.createCriteria("projekt", "proj");
-			
+			critProject = critProcess.createCriteria("projekt", "proj");
+
 			if (conjProjects != null) {
 				inCrit.add(conjProjects);
 			}
@@ -724,20 +736,19 @@ class FilterHelper {
 
 		if (conjStepProperties != null) {
 			if (!flagSteps) {
-				Criteria stepCrit =  session.createCriteria(Prozess.class);
+				Criteria stepCrit = session.createCriteria(Prozess.class);
 				stepCrit.createCriteria("schritte", "steps");
 				stepCrit.createAlias("steps.eigenschaften", "schritteig");
 				stepCrit.add(conjStepProperties);
 				stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 				List<Integer> myIds = new ArrayList<Integer>();
-			
-		   	    for (@SuppressWarnings("unchecked")
-				Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(
-						    Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-						   Prozess p =  it.next();
-						   myIds.add(p.getId());
-		   	    }
-		   	    crit.add(Restrictions.in("id", myIds));
+
+				for (@SuppressWarnings("unchecked")
+				Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+					Prozess p = it.next();
+					myIds.add(p.getId());
+				}
+				crit.add(Restrictions.in("id", myIds));
 			} else {
 				critProcess.createAlias("steps.eigenschaften", "schritteig");
 				inCrit.add(conjStepProperties);
@@ -759,11 +770,11 @@ class FilterHelper {
 			if (flagSteps) {
 				critProcess.createCriteria("bearbeitungsbenutzer", "user");
 				critProcess.add(conjUsers);
-		} else {
-//			critProcess.createCriteria("schritte", "steps");
-			inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
-			inCrit.add(conjUsers);
-		}
+			} else {
+				// critProcess.createCriteria("schritte", "steps");
+				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
+				inCrit.add(conjUsers);
+			}
 		}
 		return message;
 	}

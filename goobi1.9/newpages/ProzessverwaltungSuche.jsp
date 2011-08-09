@@ -3,7 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
-
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
+	prefix="si"%>
 <%-- ######################################## 
 
 								Suchmaske für Prozesse
@@ -33,70 +34,93 @@
 						</h:panelGroup>
 					</h:panelGrid>
 
-					<htm:table border="0" align="center" width="100%" cellpadding="15">
-						<htm:tr>
-							<htm:td>
+						<%-- Initialisierung von ProzessverwaltungForm --%>
 
-								<%-- Überschrift --%>
-								<htm:h3>
-									<h:outputText value="#{msgs.nachEinemBandSuchen}" />
-								</htm:h3>
+						<h:panelGrid id="extended" columns="2" rendered="#{ProzessverwaltungForm.initialize}">
 
-								<%-- globale Warn- und Fehlermeldungen --%>
-								<h:messages globalOnly="true" errorClass="text_red"
-									infoClass="text_blue" showDetail="true" showSummary="true"
-									tooltip="true" />
+							<%-- process title --%>
+							<h:outputText value="#{msgs.title}" />
+							<h:inputText value="#{SearchForm.processTitle}" />
 
-								<%-- ===================== Eingabe der Suchparameter ====================== --%>
-								<htm:table cellpadding="3" cellspacing="0" width="100%"
-									styleClass="eingabeBoxen">
+							<%--projects --%>
+							<h:outputText value="#{msgs.projects}" />
+							<h:selectOneMenu value="#{SearchForm.project}">
+								<si:selectItems id="pcid11" value="#{SearchForm.projects}"
+									var="proj" itemLabel="#{proj}" itemValue="#{proj}" />
+							</h:selectOneMenu>
 
-									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row1" colspan="2">
-											<h:outputText value="#{msgs.suche}" />
-										</htm:td>
-									</htm:tr>
+							<%-- process property --%>
+							<h:outputText value="#{msgs.processProperties}" />
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.processPropertyTitle}">
+									<si:selectItems value="#{SearchForm.processPropertyTitles}"
+										var="proc" itemLabel="#{proc}" itemValue="#{proc}" />
+								</h:selectOneMenu>
+								<h:inputText value="#{SearchForm.processPropertyValue}" />
+							</h:panelGroup>
 
-									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row2" colspan="2">
-											<h:panelGrid columns="2">
-												<h:outputLabel for="suchbegriff" value="#{msgs.suchbegriff}" />
-												<h:panelGroup>
-													<h:inputText id="suchbegriff"
-														style="width: 300px;margin-right:5px"
-														value="#{ProzessverwaltungForm.filter}" required="true" />
-													<h:outputLink target="_blank"
-														value="http://wiki.goobi.org/index.php/Filter_f%C3%BCr_Vorg%C3%A4nge">
-														<h:graphicImage title="#{msgs.hilfeZumFilter}"
-															value="/newpages/images/buttons/help.png"
-															style="margin-right:10px" />
-													</h:outputLink>
+							<%-- masterpiece property --%>
+							<h:outputText value="#{msgs.masterpieceProperties}" />
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.masterpiecePropertyTitle}">
+									<si:selectItems value="#{SearchForm.masterpiecePropertyTitles}"
+										var="work" itemLabel="#{work}" itemValue="#{work}" />
+								</h:selectOneMenu>
+								<h:inputText value="#{SearchForm.masterpiecePropertyValue}" />
+							</h:panelGroup>
 
-													<x:message for="suchbegriff" style="color: red"
-														replaceIdWithLabel="true" />
-												</h:panelGroup>
-											</h:panelGrid>
+							<%-- template property --%>
+							<h:outputText value="#{msgs.templateProperties}" />
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.templatePropertyTitle}">
+									<si:selectItems value="#{SearchForm.templatePropertyTitles}"
+										var="temp" itemLabel="#{temp}" itemValue="#{temp}" />
+								</h:selectOneMenu>
+								<h:inputText value="#{SearchForm.templatePropertyValue}" />
+							</h:panelGroup>
 
-										</htm:td>
-									</htm:tr>
-									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row3" align="right">
-											<h:commandButton value="#{msgs.sucheStarten}" id="search"
-												action="#{ProzessverwaltungForm.FilterAlleStart}">
-												<x:updateActionListener
-													property="#{ProzessverwaltungForm.modusAnzeige}"
-													value="aktuell" />
-											</h:commandButton>
-										</htm:td>
-									</htm:tr>
-								</htm:table>
+							<%-- step property --%>
+							<h:outputText value="#{msgs.stepProperties}" />
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.stepPropertyTitle}">
+									<si:selectItems value="#{SearchForm.stepPropertyTitles}"
+										var="step" itemLabel="#{step}" itemValue="#{step}" />
+								</h:selectOneMenu>
+								<h:inputText value="#{SearchForm.stepPropertyValue}" />
+							</h:panelGroup>
+							
+							<%--steps --%>
+							<h:outputText value="#{msgs.step}"/>
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.status}">
+									<si:selectItems value="#{SearchForm.stepstatus}"
+										var="stepstatus" itemLabel="#{stepstatus}" itemValue="#{stepstatus}" />
+								</h:selectOneMenu>								
+								<h:selectOneMenu value="#{SearchForm.stepname}">
+									<si:selectItems value="#{SearchForm.stepTitles}"
+										var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}" />
+								</h:selectOneMenu>
+							</h:panelGroup>
+							
+							<%-- user --%>
+							<%-- 
+							<h:outputText value="#{msgs.user}"/>
+							<h:panelGroup>
+								<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
+										<si:selectItems value="#{SearchForm.user}"
+										var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
+								</h:selectOneMenu>
+								<h:selectOneMenu value="#{SearchForm.stepdonetitle}">
+									<si:selectItems value="#{SearchForm.stepTitles}"
+										var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}" />
+								</h:selectOneMenu>
+							</h:panelGroup>
+							--%>
+						</h:panelGrid>
+						<h:commandButton action="#{SearchForm.filter}" title="#{msgs.filterAnwenden}"/>
 
-								<%-- ===================== // Eingabe der Suchparameter ====================== --%>
 
-							</htm:td>
-						</htm:tr>
-					</htm:table>
-				</h:form>
+					</h:form>
 				<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
 
 			</htm:td>

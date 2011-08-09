@@ -141,6 +141,14 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * needed for ExtendedSearch
+	 * @return
+	 */
+	public boolean getInitialize() {
+		return true;
+	}
+	
 	public String Neu() {
 		this.myProzess = new Prozess();
 		return "ProzessverwaltungBearbeiten";

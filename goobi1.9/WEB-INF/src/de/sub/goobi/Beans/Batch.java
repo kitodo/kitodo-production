@@ -211,9 +211,9 @@ public class Batch implements Serializable, IGoobiEntity {
 	}
 
 	public List<BatchDisplayItem> getStepList() {
-		if (this.stepList.size() == 0) {
+//		if (this.stepList.size() == 0) {
 			generateWorkflowStatus();
-		}
+//		}
 		return this.stepList;
 	}
 

@@ -478,10 +478,18 @@
        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 	
+	<!-- BatchForm -->
 	<managed-bean>
 		<managed-bean-name>BatchForm</managed-bean-name>
 		<managed-bean-class> de.sub.goobi.Forms.BatchForm </managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- SearchForm -->
+	<managed-bean>
+		<managed-bean-name>SearchForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Forms.SearchForm </managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
 </faces-config>
