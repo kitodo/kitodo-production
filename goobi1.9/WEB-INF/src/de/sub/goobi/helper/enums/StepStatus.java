@@ -36,36 +36,39 @@ import de.sub.goobi.helper.Helper;
  * @version 17.05.2009
  */
 public enum StepStatus {
+	
 	/**
 	 * Locked = step not startable
 	 */
-	LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif"),
+	LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif","steplocked"),
 	/**
 	 * open = someone can beginn with this step
 	 */
-	OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif"),
+	OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif","stepopen"),
 	/**
 	 * inwork = someone is currently working on that step
 	 */
-	INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif"),
+	INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif","stepinwork"),
 	/**
 	 * done = step is executed
 	 */
-	DONE(3, "statusAbgeschlossen", "green_10.gif", "green_15a.gif");
+	DONE(3, "statusAbgeschlossen", "green_10.gif", "green_15a.gif", "stepdone");
 
 	private int value;
 	private String title;
 	private String imageSmall;
 	private String imageBig;
+	private String searchString;
 
 	/**
 	 * private constructor, initializes integer value, title, small and big image
 	 */
-	private StepStatus(int inValue, String inTitle, String smallImage, String bigImage) {
+	private StepStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
 		this.value = inValue;
 		this.title = inTitle;
 		this.imageSmall = smallImage;
 		this.imageBig = bigImage;
+		this.searchString = searchString;
 	}
 
 	/**
@@ -121,4 +124,8 @@ public enum StepStatus {
 		return LOCKED;
 	}
 
+	
+	public String getSearchString() {
+		return this.searchString;
+	}
 }
