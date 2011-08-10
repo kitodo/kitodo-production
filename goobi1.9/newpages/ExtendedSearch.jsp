@@ -34,7 +34,6 @@
 								<h:commandLink id="id2" value="#{msgs.startseite}"
 									action="newMain" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:outputText id="id3" value="#{msgs.benutzerverwaltung}" />
 							</h:panelGroup>
 						</h:panelGrid>
 
