@@ -45,6 +45,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.goobi.production.export.ExportXmlLog;
+import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.StatisticsRenderingElement;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -1602,6 +1603,34 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 		}
 	}
+	
+	public void generateResult() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		if (!facesContext.getResponseComplete()) {
+
+			/*
+			 * -------------------------------- Vorbereiten der
+			 * Header-Informationen --------------------------------
+			 */
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+			try {
+				ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+				String contentType = servletContext.getMimeType("search.xls");
+				response.setContentType(contentType);
+				response.setHeader("Content-Disposition", "attachment;filename=\"search.xls\"");
+				ServletOutputStream out = response.getOutputStream();
+				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses, this.showArchivedProjects);
+				HSSFWorkbook wb =sr.getResult();
+				wb.write(out);
+				out.flush();
+				facesContext.responseComplete();
+
+			} catch (IOException e) {
+
+			}
+		}
+	}
+	
 
 	public boolean isShowClosedProcesses() {
 		return this.showClosedProcesses;

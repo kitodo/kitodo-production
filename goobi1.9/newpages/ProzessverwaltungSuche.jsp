@@ -5,6 +5,8 @@
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
 	prefix="si"%>
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
+	
 <%-- ######################################## 
 
 								Suchmaske für Prozesse

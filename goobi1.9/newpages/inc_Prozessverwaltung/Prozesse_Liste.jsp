@@ -534,3 +534,7 @@
 		</htm:td>
 	</htm:tr>
 </htm:table>
+<h:commandButton action="#{ProzessverwaltungForm.generateResult}">
+
+
+</h:commandButton>
