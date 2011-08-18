@@ -13,19 +13,25 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import ugh.dl.DigitalDocument;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.Export.dms.AutomaticDmsExport;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -133,7 +139,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
 							new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
 									.getProzess()));
 					/* wenn es ein automatischer Schritt mit Script ist */
-					if (myStep.isTypAutomatisch() && !myStep.getAllScriptPaths().isEmpty()) {
+					if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty()|| myStep.isTypExportDMS())) {
 						automatischeSchritte.add(myStep);
 					}
 					System.out.println("opened: " + myStep.getTitel());
@@ -195,6 +201,53 @@ import de.sub.goobi.helper.exceptions.SwapException;
 			}
 		}
 	}
+	
+	
+	public void executeDmsExport(Schritt mySchritt, boolean fullautomatic) {
+		AutomaticDmsExport dms = new AutomaticDmsExport();
+		try {
+			dms.startExport(mySchritt.getProzess());
+			closeStep(mySchritt, fullautomatic);
+		} catch (DocStructHasNoTypeException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (PreferencesException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (WriteException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (MetadataTypeNotAllowedException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (ExportFileException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (UghHelperException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		
+		} catch (SwapException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (DAOException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (TypeNotAllowedForParentException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (IOException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		} catch (InterruptedException e) {
+			abortStep(mySchritt, fullautomatic);
+			return;
+		}
+	
+			
+		
+	}
+	
 
 	/**
 	 * Script des Schrittes ausführen ================================================================
@@ -326,9 +379,9 @@ import de.sub.goobi.helper.exceptions.SwapException;
 		} catch (DAOException e) {
 			logger.error(e);
 		}
-		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-		// mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
-		SchrittAbschliessen(mySchritt, automatic);
+//		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
+//		 mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+//		SchrittAbschliessen(mySchritt, automatic);
 	}
 
 	/**
