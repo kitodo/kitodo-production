@@ -30,12 +30,14 @@ package org.goobi.production.search.lucene;
  * 
  * @author Robert Sehr
  */
+
+@Deprecated
 public enum SearchEnums {
 
-	processId("1", "id"), processTitle("2", "title"), project("3", "proj"), user("4", "user"), step("5", "step"), stepTitle("6", "steptitle"), werkId("9", "productid"), werk("10", "product"), werkWert("11",
-			"productvalue"), property("12", "property"), propertyValue("13", "propertyvalue"), ruleset("14", "ruleset"), pages("15", "pages"), template(
-			"16", "template"), vorlId("17", "vorlID"), vorl("18", "vorl"), vorlWert("19", "vorlValue"), stepdone("20", "stepdone"), stepopen("21",
-			"stepopen"), stepinwork("22", "stepinwork"), steplocked("23", "steplocked");
+	processId("1", "id"), processTitle("2", "title"), project("3", "proj"), user("4", "user"), step("5", "step"), stepTitle("6", "steptitle"), werkId(
+			"9", "productid"), werk("10", "product"), werkWert("11", "productvalue"), property("12", "property"), propertyValue("13", "propertyvalue"), ruleset(
+			"14", "ruleset"), pages("15", "pages"), template("16", "template"), vorlId("17", "vorlID"), vorl("18", "vorl"), vorlWert("19",
+			"vorlValue"), stepdone("20", "stepdone"), stepopen("21", "stepopen"), stepinwork("22", "stepinwork"), steplocked("23", "steplocked");
 
 	private String id;
 	private String luceneTitle;

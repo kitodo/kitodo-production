@@ -29,8 +29,10 @@ package Messages;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
 import java.util.ResourceBundle;
 
+import java.security.PrivilegedAction;
 import javax.faces.context.FacesContext;
 
 import de.sub.goobi.config.ConfigMain;
@@ -50,8 +52,12 @@ public class Messages {
 			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
 
 			try {
-				URL resourceURL = file.toURI().toURL();
-				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
+				final URL resourceURL = file.toURI().toURL();
+				URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+					public URLClassLoader run() {
+						return new URLClassLoader(new URL[] { resourceURL });
+					}
+				});
 				localBundle = ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
 			} catch (Exception e) {
 			}

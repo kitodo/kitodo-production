@@ -1,4 +1,5 @@
 package org.goobi.production.search.lucene;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,46 +28,53 @@ import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-/** This implementation extends the hibernate userdefined filter in order to use the 
- *  methods used there in order to filter out user assigned steps
- *  
- *   all what needs to happen seems at this point to be shielding the filter 
- *   string from the super class so where the filter string applies it can
- *   be send to the lucene search function instead of useing the old hibernate
- *   stuff 
+/**
+ * This implementation extends the hibernate userdefined filter in order to use
+ * the methods used there in order to filter out user assigned steps
+ * 
+ * all what needs to happen seems at this point to be shielding the filter
+ * string from the super class so where the filter string applies it can be send
+ * to the lucene search function instead of useing the old hibernate stuff
  * 
  * @author Wulf
- *
- *
- *	//TODO make sure that all what needs to be overwritten is overwritten
+ * 
+ * 
+ *         //TODO make sure that all what needs to be overwritten is overwritten
  */
 
+@Deprecated
 public class LuceneStepFilter extends UserDefinedStepFilter {
 
-	
 	private static final long serialVersionUID = -1554720835061645707L;
 
 	String filter = null;
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter#getCriteria()
+	 * 
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter#
+	 * getCriteria()
 	 */
-	public Criteria getCriteria(){
-	
-		return super.getCriteria().add(Restrictions.in("id", LuceneSearch.getSearchEngine()
-				.getSearchResults(this.filter)));
-		
+	@Override
+	public Criteria getCriteria() {
+
+		return super.getCriteria().add(Restrictions.in("id", LuceneSearch.getSearchEngine().getSearchResults(filter)));
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter#setFilter(java.lang.String)
+	 * 
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter#
+	 * setFilter(java.lang.String)
 	 */
-	public void setFilter(String newFilter){
+	@Override
+	public void setFilter(String newFilter) {
 		super.setFilter("");
-		this.filter = newFilter;
-		
-	}	
+		filter = newFilter;
+
+	}
 
 }

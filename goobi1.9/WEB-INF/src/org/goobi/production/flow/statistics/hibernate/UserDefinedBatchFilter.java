@@ -62,22 +62,21 @@ import de.sub.goobi.helper.PaginatingCriteria;
  * 
  * @author Robert Sehr
  ****************************************************************************/
-public class UserDefinedBatchFilter implements IEvaluableFilter {
+public class UserDefinedBatchFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 4715772407607416975L;
-//	private Criteria myCriteria = null;
+	// private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private String myName = null;
 	private String myFilterExpression = null;
 	private List<Integer> myIds = null;
 	private Dispatcher myObservable;
 
-
 	/**
 	 * Constructor using an Array of Integers representing the ids of the
 	 * Objects that need to be selected
 	 ****************************************************************************/
 	public UserDefinedBatchFilter(List<Integer> selectIDs) {
-		this.myIds = new ArrayList<Integer>(selectIDs);
+		myIds = new ArrayList<Integer>(selectIDs);
 	}
 
 	/**
@@ -85,7 +84,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 * 
 	 ****************************************************************************/
 	public UserDefinedBatchFilter(String filter) {
-		this.myFilterExpression = filter;
+		myFilterExpression = filter;
 	}
 
 	/*
@@ -101,33 +100,31 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 		// myCriteria is a WeakReference ... both cases needs to be evaluated,
 		// after gc the WeakReference
 		// object is still referenced but not the object referenced by it
-//		if (myCriteria == null ) {
-//			if (this.myIds == null) {
-//				if (this.getFilter() != null) {
-//					myCriteria = 
-//							createCriteriaFromFilterString(this.getFilter());
-//				}
-//			} else {
-//				myCriteria =
-//						createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-//		
-		if (this.myCriteria == null || this.myCriteria.get() == null) {
-			if (this.myIds == null) {
-				if (this.getFilter() != null) {
-					this.myCriteria = new WeakReference<Criteria>(
-							createCriteriaFromFilterString(this.getFilter()));
+		// if (myCriteria == null ) {
+		// if (this.myIds == null) {
+		// if (this.getFilter() != null) {
+		// myCriteria =
+		// createCriteriaFromFilterString(this.getFilter());
+		// }
+		// } else {
+		// myCriteria =
+		// createCriteriaFromIDList();
+		// }
+		// }
+		//
+		// return myCriteria;
+		//
+		if (myCriteria == null || myCriteria.get() == null) {
+			if (myIds == null) {
+				if (getFilter() != null) {
+					myCriteria = new WeakReference<Criteria>(createCriteriaFromFilterString(getFilter()));
 				}
 			} else {
-				this.myCriteria = new WeakReference<Criteria>(
-						createCriteriaFromIDList());
+				myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
 			}
 		}
 
-		return this.myCriteria.get();
+		return myCriteria.get();
 	}
 
 	/*
@@ -138,7 +135,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 */
 	@Override
 	public String getName() {
-		return this.myName;
+		return myName;
 	}
 
 	/*
@@ -151,15 +148,15 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	@Override
 	public void setFilter(String filter) {
 		// reset myCriteria because it is invalid, if filter expression changed
-		this.myCriteria = null;
-		this.myFilterExpression = filter;
+		myCriteria = null;
+		myFilterExpression = filter;
 	}
 
 	/*
 	 * 
 	 */
 	public String getFilter() {
-		return this.myFilterExpression;
+		return myFilterExpression;
 	}
 
 	/*
@@ -171,7 +168,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 */
 	@Override
 	public void setName(String name) {
-		this.myName = name;
+		myName = name;
 	}
 
 	/*
@@ -182,8 +179,8 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	@Override
 	public UserDefinedBatchFilter clone() {
 
-		UserDefinedBatchFilter udf = new UserDefinedBatchFilter(this.myFilterExpression);
-		udf.setObservable(this.myObservable);
+		UserDefinedBatchFilter udf = new UserDefinedBatchFilter(myFilterExpression);
+		udf.setObservable(myObservable);
 		return udf;
 	}
 
@@ -191,7 +188,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 * needed to pass on Observable
 	 */
 	private void setObservable(Dispatcher observable) {
-		this.myObservable = observable;
+		myObservable = observable;
 	}
 
 	/**
@@ -203,17 +200,14 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 		PaginatingCriteria crit = new PaginatingCriteria(Batch.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		
 		/*
-		 * -------------------------------- 
-		 * combine all parameters together this
-		 * part was exported to FilterHelper so 
-		 * that other Filters could access it 
-		 * 		 * --------------------------------
+		 * -------------------------------- combine all parameters together this
+		 * part was exported to FilterHelper so that other Filters could access
+		 * it * --------------------------------
 		 */
 		String message = BatchHelper.criteriaBuilder(session, inFilter, crit);
 		if (message.length() > 0) {
-			this.myObservable.setMessage(message);
+			myObservable.setMessage(message);
 		}
 
 		/**
@@ -221,15 +215,15 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 		 * by using a range the Criteria produces more than one item per
 		 * process, for each step it involves
 		 **/
-//		if (myParameter.getCriticalQuery()) {
-		
-			createIDListFromCriteria(crit);
-			crit = null;
-			crit = createCriteriaFromIDList();
-//		}
+		// if (myParameter.getCriticalQuery()) {
 
-//		crit.add(Restrictions.in("id", crit.getIds()));
-		
+		createIDListFromCriteria(crit);
+		crit = null;
+		crit = createCriteriaFromIDList();
+		// }
+
+		// crit.add(Restrictions.in("id", crit.getIds()));
+
 		return crit;
 	}
 
@@ -240,14 +234,13 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 ****************************************************************************/
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
-		this.myIds = new ArrayList<Integer>();
-   	    for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(
-				    Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-				   Batch p = (Batch) it.next();
-				   this.myIds.add(p.getId());
-		this.myCriteria = null;
+		myIds = new ArrayList<Integer>();
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+			Batch p = (Batch) it.next();
+			myIds.add(p.getId());
+			myCriteria = null;
+		}
 	}
-	 }	
 
 	/**
 	 * filter processes by id
@@ -256,7 +249,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Batch.class, session);
 		// crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.in("id", this.myIds));
+		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
 
@@ -268,8 +261,7 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object> getSourceData() {
-		return getCriteria().setFirstResult(0).setMaxResults(Integer.MAX_VALUE)
-				.list();
+		return getCriteria().setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 	}
 
 	/*
@@ -282,11 +274,11 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	@Override
 	public List<Integer> getIDList() {
 
-		if (this.myIds == null) {
+		if (myIds == null) {
 			// create ID list if not yet done
 			createIDListFromCriteria(getCriteria());
 		}
-		return new ArrayList<Integer>(this.myIds);
+		return new ArrayList<Integer>(myIds);
 	}
 
 	/*
@@ -299,10 +291,10 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	@Override
 	public Observable getObservable() {
 
-		if (this.myObservable == null) {
-			this.myObservable = new Dispatcher();
+		if (myObservable == null) {
+			myObservable = new Dispatcher();
 		}
-		return this.myObservable;
+		return myObservable;
 	}
 
 	/*
@@ -325,11 +317,10 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()
 	 */
-	
+
 	@Override
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement stepDone() ");	
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
 	}
 
 	/*
@@ -341,18 +332,15 @@ public class UserDefinedBatchFilter implements IEvaluableFilter {
 	 */
 	@Override
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement setSQL() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
 	}
-	
-	
 
 	@Override
 	public String stepDoneName() {
 		String tosearch = "stepdone:";
-		if (this.myFilterExpression.contains(tosearch)) {
-			String myStepname = this.myFilterExpression.substring(this.myFilterExpression.indexOf(tosearch));
-			myStepname = myStepname.substring(tosearch.lastIndexOf(":")+1,myStepname.length());
+		if (myFilterExpression.contains(tosearch)) {
+			String myStepname = myFilterExpression.substring(myFilterExpression.indexOf(tosearch));
+			myStepname = myStepname.substring(tosearch.lastIndexOf(":") + 1, myStepname.length());
 			if (myStepname.contains(" ")) {
 				myStepname = myStepname.substring(0, myStepname.indexOf(" "));
 			}

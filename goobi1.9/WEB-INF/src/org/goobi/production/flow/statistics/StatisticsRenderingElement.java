@@ -27,6 +27,7 @@ package org.goobi.production.flow.statistics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
@@ -41,7 +42,9 @@ import de.intranda.commons.chart.renderer.PieChartRenderer;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.config.ConfigMain;
 
-public class StatisticsRenderingElement {
+public class StatisticsRenderingElement implements Serializable {
+
+	private static final long serialVersionUID = 9211752003070422596L;
 	private IStatisticalQuestion myQuestion;
 	private DataTable dataTable;
 	private HtmlTableRenderer htmlTableRenderer;
@@ -50,17 +53,17 @@ public class StatisticsRenderingElement {
 	private String localImagePath;
 	private String imageUrl;
 	private static final Logger logger = Logger.getLogger(StatisticsRenderingElement.class);
-	
-	public StatisticsRenderingElement(DataTable inDataTable,
-			IStatisticalQuestion inQuestion) {
+
+	public StatisticsRenderingElement(DataTable inDataTable, IStatisticalQuestion inQuestion) {
 		dataTable = inDataTable;
 		myQuestion = inQuestion;
 	}
 
 	public void createRenderer(Boolean inShowAverage) {
-		/* --------------------------------
-		 * create image path
-		 * --------------------------------*/
+		/*
+		 * -------------------------------- create image path
+		 * --------------------------------
+		 */
 		localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
 
 		/* create html renderer */
@@ -88,7 +91,7 @@ public class StatisticsRenderingElement {
 		}
 		htmlTableRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
 		csvRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
-		excelRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());			
+		excelRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
 	}
 
 	/*************************************************************************************
@@ -159,9 +162,9 @@ public class StatisticsRenderingElement {
 	public CSVRenderer getCsvRenderer() {
 		return csvRenderer;
 	}
-	
+
 	public ExcelRenderer getExcelRenderer() {
 		return excelRenderer;
 	}
-	
+
 }

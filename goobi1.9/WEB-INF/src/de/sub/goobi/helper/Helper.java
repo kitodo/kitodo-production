@@ -38,7 +38,9 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
 import java.text.DateFormat;
+import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Map;
 import java.util.Observable;
@@ -357,8 +359,12 @@ public class Helper implements Serializable, Observer {
 			// if value not exists in bundle, use default bundle from classpath
 
 			try {
-				URL resourceURL = file.toURI().toURL();
-				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
+				final URL resourceURL = file.toURI().toURL();
+				URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+					public URLClassLoader run() {
+						return new URLClassLoader(new URL[] { resourceURL });
+					}
+				});
 				localBundle = ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
 			} catch (Exception e) {
 			}

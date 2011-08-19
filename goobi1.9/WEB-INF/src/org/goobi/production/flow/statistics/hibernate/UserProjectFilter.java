@@ -1,4 +1,5 @@
 package org.goobi.production.flow.statistics.hibernate;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -39,51 +40,50 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 
 //TODO: Why doesn't this implemets Cloneable?
-public class UserProjectFilter implements IEvaluableFilter{
+public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 441692997066826360L;
-	
+
 	private Integer projectID;
-//	private Criteria myCriteria = null;
+	// private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private List<Integer> myIds = null;
 	private Dispatcher myObservable;
-	private String step="";
-	
-	public UserProjectFilter(Integer projectID){
+	private String step = "";
+
+	public UserProjectFilter(Integer projectID) {
 		this.projectID = projectID;
 	}
 
+	@Override
 	public Criteria getCriteria() {
 		// myCriteria is a WeakReference ... both cases needs to be evaluated,
 		// after gc the WeakReference
 		// object is still referenced but not the object referenced by it
-//		if (myCriteria == null) {
-//			if (this.myIds == null) {
-//				if (this.projectID != null) {
-//					myCriteria =
-//							createCriteriaFromProjectID();
-//				}
-//			} else {
-//				myCriteria = 
-//						createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-		
+		// if (myCriteria == null) {
+		// if (this.myIds == null) {
+		// if (this.projectID != null) {
+		// myCriteria =
+		// createCriteriaFromProjectID();
+		// }
+		// } else {
+		// myCriteria =
+		// createCriteriaFromIDList();
+		// }
+		// }
+		//
+		// return myCriteria;
+
 		if (myCriteria == null || myCriteria.get() == null) {
-			if (this.myIds == null) {
-				if (this.projectID != null) {
-					myCriteria = new WeakReference<Criteria>(
-							createCriteriaFromProjectID());
+			if (myIds == null) {
+				if (projectID != null) {
+					myCriteria = new WeakReference<Criteria>(createCriteriaFromProjectID());
 				}
 			} else {
-				myCriteria = new WeakReference<Criteria>(
-						createCriteriaFromIDList());
+				myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
 			}
 		}
 
@@ -92,10 +92,10 @@ public class UserProjectFilter implements IEvaluableFilter{
 
 	private Criteria createCriteriaFromProjectID() {
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session); 
+		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		crit.createCriteria("projekt", "proj");
-		crit.add(Restrictions.eq("proj.id", this.projectID));
+		crit.add(Restrictions.eq("proj.id", projectID));
 		return crit;
 	}
 
@@ -109,8 +109,7 @@ public class UserProjectFilter implements IEvaluableFilter{
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
@@ -120,15 +119,16 @@ public class UserProjectFilter implements IEvaluableFilter{
 			myCriteria = null;
 		}
 	}
-	
+
+	@Override
 	public List<Integer> getIDList() {
 		createIDListFromCriteria(getCriteria());
 		return myIds;
 	}
 
+	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement getName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getName() ");
 	}
 
 	/*
@@ -138,6 +138,7 @@ public class UserProjectFilter implements IEvaluableFilter{
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
 	 */
+	@Override
 	public Observable getObservable() {
 
 		if (myObservable == null) {
@@ -145,41 +146,45 @@ public class UserProjectFilter implements IEvaluableFilter{
 		}
 		return myObservable;
 	}
-	
+
+	@Override
 	public void setFilter(String filter) {
 		step = filter;
-		
+
 	}
 
+	@Override
 	public void setName(String name) {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement setName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setName() ");
 	}
 
+	@Override
 	public void setSQL(String sqlString) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	@Override
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement stepDone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
 	}
 
+	@Override
 	public List<Object> getSourceData() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public IEvaluableFilter clone(){
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement clone() ");
+
+	@Override
+	public IEvaluableFilter clone() {
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement clone() ");
 	}
-	
+
+	@Override
 	public String stepDoneName() {
 		return step;
 	}
-	
+
 	/*
 	 * this internal class is extending the Observable Class and dispatches a
 	 * message to the Observers

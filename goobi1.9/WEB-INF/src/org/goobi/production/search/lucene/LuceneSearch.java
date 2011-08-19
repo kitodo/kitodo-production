@@ -52,10 +52,12 @@ import de.sub.goobi.config.ConfigMain;
  * @author Robert Sehr
  * 
  */
+
+@Deprecated
 public class LuceneSearch implements ISearch {
 	static Analyzer analyser;
 	private static String index_path = "";
-//	private static String analyser_path = "";
+	// private static String analyser_path = "";
 	static LuceneSearch search;
 	private static final Logger logger = Logger.getLogger(LuceneSearch.class);
 	private Version luceneVersion = Version.LUCENE_24;
@@ -65,8 +67,9 @@ public class LuceneSearch implements ISearch {
 	 */
 
 	private LuceneSearch() {
-		// analyser_path = ConfigMain.getParameter("analyser", "GermanAnalyser");
-		 index_path = ConfigMain.getParameter("index_path");
+		// analyser_path = ConfigMain.getParameter("analyser",
+		// "GermanAnalyser");
+		index_path = ConfigMain.getParameter("index_path");
 		// if (analyser_path == "GermanAnalyser") {
 		// analyser = new GermanAnalyzer(luceneVersion);
 		// } else {
@@ -99,7 +102,8 @@ public class LuceneSearch implements ISearch {
 	}
 
 	/*
-	 * this class tokenize the query, mappes the tokens to lucene SearchEnums and queries Lucene. It returns an ArrayList of ids of processes
+	 * this class tokenize the query, mappes the tokens to lucene SearchEnums
+	 * and queries Lucene. It returns an ArrayList of ids of processes
 	 */
 
 	private ArrayList<Integer> search(String inQuery, ParametersData param) {
@@ -108,7 +112,8 @@ public class LuceneSearch implements ISearch {
 		// Never forget: Strings are immutable
 		// inQuery = inQuery.trim();
 		// Don't use "isEmpty()", it's a feature of Java 1.6
-		// See http://java.sun.com/javase/6/docs/api/java/lang/String.html#isEmpty()
+		// See
+		// http://java.sun.com/javase/6/docs/api/java/lang/String.html#isEmpty()
 
 		// Don't use Java 1.5, even sun says you shouldn't use 1.5 longer
 		if (inQuery.length() == 0) {
@@ -292,10 +297,10 @@ public class LuceneSearch implements ISearch {
 			if (hits != null && hits.totalHits > 0) {
 				for (int i = 0; i < hits.totalHits; i++) {
 					Document hitDoc = isearcher.doc(hits.scoreDocs[i].doc);
-//					Field[] fields = hitDoc.getFields("signatur");
-//					for (Field f : fields) {
-//						System.out.println("signatur: " + f.stringValue());
-//					}
+					// Field[] fields = hitDoc.getFields("signatur");
+					// for (Field f : fields) {
+					// System.out.println("signatur: " + f.stringValue());
+					// }
 					myhits.add(Integer.parseInt(hitDoc.get("id")));
 				}
 			}
@@ -313,6 +318,7 @@ public class LuceneSearch implements ISearch {
 	 * 
 	 * @see org.goobi.search.interfaces.ISearch#getSearchCount(String inQuery)
 	 */
+	@Override
 	public int getSearchCount(String inQuery) {
 		return search(inQuery, null).size();
 	}
@@ -324,6 +330,7 @@ public class LuceneSearch implements ISearch {
 		return new IndexSearcher(IndexReader.open(FSDirectory.open(new File(index_path)), false));
 	}
 
+	@Override
 	public ArrayList<Integer> getSearchResults(String query) {
 		return search(query, null);
 	}

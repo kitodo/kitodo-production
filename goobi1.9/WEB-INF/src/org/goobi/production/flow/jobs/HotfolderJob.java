@@ -102,7 +102,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 							Prozess template = dao.get(hot.getTemplate());
 							dao.refresh(template);
 							logger.trace("10");
-							List<String> metsfiles = hot.getFileNamesByFilter(GoobiHotfolder.Filter);
+							List<String> metsfiles = hot.getFileNamesByFilter(GoobiHotfolder.filter);
 							logger.trace("11");
 							HashMap<String, Integer> failedData = new HashMap<String, Integer>();
 							logger.trace("12");

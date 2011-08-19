@@ -24,6 +24,7 @@ package org.goobi.production.flow.statistics;
  * 
  */
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,14 +50,17 @@ import de.sub.goobi.Statistik.StatistikStatus;
 import de.sub.goobi.helper.Helper;
 
 /**
- * The Class StatisticsManager organizes all statistical questions by choosing the right implementation depening on {@link StatisticsMode}
+ * The Class StatisticsManager organizes all statistical questions by choosing
+ * the right implementation depening on {@link StatisticsMode}
  * 
  * for old statistical question there will be generated jfreechart-datasets
  * 
  * @author Steffen Hankiewicz
  * @version 20.05.2009
  ****************************************************************************/
-public class StatisticsManager {
+public class StatisticsManager implements Serializable {
+
+	private static final long serialVersionUID = -1070332559779545423L;
 	private static final Logger logger = Logger.getLogger(StatisticsManager.class);
 	/* simple JFreeChart Dataset for the old simple statistics */
 	private Dataset jfreeDataset;
@@ -139,12 +143,14 @@ public class StatisticsManager {
 	}
 
 	/**
-	 * calculate statistics and retrieve List off {@link DataRow} from {@link StatisticsMode} for presention and rendering
+	 * calculate statistics and retrieve List off {@link DataRow} from
+	 * {@link StatisticsMode} for presention and rendering
 	 * 
 	 ****************************************************************************/
 	public void calculate() {
 		/*
-		 * -------------------------------- if to-date is before from-date, show error message --------------------------------
+		 * -------------------------------- if to-date is before from-date, show
+		 * error message --------------------------------
 		 */
 		if (sourceDateFrom != null && sourceDateTo != null && sourceDateFrom.after(sourceDateTo)) {
 			Helper.setMeldung("myStatisticButton", "selectedDatesNotValide", "selectedDatesNotValide");
@@ -152,13 +158,15 @@ public class StatisticsManager {
 		}
 
 		/*
-		 * -------------------------------- some debugging here --------------------------------
+		 * -------------------------------- some debugging here
+		 * --------------------------------
 		 */
 		logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
 				+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
 
 		/*
-		 * -------------------------------- calulate the statistical results and save it as List of DataTables (because some statistical questions
+		 * -------------------------------- calulate the statistical results and
+		 * save it as List of DataTables (because some statistical questions
 		 * allow multiple tables and charts) --------------------------------
 		 */
 		IStatisticalQuestion question = statisticMode.getStatisticalQuestion();
@@ -183,12 +191,14 @@ public class StatisticsManager {
 			List<DataTable> myDataTables = question.getDataTables(myDataSource);
 
 			/*
-			 * -------------------------------- if DataTables exist analyze them --------------------------------
+			 * -------------------------------- if DataTables exist analyze them
+			 * --------------------------------
 			 */
 			if (myDataTables != null) {
 
 				/*
-				 * -------------------------------- localize time frame for gui --------------------------------
+				 * -------------------------------- localize time frame for gui
+				 * --------------------------------
 				 */
 				StringBuilder subname = new StringBuilder();
 				if (calculatedStartDate != null) {
@@ -203,7 +213,8 @@ public class StatisticsManager {
 				}
 
 				/*
-				 * -------------------------------- run through all DataTables --------------------------------
+				 * -------------------------------- run through all DataTables
+				 * --------------------------------
 				 */
 				for (DataTable dt : myDataTables) {
 					dt.setSubname(subname.toString());
@@ -218,10 +229,12 @@ public class StatisticsManager {
 	}
 
 	/**
-	 * Depending on selected Dates oder time range, set the dates for the statistical question here
+	 * Depending on selected Dates oder time range, set the dates for the
+	 * statistical question here
 	 * 
 	 * @param question
-	 *            the {@link IStatisticalQuestion} where the dates should be set, if it is an implementation of
+	 *            the {@link IStatisticalQuestion} where the dates should be
+	 *            set, if it is an implementation of
 	 *            {@link IStatisticalQuestionLimitedTimeframe}
 	 *************************************************************************************/
 	private void setTimeFrameToStatisticalQuestion(IStatisticalQuestion question) {
@@ -376,13 +389,14 @@ public class StatisticsManager {
 
 	/**
 	 * @param inUnits
-	 *            the sourceNumberOfTimeUnits to set given as String to show an empty text field in gui
+	 *            the sourceNumberOfTimeUnits to set given as String to show an
+	 *            empty text field in gui
 	 *************************************************************************************/
 	public void setSourceNumberOfTimeUnitsAsString(String inUnits) {
 		if (StringUtils.isNotBlank(inUnits) && StringUtils.isNumericSpace(inUnits)) {
-			this.sourceNumberOfTimeUnits = Integer.parseInt(inUnits);
+			sourceNumberOfTimeUnits = Integer.parseInt(inUnits);
 		} else {
-			this.sourceNumberOfTimeUnits = 0;
+			sourceNumberOfTimeUnits = 0;
 		}
 	}
 
@@ -465,10 +479,10 @@ public class StatisticsManager {
 	 * @return includeLoops flag
 	 */
 	public boolean isIncludeLoops() {
-		if (this.includeLoops == null) {
-			this.includeLoops = false;
+		if (includeLoops == null) {
+			includeLoops = false;
 		}
-		return this.includeLoops;
+		return includeLoops;
 	}
 
 	public boolean isRenderLoopOption() {
@@ -512,7 +526,8 @@ public class StatisticsManager {
 	// /**
 	// * get List of HtmlTableRenderer for the calculated Datatables
 	// *
-	// * @return List of {@link HtmlTableRenderer} of calculated HtmlTableRenderer
+	// * @return List of {@link HtmlTableRenderer} of calculated
+	// HtmlTableRenderer
 	// *************************************************************************************/
 	// public List<HtmlTableRenderer> getMyHtmlRenderer() {
 	// return myHtmlRenderer;
@@ -528,10 +543,11 @@ public class StatisticsManager {
 	// * @throws IOException
 	// * if an error occurs while imageIO is writing
 	// *************************************************************************************/
-	// public void renderAsChart(OutputStream out, Object data) throws IOException {
+	// public void renderAsChart(OutputStream out, Object data) throws
+	// IOException {
 	// if (data instanceof Integer) {
 	// ChartRenderer ir = new ChartRenderer();
-	//			
+	//
 	// if (question.isRendererInverted(ir)) {
 	// ir.setDataTable(myDataTables.get((Integer) data).getDataTableInverted());
 	// } else {

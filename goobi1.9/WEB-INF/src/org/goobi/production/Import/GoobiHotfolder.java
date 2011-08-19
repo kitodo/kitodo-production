@@ -135,7 +135,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 * true if file is xml file and no anchor file
 	 */
 
-	public static FilenameFilter Filter = new FilenameFilter() {
+	public static FilenameFilter filter = new FilenameFilter() {
 		@Override
 		public boolean accept(File dir, String name) {
 			if (!name.contains("anchor") && name.endsWith(".xml")) {

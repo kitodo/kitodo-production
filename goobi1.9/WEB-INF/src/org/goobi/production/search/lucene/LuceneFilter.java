@@ -42,17 +42,19 @@ import de.sub.goobi.helper.PaginatingCriteria;
 /**
  * This class implements the IEvaluateFilter interface for Lucene.
  * 
- * The interface IEvaluable Filter was used so that other Implementations of a filter could be used with the same interface.
+ * The interface IEvaluable Filter was used so that other Implementations of a
+ * filter could be used with the same interface.
  * 
  * @author Robert Sehr
  * 
  */
 
+@Deprecated
 public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 8756951004361151313L;
 	private String myName;
 	private String myFilterExpression = null;
-//	private Criteria myCriteria = null;
+	// private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private List<Integer> myIds;
 	private Dispatcher myObservable;
@@ -65,7 +67,8 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	/**
-	 * Constructor using an Array of Integers representing the ids of the Objects that need to be selected
+	 * Constructor using an Array of Integers representing the ids of the
+	 * Objects that need to be selected
 	 */
 	public LuceneFilter(List<Integer> selectIDs) {
 		myIds = new ArrayList<Integer>(selectIDs);
@@ -81,25 +84,28 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria ()
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
+	 * ()
 	 */
+	@Override
 	public Criteria getCriteria() {
-//		if (myCriteria == null) {
-//			if (this.myIds == null) {
-//				if (this.getFilter() != null) {
-//					myCriteria =createCriteriaFromLucene(this.getFilter());
-//				}
-//			} else {
-//				myCriteria = createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-		
+		// if (myCriteria == null) {
+		// if (this.myIds == null) {
+		// if (this.getFilter() != null) {
+		// myCriteria =createCriteriaFromLucene(this.getFilter());
+		// }
+		// } else {
+		// myCriteria = createCriteriaFromIDList();
+		// }
+		// }
+		//
+		// return myCriteria;
+
 		if (myCriteria == null || myCriteria.get() == null) {
-			if (this.myIds == null) {
-				if (this.getFilter() != null) {
-					myCriteria = new WeakReference<Criteria>(createCriteriaFromLucene(this.getFilter()));
+			if (myIds == null) {
+				if (getFilter() != null) {
+					myCriteria = new WeakReference<Criteria>(createCriteriaFromLucene(getFilter()));
 				}
 			} else {
 				myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
@@ -112,8 +118,10 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
+	@Override
 	public String getName() {
 		return myName;
 	}
@@ -121,8 +129,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter (java.lang.String)
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
+	 * (java.lang.String)
 	 */
+	@Override
 	public void setFilter(String filter) {
 		myCriteria = null;
 		myFilterExpression = filter;
@@ -139,8 +150,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName (java.lang.String)
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
+	 * (java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		myName = name;
 	}
@@ -187,6 +201,7 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	 * 
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object> getSourceData() {
 		return getCriteria().setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
@@ -195,8 +210,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList ()
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
+	 * ()
 	 */
+	@Override
 	public List<Integer> getIDList() {
 
 		if (myIds == null) {
@@ -209,8 +227,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL (java.lang.String)
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
+	 * (java.lang.String)
 	 */
+	@Override
 	public void setSQL(String sqlString) {
 		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
 	}
@@ -218,8 +239,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone ()
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
+	 * ()
 	 */
+	@Override
 	public Integer stepDone() {
 		throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support stepDone()");
 	}
@@ -234,8 +258,11 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable ()
+	 * @see
+	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
+	 * ()
 	 */
+	@Override
 	public Observable getObservable() {
 		if (myObservable == null) {
 			myObservable = new Dispatcher();
@@ -243,18 +270,22 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 		return myObservable;
 	}
 
+	@Override
 	public IEvaluableFilter clone() {
+
 		LuceneFilter udf = new LuceneFilter(myFilterExpression);
 		udf.setObservable(myObservable);
 		return udf;
 	}
-	
+
+	@Override
 	public String stepDoneName() {
 		return null;
 	}
 
 	/*
-	 * this internal class is extending the Observable Class and dispatches a message to the Observers
+	 * this internal class is extending the Observable Class and dispatches a
+	 * message to the Observers
 	 */
 	private static class Dispatcher extends Observable {
 		@SuppressWarnings("unused")

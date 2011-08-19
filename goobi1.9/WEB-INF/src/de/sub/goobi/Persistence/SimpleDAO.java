@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -42,6 +43,7 @@ public class SimpleDAO extends BaseDAO {
 
 	@Override
 	public void refresh(Object t) {
-		refresh(t);
+		Object o = t;
+		refresh(o);
 	}
 }

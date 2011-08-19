@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -47,8 +48,10 @@ public class HistoryEvent implements Serializable {
 	private Prozess process;
 
 	/**
-	 * This constructor is only public for hibernate usage. If you want to create a new HistoryEvent please use HistoryEvent(Date date, Number
-	 * inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process)
+	 * This constructor is only public for hibernate usage. If you want to
+	 * create a new HistoryEvent please use HistoryEvent(Date date, Number
+	 * inNumericValue, String inStringValue, HistoryEventType
+	 * inHistoryEventType, Prozess process)
 	 * 
 	 * 
 	 */
@@ -59,19 +62,24 @@ public class HistoryEvent implements Serializable {
 	/**
 	 * Please use only this constructor.
 	 * 
-	 * @param date Date of HistoryEvent
-	 * @param inNumericValue value as Number (pages, size,...) 
-	 * @param inStringValue value as string 
-	 * @param inHistoryEventType type of HistoryEvent ( {@link HistoryEventType} )
-	 * @param process process of HistoryEvent
+	 * @param date
+	 *            Date of HistoryEvent
+	 * @param inNumericValue
+	 *            value as Number (pages, size,...)
+	 * @param inStringValue
+	 *            value as string
+	 * @param inHistoryEventType
+	 *            type of HistoryEvent ( {@link HistoryEventType} )
+	 * @param process
+	 *            process of HistoryEvent
 	 */
 
 	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process) {
 		super();
 		this.date = date;
-		this.numericValue = inNumericValue.doubleValue();
-		this.stringValue = inStringValue;
-		this.type = inHistoryEventType.getValue();
+		numericValue = inNumericValue.doubleValue();
+		stringValue = inStringValue;
+		type = inHistoryEventType.getValue();
 		this.process = process;
 	}
 
@@ -81,7 +89,7 @@ public class HistoryEvent implements Serializable {
 	 * @return the id
 	 */
 	public Integer getId() {
-		return this.id;
+		return id;
 	}
 
 	/**
@@ -100,7 +108,7 @@ public class HistoryEvent implements Serializable {
 	 * @return the date
 	 */
 	public Date getDate() {
-		return this.date;
+		return date;
 	}
 
 	/**
@@ -119,7 +127,7 @@ public class HistoryEvent implements Serializable {
 	 * @return the process
 	 */
 	public Prozess getProcess() {
-		return this.process;
+		return process;
 	}
 
 	/**
@@ -138,7 +146,7 @@ public class HistoryEvent implements Serializable {
 	 * @return numericValue as Double
 	 */
 	public Double getNumericValue() {
-		return this.numericValue;
+		return numericValue;
 	}
 
 	/**
@@ -157,7 +165,7 @@ public class HistoryEvent implements Serializable {
 	 * @return stringValue as String
 	 */
 	public String getStringValue() {
-		return this.stringValue;
+		return stringValue;
 	}
 
 	/**
@@ -177,7 +185,7 @@ public class HistoryEvent implements Serializable {
 	 */
 	@SuppressWarnings("unused")
 	private Integer getType() {
-		return this.type;
+		return type;
 	}
 
 	/**
@@ -197,7 +205,7 @@ public class HistoryEvent implements Serializable {
 	 * @return type as HistoryEventType
 	 */
 	public HistoryEventType getHistoryType() {
-		return HistoryEventType.getTypeFromValue(this.type);
+		return HistoryEventType.getTypeFromValue(type);
 	}
 
 	/**
@@ -225,19 +233,19 @@ public class HistoryEvent implements Serializable {
 			if (event.getDate() == null) {
 				return false;
 			}
-			if (!event.getDate().equals(this.getDate())) {
+			if (!event.getDate().equals(getDate())) {
 				return false;
 			}
 
-			if (!event.getHistoryType().equals(this.getHistoryType())) {
+			if (!event.getHistoryType().equals(getHistoryType())) {
 				return false;
 			}
 
-			if (!event.getNumericValue().equals(this.getNumericValue())) {
+			if (!event.getNumericValue().equals(getNumericValue())) {
 				return false;
 			}
 
-			if (!event.getStringValue().equals(this.getStringValue())) {
+			if (!event.getStringValue().equals(getStringValue())) {
 				return false;
 			}
 		} catch (Exception e) {

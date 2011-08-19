@@ -58,16 +58,15 @@ import de.sub.goobi.helper.PaginatingCriteria;
  * 
  * @author Wulf Riebensahm
  ****************************************************************************/
-public class UserDefinedFilter implements IEvaluableFilter {
+public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 4715772407607416975L;
-//	private Criteria myCriteria = null;
+	// private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private String myName = null;
 	private String myFilterExpression = null;
 	private List<Integer> myIds = null;
 	private Dispatcher myObservable;
 	private Parameters myParameter = new Parameters();
-
 
 	/**
 	 * Constructor using an Array of Integers representing the ids of the
@@ -92,34 +91,33 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
 	 * ()
 	 */
+	@Override
 	public Criteria getCriteria() {
 
 		// myCriteria is a WeakReference ... both cases needs to be evaluated,
 		// after gc the WeakReference
 		// object is still referenced but not the object referenced by it
-//		if (myCriteria == null ) {
-//			if (this.myIds == null) {
-//				if (this.getFilter() != null) {
-//					myCriteria = 
-//							createCriteriaFromFilterString(this.getFilter());
-//				}
-//			} else {
-//				myCriteria =
-//						createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-//		
+		// if (myCriteria == null ) {
+		// if (this.myIds == null) {
+		// if (this.getFilter() != null) {
+		// myCriteria =
+		// createCriteriaFromFilterString(this.getFilter());
+		// }
+		// } else {
+		// myCriteria =
+		// createCriteriaFromIDList();
+		// }
+		// }
+		//
+		// return myCriteria;
+		//
 		if (myCriteria == null || myCriteria.get() == null) {
-			if (this.myIds == null) {
-				if (this.getFilter() != null) {
-					myCriteria = new WeakReference<Criteria>(
-							createCriteriaFromFilterString(this.getFilter()));
+			if (myIds == null) {
+				if (getFilter() != null) {
+					myCriteria = new WeakReference<Criteria>(createCriteriaFromFilterString(getFilter()));
 				}
 			} else {
-				myCriteria = new WeakReference<Criteria>(
-						createCriteriaFromIDList());
+				myCriteria = new WeakReference<Criteria>(createCriteriaFromIDList());
 			}
 		}
 
@@ -132,6 +130,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
+	@Override
 	public String getName() {
 		return myName;
 	}
@@ -143,6 +142,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
 	 * (java.lang.String)
 	 */
+	@Override
 	public void setFilter(String filter) {
 		// reset myCriteria because it is invalid, if filter expression changed
 		myCriteria = null;
@@ -163,6 +163,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
 	 * (java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		myName = name;
 	}
@@ -196,15 +197,13 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		//crit.createCriteria("projekt", "proj");
-		//FilterHelper.limitToUserAccessRights(crit);
-		
+		// crit.createCriteria("projekt", "proj");
+		// FilterHelper.limitToUserAccessRights(crit);
+
 		/*
-		 * -------------------------------- 
-		 * combine all parameters together this
-		 * part was exported to FilterHelper so 
-		 * that other Filters could access it 
-		 * 		 * --------------------------------
+		 * -------------------------------- combine all parameters together this
+		 * part was exported to FilterHelper so that other Filters could access
+		 * it * --------------------------------
 		 */
 		String message = FilterHelper.criteriaBuilder(session, inFilter, crit, null, myParameter, null, null);
 		if (message.length() > 0) {
@@ -216,15 +215,15 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		 * by using a range the Criteria produces more than one item per
 		 * process, for each step it involves
 		 **/
-//		if (myParameter.getCriticalQuery()) {
-		
-			createIDListFromCriteria(crit);
-			crit = null;
-			crit = createCriteriaFromIDList();
-//		}
+		// if (myParameter.getCriticalQuery()) {
 
-//		crit.add(Restrictions.in("id", crit.getIds()));
-		
+		createIDListFromCriteria(crit);
+		crit = null;
+		crit = createCriteriaFromIDList();
+		// }
+
+		// crit.add(Restrictions.in("id", crit.getIds()));
+
 		return crit;
 	}
 
@@ -236,13 +235,12 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
-   	    for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(
-				    Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-				   Prozess p = (Prozess) it.next();
-				   myIds.add(p.getId());
-		myCriteria = null;
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+			Prozess p = (Prozess) it.next();
+			myIds.add(p.getId());
+			myCriteria = null;
+		}
 	}
-	 }	
 
 	/**
 	 * filter processes by id
@@ -260,10 +258,10 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * 
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object> getSourceData() {
-		return getCriteria().setFirstResult(0).setMaxResults(Integer.MAX_VALUE)
-				.list();
+		return getCriteria().setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 	}
 
 	/*
@@ -273,6 +271,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
 	 * ()
 	 */
+	@Override
 	public List<Integer> getIDList() {
 
 		if (myIds == null) {
@@ -289,6 +288,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
 	 */
+	@Override
 	public Observable getObservable() {
 
 		if (myObservable == null) {
@@ -317,6 +317,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()
 	 */
+	@Override
 	public Integer stepDone() {
 		return myParameter.getExactStepDone();
 	}
@@ -328,32 +329,32 @@ public class UserDefinedFilter implements IEvaluableFilter {
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
 	 * (java.lang.String)
 	 */
+	@Override
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException("The class "
-				+ this.getClass().getName() + " does not implement setSQL() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
 	}
-	
-	protected class Parameters{
+
+	protected class Parameters {
 		private Boolean flagCriticalQuery = false;
 		private Integer exactStepDone = null;
-		
-		protected void setCriticalQuery(){
-			this.flagCriticalQuery = true;
+
+		protected void setCriticalQuery() {
+			flagCriticalQuery = true;
 		}
-		
-		protected void setStepDone(Integer exactStepDone){
+
+		protected void setStepDone(Integer exactStepDone) {
 			this.exactStepDone = exactStepDone;
 		}
-		
+
 		@SuppressWarnings("unused")
-		private Boolean getCriticalQuery(){
-			return this.flagCriticalQuery;
+		private Boolean getCriticalQuery() {
+			return flagCriticalQuery;
 		}
-		
-		private Integer getExactStepDone(){
-			return this.exactStepDone;
+
+		private Integer getExactStepDone() {
+			return exactStepDone;
 		}
-		
+
 	}
 
 	@Override
@@ -361,7 +362,7 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		String tosearch = "stepdone:";
 		if (myFilterExpression.contains(tosearch)) {
 			String myStepname = myFilterExpression.substring(myFilterExpression.indexOf(tosearch));
-			myStepname = myStepname.substring(tosearch.lastIndexOf(":")+1,myStepname.length());
+			myStepname = myStepname.substring(tosearch.lastIndexOf(":") + 1, myStepname.length());
 			if (myStepname.contains(" ")) {
 				myStepname = myStepname.substring(0, myStepname.indexOf(" "));
 			}

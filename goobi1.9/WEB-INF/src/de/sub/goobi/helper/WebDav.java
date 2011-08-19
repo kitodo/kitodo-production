@@ -26,11 +26,13 @@ package de.sub.goobi.helper;
  * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
- */import java.io.BufferedWriter;
+ */
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -43,17 +45,22 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.config.ConfigMain;
 
-public class WebDav {
+public class WebDav implements Serializable {
+
+	private static final long serialVersionUID = -1929234096626965538L;
 	private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
 	/*
-	 * ##################################################### ##################################################### ## ## Kopieren bzw. symbolische
-	 * Links für einen Prozess in das Benutzerhome ## #####################################################
+	 * #####################################################
+	 * ##################################################### ## ## Kopieren bzw.
+	 * symbolische Links für einen Prozess in das Benutzerhome ##
+	 * #####################################################
 	 * ####################################################
 	 */
 
 	/**
-	 * Retrieve all folders from one directory ================================================================
+	 * Retrieve all folders from one directory
+	 * ================================================================
 	 */
 
 	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
@@ -85,7 +92,7 @@ public class WebDav {
 		} else {
 			for (String data : dateien) {
 				if (data.endsWith("/") || data.endsWith("\\")) {
-					data = data.substring(0, data.length()-1);
+					data = data.substring(0, data.length() - 1);
 				}
 				if (data.contains("/")) {
 					data = data.substring(data.lastIndexOf("/"));
@@ -97,7 +104,8 @@ public class WebDav {
 	}
 
 	/**
-	 * Remove Folders from Directory ================================================================
+	 * Remove Folders from Directory
+	 * ================================================================
 	 */
 	// TODO: Use generic types
 	public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
@@ -177,7 +185,10 @@ public class WebDav {
 			/* UserHome ermitteln */
 			userHome = aktuellerBenutzer.getHomeDir();
 
-			/* bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren */
+			/*
+			 * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
+			 * existieren
+			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
 				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
 				if (!projekt.exists()) {
@@ -196,7 +207,9 @@ public class WebDav {
 		}
 
 		/*
-		 * abhängig davon, ob der Download als "Massendownload" in einen Projektordner erfolgen soll oder nicht, das Zielverzeichnis definieren
+		 * abhängig davon, ob der Download als "Massendownload" in einen
+		 * Projektordner erfolgen soll oder nicht, das Zielverzeichnis
+		 * definieren
 		 */
 		String processLinkName = myProzess.getTitel() + "__[" + myProzess.getId() + "]";
 		String nach = userHome;
@@ -230,7 +243,8 @@ public class WebDav {
 			// Runtime.getRuntime().exec(command);
 
 			Helper.callShell2(command);
-			// Helper.setMeldung("Verzeichnis in Benutzerhome angelegt: ", processLinkName);
+			// Helper.setMeldung("Verzeichnis in Benutzerhome angelegt: ",
+			// processLinkName);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
@@ -278,16 +292,20 @@ public class WebDav {
 
 	// TODO: Remove this Methods - Use FileUtils, as log as it's still there ;-)
 	/*
-	 * public int getAnzahlImages(String inVerzeichnis) { try { return getAnzahlImages2(new File(inVerzeichnis)); } catch (Exception e) {
+	 * public int getAnzahlImages(String inVerzeichnis) { try { return
+	 * getAnzahlImages2(new File(inVerzeichnis)); } catch (Exception e) {
 	 * myLogger.error(e); return 0; } }
 	 * 
-	 * // Process all files and directories under dir private int getAnzahlImages2(File inDir) { int anzahl = 0; if (inDir.isDirectory()) { // die
-	 * Images zählen
+	 * // Process all files and directories under dir private int
+	 * getAnzahlImages2(File inDir) { int anzahl = 0; if (inDir.isDirectory()) {
+	 * // die Images zählen
 	 * 
-	 * FilenameFilter filter = new FilenameFilter() { public boolean accept(File dir, String name) { return name.endsWith(".tif"); } }; anzahl =
+	 * FilenameFilter filter = new FilenameFilter() { public boolean accept(File
+	 * dir, String name) { return name.endsWith(".tif"); } }; anzahl =
 	 * inDir.list(filter).length;
 	 * 
-	 * //die Unterverzeichnisse durchlaufen String[] children = inDir.list(); for (int i = 0; i < children.length; i++) { anzahl +=
+	 * //die Unterverzeichnisse durchlaufen String[] children = inDir.list();
+	 * for (int i = 0; i < children.length; i++) { anzahl +=
 	 * getAnzahlImages2(new File(inDir, children[i])); } } return anzahl; }
 	 */
 }

@@ -35,8 +35,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
@@ -62,33 +62,37 @@ import de.sub.goobi.helper.enums.StepStatus;
  * @author Robert Sehr
  * 
  */
+
+@Deprecated
 public class LuceneIndex implements IIndexer {
 	private static final Logger logger = Logger.getLogger(LuceneIndex.class);
 	// Helper help = new Helper();
 	static RAMDirectory ramDir = null;
 	private static String index_path = "";
-//	private static String analyser_path = "";
+	// private static String analyser_path = "";
 
 	static Analyzer analyser;
 	private static LuceneIndex li;
 	private static MaxFieldLength mfl = new MaxFieldLength(1000);
 	private static IndexWriter iwriter;
 	private Version luceneVersion = Version.LUCENE_29;
-	
-//	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+
+	// private static SimpleDateFormat formatter = new
+	// SimpleDateFormat("yyyymmdd");
 
 	/**
 	 * Constructor, reads configuration from main configuration file
 	 */
 
 	private LuceneIndex() {
-//		analyser_path = ConfigMain.getParameter("analyser", "GermanAnalyser");
+		// analyser_path = ConfigMain.getParameter("analyser",
+		// "GermanAnalyser");
 		index_path = ConfigMain.getParameter("index_path", new Helper().getGoobiDataDirectory());
-//		if (analyser_path == "GermanAnalyser") {
-//			analyser = new GermanAnalyzer(luceneVersion);
-//		} else {
-			analyser = new StandardAnalyzer(luceneVersion);
-//		}
+		// if (analyser_path == "GermanAnalyser") {
+		// analyser = new GermanAnalyzer(luceneVersion);
+		// } else {
+		analyser = new StandardAnalyzer(luceneVersion);
+		// }
 	}
 
 	/**
@@ -107,7 +111,8 @@ public class LuceneIndex implements IIndexer {
 	 * open a connection to the index files
 	 * 
 	 * @param createNew
-	 *            if true, the old index will be removed and a new one will be created, else the old one will be used
+	 *            if true, the old index will be removed and a new one will be
+	 *            created, else the old one will be used
 	 * @throws CorruptIndexException
 	 * @throws LockObtainFailedException
 	 * @throws IOException
@@ -141,9 +146,7 @@ public class LuceneIndex implements IIndexer {
 			doc.add(new Field(SearchEnums.processId.getLuceneTitle(), String.valueOf(process.getId()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		}
 		if (process.getTitel() != null) {
-			doc
-					.add(new Field(SearchEnums.processTitle.getLuceneTitle(), process.getTitel().toLowerCase(), Field.Store.YES,
-							Field.Index.NOT_ANALYZED));
+			doc.add(new Field(SearchEnums.processTitle.getLuceneTitle(), process.getTitel().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		}
 		if (process.isIstTemplate()) {
 			doc.add(new Field(SearchEnums.template.getLuceneTitle(), "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -177,16 +180,14 @@ public class LuceneIndex implements IIndexer {
 							Field.Index.NOT_ANALYZED));
 				}
 				if (step.getBearbeitungsstatusEnum().equals(StepStatus.DONE)) {
-					doc
-							.add(new Field(SearchEnums.stepdone.getLuceneTitle(), step.getNormalizedTitle().toLowerCase(), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+					doc.add(new Field(SearchEnums.stepdone.getLuceneTitle(), step.getNormalizedTitle().toLowerCase(), Field.Store.YES,
+							Field.Index.NOT_ANALYZED));
 					doc.add(new Field(SearchEnums.stepdone.getLuceneTitle(), String.valueOf(step.getReihenfolge().intValue()), Field.Store.YES,
 							Field.Index.NOT_ANALYZED));
 				}
 				if (step.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
-					doc
-							.add(new Field(SearchEnums.stepopen.getLuceneTitle(), step.getNormalizedTitle().toLowerCase(), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+					doc.add(new Field(SearchEnums.stepopen.getLuceneTitle(), step.getNormalizedTitle().toLowerCase(), Field.Store.YES,
+							Field.Index.NOT_ANALYZED));
 					doc.add(new Field(SearchEnums.stepopen.getLuceneTitle(), String.valueOf(step.getReihenfolge().intValue()), Field.Store.YES,
 							Field.Index.NOT_ANALYZED));
 				}
@@ -204,12 +205,10 @@ public class LuceneIndex implements IIndexer {
 				}
 
 				if (step.getBearbeitungsbeginnAsFormattedString() != null) {
-					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), step.getStartDate(), Field.Store.YES,
-							Field.Index.NOT_ANALYZED));
+					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), step.getStartDate(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				}
 				if (step.getBearbeitungsendeAsFormattedString() != null) {
-					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), step.getEndDate(), Field.Store.YES,
-							Field.Index.NOT_ANALYZED));
+					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), step.getEndDate(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				}
 				if (step.getEditTypeEnum() != null) {
 					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), String.valueOf(step.getEditTypeEnum().getTitle()), Field.Store.YES,
@@ -218,46 +217,30 @@ public class LuceneIndex implements IIndexer {
 				if (step.getEigenschaften() != null) {
 					for (Schritteigenschaft prop : step.getEigenschaftenList()) {
 						if (prop.getTitel() != null && prop.getWert() != null) {
-							doc
-									.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-											Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+							doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
 						}
 					}
 				}
 			}
 			// Metadata
-/*
-			try {
-				Fileformat ff = process.readMetadataFile();
-				if (ff != null) {
-					DigitalDocument dd = ff.getDigitalDocument();
-					if (dd != null) {
-						DocStruct topstruct = dd.getLogicalDocStruct();
-						if (topstruct != null) {
-							List<Field> meta = getMetaData(topstruct);
-							if (meta != null) {
-								for (Field e : meta) {
-									doc.add(e);
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				logger.error("no metadata found: " + e);
-			}
-	*/
+			/*
+			 * try { Fileformat ff = process.readMetadataFile(); if (ff != null)
+			 * { DigitalDocument dd = ff.getDigitalDocument(); if (dd != null) {
+			 * DocStruct topstruct = dd.getLogicalDocStruct(); if (topstruct !=
+			 * null) { List<Field> meta = getMetaData(topstruct); if (meta !=
+			 * null) { for (Field e : meta) { doc.add(e); } } } } } } catch
+			 * (Exception e) { logger.error("no metadata found: " + e); }
+			 */
 			try {
 				File f = new File(process.getImagesTifDirectory());
 				File[] filelist = f.listFiles();
 				if (filelist != null) {
-					doc
-							.add(new Field(SearchEnums.pages.getLuceneTitle(), String.valueOf(filelist.length), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+					doc.add(new Field(SearchEnums.pages.getLuceneTitle(), String.valueOf(filelist.length), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				}
 			} catch (Exception e) {
 				logger.warn("no images found: " + e);
@@ -272,13 +255,12 @@ public class LuceneIndex implements IIndexer {
 				if (work.getEigenschaften() != null) {
 					for (Werkstueckeigenschaft prop : work.getEigenschaftenList()) {
 						if (prop.getTitel() != null && prop.getWert() != null) {
-							doc
-									.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-											Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+							doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
 
 						}
 					}
@@ -292,13 +274,12 @@ public class LuceneIndex implements IIndexer {
 				if (template.getEigenschaften() != null) {
 					for (Vorlageeigenschaft prop : template.getEigenschaftenList()) {
 						if (prop.getTitel() != null && prop.getWert() != null) {
-							doc
-									.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-											Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
-							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+							doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()),
+									Field.Store.YES, Field.Index.NOT_ANALYZED));
 						}
 					}
 				}
@@ -309,12 +290,12 @@ public class LuceneIndex implements IIndexer {
 		if (process.getEigenschaften() != null) {
 			for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
 				if (prop.getTitel() != null && prop.getWert() != null) {
-					doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), prop.getNormalizedValue().toLowerCase(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+					doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), prop.getNormalizedValue().toLowerCase(), Field.Store.YES,
+							Field.Index.NOT_ANALYZED));
 					doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), prop.getNormalizedValue().toLowerCase(), Field.Store.YES,
 							Field.Index.NOT_ANALYZED));
-					doc
-							.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()), Field.Store.YES,
-									Field.Index.NOT_ANALYZED));
+					doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()), Field.Store.YES,
+							Field.Index.NOT_ANALYZED));
 				}
 			}
 
@@ -329,42 +310,46 @@ public class LuceneIndex implements IIndexer {
 	}
 
 	/*
-	 * reading metadata of the given DocStruct and returns a list of indexable Fields
+	 * reading metadata of the given DocStruct and returns a list of indexable
+	 * Fields
 	 */
 
-//	private static List<Field> getMetaData(DocStruct topstruct) {
-//		List<Field> meta = new ArrayList<Field>();
-//		List<Metadata> metalist = topstruct.getAllMetadata();
-//		if (metalist != null) {
-//			for (Metadata md : metalist) {
-//				MetadataType mdt = md.getType();
-//				HashMap<String, String> langmap = mdt.getAllLanguages();
-//				Set<String> langset = langmap.keySet();
-//				for (String lang : langset) {
-//					meta.add(new Field(normalize(md.getType().getNameByLanguage(lang).toLowerCase()), normalize(md.getValue().toLowerCase()), Field.Store.YES,
-//							Field.Index.NOT_ANALYZED));
-//				}
-//			}
-//			List<DocStruct> children = topstruct.getAllChildren();
-//			if (children != null) {
-//				for (DocStruct ds : children) {
-//					List<Field> childmeta = getMetaData(ds);
-//					if (childmeta != null) {
-//						for (Field f : childmeta) {
-//							meta.add(f);
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return meta;
-//	}
+	// private static List<Field> getMetaData(DocStruct topstruct) {
+	// List<Field> meta = new ArrayList<Field>();
+	// List<Metadata> metalist = topstruct.getAllMetadata();
+	// if (metalist != null) {
+	// for (Metadata md : metalist) {
+	// MetadataType mdt = md.getType();
+	// HashMap<String, String> langmap = mdt.getAllLanguages();
+	// Set<String> langset = langmap.keySet();
+	// for (String lang : langset) {
+	// meta.add(new
+	// Field(normalize(md.getType().getNameByLanguage(lang).toLowerCase()),
+	// normalize(md.getValue().toLowerCase()), Field.Store.YES,
+	// Field.Index.NOT_ANALYZED));
+	// }
+	// }
+	// List<DocStruct> children = topstruct.getAllChildren();
+	// if (children != null) {
+	// for (DocStruct ds : children) {
+	// List<Field> childmeta = getMetaData(ds);
+	// if (childmeta != null) {
+	// for (Field f : childmeta) {
+	// meta.add(f);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// return meta;
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.goobi.search.interfaces.IIndexer#addObject(Prozess p)
 	 */
+	@Override
 	public void addObject(Prozess process) {
 		if (ConfigMain.getBooleanParameter("useLucene")) {
 			try {
@@ -384,6 +369,7 @@ public class LuceneIndex implements IIndexer {
 	 * 
 	 * @see org.goobi.search.interfaces.IIndexer#removeObject(Prozess p)
 	 */
+	@Override
 	public void removeObject(Prozess process) {
 		if (ConfigMain.getBooleanParameter("useLucene")) {
 			try {
@@ -402,6 +388,7 @@ public class LuceneIndex implements IIndexer {
 	 * 
 	 * @see org.goobi.search.interfaces.IIndexer#updateObject(Prozess p)
 	 */
+	@Override
 	public void updateObject(Prozess process) {
 		if (ConfigMain.getBooleanParameter("useLucene")) {
 			removeObject(process);
@@ -456,11 +443,11 @@ public class LuceneIndex implements IIndexer {
 			}
 		}
 	}
-	
+
 	public static String normalize(String value) {
-		value = value.replace("+","").replace("-","").replace("&&", "").replace("||", "").replace("(", "\\(")
-         .replace(")", "\\)").replace("{", "\\{").replace("}","\\}").replace("^","")
-         .replace("\"","").replace("~","").replace(",","").replace(";","").replaceAll("\\b\\s{2,}\\b", "").replaceAll("\\b[\\s|\\s]{2,}\\b", "");
+		value = value.replace("+", "").replace("-", "").replace("&&", "").replace("||", "").replace("(", "\\(").replace(")", "\\)")
+				.replace("{", "\\{").replace("}", "\\}").replace("^", "").replace("\"", "").replace("~", "").replace(",", "").replace(";", "")
+				.replaceAll("\\b\\s{2,}\\b", "").replaceAll("\\b[\\s|\\s]{2,}\\b", "");
 		return value;
 	}
 }

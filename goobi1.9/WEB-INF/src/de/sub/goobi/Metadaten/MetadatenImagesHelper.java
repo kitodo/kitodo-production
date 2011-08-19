@@ -1,4 +1,5 @@
 package de.sub.goobi.Metadaten;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -76,14 +77,17 @@ public class MetadatenImagesHelper {
 	private int myLastImage = 0;
 
 	public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
-		this.myPrefs = inPrefs;
-		this.mydocument = inDocument;
+		myPrefs = inPrefs;
+		mydocument = inDocument;
 	}
 
 	/**
-	 * Markus baut eine Seitenstruktur aus den vorhandenen Images ---------------- Steps - ---------------- Validation of images compare existing
-	 * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
-	 * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
+	 * Markus baut eine Seitenstruktur aus den vorhandenen Images
+	 * ---------------- Steps - ---------------- Validation of images compare
+	 * existing number images with existing number of page DocStructs if it is
+	 * the same don't do anything if DocStructs are less add new pages to
+	 * physicalDocStruct if images are less delete pages from the end of
+	 * pyhsicalDocStruct --------------------------------
 	 * 
 	 * @return null
 	 * @throws TypeNotAllowedForParentException
@@ -97,20 +101,20 @@ public class MetadatenImagesHelper {
 	 */
 	public void createPagination(Prozess inProzess) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
 			DAOException {
-		DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
+		DocStruct physicaldocstruct = mydocument.getPhysicalDocStruct();
 
 		/*-------------------------------- 
 		 * der physische Baum wird nur
 		 * angelegt, wenn er noch nicht existierte
 		 * --------------------------------*/
 		if (physicaldocstruct == null) {
-			DocStructType dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
-			physicaldocstruct = this.mydocument.createDocStruct(dst);
+			DocStructType dst = myPrefs.getDocStrctTypeByName("BoundBook");
+			physicaldocstruct = mydocument.createDocStruct(dst);
 
 			/*-------------------------------- 
 			 * Probleme mit dem FilePath
 			 * -------------------------------- */
-			MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+			MetadataType MDTypeForPath = myPrefs.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
 				// mdForPath.setType(MDTypeForPath);
@@ -124,7 +128,7 @@ public class MetadatenImagesHelper {
 			} catch (MetadataTypeNotAllowedException e1) {
 			} catch (DocStructHasNoTypeException e1) {
 			}
-			this.mydocument.setPhysicalDocStruct(physicaldocstruct);
+			mydocument.setPhysicalDocStruct(physicaldocstruct);
 		}
 
 		checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());
@@ -132,7 +136,7 @@ public class MetadatenImagesHelper {
 		/*------------------------------- 
 		 * retrieve existing pages/images
 		 * -------------------------------*/
-		DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
+		DocStructType newPage = myPrefs.getDocStrctTypeByName("page");
 		List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
 		if (oldPages == null) {
 			oldPages = new ArrayList<DocStruct>();
@@ -141,27 +145,29 @@ public class MetadatenImagesHelper {
 		/*-------------------------------- 
 		 * add new page/images if necessary
 		 * --------------------------------*/
-		if (oldPages.size() < this.myLastImage) {
-			for (int i = oldPages.size(); i < this.myLastImage; i++) {
-				DocStruct dsPage = this.mydocument.createDocStruct(newPage);
+		if (oldPages.size() < myLastImage) {
+			for (int i = oldPages.size(); i < myLastImage; i++) {
+				DocStruct dsPage = mydocument.createDocStruct(newPage);
 				try {
 
 					/*
-					 * -------------------------------- die physischen Seiten anlegen, sind nicht änderbar für den Benutzer
+					 * -------------------------------- die physischen Seiten
+					 * anlegen, sind nicht änderbar für den Benutzer
 					 * --------------------------------
 					 */
 					physicaldocstruct.addChild(dsPage);
-					MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+					MetadataType mdt = myPrefs.getMetadataTypeByName("physPageNumber");
 					Metadata mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
 
 					/*
-					 * -------------------------------- die logischen Seitennummern anlegen, die der Benutzer auch ändern kann
+					 * -------------------------------- die logischen
+					 * Seitennummern anlegen, die der Benutzer auch ändern kann
 					 * --------------------------------
 					 */
-					mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+					mdt = myPrefs.getMetadataTypeByName("logicalPageNumber");
 					mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
@@ -177,8 +183,8 @@ public class MetadatenImagesHelper {
 			}
 		}
 
-		else if (oldPages.size() > this.myLastImage) {
-			MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+		else if (oldPages.size() > myLastImage) {
+			MetadataType mdt = myPrefs.getMetadataTypeByName("physPageNumber");
 			for (DocStruct page : oldPages) {
 				List<? extends Metadata> mdts = page.getAllMetadataByType(mdt);
 				if (mdts.size() != 1) {
@@ -186,9 +192,10 @@ public class MetadatenImagesHelper {
 					// return myLastImage;
 				}
 				/*
-				 * delete page DocStruct, if physical pagenumber higher than last imagenumber
+				 * delete page DocStruct, if physical pagenumber higher than
+				 * last imagenumber
 				 */
-				if (Integer.parseInt(mdts.get(0).getValue()) > this.myLastImage) {
+				if (Integer.parseInt(mdts.get(0).getValue()) > myLastImage) {
 					physicaldocstruct.removeChild(page);
 					List<Reference> refs = new ArrayList<Reference>(page.getAllFromReferences());
 					for (ugh.dl.Reference ref : refs) {
@@ -212,10 +219,10 @@ public class MetadatenImagesHelper {
 	public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation) throws ImageManagerException, IOException,
 			ImageManipulatorException {
 		logger.trace("start scaleFile");
-		int tmpSize  = inSize / 3;
+		int tmpSize = inSize / 3;
 		if (tmpSize < 1) {
 			tmpSize = 1;
-		} 
+		}
 		logger.trace("tmpSize: " + tmpSize);
 		if (ConfigMain.getParameter("ContentServerUrl") == null) {
 			logger.trace("api");
@@ -271,14 +278,15 @@ public class MetadatenImagesHelper {
 	// Add a method to validate the image files
 
 	/**
-	 * die Images eines Prozesses auf Vollständigkeit prüfen ================================================================
+	 * die Images eines Prozesses auf Vollständigkeit prüfen
+	 * ================================================================
 	 * 
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
 	public boolean checkIfImagesValid(Prozess inProzess, String folder) throws IOException, InterruptedException, SwapException, DAOException {
 		boolean isValid = true;
-		this.myLastImage = 0;
+		myLastImage = 0;
 
 		/*-------------------------------- 
 		 * alle Bilder durchlaufen und dafür
@@ -293,7 +301,7 @@ public class MetadatenImagesHelper {
 			}
 
 			// ArrayList<String> images = getImageFiles(inProzess);
-			this.myLastImage = dateien.length;
+			myLastImage = dateien.length;
 			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 				List<String> filesDirs = Arrays.asList(dateien);
 				Collections.sort(filesDirs);
@@ -325,7 +333,7 @@ public class MetadatenImagesHelper {
 		return false;
 	}
 
-	private class GoobiImageFileComparator implements Comparator<String> {
+	private static class GoobiImageFileComparator implements Comparator<String> {
 
 		@Override
 		public int compare(String s1, String s2) {
