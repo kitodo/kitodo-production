@@ -59,7 +59,9 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
  * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
- */public class HelperSchritte {
+ */
+
+public class HelperSchritte {
 	SchrittDAO dao = new SchrittDAO();
 	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritte.class);
@@ -379,9 +381,9 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 		} catch (DAOException e) {
 			logger.error(e);
 		}
-//		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-//		 mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
-//		SchrittAbschliessen(mySchritt, automatic);
+		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
+		 mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+		SchrittAbschliessen(mySchritt, automatic);
 	}
 
 	/**
