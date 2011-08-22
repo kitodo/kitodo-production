@@ -39,8 +39,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
-import java.text.DateFormat;
 import java.security.PrivilegedAction;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Observable;
@@ -81,7 +81,6 @@ public class Helper implements Serializable, Observer {
 	public static String getRequestParameter(String Parameter) {
 		/* einen bestimmten übergebenen Parameter ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
-		// TODO: Use generics
 		Map requestParams = context.getExternalContext().getRequestParameterMap();
 		String myParameter = (String) requestParams.get(Parameter);
 		if (myParameter == null) {
@@ -90,7 +89,7 @@ public class Helper implements Serializable, Observer {
 		return myParameter;
 	}
 
-	// TODO: Get rid of this - create a API for application properties
+	
 	public String getGoobiDataDirectory() {
 		if (this.myMetadatenVerzeichnis == null) {
 			this.myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
@@ -225,19 +224,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static Session getHibernateSession() {
-		// TODO: Fix for Hibernate-Session-Management, replaced with older
-		// version here
-		// Session s;
-		// try {
-		// s = HibernateUtil.getSessionFactory().getCurrentSession();
-		// } catch (HibernateException e) {
-		// myLogger.info("cannot get session from context, generate a new session");
-		// // s = HibernateUtil.getSessionFactory().openSession();
-		// s=HibernateUtilOld.getSession();
-		// }
-		// return s;
-
-		// Fix for Hibernate-Session-Management, old version - START
+	
 		Session sess;
 		try {
 			sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
@@ -248,10 +235,10 @@ public class Helper implements Serializable, Observer {
 			sess = HibernateUtilOld.getSession();
 		}
 		return sess;
-		// Fix for Hibernate-Session-Management, old version - END
+		
 	}
 
-	/* Helferklassen für kopieren von Verzeichnissen und Dateien */
+	
 
 	/**
 	 * simple call of console command without any feedback, error handling or
@@ -261,7 +248,6 @@ public class Helper implements Serializable, Observer {
 	// TODO: Don't use this to create /pages/imagesTemp/
 	public static void callShell(String command) throws IOException, InterruptedException {
 		myLogger.debug("execute Shellcommand callShell: " + command);
-		// TODO: Use a ProcessBuilder
 		Process p = Runtime.getRuntime().exec(command);
 		p.waitFor();
 
@@ -278,7 +264,7 @@ public class Helper implements Serializable, Observer {
 		if (command == null || command.length() == 0) {
 			return 1;
 		}
-		// TODO: Use a process builder
+	
 		Process process = Runtime.getRuntime().exec(command);
 		Scanner scanner = new Scanner(process.getInputStream());
 		while (scanner.hasNextLine()) {
@@ -301,36 +287,7 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	/**
-	 * NOCH FEHLERHAFT enhanced call of script with error messages and return
-	 * value of script, call it with special encoding
-	 * ================================================================
-	 */
-	// TODO: Remove this method
-	/*
-	 * public int callShell3(String command) throws IOException,
-	 * InterruptedException { myLogger.debug("execute Shellcommand callShell3: "
-	 * + command); if (command == null || command.length() == 0) return 1;
-	 * 
-	 * StringTokenizer strtok = new StringTokenizer(command, " "); Process
-	 * process = Runtime.getRuntime().exec(strtok.nextToken());
-	 * 
-	 * // set encoding BufferedWriter outCommand = new BufferedWriter(new
-	 * OutputStreamWriter(process.getOutputStream(), "UTF-8"));
-	 * outCommand.write(strtok.hasMoreTokens() ? strtok.nextToken() : "");
-	 * outCommand.flush();
-	 * 
-	 * Scanner scanner = new Scanner(process.getInputStream()); while
-	 * (scanner.hasNextLine()) { String myLine = scanner.nextLine();
-	 * setMeldung(myLine); } scanner.close(); scanner = new
-	 * Scanner(process.getErrorStream()); while (scanner.hasNextLine()) {
-	 * setFehlerMeldung(scanner.nextLine()); } scanner.close(); int rueckgabe =
-	 * process.waitFor(); return rueckgabe; }
-	 */
-
-	// TODO: Move the Stuff below in a class for interaction with a local file
-	// system
-
+	
 	public void createUserDirectory(String inDirPath, String inUser) throws IOException, InterruptedException {
 		/*
 		 * -------------------------------- Create directory with script
@@ -361,6 +318,7 @@ public class Helper implements Serializable, Observer {
 			try {
 				final URL resourceURL = file.toURI().toURL();
 				URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+					@Override
 					public URLClassLoader run() {
 						return new URLClassLoader(new URL[] { resourceURL });
 					}
@@ -514,8 +472,7 @@ public class Helper implements Serializable, Observer {
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
 	 * will be created.
 	 */
-	// TODO: Replace this method with two, one for the file stuff and another
-	// one for the checksum
+
 	public static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int goobipathlength, Element inRoot) throws IOException {
 		if (srcDir.isDirectory()) {
 			if (!dstDir.exists()) {

@@ -16,4 +16,13 @@
 		<command name="ucc"/>
 		<command name="ucc_upload"/>
 	</credentials>
+	<credentials ip="192.168.178.30" password="test">
+		<command name="addStep"/>
+		<command name="deleteProcess"/>
+		<command name="addProcess"/>
+		<command name="closeStep"/>
+		<command name="help"/>
+		<command name="ucc"/>
+		<command name="ucc_upload"/>
+	</credentials>
 </config_webapi>
