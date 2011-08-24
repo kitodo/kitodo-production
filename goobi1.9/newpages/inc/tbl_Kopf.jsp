@@ -22,8 +22,8 @@
 			style="#{HelperForm.applicationHeaderBackground}" cellpadding="0"
 			cellspacing="0" border="0">
 			<htm:tr valign="top">
-				<htm:td>
-					<h:graphicImage value="#{HelperForm.applicationLogo}" />
+				<htm:td valign="middle" style="padding-left:1px;">
+					<h:graphicImage value="#{HelperForm.applicationLogo}"/>
 				</htm:td>
 				<htm:td valign="middle" align="center">
 
@@ -51,8 +51,7 @@
 				</htm:td>
 
 
-				<htm:td valign="top" align="right" style="padding: 3 3 0 0">
-
+				<htm:td valign="top" align="right" style="padding:3px">
 					<h:form style="margin:0px" id="headform">
 						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
 							title="deutsche Version">

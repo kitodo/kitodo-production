@@ -11,126 +11,135 @@
 							Regelsaetze bearbeiten
 
 	#########################################--%>
-<a4j:keepAlive beanName="RegelsaetzeForm"/>
+<a4j:keepAlive beanName="RegelsaetzeForm" />
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="inc/head.jsp"%>
 	<body>
+		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
+			<%@include file="inc/tbl_Kopf.jsp"%>
+		</htm:table>
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+			align="center">
+			<htm:tr>
+				<%@include file="inc/tbl_Navigation.jsp"%>
+				<htm:td valign="top" styleClass="layoutInhalt">
 
-	<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
-		align="center">
-		<%@include file="inc/tbl_Kopf.jsp"%>
-		<htm:tr>
-			<%@include file="inc/tbl_Navigation.jsp"%>
-			<htm:td valign="top" styleClass="layoutInhalt">
-
-				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-<h:form id="ruleseteditform">
-				<%-- Breadcrumb --%>
-				<h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
-					<h:panelGroup id="id1">
-						<h:commandLink id="id2" value="#{msgs.startseite}" action="newMain" />
-						<f:verbatim> &#8250;&#8250; </f:verbatim>
-						<h:commandLink id="id3" value="#{msgs.regelsaetze}" action="RegelsaetzeAlle" />
-						<f:verbatim> &#8250;&#8250; </f:verbatim>
-						<h:outputText id="id4" value="#{msgs.neuenRegelsatzAnlegen}"
-							rendered="#{RegelsaetzeForm.myRegelsatz.id == null}" />
-						<h:outputText id="id5" value="#{msgs.regelsatzBearbeiten}"
-							rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
-					</h:panelGroup>
-				</h:panelGrid>
-
-				<htm:table border="0" align="center" width="100%" cellpadding="15">
-					<htm:tr>
-						<htm:td>
-							<htm:h3>
-								<h:outputText id="id6" value="#{msgs.neuenRegelsatzAnlegen}"
+					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
+					<h:form id="ruleseteditform">
+						<%-- Breadcrumb --%>
+						<h:panelGrid id="id0" width="100%" columns="1"
+							styleClass="layoutInhaltKopf">
+							<h:panelGroup id="id1">
+								<h:commandLink id="id2" value="#{msgs.startseite}"
+									action="newMain" />
+								<f:verbatim> &#8250;&#8250; </f:verbatim>
+								<h:commandLink id="id3" value="#{msgs.regelsaetze}"
+									action="RegelsaetzeAlle" />
+								<f:verbatim> &#8250;&#8250; </f:verbatim>
+								<h:outputText id="id4" value="#{msgs.neuenRegelsatzAnlegen}"
 									rendered="#{RegelsaetzeForm.myRegelsatz.id == null}" />
-								<h:outputText id="id7" value="#{msgs.regelsatzBearbeiten}"
+								<h:outputText id="id5" value="#{msgs.regelsatzBearbeiten}"
 									rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
-							</htm:h3>
+							</h:panelGroup>
+						</h:panelGrid>
 
-							<%-- globale Warn- und Fehlermeldungen --%>
-							<h:messages id="id8" globalOnly="true" errorClass="text_red"
-								infoClass="text_blue" showDetail="true" showSummary="true"
-								tooltip="true" />
+						<htm:table border="0" align="center" width="100%" cellpadding="15">
+							<htm:tr>
+								<htm:td>
+									<htm:h3>
+										<h:outputText id="id6" value="#{msgs.neuenRegelsatzAnlegen}"
+											rendered="#{RegelsaetzeForm.myRegelsatz.id == null}" />
+										<h:outputText id="id7" value="#{msgs.regelsatzBearbeiten}"
+											rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
+									</htm:h3>
 
-							<%-- Box für die Bearbeitung der Details --%>
-							<htm:table cellpadding="3" cellspacing="0" width="100%"
-								styleClass="eingabeBoxen">
+									<%-- globale Warn- und Fehlermeldungen --%>
+									<h:messages id="id8" globalOnly="true" errorClass="text_red"
+										infoClass="text_blue" showDetail="true" showSummary="true"
+										tooltip="true" />
 
-								<htm:tr>
-									<htm:td styleClass="eingabeBoxen_row1" align="left">
-										<h:outputText id="id9" value="#{msgs.details}" />
-									</htm:td>
-									<htm:td styleClass="eingabeBoxen_row1" align="right">
-										<h:commandLink id="id10" action="#{NavigationForm.Reload}">
-											<h:graphicImage id="id11" value="/newpages/images/reload.gif" />
-										</h:commandLink>
-									</htm:td>
-								</htm:tr>
+									<%-- Box für die Bearbeitung der Details --%>
+									<htm:table cellpadding="3" cellspacing="0" width="100%"
+										styleClass="eingabeBoxen">
 
-									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row2" colspan="2">
+										<htm:tr>
+											<htm:td styleClass="eingabeBoxen_row1" align="left">
+												<h:outputText id="id9" value="#{msgs.details}" />
+											</htm:td>
+											<htm:td styleClass="eingabeBoxen_row1" align="right">
+												<h:commandLink id="id10" action="#{NavigationForm.Reload}">
+													<h:graphicImage id="id11"
+														value="/newpages/images/reload.gif" />
+												</h:commandLink>
+											</htm:td>
+										</htm:tr>
 
-											<h:panelGrid id="id12" columns="2" rowClasses="top">
+										<htm:tr>
+											<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
-												<%-- Titel --%>
-												<h:outputLabel id="id13" for="titel" value="#{msgs.titel}" />
-												<h:panelGroup id="id14">
-													<h:inputText id="titel"
-														style="width: 300px;margin-right:15px"
-														value="#{RegelsaetzeForm.myRegelsatz.titel}" required="true" />
-													<x:message id="id15" for="titel" style="color: red"
-														replaceIdWithLabel="true" />
-												</h:panelGroup>
-												
-												<%-- Dateiname --%>
-												<h:outputLabel id="id16" for="file" value="#{msgs.datei}" />
-												<h:panelGroup id="id17">
-													<h:inputText id="file"
-														style="width: 300px;margin-right:15px"
-														value="#{RegelsaetzeForm.myRegelsatz.datei}" required="true" />
-													<x:message id="id18" for="file" style="color: red"
-														replaceIdWithLabel="true" />
-												</h:panelGroup>
+												<h:panelGrid id="id12" columns="2" rowClasses="top">
 
-                                                <%-- Sortierung nach Regelsatz alphabetisch --%>
-                                                <h:outputText id="id19" value="#{msgs.metadatenSortierungNachRegelsatz}" />
-                                                <h:selectBooleanCheckbox id="id20" style="margin-right:15px"
-                                                    value="#{RegelsaetzeForm.myRegelsatz.orderMetadataByRuleset}" />
+													<%-- Titel --%>
+													<h:outputLabel id="id13" for="titel" value="#{msgs.titel}" />
+													<h:panelGroup id="id14">
+														<h:inputText id="titel"
+															style="width: 300px;margin-right:15px"
+															value="#{RegelsaetzeForm.myRegelsatz.titel}"
+															required="true" />
+														<x:message id="id15" for="titel" style="color: red"
+															replaceIdWithLabel="true" />
+													</h:panelGroup>
 
-											</h:panelGrid>
-										</htm:td>
-									</htm:tr>
+													<%-- Dateiname --%>
+													<h:outputLabel id="id16" for="file" value="#{msgs.datei}" />
+													<h:panelGroup id="id17">
+														<h:inputText id="file"
+															style="width: 300px;margin-right:15px"
+															value="#{RegelsaetzeForm.myRegelsatz.datei}"
+															required="true" />
+														<x:message id="id18" for="file" style="color: red"
+															replaceIdWithLabel="true" />
+													</h:panelGroup>
 
-									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row3" align="left">
-											<h:commandButton id="id21" value="#{msgs.abbrechen}"
-												action="RegelsaetzeAlle" immediate="true" />
-										</htm:td>
-										<htm:td styleClass="eingabeBoxen_row3" align="right">
-											<h:commandButton id="id22" value="#{msgs.loeschen}"
-												action="#{RegelsaetzeForm.Loeschen}"
-												onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-												rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
-											<h:commandButton id="id23" value="#{msgs.speichern}"
-												action="#{RegelsaetzeForm.Speichern}" />
-										</htm:td>
-									</htm:tr>
-							</htm:table>
-							<%-- // Box für die Bearbeitung der Details --%>
+													<%-- Sortierung nach Regelsatz alphabetisch --%>
+													<h:outputText id="id19"
+														value="#{msgs.metadatenSortierungNachRegelsatz}" />
+													<h:selectBooleanCheckbox id="id20"
+														style="margin-right:15px"
+														value="#{RegelsaetzeForm.myRegelsatz.orderMetadataByRuleset}" />
 
-						</htm:td>
-					</htm:tr>
-				</htm:table>
-				</h:form>
-				<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
+												</h:panelGrid>
+											</htm:td>
+										</htm:tr>
 
-			</htm:td>
-		</htm:tr>
-		<%@include file="inc/tbl_Fuss.jsp"%>
-	</htm:table>
+										<htm:tr>
+											<htm:td styleClass="eingabeBoxen_row3" align="left">
+												<h:commandButton id="id21" value="#{msgs.abbrechen}"
+													action="RegelsaetzeAlle" immediate="true" />
+											</htm:td>
+											<htm:td styleClass="eingabeBoxen_row3" align="right">
+												<h:commandButton id="id22" value="#{msgs.loeschen}"
+													action="#{RegelsaetzeForm.Loeschen}"
+													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
+													rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
+												<h:commandButton id="id23" value="#{msgs.speichern}"
+													action="#{RegelsaetzeForm.Speichern}" />
+											</htm:td>
+										</htm:tr>
+									</htm:table>
+									<%-- // Box für die Bearbeitung der Details --%>
+
+								</htm:td>
+							</htm:tr>
+						</htm:table>
+					</h:form>
+					<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
+
+				</htm:td>
+			</htm:tr>
+			<%@include file="inc/tbl_Fuss.jsp"%>
+		</htm:table>
 
 	</body>
 </f:view>

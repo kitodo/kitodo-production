@@ -1,3 +1,7 @@
+<% if (request.getHeader("User-Agent").contains("MSIE 7.0"))  { %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">		
+<%} %>
 <html>
 
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f"%>
@@ -9,7 +13,7 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
 
-	<body style="margin: 0px 2px 2px 2px" onload="addableTypenAnzeigen();TreeReloaden()">
+	<body style="margin: 0px 2px 2px 2px;" class="metadatenRechtsBody" onload="addableTypenAnzeigen();TreeReloaden()" >
 
 	<a4j:status>
 		<f:facet name="start">
@@ -91,7 +95,7 @@
 			</htm:tr>
 		</htm:table>
 	</h:form>
-	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%; margin-top: 15px" styleClass="main_statistikboxen">
+	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;margin-top: 15px;height:100%;">
 
 		<htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
 			<htm:td>
@@ -101,14 +105,9 @@
 			</htm:td>
 		</htm:tr>
 
-		<htm:tr>
-			<htm:td styleClass="main_statistikboxen_row1" height="1px" colspan="2">
-												
-						
-			</htm:td>
-		</htm:tr>
+		
 		<htm:tr valign="top" style="width:100%;height:100%">
-			<htm:td styleClass="metadatenGrauBackground">
+			<htm:td>
 
 				<h:panelGroup id="myMessages">
 					<%-- globale Warn- und Fehlermeldungen --%>
@@ -146,7 +145,7 @@
 				</h:form>
 			</htm:td>
 
-			<htm:td styleClass="metadatenGrauBackground" rendered="#{Metadaten.bildAnzeigen==true}" style="top: 30px;">
+			<htm:td rendered="#{Metadaten.bildAnzeigen==true}" style="top: 30px;">
 
 				<h:panelGroup id="BildArea" style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
 					<%@include file="incMeta/Bild.jsp"%>
@@ -158,9 +157,9 @@
 		<htm:tr>
 			<htm:td styleClass="main_statistikboxen_row3" height="1px" colspan="2">
 				<h:form id="formular4" style="margin:0px">
-					<htm:table width="100%" cellspacing="0" cellpadding="0">
+					<htm:table styleClass="main_statistikboxen_bottom" width="100%" cellspacing="0" cellpadding="0" style="">
 						<htm:tr>
-							<htm:td align="right">
+							<htm:td align="right" style="padding-right:5px;">
 								<%-- Metadaten validieren --%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />

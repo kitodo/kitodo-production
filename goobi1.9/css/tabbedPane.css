@@ -86,10 +86,10 @@ td.activeSub {
     background-color: #FFFFFF !important;
     padding: 0px !important;
     border: 1px solid #FFFFFF !important;
-    border: 1px solid #FFFFFF!important;
+    /*border: 1px solid #FFFFFF!important;*/
 }
 td.inactiveSub {
-    background-color: #FFFFFF !important;
+    background-color: #F4BBA5 !important;
     padding: 0px !important;
     border: 1px solid #FFFFFF !important;
 }
@@ -106,7 +106,7 @@ td.myFaces_panelTabbedPane_emptyHeaderCell {
   	/*background-image:url('gradient.php_30px_.png') !important;*/
   	border: none !important;
   	padding: 0px !important;
-  	font-weight: bold !important; 
+  	/*font-weight: bold !important;*/ 
   
 }
 

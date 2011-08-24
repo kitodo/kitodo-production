@@ -43,7 +43,7 @@
 
 	<h:panelGrid id="mygrid11" columns="1" width="270px" style="margin:0px;">
 		<%-- ++++++++++++++++     Paginierung festlegen      ++++++++++++++++ --%>
-		<htm:table cellpadding="3" cellspacing="0" width="270px" id="PaginierungActionBox"
+		<htm:table cellpadding="3" cellspacing="0"  id="PaginierungActionBox"
 			rendered="#{Metadaten.alleSeiten !=null}" styleClass="eingabeBoxen"
 			style="position: fixed;top: 104px;left: 250px;">
 			<htm:tr>

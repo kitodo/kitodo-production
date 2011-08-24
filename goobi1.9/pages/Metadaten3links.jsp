@@ -8,7 +8,7 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
 	
-	<body style="margin:2px 2px 2px 2px;" onload="reloadRightFrame();">
+	<body style="margin:2px 2px 2px 2px;background-color:#CBE5FC;" onload="reloadRightFrame();">
 
 	<%-- ========================  neuer Baum style="color: #434387; border-style: solid; border-width: 1px; border-color: #e3c240; background-color: #faf3da;width: 100%;height: 99%;" ============================== --%>
 	<h:outputText rendered="false" value="up"
@@ -18,10 +18,10 @@
 		style="position: fixed;top: 40px;left: 170px" onclick="move(50)"
 		onmouseover="move(2)" />
 
-	<htm:table id="myTree" styleClass="layoutTreeView"
+	<htm:table id="myTree" styleClass="layoutTreeView2"
 		style="width: 100%;height: 100%;">
 		<htm:tr>
-			<htm:td valign="top">
+			<htm:td valign="top" height="100%">
 
 				<%-- globale Warn- und Fehlermeldungen --%>
 				<h:messages globalOnly="true" errorClass="text_red"

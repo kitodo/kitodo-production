@@ -319,4 +319,11 @@ public class HelperForm {
 			return false;
 		}
 	}
+	
+	public String getUserAgent() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		
+		return request.getHeader("User-Agent"); 
+	}
 }

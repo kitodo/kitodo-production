@@ -10,72 +10,78 @@
 							Alle Prozesse in der �?bersicht
 
 	#########################################--%>
-<a4j:keepAlive beanName="ProzessverwaltungForm"/>
+<a4j:keepAlive beanName="ProzessverwaltungForm" />
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="inc/head.jsp"%>
 	<body>
+		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
+			<%@include file="inc/tbl_Kopf.jsp"%>
+		</htm:table>
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+			align="center">
+			<htm:tr>
+				<%@include file="inc/tbl_Navigation.jsp"%>
+				<htm:td valign="top" styleClass="layoutInhalt">
 
-	<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
-		align="center">
-		<%@include file="inc/tbl_Kopf.jsp"%>
-		<htm:tr>
-			<%@include file="inc/tbl_Navigation.jsp"%>
-			<htm:td valign="top" styleClass="layoutInhalt">
+					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
+					<h:form id="processform">
+						<%-- Breadcrumb --%>
+						<h:panelGrid id="id0" width="100%" columns="1"
+							styleClass="layoutInhaltKopf">
+							<h:panelGroup id="id1">
+								<h:commandLink id="id2" value="#{msgs.startseite}"
+									action="newMain" />
+								<f:verbatim> &#8250;&#8250; </f:verbatim>
+								<h:outputText id="id3" value="#{msgs.prozessverwaltung}" />
+							</h:panelGroup>
+						</h:panelGrid>
 
-				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-<h:form id="processform">
-				<%-- Breadcrumb --%>
-				<h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
-					<h:panelGroup id="id1">
-						<h:commandLink id="id2" value="#{msgs.startseite}" action="newMain" />
-						<f:verbatim> &#8250;&#8250; </f:verbatim>
-						<h:outputText id="id3" value="#{msgs.prozessverwaltung}" />
-					</h:panelGroup>
-				</h:panelGrid>
+						<htm:table border="0" align="center" width="100%" cellpadding="15">
+							<htm:tr>
+								<htm:td>
 
-				<htm:table border="0" align="center" width="100%" cellpadding="15">
-					<htm:tr>
-						<htm:td>
+									<%-- �?berschrift --%>
+									<htm:h3>
+										<h:outputText id="id4" value="#{msgs.prozessverwaltung}" />
+									</htm:h3>
 
-							<%-- �?berschrift --%>
-							<htm:h3>
-								<h:outputText id="id4" value="#{msgs.prozessverwaltung}" />
-							</htm:h3>
+									<%-- globale Warn- und Fehlermeldungen --%>
+									<h:messages id="id5" globalOnly="true" errorClass="text_red"
+										infoClass="text_blue" showDetail="true" showSummary="true"
+										tooltip="true" />
 
-							<%-- globale Warn- und Fehlermeldungen --%>
-							<h:messages id="id5" globalOnly="true" errorClass="text_red"
-								infoClass="text_blue" showDetail="true" showSummary="true"
-								tooltip="true" />
-
-							<%-- Prozesse auflisten --%>
-							<%-- old
+									<%-- Prozesse auflisten --%>
+									<%-- old
 							<%@include file="inc_Prozessverwaltung/Context_Prozesse_Liste.jsp"%>
 							--%>
-							<%@include file="inc_Prozessverwaltung/Prozesse_Liste.jsp"%>
-							
-							<%-- abgeschlossene Prozesse 
+									<%@include file="inc_Prozessverwaltung/Prozesse_Liste.jsp"%>
+
+									<%-- abgeschlossene Prozesse 
 							<%@include file="inc_Prozessverwaltung/Prozesse_abgeschlossen.jsp"%> --%>
 
-							<%-- Prozesse auflisten --%>
-							<%@include file="inc_Prozessverwaltung/Prozesse_Liste_Action.jsp"%>
-							
-							<%-- Anzahl der Images und Artikel --%>
-							<%@include file="inc_Prozessverwaltung/Prozesse_Liste_Anzahlen.jsp"%>
+									<%-- Prozesse auflisten --%>
+									<%@include
+										file="inc_Prozessverwaltung/Prozesse_Liste_Action.jsp"%>
 
-							<%-- Prozessstatistik --%>
-							<%@include file="inc_Prozessverwaltung/Prozesse_Liste_Statistik.jsp"%>
-							
-						</htm:td>
-					</htm:tr>
-				</htm:table>
-				</h:form>
-				<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
+									<%-- Anzahl der Images und Artikel --%>
+									<%@include
+										file="inc_Prozessverwaltung/Prozesse_Liste_Anzahlen.jsp"%>
 
-			</htm:td>
-		</htm:tr>
-		<%@include file="inc/tbl_Fuss.jsp"%>
-	</htm:table>
+									<%-- Prozessstatistik --%>
+									<%@include
+										file="inc_Prozessverwaltung/Prozesse_Liste_Statistik.jsp"%>
+
+								</htm:td>
+							</htm:tr>
+						</htm:table>
+					</h:form>
+					<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
+
+				</htm:td>
+			</htm:tr>
+			<%@include file="inc/tbl_Fuss.jsp"%>
+		</htm:table>
 
 	</body>
 </f:view>
