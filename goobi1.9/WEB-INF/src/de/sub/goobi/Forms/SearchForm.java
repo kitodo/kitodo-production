@@ -327,6 +327,9 @@ public class SearchForm {
 		if (!this.processTitle.isEmpty()) {
 			search += this.processTitle + " ";
 		}
+		if (!this.idin.isEmpty()) {
+			search += "\"idin:" + this.idin + "\" ";
+		}
 		if (!this.project.isEmpty() && !this.project.equals(Helper.getTranslation("notSelected"))) {
 			search += "\""+ this.projectOperand + "proj:" + this.project + "\" ";
 		}

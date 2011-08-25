@@ -19,8 +19,8 @@
 			<h:panelGrid columns="1">
 
 				<%-- Upload-Schaltknopf --%>
-				<h:commandLink rendered="#{LoginForm.myBenutzer.mitMassendownload}" id="action1"
-					action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
+				<h:commandLink rendered="#{LoginForm.myBenutzer.mitMassendownload}"
+					id="action1" action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
 					title="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}"
 					onclick="if (!confirm('#{msgs.upload}?')) return">
 					<h:graphicImage
@@ -82,9 +82,10 @@
 					<jd:hideableArea id="agoradownload" saveState="view">
 						<h:panelGrid columns="1" style="margin-left:40px">
 							<%-- TODO: delete this warning once the root cause of the timeout problem is solved  --%>
-							<h:outputText style="back-color:blue; color: red; font-weight: bold;"
-								value="#{msgs.timeoutWarningDMS}"/>
-							
+							<h:outputText
+								style="back-color:blue; color: red; font-weight: bold;"
+								value="#{msgs.timeoutWarningDMS}" />
+
 							<%-- Download-Schaltknopf für Selection--%>
 							<h:commandLink id="action6"
 								action="#{ProzessverwaltungForm.ExportDMSSelection}"
@@ -352,7 +353,7 @@
 					<jd:hideableArea id="statistik" saveState="view">
 						<h:panelGrid columns="1" style="margin-left:40px">
 							<%-- StatisticsStatusVolumes--%>
-							<h:commandLink id="action30"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action30" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsStatusVolumes}"
 								title="#{msgs.statusOfVolumes}">
 								<h:outputText value="- #{msgs.statusOfVolumes}" />
@@ -361,7 +362,7 @@
 							</h:commandLink>
 
 							<%-- StatisticsUsergroups --%>
-							<h:commandLink id="action31"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action31" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsUsergroups}"
 								title="#{msgs.statusForUsers}">
 								<h:outputText value="- #{msgs.statusForUsers}" />
@@ -370,7 +371,7 @@
 							</h:commandLink>
 
 							<%-- StatisticsRuntimeSteps --%>
-							<h:commandLink id="action32"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action32" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsRuntimeSteps}"
 								title="#{msgs.runtimeOfSteps}">
 								<h:outputText value="- #{msgs.runtimeOfSteps}" />
@@ -379,7 +380,7 @@
 							</h:commandLink>
 
 							<%-- StatisticsProduction --%>
-							<h:commandLink id="action33"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action33" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsProduction}"
 								title="#{msgs.productionStatistics}">
 								<h:outputText value="- #{msgs.productionStatistics}" />
@@ -388,7 +389,7 @@
 							</h:commandLink>
 
 							<%-- StatisticsTroughput --%>
-							<h:commandLink id="action34"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action34" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsTroughput}"
 								title="#{msgs.productionThroughput}">
 								<h:outputText value="- #{msgs.productionThroughput}" />
@@ -406,7 +407,7 @@
 							</h:commandLink>
 
 							<%-- StatisticsCorrection --%>
-							<h:commandLink id="action36"  rendered="#{!HelperForm.anonymized}"
+							<h:commandLink id="action36" rendered="#{!HelperForm.anonymized}"
 								action="#{ProzessverwaltungForm.StatisticsCorrection}"
 								title="#{msgs.errorTracking}">
 								<h:outputText value="- #{msgs.errorTracking}" />
@@ -458,6 +459,14 @@
 							<h:outputText value="#{msgs.uebernehmen}" />
 						</h:commandLink>
 					</jd:hideableArea>
+				</h:panelGroup>
+
+				<h:panelGroup>
+					<h:graphicImage value="/newpages/images/buttons/excel20.png" style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
+					<h:commandLink  action="#{ProzessverwaltungForm.generateResult}"
+						 title="#{msgs.createExcel}">
+							<h:outputText value="#{msgs.createExcel}" />
+					</h:commandLink>
 				</h:panelGroup>
 
 
