@@ -54,13 +54,7 @@
     </navigation-case>
   </navigation-rule>
 	
-	 <!-- Bearbeitung von Benutzern -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>modulemanager</from-outcome>
-      <to-view-id>/newpages/modulemanager.jsp</to-view-id>
-    </navigation-case>
-  </navigation-rule>
+
 	
 		<!-- Bearbeitung von Benutzern -->
 	<navigation-rule>
@@ -464,12 +458,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ModuleServer-Bean -->
-	<managed-bean>
-		<managed-bean-name>ModuleServerForm</managed-bean-name>
-		<managed-bean-class>de.sub.goobi.Forms.ModuleServerForm</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
+	
 	
 	<!-- HibernateSessionLong-Bean -->
     <managed-bean>

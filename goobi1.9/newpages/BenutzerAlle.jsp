@@ -62,8 +62,8 @@
 									<%-- +++++++++++++++++  Anzeigefilter ++++++++++++++++++++++++ --%>
 									<h:panelGrid id="id8" width="100%"
 										columnClasses="standardTable_Column,standardTable_ColumnRight"
-										rowClasses="standardTable_Row_bottom" columns="2">
-										<h:outputText
+										rowClasses="standardTable_Row" columns="2">
+										<h:outputText style="vertical-align: conter;"
 											value="#{msgs.treffer}: #{BenutzerverwaltungForm.page.totalResults}" />
 										<h:panelGroup id="id9">
 											<h:outputText id="id10"
@@ -185,7 +185,11 @@
 										</h:column>
 
 									</x:dataTable>
-
+									<h:commandLink id="id52" action="#{BenutzerverwaltungForm.Neu}"
+										immediate="true"
+										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										<h:outputText id="id62" value="#{msgs.neuenBenutzerAnlegen}" />
+									</h:commandLink>
 									<htm:table width="100%" border="0">
 										<htm:tr valign="top">
 											<htm:td align="left">

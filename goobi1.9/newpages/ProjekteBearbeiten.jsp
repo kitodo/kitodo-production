@@ -200,7 +200,7 @@
 																<%--popupButtonImageUrl="images/calender.gif"--%>
 
 																<h:outputText id="vwid36a"
-																	value="#{msgs.projectIsArchived}" />
+																	value="#{msgs.projectIsArchived}: " />
 																<h:selectBooleanCheckbox id="vwid37b"
 																	style="margin-right:15px"
 																	value="#{ProjekteForm.myProjekt.projectIsArchived}" />

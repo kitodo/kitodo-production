@@ -229,6 +229,10 @@ public class MassImportForm {
 		ByteArrayInputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
+			if (this.uploadedFile == null) {
+				Helper.setFehlerMeldung("No file selected");
+				return;
+			}
 			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + this.uploadedFile.getName();
 
 			inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());

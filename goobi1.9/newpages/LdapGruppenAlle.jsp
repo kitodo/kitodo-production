@@ -102,6 +102,11 @@
 											</h:commandLink>
 										</x:column>
 									</x:dataTable>
+									<h:commandLink id="id52" action="#{LdapGruppenForm.Neu}"
+										immediate="true"
+										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										<h:outputText id="id62" value="#{msgs.neueLdapgruppeAnlegen}" />
+									</h:commandLink>
 
 									<htm:table width="100%" border="0">
 										<htm:tr valign="top">

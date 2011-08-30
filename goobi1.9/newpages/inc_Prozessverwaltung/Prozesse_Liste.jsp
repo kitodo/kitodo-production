@@ -520,6 +520,13 @@
 	</x:column>
 
 </x:dataTable>
+<%-- Neu-Schaltknopf --%>
+<h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
+	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}" id="new2">
+	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}" />
+	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"
+		rendered="#{(LoginForm.maximaleBerechtigung == 1) && (ProzessverwaltungForm.modusAnzeige=='vorlagen')}" />
+</h:commandLink>
 
 <htm:table width="100%" border="0">
 	<htm:tr valign="top">

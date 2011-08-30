@@ -135,6 +135,13 @@
 										</x:column>
 									</x:dataTable>
 
+									<%-- Neu-Schaltknopf --%>
+									<h:commandLink id="id52" action="#{ProjekteForm.Neu}"
+										immediate="true"
+										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										<h:outputText id="id62" value="#{msgs.neuesProjektAnlegen}" />
+									</h:commandLink>
+
 									<htm:table width="100%" border="0">
 										<htm:tr valign="top">
 											<htm:td align="left">

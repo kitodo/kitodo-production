@@ -224,17 +224,6 @@
 					onclick="chkManuellAutomatischSetzen(this)"
 					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenAbschliessen}" />
 
-				<h:outputText value="#{msgs.beimAnnehmenModulStarten}" rendered="#{NavigationForm.showModuleManager}"/>
-				<x:selectBooleanCheckbox forceId="true" id="chkmanuell2"
-					onclick="chkManuellAutomatischSetzen(this)"
-					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenModul}" rendered="#{NavigationForm.showModuleManager}"/>
-
-				<h:outputText
-					value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}" rendered="#{NavigationForm.showModuleManager}"/>
-				<x:selectBooleanCheckbox forceId="true" id="chkmanuell3"
-					onclick="chkManuellAutomatischSetzen(this)"
-					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenModulUndAbschliessen}" rendered="#{NavigationForm.showModuleManager}"/>
-
 				<h:outputText
 					value="#{msgs.automatischerSchritt}" />
 				<x:selectBooleanCheckbox forceId="true" id="chkmanuell4"
@@ -295,9 +284,6 @@
 					<x:message for="chkautomatisch" style="color: red"
 						replaceIdWithLabel="true" />
 				</h:panelGroup>
-
-				<h:outputText value="#{msgs.modul}" rendered="#{NavigationForm.showModuleManager}" />
-				<h:inputText value="#{ProzessverwaltungForm.mySchritt.typModulName}" rendered="#{NavigationForm.showModuleManager}" />
 
 				<h:outputLabel for="status" value="#{msgs.status}" />
 				<h:panelGroup>

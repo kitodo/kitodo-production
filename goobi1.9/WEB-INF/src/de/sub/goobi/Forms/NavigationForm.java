@@ -1,4 +1,7 @@
 package de.sub.goobi.Forms;
+
+import de.sub.goobi.config.ConfigMain;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,7 +29,6 @@ package de.sub.goobi.Forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import de.sub.goobi.config.ConfigMain;
 
 
 public class NavigationForm {
@@ -60,14 +62,7 @@ public class NavigationForm {
         return "BenutzerBearbeiten";
     }
     
-    /**
-     * 
-     * @return true if show_modulemanager in file GoobiConfig.properties is =true
-     */
-    public Boolean getShowModuleManager(){
-    	return ConfigMain.getBooleanParameter("show_modulemanager");
-    }
-    
+
     /**
      * 
      * @return true if show_taskmanager in file GoobiConfig.properties is =true

@@ -2,11 +2,11 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 
-<h:panelGrid id="myFilterGrid" width="100%" columnClasses="standardTable_ColumnRight" rowClasses="standardTable_Row_bottom" columns="1">
+<h:panelGrid id="myFilterGrid" width="100%" columnClasses="standardTable_ColumnRight" rowClasses="standardTable_Row" columns="1">
 	<h:panelGroup id="myFilter">
 		<h:outputText value="#{msgs.selectFilter}" />
 		<%-- Filter Liste --%>
-		<x:selectOneMenu forceId="true" id="select" style="width:15%;height:20px" value="#{Form.filter}" onclick="setFilter();">
+		<x:selectOneMenu forceId="true" id="select" style="width:18%;" value="#{Form.filter}" onclick="setFilter();">
 			<si:selectItems id="pcid11" value="#{Form.user.filters}" var="item" itemLabel="#{item}" itemValue="#{item}" />
 		</x:selectOneMenu>
 
@@ -21,7 +21,7 @@
 		</h:commandLink>
 	</h:panelGroup>
 </h:panelGrid>
-<h:panelGrid id="aslsid2" width="100%" columnClasses="standardTable_Column,standardTable_ColumnRight" rowClasses="standardTable_Row_bottom"
+<h:panelGrid id="aslsid2" width="100%" columnClasses="standardTable_Column,standardTable_ColumnRight" rowClasses="standardTable_Row"
 	columns="2">
 	<h:outputText id="aslsid3" value="#{msgs.treffer}: #{Form.page.totalResults}" rendered="#{showHits}" />
 	<h:outputText id="aslsid3_alt" value="" rendered="#{!showHits}" />

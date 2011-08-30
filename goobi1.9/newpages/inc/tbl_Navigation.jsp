@@ -231,16 +231,6 @@
 								value="34" />
 						</h:commandLink>
 
-                        <%-- aktive Module --%>
-                        <h:commandLink styleClass="mlink" action="modulemanager" rendered="#{NavigationForm.showModuleManager}" 
-                            style="#{NavigationForm.aktuell == '35' ? 'font-weight: bold;':'font-weight:normal ;'}"  id="modules">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '35'}">
-                                <f:verbatim>&#8250; </f:verbatim>
-                            </h:panelGroup>
-                            <h:outputText value="#{msgs.modulemanager}" />
-                            <x:updateActionListener property="#{NavigationForm.aktuell}"
-                                value="35" />
-                        </h:commandLink>
 
                         <%-- aktive Tasks --%>
                         <h:commandLink styleClass="mlink" action="taskmanager" rendered="#{NavigationForm.showTaskManager}" 
