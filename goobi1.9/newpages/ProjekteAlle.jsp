@@ -64,7 +64,7 @@
 										headerClass="standardTable_Header"
 										rowClasses="standardTable_Row1,standardTable_Row2"
 										columnClasses="standardTable_Column,standardTable_ColumnCentered"
-										var="item" value="#{ProjekteForm.page.listReload}">
+										var="item" value="#{ProjekteForm.page.listReload}" style="margin-top: 10px;">
 
 										<h:column id="id9">
 											<f:facet name="header">

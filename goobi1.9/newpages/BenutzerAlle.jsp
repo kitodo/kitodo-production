@@ -62,7 +62,7 @@
 									<%-- +++++++++++++++++  Anzeigefilter ++++++++++++++++++++++++ --%>
 									<h:panelGrid id="id8" width="100%"
 										columnClasses="standardTable_Column,standardTable_ColumnRight"
-										rowClasses="standardTable_Row" columns="2">
+										rowClasses="standardTable_Row" columns="2" style="margin-top: 10px;">
 										<h:outputText style="vertical-align: conter;"
 											value="#{msgs.treffer}: #{BenutzerverwaltungForm.page.totalResults}" />
 										<h:panelGroup id="id9">
