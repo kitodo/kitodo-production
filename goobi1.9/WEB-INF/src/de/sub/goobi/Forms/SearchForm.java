@@ -57,6 +57,7 @@ public class SearchForm {
 	private String processTitle = ""; // proc:
 
 	private String projectOperand = "";
+	private String processOperand ="";
 	private String processPropertyOperand = "";
 	private String masterpiecePropertyOperand = "";
 	private String templatePropertyOperand = "";
@@ -325,7 +326,8 @@ public class SearchForm {
 	public String filter() {
 		String search = "";
 		if (!this.processTitle.isEmpty()) {
-			search += this.processTitle + " ";
+			
+			search += "\"" + this.processOperand +  this.processTitle + "\" ";
 		}
 		if (!this.idin.isEmpty()) {
 			search += "\"idin:" + this.idin + "\" ";
@@ -434,6 +436,14 @@ public class SearchForm {
 
 	public void setStepOperand(String stepOperand) {
 		this.stepOperand = stepOperand;
+	}
+
+	public String getProcessOperand() {
+		return this.processOperand;
+	}
+
+	public void setProcessOperand(String processOperand) {
+		this.processOperand = processOperand;
 	}
 
 }

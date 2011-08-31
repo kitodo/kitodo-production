@@ -68,16 +68,19 @@
 													rendered="#{ProzessverwaltungForm.initialize}">
 
 													<%-- process title --%>
-													<h:outputText value="#{msgs.title}" />
+													<h:outputText value="#{msgs.title}: " />
+														<h:panelGroup>
+														<h:selectOneMenu value="#{SearchForm.processOperand}"
+															style="width:115px; margin-right:3px">
+															<f:selectItems value="#{SearchForm.operands}" />
+														</h:selectOneMenu>
 													<h:inputText value="#{SearchForm.processTitle}"
-														style="width:690px" />
+														style="width:570px" />
 
-													<%-- process id --%>
-													<h:outputText value="#{msgs.id}" />
-													<h:inputText value="#{SearchForm.idin}" style="width:690px" />
+												</h:panelGroup>
 
 													<%--projects --%>
-													<h:outputText value="#{msgs.projects}" />
+													<h:outputText value="#{msgs.projects}: " />
 													<h:panelGroup>
 														<h:selectOneMenu value="#{SearchForm.projectOperand}"
 															style="width:115px; margin-right:3px">
@@ -93,7 +96,7 @@
 													</h:panelGroup>
 
 													<%-- process property --%>
-													<h:outputText value="#{msgs.processProperties}" />
+													<h:outputText value="#{msgs.processProperties}: " />
 													<h:panelGroup>
 														<h:selectOneMenu
 															value="#{SearchForm.processPropertyOperand}"
@@ -114,7 +117,7 @@
 													</h:panelGroup>
 
 													<%-- masterpiece property --%>
-													<h:outputText value="#{msgs.masterpieceProperties}" />
+													<h:outputText value="#{msgs.masterpieceProperties}: " />
 													<h:panelGroup>
 														<h:selectOneMenu
 															value="#{SearchForm.masterpiecePropertyOperand}"
@@ -135,7 +138,7 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%-- template property --%>
-													<h:outputText value="#{msgs.templateProperties}" />
+													<h:outputText value="#{msgs.templateProperties}: " />
 													<h:panelGroup>
 														<h:selectOneMenu
 															value="#{SearchForm.templatePropertyOperand}"
@@ -155,7 +158,7 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%-- step property --%>
-													<h:outputText value="#{msgs.stepProperties}" />
+													<h:outputText value="#{msgs.stepProperties}: " />
 													<h:panelGroup>
 														<h:selectOneMenu value="#{SearchForm.stepPropertyOperand}"
 															style="width:115px; margin-right:3px">
@@ -172,7 +175,7 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%--steps --%>
-													<h:outputText value="#{msgs.step}" />
+													<h:outputText value="#{msgs.step}: " />
 													<h:panelGroup>
 														<h:selectOneMenu value="#{SearchForm.stepOperand}"
 															style="width:115px; margin-right:3px">
@@ -192,11 +195,12 @@
 																	itemValue="#{stepTitles}" />
 															</h:selectOneMenu>
 														</h:panelGroup>
+														
+									
 													</h:panelGroup>
-
 													<%-- user --%>
 													<%-- 
-							<h:outputText value="#{msgs.user}"/>
+							<h:outputText value="#{msgs.user}: "/>
 							<h:panelGroup>
 								<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
 										<si:selectItems value="#{SearchForm.user}"
@@ -208,6 +212,9 @@
 								</h:selectOneMenu>
 							</h:panelGroup>
 							--%>
+													<%-- process id --%>
+													<h:outputText value="#{msgs.id}: " />
+													<h:inputText value="#{SearchForm.idin}" style="width:690px" />
 												</h:panelGrid>
 
 
