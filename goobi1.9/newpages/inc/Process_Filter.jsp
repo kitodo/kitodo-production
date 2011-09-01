@@ -4,7 +4,7 @@
 
 <h:panelGrid id="myFilterGrid" width="100%" columnClasses="standardTable_ColumnRight" rowClasses="standardTable_Row" columns="1">
 	<h:panelGroup id="myFilter">
-		<h:outputText value="#{msgs.selectFilter}" />
+		<h:outputText value="#{msgs.selectFilter}: " />
 		<%-- Filter Liste --%>
 		<x:selectOneMenu forceId="true" id="select" style="width:18%;" value="#{Form.filter}" onclick="setFilter();">
 			<si:selectItems id="pcid11" value="#{Form.user.filters}" var="item" itemLabel="#{item}" itemValue="#{item}" />

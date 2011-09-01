@@ -138,7 +138,7 @@
 									<%-- Neu-Schaltknopf --%>
 									<h:commandLink id="id52" action="#{ProjekteForm.Neu}"
 										immediate="true"
-										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (ProjekteForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}">
 										<h:outputText id="id62" value="#{msgs.neuesProjektAnlegen}" />
 									</h:commandLink>
 

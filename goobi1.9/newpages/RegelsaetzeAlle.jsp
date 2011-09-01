@@ -112,7 +112,7 @@
 									</x:dataTable>
 									<h:commandLink id="id52" action="#{RegelsaetzeForm.Neu}"
 										immediate="true"
-										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (RegelsaetzeForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}">
 										<h:outputText id="id62" value="#{msgs.neuenRegelsatzAnlegen}" />
 									</h:commandLink>
 									<htm:table width="100%" border="0">

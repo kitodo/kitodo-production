@@ -305,6 +305,14 @@
 				</h:panelGroup>
 
 				<h:panelGroup>
+					<h:graphicImage value="/newpages/images/buttons/excel20.png" style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
+					<h:commandLink  action="#{ProzessverwaltungForm.generateResult}"
+						 title="#{msgs.createExcel}">
+							<h:outputText value="#{msgs.createExcel}" />
+					</h:commandLink>
+				</h:panelGroup>
+
+				<h:panelGroup>
 					<jd:hideableController for="anzahlen" id="countswitcher"
 						title="#{msgs.anzahlMetadatenUndImagesErmitteln}">
 						<h:graphicImage
@@ -461,13 +469,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup>
-					<h:graphicImage value="/newpages/images/buttons/excel20.png" style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
-					<h:commandLink  action="#{ProzessverwaltungForm.generateResult}"
-						 title="#{msgs.createExcel}">
-							<h:outputText value="#{msgs.createExcel}" />
-					</h:commandLink>
-				</h:panelGroup>
+
 
 
 			</h:panelGrid>

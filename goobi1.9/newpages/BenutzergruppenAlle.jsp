@@ -110,7 +110,9 @@
 									<%-- Neu-Schaltknopf --%>
 									<h:commandLink id="id52" action="#{BenutzergruppenForm.Neu}"
 										immediate="true"
-										rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
+
+										>
 										<h:outputText id="id62"
 											value="#{msgs.neueBenutzergruppeAnlegen}" />
 									</h:commandLink>

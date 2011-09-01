@@ -522,7 +522,8 @@
 </x:dataTable>
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}" id="new2">
+	rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
+	id="new2">
 	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}" />
 	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"
 		rendered="#{(LoginForm.maximaleBerechtigung == 1) && (ProzessverwaltungForm.modusAnzeige=='vorlagen')}" />
