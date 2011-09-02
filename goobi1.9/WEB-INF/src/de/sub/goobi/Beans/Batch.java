@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.goobi.production.flow.helper.BatchDisplayHelper;
 import org.goobi.production.flow.helper.BatchDisplayItem;
 
 import de.sub.goobi.Beans.Property.BatchProperty;
@@ -60,7 +61,7 @@ public class Batch implements Serializable, IGoobiEntity {
 	private Set<Prozess> processes;
 	private Benutzer user;
 	private String stepTitle = null;
-
+	private BatchDisplayHelper bdh = new BatchDisplayHelper();
 
 	
 //	zeitdesaf_PPN602167531_0093
@@ -203,6 +204,9 @@ public class Batch implements Serializable, IGoobiEntity {
 	}
 
 	public Projekt getProject() {
+		if (this.project == null && this.processes.size() > 0) {
+			this.project = getBatchList().get(0).getProjekt();
+		}
 		return this.project;
 	}
 
@@ -284,4 +288,10 @@ public class Batch implements Serializable, IGoobiEntity {
 	public void setStepTitle(String stepTitle) {
 		this.stepTitle = stepTitle;
 	}
+	
+	public BatchDisplayHelper getBatchDisplayHelper() {
+		this.bdh.setStepList(getStepList());
+		return this.bdh;
+	}
+	
 }

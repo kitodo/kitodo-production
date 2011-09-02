@@ -66,13 +66,34 @@
 		</h:panelGroup>
 	</x:column>
 
-	<%-- workflow status --%>
-	<x:column style="text-align:center">
+
+
+
+
+
+	<x:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.status}" />
 		</f:facet>
-		<h:panelGroup>
-			<x:dataTable var="batchDisplayItem" value="#{item.stepList}">
+		<a4j:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">
+			<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.batchDisplayHelper.panelOpen}" />
+			<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.batchDisplayHelper.panelOpen}" />
+			<x:updateActionListener value="#{item.batchDisplayHelper.panelOpen?false:true}" property="#{item.batchDisplayHelper.panelOpen}" />
+			<h:graphicImage value="/newpages/images/fortschritt/ende_links.gif"
+			rendered="true" />
+		<h:graphicImage value="/newpages/images/fortschritt/gr.gif"
+			style="width:#{item.batchDisplayHelper.fortschritt3 * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/ge.gif"
+			style="width:#{item.batchDisplayHelper.fortschritt2 * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/rt.gif"
+			style="width:#{item.batchDisplayHelper.fortschritt1 * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/ende_rechts.gif"
+			rendered="true" />
+			<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender" />
+		</a4j:commandLink>
+		
+		<h:panelGroup id="auflistungIntern">
+		<x:dataTable var="batchDisplayItem" value="#{item.stepList}" rendered="#{item.batchDisplayHelper.panelOpen}">
 				<x:column>
 					<h:outputText value="#{batchDisplayItem.stepOrder}" />
 				</x:column>
@@ -80,12 +101,28 @@
 					<h:outputText value="#{batchDisplayItem.stepTitle}" />
 				</x:column>
 				<x:column>
-					<h:outputText value="#{batchDisplayItem.stepStatus}" />
+					<%-- 		<h:outputText value="#{batchDisplayItem.stepStatus}" />--%>
+					<h:graphicImage
+						value="#{batchDisplayItem.stepStatus.smallImagePath}"
+						title="#{batchDisplayItem.stepTitle}"
+						rendered="#{batchDisplayItem.stepStatus == 'OPEN' || batchDisplayItem.stepStatus == 'LOCKED'}" />
+					<h:graphicImage
+						value="#{batchDisplayItem.stepStatus.smallImagePath}"
+						title="#{batchDisplayItem.stepStatus.title}: #{step.bearbeitungsbenutzer!=null && step.bearbeitungsbenutzer.id!=0?step.bearbeitungsbenutzer.nachVorname:''} (#{step.bearbeitungszeitpunkt !=null?step.bearbeitungszeitpunktAsFormattedString:''})  - #{step.editTypeEnum.title}"
+						rendered="#{(batchDisplayItem.stepStatus == 'DONE' || batchDisplayItem.stepStatus == 'INWORK') && !HelperForm.anonymized}" />
+					<h:graphicImage
+						value="#{batchDisplayItem.stepStatus.smallImagePath}"
+						title="#{batchDisplayItem.stepStatus.title}: #{step.editTypeEnum.title}"
+						rendered="#{(batchDisplayItem.stepStatus == 'DONE' || batchDisplayItem.stepStatus == 'INWORK') && HelperForm.anonymized}" />
 				</x:column>
-			</x:dataTable>
-		</h:panelGroup>
-	</x:column>
 
+
+			</x:dataTable>
+		
+		</h:panelGroup>
+	
+
+	</x:column>
 	<%-- batch project --%>
 	<x:column style="text-align:center">
 		<f:facet name="header">
@@ -94,12 +131,13 @@
 		<h:outputText value="#{item.project.titel}" />
 	</x:column>
 
-<%-- batch currentStep --%>
+	<%-- batch currentStep --%>
 	<x:column style="text-align:center">
 		<f:facet name="header">
 			<h:outputText value="#{msgs.currentStep}" />
 		</f:facet>
-		<h:outputText value="#{item.currentStep.stepTitle} #{item.currentStep.stepOrder} #{item.currentStep.stepStatus}" />
+		<h:outputText
+			value="#{item.currentStep.stepTitle} #{item.currentStep.stepOrder} #{item.currentStep.stepStatus}" />
 	</x:column>
 
 
@@ -110,30 +148,28 @@
 		</f:facet>
 
 		<h:commandLink id="take"
-		rendered="#{item.currentStep.stepStatus == 'OPEN'}"
+			rendered="#{item.currentStep.stepStatus == 'OPEN'}"
 			action="#{BatchForm.BatchDurchBenutzerUebernehmen}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{BatchForm.batch}" value="#{item}" />
 		</h:commandLink>
-		
+
 		<h:commandLink action="BatchesEdit" id="view1"
 			rendered="#{item.currentStep.stepStatus == 'INWORK' && item.user.id == LoginForm.myBenutzer.id}"
 			title="#{msgs.inBearbeitungDurch}: #{item.user!=null && item.user.id!=0 ? item.user.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
-			<x:updateActionListener property="#{BatchForm.batch}"
-				value="#{item}" />
+			<x:updateActionListener property="#{BatchForm.batch}" value="#{item}" />
 		</h:commandLink>
 
-		
+
 		<h:commandLink action="BatchesEdit" id="view2"
 			rendered="#{item.currentStep.stepStatus == 'INWORK' && item.user.id != LoginForm.myBenutzer.id}"
 			title="#{msgs.inBearbeitungDurch}: #{item.user!=null && item.user.id!=0 ? item.user.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin3b.gif" />
-			<x:updateActionListener property="#{BatchForm.batch}"
-				value="#{item}" />
+			<x:updateActionListener property="#{BatchForm.batch}" value="#{item}" />
 		</h:commandLink>
-		
+
 
 	</x:column>
 
