@@ -28,7 +28,7 @@ import java.util.Date;
  * 
  */
 public class GoobiVersion {
-	public final static String VERSION = "1.6.5";
-	public final static String BUILDVERSION = "1.6.5-772";
+	public final static String VERSION = "1.9 tiger beta 3";
+	public final static String BUILDVERSION = "1.9-1772 tiger beta 3";
 	public final static String BUILDDATE = new Date().toString();
 }

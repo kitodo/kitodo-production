@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -292,7 +293,8 @@ public class ProzesskopieForm {
 		readProjectConfigs();
 		try {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
-			this.myRdf = this.myImportOpac.OpacToDocStruct(this.opacSuchfeld, this.opacSuchbegriff, this.opacKatalog, this.prozessKopie.getRegelsatz().getPreferences(), true);
+			this.myRdf = this.myImportOpac.OpacToDocStruct(this.opacSuchfeld, this.opacSuchbegriff, this.opacKatalog, this.prozessKopie
+					.getRegelsatz().getPreferences(), true);
 			if (this.myImportOpac.getOpacDocType(true) != null) {
 				this.docType = this.myImportOpac.getOpacDocType(true).getTitle();
 			}
@@ -360,15 +362,15 @@ public class ProzesskopieForm {
 							Metadata md = this.ughHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								field.setWert(md.getValue());
-								md.setValue(field.getWert().replace("&amp;","&"));
+								md.setValue(field.getWert().replace("&amp;", "&"));
 							}
 						}
 					} catch (UghHelperException e) {
 						myLogger.error(e);
 						Helper.setFehlerMeldung(e.getMessage(), "");
 					}
-					if (field.getWert()!= null && !field.getWert().equals("")) {
-						field.setWert(field.getWert().replace("&amp;","&"));
+					if (field.getWert() != null && !field.getWert().equals("")) {
+						field.setWert(field.getWert().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
 			}// end for
@@ -506,7 +508,8 @@ public class ProzesskopieForm {
 		 * -------------------------------- Prüfung der additional-Eingaben, die angegeben werden müssen --------------------------------
 		 */
 		for (AdditionalField field : this.additionalFields) {
-			if ((field.getWert() == null || field.getWert().equals("")) && field.isRequired() && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getWert()))) {
+			if ((field.getWert() == null || field.getWert().equals("")) && field.isRequired() && field.getShowDependingOnDoctype()
+					&& (StringUtils.isBlank(field.getWert()))) {
 				valide = false;
 				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " is empty");
 			}
@@ -547,7 +550,6 @@ public class ProzesskopieForm {
 		}
 		EigenschaftenHinzufuegen();
 		this.prozessKopie.setWikifield(this.prozessVorlage.getWikifield());
-
 
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
@@ -829,8 +831,6 @@ public class ProzesskopieForm {
 				ds.addChild(dsvolume);
 				this.myRdf = ff;
 			}
-			
-			
 
 		} catch (TypeNotAllowedForParentException e) {
 			myLogger.error(e);
@@ -967,6 +967,7 @@ public class ProzesskopieForm {
 	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollection = new ArrayList<String>();
+		ArrayList<String> defaultCollections = new ArrayList<String>();
 		String filename = this.help.getGoobiConfigDirectory() + "digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
@@ -982,19 +983,25 @@ public class ProzesskopieForm {
 			List<Element> projekte = root.getChildren();
 			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
 				Element projekt = iter.next();
-				List<Element> projektnamen = projekt.getChildren("name");
-				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-					Element projektname = iterator.next();
-					// " - soll sein: " + prozessKopie.getProjekt().getTitel());
-
-					/*
-					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
-					 */
-					if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProjekt().getTitel())) {
-						List<Element> myCols = projekt.getChildren("DigitalCollection");
-						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-							Element col = it2.next();
-							this.possibleDigitalCollection.add(col.getText());
+				
+				// collect default collections
+				if (projekt.getName().equals("default")) {
+					List<Element> myCols = projekt.getChildren("DigitalCollection");
+					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+						defaultCollections.add(it2.next().getText());
+					}
+				} else {
+					// run through the projects
+					List<Element> projektnamen = projekt.getChildren("name");
+					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
+						Element projektname = iterator.next();
+						// all all collections to list
+						if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProjekt().getTitel())) {
+							List<Element> myCols = projekt.getChildren("DigitalCollection");
+							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+								Element col = it2.next();
+								this.possibleDigitalCollection.add(col.getText());
+							}
 						}
 					}
 				}
@@ -1007,6 +1014,10 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
 
+		if (this.possibleDigitalCollection.size()==0){
+			this.possibleDigitalCollection = defaultCollections;
+		}
+		
 		// if only one collection is possible take it directly
 		this.digitalCollections = new ArrayList<String>();
 		if (isSingleChoiceCollection()) {
@@ -1303,7 +1314,8 @@ public class ProzesskopieForm {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
 					AdditionalField myField = it2.next();
-					if ((myField.getTitel().equals("Titel") || myField.getTitel().equals("Title")) && myField.getWert()!=null && !myField.getWert().equals("") ) {
+					if ((myField.getTitel().equals("Titel") || myField.getTitel().equals("Title")) && myField.getWert() != null
+							&& !myField.getWert().equals("")) {
 						title = myField.getWert();
 					}
 					/*
@@ -1336,32 +1348,7 @@ public class ProzesskopieForm {
 	}
 
 	public String downloadDocket() {
-		return	this.prozessKopie.downloadDocket();
-//		myLogger.debug("generate run note for process " + prozessKopie.getId());
-//		String rootpath = ConfigMain.getParameter("xsltFolder");
-//		File xsltfile = new File(rootpath, "docket.xsl");
-//		FacesContext facesContext = FacesContext.getCurrentInstance();
-//		if (!facesContext.getResponseComplete()) {
-//			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-//			String fileName = "docket.pdf";
-//			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-//			String contentType = servletContext.getMimeType(fileName);
-//			response.setContentType(contentType);
-//			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-//
-//			// write run note to servlet output stream
-//			try {
-//				ServletOutputStream out = response.getOutputStream();
-//				ExportDocket ern = new ExportDocket();
-//				ern.startExport(prozessKopie, out, xsltfile.getAbsolutePath());
-//				out.flush();
-//			} catch (IOException e) {
-//				myLogger.error("IOException while exporting run note", e);
-//			}
-//
-//			facesContext.responseComplete();
-//		}
-//		return "";
+		return this.prozessKopie.downloadDocket();
 	}
 
 	/**

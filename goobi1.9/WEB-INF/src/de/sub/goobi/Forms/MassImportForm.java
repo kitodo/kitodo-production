@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -108,6 +109,7 @@ public class MassImportForm {
 	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollections = new ArrayList<String>();
+		ArrayList<String> defaultCollections = new ArrayList<String>();
 		String filename = this.help.getGoobiConfigDirectory() + "digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
@@ -121,14 +123,23 @@ public class MassImportForm {
 			List<Element> projekte = root.getChildren();
 			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
 				Element projekt = iter.next();
-				List<Element> projektnamen = projekt.getChildren("name");
-				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-					Element projektname = iterator.next();
-					if (projektname.getText().equalsIgnoreCase(this.template.getProjekt().getTitel())) {
-						List<Element> myCols = projekt.getChildren("DigitalCollection");
-						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-							Element col = it2.next();
-							this.possibleDigitalCollections.add(col.getText());
+				// collect default collections
+				if (projekt.getName().equals("default")) {
+					List<Element> myCols = projekt.getChildren("DigitalCollection");
+					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+						defaultCollections.add(it2.next().getText());
+					}
+				} else {
+					// run through the projects
+					List<Element> projektnamen = projekt.getChildren("name");
+					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
+						Element projektname = iterator.next();
+						if (projektname.getText().equalsIgnoreCase(this.template.getProjekt().getTitel())) {
+							List<Element> myCols = projekt.getChildren("DigitalCollection");
+							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+								Element col = it2.next();
+								this.possibleDigitalCollections.add(col.getText());
+							}
 						}
 					}
 				}
@@ -139,6 +150,9 @@ public class MassImportForm {
 		} catch (IOException e1) {
 			logger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+		}
+		if (this.possibleDigitalCollections.size()==0){
+			this.possibleDigitalCollections = defaultCollections;
 		}
 	}
 
@@ -190,7 +204,7 @@ public class MassImportForm {
 			}
 
 			Batch b = new Batch();
-			
+
 			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {
 				if (data.getValue().equals(ImportReturnValue.ExportFinished)) {
 					int returnValue = CommandLineInterface.generateProcess(data.getKey(), this.template, new File(tempfolder), null, "error", b);
@@ -203,7 +217,7 @@ public class MassImportForm {
 				}
 
 			}
-			if (b.getBatchList().size()> 0) {
+			if (b.getBatchList().size() > 0) {
 				try {
 					new BatchDAO().save(b);
 				} catch (DAOException e) {
