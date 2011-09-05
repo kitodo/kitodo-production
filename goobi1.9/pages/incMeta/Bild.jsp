@@ -188,7 +188,7 @@
 <h:graphicImage id="myBild" value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()" />
 
 <h:form id="formularOrdner" rendered="#{Metadaten.bildNummer != '-1'}" style="margin-top:15px">
-	<h:outputText value="#{msgs.aktuellerOrdner}" />
+	<h:outputText value="#{msgs.aktuellerOrdner}: " />
 	<h:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}">
 		<si:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 		<s:submitOnEvent for="cmdOrdnerWechseln" event="change" />

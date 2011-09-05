@@ -33,32 +33,32 @@
 							</htm:td>
 							<htm:td valign="middle" align="right">
 								<h:panelGrid id="grid1" columns="2" cellpadding="0" cellspacing="0">
-									<h:commandLink value="Treelevel 0/1" action="Metadaten3links"
+									<h:commandLink value="#{msgs.treelevel} " action="Metadaten3links"
 										target="links" styleClass="metadataHeaderLinks">
 										<x:updateActionListener
 											value="#{Metadaten.treeProperties.showtreelevel?false:true}"
 											property="#{Metadaten.treeProperties.showtreelevel}" />
 									</h:commandLink>
-									<h:commandLink value="TreeTitel 0/1" action="Metadaten3links"
+									<h:commandLink value="#{msgs.treeTitle} " action="Metadaten3links"
 										target="links" styleClass="metadataHeaderLinks">
 										<x:updateActionListener
 											value="#{Metadaten.treeProperties.showtitle?false:true}"
 											property="#{Metadaten.treeProperties.showtitle}" />
 									</h:commandLink>
-									<h:commandLink value="TreePageNumber 0/1"
+									<h:commandLink value="#{msgs.treePageNumber} "
 										action="Metadaten3links" target="links" styleClass="metadataHeaderLinks">
 										<x:updateActionListener
 											value="#{Metadaten.treeProperties.showfirstpagenumber?false:true}"
 											property="#{Metadaten.treeProperties.showfirstpagenumber}" />
 									</h:commandLink>
-									<h:commandLink value="TreeExpand 0/1"
+									<h:commandLink value="#{msgs.treeExpand} "
 										action="#{Metadaten.TreeExpand}" target="links"
 										styleClass="metadataHeaderLinks">
 										<x:updateActionListener
 											value="#{Metadaten.treeProperties.fullexpanded?false:true}"
 											property="#{Metadaten.treeProperties.fullexpanded}" />
 									</h:commandLink>
-									<h:commandLink value="stickyimage 0/1"
+									<h:commandLink value="#{msgs.stickyImage} "
 										action="Metadaten2rechts" target="rechts"
 										styleClass="metadataHeaderLinks">
 										<x:updateActionListener

@@ -46,7 +46,7 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column">
-					<h:outputText value="#{msgs.ersteSeite} :" />
+					<h:outputText value="#{msgs.ersteSeite}: " />
 					<h:panelGroup>
 						<x:inputText id="pagestart1" forceId="true" value="#{Metadaten.pagesStart}" />
 						<rich:suggestionbox height="200" width="145" for="pagestart1" var="startpage" id="suggestion3" suggestionAction="#{Metadaten.autocomplete}">
@@ -61,8 +61,8 @@
 						<h:graphicImage value="/newpages/images/buttons/left_20px.gif" style="border: 0px;vertical-align:middle;" />
 						<x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
 					</a4j:commandLink>
-					
-					<h:outputText value="#{msgs.letzteSeite} :" />
+				
+					<h:outputText value="#{msgs.letzteSeite}: " />
 					<h:panelGroup>
 						<x:inputText id="pageend1" forceId="true" value="#{Metadaten.pagesEnd}" />
 						<rich:suggestionbox tokens=":" height="200" width="145" for="pageend1" var="endpage" id="suggestion4"

@@ -77,13 +77,17 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getMainTitle() {
+		if (this.mainTitle!=null && this.mainTitle.length() > 50) {
+			return this.mainTitle.substring(0, 49);
+		}
+		
 		return this.mainTitle;
 	}
 
 	public void setMainTitle(String mainTitle) {
 		this.mainTitle = mainTitle;
 	}
-
+	
 	public String getPpnDigital() {
 		return this.ppnDigital;
 	}

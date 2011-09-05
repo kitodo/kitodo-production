@@ -311,10 +311,10 @@
 		</h:commandLink>
 
 		<%-- Metadaten-Schaltknopf --%>
-		<h:commandLink action="#{Metadaten.XMLlesen}" id="action14" title="#{msgs.metadatenBearbeiten}"
+		<h:commandLink action="#{Metadaten.XMLlesen}" id="action14" title="#{msgs.metadatenBearbeiten}123"
 			rendered="#{(LoginForm.maximaleBerechtigung != 1) && (LoginForm.maximaleBerechtigung != 2) && item.benutzerGesperrt == null && ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
 			<h:graphicImage value="/newpages/images/buttons/view1.gif" style="margin-right:10px" />
-			<f:param name="nurLesen" value="true" />
+	 		<f:param name="nurLesen" value="true" />
 			<f:param name="ProzesseID" value="#{item.id}" />
 			<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
 			<f:param name="zurueck" value="ProzessverwaltungAlle" />
