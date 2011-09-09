@@ -68,12 +68,16 @@ public class SearchForm {
 		for (StepStatus s : StepStatus.values()) {
 			this.stepstatus.add(s);
 		}
+		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		// long start = System.currentTimeMillis();
 		Session session = Helper.getHibernateSession();
 
 		// projects
 		Criteria crit = session.createCriteria(Projekt.class);
 		crit.addOrder(Order.asc("titel"));
+		if (restriction > 2) {
+			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
+		}
 		this.projects.add(Helper.getTranslation("notSelected"));
 		@SuppressWarnings("unchecked")
 		List<Projekt> projektList = crit.list();

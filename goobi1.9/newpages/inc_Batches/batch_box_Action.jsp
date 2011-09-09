@@ -7,18 +7,6 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
 	prefix="si"%>
 
-<script type="text/javascript">
-	function loadData() {
-
-		var url = document.getElementById('select').value;
-
-		//	document.getElementById('searchForm:test').value = '#{navigationHelper.searchUrl}/' + url + '/1/';
-		if (url != undefined) {
-			alert(url);
-		}
-		alert('bla');
-	}
-</script>
 
 <h:panelGroup
 	rendered="#{BatchForm.batch.user.id == LoginForm.myBenutzer.id}">

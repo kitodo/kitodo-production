@@ -90,7 +90,7 @@ public class MetadatenVerifizierung {
 		if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
 			Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
 			try {
-				if (!identifierTopStruct.getValue().replaceAll("[\\W]", "").equals(identifierTopStruct.getValue())) {
+				if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
 					Helper.setFehlerMeldung("Identifier value of metadata " +  identifierTopStruct.getType().getName() + " in DocStruct "+ logical.getType().getName() + " contains invalid character ");
 					ergebnis = false;
 				}
@@ -100,7 +100,7 @@ public class MetadatenVerifizierung {
 					Helper.setFehlerMeldung("Identifier values of metadata " +  identifierTopStruct.getType().getName() + " are the same for " + logical.getType().getName() + " and " + firstChild.getType().getName());
 					ergebnis = false;
 				}
-				if (!identifierFirstChild.getValue().replaceAll("[\\W]", "").equals(identifierFirstChild.getValue())) {
+				if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
 					Helper.setFehlerMeldung("Identifier value of metadata " +  identifierFirstChild.getType().getName() + " in DocStruct "+ firstChild.getType().getName() + " contains invalid character ");
 					ergebnis = false;
 				}

@@ -39,7 +39,7 @@
 											value="#{Metadaten.treeProperties.showtreelevel?false:true}"
 											property="#{Metadaten.treeProperties.showtreelevel}" />
 									</h:commandLink>
-									<h:commandLink value="#{msgs.treeTitle} " action="Metadaten3links"
+									<h:commandLink value="#{msgs.treeTitle} " action="Metadaten3links" style="padding-left: 5px;"
 										target="links" styleClass="metadataHeaderLinks">
 										<x:updateActionListener
 											value="#{Metadaten.treeProperties.showtitle?false:true}"
@@ -51,7 +51,7 @@
 											value="#{Metadaten.treeProperties.showfirstpagenumber?false:true}"
 											property="#{Metadaten.treeProperties.showfirstpagenumber}" />
 									</h:commandLink>
-									<h:commandLink value="#{msgs.treeExpand} "
+									<h:commandLink value="#{msgs.treeExpand} " style="padding-left: 5px;"
 										action="#{Metadaten.TreeExpand}" target="links"
 										styleClass="metadataHeaderLinks">
 										<x:updateActionListener

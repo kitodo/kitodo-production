@@ -94,7 +94,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
-	private Batch batch;
+	private Batch batch ;
 
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
