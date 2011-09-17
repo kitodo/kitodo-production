@@ -125,7 +125,8 @@ public class BatchForm extends BasisForm {
 
 	public String BatchDurchBenutzerUebernehmen() {
 
-		ProzessDAO pdao = new ProzessDAO();
+//		ProzessDAO pdao = new ProzessDAO();
+		BatchDAO dao = new BatchDAO();
 		Helper.getHibernateSession().clear();
 		Helper.getHibernateSession().refresh(this.batch);
 
@@ -145,12 +146,12 @@ public class BatchForm extends BasisForm {
 						.getHistory()
 						.add(new HistoryEvent(currentStep.getBearbeitungsbeginn(), currentStep.getReihenfolge().doubleValue(),
 								currentStep.getTitel(), HistoryEventType.stepInWork, currentStep.getProzess()));
-				try {
-					pdao.save(currentStep.getProzess());
-				} catch (DAOException e) {
-					Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-					myLogger.error("step couldn't get saved", e);
-				}
+//				try {
+//					pdao.save(currentStep.getProzess());
+//				} catch (DAOException e) {
+//					Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+//					myLogger.error("step couldn't get saved", e);
+//				}
 				if (currentStep.isTypImagesLesen() || currentStep.isTypImagesSchreiben()) {
 					try {
 						new File(currentStep.getProzess().getImagesOrigDirectory());
@@ -165,6 +166,12 @@ public class BatchForm extends BasisForm {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			if (user != null) {
 				this.batch.setUser(user);
+			}
+			try {
+				dao.save(this.batch);
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+				myLogger.error("step couldn't get saved", e);
 			}
 		}
 		return "BatchesEdit";
@@ -192,7 +199,8 @@ public class BatchForm extends BasisForm {
 				}
 			}
 		}
-		return "BatchesAll";
+		// TODO pruefen ob hier auch der batch aktualisiert werden muss
+		return FilterAlleStart();
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
