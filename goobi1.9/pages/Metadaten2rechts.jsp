@@ -164,7 +164,7 @@
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
-								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}" target="_parent" />
+								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.goBack}" target="_parent" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten schreiben --%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Reload}" value="#{msgs.speichern}" rendered="#{not Metadaten.nurLesenModus}"
