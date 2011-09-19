@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -73,7 +74,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
 /**
  * 
  * @author Robert Sehr
- *
+ * 
  */
 
 public class BatchForm extends BasisForm {
@@ -121,11 +122,9 @@ public class BatchForm extends BasisForm {
 		// TODO
 	}
 
-	
-
 	public String BatchDurchBenutzerUebernehmen() {
 
-//		ProzessDAO pdao = new ProzessDAO();
+		// ProzessDAO pdao = new ProzessDAO();
 		BatchDAO dao = new BatchDAO();
 		Helper.getHibernateSession().clear();
 		Helper.getHibernateSession().refresh(this.batch);
@@ -146,12 +145,13 @@ public class BatchForm extends BasisForm {
 						.getHistory()
 						.add(new HistoryEvent(currentStep.getBearbeitungsbeginn(), currentStep.getReihenfolge().doubleValue(),
 								currentStep.getTitel(), HistoryEventType.stepInWork, currentStep.getProzess()));
-//				try {
-//					pdao.save(currentStep.getProzess());
-//				} catch (DAOException e) {
-//					Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-//					myLogger.error("step couldn't get saved", e);
-//				}
+				// try {
+				// pdao.save(currentStep.getProzess());
+				// } catch (DAOException e) {
+				// Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"),
+				// e);
+				// myLogger.error("step couldn't get saved", e);
+				// }
 				if (currentStep.isTypImagesLesen() || currentStep.isTypImagesSchreiben()) {
 					try {
 						new File(currentStep.getProzess().getImagesOrigDirectory());
@@ -258,8 +258,6 @@ public class BatchForm extends BasisForm {
 		return FilterAlleStart();
 	}
 
-
-
 	public void executeScript() {
 		BatchDisplayItem bdi = this.batch.getCurrentStep();
 		for (Prozess p : this.batch.getBatchList()) {
@@ -307,8 +305,6 @@ public class BatchForm extends BasisForm {
 		}
 		return answer;
 	}
-
-
 
 	public void setProcess(Integer title) {
 		this.process = title;
@@ -421,7 +417,7 @@ public class BatchForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Schritt> getNextStepsForProblemSolution() {
 		List<Schritt> alleNachfolgendenSchritte = null;
-//		BatchDisplayItem bdi = this.batch.getCurrentStep();
+		// BatchDisplayItem bdi = this.batch.getCurrentStep();
 		for (Prozess p : this.batch.getBatchList()) {
 			if (p.getId() == this.process) {
 				Schritt currentStep = p.getFirstOpenStep();
@@ -532,6 +528,7 @@ public class BatchForm extends BasisForm {
 	public void setMySolutionID(Integer mySolutionID) {
 		this.mySolutionID = mySolutionID;
 	}
+
 	public Batch getBatch() {
 		return this.batch;
 	}
@@ -539,7 +536,7 @@ public class BatchForm extends BasisForm {
 	public void setBatch(Batch batch) {
 		this.batch = batch;
 	}
-	
+
 	public String getScriptName() {
 		return this.script;
 	}

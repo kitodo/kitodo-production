@@ -53,15 +53,14 @@ public final class ConfigDispayRules {
 	 */
 
 	private ConfigDispayRules() {
-		configPfad = helper.getGoobiConfigDirectory() + "ruleSet.xml";
+		configPfad = this.helper.getGoobiConfigDirectory() + "ruleSet.xml";
 		try {
 			config = new XMLConfiguration(configPfad);
 			config.setReloadingStrategy(new FileChangedReloadingStrategy());
 			getDisplayItems();
 		} catch (ConfigurationException e) {
 			/*
-			 * no configuration file found, default configuration (textarea)
-			 * will be used, nothing to do here
+			 * no configuration file found, default configuration (textarea) will be used, nothing to do here
 			 */
 		}
 	}
@@ -75,7 +74,7 @@ public final class ConfigDispayRules {
 	 * creates hierarchical HashMap with values for each element of given data
 	 */
 	private synchronized void getDisplayItems() {
-		if (allValues.isEmpty() && config != null) {
+		if (this.allValues.isEmpty() && config != null) {
 			int countRuleSet = config.getMaxIndex("ruleSet");
 			for (int i = 0; i <= countRuleSet; i++) {
 				int projectContext = config.getMaxIndex("ruleSet(" + i + ").context");
@@ -88,10 +87,12 @@ public final class ConfigDispayRules {
 					int countSelect = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").select");
 					int countTextArea = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").textarea");
 					int countInput = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").input");
+					int countReadOnly = config.getMaxIndex("ruleSet(" + i + ").context(" + j + ").readonly");
 					HashMap<String, ArrayList<Item>> select1 = new HashMap<String, ArrayList<Item>>();
 					HashMap<String, ArrayList<Item>> select = new HashMap<String, ArrayList<Item>>();
 					HashMap<String, ArrayList<Item>> input = new HashMap<String, ArrayList<Item>>();
 					HashMap<String, ArrayList<Item>> textarea = new HashMap<String, ArrayList<Item>>();
+					HashMap<String, ArrayList<Item>> readonly = new HashMap<String, ArrayList<Item>>();
 					for (int k = 0; k <= countSelect1; k++) {
 						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select1(" + k + ")[@tns:ref]");
 						ArrayList<Item> items = getSelect1ByElementName(projectName, bind, elementName);
@@ -112,15 +113,22 @@ public final class ConfigDispayRules {
 						ArrayList<Item> items = getInputByElementName(projectName, bind, elementName);
 						input.put(elementName, items);
 					}
+					for (int k = 0; k <= countReadOnly; k++) {
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").readonly(" + k + ")[@tns:ref]");
+						ArrayList<Item> items = getReadOnlyByElementName(projectName, bind, elementName);
+						readonly.put(elementName, items);
+					}
+
 					itemsByType.put("select1", select1);
 					itemsByType.put("select", select);
 					itemsByType.put("input", input);
 					itemsByType.put("textarea", textarea);
-					if (allValues.get(projectName) == null) {
+					itemsByType.put("readonly", readonly);
+					if (this.allValues.get(projectName) == null) {
 						bindstate.put(bind, itemsByType);
-						allValues.put(projectName, bindstate);
+						this.allValues.put(projectName, bindstate);
 					} else {
-						bindstate = allValues.get(projectName);
+						bindstate = this.allValues.get(projectName);
 						bindstate.put(bind, itemsByType);
 					}
 				}
@@ -312,10 +320,32 @@ public final class ConfigDispayRules {
 				for (int j = 0; j <= type; j++) {
 					String myElementName = config.getString("ruleSet.context(" + i + ").textarea(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the
-																															// displayed
-																															// value
+						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the displayed value
 								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), false);
+						listOfItems.add(myItem);
+					}
+				}
+			}
+		}
+		return listOfItems;
+	}
+
+	private ArrayList<Item> getReadOnlyByElementName(String project, String bind, String elementName) {
+		ArrayList<Item> listOfItems = new ArrayList<Item>();
+		int count = config.getMaxIndex("ruleSet.context");
+		for (int i = 0; i <= count; i++) {
+			String myProject = config.getString("ruleSet.context(" + i + ")[@projectName]");
+			String myBind = config.getString("ruleSet.context(" + i + ").bind");
+			if (myProject.equals(project) && myBind.equals(bind)) {
+				int type = config.getMaxIndex("ruleSet.context(" + i + ").readonly");
+
+				for (int j = 0; j <= type; j++) {
+					String myElementName = config.getString("ruleSet.context(" + i + ").readonly(" + j + ")[@tns:ref]");
+					if (myElementName.equals(elementName)) {
+						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), // the
+																														// displayed
+																														// value
+								config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
 				}
@@ -336,14 +366,14 @@ public final class ConfigDispayRules {
 	 */
 
 	public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName) {
-		synchronized (allValues) {
-			if (allValues.isEmpty() && config != null) {
+		synchronized (this.allValues) {
+			if (this.allValues.isEmpty() && config != null) {
 				getDisplayItems();
 			} else if (config == null) {
 
 				return DisplayType.textarea;
 			}
-			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = allValues.get(myproject);
+			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = this.allValues.get(myproject);
 			if (bind == null) {
 				return DisplayType.textarea;
 			}
@@ -381,14 +411,14 @@ public final class ConfigDispayRules {
 
 	public ArrayList<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName, DisplayType mydisplayType) {
 		ArrayList<Item> values = new ArrayList<Item>();
-		synchronized (allValues) {
-			if (allValues.isEmpty() && config != null) {
+		synchronized (this.allValues) {
+			if (this.allValues.isEmpty() && config != null) {
 				getDisplayItems();
 			} else if (config == null) {
 				values.add(new Item(myelementName, "", false));
 				return values;
 			}
-			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = allValues.get(myproject);
+			HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = this.allValues.get(myproject);
 			if (bind.isEmpty()) {
 				values.add(new Item(myelementName, "", false));
 				return values;
@@ -414,15 +444,14 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * refreshes the hierarchical HashMap with values from xml file. If HashMap
-	 * is used by another thread, the function will wait until
+	 * refreshes the hierarchical HashMap with values from xml file. If HashMap is used by another thread, the function will wait until
 	 * 
 	 */
 
 	public void refresh() {
-		if (config != null && !allValues.isEmpty()) {
-			synchronized (allValues) {
-				allValues.clear();
+		if (config != null && !this.allValues.isEmpty()) {
+			synchronized (this.allValues) {
+				this.allValues.clear();
 				getDisplayItems();
 			}
 		}

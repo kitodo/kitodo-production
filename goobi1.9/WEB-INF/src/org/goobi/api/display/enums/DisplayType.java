@@ -27,22 +27,22 @@ package org.goobi.api.display.enums;
 public enum DisplayType {
 
 	
-	input("0","input"),select("1","select"),select1("2","select1"),textarea("3","textarea"); 
+	input("0","input"),select("1","select"),select1("2","select1"),textarea("3","textarea"), readonly("4", "readonly"); 
 	
 	private String id;
 	private String title;
 
 	private DisplayType(String myId, String myTitle) {
-		id = myId;
-		title = myTitle;
+		this.id = myId;
+		this.title = myTitle;
 	}
 
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 	
 	public static DisplayType getByTitle(String inTitle){

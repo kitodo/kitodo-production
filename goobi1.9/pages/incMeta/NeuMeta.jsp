@@ -73,6 +73,10 @@
 								onchange="styleAnpassen(this)" immediate="true">
 								<f:selectItems value="#{Metadaten.metadatum.items}" />
 							</h:selectOneMenu>
+							<h:outputText id="myOutput" value="#{Metadaten.metadatum.value}"
+							
+								rendered="#{(Metadaten.outputType == 'readonly')}"
+								styleClass="metadatenInput" style="width: 350px;" />
 						</x:div>
 					</h:panelGroup>
 				</h:panelGrid>

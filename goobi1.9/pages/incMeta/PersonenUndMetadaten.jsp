@@ -169,7 +169,9 @@
 					<si:selectItems value="#{Item.items}" itemValue="#{element.label}" var="element" itemLabel="#{element.label}" />
 					<a4j:support event="onchange" requestDelay="1" />
 				</h:selectOneMenu>
-
+				<h:outputText id="myOutput" value="#{Item.value}"	
+								rendered="#{(Item.outputType == 'readonly')}"
+								styleClass="metadatenInput" style="width: 350px;" />
 			</h:column>
 
 
