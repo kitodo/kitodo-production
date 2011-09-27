@@ -232,7 +232,10 @@ public class MassImportForm {
 			Helper.setFehlerMeldung("missingData");
 		}
 		this.idList = null;
-		this.importFile = null;
+		if (this.importFile != null) {
+			this.importFile.delete();
+			this.importFile = null;
+		}
 		this.records = "";
 	}
 
@@ -247,7 +250,16 @@ public class MassImportForm {
 				Helper.setFehlerMeldung("No file selected");
 				return;
 			}
-			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + this.uploadedFile.getName();
+			
+			String basename = this.uploadedFile.getName();
+			if (basename.contains("/")) {
+				basename = basename.substring(basename.lastIndexOf("/")+1);
+			} 
+			if (basename.contains("\\")) {
+				basename = basename.substring(basename.lastIndexOf("\\")+1);
+			}
+			
+			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + basename;
 
 			inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
 			outputStream = new FileOutputStream(filename);
@@ -259,7 +271,8 @@ public class MassImportForm {
 			}
 
 			this.importFile = new File(filename);
-			Helper.setMeldung("File '" + this.uploadedFile.getName() + "' successfully uploaded, press 'Save' now...");
+			
+			Helper.setMeldung("File '" + basename + "' successfully uploaded, press 'Save' now...");
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			Helper.setFehlerMeldung("Upload failed");
