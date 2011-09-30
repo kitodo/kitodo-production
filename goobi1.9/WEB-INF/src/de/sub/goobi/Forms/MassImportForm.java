@@ -252,6 +252,9 @@ public class MassImportForm {
 			}
 			
 			String basename = this.uploadedFile.getName();
+			if (basename.startsWith(".")) {
+				basename = basename.substring(1);
+			}
 			if (basename.contains("/")) {
 				basename = basename.substring(basename.lastIndexOf("/")+1);
 			} 
