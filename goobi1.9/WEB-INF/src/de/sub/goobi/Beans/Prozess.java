@@ -103,7 +103,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	Helper help = new Helper();
 
 	public static String DIRECTORY_PREFIX = "orig";
-	public static String DIRECTORY_SUFFIX = "tif";
+	public static String DIRECTORY_SUFFIX = "images";
 
 	private static int numberOfBackups = 0;
 	private static String FORMAT = "";
