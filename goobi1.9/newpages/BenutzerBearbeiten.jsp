@@ -27,7 +27,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="usereditform">
+					<h:form id="usereditform" >
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -286,17 +286,17 @@
 
 										<htm:tr>
 											<htm:td styleClass="eingabeBoxen_row3" align="left">
-												<h:commandButton id="id58" value="#{msgs.abbrechen}"
-													action="BenutzerAlle" immediate="true" />
+												<h:commandButton id="id60" value="#{msgs.speichern}"
+													action="#{BenutzerverwaltungForm.Speichern}" />
 											</htm:td>
 
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
+												<h:commandButton id="id58" value="#{msgs.abbrechen}"
+													action="BenutzerAlle" immediate="true" />
 												<h:commandButton id="id59" value="#{msgs.loeschen}"
 													action="#{BenutzerverwaltungForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{BenutzerverwaltungForm.myClass.id != null}" />
-												<h:commandButton id="id60" value="#{msgs.speichern}"
-													action="#{BenutzerverwaltungForm.Speichern}" />
 											</htm:td>
 										</htm:tr>
 

@@ -354,12 +354,12 @@
 			</h:commandLink>
 
 			<%-- XML Export-Schaltknopf --%>
-<%-- 			<h:commandLink id="ubid119" action="#{ProzessverwaltungForm.CreateXML}" title="#{msgs.createXML}"
+			<h:commandLink id="ubid119" action="#{ProzessverwaltungForm.CreateXML}" title="#{msgs.createXML}"
 				rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
 				<h:graphicImage id="ubid120" alt="sorta" value="/newpages/images/buttons/xml.gif" style="margin-right:2px" />
 				<x:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}" />
 			</h:commandLink>
---%>
+
 			<%-- Docket Export --%>
 			<h:commandLink id="ubid1119" action="#{ProzessverwaltungForm.downloadDocket}" title="#{msgs.laufzettelDrucken}"
 				rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">

@@ -83,14 +83,20 @@ public class MetadatenHelper implements Comparator<Object> {
 		// + " soll werden zu " + inNewType);
 		DocStructType dst = this.myPrefs.getDocStrctTypeByName(inNewType);
 		DocStruct newDocstruct = this.mydocument.createDocStruct(dst);
-
 		/*
 		 * -------------------------------- alle Metadaten hinzufügen --------------------------------
 		 */
 
 		for (Metadata old : inOldDocstruct.getAllMetadata()) {
+			boolean match = false;
 			if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-				if (!newDocstruct.getAddableMetadataTypes().contains(old.getType())) {
+				for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
+					if (mt.getName().equals(old.getType().getName())) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
 					Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
 							+ newDocstruct.getType().getName());
 					return inOldDocstruct;
@@ -103,27 +109,38 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 
-
 		/*
 		 * -------------------------------- alle Personen hinzufügen --------------------------------
 		 */
+		if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
+			for (Person old : inOldDocstruct.getAllPersons()) {
+				boolean match = false;
+				if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
+					for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
+						if (mt.getName().equals(old.getType().getName())) {
+							match = true;
+						}
+					}
+					if (!match) {
+						Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
+								+ newDocstruct.getType().getName());
 
-		for (Person old : inOldDocstruct.getAllPersons()) {
-			if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-				if (!newDocstruct.getAddableMetadataTypes().contains(old.getType())) {
+						// if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
+						// if (!newDocstruct.getAddableMetadataTypes().contains(old.getType())) {
+						// Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
+						// + newDocstruct.getType().getName());
+						//
+						// return inOldDocstruct;
+					} else {
+						newDocstruct.addPerson(old);
+					}
+				} else {
 					Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
 							+ newDocstruct.getType().getName());
-
 					return inOldDocstruct;
-				} else {
-					newDocstruct.addPerson(old);
 				}
-			} else {
-				Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element " + newDocstruct.getType().getName());
-				return inOldDocstruct;
 			}
 		}
-
 		/*
 		 * -------------------------------- alle Seiten hinzufügen --------------------------------
 		 */
@@ -138,23 +155,23 @@ public class MetadatenHelper implements Comparator<Object> {
 		/*
 		 * -------------------------------- alle Docstruct-Children hinzufügen --------------------------------
 		 */
-
-		for (DocStruct old : inOldDocstruct.getAllChildren()) {
-			if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
-				if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType())) {
+		if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
+			for (DocStruct old : inOldDocstruct.getAllChildren()) {
+				if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
+					if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType())) {
+						Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
+								+ newDocstruct.getType().getName());
+						return inOldDocstruct;
+					} else {
+						newDocstruct.addChild(old);
+					}
+				} else {
 					Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
 							+ newDocstruct.getType().getName());
 					return inOldDocstruct;
-				} else {
-					newDocstruct.addChild(old);
 				}
-			} else {
-				Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
-						+ newDocstruct.getType().getName());
-				return inOldDocstruct;
 			}
 		}
-
 		/*
 		 * -------------------------------- neues Docstruct zum Parent hinzufügen und an die gleiche Stelle schieben, wie den Vorg?nger
 		 * --------------------------------
