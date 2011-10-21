@@ -89,6 +89,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
 		for (Metadata old : inOldDocstruct.getAllMetadata()) {
 			boolean match = false;
+
 			if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
 				for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
 					if (mt.getName().equals(old.getType().getName())) {
@@ -97,9 +98,13 @@ public class MetadatenHelper implements Comparator<Object> {
 					}
 				}
 				if (!match) {
-					Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
-							+ newDocstruct.getType().getName());
-					return inOldDocstruct;
+					try {
+						newDocstruct.addMetadata(old);
+					} catch (Exception e) {
+						Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
+								+ newDocstruct.getType().getName());
+						return inOldDocstruct;
+					}
 				} else {
 					newDocstruct.addMetadata(old);
 				}
@@ -119,6 +124,7 @@ public class MetadatenHelper implements Comparator<Object> {
 					for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
 						if (mt.getName().equals(old.getType().getName())) {
 							match = true;
+							break;
 						}
 					}
 					if (!match) {
@@ -158,7 +164,21 @@ public class MetadatenHelper implements Comparator<Object> {
 		if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
 			for (DocStruct old : inOldDocstruct.getAllChildren()) {
 				if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
-					if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType())) {
+					// boolean match = false;
+					// if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size()
+					// > 0) {
+					// for (String ds : newDocstruct.getType().getAllAllowedDocStructTypes()) {
+					// if (ds.equals(old.getType().getName())) {
+					// match = true;
+					// break;
+					// }
+					// }
+					// if (!match) {
+					// Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
+					// + newDocstruct.getType().getName());
+					// }
+
+					if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType().getName())) {
 						Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
 								+ newDocstruct.getType().getName());
 						return inOldDocstruct;

@@ -33,7 +33,7 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
 
-	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validator(2, "validate", IValidatorPlugin.class);
+	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validator(3, "validate", IValidatorPlugin.class);
 	
 	private int id;
 	private String name;

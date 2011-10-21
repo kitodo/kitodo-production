@@ -131,7 +131,11 @@ public class HotfolderJob extends AbstractGoobiJob {
 								// // TODO Errorhandling
 								logger.trace("17");
 								for (String filename : failedData.keySet()) {
-
+									File oldFile = new File(hot.getFolderAsFile(), filename);
+									if (oldFile.exists()) {
+										File newFile = new File(oldFile.getAbsolutePath() + "_");
+										oldFile.renameTo(newFile);
+									}
 									logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
 								}
 							}
