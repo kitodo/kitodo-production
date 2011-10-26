@@ -30,9 +30,9 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ResourceBundle;
 
-import java.security.PrivilegedAction;
 import javax.faces.context.FacesContext;
 
 import de.sub.goobi.config.ConfigMain;
@@ -47,13 +47,14 @@ public class Messages {
 	}
 
 	public static String getString(String key) {
-		File file = new File(ConfigMain.getParameter("localMessages"));
+		File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
 		if (file.exists()) {
 			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
 
 			try {
 				final URL resourceURL = file.toURI().toURL();
 				URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+					@Override
 					public URLClassLoader run() {
 						return new URLClassLoader(new URL[] { resourceURL });
 					}

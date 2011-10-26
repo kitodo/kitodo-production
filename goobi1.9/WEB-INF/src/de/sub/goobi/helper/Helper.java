@@ -310,7 +310,7 @@ public class Helper implements Serializable, Observer {
 
 	public static void loadLanguageBundle() {
 		bundle = ResourceBundle.getBundle("Messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		File file = new File(ConfigMain.getParameter("localMessages"));
+		File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
 		if (file.exists()) {
 			// Load local message bundle from file system only if file exists;
 			// if value not exists in bundle, use default bundle from classpath
