@@ -64,10 +64,16 @@ public class BenutzergruppenForm extends BasisForm {
 	public String Loeschen() {
 		try {
 			if (this.myBenutzergruppe.getBenutzerList().size() > 0) {
+				for (Benutzer b : this.myBenutzergruppe.getBenutzerList()) {
+					b.getBenutzergruppen().remove(this.myBenutzergruppe);
+				}
 				this.myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
 				this.dao.save(this.myBenutzergruppe);
 			}
 			if (this.myBenutzergruppe.getSchritteList().size() > 0) {
+				for (Schritt s : this.myBenutzergruppe.getSchritteList()) {
+					s.getBenutzergruppen().remove(this.myBenutzergruppe);
+				}
 				this.myBenutzergruppe.setSchritte(new HashSet<Schritt>());
 				this.dao.save(this.myBenutzergruppe);
 			}

@@ -58,6 +58,14 @@ public class WebDav implements Serializable {
 	 * ####################################################
 	 */
 
+	private static String DONEDIRECTORYNAME = "fertig/";
+	public WebDav(){
+		DONEDIRECTORYNAME =ConfigMain.getParameter("doneDirectoryName", "fertig/");
+
+		
+	}
+	
+	
 	/**
 	 * Retrieve all folders from one directory
 	 * ================================================================
@@ -194,7 +202,7 @@ public class WebDav implements Serializable {
 				if (!projekt.exists()) {
 					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 				}
-				projekt = new File(userHome + "fertig" + File.separator);
+				projekt = new File(userHome + DONEDIRECTORYNAME);
 				if (!projekt.exists()) {
 					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 				}

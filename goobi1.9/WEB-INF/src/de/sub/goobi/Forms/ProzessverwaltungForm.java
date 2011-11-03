@@ -124,6 +124,8 @@ public class ProzessverwaltungForm extends BasisForm {
 	private boolean showArchivedProjects = false;
 
 	private boolean showStatistics = false;
+	
+	private static String DONEDIRECTORYNAME = "fertig/";
 
 	public ProzessverwaltungForm() {
 		this.anzeigeAnpassen = new HashMap<String, Boolean>();
@@ -141,6 +143,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		} else {
 			this.anzeigeAnpassen.put("processDate", false);
 		}
+		DONEDIRECTORYNAME =ConfigMain.getParameter("doneDirectoryName", "fertig/");
+
 	}
 
 	/**
@@ -742,9 +746,9 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String UploadFromHomeAlle() {
 		WebDav myDav = new WebDav();
-		List<String> folder = myDav.UploadFromHomeAlle("fertig/");
-		myDav.removeFromHomeAlle(folder, "fertig/");
-		Helper.setMeldung(null, "directoryRemovedAll", "fertig/");
+		List<String> folder = myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
+		myDav.removeFromHomeAlle(folder, DONEDIRECTORYNAME);
+		Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
 		return "";
 	}
 

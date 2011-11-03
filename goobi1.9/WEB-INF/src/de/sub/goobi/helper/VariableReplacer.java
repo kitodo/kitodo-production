@@ -116,7 +116,7 @@ public class VariableReplacer {
 			String imagepath = this.process.getImagesDirectory().replace("\\", "/");
 			String origpath = this.process.getImagesOrigDirectory().replace("\\", "/");
 			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
-			;
+			String sourcepath = this.process.getSourceDirectory().replace("\\", "/");
 			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
 			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
@@ -133,6 +133,10 @@ public class VariableReplacer {
 				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
 			}
 
+			if (sourcepath.endsWith(File.separator)) {
+				sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
+			}
+			
 			if (inString.contains("(tifurl)")) {
 				if (SystemUtils.IS_OS_WINDOWS) {
 					inString = inString.replace("(tifurl)", "file:/" + tifpath);
@@ -166,6 +170,9 @@ public class VariableReplacer {
 			}
 			if (inString.contains("(processpath)")) {
 				inString = inString.replace("(processpath)", processpath);
+			}
+			if (inString.contains("(sourcepath)")){
+				inString = inString.replace("(sourcepath)", sourcepath);
 			}
 			if (inString.contains("(processtitle)")) {
 				inString = inString.replace("(processtitle)", this.process.getTitel());

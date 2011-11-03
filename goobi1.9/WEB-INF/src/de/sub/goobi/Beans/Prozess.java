@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -94,7 +95,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
-	private Batch batch ;
+	private Batch batch;
 
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
@@ -394,10 +395,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Helper ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
 	 */
 
 	public Projekt getProjekt() {
@@ -407,11 +406,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public void setProjekt(Projekt projekt) {
 		this.projekt = projekt;
 	}
-	
+
 	public Batch getBatch() {
 		return this.batch;
 	}
-	
+
 	public void setBatch(Batch batch) {
 		this.batch = batch;
 	}
@@ -738,16 +737,17 @@ public class Prozess implements Serializable, IGoobiEntity {
 			File[] meta = metaFilePath.listFiles(filter);
 			List<File> files = Arrays.asList(meta);
 			Collections.reverse(files);
+
 			int count;
 			if (meta != null) {
-				if (meta.length > numberOfBackups) {
+				if (files.size() > numberOfBackups) {
 					count = numberOfBackups;
 				} else {
 					count = meta.length;
 				}
-				while (count >= 0) {
+				while (count > 0) {
 					for (File data : files) {
-						if (data.toString().contains("xml." + (count - 1))) {
+						if (data.getName().endsWith("xml." + (count - 1))) {
 							Long lastModified = data.lastModified();
 							File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
 							data.renameTo(newFile);
@@ -755,7 +755,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 								newFile.setLastModified(lastModified);
 							}
 						}
-						if (data.toString().endsWith(".xml")) {
+						if (data.getName().endsWith(".xml") && count == 1) {
 							Long lastModified = data.lastModified();
 							File newFile = new File(data.toString() + ".1");
 							data.renameTo(newFile);
@@ -853,8 +853,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner
-	 * Benutzergruppe zugewiesen ist
+	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner Benutzergruppe zugewiesen ist
 	 * ================================================================
 	 */
 	public boolean getContainsUnreachableSteps() {
@@ -867,8 +866,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * check if there is one task in edit mode, where the user has the rights to
-	 * write to image folder
+	 * check if there is one task in edit mode, where the user has the rights to write to image folder
 	 * ================================================================
 	 */
 	public boolean isImageFolderInUse() {
@@ -881,8 +879,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * get user of task in edit mode with rights to write to image folder
-	 * ================================================================
+	 * get user of task in edit mode with rights to write to image folder ================================================================
 	 */
 	public Benutzer getImageFolderInUseUser() {
 		for (Schritt s : getSchritteList()) {
@@ -894,10 +891,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate
-	 * does not like bit-Fields with null Values (thats why Boolean) and MyFaces
-	 * seams not to like Boolean (thats why boolean for the GUI)
-	 * ================================================================
+	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null Values (thats why Boolean) and
+	 * MyFaces seams not to like Boolean (thats why boolean for the GUI) ================================================================
 	 */
 	public Boolean isSwappedOutHibernate() {
 		return this.swappedOut;
@@ -994,10 +989,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return "";
 	}
-	
-	
+
 	public Schritt getFirstOpenStep() {
-		
+
 		for (Schritt s : getSchritteList()) {
 			if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN) || s.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
 				return s;
@@ -1005,6 +999,5 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return null;
 	}
-	
-	
+
 }
