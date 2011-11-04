@@ -1,4 +1,5 @@
 package de.sub.goobi.Import;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -68,8 +69,7 @@ public class ImportOpac {
 
 	/**
 	 * @param inSuchfeld
-	 *            (PPN: 12, ISBN: 7, ISSN: 8, alles: 1016, Verbuchungsnummer:
-	 *            8535
+	 *            (PPN: 12, ISBN: 7, ISSN: 8, alles: 1016, Verbuchungsnummer: 8535
 	 * @param inSuchbegriff
 	 * @return
 	 * @throws Exception
@@ -77,8 +77,7 @@ public class ImportOpac {
 	@SuppressWarnings("unchecked")
 	public Fileformat OpacToDocStruct(String inSuchfeld, String inSuchbegriff, String inKatalog, Prefs inPrefs, boolean verbose) throws Exception {
 		/*
-		 * -------------------------------- Katalog auswählen
-		 * --------------------------------
+		 * -------------------------------- Katalog auswählen --------------------------------
 		 */
 		this.coc = new ConfigOpac().getCatalogueByName(inKatalog);
 		if (this.coc == null) {
@@ -86,7 +85,7 @@ public class ImportOpac {
 		}
 		Catalogue cat = new Catalogue(this.coc.getDescription(), this.coc.getAddress(), this.coc.getPort(), this.coc.getCbs(), this.coc.getDatabase());
 		if (verbose) {
-			Helper.setMeldung(null, "verwendeter Katalog: ", this.coc.getDescription());
+			Helper.setMeldung(null, Helper.getTranslation("CatalogueUsage") + ": ", this.coc.getDescription());
 		}
 		GetOpac myOpac = new GetOpac(cat);
 		myOpac.setData_character_encoding(this.coc.getCharset());
@@ -98,9 +97,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- Opac abfragen und erhaltenes
-		 * Dom-Dokument in JDom-Dokument umwandeln
-		 * --------------------------------
+		 * -------------------------------- Opac abfragen und erhaltenes Dom-Dokument in JDom-Dokument umwandeln --------------------------------
 		 */
 		Node myHitlist = myOpac.retrievePicaNode(myQuery, 1);
 		/* Opac-Beautifier aufrufen */
@@ -113,8 +110,7 @@ public class ImportOpac {
 
 		myLogger.debug("Gattung: " + this.gattung);
 		/*
-		 * -------------------------------- wenn der Treffer ein Volume eines
-		 * Multivolume-Bandes ist, dann das Sammelwerk überordnen
+		 * -------------------------------- wenn der Treffer ein Volume eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
 		 * --------------------------------
 		 */
 		// if (isMultivolume()) {
@@ -154,8 +150,7 @@ public class ImportOpac {
 					DOMOutputter doutputter = new DOMOutputter();
 					myHitlist = doutputter.output(myJdomDocMultivolumeband);
 					/*
-					 * dabei aber nicht das Document, sondern das erste Kind
-					 * nehmen
+					 * dabei aber nicht das Document, sondern das erste Kind nehmen
 					 */
 					myHitlist = myHitlist.getFirstChild();
 				}
@@ -163,8 +158,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- wenn der Treffer ein Contained Work
-		 * ist, dann übergeordnetes Werk --------------------------------
+		 * -------------------------------- wenn der Treffer ein Contained Work ist, dann übergeordnetes Werk --------------------------------
 		 */
 		// if (isContainedWork()) {
 		if (getOpacDocType(verbose).isContainedWork()) {
@@ -188,8 +182,7 @@ public class ImportOpac {
 					// outputter.output(myJdomDocParent.getRootElement(),
 					// output);
 					/*
-					 * alle Elemente des Parents übernehmen, die noch nicht
-					 * selbst vorhanden sind
+					 * alle Elemente des Parents übernehmen, die noch nicht selbst vorhanden sind
 					 */
 					if (myFirstHitParent.getChildren() != null) {
 
@@ -205,8 +198,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen
-		 * --------------------------------
+		 * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
 		 */
 		/* XML in Datei schreiben */
 		// XMLOutputter outputter = new XMLOutputter();
@@ -266,8 +258,7 @@ public class ImportOpac {
 	}
 
 	/**
-	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
-	 * 021A-9) ermitteln
+	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork: 021A-9) ermitteln
 	 * 
 	 * @param inElement
 	 * @return
@@ -290,11 +281,8 @@ public class ImportOpac {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Erg�nze das
-	 * Docstruct um zusätzliche Opac-Details ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Erg�nze das Docstruct um
+	 * zusätzliche Opac-Details ## ##################################################### ####################################################
 	 */
 
 	private void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
@@ -305,8 +293,7 @@ public class ImportOpac {
 		Element mySecondHit = null;
 
 		/*
-		 * -------------------------------- bei Multivolumes noch das Child in
-		 * xml und docstruct ermitteln --------------------------------
+		 * -------------------------------- bei Multivolumes noch das Child in xml und docstruct ermitteln --------------------------------
 		 */
 		// if (isMultivolume()) {
 		if (getOpacDocType(verbose).isMultiVolume()) {
@@ -318,8 +305,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- vorhandene PPN als digitale oder
-		 * analoge einsetzen --------------------------------
+		 * -------------------------------- vorhandene PPN als digitale oder analoge einsetzen --------------------------------
 		 */
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
@@ -330,8 +316,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- wenn es ein multivolume ist, dann
-		 * auch die PPN prüfen --------------------------------
+		 * -------------------------------- wenn es ein multivolume ist, dann auch die PPN prüfen --------------------------------
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
@@ -344,13 +329,11 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- den Main-Title bereinigen
-		 * --------------------------------
+		 * -------------------------------- den Main-Title bereinigen --------------------------------
 		 */
 		String myTitle = getElementFieldValue(myFirstHit, "021A", "a");
 		/*
-		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
-		 * Stelle nachsehen (vor allem bei Contained-Work)
+		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer Stelle nachsehen (vor allem bei Contained-Work)
 		 */
 		if (myTitle == null || myTitle.length() == 0) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
@@ -358,8 +341,7 @@ public class ImportOpac {
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
 		/*
-		 * -------------------------------- Sorting-Titel mit
-		 * Umlaut-Konvertierung --------------------------------
+		 * -------------------------------- Sorting-Titel mit Umlaut-Konvertierung --------------------------------
 		 */
 		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
@@ -367,8 +349,7 @@ public class ImportOpac {
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
 		/*
-		 * -------------------------------- bei multivolumes den Main-Title
-		 * bereinigen --------------------------------
+		 * -------------------------------- bei multivolumes den Main-Title bereinigen --------------------------------
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
@@ -376,8 +357,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- bei multivolumes den Sorting-Titel
-		 * mit Umlaut-Konvertierung --------------------------------
+		 * -------------------------------- bei multivolumes den Sorting-Titel mit Umlaut-Konvertierung --------------------------------
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
@@ -389,16 +369,14 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- Sprachen - Konvertierung auf zwei
-		 * Stellen --------------------------------
+		 * -------------------------------- Sprachen - Konvertierung auf zwei Stellen --------------------------------
 		 */
 		String sprache = getElementFieldValue(myFirstHit, "010@", "a");
 		sprache = ughhelp.convertLanguage(sprache);
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
 
 		/*
-		 * -------------------------------- bei multivolumes die Sprachen -
-		 * Konvertierung auf zwei Stellen --------------------------------
+		 * -------------------------------- bei multivolumes die Sprachen - Konvertierung auf zwei Stellen --------------------------------
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String spracheMulti = getElementFieldValue(mySecondHit, "010@", "a");
@@ -407,36 +385,31 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- ISSN
-		 * --------------------------------
+		 * -------------------------------- ISSN --------------------------------
 		 */
 		String issn = getElementFieldValue(myFirstHit, "005A", "0");
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
 		/*
-		 * -------------------------------- Copyright
-		 * --------------------------------
+		 * -------------------------------- Copyright --------------------------------
 		 */
 		String copyright = getElementFieldValue(myFirstHit, "037I", "a");
 		ughhelp.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
 		/*
-		 * -------------------------------- Format
-		 * --------------------------------
+		 * -------------------------------- Format --------------------------------
 		 */
 		String format = getElementFieldValue(myFirstHit, "034I", "a");
 		ughhelp.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
 		/*
-		 * -------------------------------- Umfang
-		 * --------------------------------
+		 * -------------------------------- Umfang --------------------------------
 		 */
 		String umfang = getElementFieldValue(myFirstHit, "034D", "a");
 		ughhelp.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
 
 		/*
-		 * -------------------------------- Signatur
-		 * --------------------------------
+		 * -------------------------------- Signatur --------------------------------
 		 */
 		String sig = getElementFieldValue(myFirstHit, "209A", "c");
 		if (sig.length() > 0) {
@@ -463,15 +436,13 @@ public class ImportOpac {
 		myLogger.debug("Signatur full: " + sig);
 
 		/*
-		 * -------------------------------- Ats Tsl Vorbereitung
-		 * --------------------------------
+		 * -------------------------------- Ats Tsl Vorbereitung --------------------------------
 		 */
 		myTitle = myTitle.toLowerCase();
 		myTitle = myTitle.replaceAll("&", "");
 
 		/*
-		 * -------------------------------- bei nicht-Zeitschriften Ats
-		 * berechnen --------------------------------
+		 * -------------------------------- bei nicht-Zeitschriften Ats berechnen --------------------------------
 		 */
 		// if (!gattung.startsWith("ab") && !gattung.startsWith("ob")) {
 		String autor = getElementFieldValue(myFirstHit, "028A", "a").toLowerCase();
@@ -481,8 +452,7 @@ public class ImportOpac {
 		this.atstsl = createAtstsl(myTitle, autor);
 
 		/*
-		 * -------------------------------- bei Zeitschriften noch ein
-		 * PeriodicalVolume als Child einfügen --------------------------------
+		 * -------------------------------- bei Zeitschriften noch ein PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
 		if (getOpacDocType(verbose).isPeriodical()) {
@@ -500,8 +470,7 @@ public class ImportOpac {
 	}
 
 	/**
-	 * den Ats erzeugen und zurückgeben
-	 * ================================================================
+	 * den Ats erzeugen und zurückgeben ================================================================
 	 */
 	public String createAtstsl(String myTitle, String autor) {
 		String myAtsTsl = "";
@@ -511,7 +480,7 @@ public class ImportOpac {
 				myAtsTsl = autor.substring(0, 4);
 			} else {
 				myAtsTsl = autor;
-			/* titel */
+				/* titel */
 			}
 
 			if (myTitle.length() > 4) {
@@ -522,8 +491,7 @@ public class ImportOpac {
 		}
 
 		/*
-		 * -------------------------------- bei Zeitschriften Tsl berechnen
-		 * --------------------------------
+		 * -------------------------------- bei Zeitschriften Tsl berechnen --------------------------------
 		 */
 		// if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
 		if (autor == null || autor.equals("")) {
@@ -571,8 +539,7 @@ public class ImportOpac {
 			String feldname = myElement.getAttributeValue("tag");
 			// System.out.println(feldname);
 			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
 			 */
 			if (feldname.equals(inTagName)) {
 				return myElement;
@@ -582,10 +549,8 @@ public class ImportOpac {
 	}
 
 	/**
-	 * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an
-	 * einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
-	 * Element bereits einen Parent hat
-	 * ================================================================
+	 * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
+	 * Element bereits einen Parent hat ================================================================
 	 */
 	@SuppressWarnings("unchecked")
 	private Element getCopyFromJdomElement(Element inHit) {
@@ -616,8 +581,7 @@ public class ImportOpac {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
 			 */
 			if (feldname.equals(inFieldName)) {
 				return getFieldValue(myElement, inAttributeName);
@@ -644,11 +608,8 @@ public class ImportOpac {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Publikationstypen aus der Konfiguration auslesen ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Publikationstypen aus der
+	 * Konfiguration auslesen ## ##################################################### ####################################################
 	 */
 
 	// public boolean isMonograph() {
@@ -688,19 +649,19 @@ public class ImportOpac {
 			ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
 			if (cod == null) {
 				if (verbose) {
-					Helper.setFehlerMeldung("Unbekannte Gattung: ", this.gattung);
+					Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType") + ": ", this.gattung);
 				}
 				cod = new ConfigOpac().getAllDoctypes().get(0);
 				this.gattung = cod.getMappings().get(0);
 				if (verbose) {
-					Helper.setFehlerMeldung("changed docttype: ", this.gattung + " - " + cod.getTitle());
+					Helper.setFehlerMeldung(Helper.getTranslation("CatalogueChangeDocType") + ": ", this.gattung + " - " + cod.getTitle());
 				}
 			}
 			return cod;
 		} catch (IOException e) {
 			myLogger.error("OpacDoctype unknown", e);
 			if (verbose) {
-				Helper.setFehlerMeldung("OpacDoctype unknown", e);
+				Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType"), e);
 			}
 			return null;
 		}

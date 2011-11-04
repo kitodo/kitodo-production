@@ -82,7 +82,7 @@ public class JobManager implements ServletContextListener {
 		initializeJob(new HistoryAnalyserJob(), "dailyHistoryAnalyser", sched);
 		initializeJob(new LuceneIndexJob(), "dailyLuceneIndex", sched);
 		// TODO template id konfigurierbar
-		initializeJobNonConfigured(new HotfolderJob(), 1, sched);
+		initializeJobNonConfigured(new HotfolderJob(), 5, sched);
 	}
 
 	/***************************************************************************
@@ -131,6 +131,7 @@ public class JobManager implements ServletContextListener {
 			sched.scheduleJob(jobDetail, trigger);
 	}
 	
+	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		logger.debug("Start daily JobManager scheduler");
 		try {
@@ -140,6 +141,7 @@ public class JobManager implements ServletContextListener {
 		}
 	}
 
+	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		logger.debug("Start daily JobManager scheduler");
 		try {
