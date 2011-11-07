@@ -47,9 +47,16 @@ public class SearchResultGeneration {
 		@SuppressWarnings("unchecked")
 		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 
+	
+		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Search results");
-		HSSFRow row0 = sheet.createRow(0);
+		
+		HSSFRow title = sheet.createRow(0);
+		HSSFCell titleCell = title.createCell(0);
+		titleCell.setCellValue(this.filter);
+		
+		HSSFRow row0 = sheet.createRow(1);
 		HSSFCell headercell0 = row0.createCell(0);
 		headercell0.setCellValue(Helper.getTranslation("title"));
 		HSSFCell headercell1 = row0.createCell(1);
@@ -65,7 +72,9 @@ public class SearchResultGeneration {
 		HSSFCell headercell6 = row0.createCell(6);
 		headercell6.setCellValue(Helper.getTranslation("Status"));
 
-		int rowcounter = 1;
+	
+		
+		int rowcounter = 2;
 		for (Prozess p : pl) {
 			HSSFRow row = sheet.createRow(rowcounter);
 			HSSFCell cell0 = row.createCell(0);

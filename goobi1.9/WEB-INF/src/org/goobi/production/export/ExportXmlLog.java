@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.IProcessDataExport;
@@ -43,6 +44,7 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
+import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
@@ -51,6 +53,7 @@ import de.sub.goobi.Beans.Vorlage;
 import de.sub.goobi.Beans.Vorlageeigenschaft;
 import de.sub.goobi.Beans.Werkstueck;
 import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.Beans.Property.BatchProperty;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 /**
@@ -157,6 +160,40 @@ public class ExportXmlLog implements IProcessDataExport {
 		comment.setText(process.getWikifield());
 		processElements.add(comment);
 
+		Batch b = process.getBatch();
+		if (b != null) {
+			Element batch = new Element("batch", xmlns);
+			batch.setAttribute("batchIdentifier", String.valueOf(b.getId()));
+			batch.setAttribute("batchTitle", b.getTitle());
+			
+			List<Element> batchProperties = new ArrayList<Element>();
+			
+			for (BatchProperty prop : b.getEigenschaftenList()) {
+				Element property = new Element("property", xmlns); 
+				property.setAttribute("propertyIdentifier", prop.getTitel());
+				if (prop.getWert() != null) {
+					property.setAttribute("value", replacer(prop.getWert()));
+				} else {
+					property.setAttribute("value", "");
+				}
+				Element label = new Element("label", xmlns);
+				// label.setAttribute("lang",
+				// l.getLanguage(),Namespace.XML_NAMESPACE);
+				// label.setText(labelMap.get(l));
+				label.setText(prop.getTitel());
+				property.addContent(label);
+				// }
+				batchProperties.add(property);
+			}
+//			if (batchProperties.size() != 0) {
+				Element properties = new Element("properties", xmlns);
+				properties.addContent(batchProperties);
+				batch.addContent(properties);
+				processElements.add(batch);
+//			}
+		}
+		
+		
 		ArrayList<Element> processProperties = new ArrayList<Element>();
 		for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
 			Element property = new Element("property", xmlns);
