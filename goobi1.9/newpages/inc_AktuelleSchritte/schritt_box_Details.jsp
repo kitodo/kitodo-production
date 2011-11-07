@@ -112,9 +112,15 @@
 		<htm:td>
 		
 			<h:form id="htmleditorform">
-				<h:inputTextarea id="myTextArea" value="#{AktuelleSchritteForm.wikiField}" rows="10" cols="50" style="width: 50%" />
+				<h:inputText id="myTextArea" value="#{AktuelleSchritteForm.wikiField}" style="width: 50%" />
 			</h:form>
-				</htm:td>
+			
+			<h:form id="addToWikiForm">
+				<h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" style="width: 60%" />
+				<h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.addToWikiField}"/>
+			</h:form>
+			
+		</htm:td>
 	</htm:tr>
 </htm:table>
 
@@ -128,6 +134,7 @@
         	width : "100%",
           height : "200",
           plugins : "safari,pagebreak,style,table,save,advhr,emotions,iespell,inlinepopups,insertdatetime,preview,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking",
+          readonly : 1,
 
         	// Theme options
         	theme_advanced_buttons1 : "save,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontsizeselect",

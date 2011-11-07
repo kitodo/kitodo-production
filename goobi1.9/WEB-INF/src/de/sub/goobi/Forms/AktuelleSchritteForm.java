@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
+import org.goobi.production.cli.CliCommand_EditLogfile;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
@@ -94,9 +95,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	private IEvaluableFilter myFilteredDataSource;
 	private String scriptPath;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+	private String addToWikiField;
 	private static String DONEDIRECTORYNAME = "fertig/";
-	
 
 	private Boolean flagWait = false;
 
@@ -107,8 +107,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.anzeigeAnpassen.put("processId", false);
 		this.anzeigeAnpassen.put("modules", false);
 		/*
-		 * --------------------- Vorgangsdatum generell anzeigen?
-		 * -------------------
+		 * --------------------- Vorgangsdatum generell anzeigen? -------------------
 		 */
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		if (login.getMyBenutzer() != null) {
@@ -116,14 +115,12 @@ public class AktuelleSchritteForm extends BasisForm {
 		} else {
 			this.anzeigeAnpassen.put("processDate", false);
 		}
-		DONEDIRECTORYNAME =ConfigMain.getParameter("doneDirectoryName", "fertig/");
+		DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Filter ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Filter ##
+	 * ##################################################### ####################################################
 	 */
 
 	/**
@@ -212,11 +209,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Bearbeitung
-	 * des Schritts übernehmen oder abschliessen ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Bearbeitung des Schritts
+	 * übernehmen oder abschliessen ## ##################################################### ####################################################
 	 */
 
 	public String SchrittDurchBenutzerUebernehmen() {
@@ -245,12 +239,11 @@ public class AktuelleSchritteForm extends BasisForm {
 					this.mySchritt
 							.getProzess()
 							.getHistory()
-							.add(new HistoryEvent(this.mySchritt.getBearbeitungsbeginn(), this.mySchritt.getReihenfolge().doubleValue(), this.mySchritt.getTitel(),
-									HistoryEventType.stepInWork, this.mySchritt.getProzess()));
+							.add(new HistoryEvent(this.mySchritt.getBearbeitungsbeginn(), this.mySchritt.getReihenfolge().doubleValue(),
+									this.mySchritt.getTitel(), HistoryEventType.stepInWork, this.mySchritt.getProzess()));
 					try {
 						/*
-						 * den Prozess aktualisieren, so dass der
-						 * Sortierungshelper gespeichert wird
+						 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 						 */
 						new ProzessDAO().save(this.mySchritt.getProzess());
 					} catch (DAOException e) {
@@ -260,8 +253,7 @@ public class AktuelleSchritteForm extends BasisForm {
 						this.flagWait = false;
 					}
 					/*
-					 * wenn es ein Image-Schritt ist, dann gleich die Images ins
-					 * Home
+					 * wenn es ein Image-Schritt ist, dann gleich die Images ins Home
 					 */
 
 					if (this.mySchritt.isTypImagesLesen() || this.mySchritt.isTypImagesSchreiben()) {
@@ -282,8 +274,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void saveProperties() {
 		try {
 			/*
-			 * den Prozess aktualisieren, so dass der Sortierungshelper
-			 * gespeichert wird
+			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 
 			for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
@@ -310,8 +301,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 		try {
 			/*
-			 * den Prozess aktualisieren, so dass der Sortierungshelper
-			 * gespeichert wird
+			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 			new ProzessDAO().save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -322,12 +312,12 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public String SchrittDurchBenutzerAbschliessen() {
 		/*
-		 * -------------------------------- if step allows writing of images,
-		 * then count all images here --------------------------------
+		 * -------------------------------- if step allows writing of images, then count all images here --------------------------------
 		 */
 		if (this.mySchritt.isTypImagesSchreiben()) {
 			try {
-				this.mySchritt.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(this.mySchritt.getProzess().getImagesOrigDirectory())));
+				this.mySchritt.getProzess().setSortHelperImages(
+						FileUtils.getNumberOfFiles(new File(this.mySchritt.getProzess().getImagesOrigDirectory())));
 				HistoryAnalyserJob.updateHistory(this.mySchritt.getProzess());
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("Error while calculation of storage and images", e);
@@ -335,9 +325,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 
 		/*
-		 * -------------------------------- wenn das Resultat des
-		 * Arbeitsschrittes zunÃ¤chst verifiziert werden soll, dann ggf. das
-		 * Abschliessen abbrechen --------------------------------
+		 * -------------------------------- wenn das Resultat des Arbeitsschrittes zunÃ¤chst verifiziert werden soll, dann ggf. das Abschliessen
+		 * abbrechen --------------------------------
 		 */
 		if (this.mySchritt.isTypBeimAbschliessenVerifizieren()) {
 			/* Metadatenvalidierung */
@@ -373,8 +362,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 
 		/*
-		 * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten
-		 * schon vorher draussen
+		 * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon vorher draussen
 		 */
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
@@ -383,10 +371,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Eigenschaften
-	 * bearbeiten ## #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Eigenschaften bearbeiten ##
+	 * ##################################################### ####################################################
 	 */
 
 	public String SchrittEigenschaftNeu() {
@@ -414,11 +400,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Korrekturmeldung an vorherige Schritte ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Korrekturmeldung an vorherige
+	 * Schritte ## ##################################################### ####################################################
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -462,8 +445,7 @@ public class AktuelleSchritteForm extends BasisForm {
 					.getHistory()
 					.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp.getProzess()));
 			/*
-			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-			 * wieder schliessen
+			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
 			List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
 					.add(Restrictions.le("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
@@ -485,8 +467,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 
 			/*
-			 * den Prozess aktualisieren, so dass der Sortierungshelper
-			 * gespeichert wird
+			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 			new ProzessDAO().save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -498,11 +479,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Problem-behoben-Meldung an nachfolgende Schritte ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Problem-behoben-Meldung an
+	 * nachfolgende Schritte ## ##################################################### ####################################################
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -527,8 +505,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			Schritt temp = dao.get(this.mySolutionID);
 
 			/*
-			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
-			 * wieder schliessen
+			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
 			List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
 					.add(Restrictions.ge("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.le("reihenfolge", temp.getReihenfolge()))
@@ -548,8 +525,8 @@ public class AktuelleSchritteForm extends BasisForm {
 				Schritteigenschaft seg = new Schritteigenschaft();
 				seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
 				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + Helper.getTranslation("KorrekturloesungFuer")
-						+ " " + temp.getTitel() + ": " + this.solutionMessage);
+				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
 				seg.setSchritt(step);
 				seg.setType(PropertyType.messageImportant);
 				seg.setCreationDate(new Date());
@@ -558,8 +535,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 
 			/*
-			 * den Prozess aktualisieren, so dass der Sortierungshelper
-			 * gespeichert wird
+			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 			new ProzessDAO().save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -571,11 +547,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Upload und
-	 * Download der Images ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Upload und Download der
+	 * Images ## ##################################################### ####################################################
 	 */
 
 	public String UploadFromHome() {
@@ -602,9 +575,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<String> fertigListe = this.myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
 		List<String> geprueft = new ArrayList<String>();
 		/*
-		 * -------------------------------- die hochgeladenen Prozess-IDs
-		 * durchlaufen und auf abgeschlossen setzen
-		 * --------------------------------
+		 * -------------------------------- die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen --------------------------------
 		 */
 		if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
 			this.nurOffeneSchritte = false;
@@ -617,8 +588,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			for (Iterator<Schritt> iterator = this.page.getCompleteList().iterator(); iterator.hasNext();) {
 				Schritt step = iterator.next();
 				/*
-				 * nur wenn der Schritt bereits im Bearbeitungsmodus ist,
-				 * abschliessen
+				 * nur wenn der Schritt bereits im Bearbeitungsmodus ist, abschliessen
 				 */
 				if (step.getProzess().getId().intValue() == Integer.parseInt(myID) && step.getBearbeitungsstatusEnum() == StepStatus.INWORK) {
 					this.mySchritt = step;
@@ -703,8 +673,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/**
-	 * call module for this step
-	 * ================================================================
+	 * call module for this step ================================================================
 	 * 
 	 * @throws IOException
 	 */
@@ -774,10 +743,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Getter und
-	 * Setter ## #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
 	 */
 
 	public Prozess getMyProzess() {
@@ -853,16 +820,13 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Parameter per
-	 * Get Ã¼bergeben bekommen und entsprechen den passenden Schritt laden ##
-	 * #####################################################
+	 * ##################################################### ##################################################### ## ## Parameter per Get Ã¼bergeben
+	 * bekommen und entsprechen den passenden Schritt laden ## #####################################################
 	 * ####################################################
 	 */
 
 	/**
-	 * prüfen, ob per Parameter vielleicht zunÃ¤chst ein anderer geladen werden
-	 * soll
+	 * prüfen, ob per Parameter vielleicht zunÃ¤chst ein anderer geladen werden soll
 	 * 
 	 * @throws DAOException
 	 *             , NumberFormatException
@@ -871,8 +835,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		String param = Helper.getRequestParameter("myid");
 		if (param != null && !param.equals("")) {
 			/*
-			 * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann
-			 * dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
+			 * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
 			 */
 			if (this.page == null && (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
 				FilterAlleStart();
@@ -909,10 +872,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Downloads ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Downloads ##
+	 * ##################################################### ####################################################
 	 */
 
 	public void DownloadTiffHeader() throws IOException {
@@ -921,10 +882,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * public void DownloadRusExport() throws IOException, ReadException,
-	 * InterruptedException, PreferencesException, SwapException, DAOException,
-	 * WriteException { RusslandExport rus = new
-	 * RusslandExport(mySchritt.getProzess()); rus.ExportStart(); }
+	 * public void DownloadRusExport() throws IOException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException,
+	 * WriteException { RusslandExport rus = new RusslandExport(mySchritt.getProzess()); rus.ExportStart(); }
 	 */
 
 	public void ExportDMS() {
@@ -976,10 +935,27 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	public void setWikiField(String inString) {
 		this.mySchritt.getProzess().setWikifield(inString);
-		// try {
-		// new ProzessDAO().save(mySchritt.getProzess());
-		// } catch (DAOException e) {
-		// myLogger.error(e);
-		// }
 	}
+
+	public String getAddToWikiField() {
+		return addToWikiField;
+	}
+
+	public void setAddToWikiField(String addToWikiField) {
+		this.addToWikiField = addToWikiField;
+	}
+
+	public void addToWikiField() {
+		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+		CliCommand_EditLogfile cli = new CliCommand_EditLogfile();
+		this.mySchritt.getProzess().setWikifield(this.mySchritt.getProzess().getWikifield() + cli.getWikiMessage("user", message));
+		this.addToWikiField = "";
+		try {
+			new ProzessDAO().save(mySchritt.getProzess());
+		} catch (DAOException e) {
+			myLogger.error(e);
+		}
+	}
+
 }

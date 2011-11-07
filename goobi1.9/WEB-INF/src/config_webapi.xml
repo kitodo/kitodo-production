@@ -6,6 +6,7 @@
 		<command name="help"/>
 		<command name="ucc"/>
 		<command name="ucc_upload"/>
+		<command name="editLogfile"/>
 	</credentials>
 	<credentials ip="127.0.0.1" password="test">
 		<command name="addStep"/>
@@ -15,6 +16,7 @@
 		<command name="help"/>
 		<command name="ucc"/>
 		<command name="ucc_upload"/>
+		<command name="editLogfile"/>
 	</credentials>
 	<credentials ip="192.168.178.30" password="test">
 		<command name="addStep"/>
