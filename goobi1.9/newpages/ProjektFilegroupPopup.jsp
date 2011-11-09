@@ -72,7 +72,7 @@
 										<h:inputText id="mimetype"
 											style="width: 550px;margin-right:15px"
 											value="#{ProjekteForm.myFilegroup.mimetype}" required="true" />
-										<x:message id="id14" for="mimetype" style="color: red"
+									 	<x:message id="id14" for="mimetype" style="color: red"
 											replaceIdWithLabel="true" />
 									</h:panelGroup>
 
@@ -82,9 +82,18 @@
 										<h:inputText id="suffix"
 											style="width: 550px;margin-right:15px"
 											value="#{ProjekteForm.myFilegroup.suffix}" required="true" />
-										<x:message id="id17" for="suffix" style="color: red"
+					 					<x:message id="id17" for="suffix" style="color: red"
 											replaceIdWithLabel="true" />
 									</h:panelGroup>
+									
+									<%-- folder --%>
+									<h:outputLabel for="folder" value="#{msgs.folder}"/>
+									<h:panelGroup>
+										<h:inputText id="folder" 
+										style="width: 550px;margin-right:15px"
+											value="#{ProjekteForm.myFilegroup.folder}" required="true" />	
+									</h:panelGroup>
+
 
 								</h:panelGrid>
 							</htm:td>

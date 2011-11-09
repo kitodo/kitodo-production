@@ -14,7 +14,7 @@
 		<property name="path" column="path" type="string"/>
 		<property name="mimetype" column="mimetype" type="string"/>
 		<property name="suffix" column="suffix" type="string"/>
-		
+		<property name="folder" column="folder" type="string"/>
 		<many-to-one name="project" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
 				
 	</class>

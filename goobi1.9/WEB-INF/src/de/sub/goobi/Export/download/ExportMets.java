@@ -1,4 +1,5 @@
 package de.sub.goobi.Export.download;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -238,14 +240,29 @@ public class ExportMets {
 			// group pathes!
 			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
 			Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
+
 			if (myFilegroups != null && myFilegroups.size() > 0) {
 				for (ProjectFileGroup pfg : myFilegroups) {
-					VirtualFileGroup v = new VirtualFileGroup();
-					v.setName(pfg.getName());
-					v.setPathToFiles(vp.replace(pfg.getPath()));
-					v.setMimetype(pfg.getMimetype());
-					v.setFileSuffix(pfg.getSuffix());
-					mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+					// check if source files exists
+					if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+						File folder = new File(myProzess.getMethodFromName(pfg.getFolder()));
+						if (folder.exists() && folder.list().length > 0) {
+							VirtualFileGroup v = new VirtualFileGroup();
+							v.setName(pfg.getName());
+							v.setPathToFiles(vp.replace(pfg.getPath()));
+							v.setMimetype(pfg.getMimetype());
+							v.setFileSuffix(pfg.getSuffix());
+							mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+						}
+					} else {
+
+						VirtualFileGroup v = new VirtualFileGroup();
+						v.setName(pfg.getName());
+						v.setPathToFiles(vp.replace(pfg.getPath()));
+						v.setMimetype(pfg.getMimetype());
+						v.setFileSuffix(pfg.getSuffix());
+						mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+					}
 				}
 			}
 
@@ -268,20 +285,24 @@ public class ExportMets {
 
 			String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
 			pointer = vp.replace(anchor);
-			mm.setMptrAnchorUrl(pointer);
 
 			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-			ArrayList<String> images = new ArrayList<String>();
+			List<String> images = new ArrayList<String>();
 			try {
+				// TODO andere Dateigruppen nicht mit image Namen ersetzen
 				images = new MetadatenImagesHelper(this.myPrefs, dd).getImageFiles(myProzess);
 				dd.overrideContentFiles(images);
 			} catch (IndexOutOfBoundsException e) {
-				myLogger.error(e);				
+				myLogger.error(e);
 			} catch (InvalidImagesException e) {
 				myLogger.error(e);
 			}
-			// }
 			mm.write(targetFileName);
 		}
 	}
+
+	//	private static String getMimetype(String filename) {
+//		FileNameMap fnm = URLConnection.getFileNameMap();
+//		return fnm.getContentTypeFor(filename);
+//	}
 }

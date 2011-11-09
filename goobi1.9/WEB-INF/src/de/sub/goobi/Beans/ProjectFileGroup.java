@@ -34,8 +34,9 @@ public class ProjectFileGroup implements Serializable {
 	private Integer id;
 	private String name;
 	private String path;
-	private String mimetype;
-	private String suffix;
+	private String mimetype; // optional
+	private String suffix; // optional
+	private String folder;
 
 	private Projekt project;
 
@@ -93,6 +94,14 @@ public class ProjectFileGroup implements Serializable {
 
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
+	}
+
+	public String getFolder() {
+		return this.folder;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 
 }

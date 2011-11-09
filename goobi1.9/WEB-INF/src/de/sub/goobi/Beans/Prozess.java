@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -379,6 +380,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public String getPdfDirectory() throws SwapException, DAOException, IOException, InterruptedException {
 		return getOcrDirectory() + this.titel + "_pdf" + File.separator;
+	}
+
+	public String getAltoDirectory() throws SwapException, DAOException, IOException, InterruptedException {
+		// TODO FIXME
+		return getOcrDirectory() + this.titel + "_xml" + File.separator;
 	}
 
 	public String getSourceDirectory() throws SwapException, DAOException, IOException, InterruptedException {
@@ -997,6 +1003,30 @@ public class Prozess implements Serializable, IGoobiEntity {
 				return s;
 			}
 		}
+		return null;
+	}
+
+
+
+	public String getMethodFromName(String methodName) {
+		java.lang.reflect.Method method;
+		try {
+			method = this.getClass().getMethod(methodName);
+			Object o = method.invoke(this);
+			return (String) o;
+		} catch (SecurityException e) {
+			myLogger.error(e);
+		} catch (NoSuchMethodException e) {
+			myLogger.error(e);
+		} catch (IllegalArgumentException e) {
+			myLogger.error(e);
+		} catch (IllegalAccessException e) {
+			myLogger.error(e);
+		} catch (InvocationTargetException e) {
+			myLogger.error(e);
+		}
+
+		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -581,7 +581,8 @@
 																	</x:dataTable>
 																	<%-- Hinzufügen-Schaltknopf --%>
 																	<h:panelGroup id="id87">
-																		<jp:popupFrame scrolling="auto" height="200px"
+																		<jp:popupFrame scrolling="auto" height="270px"
+																		
 																			width="700px" topStyle="background: #1874CD;"
 																			bottomStyleClass="popup_unten"
 																			styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"
