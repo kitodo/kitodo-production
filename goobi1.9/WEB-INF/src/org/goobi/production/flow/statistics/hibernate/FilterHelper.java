@@ -623,12 +623,12 @@ class FilterHelper {
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
 
-			if (tok.startsWith(FilterString.PROCESSPROPERTY)) {
+			if (tok.startsWith(FilterString.PROCESSPROPERTY)||  tok.startsWith(FilterString.PROZESSEIGENSCHAFT)) {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, false);
-			} else if (tok.startsWith(FilterString.STEPPROPERTY)) {
+			} else if (tok.startsWith(FilterString.STEPPROPERTY) || tok.startsWith(FilterString.SCHRITTEIGENSCHAFT)) {
 				if (conjStepProperties == null) {
 					conjStepProperties = Restrictions.conjunction();
 				}
@@ -638,34 +638,34 @@ class FilterHelper {
 			// search over steps
 			// original filter, is left here for compatibility reason
 			// doesn't fit into new keyword scheme
-			else if (tok.startsWith(FilterString.STEP)) {
+			else if (tok.startsWith(FilterString.STEP) || tok.startsWith(FilterString.SCHRITT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + createHistoricFilter(conjSteps, tok, flagSteps);
 
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPINWORK)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPINWORK) || tok.toLowerCase().startsWith(FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.INWORK, false));
 
 				// new keyword stepLocked implemented
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPLOCKED)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPLOCKED)||tok.toLowerCase().startsWith(FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.LOCKED, false));
 
 				// new keyword stepOpen implemented
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPOPEN)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPOPEN)|| tok.toLowerCase().startsWith(FilterString.SCHRITTOFFEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.OPEN, false));
 
 				// new keyword stepDone implemented
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONE)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONE) || tok.toLowerCase().startsWith(FilterString.SCHRITTABGESCHLOSSEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
@@ -673,26 +673,26 @@ class FilterHelper {
 
 				// new keyword stepDoneTitle implemented, replacing so far
 				// undocumented
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONETITLE)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONETITLE)|| tok.toLowerCase().startsWith(FilterString.ABGESCHLOSSENERSCHRITTTITEL)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, false);
 
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONEUSER)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONEUSER)|| tok.toLowerCase().startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER)) {
 				if (conjUsers == null) {
 					conjUsers = Restrictions.conjunction();
 				}
 				FilterHelper.filterStepDoneUser(conjUsers, tok);
 
-			} else if (tok.startsWith(FilterString.PROJECT)) {
+			} else if (tok.startsWith(FilterString.PROJECT)|| tok.toLowerCase().startsWith(FilterString.PROJEKT)) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
 				FilterHelper.filterProject(conjProjects, tok, false);
 
-			} else if (tok.startsWith(FilterString.TEMPLATE)) {
+			} else if (tok.startsWith(FilterString.TEMPLATE)|| tok.toLowerCase().startsWith(FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
@@ -704,52 +704,52 @@ class FilterHelper {
 				}
 				FilterHelper.filterIds(conjProcesses, tok);
 
-			} else if (tok.startsWith(FilterString.PROCESS)) {
+			} else if (tok.startsWith(FilterString.PROCESS) || tok.toLowerCase().startsWith(FilterString.PROZESS)) {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
 				conjProcesses.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
 
-			} else if (tok.startsWith(FilterString.WORKPIECE)) {
+			} else if (tok.startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
 				FilterHelper.filterWorkpiece(conjWorkPiece, tok, false);
 
-			} else if (tok.startsWith("-" + FilterString.PROCESSPROPERTY)) {
+			} else if (tok.startsWith("-" + FilterString.PROCESSPROPERTY) || tok.startsWith("-" + FilterString.PROZESSEIGENSCHAFT)) {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, true);
-			} else if (tok.startsWith("-" + FilterString.STEPPROPERTY)) {
+			} else if (tok.startsWith("-" + FilterString.STEPPROPERTY) || tok.startsWith("-" + FilterString.SCHRITTEIGENSCHAFT)) {
 				if (conjStepProperties == null) {
 					conjStepProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterStepProperty(conjStepProperties, tok, true);
 			}
 
-			else if (tok.toLowerCase().startsWith("-" + FilterString.STEPINWORK)) {
+			else if (tok.toLowerCase().startsWith("-" + FilterString.STEPINWORK)||tok.startsWith("-" + FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.INWORK, true));
 
 				// new keyword stepLocked implemented
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPLOCKED)) {
+			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPLOCKED)|| tok.startsWith("-" + FilterString.SCHRITTGESPERRT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.LOCKED, true));
 
 				// new keyword stepOpen implemented
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPOPEN)) {
+			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPOPEN) || tok.startsWith("-" + FilterString.SCHRITTOFFEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				message = message + (createStepFilters(returnParameters, conjSteps, tok,  StepStatus.OPEN, true));
 
 				// new keyword stepDone implemented
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPDONE)) {
+			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPDONE)||tok.startsWith("-" + FilterString.SCHRITTABGESCHLOSSEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
@@ -757,26 +757,26 @@ class FilterHelper {
 
 				// new keyword stepDoneTitle implemented, replacing so far
 				// undocumented
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPDONETITLE)) {
+			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPDONETITLE) || tok.startsWith("-" + FilterString.ABGESCHLOSSENERSCHRITTTITEL)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, true);
 
-			} else if (tok.startsWith("-" + FilterString.PROJECT)) {
+			} else if (tok.startsWith("-" + FilterString.PROJECT)|| tok.startsWith("-" + FilterString.PROJEKT)) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
 				FilterHelper.filterProject(conjProjects, tok, true);
 
-			} else if (tok.startsWith("-" + FilterString.TEMPLATE)) {
+			} else if (tok.startsWith("-" + FilterString.TEMPLATE) || tok.startsWith("-" + FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
 				FilterHelper.filterScanTemplate(conjTemplates, tok, true);
 
-			} else if (tok.startsWith("-" + FilterString.WORKPIECE)) {
+			} else if (tok.startsWith("-" + FilterString.WORKPIECE) || tok.startsWith("-" + FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}

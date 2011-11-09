@@ -231,30 +231,30 @@ public class BatchHelper extends FilterHelper {
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
 
-			if (tok.startsWith(FilterString.PROCESSPROPERTY)) {
+			if (tok.startsWith(FilterString.PROCESSPROPERTY)||  tok.startsWith(FilterString.PROZESSEIGENSCHAFT)) {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				BatchHelper.filterProcessProperty(conjProcessProperties, tok, false);
-			} else if (tok.startsWith(FilterString.STEPPROPERTY)) {
+			} else if (tok.startsWith(FilterString.STEPPROPERTY) || tok.startsWith(FilterString.SCHRITTEIGENSCHAFT)) {
 				if (conjStepProperties == null) {
 					conjStepProperties = Restrictions.conjunction();
 				}
 				BatchHelper.filterStepProperty(conjStepProperties, tok, false);
 
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONEUSER)) {
+			} else if (tok.toLowerCase().startsWith(FilterString.STEPDONEUSER)|| tok.toLowerCase().startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER)) {
 				if (conjUsers == null) {
 					conjUsers = Restrictions.conjunction();
 				}
 				BatchHelper.filterStepDoneUser(conjUsers, tok);
 
-			} else if (tok.startsWith(FilterString.PROJECT)) {
+			} else if (tok.startsWith(FilterString.PROJECT)|| tok.toLowerCase().startsWith(FilterString.PROJEKT)) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
 				BatchHelper.filterProject(conjProjects, tok, false);
 
-			} else if (tok.startsWith(FilterString.TEMPLATE)) {
+			} else if (tok.startsWith(FilterString.TEMPLATE)|| tok.toLowerCase().startsWith(FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
@@ -266,41 +266,41 @@ public class BatchHelper extends FilterHelper {
 				}
 				BatchHelper.filterIds(conjProcesses, tok);
 
-			} else if (tok.startsWith(FilterString.PROCESS)) {
+			} else if (tok.startsWith(FilterString.PROCESS) || tok.toLowerCase().startsWith(FilterString.PROZESS)) {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
 				conjProcesses.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
 
-			} else if (tok.startsWith(FilterString.WORKPIECE)) {
+			} else if (tok.startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
 				BatchHelper.filterWorkpiece(conjWorkPiece, tok, false);
 
-			} else if (tok.startsWith("-" + FilterString.PROCESSPROPERTY)) {
+			} else if (tok.startsWith("-" + FilterString.PROCESSPROPERTY) || tok.startsWith("-" + FilterString.PROZESSEIGENSCHAFT)) {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				BatchHelper.filterProcessProperty(conjProcessProperties, tok, true);
-			} else if (tok.startsWith("-" + FilterString.STEPPROPERTY)) {
+			} else if (tok.startsWith("-" + FilterString.STEPPROPERTY) || tok.startsWith("-" + FilterString.SCHRITTEIGENSCHAFT)) {
 				if (conjStepProperties == null) {
 					conjStepProperties = Restrictions.conjunction();
 				}
 				BatchHelper.filterStepProperty(conjStepProperties, tok, true);	
-			} else if (tok.startsWith("-" + FilterString.PROJECT)) {
+			} else if (tok.startsWith("-" + FilterString.PROJECT)|| tok.startsWith("-" + FilterString.PROJEKT)) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
 				BatchHelper.filterProject(conjProjects, tok, true);
 
-			} else if (tok.startsWith("-" + FilterString.TEMPLATE)) {
+			} else if (tok.startsWith("-" + FilterString.TEMPLATE) || tok.startsWith("-" + FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
 				BatchHelper.filterScanTemplate(conjTemplates, tok, true);
 
-			} else if (tok.startsWith("-" + FilterString.WORKPIECE)) {
+			} else if (tok.startsWith("-" + FilterString.WORKPIECE) || tok.startsWith("-" + FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
