@@ -28,12 +28,19 @@ package org.goobi.production.flow.jobs;
  * exception statement from your version.
  */
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.Import.GoobiHotfolder;
-import org.goobi.production.cli.CommandLineInterface;
+import org.goobi.production.cli.helper.CopyProcess;
+
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.WriteException;
 
 import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
@@ -41,6 +48,7 @@ import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
  * 
@@ -116,7 +124,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 								logger.debug("found file: " + filename);
 								logger.trace("13");
 
-								int returnValue = CommandLineInterface.generateProcess(filename, template, hot.getFolderAsFile(),
+								int returnValue = generateProcess(filename, template, hot.getFolderAsFile(),
 										hot.getCollection(), hot.getUpdateStrategy(), batch);
 								logger.trace("14");
 								if (returnValue != 0) {
@@ -172,5 +180,191 @@ public class HotfolderJob extends AbstractGoobiJob {
 			}
 		}
 		return size;
+	}
+	
+	public static int generateProcess(String processTitle, Prozess vorlage, File dir, String digitalCollection, String updateStrategy, Batch batch) {
+		// wenn keine anchor Datei, dann Vorgang anlegen
+		if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
+			if (!updateStrategy.equals("ignore")) {
+				boolean test = testTitle(processTitle.substring(0, processTitle.length() - 4));
+				if (!test && updateStrategy.equals("error")) {
+					File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ File.separator);
+					List<String> imageDir = new ArrayList<String>();
+					if (images.isDirectory()) {
+						String[] files = images.list();
+						for (int i = 0; i < files.length; i++) {
+							imageDir.add(files[i]);
+						}
+						try {
+							FileUtils.deleteDirectory(images);
+						} catch (IOException e) {
+						}
+					}
+					try {
+						FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+					} catch (Exception e) {
+						logger.error("Can not delete file " + processTitle, e);
+						return 30;
+					}
+					File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ "_anchor.xml");
+					if (anchor.exists()) {
+						FileUtils.deleteQuietly(anchor);
+					}
+					return 27;
+				} else if (!test && updateStrategy.equals("update")) {
+					// TODO UPDATE mets data
+					File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ File.separator);
+					List<String> imageDir = new ArrayList<String>();
+					if (images.isDirectory()) {
+						String[] files = images.list();
+						for (int i = 0; i < files.length; i++) {
+							imageDir.add(files[i]);
+						}
+						try {
+							FileUtils.deleteDirectory(images);
+						} catch (IOException e) {
+						}
+					}
+					try {
+						FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+					} catch (Exception e) {
+						logger.error("Can not delete file " + processTitle, e);
+						return 30;
+					}
+					File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ "_anchor.xml");
+					if (anchor.exists()) {
+						FileUtils.deleteQuietly(anchor);
+					}
+					return 28;
+				}
+			}
+			CopyProcess form = new CopyProcess();
+			form.setProzessVorlage(vorlage);
+			form.metadataFile = dir.getAbsolutePath() + File.separator + processTitle;
+			form.Prepare();
+			form.getProzessKopie().setTitel(processTitle.substring(0, processTitle.length() - 4));
+			if (form.testTitle()) {
+				if (digitalCollection == null) {
+					List<String> collections = new ArrayList<String>();
+					// collections.add("varia");
+					form.setDigitalCollections(collections);
+				} else {
+					List<String> col = new ArrayList<String>();
+					col.add(digitalCollection);
+					form.setDigitalCollections(col);
+				}
+				form.OpacAuswerten();
+
+				try {
+					Prozess p = form.NeuenProzessAnlegen2();
+					if (p.getId() != null) {
+						if (batch != null) {
+							batch.addProcessToBatch(p);
+							batch.setProject(p.getProjekt());
+						}
+						// copy image files to new directory
+						File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ File.separator);
+						List<String> imageDir = new ArrayList<String>();
+						if (images.isDirectory()) {
+							String[] files = images.list();
+							for (int i = 0; i < files.length; i++) {
+								imageDir.add(files[i]);
+							}
+							for (String file : imageDir) {
+								File image = new File(images, file);
+								File dest = new File(p.getImagesOrigDirectory() + image.getName());
+								FileUtils.moveFile(image, dest);
+							}
+							FileUtils.deleteDirectory(images);
+						}
+
+						// copy fulltext files
+
+						File fulltext = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ "_txt" + File.separator);
+						// List<String> fulltextDir = new ArrayList<String>();
+						if (fulltext.isDirectory()) {
+							// String[] files = fulltext.list();
+							// for (int i = 0; i < files.length; i++) {
+							// fulltextDir.add(files[i]);
+							// }
+							// for (String file : fulltextDir) {
+							// File txtFile = new File(fulltext, file);
+							// File dest = new File(p.getTxtDirectory() + File.separator + txtFile.getName());
+							// FileUtils.moveFile(txtFile, dest);
+							// }
+							// FileUtils.deleteDirectory(fulltext);
+							FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
+						}
+
+						// copy source files
+
+						File sourceDir = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ "_src" + File.separator);
+						if (sourceDir.isDirectory()) {
+							FileUtils.moveDirectory(sourceDir, new File(p.getSourceDirectory()));
+						}
+
+						try {
+							FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+						} catch (Exception e) {
+							logger.error("Can not delete file " + processTitle + " after importing " + p.getTitel() + " into goobi", e);
+							return 30;
+						}
+						File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ "_anchor.xml");
+						if (anchor.exists()) {
+							FileUtils.deleteQuietly(anchor);
+						}
+					}
+				} catch (ReadException e) {
+					logger.error(e);
+					return 20;
+				} catch (PreferencesException e) {
+					logger.error(e);
+					return 21;
+				} catch (SwapException e) {
+					logger.error(e);
+					return 22;
+				} catch (DAOException e) {
+					logger.error(e);
+					return 22;
+				} catch (WriteException e) {
+					logger.error(e);
+					return 23;
+				} catch (IOException e) {
+					logger.error(e);
+					return 24;
+				} catch (InterruptedException e) {
+					logger.error(e);
+					return 25;
+				}
+			}
+			// TODO updateImagePath aufrufen
+
+			return 0;
+		} else {
+			return 26;
+		}
+	}
+	
+	public static boolean testTitle(String titel) {
+		if (titel != null) {
+			long anzahl = 0;
+			try {
+				anzahl = new ProzessDAO().count("from Prozess where titel='" + titel + "'");
+			} catch (DAOException e) {
+				return false;
+			}
+			if (anzahl > 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
