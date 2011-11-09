@@ -1,4 +1,12 @@
-package org.goobi.production.enums;
+package org.goobi.production.plugin.interfaces;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.goobi.production.cli.CommandResponse;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,57 +34,21 @@ package org.goobi.production.enums;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.production.plugin.interfaces.ICommandPlugin;
-import org.goobi.production.plugin.interfaces.IImportPlugin;
-import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.production.plugin.interfaces.IStepPlugin;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
-public enum PluginType {
+public interface ICommandPlugin extends IPlugin {
+	
+	public void setParameterMap(HashMap<String, String> parameterMap);
 
-	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validator(3, "validate", IValidatorPlugin.class), Command(4, "command", ICommandPlugin.class);
+	public CommandResponse validate();
 	
-	private int id;
-	private String name;
-	private Class<IPlugin> interfaz;
+	public CommandResponse execute();
 	
-	@SuppressWarnings("unchecked")
-	private PluginType(int id, String name, Class<? extends IPlugin> inInterfaz) {
-		this.id =id;
-		this.name = name;
-		this.interfaz = (Class<IPlugin>) inInterfaz;
-	}
+	public CommandResponse help();
 	
-	public static PluginType getTypeFromValue(String pluginType) {
-		if (pluginType != null) {
-			for (PluginType type : PluginType.values()) {
-				if (type.getName().equals(pluginType)) {
-					return type;
-				}
-			}
-		}
-		return null;
-	}
+	public boolean usesHttpSession();
 	
-	public static PluginType getTypesFromId(int pluginType) {
-		for (PluginType type : PluginType.values()) {
-			if (type.getId()== pluginType) {
-				return type;
-			}
-		}
-		return null;
-	}
+	public void setHttpResponse(HttpServletResponse resp);
 
-	public int getId() {
-		return this.id;
-	}
-	
-	public Class<IPlugin> getInterfaz() {
-		return this.interfaz;
-	}
-
-	public String getName() {
-		return this.name;
-	}
+	public void setHttpRequest(HttpServletRequest resp);
 	
 }

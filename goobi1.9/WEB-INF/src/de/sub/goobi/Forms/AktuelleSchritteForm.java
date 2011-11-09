@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
-import org.goobi.production.cli.CliCommand_EditLogfile;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
@@ -948,8 +948,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void addToWikiField() {
 		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		CliCommand_EditLogfile cli = new CliCommand_EditLogfile();
-		this.mySchritt.getProzess().setWikifield(this.mySchritt.getProzess().getWikifield() + cli.getWikiMessage("user", message));
+		this.mySchritt.getProzess().setWikifield(this.mySchritt.getProzess().getWikifield() + WikiFieldHelper.getWikiMessage("user", message));
 		this.addToWikiField = "";
 		try {
 			new ProzessDAO().save(mySchritt.getProzess());

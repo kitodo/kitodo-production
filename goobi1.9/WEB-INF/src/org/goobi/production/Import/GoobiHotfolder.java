@@ -38,6 +38,8 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
+import de.sub.goobi.helper.Helper;
+
 public class GoobiHotfolder implements IGoobiHotfolder {
 
 	/** Logger for this class. */
@@ -152,6 +154,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		logger.trace("config 2");
 
 		try {
+			//XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "config_hotfolder.xml");
 			XMLConfiguration config = new XMLConfiguration("config_hotfolder.xml");
 
 			logger.trace("config 3");
