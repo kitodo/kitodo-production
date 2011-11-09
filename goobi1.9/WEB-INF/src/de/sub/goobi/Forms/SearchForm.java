@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -334,37 +335,37 @@ public class SearchForm {
 			search += "\"" + this.processOperand +  this.processTitle + "\" ";
 		}
 		if (!this.idin.isEmpty()) {
-			search += "\"idin:" + this.idin + "\" ";
+			search += "\"" + FilterString.ID + this.idin + "\" ";
 		}
 		if (!this.project.isEmpty() && !this.project.equals(Helper.getTranslation("notSelected"))) {
-			search += "\""+ this.projectOperand + "proj:" + this.project + "\" ";
+			search += "\""+ this.projectOperand + FilterString.PROJECT + this.project + "\" ";
 		}
 		if (!this.processPropertyValue.isEmpty()) {
 			if (!this.processPropertyTitle.isEmpty() && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.processPropertyOperand + "processeig:" + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
 			} else {
-				search += "\"processeig:" + this.processPropertyValue + "\" ";
+				search += "\""+ this.masterpiecePropertyOperand+FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
 			}
 		}
 		if (!this.masterpiecePropertyValue.isEmpty()) {
 			if (!this.masterpiecePropertyTitle.isEmpty() && !this.masterpiecePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.masterpiecePropertyOperand + "werk:" + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
+				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
 			} else {
-				search += "\""+ this.masterpiecePropertyOperand + "werk:" + this.masterpiecePropertyValue + "\" ";
+				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyValue + "\" ";
 			}
 		}
 		if (!this.templatePropertyValue.isEmpty()) {
 			if (!this.templatePropertyTitle.isEmpty() && !this.templatePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.templatePropertyOperand + "vorl:" + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
+				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
 			} else {
-				search += "\""+ this.templatePropertyOperand + "vorl:" + this.templatePropertyValue + "\" ";
+				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue + "\" ";
 			}
 		}
 		if (!this.stepPropertyValue.isEmpty() && !this.stepname.isEmpty()) {
 			if (!this.stepPropertyTitle.isEmpty() && !this.stepPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.stepPropertyOperand + "stepeig:" + this.stepPropertyTitle + ":" + this.stepPropertyValue + "\" ";
+				search += "\""+ this.stepPropertyOperand + FilterString.STEPPROPERTY + this.stepPropertyTitle + ":" + this.stepPropertyValue + "\" ";
 			} else {
-				search += "\""+ this.stepPropertyOperand + "stepeig:" + this.stepPropertyValue + "\" ";
+				search += "\""+ this.stepPropertyOperand + FilterString.STEPPROPERTY + this.stepPropertyValue + "\" ";
 			}
 		}
 
@@ -372,7 +373,7 @@ public class SearchForm {
 			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
 		}
 		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty() && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))) {
-			search += "\"stepdoneuser:" + this.stepdoneuser + "\" \"stepDoneTitle:" + this.stepdonetitle + "\" ";
+			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
 		}
 		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
 				.get("ProzessverwaltungForm");
