@@ -43,11 +43,11 @@ import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.Import.Record;
-import org.goobi.production.cli.CommandLineInterface;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.flow.jobs.HotfolderJob;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
@@ -207,7 +207,7 @@ public class MassImportForm {
 
 			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {
 				if (data.getValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = CommandLineInterface.generateProcess(data.getKey(), this.template, new File(tempfolder), null, "error", b);
+					int returnValue = HotfolderJob.generateProcess(data.getKey(), this.template, new File(tempfolder), null, "error", b);
 					if (returnValue > 0) {
 						Helper.setFehlerMeldung("import failed for " + data.getKey() + ", process generation failed with error code " + returnValue);
 					}
