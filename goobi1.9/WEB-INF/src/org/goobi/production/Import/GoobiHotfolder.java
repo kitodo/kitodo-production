@@ -1,4 +1,5 @@
 package org.goobi.production.Import;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -28,6 +29,7 @@ package org.goobi.production.Import;
  */
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,10 +37,9 @@ import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
-
-import de.sub.goobi.helper.Helper;
 
 public class GoobiHotfolder implements IGoobiHotfolder {
 
@@ -154,7 +155,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		logger.trace("config 2");
 
 		try {
-			//XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "config_hotfolder.xml");
+			// XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "config_hotfolder.xml");
 			XMLConfiguration config = new XMLConfiguration("config_hotfolder.xml");
 
 			logger.trace("config 3");
@@ -209,7 +210,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -223,7 +225,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 * @param template the template to set
+	 * @param template
+	 *            the template to set
 	 */
 	public void setTemplate(Integer template) {
 		this.template = template;
@@ -237,7 +240,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 * @param updateStrategy the updateStrategy to set
+	 * @param updateStrategy
+	 *            the updateStrategy to set
 	 */
 	public void setUpdateStrategy(String updateStrategy) {
 		this.updateStrategy = updateStrategy;
@@ -251,7 +255,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 * @param collection the collection to set
+	 * @param collection
+	 *            the collection to set
 	 */
 	public void setCollection(String collection) {
 		this.collection = collection;
@@ -262,5 +267,28 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 	public String getCollection() {
 		return this.collection;
+	}
+
+	public File getLockFile() {
+		return new File(this.folder, ".lock");
+
+	}
+
+	public boolean isLocked() {
+		return getLockFile().exists();
+	}
+
+	public void lock() throws IOException {
+		File f = getLockFile();
+		if (!f.exists()) {
+			f.createNewFile();
+		}
+	}
+
+	public void unlock() throws IOException {
+		File f = getLockFile();
+		if (f.exists()) {
+			FileUtils.forceDelete(f);
+		}
 	}
 }

@@ -41,7 +41,6 @@ import org.goobi.production.cli.helper.CopyProcess;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
-
 import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.BatchDAO;
@@ -86,74 +85,72 @@ public class HotfolderJob extends AbstractGoobiJob {
 			logger.trace("1");
 			List<GoobiHotfolder> hotlist = GoobiHotfolder.getInstances();
 			logger.trace("2");
-			for (GoobiHotfolder hot : hotlist) {
+			for (GoobiHotfolder hotfolder : hotlist) {
 				logger.trace("3");
-				// GoobiHotfolder hot = new GoobiHotfolder(new
-				// File(ConfigMain.getParameter("GoobiHotfolder",
-				// "/opt/digiverso/goobi/hotfolder")));
-				// templateId = ConfigMain.getIntParameter("GoobiHotfolderId",
-				// 944);
-				List<File> list = hot.getCurrentFiles();
+				List<File> list = hotfolder.getCurrentFiles();
 				logger.trace("4");
 				long size = getSize(list);
 				logger.trace("5");
 				try {
 					if (size > 0) {
-						logger.trace("6");
-						Thread.sleep(10000);
-						logger.trace("7");
-						list = hot.getCurrentFiles();
-						logger.trace("8");
-						if (size == getSize(list)) {
-							logger.trace("9");
-							ProzessDAO dao = new ProzessDAO();
-							Prozess template = dao.get(hot.getTemplate());
-							dao.refresh(template);
-							logger.trace("10");
-							List<String> metsfiles = hot.getFileNamesByFilter(GoobiHotfolder.filter);
-							logger.trace("11");
-							HashMap<String, Integer> failedData = new HashMap<String, Integer>();
-							logger.trace("12");
-							
-							
-							
-							Batch batch = new Batch();	
-							
-							
-							for (String filename : metsfiles) {
-								logger.debug("found file: " + filename);
-								logger.trace("13");
+						if (!hotfolder.isLocked()) {
 
-								int returnValue = generateProcess(filename, template, hot.getFolderAsFile(),
-										hot.getCollection(), hot.getUpdateStrategy(), batch);
-								logger.trace("14");
-								if (returnValue != 0) {
-									logger.trace("15");
-									failedData.put(filename, returnValue);
-									logger.trace("16");
-								} else {
-									logger.debug("finished file: " + filename);
-								}
-							}
-							if (!failedData.isEmpty()) {
-								// // TODO Errorhandling
-								logger.trace("17");
-								for (String filename : failedData.keySet()) {
-									File oldFile = new File(hot.getFolderAsFile(), filename);
-									if (oldFile.exists()) {
-										File newFile = new File(oldFile.getAbsolutePath() + "_");
-										oldFile.renameTo(newFile);
+							logger.trace("6");
+							Thread.sleep(10000);
+							logger.trace("7");
+							list = hotfolder.getCurrentFiles();
+							logger.trace("8");
+							if (size == getSize(list)) {
+								hotfolder.lock();
+								logger.trace("9");
+								ProzessDAO dao = new ProzessDAO();
+								Prozess template = dao.get(hotfolder.getTemplate());
+								dao.refresh(template);
+								logger.trace("10");
+								List<String> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
+								logger.trace("11");
+								HashMap<String, Integer> failedData = new HashMap<String, Integer>();
+								logger.trace("12");
+
+								Batch batch = new Batch();
+
+								for (String filename : metsfiles) {
+									logger.debug("found file: " + filename);
+									logger.trace("13");
+
+									int returnValue = generateProcess(filename, template, hotfolder.getFolderAsFile(), hotfolder.getCollection(),
+											hotfolder.getUpdateStrategy(), batch);
+									logger.trace("14");
+									if (returnValue != 0) {
+										logger.trace("15");
+										failedData.put(filename, returnValue);
+										logger.trace("16");
+									} else {
+										logger.debug("finished file: " + filename);
 									}
-									logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
 								}
+								if (!failedData.isEmpty()) {
+									// // TODO Errorhandling
+									logger.trace("17");
+									for (String filename : failedData.keySet()) {
+										File oldFile = new File(hotfolder.getFolderAsFile(), filename);
+										if (oldFile.exists()) {
+											File newFile = new File(oldFile.getAbsolutePath() + "_");
+											oldFile.renameTo(newFile);
+										}
+										logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
+									}
+								}
+								new BatchDAO().save(batch);
+								hotfolder.unlock();
 							}
-							new BatchDAO().save(batch); 
 						} else {
 							logger.trace("18");
 							return;
 						}
 						logger.trace("19");
 					}
+
 				} catch (InterruptedException e) {
 					logger.error(e);
 					logger.trace("20");
@@ -164,6 +161,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 					logger.error(e);
 				}
 			}
+
 		}
 	}
 
@@ -181,7 +179,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 		}
 		return size;
 	}
-	
+
 	public static int generateProcess(String processTitle, Prozess vorlage, File dir, String digitalCollection, String updateStrategy, Batch batch) {
 		// wenn keine anchor Datei, dann Vorgang anlegen
 		if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
@@ -352,7 +350,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			return 26;
 		}
 	}
-	
+
 	public static boolean testTitle(String titel) {
 		if (titel != null) {
 			long anzahl = 0;

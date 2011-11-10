@@ -91,7 +91,7 @@
 									<h:panelGroup>
 										<h:inputText id="folder" 
 										style="width: 550px;margin-right:15px"
-											value="#{ProjekteForm.myFilegroup.folder}" required="true" />	
+											value="#{ProjekteForm.myFilegroup.folder}" required="false" />	
 									</h:panelGroup>
 
 
