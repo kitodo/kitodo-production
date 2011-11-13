@@ -25,7 +25,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="ldapeditform">
+					<h:form id="ldapeditform" onkeypress="ifEnterClick(event, 'ldapeditform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -294,7 +294,7 @@
 													action="#{LdapGruppenForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{LdapGruppenForm.myLdapGruppe.id != null}" />
-												<h:commandButton id="id70" value="#{msgs.speichern}"
+												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{LdapGruppenForm.Speichern}" />
 											</htm:td>
 										</htm:tr>

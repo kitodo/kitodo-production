@@ -44,7 +44,9 @@ public class PluginLoader {
 	
 	private final static boolean useDevelopmentPath = false;
 //	private final static String developmentPath = "/Users/steffen/Documents/workspace/SampleStepPlugins/bin/";
-	private final static String developmentPath = "/Users/steffen/Documents/workspace/MetsEditor/bin/";
+	
+	private final static String developmentPath = "/Users/steffen/Documents/workspace/ORKAFileManImportPlugin/bin";
+//	private final static String developmentPath = "/Users/steffen/Documents/workspace/MetsEditor/bin/";
 
 	public static List<IPlugin> getPluginList(PluginType inType) {
 		PluginManagerUtil pmu = initialize(inType);

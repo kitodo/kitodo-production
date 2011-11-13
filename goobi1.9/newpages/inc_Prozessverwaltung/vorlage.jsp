@@ -23,7 +23,7 @@
 			<htm:td valign="top" styleClass="layoutInhalt">
 
 				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-<h:form id="vorform2">
+<h:form id="vorform2" >
 				<%-- Breadcrumb --%>
 				<h:panelGrid columns="1" styleClass="layoutInhaltKopf">
 					<h:panelGroup>

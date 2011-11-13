@@ -58,6 +58,7 @@ import org.jdom.Element;
 
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Forms.LoginForm;
+import de.sub.goobi.Persistence.HibernateSessionLong;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.config.ConfigMain;
 
@@ -224,7 +225,6 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static Session getHibernateSession() {
-	
 		Session sess;
 		try {
 			sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
@@ -235,10 +235,12 @@ public class Helper implements Serializable, Observer {
 			sess = HibernateUtilOld.getSession();
 		}
 		return sess;
-		
 	}
-
 	
+	public static void createNewHibernateSession() {
+		HibernateSessionLong hsl = (HibernateSessionLong) getManagedBeanValue("#{HibernateSessionLong}");
+		hsl.getNewSession();
+	}
 
 	/**
 	 * simple call of console command without any feedback, error handling or

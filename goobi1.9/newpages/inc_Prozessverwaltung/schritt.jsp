@@ -23,7 +23,7 @@
 			<htm:td valign="top" styleClass="layoutInhalt">
 
 				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-				<h:form id="stepform">
+				<h:form id="stepform" onkeypress="ifEnterClick(event, 'stepform:absenden');">
 					<%-- Breadcrumb --%>
 					<h:panelGrid columns="1" styleClass="layoutInhaltKopf">
 						<h:panelGroup>

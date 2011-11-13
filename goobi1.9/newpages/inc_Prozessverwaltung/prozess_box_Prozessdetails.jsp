@@ -158,7 +158,7 @@
 							value="#{ProzessverwaltungForm.projektAuswahlListe}" />
 					</h:selectOneMenu>
 					<x:message for="prozess" style="color: red"
-						detailFormat="#{msgs.keinProzessAngegeben}" />
+						detailFormat="#{msgs.keinProjektAngegeben}" />
 				</h:panelGroup>
 
 				<%-- Ausgabename
@@ -214,7 +214,7 @@
 				onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 				rendered="#{ProzessverwaltungForm.myProzess.id != null}" />
 			<h:commandButton value="#{msgs.speichern}"
-				action="#{ProzessverwaltungForm.Speichern}">
+				action="#{ProzessverwaltungForm.Speichern}" id="absenden">
 				<x:updateActionListener
 					property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>

@@ -24,14 +24,16 @@
 	<h:outputText value="#{msgs.aktuelleProzesse}" rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}" />
 </htm:h4>
 
-
-
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}" id="new">
-	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}" />
-	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"
-		rendered="#{(LoginForm.maximaleBerechtigung == 1) && (ProzessverwaltungForm.modusAnzeige=='vorlagen')}" />
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen'}" id="new1">
+	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" />
+</h:commandLink>
+
+<%-- Neu-Schaltknopf --%>
+<h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen'}" id="new2">
+	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}" />
 </h:commandLink>
 
 
@@ -426,14 +428,19 @@
 	</x:column>
 
 </x:dataTable>
+
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
-	id="new2">
-	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}" />
-	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}"
-		rendered="#{(LoginForm.maximaleBerechtigung == 1) && (ProzessverwaltungForm.modusAnzeige=='vorlagen')}" />
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" id="new3">
+	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" />
 </h:commandLink>
+
+<%-- Neu-Schaltknopf --%>
+<h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" id="new4">
+	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}" />
+</h:commandLink>
+
 
 <htm:table width="100%" border="0">
 	<htm:tr valign="top">

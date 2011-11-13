@@ -30,7 +30,7 @@
 						value="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}" />
 				</h:commandLink>
 
-				<h:panelGroup rendered="#{LoginForm.myBenutzer.mitMassendownload}">
+				<h:panelGroup rendered="#{LoginForm.myBenutzer.mitMassendownload && ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="download" id="downloadswitcher"
 						title="#{msgs.downloadInMeinHomeverzeichnis}">
 						<h:graphicImage
@@ -71,7 +71,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{LoginForm.maximaleBerechtigung == 1}">
+				<h:panelGroup rendered="#{LoginForm.maximaleBerechtigung == 1 && ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="agoradownload" id="agoraswitcher"
 						title="#{msgs.metadatenFuerDMSExportieren}">
 						<h:graphicImage value="/newpages/images/buttons/dms.png"
@@ -114,7 +114,7 @@
 				</h:panelGroup>
 
 				<%-- Bearbeitungsstatus hochsetzen--%>
-				<h:panelGroup>
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="statusUp" id="statusswitcher"
 						title="#{msgs.bearbeitungsstatusHochsetzen}">
 						<h:graphicImage value="/newpages/images/buttons/step_for_20px.gif"
@@ -153,7 +153,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup>
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="statusDown" id="downswitcher"
 						title="#{msgs.bearbeitungsstatusRuntersetzen}">
 						<h:graphicImage
@@ -194,7 +194,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{LoginForm.maximaleBerechtigung == 1}">
+				<h:panelGroup rendered="#{LoginForm.maximaleBerechtigung == 1 && ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="goobiScript" id="scriptswitcher"
 						title="#{msgs.goobiScriptAusfuehren}">
 						<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
@@ -304,7 +304,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup>
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<h:graphicImage value="/newpages/images/buttons/excel20.png" style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
 					<h:commandLink  action="#{ProzessverwaltungForm.generateResult}"
 						 title="#{msgs.createExcel}">
@@ -312,7 +312,7 @@
 					</h:commandLink>
 				</h:panelGroup>
 
-				<h:panelGroup>
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="anzahlen" id="countswitcher"
 						title="#{msgs.anzahlMetadatenUndImagesErmitteln}">
 						<h:graphicImage
@@ -349,7 +349,7 @@
 					</jd:hideableArea>
 				</h:panelGroup>
 
-				<h:panelGroup>
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="statistik" id="statswitcher"
 						title="#{msgs.statistischeAuswertung}">
 						<h:graphicImage

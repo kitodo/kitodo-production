@@ -26,7 +26,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="groupeditform">
+					<h:form id="groupeditform" onkeypress="ifEnterClick(event, 'groupeditform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -124,7 +124,7 @@
 													action="#{BenutzergruppenForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{BenutzergruppenForm.myBenutzergruppe.id != null}" />
-												<h:commandButton id="id23" value="#{msgs.speichern}"
+												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{BenutzergruppenForm.Speichern}" />
 											</htm:td>
 										</htm:tr>

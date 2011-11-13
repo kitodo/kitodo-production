@@ -79,6 +79,7 @@ import de.sub.goobi.Export.download.ExportPdf;
 import de.sub.goobi.Export.download.Multipage;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Persistence.BatchDAO;
+import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
@@ -158,6 +159,14 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String Neu() {
 		this.myProzess = new Prozess();
+		this.modusBearbeiten="prozess";
+		return "ProzessverwaltungBearbeiten";
+	}
+	
+	public String NeuVorlage() {
+		this.myProzess = new Prozess();
+		this.myProzess.setIstTemplate(true);
+		this.modusBearbeiten="prozess";
 		return "ProzessverwaltungBearbeiten";
 	}
 
@@ -265,6 +274,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public String FilterAktuelleProzesse() {
+		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 
@@ -335,6 +345,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Anzeige der Sammelbände filtern
 	 */
 	public String FilterAlleStart() {
+		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		/*
@@ -535,6 +546,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String SchrittNeu() {
 		this.mySchritt = new Schritt();
+		modusBearbeiten="schritt";
 		return "ProzessverwaltungBearbeitenSchritt";
 	}
 
@@ -1080,6 +1092,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String Reload() {
+		Helper.createNewHibernateSession();
 		Helper.getHibernateSession().clear();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
 			Helper.getHibernateSession().refresh(this.mySchritt);

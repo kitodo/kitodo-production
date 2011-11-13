@@ -1,0 +1,215 @@
+package org.goobi.production.properties;
+
+import java.util.ArrayList;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.log4j.Logger;
+
+import de.sub.goobi.Beans.Prozesseigenschaft;
+import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.helper.Helper;
+
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. - http://gdz.sub.uni-goettingen.de - http://www.intranda.com
+ * 
+ * Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ),
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ * 
+ */
+
+public class PropertyParser {
+	private static final Logger logger = Logger.getLogger(PropertyParser.class);
+
+	public static void main(String[] args) {
+		PropertyParser parser = new PropertyParser();
+		parser.readConfigAsSample();
+		System.out.println("finish");
+	}
+
+	private void readConfigAsSample() {
+		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
+
+		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		XMLConfiguration config;
+		try {
+			config = new XMLConfiguration(path);
+		} catch (ConfigurationException e) {
+			logger.error(e);
+			config = new XMLConfiguration();
+		}
+		config.setListDelimiter('&');
+		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+		// run though all properties
+		int countProperties = config.getMaxIndex("property");
+		for (int i = 0; i <= countProperties; i++) {
+
+			// general values for property
+			ProcessProperty pp = new ProcessProperty();
+			pp.setName(config.getString("property(" + i + ")[@name]"));
+			pp.setContainer(config.getInt("property(" + i + ")[@container]"));
+
+			// projects
+			int count = config.getMaxIndex("property(" + i + ").project");
+			for (int j = 0; j <= count; j++) {
+				pp.getProjects().add(config.getString("property(" + i + ").project(" + j + ")"));
+			}
+
+			// showStep
+			count = config.getMaxIndex("property(" + i + ").showStep");
+			for (int j = 0; j <= count; j++) {
+				ShowStepCondition ssc = new ShowStepCondition();
+				ssc.setName(config.getString("property(" + i + ").showStep(" + j + ")[@name]"));
+				String access = config.getString("property(" + i + ").showStep(" + j + ")[@access]");
+				ssc.setAccessCondition(AccessCondition.getAccessConditionByName(access));
+				pp.getShowStepConditions().add(ssc);
+			}
+
+			// showProcessGroupAccessCondition
+			String groupAccess = config.getString("property(" + i + ").showProcessGroup[@access]");
+			pp.setShowProcessGroupAccessCondition(AccessCondition.getAccessConditionByName(groupAccess));
+
+			// validation expression
+			pp.setValidation(config.getString("property(" + i + ").validation"));
+			// type
+			pp.setType(Type.getTypeByName(config.getString("property(" + i + ").type")));
+			// (default) value
+			pp.setValue(config.getString("property(" + i + ").defaultvalue"));
+
+			// possible values
+			count = config.getMaxIndex("property(" + i + ").value");
+			for (int j = 0; j <= count; j++) {
+				pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
+			}
+			properties.add(pp);
+		}
+	}
+
+	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
+		String stepTitle = mySchritt.getTitel();
+		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
+		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
+
+		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		XMLConfiguration config;
+		try {
+			config = new XMLConfiguration(path);
+		} catch (ConfigurationException e) {
+			logger.error(e);
+			config = new XMLConfiguration();
+		}
+		config.setListDelimiter('&');
+		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+		// run though all properties
+		int countProperties = config.getMaxIndex("property");
+		for (int i = 0; i <= countProperties; i++) {
+
+			// general values for property
+			ProcessProperty pp = new ProcessProperty();
+			pp.setName(config.getString("property(" + i + ")[@name]"));
+			pp.setContainer(config.getInt("property(" + i + ")[@container]"));
+
+			// projects
+			int count = config.getMaxIndex("property(" + i + ").project");
+			for (int j = 0; j <= count; j++) {
+				pp.getProjects().add(config.getString("property(" + i + ").project(" + j + ")"));
+			}
+
+			// project is configured
+			if (pp.getProjects().contains("*") || pp.getProjects().contains(projectTitle)) {
+
+				// showStep
+				boolean containsCurrentStepTitle = false;
+				count = config.getMaxIndex("property(" + i + ").showStep");
+				for (int j = 0; j <= count; j++) {
+					ShowStepCondition ssc = new ShowStepCondition();
+					ssc.setName(config.getString("property(" + i + ").showStep(" + j + ")[@name]"));
+					if (ssc.getName().equals(stepTitle)) {
+						containsCurrentStepTitle = true;
+					}
+					String access = config.getString("property(" + i + ").showStep(" + j + ")[@access]");
+					ssc.setAccessCondition(AccessCondition.getAccessConditionByName(access));
+					pp.getShowStepConditions().add(ssc);
+				}
+
+				// steptitle is configured
+				if (containsCurrentStepTitle) {
+					// showProcessGroupAccessCondition
+					String groupAccess = config.getString("property(" + i + ").showProcessGroup[@access]");
+					pp.setShowProcessGroupAccessCondition(AccessCondition.getAccessConditionByName(groupAccess));
+
+					// validation expression
+					pp.setValidation(config.getString("property(" + i + ").validation"));
+					// type
+					pp.setType(Type.getTypeByName(config.getString("property(" + i + ").type")));
+					// (default) value
+					pp.setValue(config.getString("property(" + i + ").defaultvalue"));
+
+					// possible values
+					count = config.getMaxIndex("property(" + i + ").value");
+					for (int j = 0; j <= count; j++) {
+						pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
+					}
+					properties.add(pp);
+				}
+			}
+		}
+		
+		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing 'eigenschaften'
+		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
+		for (Prozesseigenschaft pe : mySchritt.getProzess().getEigenschaften()) {
+		
+			for (ProcessProperty pp : listClone) {
+				if (pe.getTitel().equals(pp.getName())){
+					// pp has no pe assigned
+					if (pp.getProzesseigenschaft()==null){
+						pp.setProzesseigenschaft(pe);
+						pp.setValue(pe.getWert());
+						pp.setContainer(pe.getContainer());
+					}else{
+						//clone pp
+						ProcessProperty pnew = pp.getClone();
+						pnew.setProzesseigenschaft(pe);
+						pnew.setValue(pe.getWert());
+						pnew.setContainer(pe.getContainer());
+						properties.add(pnew);
+					}
+				}
+			}
+		}
+	
+		// add 'eigenschaft' to all ProcessProperties
+		for (ProcessProperty pp : properties) {
+			if (pp.getProzesseigenschaft()==null){
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(mySchritt.getProzess());
+				mySchritt.getProzess().getEigenschaften().add(pe);
+				pp.setProzesseigenschaft(pe);
+			}
+		}
+		
+		return properties;
+	}
+
+}

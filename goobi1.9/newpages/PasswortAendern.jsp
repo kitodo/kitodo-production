@@ -50,7 +50,7 @@
 									style="margin-bottom:15px;display:block" />
 
 								<%-- ++++++++++++++++     Passwort-Parameter      ++++++++++++++++ --%>
-								<h:form id="passwortform">
+								<h:form id="passwortform" onkeypress="ifEnterClick(event, 'absenden');">
 									<htm:table cellpadding="3" cellspacing="0" width="100%"
 										styleClass="eingabeBoxen">
 										<htm:tr>
@@ -69,7 +69,7 @@
 														<h:inputSecret id="passwortAendernAlt"
 															style="width: 200px;margin-right:15px"
 															value="#{LoginForm.passwortAendernAlt}"
-															onkeypress="return submitEnter('absenden',event)" />
+															 />
 														<h:message id="mess1" for="passwortAendernAlt"
 															errorClass="text_red" infoClass="text_blue" />
 													</h:panelGroup>

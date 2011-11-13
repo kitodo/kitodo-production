@@ -42,6 +42,8 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
+import org.goobi.production.properties.ProcessProperty;
+import org.goobi.production.properties.PropertyParser;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
@@ -50,6 +52,7 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Export.dms.ExportDms;
@@ -128,6 +131,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	@SuppressWarnings("unchecked")
 	public String FilterAlleStart() {
+		Helper.createNewHibernateSession();
 		if (this.page != null && this.page.getTotalResults() != 0) {
 			SchrittDAO dao = new SchrittDAO();
 			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
@@ -769,6 +773,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void setMySchritt(Schritt mySchritt) {
 		this.modusBearbeiten = "";
 		this.mySchritt = mySchritt;
+		loadProcessProperties();
 	}
 
 	public String getModusBearbeiten() {
@@ -957,4 +962,38 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
+	private ArrayList<ProcessProperty> processPropertyList;
+
+	public ArrayList<ProcessProperty> getProcessProperties() {
+		return processPropertyList;
+	}
+
+	private void loadProcessProperties() {
+		processPropertyList = PropertyParser.getPropertiesForStep(mySchritt);
+	}
+
+	public void saveProcessProperties() {
+		boolean valid = true;
+		for (ProcessProperty p : processPropertyList) {
+			if (!p.isValid()) {
+				Helper.setFehlerMeldung("Property " + p.getName() + " not valid");
+				valid = false;
+			}
+		}
+
+		if (valid) {
+			for (ProcessProperty p : processPropertyList) {
+				p.transfer();
+			}
+			try {
+				new ProzessDAO().save(mySchritt.getProzess());
+				Helper.setMeldung("Properties saved");
+			} catch (DAOException e) {
+				myLogger.error(e);
+				Helper.setFehlerMeldung("Properties could not be saved");
+			}
+			
+		}
+		
+	}
 }

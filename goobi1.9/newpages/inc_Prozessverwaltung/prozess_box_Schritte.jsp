@@ -168,7 +168,7 @@
 </x:dataTable>
 
 <%-- Neu-Schaltknopf --%>
-<h:commandLink action="#{ProzessverwaltungForm.SchrittNeu}"
+<h:commandLink id="addStepLink" action="#{ProzessverwaltungForm.SchrittNeu}"
 	value="#{msgs.schrittHinzufuegen}" title="#{msgs.schrittHinzufuegen}"
 	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) && (ProzessverwaltungForm.myProzess.titel != '')}">
 </h:commandLink>

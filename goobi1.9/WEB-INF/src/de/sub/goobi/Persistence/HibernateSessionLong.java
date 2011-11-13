@@ -99,5 +99,11 @@ public class HibernateSessionLong {
       }
    }
 
+   public Session getNewSession() throws HibernateException {
+	   sess.close();
+	   sess=null;
+	   return getSession();
+   }
+   
 }
 

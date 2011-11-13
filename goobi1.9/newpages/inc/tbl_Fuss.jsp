@@ -35,6 +35,52 @@
         else
         return true;
 }
+    
+    
+    /**
+     * Handler for onkeypress that clicks {@code targetElement} if the
+     * enter key is pressed.
+     */
+    function ifEnterClick(event, targetElement) {
+        event = event || window.event;
+        if (event.keyCode == 13) {
+            // normalize event target, so it looks the same for all browsers
+            if (!event.target) {
+                event.target = event.srcElement;
+            }
+
+            // don't do anything if the element handles the enter key on its own
+            if (event.target.nodeName == 'A') {
+                return;
+            }
+            if (event.target.nodeName == 'INPUT') {
+                if (event.target.type == 'button' || event.target.type == 'submit') {
+                    if (strEndsWith(event.target.id, 'focusKeeper')) {
+                        // inside some Richfaces component such as rich:listShuttle
+                    } else {
+                        return;
+                    }
+                }
+            }
+            if (event.target.nodeName =='TEXTAREA') {
+                return;
+            }
+
+            // swallow event
+            if (event.preventDefault) {
+                // Firefox
+                event.stopPropagation();
+                event.preventDefault();
+            } else {
+                // IE
+                event.cancelBubble = true;
+                event.returnValue = false;
+            }
+
+            document.getElementById(targetElement).click();
+        }
+    }
+
 </script>
 
 					</htm:td>

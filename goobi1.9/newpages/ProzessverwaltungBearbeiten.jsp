@@ -26,7 +26,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="proceditform">
+					<h:form id="proceditform" onkeypress="ifEnterClick(event, 'proceditform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">

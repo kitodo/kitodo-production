@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config_processProperties>
+
+	<property name="Öffnungswinkel" container="1">
+		<project name="DigiWunschbuch"/>
+		<showStep name="Scannen" access="writeRequired"/>
+		<showStep name="Qualitätskontrolle" access="read"/>
+		<showProcessGroup access="write"/>
+		<validation></validation>
+		<type>ListMultiSelect</type> <!-- Text, List, ListMultiSelect, Boolean -->
+		<defaultvalue>90</defaultvalue>
+		<value>45</value>
+		<value>60</value>
+		<value>90</value>
+		<value>180</value>
+	</property>
+
+</config_processProperties>

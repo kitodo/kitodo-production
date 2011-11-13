@@ -65,7 +65,7 @@
 		</htm:td>
 	</htm:tr>
 
-	<h:form id="vorform">
+	<h:form id="vorform" onkeypress="ifEnterClick(event, 'vorform2:vorform:absenden');">
 		<%-- Formular für die Bearbeitung der Vorlage --%>
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
@@ -95,7 +95,7 @@
 				</h:commandButton>
 			</htm:td>
 			<htm:td styleClass="eingabeBoxen_row3" align="right">
-				<h:commandButton value="#{msgs.uebernehmen}"
+				<h:commandButton value="#{msgs.uebernehmen}" id="absenden"
 					action="#{ProzessverwaltungForm.VorlageUebernehmen}">
 					<x:updateActionListener
 						property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />

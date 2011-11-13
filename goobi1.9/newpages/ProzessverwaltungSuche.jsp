@@ -26,7 +26,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="procmanageform">
+					<h:form id="searchform" onkeypress="ifEnterClick(event, 'searchform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -228,7 +228,7 @@
 											</htm:td>
 
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
-												<h:commandButton action="#{SearchForm.filter}" 
+												<h:commandButton id="absenden" action="#{SearchForm.filter}" 
 													title="#{msgs.filterAnwenden}"
 													value="#{msgs.filterAnwenden}">
 												</h:commandButton>

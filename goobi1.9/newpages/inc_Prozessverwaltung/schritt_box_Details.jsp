@@ -320,7 +320,7 @@
 				action="#{ProzessverwaltungForm.SchrittLoeschen}"
 				onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 				rendered="#{ProzessverwaltungForm.mySchritt.id != null}" />
-			<h:commandButton value="#{msgs.uebernehmen}"
+			<h:commandButton value="#{msgs.uebernehmen}" id="absenden"
 				action="#{ProzessverwaltungForm.SchrittUebernehmen}">
 				<x:updateActionListener
 					property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />

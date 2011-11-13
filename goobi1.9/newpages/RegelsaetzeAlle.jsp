@@ -64,7 +64,7 @@
 										cellspacing="1px" cellpadding="1px"
 										headerClass="standardTable_Header"
 										rowClasses="standardTable_Row1,standardTable_Row2"
-										columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered" style="margin-top: 10px;"
+										columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered" style="margin-top: 10px;"
 										var="item" value="#{RegelsaetzeForm.page.listReload}">
 
 										<h:column id="id9">

@@ -12,6 +12,7 @@
 
 <html>
 <f:view locale="#{SpracheForm.locale}">
+
 	<%@include file="inc/head.jsp"%>
 	<body>
 		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
@@ -25,7 +26,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="userconfigform">
+					<h:form id="userconfigform" onkeypress="ifEnterClick(event, 'userconfigform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -135,7 +136,7 @@
 													action="newMain" immediate="true" />
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
-												<h:commandButton id="id23" value="#{msgs.speichern}"
+												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{LoginForm.BenutzerkonfigurationSpeichern}" />
 											</htm:td>
 										</htm:tr>

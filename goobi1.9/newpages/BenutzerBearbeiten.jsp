@@ -27,7 +27,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="usereditform">
+					<h:form id="usereditform" onkeypress="ifEnterClick(event, 'usereditform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -295,7 +295,7 @@
 													action="#{BenutzerverwaltungForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{BenutzerverwaltungForm.myClass.id != null}" />
-												<h:commandButton id="id60" value="#{msgs.speichern}"
+												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{BenutzerverwaltungForm.Speichern}" />
 											</htm:td>
 										</htm:tr>

@@ -26,7 +26,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="ruleseteditform">
+					<h:form id="ruleseteditform" onkeypress="ifEnterClick(event, 'ruleseteditform:absenden');">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
@@ -123,7 +123,7 @@
 													action="#{RegelsaetzeForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{RegelsaetzeForm.myRegelsatz.id != null}" />
-												<h:commandButton id="id23" value="#{msgs.speichern}"
+												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{RegelsaetzeForm.Speichern}" />
 											</htm:td>
 										</htm:tr>
