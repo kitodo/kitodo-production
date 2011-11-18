@@ -57,6 +57,8 @@ public class Pagination {
 	 * [i], [ii], [iii], [iv],...
 	 */
 	public static final String PAGINATION_ROMAN_BRACKET = "5";
+	
+	public static final String PAGINATION_FREETEXT = "6";
 
 	public static final int ALL_PAGES = 1;
 
@@ -167,6 +169,7 @@ public class Pagination {
 					nextPaginationLabel += getRectoVersoSuffixForPagination(currentPageNumber);
 				}
 			}
+		
 
 			this.newPaginated[i].setWert(nextPaginationLabel);
 
@@ -191,7 +194,9 @@ public class Pagination {
 			RomanNumeral r = new RomanNumeral();
 			r.setValue(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
 			actualPaginationLabel = "[" + r.toString() + "]";
+	
 		} else {
+			// free text
 			actualPaginationLabel = this.paginationStartValue;
 		}
 

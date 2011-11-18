@@ -60,6 +60,7 @@
 						<f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}" />
 						<f:selectItem itemValue="5" itemLabel="#{msgs.roemischBracket}" />
 						<f:selectItem itemValue="3" itemLabel="#{msgs.unnummeriert}" />
+						<f:selectItem itemValue="6" itemLabel="#{msgs.paginationFreetext}" />
 					</h:selectOneMenu>
 					<htm:br />
 					<x:inputText id="paginierungWert" forceId="true"
