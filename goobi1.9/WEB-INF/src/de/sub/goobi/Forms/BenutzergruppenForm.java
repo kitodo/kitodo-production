@@ -37,6 +37,7 @@ import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
+import de.sub.goobi.Persistence.SimpleDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -63,15 +64,16 @@ public class BenutzergruppenForm extends BasisForm {
 
 	public String Loeschen() {
 		try {
-			if (this.myBenutzergruppe.getBenutzerList().size() > 0) {
-				for (Benutzer b : this.myBenutzergruppe.getBenutzerList()) {
+			new SimpleDAO().refreshObject(this.myBenutzergruppe);
+			if (this.myBenutzergruppe.getBenutzer().size() > 0) {
+				for (Benutzer b : this.myBenutzergruppe.getBenutzer()) {
 					b.getBenutzergruppen().remove(this.myBenutzergruppe);
 				}
 				this.myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
 				this.dao.save(this.myBenutzergruppe);
 			}
-			if (this.myBenutzergruppe.getSchritteList().size() > 0) {
-				for (Schritt s : this.myBenutzergruppe.getSchritteList()) {
+			if (this.myBenutzergruppe.getSchritte().size() > 0) {
+				for (Schritt s : this.myBenutzergruppe.getSchritte()) {
 					s.getBenutzergruppen().remove(this.myBenutzergruppe);
 				}
 				this.myBenutzergruppe.setSchritte(new HashSet<Schritt>());

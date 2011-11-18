@@ -321,7 +321,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Ldap myLdap = new Ldap();
 		try {
 			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());
-			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + this.myClass.getNachVorname(), "");
+			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + this.myClass.getNachVorname(), "");
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
 		}

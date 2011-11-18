@@ -41,8 +41,8 @@ public class SimpleDAO extends BaseDAO {
 		removeObj(t);
 	}
 
-	@Override
-	public void refresh(Object t) {
+	
+	public void refreshObject(Object t) {
 		Object o = t;
 		refresh(o);
 	}

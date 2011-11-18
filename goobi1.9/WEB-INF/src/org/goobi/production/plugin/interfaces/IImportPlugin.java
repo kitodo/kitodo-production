@@ -27,11 +27,10 @@ package org.goobi.production.plugin.interfaces;
  * exception statement from your version.
  */
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 
+import org.goobi.production.Import.ImportObject;
 import org.goobi.production.Import.Record;
-import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 
 import ugh.dl.Fileformat;
@@ -51,7 +50,7 @@ public interface IImportPlugin extends IPlugin {
 
 	public List<Record> splitRecords(String records);
 	
-	public HashMap<String, ImportReturnValue> generateFiles(List<Record> records);
+	public List<ImportObject> generateFiles(List<Record> records);
 	
 	public void setImportFolder(String folder);
 	

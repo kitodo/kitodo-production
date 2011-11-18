@@ -33,15 +33,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.Import.GoobiHotfolder;
+import org.goobi.production.Import.ImportObject;
 import org.goobi.production.Import.Record;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
@@ -158,7 +157,7 @@ public class MassImportForm {
 
 	public void convertData() {
 		if (testForData()) {
-			HashMap<String, ImportReturnValue> answer = new HashMap<String, ImportReturnValue>();
+			List<ImportObject> answer = new ArrayList<ImportObject>();
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
@@ -205,18 +204,18 @@ public class MassImportForm {
 
 			Batch b = new Batch();
 
-			for (Entry<String, ImportReturnValue> data : answer.entrySet()) {
-				if (data.getValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = HotfolderJob.generateProcess(data.getKey(), this.template, new File(tempfolder), null, "error", b);
+			for (ImportObject io : answer) {
+				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
+					int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
 					if (returnValue > 0) {
-						Helper.setFehlerMeldung("import failed for " + data.getKey() + ", process generation failed with error code " + returnValue);
+						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed with error code " + returnValue);
 					}
-					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + data.getKey());
+					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
 				} else {
-					Helper.setFehlerMeldung("import failed for " + data.getKey() + " error code is: " + data.getValue());
+					Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + " error code is: " + io.getProcessTitle());
 				}
-
 			}
+		
 			if (b.getBatchList().size() > 0) {
 				try {
 					new BatchDAO().save(b);
