@@ -182,7 +182,16 @@
 
 </h:form>
 
-<h:outputText rendered="#{Metadaten.bildNummer != '-1' && Metadaten.ocrResult!=''}" value="#{Metadaten.ocrResult}" escape="false" />
+<h:panelGroup
+	rendered="#{Metadaten.bildNummer != '-1' && Metadaten.ocrResult!=''}">
+	<htm:div
+		style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
+		<htm:h3>
+			<h:outputText value="OCR" />
+		</htm:h3>
+		<h:outputText value="#{Metadaten.ocrResult}" escape="false" />
+	</htm:div>
+</h:panelGroup>
 
 <%-- das Bild selbst --%>
 <h:graphicImage id="myBild" value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()" />
