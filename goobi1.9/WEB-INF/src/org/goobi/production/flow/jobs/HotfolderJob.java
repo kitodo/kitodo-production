@@ -36,6 +36,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.Import.GoobiHotfolder;
+import org.goobi.production.Import.ImportObject;
 import org.goobi.production.cli.helper.CopyProcess;
 
 import ugh.exceptions.PreferencesException;
@@ -364,5 +365,139 @@ public class HotfolderJob extends AbstractGoobiJob {
 			}
 		}
 		return true;
+	}
+
+
+	
+	public static int generateProcess(ImportObject io, Prozess vorlage, Batch batch) {
+		String processTitle = io.getProcessTitle();
+		String metsfilename = io.getMetsFilename();
+		String basepath = metsfilename.substring(0, metsfilename.length()-4);
+		File metsfile = new File(metsfilename);
+		if (!testTitle(processTitle)) {
+			// removing all data
+			File imagesFolder = new File(basepath);
+			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+				deleteDirectory(imagesFolder);
+			} else {
+				imagesFolder = new File(basepath +"_" + vorlage.DIRECTORY_SUFFIX);
+				if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+					deleteDirectory(imagesFolder);
+				}
+			}
+			try {
+				FileUtils.forceDelete(metsfile);
+			} catch (Exception e) {
+				logger.error("Can not delete file " + processTitle, e);
+				return 30;
+			}
+			File anchor = new File(basepath + "_anchor.xml");
+			if (anchor.exists()) {
+				FileUtils.deleteQuietly(anchor);
+			}
+		}
+
+		CopyProcess cp = new CopyProcess();
+		cp.setProzessVorlage(vorlage);
+		cp.metadataFile = metsfilename;
+		cp.Prepare(io);
+		cp.getProzessKopie().setTitel(processTitle);
+		if (cp.testTitle()) {
+
+			cp.OpacAuswerten();
+			try {
+				Prozess p = cp.createProcess(io);
+				if (p.getId() != null) {
+					if (batch != null) {
+						batch.addProcessToBatch(p);
+						batch.setProject(p.getProjekt());
+					}
+					moveFiles(metsfile, basepath, p);
+				}
+
+			} catch (ReadException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (PreferencesException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SwapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DAOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WriteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	
+		return 0;
+		
+	}
+
+	private static void deleteDirectory(File directory) {
+		try {
+			FileUtils.deleteDirectory(directory);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+	}
+
+	private static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
+
+		File imagesFolder = new File(basepath);
+		if (!imagesFolder.exists()) {
+			imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
+		}
+		if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+			List<String> imageDir = new ArrayList<String>();
+
+			String[] files = imagesFolder.list();
+			for (int i = 0; i < files.length; i++) {
+				imageDir.add(files[i]);
+			}
+			for (String file : imageDir) {
+				File image = new File(imagesFolder, file);
+				File dest = new File(p.getImagesOrigDirectory() + image.getName());
+				FileUtils.moveFile(image, dest);
+			}
+			deleteDirectory(imagesFolder);
+		}
+
+		// copy fulltext files
+
+		File fulltext = new File(basepath + "_txt");
+
+		if (fulltext.isDirectory()) {
+
+			FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
+		}
+
+		// copy source files
+
+		File sourceDir = new File(basepath + "_src" + File.separator);
+		if (sourceDir.isDirectory()) {
+			FileUtils.moveDirectory(sourceDir, new File(p.getSourceDirectory()));
+		}
+
+		try {
+			FileUtils.forceDelete(metsfile);
+		} catch (Exception e) {
+			logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
+
+		}
+		File anchor = new File(basepath + "_anchor.xml");
+		if (anchor.exists()) {
+			FileUtils.deleteQuietly(anchor);
+		}
 	}
 }

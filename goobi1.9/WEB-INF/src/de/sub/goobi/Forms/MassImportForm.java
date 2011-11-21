@@ -58,9 +58,13 @@ import org.jdom.input.SAXBuilder;
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Prozesseigenschaft;
+import de.sub.goobi.Beans.Vorlageeigenschaft;
+import de.sub.goobi.Beans.Werkstueckeigenschaft;
 import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 // TODO FIXME alle Meldungen durch  messages-Meldungen ersetzen
@@ -185,6 +189,30 @@ public class MassImportForm {
 				plugin.setFile(this.importFile);
 				List<Record> recordList = plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
+					Prozesseigenschaft pe = new Prozesseigenschaft();
+					pe.setWert("jkbgh");
+					pe.setTitel("sjkparhnkldfha");
+					pe.setType(PropertyType.String);
+					List<Prozesseigenschaft> pl = new ArrayList<Prozesseigenschaft>();
+					pl.add(pe);
+					r.setProcessProperties(pl);
+					
+					Werkstueckeigenschaft we = new Werkstueckeigenschaft();
+					we.setTitel("sdgjdfklxc bn");
+					we.setWert("sfbjkafghasfoghj");
+					we.setType(PropertyType.String);
+					List<Werkstueckeigenschaft> wl = new ArrayList<Werkstueckeigenschaft>();
+					wl.add(we);
+					r.setWorkProperties(wl);
+					
+					Vorlageeigenschaft ve = new Vorlageeigenschaft();
+					ve.setTitel("asdfhjksad");
+					ve.setWert("dfjfgjl");
+					ve.setType(PropertyType.String);
+					List<Vorlageeigenschaft> vl = new ArrayList<Vorlageeigenschaft>();
+					vl.add(ve);
+					r.setTemplateProperties(vl);
+					
 					r.setCollections(this.digitalCollections);
 				}
 				answer = plugin.generateFiles(recordList);
@@ -206,7 +234,8 @@ public class MassImportForm {
 
 			for (ImportObject io : answer) {
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
+					int returnValue = HotfolderJob.generateProcess(io, this.template, b);
+//					int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
 					if (returnValue > 0) {
 						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed with error code " + returnValue);
 					}
