@@ -84,6 +84,7 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.VariableReplacer;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -2185,23 +2186,16 @@ public class Metadaten {
 				}
 			}
 		}
-		if (endseite - startseite > 5) {
-			endseite = startseite + 5;
-		}
 		return getOcrBasisUrl(startseite, endseite);
 	}
 
 	private String getOcrBasisUrl(int... seiten) {
-		String url = ConfigMain.getParameter("ocrUrl") + "?path=/";
-		try {
-			url += this.myProzess.getImagesDirectory().substring(this.help.getGoobiDataDirectory().length()) + this.currentTifFolder;
-		} catch (Exception e) {
-			myLogger.error(e);
-		}
+		String url = ConfigMain.getParameter("ocrUrl");
+		VariableReplacer replacer = new VariableReplacer(mydocument, myPrefs, myProzess, null);
+		url = replacer.replace(url);
 		url += "/&imgrange=" + seiten[0];
-		if (seiten.length > 1) {
+		if (seiten.length > 1)
 			url += "-" + seiten[1];
-		}
 		return url;
 	}
 

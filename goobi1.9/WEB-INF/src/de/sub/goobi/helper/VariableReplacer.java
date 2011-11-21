@@ -116,6 +116,8 @@ public class VariableReplacer {
 			String imagepath = this.process.getImagesDirectory().replace("\\", "/");
 			String origpath = this.process.getImagesOrigDirectory().replace("\\", "/");
 			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
+			String ocrBasisPath = this.process.getOcrDirectory().replace("\\", "/");
+			String ocrPlaintextPath = this.process.getTxtDirectory().replace("\\", "/");
 			String sourcepath = this.process.getSourceDirectory().replace("\\", "/");
 			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
@@ -132,11 +134,15 @@ public class VariableReplacer {
 			if (processpath.endsWith(File.separator)) {
 				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
 			}
-
 			if (sourcepath.endsWith(File.separator)) {
 				sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
 			}
-			
+			if (ocrBasisPath.endsWith(File.separator)) {
+				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
+			}
+			if (ocrPlaintextPath.endsWith(File.separator)) {
+				ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
+			}
 			if (inString.contains("(tifurl)")) {
 				if (SystemUtils.IS_OS_WINDOWS) {
 					inString = inString.replace("(tifurl)", "file:/" + tifpath);
@@ -173,6 +179,12 @@ public class VariableReplacer {
 			}
 			if (inString.contains("(sourcepath)")){
 				inString = inString.replace("(sourcepath)", sourcepath);
+			}
+			if (inString.contains("(ocrbasispath)")){
+				inString = inString.replace("(ocrbasispath)", ocrBasisPath);
+			}
+			if (inString.contains("(ocrplaintextpath)")){
+				inString = inString.replace("(ocrplaintextpath)", ocrPlaintextPath);
 			}
 			if (inString.contains("(processtitle)")) {
 				inString = inString.replace("(processtitle)", this.process.getTitel());
