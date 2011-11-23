@@ -133,10 +133,15 @@ public class WebDav implements Serializable {
 			command += VerzeichnisAlle + myname;
 			// myLogger.debug(command);
 			try {
-				Runtime.getRuntime().exec(command);
+				
+				Helper.callShell(command);
 			} catch (java.io.IOException ioe) {
 				myLogger.error("IOException UploadFromHomeAlle()", ioe);
 				Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+				return;
+			} catch (InterruptedException e) {
+				myLogger.error("IOException UploadFromHomeAlle()", e);
+				Helper.setFehlerMeldung("Aborted upload from home, error", e.getMessage());
 				return;
 			}
 		}
@@ -174,10 +179,14 @@ public class WebDav implements Serializable {
 
 		try {
 			// TODO: Use ProcessBuilder
-			Runtime.getRuntime().exec(command);
+			Helper.callShell(command);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException UploadFromHome", ioe);
 			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+		} catch (InterruptedException e) {
+			myLogger.error("IOException UploadFromHome", e);
+			Helper.setFehlerMeldung("Aborted upload from home, error", e.getMessage());
+
 		}
 	}
 

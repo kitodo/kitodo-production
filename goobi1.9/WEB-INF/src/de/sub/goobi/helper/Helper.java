@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -64,7 +65,6 @@ import de.sub.goobi.config.ConfigMain;
 
 public class Helper implements Serializable, Observer {
 
-
 	private static final Logger myLogger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;
 
@@ -90,7 +90,6 @@ public class Helper implements Serializable, Observer {
 		return myParameter;
 	}
 
-	
 	public String getGoobiDataDirectory() {
 		if (this.myMetadatenVerzeichnis == null) {
 			this.myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
@@ -158,8 +157,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
-	 * übergeben
+	 * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control übergeben
 	 */
 	private static void setMeldung(String control, String meldung, String beschreibung, boolean nurInfo) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -236,64 +234,129 @@ public class Helper implements Serializable, Observer {
 		}
 		return sess;
 	}
-	
+
 	public static void createNewHibernateSession() {
 		HibernateSessionLong hsl = (HibernateSessionLong) getManagedBeanValue("#{HibernateSessionLong}");
 		hsl.getNewSession();
 	}
 
 	/**
-	 * simple call of console command without any feedback, error handling or
-	 * return value
+	 * simple call of console command without any feedback, error handling or return value
 	 * ================================================================
 	 */
-	// TODO: Don't use this to create /pages/imagesTemp/
 	public static void callShell(String command) throws IOException, InterruptedException {
 		myLogger.debug("execute Shellcommand callShell: " + command);
-		Process p = Runtime.getRuntime().exec(command);
-		p.waitFor();
+		InputStream is = null;
+		InputStream es = null;
+		OutputStream out = null;
+		
+		try {
+			myLogger.debug("execute Shellcommand callShell2: " + command);
+			if (command == null || command.length() == 0) {
+				return ;
+			}
+			Process process = Runtime.getRuntime().exec(command);
+			is = process.getInputStream();
+			es = process.getErrorStream();
+			out = process.getOutputStream();
+		
+			process.waitFor();
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					is = null;
+				}
+			}
+			if (es != null) {
+				try {
+					es.close();
+				} catch (IOException e) {
+					es = null;
+				}
 
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					out = null;
+				}
+			}
+		}
 	}
 
 	/**
-	 * Call scripts from console and give back error messages and return value
-	 * of the called script
+	 * Call scripts from console and give back error messages and return value of the called script
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
 	 * 
 	 */
 	public static Integer callShell2(String command) throws IOException, InterruptedException {
-		myLogger.debug("execute Shellcommand callShell2: " + command);
-		boolean errorsExist = false;
-		if (command == null || command.length() == 0) {
-			return 1;
-		}
-	
-		Process process = Runtime.getRuntime().exec(command);
-		Scanner scanner = new Scanner(process.getInputStream());
-		while (scanner.hasNextLine()) {
-			String myLine = scanner.nextLine();
-			setMeldung(myLine);
-		}
+		InputStream is = null;
+		InputStream es = null;
+		OutputStream out = null;
 
-		scanner.close();
-		scanner = new Scanner(process.getErrorStream());
-		while (scanner.hasNextLine()) {
-			errorsExist = true;
-			setFehlerMeldung(scanner.nextLine());
-		}
-		scanner.close();
-		int rueckgabe = process.waitFor();
-		if (errorsExist) {
-			return 1;
-		} else {
-			return rueckgabe;
+		try {
+			myLogger.debug("execute Shellcommand callShell2: " + command);
+			boolean errorsExist = false;
+			if (command == null || command.length() == 0) {
+				return 1;
+			}
+			Process process = Runtime.getRuntime().exec(command);
+			is = process.getInputStream();
+			es = process.getErrorStream();
+			out = process.getOutputStream();
+			Scanner scanner = new Scanner(is);
+			while (scanner.hasNextLine()) {
+				String myLine = scanner.nextLine();
+				setMeldung(myLine);
+			}
+
+			scanner.close();
+			scanner = new Scanner(es);
+			while (scanner.hasNextLine()) {
+				errorsExist = true;
+				setFehlerMeldung(scanner.nextLine());
+			}
+			scanner.close();
+			int rueckgabe = process.waitFor();
+			if (errorsExist) {
+				return 1;
+			} else {
+				return rueckgabe;
+			}
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					is = null;
+				}
+			}
+			if (es != null) {
+				try {
+					es.close();
+				} catch (IOException e) {
+					es = null;
+				}
+
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					out = null;
+				}
+			}
 		}
 	}
 
-	
 	public void createUserDirectory(String inDirPath, String inUser) throws IOException, InterruptedException {
 		/*
-		 * -------------------------------- Create directory with script
-		 * --------------------------------
+		 * -------------------------------- Create directory with script --------------------------------
 		 */
 		String command = ConfigMain.getParameter("script_createDirUserHome") + " ";
 		command += inUser + " " + inDirPath;
@@ -302,8 +365,7 @@ public class Helper implements Serializable, Observer {
 
 	public void createMetaDirectory(String inDirPath) throws IOException, InterruptedException {
 		/*
-		 * -------------------------------- Create directory with script
-		 * --------------------------------
+		 * -------------------------------- Create directory with script --------------------------------
 		 */
 		String command = ConfigMain.getParameter("script_createDirMeta") + " ";
 		command += inDirPath;
@@ -395,8 +457,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Copies src file to dst file. If the dst file does not exist, it is
-	 * created
+	 * Copies src file to dst file. If the dst file does not exist, it is created
 	 */
 	public static void copyFile(File src, File dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
@@ -414,9 +475,8 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir. Returns true if all
-	 * deletions were successful. If a deletion fails, the method stops
-	 * attempting to delete and returns false.
+	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
+	 * to delete and returns false.
 	 */
 	public static boolean deleteDir(File dir) {
 		if (!dir.exists()) {
@@ -471,8 +531,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
-	 * will be created.
+	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
 	 */
 
 	public static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int goobipathlength, Element inRoot) throws IOException {

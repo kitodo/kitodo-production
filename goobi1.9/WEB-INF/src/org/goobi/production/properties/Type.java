@@ -27,8 +27,13 @@ package org.goobi.production.properties;
  */
 
 public enum Type {
-	TEXT, LIST, LISTMULTISELECT, BOOLEAN;
-
+	TEXT("text"), LIST("list"), LISTMULTISELECT("listmultiselect"), BOOLEAN("boolean");
+	private String name;
+	
+	private Type(String name) {
+		this.name = name;
+	}
+	
 	public static Type getTypeByName(String inName){
 		if (inName.equalsIgnoreCase("LIST")){
 			return LIST;
@@ -40,5 +45,9 @@ public enum Type {
 			return BOOLEAN;
 		}
 		return TEXT;
+	}
+	
+	public String getName(){
+		return this.name;
 	}
 }

@@ -50,22 +50,16 @@ import org.goobi.production.flow.jobs.HotfolderJob;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
+import org.goobi.production.properties.ImportProperty;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
-import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
-import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.PropertyType;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 // TODO FIXME alle Meldungen durch  messages-Meldungen ersetzen
 public class MassImportForm {
@@ -85,17 +79,21 @@ public class MassImportForm {
 	private List<String> usablePluginsForFiles = new ArrayList<String>();
 	private final ImportPluginLoader ipl = new ImportPluginLoader();
 	private String currentPlugin = "";
+	private IImportPlugin plugin;
+
 	private File importFile = null;
 	private final Helper help = new Helper();
+	// private ImportConfiguration ic = null;
 
 	private UploadedFile uploadedFile = null;
 
 	public MassImportForm() {
 
 		// usablePlugins = ipl.getTitles();
-		setUsablePluginsForRecords(this.ipl.getPluginsForType(ImportType.Record));
-		setUsablePluginsForIDs(this.ipl.getPluginsForType(ImportType.ID));
-		setUsablePluginsForFiles(this.ipl.getPluginsForType(ImportType.FILE));
+		this.usablePluginsForRecords = this.ipl.getPluginsForType(ImportType.Record);
+		this.usablePluginsForIDs = this.ipl.getPluginsForType(ImportType.ID);
+		this.usablePluginsForFiles = this.ipl.getPluginsForType(ImportType.FILE);
+
 	}
 
 	public String Prepare() {
@@ -154,7 +152,7 @@ public class MassImportForm {
 			logger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
-		if (this.possibleDigitalCollections.size()==0){
+		if (this.possibleDigitalCollections.size() == 0) {
 			this.possibleDigitalCollections = defaultCollections;
 		}
 	}
@@ -166,92 +164,117 @@ public class MassImportForm {
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			if (StringUtils.isNotEmpty(this.idList)) {
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				plugin.setImportFolder(tempfolder);
-				plugin.setPrefs(prefs);
-				List<String> ids = plugin.splitIds(this.idList);
+				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				this.plugin.setImportFolder(tempfolder);
+				this.plugin.setPrefs(prefs);
+				List<String> ids = this.plugin.splitIds(this.idList);
 				List<Record> recordList = new ArrayList<Record>();
 				for (String id : ids) {
 					Record r = new Record();
 					r.setData(id);
 					r.setId(id);
 					r.setCollections(this.digitalCollections);
+					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
+					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
+					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
+					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
+					// }
+					//
+					// Prozesseigenschaft pe = new Prozesseigenschaft();
+					// pe.setTitel("importPlugin");
+					// pe.setWert(plugin.getTitle());
+					// pe.setType(PropertyType.String);
+					// r.getProcessProperties().add(pe);
+
 					recordList.add(r);
 				}
 
-				answer = plugin.generateFiles(recordList);
+				answer = this.plugin.generateFiles(recordList);
 			} else if (this.importFile != null) {
 				// uploaded file
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				plugin.setImportFolder(tempfolder);
+				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				this.plugin.setImportFolder(tempfolder);
 
-				plugin.setPrefs(prefs);
-				plugin.setFile(this.importFile);
-				List<Record> recordList = plugin.generateRecordsFromFile();
+				this.plugin.setPrefs(prefs);
+				this.plugin.setFile(this.importFile);
+				List<Record> recordList = this.plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
-					Prozesseigenschaft pe = new Prozesseigenschaft();
-					pe.setWert("jkbgh");
-					pe.setTitel("sjkparhnkldfha");
-					pe.setType(PropertyType.String);
-					List<Prozesseigenschaft> pl = new ArrayList<Prozesseigenschaft>();
-					pl.add(pe);
-					r.setProcessProperties(pl);
-					
-					Werkstueckeigenschaft we = new Werkstueckeigenschaft();
-					we.setTitel("sdgjdfklxc bn");
-					we.setWert("sfbjkafghasfoghj");
-					we.setType(PropertyType.String);
-					List<Werkstueckeigenschaft> wl = new ArrayList<Werkstueckeigenschaft>();
-					wl.add(we);
-					r.setWorkProperties(wl);
-					
-					Vorlageeigenschaft ve = new Vorlageeigenschaft();
-					ve.setTitel("asdfhjksad");
-					ve.setWert("dfjfgjl");
-					ve.setType(PropertyType.String);
-					List<Vorlageeigenschaft> vl = new ArrayList<Vorlageeigenschaft>();
-					vl.add(ve);
-					r.setTemplateProperties(vl);
-					
+
+					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
+					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
+					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
+					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
+					// }
+					//
+					// Prozesseigenschaft pe = new Prozesseigenschaft();
+					// pe.setTitel("importPlugin");
+					// pe.setWert(plugin.getTitle());
+					// pe.setType(PropertyType.String);
+					// r.getProcessProperties().add(pe);
+
 					r.setCollections(this.digitalCollections);
 				}
-				answer = plugin.generateFiles(recordList);
+				answer = this.plugin.generateFiles(recordList);
 			}
 			// found list with records
 			else if (StringUtils.isNotEmpty(this.records)) {
-				IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				plugin.setImportFolder(tempfolder);
+				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				this.plugin.setImportFolder(tempfolder);
 
-				plugin.setPrefs(prefs);
-				List<Record> recordList = plugin.splitRecords(this.records);
+				this.plugin.setPrefs(prefs);
+				List<Record> recordList = this.plugin.splitRecords(this.records);
 				for (Record r : recordList) {
+					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
+					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
+					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
+					// }
+					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
+					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
+					// }
+					//
+					// Prozesseigenschaft pe = new Prozesseigenschaft();
+					// pe.setTitel("importPlugin");
+					// pe.setWert(plugin.getTitle());
+					// pe.setType(PropertyType.String);
+					// r.getProcessProperties().add(pe);
 					r.setCollections(this.digitalCollections);
 				}
-				answer = plugin.generateFiles(recordList);
+				answer = this.plugin.generateFiles(recordList);
 			}
 
-			Batch b = new Batch();
+			// Batch b = new Batch();
 
 			for (ImportObject io : answer) {
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = HotfolderJob.generateProcess(io, this.template, b);
-//					int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
+					int returnValue = HotfolderJob.generateProcess(io, this.template);
+					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
 					if (returnValue > 0) {
-						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed with error code " + returnValue);
+						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed with error code "
+								+ returnValue);
 					}
 					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
 				} else {
 					Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + " error code is: " + io.getProcessTitle());
 				}
 			}
-		
-			if (b.getBatchList().size() > 0) {
-				try {
-					new BatchDAO().save(b);
-				} catch (DAOException e) {
-					// TODO
-				}
-			}
+
+			// if (b.getBatchList().size() > 0) {
+			// try {
+			// new BatchDAO().save(b);
+			// } catch (DAOException e) {
+			//
+			// }
+			// }
 
 		}
 
@@ -278,18 +301,18 @@ public class MassImportForm {
 				Helper.setFehlerMeldung("No file selected");
 				return;
 			}
-			
+
 			String basename = this.uploadedFile.getName();
 			if (basename.startsWith(".")) {
 				basename = basename.substring(1);
 			}
 			if (basename.contains("/")) {
-				basename = basename.substring(basename.lastIndexOf("/")+1);
-			} 
-			if (basename.contains("\\")) {
-				basename = basename.substring(basename.lastIndexOf("\\")+1);
+				basename = basename.substring(basename.lastIndexOf("/") + 1);
 			}
-			
+			if (basename.contains("\\")) {
+				basename = basename.substring(basename.lastIndexOf("\\") + 1);
+			}
+
 			String filename = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/temp/") + basename;
 
 			inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
@@ -302,7 +325,7 @@ public class MassImportForm {
 			}
 
 			this.importFile = new File(filename);
-			
+
 			Helper.setMeldung("File '" + basename + "' successfully uploaded, press 'Save' now...");
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
@@ -445,6 +468,7 @@ public class MassImportForm {
 	 *            the template to set
 	 */
 	public void setTemplate(Prozess template) {
+		// this.ic = new ImportConfiguration(template);
 		this.template = template;
 
 	}
@@ -548,6 +572,7 @@ public class MassImportForm {
 	 */
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
+		this.plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
 	}
 
 	/**
@@ -601,4 +626,33 @@ public class MassImportForm {
 	public List<String> getUsablePluginsForFiles() {
 		return this.usablePluginsForFiles;
 	}
+
+	public boolean getHasNextPage() {
+		// TODO muss für rerender sorgen
+		if (this.plugin != null && this.plugin.getProperties().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public String nextPage() {
+		return "MassImportFormPage2";
+	}
+
+	public List<ImportProperty> getProperties() {
+
+		if (this.plugin != null) {
+			return this.plugin.getProperties();
+		}
+		return new ArrayList<ImportProperty>();
+	}
+
+	// public ImportConfiguration getImportConfiguration() {
+	// return this.ic;
+	// }
+	//
+	// public void setImportConfiguration(ImportConfiguration ic) {
+	// this.ic = ic;
+	// }
+
 }

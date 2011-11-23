@@ -83,7 +83,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	private XMLBasedPropertyTemplateProvider(IGoobiEntity inEntity) throws JDOMException, IOException {
 		Parser parser = new Parser();
 //		entity = inEntity;
-		propertyList = parser.createModelFromXML(getFilepath(), false, inEntity);
+		this.propertyList = parser.createModelFromXML(getFilepath(), false, inEntity);
 	}
 
 	/*
@@ -91,8 +91,9 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	 * 
 	 * @see org.goobi.production.api.property.xmlbasedprovider.IProvidePropertyTemplates #getTemplates(org.goobi.production.api.property.Status)
 	 */
+	@Override
 	public List<PropertyTemplate> getTemplates(Status status, IGoobiEntity inEntity) {
-		if (propertyList == null) {
+		if (this.propertyList == null) {
 			return null;
 		}
 		List<PropertyTemplate> tempList = filterPropertyList(status);
@@ -142,7 +143,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 
 		List<PropertyTemplate> toAdd = new ArrayList<PropertyTemplate>();
 
-		for (PropertyTemplate property : propertyList) {
+		for (PropertyTemplate property : this.propertyList) {
 
 			// batch
 			
@@ -224,6 +225,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	 * @return Integer, index of property in {@link XMLBasedPropertyTemplateProvider#propertyList}
 	 ****************************************************************************/
 	private Boolean checkEntity(String statusEntity, String propertyEntity, PropertyTemplate property) {
+		//TODO Werk und Vorlage fehlerhaft?
 		if (propertyEntity != null) {
 			if (propertyEntity.equals("")) {
 				return true;
@@ -244,7 +246,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	}
 
 	public String getFilepath() {
-		return filename;
+		return this.filename;
 	}
 
 

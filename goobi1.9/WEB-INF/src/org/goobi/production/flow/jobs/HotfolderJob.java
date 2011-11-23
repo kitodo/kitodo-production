@@ -369,7 +369,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 
 	
-	public static int generateProcess(ImportObject io, Prozess vorlage, Batch batch) {
+	public static int generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
 		String metsfilename = io.getMetsFilename();
 		String basepath = metsfilename.substring(0, metsfilename.length()-4);
@@ -407,13 +407,13 @@ public class HotfolderJob extends AbstractGoobiJob {
 			cp.OpacAuswerten();
 			try {
 				Prozess p = cp.createProcess(io);
-				if (p.getId() != null) {
-					if (batch != null) {
-						batch.addProcessToBatch(p);
-						batch.setProject(p.getProjekt());
-					}
-					moveFiles(metsfile, basepath, p);
-				}
+//				if (p.getId() != null) {
+//					if (batch != null) {
+//						batch.addProcessToBatch(p);
+//						batch.setProject(p.getProjekt());
+//					}
+//				}
+				moveFiles(metsfile, basepath, p);
 
 			} catch (ReadException e) {
 				// TODO Auto-generated catch block

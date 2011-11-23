@@ -29,15 +29,11 @@ package org.goobi.production.Import;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
-
 public class Record {
 
-	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
-	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
-	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
+//	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
+//	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
+//	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
 	
 	private List<String> collections = new ArrayList<String>();
 	private String data = "";
@@ -81,23 +77,23 @@ public class Record {
 		return this.collections;
 	}
 
-	public List<Prozesseigenschaft> getProcessProperties() {
-		return this.processProperties;
-	}
-	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
-		this.processProperties = processProperties;
-	}
-	public List<Werkstueckeigenschaft> getWorkProperties() {
-		return this.workProperties;
-	}
-	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
-		this.workProperties = workProperties;
-	}
-	public List<Vorlageeigenschaft> getTemplateProperties() {
-		return this.templateProperties;
-	}
-	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
-		this.templateProperties = templateProperties;
-	}
+//	public List<Prozesseigenschaft> getProcessProperties() {
+//		return this.processProperties;
+//	}
+//	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
+//		this.processProperties = processProperties;
+//	}
+//	public List<Werkstueckeigenschaft> getWorkProperties() {
+//		return this.workProperties;
+//	}
+//	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
+//		this.workProperties = workProperties;
+//	}
+//	public List<Vorlageeigenschaft> getTemplateProperties() {
+//		return this.templateProperties;
+//	}
+//	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
+//		this.templateProperties = templateProperties;
+//	}
 	
 }

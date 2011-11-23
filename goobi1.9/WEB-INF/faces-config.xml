@@ -71,7 +71,13 @@
 			<to-view-id>/newpages/MassImport.jsp</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>MassImportFormPage2</from-outcome>
+			<to-view-id>/newpages/MassImportPage2.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 	
 	
 	<!-- Alle Benutzergruppen als Popup für die Bearbeitung der Benutzer-->

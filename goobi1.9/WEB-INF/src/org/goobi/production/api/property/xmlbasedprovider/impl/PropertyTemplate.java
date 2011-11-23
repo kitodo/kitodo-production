@@ -85,8 +85,8 @@ public class PropertyTemplate {
 		try {
 			this.name = hgp.getTitel();
 			this.owningEntity = hgp.getOwningEntity();
-			maskedProp = hgp;
-			selectedValue = hgp.getWert();
+			this.maskedProp = hgp;
+			this.selectedValue = hgp.getWert();
 
 		} catch (Exception e) {
 			logger.error("some error occured in constuctor", e);
@@ -111,8 +111,8 @@ public class PropertyTemplate {
 	private void initPropery() {
 		if (this.maskedProp == null) {
 //			if (owningEntity != null) {
-				this.maskedProp = generateProperty(owningEntity, name);
-				maskedProp.setWert(selectedValue);
+				this.maskedProp = generateProperty(this.owningEntity, this.name);
+				this.maskedProp.setWert(this.selectedValue);
 				// } else {
 				// logger.error("scheiße");
 //			}
@@ -169,7 +169,7 @@ public class PropertyTemplate {
 	 */
 	public String getName() {
 		initPropery();
-		return name;
+		return this.name;
 	}
 
 	/*
@@ -190,7 +190,7 @@ public class PropertyTemplate {
 	 */
 	public List<String> getValuesList() {
 		initPropery();
-		return valuesList;
+		return this.valuesList;
 	}
 
 	/*
@@ -242,7 +242,7 @@ public class PropertyTemplate {
 	 */
 	public String getSelectedValue() {
 		initPropery();
-		return selectedValue;
+		return this.selectedValue;
 	}
 
 	/*
@@ -252,16 +252,16 @@ public class PropertyTemplate {
 	 */
 	public String getSelectedValueBeautified() {
 		if (getType().equals(PropertyType.ListMultiSelect)) {
-			if (selectedValue == null) {
+			if (this.selectedValue == null) {
 				return "";
 			}
-			String back = selectedValue.replaceAll("[\\s][|][\\s]", ", ");
+			String back = this.selectedValue.replaceAll("[\\s][|][\\s]", ", ");
 			if (back.endsWith(", ")) {
 				back = back.substring(0, back.length() - 2);
 			}
 			return back;
 		}
-		return selectedValue;
+		return this.selectedValue;
 	}
 
 	/*
@@ -282,7 +282,7 @@ public class PropertyTemplate {
 	 */
 	public boolean isRequired() {
 		initPropery();
-		return maskedProp.isIstObligatorisch();
+		return this.maskedProp.isIstObligatorisch();
 	}
 
 	/*
@@ -293,9 +293,9 @@ public class PropertyTemplate {
 	public void setRequired(Boolean required) {
 		initPropery();
 		if (required != null) {
-			maskedProp.setIstObligatorisch(required);
+			this.maskedProp.setIstObligatorisch(required);
 		} else {
-			maskedProp.setIstObligatorisch(false);
+			this.maskedProp.setIstObligatorisch(false);
 		}
 	}
 
@@ -305,7 +305,7 @@ public class PropertyTemplate {
 	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#getEntities()
 	 */
 	public HashMap<String, String> getEntities() {
-		return entities;
+		return this.entities;
 	}
 
 	/*
@@ -358,7 +358,7 @@ public class PropertyTemplate {
 	 */
 	public IGoobiProperty getProperty() {
 		initPropery();
-		return maskedProp;
+		return this.maskedProp;
 	}
 
 	/*
@@ -368,7 +368,7 @@ public class PropertyTemplate {
 	 */
 	public Integer getId() {
 		initPropery();
-		return maskedProp.getId();
+		return this.maskedProp.getId();
 	}
 
 	/*
@@ -417,7 +417,7 @@ public class PropertyTemplate {
 
 	public Status getStatus() {
 		initPropery();
-		return maskedProp.getStatus();
+		return this.maskedProp.getStatus();
 	}
 
 	/*
@@ -427,7 +427,7 @@ public class PropertyTemplate {
 	 */
 	public IGoobiEntity getOwningEntity() {
 		initPropery();
-		return maskedProp.getOwningEntity();
+		return this.maskedProp.getOwningEntity();
 	}
 
 	/*
@@ -436,10 +436,10 @@ public class PropertyTemplate {
 	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setOwningEntity(de.sub.goobi.Beans.Property.IGoobiEntity)
 	 */
 	public void setOwningEntity(IGoobiEntity inEntity) {
-		owningEntity = inEntity;
+		this.owningEntity = inEntity;
 		initPropery();
 
-		maskedProp.setOwningEntity(inEntity);
+		this.maskedProp.setOwningEntity(inEntity);
 	}
 
 	/*
@@ -449,7 +449,7 @@ public class PropertyTemplate {
 	 */
 	public String getAuswahl() {
 		initPropery();
-		return maskedProp.getAuswahl();
+		return this.maskedProp.getAuswahl();
 	}
 
 	/*
@@ -459,7 +459,7 @@ public class PropertyTemplate {
 	 */
 	public Date getCreationDate() {
 		initPropery();
-		return maskedProp.getCreationDate();
+		return this.maskedProp.getCreationDate();
 	}
 
 	/*
@@ -469,7 +469,7 @@ public class PropertyTemplate {
 	 */
 	public String getTitel() {
 		initPropery();
-		return maskedProp.getTitel();
+		return this.maskedProp.getTitel();
 	}
 
 	/*
@@ -479,7 +479,7 @@ public class PropertyTemplate {
 	 */
 	public PropertyType getType() {
 		initPropery();
-		return maskedProp.getType();
+		return this.maskedProp.getType();
 	}
 
 	/*
@@ -489,7 +489,7 @@ public class PropertyTemplate {
 	 */
 	public String getWert() {
 		initPropery();
-		return maskedProp.getWert();
+		return this.maskedProp.getWert();
 	}
 
 	/*
@@ -499,7 +499,7 @@ public class PropertyTemplate {
 	 */
 	public boolean isIstObligatorisch() {
 		initPropery();
-		return maskedProp.isIstObligatorisch();
+		return this.maskedProp.isIstObligatorisch();
 	}
 
 	/*
@@ -509,7 +509,7 @@ public class PropertyTemplate {
 	 */
 	public void setAuswahl(String auswahl) {
 		initPropery();
-		maskedProp.setAuswahl(auswahl);
+		this.maskedProp.setAuswahl(auswahl);
 
 	}
 
@@ -520,7 +520,7 @@ public class PropertyTemplate {
 	 */
 	public void setCreationDate(Date creation) {
 		initPropery();
-		maskedProp.setCreationDate(creation);
+		this.maskedProp.setCreationDate(creation);
 
 	}
 
@@ -532,7 +532,7 @@ public class PropertyTemplate {
 	public void setTitel(String titel) {
 		initPropery();
 		this.name = titel;
-		maskedProp.setTitel(titel);
+		this.maskedProp.setTitel(titel);
 
 	}
 
@@ -543,7 +543,7 @@ public class PropertyTemplate {
 	 */
 	public void setType(PropertyType inType) {
 		initPropery();
-		maskedProp.setType(inType);
+		this.maskedProp.setType(inType);
 
 	}
 
@@ -555,7 +555,7 @@ public class PropertyTemplate {
 	public void setWert(String wert) {
 		initPropery();
 		this.selectedValue = wert;
-		maskedProp.setWert(wert);
+		this.maskedProp.setWert(wert);
 
 	}
 
@@ -564,12 +564,12 @@ public class PropertyTemplate {
 	}
 
 	public boolean getIsUsed() {
-		return isUsed;
+		return this.isUsed;
 	}
 
 	public PropertyTemplate copy(int container) {
-		PropertyTemplate pt = new PropertyTemplate(owningEntity, this.getName());
-		IGoobiProperty ip = generateProperty(owningEntity, this.getName());
+		PropertyTemplate pt = new PropertyTemplate(this.owningEntity, this.getName());
+		IGoobiProperty ip = generateProperty(this.owningEntity, this.getName());
 		pt.setProperty(ip);
 		pt.setAuswahl(this.getAuswahl());
 		pt.setCreationDate(new Date());
@@ -582,7 +582,7 @@ public class PropertyTemplate {
 		pt.setValue(this.getValue());
 		pt.setWert(this.getWert());
 		pt.setContainer(container);
-		pt.setOwningEntity(owningEntity);
+		pt.setOwningEntity(this.owningEntity);
 		return pt;
 	}
 
@@ -593,7 +593,7 @@ public class PropertyTemplate {
 	public void setContainer(int container) {
 		initPropery();
 		// this.container = container;
-		maskedProp.setContainer(container);
+		this.maskedProp.setContainer(container);
 	}
 
 	/**
@@ -604,7 +604,7 @@ public class PropertyTemplate {
 		// if (container == null) {
 		// return 0;
 		// }
-		return maskedProp.getContainer();
+		return this.maskedProp.getContainer();
 	}
 
 }

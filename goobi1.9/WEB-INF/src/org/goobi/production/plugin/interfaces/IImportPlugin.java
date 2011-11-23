@@ -32,6 +32,7 @@ import java.util.List;
 import org.goobi.production.Import.ImportObject;
 import org.goobi.production.Import.Record;
 import org.goobi.production.enums.ImportType;
+import org.goobi.production.properties.ImportProperty;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
@@ -61,5 +62,7 @@ public interface IImportPlugin extends IPlugin {
 	public List<String> splitIds(String ids);
 	
 	public List<ImportType> getImportTypes();
+	
+	public List<ImportProperty> getProperties();
 	
 }

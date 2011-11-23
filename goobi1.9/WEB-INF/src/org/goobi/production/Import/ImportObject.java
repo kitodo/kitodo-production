@@ -28,10 +28,8 @@ public class ImportObject {
 	
 	
 	
-	public ImportObject(Record r) {
-		this.processProperties = r.getProcessProperties();
-		this.workProperties = r.getWorkProperties();
-		this.templateProperties = r.getTemplateProperties();
+	public ImportObject() {
+		
 	
 	}
 	

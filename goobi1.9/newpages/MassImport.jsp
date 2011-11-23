@@ -4,9 +4,9 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="http://www.jenia.org/jsf/popup" prefix="jp"%>
-<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
-	prefix="si"%>
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
+
 
 
 <%-- ######################################## 
@@ -22,8 +22,7 @@
 		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
 			<%@include file="inc/tbl_Kopf.jsp"%>
 		</htm:table>
-		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
-			align="center">
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable" align="center">
 			<link href="../css/tabbedPane.css" rel="stylesheet" type="text/css" />
 			<htm:tr>
 				<%@include file="inc/tbl_Navigation.jsp"%>
@@ -32,13 +31,11 @@
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
 					<h:form enctype="multipart/form-data" id="formupload">
 						<%-- Breadcrumb --%>
-						<h:panelGrid width="100%" columns="1"
-							styleClass="layoutInhaltKopf" id="projgrid112">
+						<h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf" id="projgrid112">
 							<h:panelGroup id="id1">
 								<h:commandLink value="#{msgs.startseite}" action="newMain" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:commandLink value="#{msgs.prozessverwaltung}"
-									action="ProzessverwaltungAlle" />
+								<h:commandLink value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:outputText value="#{msgs.MassImport}" />
 							</h:panelGroup>
@@ -53,13 +50,10 @@
 									</htm:h3>
 
 									<%-- globale Warn- und Fehlermeldungen --%>
-									<h:messages id="id8" globalOnly="false" errorClass="text_red"
-										infoClass="text_blue" showDetail="true" showSummary="true"
-										tooltip="true" />
+									<h:messages id="id8" globalOnly="false" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
 									<%-- Box für die Bearbeitung der Details --%>
-									<htm:table cellpadding="3" cellspacing="0" width="100%"
-										styleClass="eingabeBoxen">
+									<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" id="table1">
 
 										<htm:tr>
 											<htm:td styleClass="eingabeBoxen_row1" align="left">
@@ -67,8 +61,7 @@
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row1" align="right">
 												<h:commandLink id="idnp2" action="#{NavigationForm.Reload}">
-													<h:graphicImage id="idnp4"
-														value="/newpages/images/reload.gif" />
+													<h:graphicImage id="idnp4" value="/newpages/images/reload.gif" />
 												</h:commandLink>
 											</htm:td>
 										</htm:tr>
@@ -78,129 +71,84 @@
 											<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
 
-												<x:panelTabbedPane serverSideTabSwitch="true"
-													immediateTabChange="false" styleClass="tabbedPane"
-													activeTabStyleClass="activeTab"
-													inactiveTabStyleClass="inactiveTab"
-													disabledTabStyleClass="disabledTab"
-													activeSubStyleClass="activeSub"
-													inactiveSubStyleClass="inactiveSub"
-													tabContentStyleClass="tabContent">
+												<x:panelTabbedPane serverSideTabSwitch="true" immediateTabChange="false" styleClass="tabbedPane" activeTabStyleClass="activeTab"
+													inactiveTabStyleClass="inactiveTab" disabledTabStyleClass="disabledTab" activeSubStyleClass="activeSub"
+													inactiveSubStyleClass="inactiveSub" tabContentStyleClass="tabContent" id="inputtable">
 
-													<x:panelTab label="#{msgs.recordImport}">
-														<h:panelGrid columns="2" width="100%" border="0"
-															style="font-size:12;margin-left:30px" rowClasses="rowTop"
+													<x:panelTab label="#{msgs.recordImport}" id="record">
+														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
-															<h:outputText
-																value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
-															<h:outputLabel for="digitaleKollektionen"
-																value="#{msgs.digitaleKollektionen}:" />
-															<h:selectManyListbox id="digitaleKollektionen"
-																value="#{MassImportForm.digitalCollections}"
-																styleClass="processMassImport" size="5">
-																<si:selectItems
-																	value="#{MassImportForm.possibleDigitalCollection}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
+															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
+																<si:selectItems value="#{MassImportForm.possibleDigitalCollection}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectManyListbox>
 
-															<h:outputLabel for="plugins"
-																value="#{msgs.importplugin}:" />
-															<h:selectOneMenu id="plugins"
-																value="#{MassImportForm.currentPlugin}"
-																styleClass="processMassImport">
-																<si:selectItems
-																	value="#{MassImportForm.usablePluginsForRecords}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="plugins" value="#{msgs.importplugin}:" />
+															<h:selectOneMenu id="plugins" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
+															<a4j:support event="onchange" reRender="formupload:next, formupload:save"/>
+																<si:selectItems value="#{MassImportForm.usablePluginsForRecords}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
 															<h:outputLabel for="records" value="#{msgs.records}" />
-															<h:inputTextarea id="records"
-																value="#{MassImportForm.records}"
-																styleClass="processMassImport" style="height: 400px;" />
+															<h:inputTextarea id="records" value="#{MassImportForm.records}" styleClass="processMassImport" style="height: 400px;" />
 
 
 														</h:panelGrid>
 													</x:panelTab>
 
 
-													<x:panelTab label="#{msgs.idImport}">
-														<h:panelGrid columns="2" width="100%" border="0"
-															style="font-size:12;margin-left:30px" rowClasses="rowTop"
+													<x:panelTab label="#{msgs.idImport}" id="idimport">
+														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
-															<h:outputText
-																value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
-															<h:outputLabel for="digitaleKollektionen"
-																value="#{msgs.digitaleKollektionen}:" />
-															<h:selectManyListbox id="digitaleKollektionen"
-																value="#{MassImportForm.digitalCollections}"
-																styleClass="processMassImport" size="5">
-																<si:selectItems
-																	value="#{MassImportForm.possibleDigitalCollection}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
+															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
+																<si:selectItems value="#{MassImportForm.possibleDigitalCollection}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectManyListbox>
 
-															<h:outputLabel for="plugins2"
-																value="#{msgs.importplugin}:" />
-															<h:selectOneMenu id="plugins2"
-																value="#{MassImportForm.currentPlugin}"
-																styleClass="processMassImport">
-																<si:selectItems
-																	value="#{MassImportForm.usablePluginsForIDs}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="plugins2" value="#{msgs.importplugin}:" />
+															<h:selectOneMenu id="plugins2" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
+															<a4j:support event="onchange" reRender="formupload:next, formupload:save"/>
+																<si:selectItems value="#{MassImportForm.usablePluginsForIDs}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
 															<h:outputLabel for="ids" value="#{msgs.listOfIds}:" />
-															<h:inputTextarea id="ids"
-																value="#{MassImportForm.idList}"
-																styleClass="processMassImport" style="height: 400px;" />
+															<h:inputTextarea id="ids" value="#{MassImportForm.idList}" styleClass="processMassImport" style="height: 400px;" />
 														</h:panelGrid>
 													</x:panelTab>
 
 
-													<x:panelTab label="#{msgs.uploadImport}">
+													<x:panelTab label="#{msgs.uploadImport}" id="upload">
 
-														<h:panelGrid columns="2" width="100%" border="0"
-															style="font-size:12;margin-left:30px" rowClasses="rowTop"
+														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
-															<h:outputText
-																value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
-															<h:outputLabel for="digitaleKollektionen"
-																value="#{msgs.digitaleKollektionen}:" />
-															<h:selectManyListbox id="digitaleKollektionen"
-																value="#{MassImportForm.digitalCollections}"
-																styleClass="processMassImport" size="5">
-																<si:selectItems
-																	value="#{MassImportForm.possibleDigitalCollection}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
+															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
+																<si:selectItems value="#{MassImportForm.possibleDigitalCollection}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectManyListbox>
 
-															<h:outputLabel for="plugins3"
-																value="#{msgs.importplugin}:" />
-															<h:selectOneMenu id="plugins3"
-																value="#{MassImportForm.currentPlugin}"
-																styleClass="processMassImport">
-																<si:selectItems
-																	value="#{MassImportForm.usablePluginsForFiles}"
-																	var="step" itemLabel="#{step}" itemValue="#{step}" />
+															<h:outputLabel for="plugins3" value="#{msgs.importplugin}:" />
+															<h:selectOneMenu id="plugins3" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
+															<a4j:support event="onchange" reRender="formupload:next, formupload:save"/>
+																<si:selectItems value="#{MassImportForm.usablePluginsForFiles}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
-															<h:outputLabel for="fileupload3"
-																value="#{msgs.uploadImport}:"></h:outputLabel>
+															<h:outputLabel for="fileupload3" value="#{msgs.uploadImport}:"></h:outputLabel>
 															<h:panelGroup>
-																<x:inputFileUpload id="fileupload3" accept="application/xml"
-																	value="#{MassImportForm.uploadedFile}" storage="file"
+																<x:inputFileUpload id="fileupload3" accept="application/xml" value="#{MassImportForm.uploadedFile}" storage="file"
 																	styleClass="fileUploadInput" required="false" />
-																<h:commandButton value="#{msgs.uploadFile}" id="button3"
-																	action="#{MassImportForm.uploadFile}">
+																<h:commandButton value="#{msgs.uploadFile}" id="button3" action="#{MassImportForm.uploadFile}">
 																</h:commandButton>
 															</h:panelGroup>
 														</h:panelGrid>
@@ -214,14 +162,14 @@
 
 										<htm:tr>
 											<htm:td styleClass="eingabeBoxen_row3" align="left">
-												<h:commandButton id="id121" value="#{msgs.abbrechen}"
-													action="ProzessverwaltungAlle" immediate="true" />
+												<h:commandButton id="id121" value="#{msgs.abbrechen}" action="ProzessverwaltungAlle" immediate="true" />
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
 
 
-												<h:commandButton id="id124" value="#{msgs.speichern}"
-													action="#{MassImportForm.convertData}" />
+												<h:commandButton id="next" value="#{msgs.weiter}" action="#{MassImportForm.nextPage}" rendered="#{MassImportForm.hasNextPage}" />
+
+												<h:commandButton id="save" value="#{msgs.speichern}" action="#{MassImportForm.convertData}" rendered="#{!MassImportForm.hasNextPage}" />
 
 											</htm:td>
 

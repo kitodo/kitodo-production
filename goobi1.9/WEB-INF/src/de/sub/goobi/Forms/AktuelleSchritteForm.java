@@ -42,6 +42,7 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
+import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.Criteria;
@@ -974,7 +975,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void saveProcessProperties() {
 		boolean valid = true;
-		for (ProcessProperty p : processPropertyList) {
+		for (IProperty p : processPropertyList) {
 			if (!p.isValid()) {
 				Helper.setFehlerMeldung("Property " + p.getName() + " not valid");
 				valid = false;
@@ -982,7 +983,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 
 		if (valid) {
-			for (ProcessProperty p : processPropertyList) {
+			for (IProperty p : processPropertyList) {
 				p.transfer();
 			}
 			try {

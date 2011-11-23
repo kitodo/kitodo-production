@@ -1,4 +1,5 @@
 package org.goobi.production.api.property.xmlbasedprovider;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -33,8 +34,9 @@ import de.sub.goobi.Beans.Werkstueck;
 
 /**
  * simple POJO class to generate PropertyTemplate for a IGoobiEntity
+ * 
  * @author rsehr
- *
+ * 
  */
 public class Status {
 
@@ -90,7 +92,7 @@ public class Status {
 		myStatus.setProject(inEntity.getTitel());
 		return myStatus;
 	}
-	
+
 	public static Status getBatchStatus(Batch inEntity) {
 		Status myStatus = new Status();
 		myStatus.setProject(inEntity.getProject().getTitel());
@@ -117,7 +119,11 @@ public class Status {
 		Status myStatus = new Status();
 		myStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
 		myStatus.setProcess(inEntity.getProzess().getTitel());
-		myStatus.setProductionResource(String.valueOf(inEntity.getId()));
+		if (inEntity.getId() != null) {
+			myStatus.setProductionResource(String.valueOf(inEntity.getId()));
+		} else  {
+			myStatus.setProductionResource("0");
+		}
 		return myStatus;
 	}
 
@@ -125,11 +131,13 @@ public class Status {
 		Status myStatus = new Status();
 		myStatus.setProject(inEntity.getProzess().getProjekt().getTitel());
 		myStatus.setProcess(inEntity.getProzess().getTitel());
-		myStatus.setProduct(String.valueOf(inEntity.getId()));
+		if (inEntity.getId() != null) {
+			myStatus.setProduct(String.valueOf(inEntity.getId()));
+		} else  {
+			myStatus.setProduct("0");
+		}
 		return myStatus;
 	}
-	
-
 
 	public void setBatch(String batch) {
 		this.batch = batch;
