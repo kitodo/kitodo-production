@@ -41,7 +41,6 @@ public class ImportProperty implements IProperty{
 	private List<String> possibleValues = new ArrayList<String>();
 	private List<String> projects = new ArrayList<String>();
 	
-	
 	public ImportProperty() {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
@@ -143,6 +142,8 @@ public class ImportProperty implements IProperty{
 	}
 		
 	
+	
+	
 	@Override
 	public ImportProperty getClone(){
 		ImportProperty p = new ImportProperty();
@@ -152,5 +153,37 @@ public class ImportProperty implements IProperty{
 	@Override
 	public void transfer(){
 		
+	}
+
+	// TODO nach
+	public List<String> getValueList() {
+		String[] values = this.value.split("; ");
+		List<String> answer = new ArrayList<String>();
+		for (String val : values) {
+			answer.add(val);
+		}
+		return answer;
+	}
+
+	public void setValueList(List<String> valueList) {
+		this.value = "";
+		for (String val : valueList) {
+			this.value = this.value + val + "; ";
+		}
+	}
+	
+	public boolean getBooleanValue() {
+		if (this.value.equalsIgnoreCase("true")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public void setBooleanValue(boolean val) {
+		if (val) {
+			this.value = "true";
+		} else {
+			this.value = "false";
+		}
 	}
 }

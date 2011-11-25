@@ -27,7 +27,7 @@ package org.goobi.production.properties;
  */
 
 public enum Type {
-	TEXT("text"), LIST("list"), LISTMULTISELECT("listmultiselect"), BOOLEAN("boolean");
+	TEXT("text"), LIST("list"), LISTMULTISELECT("listmultiselect"), BOOLEAN("boolean"), DATE("date");
 	private String name;
 	
 	private Type(String name) {
@@ -43,6 +43,9 @@ public enum Type {
 		}
 		if (inName.equalsIgnoreCase("BOOLEAN")){
 			return BOOLEAN;
+		}
+		if (inName.equalsIgnoreCase("DATE")) {
+			return DATE;
 		}
 		return TEXT;
 	}

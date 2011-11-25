@@ -75,56 +75,54 @@
 
 
 
-												<x:dataTable var="processProperty" id="processProperties" value="#{MassImportForm.properties}">
+												<x:dataTable var="property" id="processProperties" value="#{MassImportForm.properties}">
+
 													<h:column>
-														<h:panelGroup id="prpvw15_1" rendered="#{processProperty.type.name == 'text'}">
-															<h:outputText value="#{processProperty.name}" />
-															<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{processProperty.value}" />
+														<h:panelGroup id="prpvw15_1" rendered="#{property.type.name == 'text'}">
+															<h:outputText value="#{property.name}" />
+															<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{property.value}" />
 														</h:panelGroup>
 
 														<%-- numbers only --%>
-														<h:panelGroup id="prpvw15_1m" rendered="#{processProperty.type.name == 'integer' || processProperty.type.name == 'number'}">
-															<h:outputText value="#{processProperty.name}" />
-															<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{processProperty.value}">
+														<h:panelGroup id="prpvw15_1m" rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
+															<h:outputText value="#{property.name}" />
+															<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
 																<f:validateLongRange minimum="0" />
 															</h:inputText>
 														</h:panelGroup>
 
 														<%--  SelectOneMenu --%>
-														<h:panelGroup id="prpvw15_2" rendered="#{(processProperty.type.name == 'list')}">
-															<h:outputText value="#{processProperty.name}" />
-															<h:selectOneMenu value="#{processProperty.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
-																<si:selectItems id="prpvw15_2_2" value="#{processProperty.possibleValues}" var="processPropertys" itemLabel="#{processPropertys}"
-																	itemValue="#{processPropertys}" />
+														<h:panelGroup id="prpvw15_2" rendered="#{(property.type.name == 'list')}">
+															<h:outputText value="#{property.name}" />
+															<h:selectOneMenu value="#{property.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
+																<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
+																	itemValue="#{propertys}" />
 															</h:selectOneMenu>
 														</h:panelGroup>
 
-														<%--  SelectManyMenu 
-														<h:panelGroup id="prpvw15_3" rendered="#{(processProperty.type.name == 'listmultiselect')}">
-															<h:outputText value="#{processProperty.name}" />
-															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{processProperty.value}"
-																required="#{processProperty.required}" size="5">
-																<si:selectItems id="prpvw15_3_2" value="#{processProperty.possibleValues}" var="processPropertys" itemLabel="#{processPropertys}"
-																	itemValue="#{processPropertys}" />
+														<%--  SelectManyMenu --%>
+														<h:panelGroup id="prpvw15_3" rendered="#{(property.type.name == 'listmultiselect')}">
+															<h:outputText value="#{property.name}" />
+															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}"
+																 size="5">
+																<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
+																	itemValue="#{propertys}" />
 															</h:selectManyListbox>
-														</h:panelGroup>--%>
+														</h:panelGroup>
 
 														<%--  Boolean --%>
-														<h:panelGroup id="prpvw15_4" rendered="#{(processProperty.type.name == 'boolean')}">
-															<h:outputText value="#{processProperty.name}" />
-
-															<h:selectOneMenu value="#{processProperty.value}" id="prpvw15_4_1" style="width: 500px;margin-right:15px">
-																<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
-																<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
-															</h:selectOneMenu>
+														<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}">
+															<h:outputText value="#{property.name}" />
+															<h:selectBooleanCheckbox value="#{property.booleanValue}"/>
+														
 														</h:panelGroup>
 
-														<%--  Date  
-														<h:panelGroup id="prpvw15_5" rendered="#{(processProperty.type.name == 'date')}">
-															<h:outputText value="#{processProperty.name}" />
-															<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{processProperty.date}" enableManualInput="true">
+														<%--  Date  --%>
+														<h:panelGroup id="prpvw15_5" rendered="#{(property.type.name == 'date')}">
+															<h:outputText value="#{property.name}" />
+															<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true">
 															</rich:calendar>
-														</h:panelGroup>--%>
+														</h:panelGroup>
 													</h:column>
 												</x:dataTable>
 
