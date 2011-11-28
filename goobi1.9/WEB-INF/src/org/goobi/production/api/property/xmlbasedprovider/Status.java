@@ -25,7 +25,6 @@ package org.goobi.production.api.property.xmlbasedprovider;
  * exception statement from your version.
  * 
  */
-import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
@@ -45,7 +44,6 @@ public class Status {
 	private String step;
 	private String product;
 	private String productionResource;
-	private String batch;
 
 	public void setProject(String project) {
 		this.project = project;
@@ -93,13 +91,6 @@ public class Status {
 		return myStatus;
 	}
 
-	public static Status getBatchStatus(Batch inEntity) {
-		Status myStatus = new Status();
-		myStatus.setProject(inEntity.getProject().getTitel());
-		myStatus.setBatch(String.valueOf(inEntity.getId()));
-		return myStatus;
-	}
-
 	public static Status getProcessStatus(Prozess inEntity) {
 		Status myStatus = new Status();
 		myStatus.setProject(inEntity.getProjekt().getTitel());
@@ -139,12 +130,5 @@ public class Status {
 		return myStatus;
 	}
 
-	public void setBatch(String batch) {
-		this.batch = batch;
-	}
-
-	public String getBatch() {
-		return this.batch;
-	}
 
 }

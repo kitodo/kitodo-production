@@ -42,9 +42,7 @@ import org.goobi.production.cli.helper.CopyProcess;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.BatchDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -113,14 +111,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 								HashMap<String, Integer> failedData = new HashMap<String, Integer>();
 								logger.trace("12");
 
-								Batch batch = new Batch();
-
 								for (String filename : metsfiles) {
 									logger.debug("found file: " + filename);
 									logger.trace("13");
 
 									int returnValue = generateProcess(filename, template, hotfolder.getFolderAsFile(), hotfolder.getCollection(),
-											hotfolder.getUpdateStrategy(), batch);
+											hotfolder.getUpdateStrategy());
 									logger.trace("14");
 									if (returnValue != 0) {
 										logger.trace("15");
@@ -142,7 +138,6 @@ public class HotfolderJob extends AbstractGoobiJob {
 										logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
 									}
 								}
-								new BatchDAO().save(batch);
 								hotfolder.unlock();
 							}
 						} else {
@@ -181,7 +176,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 		return size;
 	}
 
-	public static int generateProcess(String processTitle, Prozess vorlage, File dir, String digitalCollection, String updateStrategy, Batch batch) {
+	public static int generateProcess(String processTitle, Prozess vorlage, File dir, String digitalCollection, String updateStrategy) {
 		// wenn keine anchor Datei, dann Vorgang anlegen
 		if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
 			if (!updateStrategy.equals("ignore")) {
@@ -261,10 +256,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 				try {
 					Prozess p = form.NeuenProzessAnlegen2();
 					if (p.getId() != null) {
-						if (batch != null) {
-							batch.addProcessToBatch(p);
-							batch.setProject(p.getProjekt());
-						}
+						
 						// copy image files to new directory
 						File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
 								+ File.separator);

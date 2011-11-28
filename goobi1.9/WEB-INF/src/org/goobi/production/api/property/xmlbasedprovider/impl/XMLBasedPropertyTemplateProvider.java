@@ -48,8 +48,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	private static final String STEP = "step";
 	private static final String PRODUCT = "product";
 	private static final String PRODUCTIONRESOURCE = "productionresource";
-	private static final String BATCH = "batch";
-
+	
 	private static XMLBasedPropertyTemplateProvider instance = null;
 	// TODO replace it with real one
 	private String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "propertyTemplates.xml";
@@ -145,15 +144,8 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 
 		for (PropertyTemplate property : this.propertyList) {
 
-			// batch
-			
-			if (status.getBatch() != null) {
-				if (checkEntity(status.getBatch(),  property.getEntities().get(BATCH), property) && checkEntity(status.getProject(), property.getEntities().get(PROJECT), property)) {
-					toAdd.add(property);
-				}
-			}
 			// Werkstueck
-			else if (status.getProduct() != null) {
+			 if (status.getProduct() != null) {
 				if (checkEntity(status.getProject(), property.getEntities().get(PROJECT), property)
 						&& checkEntity(status.getProcess(), property.getEntities().get(PROCESS), property)
 						&& !checkEntity(status.getStep(), property.getEntities().get(STEP), property)
