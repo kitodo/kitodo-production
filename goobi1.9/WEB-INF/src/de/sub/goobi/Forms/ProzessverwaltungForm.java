@@ -61,7 +61,6 @@ import org.hibernate.criterion.Restrictions;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 
-import de.sub.goobi.Beans.Batch;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
 import de.sub.goobi.Beans.Projekt;
@@ -78,8 +77,6 @@ import de.sub.goobi.Export.download.ExportMets;
 import de.sub.goobi.Export.download.ExportPdf;
 import de.sub.goobi.Export.download.Multipage;
 import de.sub.goobi.Export.download.TiffHeader;
-import de.sub.goobi.Persistence.BatchDAO;
-import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
@@ -232,13 +229,13 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String Loeschen() {
 		deleteMetadataDirectory();
 		try {
-			Batch b = this.myProzess.getBatch();
-			if (b != null) {
-				b.removeProcessFromBatch(this.myProzess);
-				if (b.getBatchList().isEmpty()) {
-					new BatchDAO().remove(b);
-				}
-			}
+//			Batch b = this.myProzess.getBatch();
+//			if (b != null) {
+//				b.removeProcessFromBatch(this.myProzess);
+//				if (b.getBatchList().isEmpty()) {
+//					new BatchDAO().remove(b);
+//				}
+//			}
 			this.dao.remove(this.myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete ", e);
@@ -546,7 +543,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String SchrittNeu() {
 		this.mySchritt = new Schritt();
-		modusBearbeiten="schritt";
+		this.modusBearbeiten="schritt";
 		return "ProzessverwaltungBearbeitenSchritt";
 	}
 

@@ -21,12 +21,13 @@
 		<property name="sortHelperDocstructs" column="sortHelperDocstructs" type="integer"/>
 		<property name="sortHelperMetadata" column="sortHelperMetadata" type="integer"/>
 		<property name="erstellungsdatum" column="erstellungsdatum" type="timestamp"/>
+		<property name="batch" column="batchID" type="integer"/>
 		<property name="wikifield" column="wikifield" type="text"/>
 		
 		<many-to-one name="projekt" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
 		
 		<many-to-one name="regelsatz" class="de.sub.goobi.Beans.Regelsatz" column="MetadatenKonfigurationID"/>
-		<many-to-one name="batch" class="de.sub.goobi.Beans.Batch" column="batchID"/>
+	<!--<many-to-one name="batch" class="de.sub.goobi.Beans.Batch" column="batchID"/>-->
 		
 		<set name="schritte" cascade="all,delete-orphan" inverse="true" order-by="Reihenfolge" lazy="true">
 			<key column="ProzesseID"/>

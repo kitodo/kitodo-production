@@ -194,12 +194,12 @@ public class Batch implements Serializable, IGoobiEntity {
 
 
 	public void addProcessToBatch(Prozess p) {
-		p.setBatch(this);
+//		p.setBatch(this);
 		this.processes.add(p);
 	}
 
 	public void removeProcessFromBatch(Prozess p) {
-		p.setBatch(null);
+//		p.setBatch(null);
 		this.processes.remove(p);
 	}
 

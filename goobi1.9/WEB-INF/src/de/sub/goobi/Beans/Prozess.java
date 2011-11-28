@@ -96,7 +96,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
-	private Batch batch;
+	// private Batch batch;
+	private Integer batch;
 
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
@@ -413,11 +414,19 @@ public class Prozess implements Serializable, IGoobiEntity {
 		this.projekt = projekt;
 	}
 
-	public Batch getBatch() {
+	// public Batch getBatch() {
+	// return this.batch;
+	// }
+	//
+	// public void setBatch(Batch batch) {
+	// this.batch = batch;
+	// }
+
+	public Integer getBatch() {
 		return this.batch;
 	}
 
-	public void setBatch(Batch batch) {
+	public void setBatch(Integer batch) {
 		this.batch = batch;
 	}
 
@@ -1005,8 +1014,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return null;
 	}
-
-
 
 	public String getMethodFromName(String methodName) {
 		java.lang.reflect.Method method;
