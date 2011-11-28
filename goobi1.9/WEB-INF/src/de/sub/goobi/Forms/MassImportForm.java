@@ -157,7 +157,7 @@ public class MassImportForm {
 		}
 	}
 
-	public void convertData() {
+	public String convertData() {
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			// found list with ids
@@ -281,6 +281,7 @@ public class MassImportForm {
 		// missing data
 		else {
 			Helper.setFehlerMeldung("missingData");
+			return "";
 		}
 		this.idList = null;
 		if (this.importFile != null) {
@@ -288,6 +289,7 @@ public class MassImportForm {
 			this.importFile = null;
 		}
 		this.records = "";
+		return "MassImportFormPage3";
 	}
 
 	/**
