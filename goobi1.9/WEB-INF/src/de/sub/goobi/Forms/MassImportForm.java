@@ -628,9 +628,15 @@ public class MassImportForm {
 	}
 
 	public boolean getHasNextPage() {
-		// TODO muss für rerender sorgen
-		if (this.plugin != null && this.plugin.getProperties().size() > 0) {
-			return true;
+		java.lang.reflect.Method method;
+		try {
+			method = this.plugin.getClass().getMethod("getProperties");
+			Object o = method.invoke(this.plugin);
+			List<ImportProperty> list = (List<ImportProperty>) o;
+			if (this.plugin != null && list.size() > 0) {
+				return true;
+			}
+		} catch (Exception e) {
 		}
 		return false;
 	}
