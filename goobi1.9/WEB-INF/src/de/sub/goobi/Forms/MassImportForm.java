@@ -51,6 +51,7 @@ import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.properties.ImportProperty;
+import org.hibernate.Session;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -58,6 +59,7 @@ import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
@@ -160,6 +162,11 @@ public class MassImportForm {
 	public String convertData() {
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
+			Integer batchId = null;
+			if (answer.size()>0){
+				Session session = Helper.getHibernateSession();
+				batchId = 1+ (Integer) session.createQuery("select max(batch) from Prozess").uniqueResult();
+			}
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
@@ -255,6 +262,9 @@ public class MassImportForm {
 			// Batch b = new Batch();
 
 			for (ImportObject io : answer) {
+				if (batchId!=null){
+					io.setBatchId(batchId);
+				}
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
 					int returnValue = HotfolderJob.generateProcess(io, this.template);
 					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);

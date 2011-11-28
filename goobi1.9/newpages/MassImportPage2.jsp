@@ -71,29 +71,26 @@
 										<htm:tr>
 											<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
-												<h:outputText value="#{msgs.processProperties}" />
-
-
-
 												<x:dataTable var="property" id="processProperties" value="#{MassImportForm.properties}">
+	
+													<h:column>
+														<h:outputText value="#{property.name}:" />
+													</h:column>
 
 													<h:column>
 														<h:panelGroup id="prpvw15_1" rendered="#{property.type.name == 'text'}">
-															<h:outputText value="#{property.name}" />
 															<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{property.value}" />
 														</h:panelGroup>
 
 														<%-- numbers only --%>
 														<h:panelGroup id="prpvw15_1m" rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
-															<h:outputText value="#{property.name}" />
-															<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
+														<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
 																<f:validateLongRange minimum="0" />
 															</h:inputText>
 														</h:panelGroup>
 
 														<%--  SelectOneMenu --%>
 														<h:panelGroup id="prpvw15_2" rendered="#{(property.type.name == 'list')}">
-															<h:outputText value="#{property.name}" />
 															<h:selectOneMenu value="#{property.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
 																<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
 																	itemValue="#{propertys}" />
@@ -102,7 +99,6 @@
 
 														<%--  SelectManyMenu --%>
 														<h:panelGroup id="prpvw15_3" rendered="#{(property.type.name == 'listmultiselect')}">
-															<h:outputText value="#{property.name}" />
 															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}"
 																 size="5">
 																<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
@@ -112,14 +108,11 @@
 
 														<%--  Boolean --%>
 														<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}">
-															<h:outputText value="#{property.name}" />
-															<h:selectBooleanCheckbox value="#{property.booleanValue}"/>
-														
+															<h:selectBooleanCheckbox value="#{property.booleanValue}"/>		
 														</h:panelGroup>
 
 														<%--  Date  --%>
 														<h:panelGroup id="prpvw15_5" rendered="#{(property.type.name == 'date')}">
-															<h:outputText value="#{property.name}" />
 															<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true">
 															</rich:calendar>
 														</h:panelGroup>

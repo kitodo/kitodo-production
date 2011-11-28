@@ -355,6 +355,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 			if (anzahl > 0) {
 				return false;
 			}
+		}else{
+			return false;
 		}
 		return true;
 	}

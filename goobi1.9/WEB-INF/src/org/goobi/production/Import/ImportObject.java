@@ -13,6 +13,7 @@ public class ImportObject {
 
 	// TODO must end with ".xml" in current implementation
 	private String processTitle ="";
+	private Integer batchId;
 	
 	// TODO needed?
 	private String metsFilename ="";
@@ -78,7 +79,12 @@ public class ImportObject {
 	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
 		this.templateProperties = templateProperties;
 	}
-
+	public Integer getBatchId() {
+		return batchId;
+	}
+	public void setBatchId(Integer batchId) {
+		this.batchId = batchId;
+	}
 	
 	
 }
