@@ -642,6 +642,10 @@ public class MassImportForm {
 	}
 
 	public String nextPage() {
+		if (StringUtils.isEmpty(this.idList) && this.importFile == null && StringUtils.isEmpty(this.records)) {
+			Helper.setFehlerMeldung("missingData");
+			return "";
+		}
 		return "MassImportFormPage2";
 	}
 
