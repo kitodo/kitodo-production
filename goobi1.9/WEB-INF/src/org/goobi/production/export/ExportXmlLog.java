@@ -95,7 +95,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	@Override
 	public void startExport(Prozess process, OutputStream os, String xslt) throws IOException {
 		try {
-			Document doc = createDocument(process);
+			Document doc = createDocument(process, true);
 
 			XMLOutputter outp = new XMLOutputter();
 			outp.setFormat(Format.getPrettyFormat());
@@ -116,23 +116,23 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @return a new xml document
 	 * @throws ConfigurationException
 	 */
-	public Document createDocument(Prozess process) {
+	public Document createDocument(Prozess process, boolean addNamespace) {
 
 		Element processElm = new Element("process");
 		Document doc = new Document(processElm);
 
 		processElm.setAttribute("processID", String.valueOf(process.getId()));
 
-		// namespace declaration
-
 		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		// namespace declaration
+		if (addNamespace) {
 
-		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		processElm.addNamespaceDeclaration(xsi);
-		processElm.setNamespace(xmlns);
-		Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
-		processElm.setAttribute(attSchema);
-
+			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+			processElm.addNamespaceDeclaration(xsi);
+			processElm.setNamespace(xmlns);
+			Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+			processElm.setAttribute(attSchema);
+		}
 		// process information
 
 		ArrayList<Element> processElements = new ArrayList<Element>();
@@ -415,7 +415,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	}
 
 	public void startTransformation(Prozess p, OutputStream out, String filename) throws ConfigurationException, XSLTransformException, IOException {
-		Document doc = createDocument(p);
+		Document doc = createDocument(p, true);
 		XmlTransformation(out, doc, filename);
 	}
 
@@ -430,7 +430,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method exports the production metadata for al list of processes as a single file to a given stream.
-	 *
+	 * 
 	 * @param processList
 	 * @param outputStream
 	 * @param xslt
@@ -440,8 +440,15 @@ public class ExportXmlLog implements IProcessDataExport {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);
+		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+
+		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		root.addNamespaceDeclaration(xsi);
+		root.setNamespace(xmlns);
+		Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+		root.setAttribute(attSchema);
 		for (Prozess p : processList) {
-			Document doc = createDocument(p);
+			Document doc = createDocument(p, false);
 			Element processRoot = doc.getRootElement();
 			processRoot.detach();
 			root.addContent(processRoot);
@@ -449,10 +456,10 @@ public class ExportXmlLog implements IProcessDataExport {
 
 		XMLOutputter outp = new XMLOutputter();
 		outp.setFormat(Format.getPrettyFormat());
-		
+
 		try {
-//			FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
-//			outp.output(answer, fos);
+			// FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
+			// outp.output(answer, fos);
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 
