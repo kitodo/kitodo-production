@@ -74,7 +74,8 @@
 													</h:commandLink>
 
 													<h:commandLink id="utid20" action="#{MassImportForm.Prepare}">
-														<h:graphicImage id="utid25" alt="/newpages/images/buttons/star_blue_multi.gif" value="/newpages/images/buttons/star_blue_multi.gif"
+														<h:graphicImage id="utid25" alt="/newpages/images/buttons/star_blue.gif" 
+														value="/newpages/images/buttons/star_blue.gif"
 															style="vertical-align:middle" />
 														<h:outputText value="#{msgs.weiterenVorgangAnlegen}" />
 													</h:commandLink>

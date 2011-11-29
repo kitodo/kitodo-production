@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,7 +55,6 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Export.dms.ExportDms;
@@ -101,7 +102,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private String addToWikiField;
 	private static String DONEDIRECTORYNAME = "fertig/";
-
+	private ProzessDAO pdao;
 	private Boolean flagWait = false;
 
 	public AktuelleSchritteForm() {
@@ -110,6 +111,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.anzeigeAnpassen.put("selectionBoxes", false);
 		this.anzeigeAnpassen.put("processId", false);
 		this.anzeigeAnpassen.put("modules", false);
+		this.pdao = new ProzessDAO();
 		/*
 		 * --------------------- Vorgangsdatum generell anzeigen? -------------------
 		 */
@@ -250,7 +252,7 @@ public class AktuelleSchritteForm extends BasisForm {
 						/*
 						 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 						 */
-						new ProzessDAO().save(this.mySchritt.getProzess());
+						this.pdao.save(this.mySchritt.getProzess());
 					} catch (DAOException e) {
 						Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
 						myLogger.error("step couldn't get saved", e);
@@ -308,7 +310,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			new ProzessDAO().save(this.mySchritt.getProzess());
+			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 		}
 		// calcHomeImages();
@@ -474,7 +476,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			new ProzessDAO().save(this.mySchritt.getProzess());
+			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 		}
 
@@ -542,7 +544,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			new ProzessDAO().save(this.mySchritt.getProzess());
+			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 		}
 
@@ -612,7 +614,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomePage() {
-		ProzessDAO dao = new ProzessDAO();
+	
 		for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
 			Schritt step = iter.next();
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
@@ -622,7 +624,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				step.setBearbeitungsbeginn(new Date());
 				Prozess proz = step.getProzess();
 				try {
-					dao.save(proz);
+					this.pdao.save(proz);
 				} catch (DAOException e) {
 					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitel());
 				}
@@ -636,7 +638,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomeHits() {
-		ProzessDAO dao = new ProzessDAO();
+		
 		for (Iterator<Schritt> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
 			Schritt step = iter.next();
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
@@ -646,7 +648,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				step.setBearbeitungsbeginn(new Date());
 				Prozess proz = step.getProzess();
 				try {
-					dao.save(proz);
+					this.pdao.save(proz);
 				} catch (DAOException e) {
 					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitel());
 				}
@@ -944,7 +946,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public String getAddToWikiField() {
-		return addToWikiField;
+		return this.addToWikiField;
 	}
 
 	public void setAddToWikiField(String addToWikiField) {
@@ -957,25 +959,44 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.getProzess().setWikifield(this.mySchritt.getProzess().getWikifield() + WikiFieldHelper.getWikiMessage("user", message));
 		this.addToWikiField = "";
 		try {
-			new ProzessDAO().save(mySchritt.getProzess());
+			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 			myLogger.error(e);
 		}
 	}
 
-	private ArrayList<ProcessProperty> processPropertyList;
+	// TODO property
 
-	public ArrayList<ProcessProperty> getProcessProperties() {
-		return processPropertyList;
+	private List<ProcessProperty> processPropertyList;
+
+	private ProcessProperty processProperty;
+
+	public ProcessProperty getProcessProperty() {
+		return this.processProperty;
+	}
+
+	public void setProcessProperty(ProcessProperty processProperty) {
+		this.processProperty = processProperty;
+	}
+
+	public List<ProcessProperty> getProcessProperties() {
+		return this.processPropertyList;
 	}
 
 	private void loadProcessProperties() {
-		processPropertyList = PropertyParser.getPropertiesForStep(mySchritt);
+		this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
+		for (ProcessProperty pt : this.processPropertyList) {
+			if (!this.containers.contains(pt.getContainer())) {
+				this.containers.add(pt.getContainer());
+			}
+		}
+		Collections.sort(this.containers);
 	}
 
+	// TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern
 	public void saveProcessProperties() {
 		boolean valid = true;
-		for (IProperty p : processPropertyList) {
+		for (IProperty p : this.processPropertyList) {
 			if (!p.isValid()) {
 				Helper.setFehlerMeldung("Property " + p.getName() + " not valid");
 				valid = false;
@@ -983,18 +1004,88 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 
 		if (valid) {
-			for (IProperty p : processPropertyList) {
+			for (IProperty p : this.processPropertyList) {
 				p.transfer();
 			}
 			try {
-				new ProzessDAO().save(mySchritt.getProzess());
+				this.pdao.save(this.mySchritt.getProzess());
 				Helper.setMeldung("Properties saved");
 			} catch (DAOException e) {
 				myLogger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
 			}
-			
+
 		}
-		
+
 	}
+
+	private void saveWithoutValidation() {
+		for (IProperty p : this.processPropertyList) {
+			p.transfer();
+		}
+		try {
+			this.pdao.save(this.mySchritt.getProzess());
+		} catch (DAOException e) {
+			myLogger.error(e);
+			Helper.setFehlerMeldung("Properties could not be saved");
+		}
+	}
+
+	private List<Integer> containers = new ArrayList<Integer>();
+
+	public String duplicateContainer() {
+		Integer currentContainer = this.processProperty.getContainer();
+		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+		// search for all properties in container
+		for (ProcessProperty pt : this.processPropertyList) {
+			if (pt.getContainer() == currentContainer) {
+				plist.add(pt);
+			}
+		}
+
+		// find new unused container number
+		boolean search = true;
+		int newContainerNumber = 1;
+		while (search) {
+			if (!this.containers.contains(newContainerNumber)) {
+				search = false;
+			} else {
+				newContainerNumber++;
+			}
+		}
+		// clone properties
+		for (ProcessProperty pt : plist) {
+			ProcessProperty newProp = pt.getClone(newContainerNumber);
+			this.processPropertyList.add(newProp);
+			saveWithoutValidation();
+		}
+
+		return "";
+	}
+
+	public List<Integer> getContainers() {
+		return this.containers;
+	}
+
+	public List<ProcessProperty> getSortedProperties() {
+		Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
+		Collections.sort(this.processPropertyList, comp);
+		return this.processPropertyList;
+	}
+
+	public void deleteProperty() {
+		this.processPropertyList.remove(this.processProperty);
+		if (this.processProperty.getProzesseigenschaft().getId() != null) {
+			this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
+		}
+		saveWithoutValidation();
+		loadProcessProperties();
+	}
+
+	public void duplicateProperty() {
+		ProcessProperty pt = this.processProperty.getClone(0);
+		this.processPropertyList.add(pt);
+		saveWithoutValidation();
+	}
+
 }

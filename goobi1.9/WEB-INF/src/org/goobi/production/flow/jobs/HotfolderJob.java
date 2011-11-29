@@ -391,6 +391,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			if (anchor.exists()) {
 				FileUtils.deleteQuietly(anchor);
 			}
+			return null;
 		}
 
 		CopyProcess cp = new CopyProcess();

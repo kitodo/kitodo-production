@@ -189,7 +189,7 @@ public class PropertyParser {
 						pp.setContainer(pe.getContainer());
 					}else{
 						//clone pp
-						ProcessProperty pnew = pp.getClone();
+						ProcessProperty pnew = pp.getClone(pe.getContainer());
 						pnew.setProzesseigenschaft(pe);
 						pnew.setValue(pe.getWert());
 						pnew.setContainer(pe.getContainer());

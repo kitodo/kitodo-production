@@ -26,7 +26,9 @@ package org.goobi.production.properties;
  * 
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,14 +48,16 @@ public class ProcessProperty implements IProperty {
 	private List<ShowStepCondition> showStepConditions;
 	private AccessCondition showProcessGroupAccessCondition;
 	private Prozesseigenschaft prozesseigenschaft;
-	
+
 	public ProcessProperty() {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getName()
 	 */
 	@Override
@@ -61,7 +65,9 @@ public class ProcessProperty implements IProperty {
 		return this.name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setName(java.lang.String)
 	 */
 	@Override
@@ -69,7 +75,9 @@ public class ProcessProperty implements IProperty {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getContainer()
 	 */
 	@Override
@@ -77,7 +85,9 @@ public class ProcessProperty implements IProperty {
 		return this.container;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setContainer(int)
 	 */
 	@Override
@@ -85,7 +95,9 @@ public class ProcessProperty implements IProperty {
 		this.container = container;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getValidation()
 	 */
 	@Override
@@ -93,7 +105,9 @@ public class ProcessProperty implements IProperty {
 		return this.validation;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setValidation(java.lang.String)
 	 */
 	@Override
@@ -101,7 +115,9 @@ public class ProcessProperty implements IProperty {
 		this.validation = validation;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getType()
 	 */
 	@Override
@@ -109,7 +125,9 @@ public class ProcessProperty implements IProperty {
 		return this.type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setType(org.goobi.production.properties.Type)
 	 */
 	@Override
@@ -117,7 +135,9 @@ public class ProcessProperty implements IProperty {
 		this.type = type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getValue()
 	 */
 	@Override
@@ -125,7 +145,9 @@ public class ProcessProperty implements IProperty {
 		return this.value;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setValue(java.lang.String)
 	 */
 	@Override
@@ -133,7 +155,9 @@ public class ProcessProperty implements IProperty {
 		this.value = value;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getPossibleValues()
 	 */
 	@Override
@@ -141,7 +165,9 @@ public class ProcessProperty implements IProperty {
 		return this.possibleValues;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setPossibleValues(java.util.ArrayList)
 	 */
 	@Override
@@ -149,47 +175,59 @@ public class ProcessProperty implements IProperty {
 		this.possibleValues = possibleValues;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getProjects()
 	 */
 	@Override
 	public List<String> getProjects() {
 		return this.projects;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setProjects(java.util.ArrayList)
 	 */
 	@Override
 	public void setProjects(List<String> projects) {
 		this.projects = projects;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getShowStepConditions()
 	 */
 	@Override
 	public List<ShowStepCondition> getShowStepConditions() {
 		return this.showStepConditions;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setShowStepConditions(java.util.ArrayList)
 	 */
 	@Override
 	public void setShowStepConditions(List<ShowStepCondition> showStepConditions) {
 		this.showStepConditions = showStepConditions;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getShowProcessGroupAccessCondition()
 	 */
 	@Override
 	public AccessCondition getShowProcessGroupAccessCondition() {
 		return this.showProcessGroupAccessCondition;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setShowProcessGroupAccessCondition(org.goobi.production.properties.AccessCondition)
 	 */
 	@Override
@@ -197,53 +235,67 @@ public class ProcessProperty implements IProperty {
 		this.showProcessGroupAccessCondition = showProcessGroupAccessCondition;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#isValid()
 	 */
 	@Override
-	public boolean isValid(){
-		Pattern pattern = Pattern.compile(this.validation);
-		Matcher matcher = pattern.matcher(this.value);
-		return matcher.matches();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.goobi.production.properties.IProperty#save(de.sub.goobi.Beans.Schritt)
-	 */
-	
-	public void save(Schritt step){
-		if (this.prozesseigenschaft!=null){
-			
+	public boolean isValid() {
+		if (this.validation != null && this.validation.length() > 0) {
+			Pattern pattern = Pattern.compile(this.validation);
+			Matcher matcher = pattern.matcher(this.value);
+			return matcher.matches();
+		} else {
+			return true;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.goobi.production.properties.IProperty#save(de.sub.goobi.Beans.Schritt)
+	 */
+
+	public void save(Schritt step) {
+		if (this.prozesseigenschaft != null) {
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
 	 */
-	
+
 	public Prozesseigenschaft getProzesseigenschaft() {
 		return this.prozesseigenschaft;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#setProzesseigenschaft(de.sub.goobi.Beans.Prozesseigenschaft)
 	 */
-	
+
 	public void setProzesseigenschaft(Prozesseigenschaft prozesseigenschaft) {
 		this.prozesseigenschaft = prozesseigenschaft;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#getClone()
 	 */
 	@Override
-	public ProcessProperty getClone(){
+	public ProcessProperty getClone(int containerNumber) {
 		ProcessProperty p = new ProcessProperty();
-		if (this.container.intValue()==0){
-			p.setContainer(0);
-		}else{
-			p.setContainer(this.container.intValue()+1);
-		}
+		// if (this.container.intValue()==0){
+		p.setContainer(containerNumber);
+		// }else{
+		// p.setContainer(this.container.intValue()+1);
+		// }
 		p.setName(this.name);
 		p.setValidation(this.validation);
 		p.setType(this.type);
@@ -254,14 +306,62 @@ public class ProcessProperty implements IProperty {
 		p.setProjects(new ArrayList<String>(getProjects()));
 		return p;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.properties.IProperty#transfer()
 	 */
 	@Override
-	public void transfer(){
-		this.prozesseigenschaft.setWert(this.value);
-		this.prozesseigenschaft.setTitel(this.name);
-		this.prozesseigenschaft.setContainer(this.container);
+	public void transfer() {
+		if (this.value != null && this.value.length() > 0) {
+			this.prozesseigenschaft.setWert(this.value);
+			this.prozesseigenschaft.setTitel(this.name);
+			this.prozesseigenschaft.setContainer(this.container);
+		}
+	}
+
+	public List<String> getValueList() {
+		String[] values = this.value.split("; ");
+		List<String> answer = new ArrayList<String>();
+		for (String val : values) {
+			answer.add(val);
+		}
+		return answer;
+	}
+
+	public void setValueList(List<String> valueList) {
+		this.value = "";
+		for (String val : valueList) {
+			this.value = this.value + val + "; ";
+		}
+	}
+
+	public boolean getBooleanValue() {
+		if (this.value.equalsIgnoreCase("true")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setBooleanValue(boolean val) {
+		if (val) {
+			this.value = "true";
+		} else {
+			this.value = "false";
+		}
+	}
+
+	public static class CompareProperties implements Comparator<ProcessProperty>, Serializable {
+
+		private static final long serialVersionUID = 8047374873015931547L;
+
+		@Override
+		public int compare(ProcessProperty o1, ProcessProperty o2) {
+
+			return new Integer(o1.getContainer()).compareTo(new Integer(o2.getContainer()));
+		}
+
 	}
 }

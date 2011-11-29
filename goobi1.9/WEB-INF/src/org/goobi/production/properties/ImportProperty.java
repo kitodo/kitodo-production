@@ -145,7 +145,7 @@ public class ImportProperty implements IProperty{
 	
 	
 	@Override
-	public ImportProperty getClone(){
+	public ImportProperty getClone(int containerNumber){
 		ImportProperty p = new ImportProperty();
 		return p;
 	}
@@ -155,7 +155,7 @@ public class ImportProperty implements IProperty{
 		
 	}
 
-	// TODO nach
+	
 	public List<String> getValueList() {
 		String[] values = this.value.split("; ");
 		List<String> answer = new ArrayList<String>();

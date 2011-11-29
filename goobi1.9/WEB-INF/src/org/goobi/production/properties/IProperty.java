@@ -48,7 +48,7 @@ public interface IProperty {
 
 //	public abstract void setProzesseigenschaft(Prozesseigenschaft prozesseigenschaft);
 
-	public abstract IProperty getClone();
+	public abstract IProperty getClone(int containerNumber);
 
 	public abstract void transfer();
 
