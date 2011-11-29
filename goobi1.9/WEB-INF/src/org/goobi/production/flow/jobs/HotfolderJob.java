@@ -45,6 +45,7 @@ import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
@@ -363,11 +364,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 
 	
-	public static int generateProcess(ImportObject io, Prozess vorlage) {
+	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
 		String metsfilename = io.getMetsFilename();
 		String basepath = metsfilename.substring(0, metsfilename.length()-4);
 		File metsfile = new File(metsfilename);
+		Prozess p = null;
 		if (!testTitle(processTitle)) {
 			// removing all data
 			File imagesFolder = new File(basepath);
@@ -383,7 +385,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 				FileUtils.forceDelete(metsfile);
 			} catch (Exception e) {
 				logger.error("Can not delete file " + processTitle, e);
-				return 30;
+				return null;
 			}
 			File anchor = new File(basepath + "_anchor.xml");
 			if (anchor.exists()) {
@@ -400,41 +402,33 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 			cp.OpacAuswerten();
 			try {
-				Prozess p = cp.createProcess(io);
-//				if (p.getId() != null) {
-//					if (batch != null) {
-//						batch.addProcessToBatch(p);
-//						batch.setProject(p.getProjekt());
-//					}
-//				}
+				p = cp.createProcess(io);
 				moveFiles(metsfile, basepath, p);
 
 			} catch (ReadException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (PreferencesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (SwapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (DAOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (WriteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Helper.setFehlerMeldung(e);
+				logger.error(e);
 			}
 		}
-
-	
-		return 0;
+		return p;
 		
 	}
 

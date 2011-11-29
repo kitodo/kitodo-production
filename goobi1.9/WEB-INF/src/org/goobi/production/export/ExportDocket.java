@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -55,8 +56,7 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 public class ExportDocket implements IProcessDataExport {
 
 	/**
-	 * This method exports the production metadata as run note to a given
-	 * stream. the docket.xsl has to be in the config-folder
+	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the config-folder
 	 * 
 	 * @param process
 	 *            the process to export
@@ -65,20 +65,49 @@ public class ExportDocket implements IProcessDataExport {
 	 * @throws IOException
 	 * @throws ExportFileException
 	 */
+	@Override
 	public void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException {
-		
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		exl.startExport(process, out, null);
-				
+
 		// generate pdf file
 		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
 		StreamSource transformSource = new StreamSource(xsltfile);
 		FopFactory fopFactory = FopFactory.newInstance();
 		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		// transform xml 
+		// transform xml
+		Transformer xslfoTransformer = getTransformer(transformSource);
+		try {
+			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, outStream);
+			Result res = new SAXResult(fop.getDefaultHandler());
+			xslfoTransformer.transform(source, res);
+		} catch (FOPException e) {
+			throw new IOException("FOPException occured", e);
+		} catch (TransformerException e) {
+			throw new IOException("TransformerException occured", e);
+		}
+
+		// write the content to output stream
+		byte[] pdfBytes = outStream.toByteArray();
+		os.write(pdfBytes);
+	}
+
+	public void startExport(List<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
+
+		ExportXmlLog exl = new ExportXmlLog();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		exl.startExport(processList, out, null);
+
+		// generate pdf file
+		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
+		StreamSource transformSource = new StreamSource(xsltfile);
+		FopFactory fopFactory = FopFactory.newInstance();
+		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		// transform xml
 		Transformer xslfoTransformer = getTransformer(transformSource);
 		try {
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, outStream);

@@ -36,6 +36,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -46,6 +51,7 @@ import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.jobs.HotfolderJob;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
@@ -59,7 +65,6 @@ import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
@@ -89,6 +94,8 @@ public class MassImportForm {
 
 	private UploadedFile uploadedFile = null;
 
+	private List<Prozess> processList;
+	
 	public MassImportForm() {
 
 		// usablePlugins = ipl.getTitles();
@@ -160,6 +167,7 @@ public class MassImportForm {
 	}
 
 	public String convertData() {
+		this.processList = new ArrayList<Prozess>();
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Integer batchId = null;
@@ -181,22 +189,6 @@ public class MassImportForm {
 					r.setData(id);
 					r.setId(id);
 					r.setCollections(this.digitalCollections);
-					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
-					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
-					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
-					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
-					// }
-					//
-					// Prozesseigenschaft pe = new Prozesseigenschaft();
-					// pe.setTitel("importPlugin");
-					// pe.setWert(plugin.getTitle());
-					// pe.setType(PropertyType.String);
-					// r.getProcessProperties().add(pe);
-
 					recordList.add(r);
 				}
 
@@ -210,23 +202,6 @@ public class MassImportForm {
 				this.plugin.setFile(this.importFile);
 				List<Record> recordList = this.plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
-
-					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
-					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
-					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
-					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
-					// }
-					//
-					// Prozesseigenschaft pe = new Prozesseigenschaft();
-					// pe.setTitel("importPlugin");
-					// pe.setWert(plugin.getTitle());
-					// pe.setType(PropertyType.String);
-					// r.getProcessProperties().add(pe);
-
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
@@ -239,21 +214,6 @@ public class MassImportForm {
 				this.plugin.setPrefs(prefs);
 				List<Record> recordList = this.plugin.splitRecords(this.records);
 				for (Record r : recordList) {
-					// for (PropertyTemplate pt : this.ic.getProcessProperties()) {
-					// r.getProcessProperties().add((Prozesseigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getWorkProperties()) {
-					// r.getWorkProperties().add((Werkstueckeigenschaft) pt.getProperty());
-					// }
-					// for (PropertyTemplate pt : this.ic.getTemplateProperties()) {
-					// r.getTemplateProperties().add((Vorlageeigenschaft) pt.getProperty());
-					// }
-					//
-					// Prozesseigenschaft pe = new Prozesseigenschaft();
-					// pe.setTitel("importPlugin");
-					// pe.setWert(plugin.getTitle());
-					// pe.setType(PropertyType.String);
-					// r.getProcessProperties().add(pe);
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
@@ -266,26 +226,24 @@ public class MassImportForm {
 					io.setBatchId(batchId);
 				}
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-					int returnValue = HotfolderJob.generateProcess(io, this.template);
+					Prozess p = HotfolderJob.generateProcess(io, this.template);
 					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
-					if (returnValue > 0) {
-						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed with error code "
-								+ returnValue);
+					if (p == null) {
+						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed");
+						
 					}
-					Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
+					else {
+						Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
+						this.processList.add(p);
+					}
 				} else {
 					Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + " error code is: " + io.getProcessTitle());
 				}
 			}
-
-			// if (b.getBatchList().size() > 0) {
-			// try {
-			// new BatchDAO().save(b);
-			// } catch (DAOException e) {
-			//
-			// }
-			// }
-
+			if (answer.size() != this.processList.size()) {
+				// some error on process generation, don't go to next page
+				return "";
+			}
 		}
 
 		// missing data
@@ -644,6 +602,7 @@ public class MassImportForm {
 		try {
 			method = this.plugin.getClass().getMethod("getProperties");
 			Object o = method.invoke(this.plugin);
+			@SuppressWarnings("unchecked")
 			List<ImportProperty> list = (List<ImportProperty>) o;
 			if (this.plugin != null && list.size() > 0) {
 				return true;
@@ -669,6 +628,14 @@ public class MassImportForm {
 		return new ArrayList<ImportProperty>();
 	}
 
+	public List<Prozess> getProcessList() {
+		return this.processList;
+	}
+
+	public void setProcessList(List<Prozess> processList) {
+		this.processList = processList;
+	}
+
 	// public ImportConfiguration getImportConfiguration() {
 	// return this.ic;
 	// }
@@ -677,4 +644,35 @@ public class MassImportForm {
 	// this.ic = ic;
 	// }
 
+	
+	public String downloadDocket() {
+		logger.debug("generate docket for process list");
+		String rootpath = ConfigMain.getParameter("xsltFolder");
+		File xsltfile = new File(rootpath, "docket_multipage.xsl");
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		if (!facesContext.getResponseComplete()) {
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+			String fileName = "batch_docket" + ".pdf";
+			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+			String contentType = servletContext.getMimeType(fileName);
+			response.setContentType(contentType);
+			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+
+		
+			
+			// write docket to servlet output stream
+			try {
+				ServletOutputStream out = response.getOutputStream();
+				ExportDocket ern = new ExportDocket();
+				ern.startExport(this.processList, out, xsltfile.getAbsolutePath());
+				out.flush();
+			} catch (IOException e) {
+				logger.error("IOException while exporting run note", e);
+			}
+
+			facesContext.responseComplete();
+		}
+		return "";
+	}
+	
 }

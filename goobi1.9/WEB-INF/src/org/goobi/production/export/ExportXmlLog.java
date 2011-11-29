@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.IProcessDataExport;
@@ -54,8 +55,7 @@ import de.sub.goobi.Beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 /**
- * This class provides xml logfile generation. After the the generation the file
- * will be written to user home directory
+ * This class provides xml logfile generation. After the the generation the file will be written to user home directory
  * 
  * @author Robert Sehr
  * 
@@ -103,7 +103,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			outp.output(doc, os);
 			os.close();
 
-		} catch (ConfigurationException e) {
+		} catch (Exception e) {
 			throw new IOException(e);
 		}
 	}
@@ -116,7 +116,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @return a new xml document
 	 * @throws ConfigurationException
 	 */
-	public Document createDocument(Prozess process) throws ConfigurationException {
+	public Document createDocument(Prozess process) {
 
 		Element processElm = new Element("process");
 		Document doc = new Document(processElm);
@@ -157,34 +157,33 @@ public class ExportXmlLog implements IProcessDataExport {
 		comment.setText(process.getWikifield());
 		processElements.add(comment);
 
-//		Batch b = process.getBatch();
-//		if (b != null) {
-//			Element batch = new Element("batch", xmlns);
-//			batch.setAttribute("batchIdentifier", String.valueOf(b.getId()));
-//			batch.setAttribute("batchTitle", b.getTitle());
-//			
-//			List<Element> batchProperties = new ArrayList<Element>();
-//			
-//			for (BatchProperty prop : b.getEigenschaftenList()) {
-//				Element property = new Element("property", xmlns); 
-//				property.setAttribute("propertyIdentifier", prop.getTitel());
-//				if (prop.getWert() != null) {
-//					property.setAttribute("value", replacer(prop.getWert()));
-//				} else {
-//					property.setAttribute("value", "");
-//				}
-//				Element label = new Element("label", xmlns);
-//				label.setText(prop.getTitel());
-//				property.addContent(label);
-//				batchProperties.add(property);
-//			}
-//				Element properties = new Element("properties", xmlns);
-//				properties.addContent(batchProperties);
-//				batch.addContent(properties);
-//				processElements.add(batch);
-//		}
-		
-		
+		// Batch b = process.getBatch();
+		// if (b != null) {
+		// Element batch = new Element("batch", xmlns);
+		// batch.setAttribute("batchIdentifier", String.valueOf(b.getId()));
+		// batch.setAttribute("batchTitle", b.getTitle());
+		//
+		// List<Element> batchProperties = new ArrayList<Element>();
+		//
+		// for (BatchProperty prop : b.getEigenschaftenList()) {
+		// Element property = new Element("property", xmlns);
+		// property.setAttribute("propertyIdentifier", prop.getTitel());
+		// if (prop.getWert() != null) {
+		// property.setAttribute("value", replacer(prop.getWert()));
+		// } else {
+		// property.setAttribute("value", "");
+		// }
+		// Element label = new Element("label", xmlns);
+		// label.setText(prop.getTitel());
+		// property.addContent(label);
+		// batchProperties.add(property);
+		// }
+		// Element properties = new Element("properties", xmlns);
+		// properties.addContent(batchProperties);
+		// batch.addContent(properties);
+		// processElements.add(batch);
+		// }
+
 		ArrayList<Element> processProperties = new ArrayList<Element>();
 		for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
 			Element property = new Element("property", xmlns);
@@ -382,8 +381,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	}
 
 	/**
-	 * This method transforms the xml log using a xslt file and opens a new
-	 * window with the output file
+	 * This method transforms the xml log using a xslt file and opens a new window with the output file
 	 * 
 	 * @param out
 	 *            ServletOutputStream
@@ -428,5 +426,45 @@ public class ExportXmlLog implements IProcessDataExport {
 		in = in.replace(">", "?");
 		in = in.replace("<", "?");
 		return in;
+	}
+
+	/**
+	 * This method exports the production metadata for al list of processes as a single file to a given stream.
+	 *
+	 * @param processList
+	 * @param outputStream
+	 * @param xslt
+	 */
+
+	public void startExport(List<Prozess> processList, OutputStream outputStream, String xslt) {
+		Document answer = new Document();
+		Element root = new Element("processes");
+		answer.setRootElement(root);
+		for (Prozess p : processList) {
+			Document doc = createDocument(p);
+			Element processRoot = doc.getRootElement();
+			processRoot.detach();
+			root.addContent(processRoot);
+		}
+
+		XMLOutputter outp = new XMLOutputter();
+		outp.setFormat(Format.getPrettyFormat());
+		
+		try {
+//			FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
+//			outp.output(answer, fos);
+			outp.output(answer, outputStream);
+		} catch (IOException e) {
+
+		} finally {
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					outputStream = null;
+				}
+			}
+		}
+
 	}
 }
