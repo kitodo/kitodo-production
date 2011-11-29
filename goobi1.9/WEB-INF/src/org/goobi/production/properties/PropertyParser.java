@@ -1,12 +1,14 @@
 package org.goobi.production.properties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
+import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.helper.Helper;
@@ -175,20 +177,21 @@ public class PropertyParser {
 				}
 			}
 		}
-		
-		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing 'eigenschaften'
+
+		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
+		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		for (Prozesseigenschaft pe : mySchritt.getProzess().getEigenschaften()) {
-		
+
 			for (ProcessProperty pp : listClone) {
-				if (pe.getTitel().equals(pp.getName())){
+				if (pe.getTitel().equals(pp.getName())) {
 					// pp has no pe assigned
-					if (pp.getProzesseigenschaft()==null){
+					if (pp.getProzesseigenschaft() == null) {
 						pp.setProzesseigenschaft(pe);
 						pp.setValue(pe.getWert());
 						pp.setContainer(pe.getContainer());
-					}else{
-						//clone pp
+					} else {
+						// clone pp
 						ProcessProperty pnew = pp.getClone(pe.getContainer());
 						pnew.setProzesseigenschaft(pe);
 						pnew.setValue(pe.getWert());
@@ -198,18 +201,118 @@ public class PropertyParser {
 				}
 			}
 		}
-	
+
 		// add 'eigenschaft' to all ProcessProperties
 		for (ProcessProperty pp : properties) {
-			if (pp.getProzesseigenschaft()==null){
+			if (pp.getProzesseigenschaft() == null) {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(mySchritt.getProzess());
 				mySchritt.getProzess().getEigenschaften().add(pe);
 				pp.setProzesseigenschaft(pe);
 			}
 		}
-		
+
 		return properties;
 	}
 
+	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
+		String projectTitle = process.getProjekt().getTitel();
+		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
+
+		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		XMLConfiguration config;
+		try {
+			config = new XMLConfiguration(path);
+		} catch (ConfigurationException e) {
+			logger.error(e);
+			config = new XMLConfiguration();
+		}
+		config.setListDelimiter('&');
+		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+		// run though all properties
+		int countProperties = config.getMaxIndex("property");
+		for (int i = 0; i <= countProperties; i++) {
+
+			// general values for property
+			ProcessProperty pp = new ProcessProperty();
+			pp.setName(config.getString("property(" + i + ")[@name]"));
+			pp.setContainer(config.getInt("property(" + i + ")[@container]"));
+
+			// projects
+			int count = config.getMaxIndex("property(" + i + ").project");
+			for (int j = 0; j <= count; j++) {
+				pp.getProjects().add(config.getString("property(" + i + ").project(" + j + ")"));
+			}
+
+			// project is configured
+			if (pp.getProjects().contains("*") || pp.getProjects().contains(projectTitle)) {
+
+				// validation expression
+				pp.setValidation(config.getString("property(" + i + ").validation"));
+				// type
+				pp.setType(Type.getTypeByName(config.getString("property(" + i + ").type")));
+				// (default) value
+				pp.setValue(config.getString("property(" + i + ").defaultvalue"));
+
+				// possible values
+				count = config.getMaxIndex("property(" + i + ").value");
+				for (int j = 0; j <= count; j++) {
+					pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
+				}
+				properties.add(pp);
+
+			}
+		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
+			// 'eigenschaften'
+		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
+		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
+		for (Prozesseigenschaft pe : process.getEigenschaften()) {
+
+			for (ProcessProperty pp : listClone) {
+				if (pe.getTitel().equals(pp.getName())) {
+					// pp has no pe assigned
+					if (pp.getProzesseigenschaft() == null) {
+						pp.setProzesseigenschaft(pe);
+						pp.setValue(pe.getWert());
+						pp.setContainer(pe.getContainer());
+					} else {
+						// clone pp
+						ProcessProperty pnew = pp.getClone(pe.getContainer());
+						pnew.setProzesseigenschaft(pe);
+						pnew.setValue(pe.getWert());
+						pnew.setContainer(pe.getContainer());
+						properties.add(pnew);
+					}
+				}
+			}
+		}
+
+		// add 'eigenschaft' to all ProcessProperties
+		for (ProcessProperty pp : properties) {
+			if (pp.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(process);
+				process.getEigenschaften().add(pe);
+				pp.setProzesseigenschaft(pe);
+			} else {
+				plist.remove(pp.getProzesseigenschaft());
+			}
+		}
+		// create ProcessProperties to remaining 'eigenschaften'
+		if (plist.size() > 0) {
+			for (Prozesseigenschaft pe : plist) {
+				ProcessProperty pp = new ProcessProperty();
+				pp.setProzesseigenschaft(pe);
+				pp.setName(pe.getTitel());
+				pp.setValue(pe.getWert());
+				pp.setContainer(pe.getContainer());
+				pp.setType(Type.TEXT);
+				properties.add(pp);
+
+			}
+		}
+
+		return properties;
+	}
 }

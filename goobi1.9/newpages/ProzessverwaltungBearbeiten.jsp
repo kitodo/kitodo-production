@@ -87,7 +87,7 @@
 
 									<%-- Prozesseigenschaften --%>
 									<%@include
-										file="inc_Prozessverwaltung/prozess_box_Prozesseigenschaften.jsp"%>
+										file="inc_Prozessverwaltung/prozess_box_Properties.jsp"%>
 
 								</htm:td>
 							</htm:tr>
