@@ -79,12 +79,12 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
 import de.sub.goobi.helper.TreeNode;
+import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.VariableReplacer;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -160,7 +160,6 @@ public class Metadaten {
 	private String addDocStructType2;
 	private String zurueck = "Main";
 	private MetadatenSperrung sperrung = new MetadatenSperrung();
-	private Helper help = new Helper();
 	private boolean nurLesenModus;
 	private String neuesElementWohin = "1";
 	private boolean modusStrukturelementVerschieben = false;
@@ -2191,11 +2190,12 @@ public class Metadaten {
 
 	private String getOcrBasisUrl(int... seiten) {
 		String url = ConfigMain.getParameter("ocrUrl");
-		VariableReplacer replacer = new VariableReplacer(mydocument, myPrefs, myProzess, null);
+		VariableReplacer replacer = new VariableReplacer(this.mydocument, this.myPrefs, this.myProzess, null);
 		url = replacer.replace(url);
 		url += "/&imgrange=" + seiten[0];
-		if (seiten.length > 1)
+		if (seiten.length > 1) {
 			url += "-" + seiten[1];
+		}
 		return url;
 	}
 

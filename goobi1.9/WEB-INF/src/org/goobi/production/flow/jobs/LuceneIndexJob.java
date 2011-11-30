@@ -44,6 +44,7 @@ import de.sub.goobi.helper.Helper;
  * @author Robert Sehr
  *
  */
+@Deprecated
 public class LuceneIndexJob extends AbstractGoobiJob {
 	private static final Logger logger = Logger.getLogger(LuceneIndexJob.class);
 	

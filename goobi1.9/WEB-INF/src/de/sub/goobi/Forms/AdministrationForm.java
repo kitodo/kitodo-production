@@ -81,6 +81,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
+@SuppressWarnings("deprecation")
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
 	private static final Logger myLogger = Logger.getLogger(AdministrationForm.class);

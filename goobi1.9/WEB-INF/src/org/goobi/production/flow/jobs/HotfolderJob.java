@@ -364,6 +364,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 
 	
+	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
 		String metsfilename = io.getMetsFilename();
@@ -441,6 +442,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	private static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
 
 		File imagesFolder = new File(basepath);

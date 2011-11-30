@@ -33,7 +33,7 @@ import de.sub.goobi.Beans.Prozess;
  * This interface can be used to implement a search index engine for goobi. 
  * @author Robert Sehr
  */
-
+@Deprecated
 public interface IIndexer {
 	
 	/**

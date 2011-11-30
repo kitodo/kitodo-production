@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * This interface defines a search engine for goobi. 
  * @author Robert Sehr
  */
-
+@Deprecated
 public interface ISearch {
 	
 	/**

@@ -28,8 +28,6 @@ package de.sub.goobi.Persistence;
  */
 import java.util.List;
 
-import org.goobi.production.search.lucene.LuceneIndex;
-
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.helper.exceptions.DAOException;
 
@@ -42,7 +40,7 @@ public class SchrittDAO extends BaseDAO {
 
 	public Schritt save(Schritt t) throws DAOException {
 		storeObj(t);
-		LuceneIndex.updateProcess(t.getProzess());
+//		LuceneIndex.updateProcess(t.getProzess());
 		return (Schritt) retrieveObj(Schritt.class, t.getId());
 	}
 
@@ -57,14 +55,14 @@ public class SchrittDAO extends BaseDAO {
 	public void remove(Schritt t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);
-			LuceneIndex.updateProcess(t.getProzess());
+//			LuceneIndex.updateProcess(t.getProzess());
 		}
 	}
 
 	public void remove(Integer id) throws DAOException {
 		Schritt t = (Schritt) retrieveObj(Schritt.class, id);
 		removeObj(Schritt.class, id);
-		LuceneIndex.updateProcess(t.getProzess());
+//		LuceneIndex.updateProcess(t.getProzess());
 	}
 
 	@SuppressWarnings("unchecked")

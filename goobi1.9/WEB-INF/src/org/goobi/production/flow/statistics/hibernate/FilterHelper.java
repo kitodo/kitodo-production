@@ -86,7 +86,6 @@ class FilterHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void limitToUserAssignedSteps(Conjunction con, Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
 		/* show only open Steps or those in use by current user */
 
@@ -131,11 +130,13 @@ class FilterHelper {
 		critGroups.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 
 		/* collecting the hits */
-		// TODO: Try to avoid Iterators, use for loops instead
 		critGroups.setProjection(Projections.id());
-		for (Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			idList.add((Integer) it.next());
+		for (Object o : critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
+			idList.add((Integer)o);
 		}
+//		for (Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+//			idList.add((Integer) it.next());
+//		}
 
 		/*
 		 * -------------------------------- Users only
@@ -166,11 +167,14 @@ class FilterHelper {
 		critUser.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
 		/* collecting the hits */
-		// TODO: Try to avoid Iterators, use for loops instead
+	
 		critUser.setProjection(Projections.id());
-		for (Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			idList.add((Integer) it.next());
+		for (Object o : critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
+			idList.add((Integer)o);
 		}
+//		for (Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+//			idList.add((Integer) it.next());
+//		}
 
 		/*
 		 * -------------------------------- only taking the hits by restricting
@@ -555,11 +559,11 @@ class FilterHelper {
 		@SuppressWarnings("unused")
 		Boolean flagSetCritProjects = false;
 
-		if (crit.getClassName() == Prozess.class.getName()) {
+		if (crit.getClassName().equals(Prozess.class.getName())) {
 			flagProcesses = true;
 		}
 
-		if (crit.getClassName() == Schritt.class.getName()) {
+		if (crit.getClassName().equals(Schritt.class.getName())) {
 			flagSteps = true;
 		}
 

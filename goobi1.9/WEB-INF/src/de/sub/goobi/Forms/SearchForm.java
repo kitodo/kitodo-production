@@ -65,6 +65,7 @@ public class SearchForm {
 	private String stepPropertyOperand = "";
 	private String stepOperand = "";
 
+	@SuppressWarnings("unchecked")
 	public SearchForm() {
 		for (StepStatus s : StepStatus.values()) {
 			this.stepstatus.add(s);
@@ -80,7 +81,7 @@ public class SearchForm {
 			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
 		}
 		this.projects.add(Helper.getTranslation("notSelected"));
-		@SuppressWarnings("unchecked")
+		
 		List<Projekt> projektList = crit.list();
 		for (Projekt p : projektList) {
 			this.projects.add(p.getTitel());
@@ -90,8 +91,7 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			this.masterpiecePropertyTitles.add((String) it.next());
 		}
 
@@ -99,8 +99,7 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			this.templatePropertyTitles.add((String) it.next());
 		}
 
@@ -108,8 +107,7 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			this.processPropertyTitles.add((String) it.next());
 		}
 
@@ -117,8 +115,7 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			this.stepPropertyTitles.add((String) it.next());
 		}
 
@@ -126,8 +123,7 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
-		for (@SuppressWarnings("unchecked")
-		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			this.stepTitles.add((String) it.next());
 		}
 
