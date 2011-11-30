@@ -82,6 +82,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private String typAutomatischScriptpfad5;
 	private String typModulName;
 	private boolean typBeimAbschliessenVerifizieren = false;
+	private Boolean batchStep = false;
 
 	private Prozess prozess;
 	private Set<Schritteigenschaft> eigenschaften;
@@ -795,4 +796,24 @@ public class Schritt implements Serializable, IGoobiEntity {
 		getDisplayProperties();
 		
 	}
+	
+	/*
+	 * batch step information
+	 */
+
+	public Boolean getBatchStep() {
+		if (this.batchStep == null) {
+			this.batchStep = Boolean.valueOf(false);
+		}
+		return this.batchStep;
+	}
+
+	public void setBatchStep(Boolean batchStep) {
+		if (batchStep == null) {
+			batchStep = Boolean.valueOf(false);
+		}
+		this.batchStep = batchStep;
+	}
+
+	
 }

@@ -268,21 +268,25 @@ public class PropertyParser {
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
 		for (Prozesseigenschaft pe : process.getEigenschaften()) {
-
-			for (ProcessProperty pp : listClone) {
-				if (pe.getTitel().equals(pp.getName())) {
-					// pp has no pe assigned
-					if (pp.getProzesseigenschaft() == null) {
-						pp.setProzesseigenschaft(pe);
-						pp.setValue(pe.getWert());
-						pp.setContainer(pe.getContainer());
-					} else {
-						// clone pp
-						ProcessProperty pnew = pp.getClone(pe.getContainer());
-						pnew.setProzesseigenschaft(pe);
-						pnew.setValue(pe.getWert());
-						pnew.setContainer(pe.getContainer());
-						properties.add(pnew);
+			
+			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
+			if (pe.getTitel() != null) {
+				
+				for (ProcessProperty pp : listClone) {
+					if (pe.getTitel().equals(pp.getName())) {
+						// pp has no pe assigned
+						if (pp.getProzesseigenschaft() == null) {
+							pp.setProzesseigenschaft(pe);
+							pp.setValue(pe.getWert());
+							pp.setContainer(pe.getContainer());
+						} else {
+							// clone pp
+							ProcessProperty pnew = pp.getClone(pe.getContainer());
+							pnew.setProzesseigenschaft(pe);
+							pnew.setValue(pe.getWert());
+							pnew.setContainer(pe.getContainer());
+							properties.add(pnew);
+						}
 					}
 				}
 			}

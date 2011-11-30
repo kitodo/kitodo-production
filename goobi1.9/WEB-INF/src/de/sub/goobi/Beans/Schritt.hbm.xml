@@ -45,6 +45,8 @@
 		<property name="typAutomatischScriptpfad5" column="typAutomatischScriptpfad5" type="string"/>
 		<property name="typBeimAbschliessenVerifizieren" column="typBeimAbschliessenVerifizieren" />
 		<property name="typModulName" column="typModulName" type="string"/>
+		<property name="batchStep" column="batchStep" type="boolean"  />
+		
 		
 		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.Beans.Benutzer" column="BearbeitungsBenutzerID"/>
 		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="ProzesseID"/>
