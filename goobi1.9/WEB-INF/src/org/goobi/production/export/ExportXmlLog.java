@@ -124,12 +124,12 @@ public class ExportXmlLog implements IProcessDataExport {
 		processElm.setAttribute("processID", String.valueOf(process.getId()));
 
 		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		processElm.setNamespace(xmlns);
 		// namespace declaration
 		if (addNamespace) {
 
 			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			processElm.addNamespaceDeclaration(xsi);
-			processElm.setNamespace(xmlns);
 			Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
 			processElm.setAttribute(attSchema);
 		}
@@ -458,8 +458,8 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-			// FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
-			// outp.output(answer, fos);
+//			 FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
+//			 outp.output(answer, fos);
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 
