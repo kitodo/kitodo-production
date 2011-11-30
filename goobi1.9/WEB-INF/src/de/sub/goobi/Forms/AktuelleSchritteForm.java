@@ -295,6 +295,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			// only steps with same batchid
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			currentStepsOfBatch = crit.list();
+		} else {
+			return SchrittDurchBenutzerUebernehmen();
 		}
 		// if only one step is asigned for this batch, use the single
 
@@ -844,6 +846,14 @@ public class AktuelleSchritteForm extends BasisForm {
 		loadProcessProperties();
 	}
 
+	public void setStep(Schritt step) {
+		this.mySchritt = step;
+	}
+	
+	public Schritt getStep() {
+		return this.mySchritt;
+	}
+	
 	public String getModusBearbeiten() {
 		return this.modusBearbeiten;
 	}
@@ -1154,7 +1164,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public BatchHelper getBatchHelper() {
-		return batchHelper;
+		return this.batchHelper;
 	}
 
 	public void setBatchHelper(BatchHelper batchHelper) {

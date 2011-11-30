@@ -57,10 +57,8 @@
 
 							<%@include
 								file="inc_Batches/batch_box_Properties.jsp"%>
-<%-- 
+
 							<%@include file="inc_Batches/batch_box_Action.jsp"%>
---%>							<%-- Schritt 
-							--%>
 						</htm:td>
 					</htm:tr>
 				</htm:table>

@@ -4,19 +4,16 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="http://www.jenia.org/jsf/dynamic" prefix="jd"%>
-<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
-	prefix="si"%>
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 
 
-<h:panelGroup
-	rendered="#{BatchForm.batch.user.id == LoginForm.myBenutzer.id}">
+<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 
 	<%-- ++++++++++++++++     // Import      ++++++++++++++++ --%>
 	<h:form id="actionform">
 		<%-- ++++++++++++++++     Action      ++++++++++++++++ --%>
-		<htm:table cellpadding="3" cellspacing="0" width="100%"
-			styleClass="eingabeBoxen" style="margin-top:20px">
+		<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" style="margin-top:20px">
 			<htm:tr>
 				<htm:td styleClass="eingabeBoxen_row1">
 					<h:outputText value="#{msgs.moeglicheAktionen}" />
@@ -27,75 +24,25 @@
 					<h:panelGrid columns="1">
 
 
-						<x:dataList var="script"
-							value="#{BatchForm.batch.currentStep.scriptnames}"
-							layout="unorderedList">
-							<h:commandLink id="action3" action="#{BatchForm.executeScript}"
-								title="#{script}">
-								<x:updateActionListener property="#{BatchForm.script}"
-									value="#{script}" />
-								<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
-									style="margin-right:3px;vertical-align:middle" />
+						<x:dataList var="script" value="#{AktuelleSchritteForm.batchHelper.scriptnames}" layout="unorderedList">
+							<h:commandLink id="action3" action="#{AktuelleSchritteForm.batchHelper.executeScript}" title="#{script}">
+								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.script}" value="#{script}" />
+								<h:graphicImage value="/newpages/images/buttons/admin4b.gif" style="margin-right:3px;vertical-align:middle" />
 								<h:outputText value="#{msgs.scriptAusfuehren} : #{script}" />
 							</h:commandLink>
 						</x:dataList>
 
 
-
-
-
-						<%-- 
-						<h:commandLink id="action8"
-							rendered="#{0==1 && BatchForm.batch.prozess.benutzerGesperrt == null}"
-							action="#{AktuelleSchritteForm.DownloadTiffHeader}"
-							title="#{msgs.dateiMitTiffHeaderSpeichern}">
-							<h:graphicImage value="/newpages/images/buttons/tif.gif"
-								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.dateiMitTiffHeaderSpeichern}" />
-						</h:commandLink>
-						--%>
-
-						<h:outputText
-							style="back-color:blue; color: red; font-weight: bold;"
-							rendered="#{BatchForm.batch.currentStep.exportDMS }"
+						<h:outputText style="back-color:blue; color: red; font-weight: bold;" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typExportDMS }"
 							value="#{msgs.timeoutWarningDMS}" />
 
-						<h:commandLink id="action9"
-							rendered="#{BatchForm.batch.currentStep.exportDMS}"
-							action="#{BatchForm.ExportDMS}" title="#{msgs.importDms}">
-							<h:graphicImage value="/newpages/images/buttons/dms.png"
-								style="margin-right:3px;vertical-align:middle" />
+						<h:commandLink id="action9" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typExportDMS}"
+							action="#{AktuelleSchritteForm.batchHelper.ExportDMS}" title="#{msgs.importDms}">
+							<h:graphicImage value="/newpages/images/buttons/dms.png" style="margin-right:3px;vertical-align:middle" />
 							<h:outputText value="#{msgs.importDms}" />
 						</h:commandLink>
 
-						<%-- TODO hier vielleicht mit einer dropdown Liste arbeiten?--%>
-						<x:selectOneMenu forceId="true" id="select"
-							value="#{BatchForm.process}">
-							<si:selectItems id="pcid11"
-								value="#{BatchForm.allActiveProcesses}" var="item"
-								itemLabel="#{item.titel}" itemValue="#{item.id}" />
-						</x:selectOneMenu>
-						<%-- 	rendered="#{BatchForm.batch.typMetadaten && BatchForm.batch.prozess.benutzerGesperrt == null}" --%>
-						<h:commandLink id="action10" action="#{Metadaten.XMLlesen}"
-							title="#{msgs.metadatenBearbeiten}">
-							<h:graphicImage value="/newpages/images/buttons/view1.gif"
-								style="margin-left:7px;margin-right:10px;vertical-align:middle" />
-							<h:outputText value="#{msgs.metadatenBearbeiten}" />
-							<f:param name="ProzesseID" value="#{BatchForm.process}" />
-							<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
-							<f:param name="zurueck" value="BatchesEdit" />
-						</h:commandLink>
 
-
-						<%-- Bearbeitung abbrechen-Schaltknopf --%>
-						<h:commandLink id="action11"
-							action="#{BatchForm.BatchDurchBenutzerZurueckgeben}"
-							title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
-							onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
-							<h:graphicImage value="/newpages/images/buttons/cancel3.gif"
-								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}" />
-						</h:commandLink>
 
 
 
@@ -175,13 +122,17 @@
 							</jd:hideableArea>
 						</h:panelGroup>
 --%>
+
+						<%-- Bearbeitung abbrechen-Schaltknopf --%>
+						<h:commandLink id="action11" action="#{AktuelleSchritteForm.batchHelper.BatchDurchBenutzerZurueckgeben}"
+							title="#{msgs.bearbeitungDiesesSchrittesAbgeben}" onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
+							<h:graphicImage value="/newpages/images/buttons/cancel3.gif" style="margin-right:3px;vertical-align:middle" />
+							<h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}" />
+						</h:commandLink>
 						<%-- Abschliessen-Schaltknopf --%>
-						<h:commandLink id="action15"
-							action="#{BatchForm.BatchDurchBenutzerAbschliessen}"
-							title="#{msgs.diesenSchrittAbschliessen}"
-							onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
-							<h:graphicImage value="/newpages/images/buttons/ok.gif"
-								style="margin-right:3px;vertical-align:middle" />
+						<h:commandLink id="action15" action="#{AktuelleSchritteForm.batchHelper.BatchDurchBenutzerAbschliessen}"
+							title="#{msgs.diesenSchrittAbschliessen}" onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
+							<h:graphicImage value="/newpages/images/buttons/ok.gif" style="margin-right:3px;vertical-align:middle" />
 							<h:outputText value="#{msgs.diesenSchrittAbschliessen}" />
 						</h:commandLink>
 

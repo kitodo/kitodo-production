@@ -329,13 +329,13 @@
 		<h:commandLink id="batch" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'OPEN' && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
-			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
+			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%--TODO add batch implementation for this --%>
 		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
-			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
+			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 	</x:column>
 	<%-- ===================== // Action ====================== --%>
