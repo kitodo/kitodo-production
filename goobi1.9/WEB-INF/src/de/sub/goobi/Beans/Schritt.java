@@ -807,6 +807,13 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		return this.batchStep;
 	}
+	
+	public Boolean isBatchStep() {
+		if (this.batchStep == null) {
+			this.batchStep = Boolean.valueOf(false);
+		}
+		return this.batchStep;
+	}
 
 	public void setBatchStep(Boolean batchStep) {
 		if (batchStep == null) {

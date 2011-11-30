@@ -17,61 +17,88 @@
 					</htm:td>
 				</htm:tr>
 
+<htm:tr>
+		<htm:td styleClass="main_statistikboxen_row2">
 
+			<htm:table border="0" width="90%" cellpadding="2">
 				<htm:tr>
-					<htm:td styleClass="main_statistikboxen_row2">
-
-						<htm:table border="0" width="90%" cellpadding="2">
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.titel}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{BatchForm.batch.currentStep.stepTitle}" />
-								</htm:td>
-							</htm:tr>
-
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.prozessTitel}:" />
-								</htm:td>
-								<htm:td>
-									<h:panelGroup>
-										<x:dataTable var="process" value="#{BatchForm.batch.batchList}">
-											<x:column>
-												<h:outputText value="#{process.titel}" />
-											</x:column>
-										</x:dataTable>
-									</h:panelGroup>
-								</htm:td>
-							</htm:tr>
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.reihenfolge}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{BatchForm.batch.currentStep.stepOrder}" />
-								</htm:td>
-							</htm:tr>
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.user}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{BatchForm.batch.user.nachVorname}" />
-								</htm:td>
-							</htm:tr>
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.status}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{BatchForm.batch.currentStep.stepStatus}" />
-								</htm:td>
-							</htm:tr>
-						</htm:table>
+					<htm:td width="150">
+						<h:outputText value="#{msgs.titel}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.titelLokalisiert}" />
 					</htm:td>
 				</htm:tr>
+
+			
+				<htm:tr>
+					<htm:td width="150">
+						<h:outputText value="#{msgs.reihenfolge}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.reihenfolge}" />
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td width="150">
+						<h:outputText value="#{msgs.prioritaet}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet}"
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet!=10}" />
+						<h:outputText value="#{msgs.korrektur}"
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet==10}" />
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td width="150">
+						<h:outputText value="#{msgs.status}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsstatusEnum.title}" />
+					</htm:td>
+				</htm:tr>
+
+				<htm:tr
+					rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbeginn !=null && !HelperForm.anonymized}">
+					<htm:td width="150">
+						<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbeginnAsFormattedString}" />
+					</htm:td>
+				</htm:tr>
+				<htm:tr
+					rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+					<htm:td width="150">
+						<h:outputText value="#{msgs.zuletztBearbeitet}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunktAsFormattedString}" />
+					</htm:td>
+				</htm:tr>
+
+				<htm:tr
+					rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+					<htm:td width="150">
+						<h:outputText value="#{msgs.aktualisierungstyp}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText
+							value="#{AktuelleSchritteForm.batchHelper.currentStep.editTypeEnum.title}" />
+					</htm:td>
+				</htm:tr>
+
+			</htm:table>
+		</htm:td>
+	</htm:tr>
+
+			
 			</htm:table>
 		</htm:td>
 	</htm:tr>

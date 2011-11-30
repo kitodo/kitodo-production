@@ -7,15 +7,9 @@
 <%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
-
-<%-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ --%>
-<%-- ++++++++++++++++     Eigenschaftentabelle      ++++++++++++++++ --%>
-<%-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ --%>
-
-<h:form id="propform">
+<h:form id="propform2">
 	<%-- Box für die Bearbeitung der Details --%>
-	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
-		rendered="#{BatchForm.batch.displayProperties.propertySize > 0}">
+	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
@@ -27,185 +21,145 @@
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="3">
 
-				<x:dataTable id="container" var="container" value="#{BatchForm.batch.displayProperties.containers}">
+
+
+				<x:dataTable id="container" var="container" value="#{AktuelleSchritteForm.batchHelper.containers}">
 					<h:column>
-						<x:dataTable id="eigenschaften" var="mystep_item" value="#{BatchForm.batch.displayProperties.sortedProperties}" style="border-bottom: 1px solid #F4BBA5;">
-
-							<h:column rendered="#{mystep_item.container==0 && mystep_item.container==container}">
-								<h:outputText value="#{mystep_item.titel}" />
-
+						<x:dataTable id="property" var="property" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" style="border-bottom: 1px solid #F4BBA5;">
+							<h:column rendered="#{property.container==0 && property.container==container}">
+								<h:outputText value="#{property.name}" />
 							</h:column>
-
-							<h:column rendered="#{mystep_item.container==0 && mystep_item.container==container}">
-
-								<%-- textarea --%>
-								<h:panelGroup id="prpvw15_1"
-									rendered="#{((mystep_item.type.name == 'string') || (mystep_item.type.name == 'unknown') || (mystep_item.type.name == 'null') || (mystep_item.type.name == 'messagenormal'))}">
-
-									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValue}" required="#{mystep_item.required}" />
-									<x:message id="prpvw15_1_1" for="file" style="color: red" replaceIdWithLabel="true" />
-								</h:panelGroup>
-
-								<%-- only text --%>
-								<h:panelGroup id="prpvw15_1e" rendered="#{((mystep_item.type.name == 'messageimportant') || (mystep_item.type.name == 'messageerror'))}">
-									<htm:div id="test" style="width: 500px;margin-right:15px">
-										<h:outputText id="filee" value="#{mystep_item.selectedValue}" />
-									</htm:div>
+							<h:column rendered="#{property.container==0 && property.container==container}">
+								<h:panelGroup id="prpvw15_1" rendered="#{property.type.name == 'text'}">
+									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{property.value}" />
 								</h:panelGroup>
 
 								<%-- numbers only --%>
-								<h:panelGroup id="prpvw15_1m" rendered="#{mystep_item.type.name == 'integer' || mystep_item.type.name == 'number'}">
-									<h:outputLabel for="Number" value="#{mystep_item.titel}" style="display:none" />
-									<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValue}" required="#{mystep_item.required}">
+								<h:panelGroup id="prpvw15_1m" rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
+									<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
 										<f:validateLongRange minimum="0" />
 									</h:inputText>
-									<x:message id="prpvw15_1_12" for="Number" style="color: red" showSummary="true" />
 								</h:panelGroup>
 
 								<%--  SelectOneMenu --%>
-								<h:panelGroup id="prpvw15_2" rendered="#{(mystep_item.type.name == 'list')}">
-									<h:selectOneMenu value="#{mystep_item.selectedValue}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
-										<si:selectItems id="prpvw15_2_2" value="#{mystep_item.valuesList}" var="mystep_items" itemLabel="#{mystep_items}" itemValue="#{mystep_items}" />
+								<h:panelGroup id="prpvw15_2" rendered="#{(property.type.name == 'list')}">
+									<h:selectOneMenu value="#{property.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
+										<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
 									</h:selectOneMenu>
 								</h:panelGroup>
 
 								<%--  SelectManyMenu --%>
-								<h:panelGroup id="prpvw15_3" rendered="#{(mystep_item.type.name == 'listmultiselect')}">
-									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValuesList}"
-										required="#{mystep_item.required}" size="5">
-										<si:selectItems id="prpvw15_3_2" value="#{mystep_item.valuesList}" var="mystep_items" itemLabel="#{mystep_items}" itemValue="#{mystep_items}" />
+								<h:panelGroup id="prpvw15_3" rendered="#{(property.type.name == 'listmultiselect')}">
+									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}" size="5">
+										<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
 									</h:selectManyListbox>
 								</h:panelGroup>
 
 								<%--  Boolean --%>
-								<h:panelGroup id="prpvw15_4" rendered="#{(mystep_item.type.name == 'boolean')}">
-									<h:selectOneMenu value="#{mystep_item.selectedValue}" id="prpvw15_4_1" required="#{mystep_item.required}" style="width: 500px;margin-right:15px">
-										<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
-										<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
-									</h:selectOneMenu>
+								<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}">
+									<h:selectBooleanCheckbox value="#{property.booleanValue}" />
 								</h:panelGroup>
 
 								<%--  Date  --%>
-								<h:panelGroup id="prpvw15_5" rendered="#{(mystep_item.type.name == 'date')}">
-									<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{mystep_item.date}" enableManualInput="true">
-									</rich:calendar>
-								</h:panelGroup>
-							</h:column>
-							<%-- delete --%>
-							<h:column rendered="#{mystep_item.container==0 && mystep_item.container==container}">
-								<h:panelGroup>
-									<h:commandLink action="#{BatchForm.batch.displayProperties.deleteProperty}"
-										rendered="#{mystep_item.type.name != 'messageerror' && mystep_item.type.name != 'messageimportant' && mystep_item.type.name != 'messagenormal'}">
-										<h:graphicImage value="images/buttons/waste1a_20px.gif" />
-										<x:updateActionListener value="#{mystep_item}" property="#{BatchForm.batch.displayProperties.currentProperty}" />
-									</h:commandLink>
-
-								</h:panelGroup>
-								<%-- duplicate --%>
-								<h:panelGroup>
-									<h:commandLink action="#{BatchForm.batch.displayProperties.duplicateProperty}"
-										rendered="#{mystep_item.type.name != 'messageerror' && mystep_item.type.name != 'messageimportant' && mystep_item.type.name != 'messagenormal'}">
-										<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-										<x:updateActionListener value="#{mystep_item}" property="#{BatchForm.batch.displayProperties.currentProperty}" />
-									</h:commandLink>
-								</h:panelGroup>
-							</h:column>
-							
-
-<%-- container with properties --%>
-							<h:column rendered="#{mystep_item.container!=0 && mystep_item.container==container}">
-								<h:outputText value="#{mystep_item.titel}" />
-
-							</h:column>
-
-							<h:column rendered="#{mystep_item.container!=0 && mystep_item.container==container}">
-
-								<%-- textarea --%>
-								<h:panelGroup id="prpvw15_12"
-									rendered="#{((mystep_item.type.name == 'string') || (mystep_item.type.name == 'unknown') || (mystep_item.type.name == 'null') || (mystep_item.type.name == 'messagenormal'))}">
-
-									<h:inputText id="file2" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValue}" required="#{mystep_item.required}" />
-									<x:message id="prpvw15_1_122246" for="file2" style="color: red" replaceIdWithLabel="true" />
-								</h:panelGroup>
-
-								<%-- only text --%>
-								<h:panelGroup id="prpvw15_12e" rendered="#{((mystep_item.type.name == 'messageimportant') || (mystep_item.type.name == 'messageerror'))}">
-									<htm:div id="test2" style="width: 500px;margin-right:15px">
-										<h:outputText id="filee2" value="#{mystep_item.selectedValue}" />
-									</htm:div>
-								</h:panelGroup>
-
-								<%-- numbers only --%>
-								<h:panelGroup id="prpvw15_12m" rendered="#{mystep_item.type.name == 'integer' || mystep_item.type.name == 'number'}">
-									<h:outputLabel for="Number2" value="#{mystep_item.titel}" style="display:none" />
-									<h:inputText id="Number2" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValue}" required="#{mystep_item.required}">
-										<f:validateLongRange minimum="0" />
-									</h:inputText>
-									<x:message id="prpvw15_1_122" for="Number2" style="color: red" showSummary="true" />
-								</h:panelGroup>
-
-								<%--  SelectOneMenu --%>
-								<h:panelGroup id="prpvw15_22" rendered="#{(mystep_item.type.name == 'list')}">
-									<h:selectOneMenu value="#{mystep_item.selectedValue}" id="prpvw15_2_12" style="width: 500px;margin-right:15px">
-										<si:selectItems id="prpvw15_2_22" value="#{mystep_item.valuesList}" var="mystep_items" itemLabel="#{mystep_items}" itemValue="#{mystep_items}" />
-									</h:selectOneMenu>
-								</h:panelGroup>
-
-								<%--  SelectManyMenu --%>
-								<h:panelGroup id="prpvw15_32" rendered="#{(mystep_item.type.name == 'listmultiselect')}">
-									<h:selectManyListbox id="prpvw15_3_12" style="width: 500px;margin-right:15px" value="#{mystep_item.selectedValuesList}"
-										required="#{mystep_item.required}" size="5">
-										<si:selectItems id="prpvw15_3_22" value="#{mystep_item.valuesList}" var="mystep_items" itemLabel="#{mystep_items}" itemValue="#{mystep_items}" />
-									</h:selectManyListbox>
-								</h:panelGroup>
-
-								<%--  Boolean --%>
-								<h:panelGroup id="prpvw15_42" rendered="#{(mystep_item.type.name == 'boolean')}">
-									<h:selectOneMenu value="#{mystep_item.selectedValue}" id="prpvw15_4_145" required="#{mystep_item.required}" style="width: 500px;margin-right:15px">
-										<f:selectItem id="prpvw15_4_22" itemValue="true" itemLabel="#{msgs.yes}" />
-										<f:selectItem id="prpvw15_4_32" itemValue="false" itemLabel="#{msgs.no}" />
-									</h:selectOneMenu>
-								</h:panelGroup>
-
-								<%--  Date  --%>
-								<h:panelGroup id="prpvw15_52" rendered="#{(mystep_item.type.name == 'date')}">
-									<rich:calendar id="prpvw15_5_12" datePattern="dd.MM.yyyy" value="#{mystep_item.date}" enableManualInput="true">
+								<h:panelGroup id="prpvw15_5" rendered="#{(property.type.name == 'date')}">
+									<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true">
 									</rich:calendar>
 								</h:panelGroup>
 
 
 							</h:column>
-							<%-- delete --%>
-							<h:column rendered="#{mystep_item.container!=0 && mystep_item.container==container}">
+							<%-- delete 
+							<h:column rendered="#{property.container==0 && property.container==container}">
 								<h:panelGroup>
-									<h:commandLink action="#{BatchForm.batch.displayProperties.deleteProperty}"
-										rendered="#{mystep_item.type.name != 'messageerror' && mystep_item.type.name != 'messageimportant' && mystep_item.type.name != 'messagenormal'}">
+									<h:commandLink action="#{AktuelleSchritteForm.batchHelper.deleteProperty}"
+										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
 										<h:graphicImage value="images/buttons/waste1a_20px.gif" />
-										<x:updateActionListener value="#{mystep_item}" property="#{BatchForm.batch.displayProperties.currentProperty}" />
+										<x:updateActionListener value="#{property}" property="#{AktuelleSchritteForm.batchHelper.processProperty}" />
 									</h:commandLink>
 
-								</h:panelGroup>
-								<%-- duplicate --%>
+								</h:panelGroup>--%>
+								<%-- duplicate 
 								<h:panelGroup>
-									<h:commandLink action="#{BatchForm.batch.displayProperties.duplicateContainer}"
-										rendered="#{mystep_item.type.name != 'messageerror' && mystep_item.type.name != 'messageimportant' && mystep_item.type.name != 'messagenormal'}">
+									<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateProperty}"
+										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
 										<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-										<x:updateActionListener value="#{mystep_item}" property="#{BatchForm.batch.displayProperties.currentProperty}" />
+										<x:updateActionListener value="#{property}" property="#{AktuelleSchritteForm.batchHelper.processProperty}" />
 									</h:commandLink>
-
 								</h:panelGroup>
+							</h:column>
+--%>
+
+
+							<%-- groupings of properties --%>
+
+							<h:column rendered="#{property.container!=0 && property.container==container}">
+								<h:outputText value="#{property.name}" />
 
 							</h:column>
-							<htm:br rendered="#{mystep_item.container!=0 && mystep_item.container==container}" />
-							<htm:br rendered="#{mystep_item.container!=0 && mystep_item.container==container}" />
 
-							<htm:hr rendered="#{mystep_item.container!=0 && mystep_item.container==container}" />
-							<htm:br rendered="#{mystep_item.container!=0 && mystep_item.container==container}" />
+							<h:column rendered="#{property.container!=0 && property.container==container}">
+								<h:panelGroup rendered="#{property.type.name == 'text'}">
+									<h:inputText style="width: 500px;margin-right:15px" value="#{property.value}" />
+								</h:panelGroup>
+
+								<%-- numbers only --%>
+								<h:panelGroup rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
+									<h:inputText style="width: 500px;margin-right:15px" value="#{property.value}">
+										<f:validateLongRange minimum="0" />
+									</h:inputText>
+								</h:panelGroup>
+
+								<%--  SelectOneMenu --%>
+								<h:panelGroup rendered="#{(property.type.name == 'list')}">
+									<h:selectOneMenu value="#{property.value}" style="width: 500px;margin-right:15px">
+										<si:selectItems value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
+									</h:selectOneMenu>
+								</h:panelGroup>
+
+								<%--  SelectManyMenu --%>
+								<h:panelGroup rendered="#{(property.type.name == 'listmultiselect')}">
+									<h:selectManyListbox style="width: 500px;margin-right:15px" value="#{property.valueList}" size="5">
+										<si:selectItems value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
+									</h:selectManyListbox>
+								</h:panelGroup>
+
+								<%--  Boolean --%>
+								<h:panelGroup rendered="#{(property.type.name == 'boolean')}">
+									<h:selectBooleanCheckbox value="#{property.booleanValue}" />
+								</h:panelGroup>
+
+								<%--  Date  --%>
+								<h:panelGroup rendered="#{(property.type.name == 'date')}">
+									<rich:calendar datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true">
+									</rich:calendar>
+								</h:panelGroup>
+							</h:column>
+							<%--
+							<h:column rendered="#{property.container!=0 && property.container==container}">
+								<h:panelGroup>
+									<h:commandLink action="#{AktuelleSchritteForm.batchHelper.deleteProperty}"
+										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
+										<h:graphicImage value="images/buttons/waste1a_20px.gif" />
+										<x:updateActionListener value="#{property}" property="#{AktuelleSchritteForm.batchHelper.processProperty}" />
+									</h:commandLink>
+
+								</h:panelGroup>
+								 duplicate 
+								<h:panelGroup>
+									<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainer}"
+										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
+										<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+										<x:updateActionListener value="#{property}" property="#{AktuelleSchritteForm.batchHelper.processProperty}" />
+									</h:commandLink>
+
+								</h:panelGroup>
+
+							</h:column>--%>
+							<htm:br rendered="#{property.container!=0 && property.container==container}" />
+
 						</x:dataTable>
 					</h:column>
-
 				</x:dataTable>
-
 
 
 			</htm:td>
@@ -213,19 +167,13 @@
 
 		<htm:tr>
 			<htm:td colspan="2" styleClass="eingabeBoxen_row3" align="right">
-				<h:commandButton value="#{msgs.speichern}" action="#{AktuelleSchritteForm.saveProperties}" />
+				<h:commandButton value="#{msgs.speichern}" action="#{AktuelleSchritteForm.batchHelper.saveProcessProperties}" />
 			</htm:td>
 		</htm:tr>
 	</htm:table>
 	<%-- // Box für die Bearbeitung der Details --%>
 
 </h:form>
-
-
-
-
-
-
 
 
 

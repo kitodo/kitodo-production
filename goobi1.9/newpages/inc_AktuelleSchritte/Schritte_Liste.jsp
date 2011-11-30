@@ -311,7 +311,7 @@
 
 		<%-- Bearbeiten-Schaltknopf (eigener Schritt) --%>
 		<h:commandLink action="AktuelleSchritteBearbeiten" id="view1"
-			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && !item.batchStep} "
+			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && !item.batchStep}"
 			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />

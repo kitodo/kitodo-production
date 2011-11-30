@@ -67,6 +67,7 @@ import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.SimpleDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.BatchHelper;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
@@ -104,6 +105,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private static String DONEDIRECTORYNAME = "fertig/";
 	private ProzessDAO pdao;
 	private Boolean flagWait = false;
+	private BatchHelper batchHelper;
 
 	public AktuelleSchritteForm() {
 		this.anzeigeAnpassen = new HashMap<String, Boolean>();
@@ -337,8 +339,8 @@ public class AktuelleSchritteForm extends BasisForm {
 				myLogger.error("step couldn't get saved", e);
 			}
 		}
-		
-		return "BatchEdit";
+		this.setBatchHelper(new BatchHelper(currentStepsOfBatch));
+		return "BatchesEdit";
 	}
 
 	public void saveProperties() {
@@ -1149,6 +1151,14 @@ public class AktuelleSchritteForm extends BasisForm {
 		ProcessProperty pt = this.processProperty.getClone(0);
 		this.processPropertyList.add(pt);
 		saveWithoutValidation();
+	}
+
+	public BatchHelper getBatchHelper() {
+		return batchHelper;
+	}
+
+	public void setBatchHelper(BatchHelper batchHelper) {
+		this.batchHelper = batchHelper;
 	}
 
 }

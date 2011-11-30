@@ -10,7 +10,7 @@
 							Alle Aktuellen Schritte in der �?bersicht
 
 	#########################################--%>
-<a4j:keepAlive beanName="BatchForm"/>
+<a4j:keepAlive beanName="AktuelleSchritteForm"/>
 <html>
 <f:view locale="#{SpracheForm.locale}">
 
@@ -32,7 +32,7 @@
 							<h:commandLink id="id3" value="#{msgs.startseite}" action="newMain" />
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
 							<h:commandLink id="id4" value="#{msgs.batches}"
-								action="BatchesAll" />
+								action="AktuelleSchritteAlle" />
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
 							<h:outputText id="id5" value="#{msgs.detailsOfBatch}" />
 						</h:panelGroup>
@@ -54,10 +54,12 @@
 								tooltip="true" />
 
 							<%@include file="inc_Batches/batch_box_Details.jsp"%>
+
 							<%@include
 								file="inc_Batches/batch_box_Properties.jsp"%>
+<%-- 
 							<%@include file="inc_Batches/batch_box_Action.jsp"%>
-							<%-- Schritt 
+--%>							<%-- Schritt 
 							--%>
 						</htm:td>
 					</htm:tr>
