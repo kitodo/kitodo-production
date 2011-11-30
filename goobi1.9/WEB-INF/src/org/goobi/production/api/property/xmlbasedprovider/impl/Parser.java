@@ -44,6 +44,8 @@ import de.sub.goobi.helper.enums.PropertyType;
  * @author Igor Toker
  * 
  *******************************************************************************/
+
+
 public class Parser {
 	// Strings used in xml
 	private static final String PROPERTY = "property";
@@ -78,7 +80,7 @@ public class Parser {
 		Element rootElement = doc.getRootElement();
 
 		ArrayList<Element> ePropertyList = new ArrayList<Element>();
-		ePropertyList.addAll(rootElement.getChildren(PROPERTY, ns));
+		ePropertyList.addAll(rootElement.getChildren(PROPERTY, this.ns));
 
 		ArrayList<PropertyTemplate> propList = new ArrayList<PropertyTemplate>();
 		for (Element eProperty : ePropertyList) {
@@ -123,14 +125,14 @@ public class Parser {
 			property.setContainer(0);
 		}
 		// Type
-		if (element.getChild(TYPE, ns) != null) {
-			PropertyType type = getPropertyTypeFromString(element.getChild(TYPE, ns).getValue());
+		if (element.getChild(TYPE, this.ns) != null) {
+			PropertyType type = getPropertyTypeFromString(element.getChild(TYPE, this.ns).getValue());
 			if (type != null) {
 				property.setType(type);
 			}
 		}
 		// Values
-		ArrayList<Element> eValues = new ArrayList<Element>(element.getChildren(VALUE, ns));
+		ArrayList<Element> eValues = new ArrayList<Element>(element.getChildren(VALUE, this.ns));
 		if (eValues != null & eValues.size() > 0) {
 			// �berprufen ob die Werte zu dem Typ passen!
 			for (Element eValue : eValues) {
@@ -149,12 +151,13 @@ public class Parser {
 		}
 
 		// Entities
-		ArrayList<Element> eEntities = new ArrayList<Element>(element.getChildren(ENTITY, ns));
+		ArrayList<Element> eEntities = new ArrayList<Element>(element.getChildren(ENTITY, this.ns));
 		for (Element eEntity : eEntities) {
 			String entityName = eEntity.getAttributeValue(NAME);
 			String type = eEntity.getAttributeValue(TYPE);
-			if (entityName == null)
+			if (entityName == null) {
 				entityName = "";
+			}
 			if (type != null && type.length() > 0) {
 				property.getEntities().put(type, entityName);
 			}

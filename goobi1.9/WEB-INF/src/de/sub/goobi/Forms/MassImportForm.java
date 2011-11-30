@@ -173,7 +173,7 @@ public class MassImportForm {
 			Integer batchId = null;
 			if (answer.size()>0){
 				Session session = Helper.getHibernateSession();
-				batchId = 1+ (Integer) session.createQuery("select max(batch) from Prozess").uniqueResult();
+				batchId = 1+ (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
 			}
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();

@@ -278,6 +278,69 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public String TakeOverBatch() {
+		// find all steps with same batch id and step status
+		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
+
+		String steptitle = this.mySchritt.getTitel();
+		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
+		if (batchNumber != null) {
+			// only steps with same title
+			Criteria crit = this.myFilteredDataSource.getCriteria();
+			crit.add(Restrictions.eq("titel", steptitle));
+
+			// only steps with same batchid
+			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			currentStepsOfBatch = crit.list();
+		}
+		// if only one step is asigned for this batch, use the single
+
+		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
+		
+		if (currentStepsOfBatch.size() == 1) {
+			return SchrittDurchBenutzerUebernehmen();
+		}
+
+		for (Schritt s : currentStepsOfBatch) {
+
+			if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
+				s.setBearbeitungsstatusEnum(StepStatus.INWORK);
+				s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
+				HelperSchritte.updateEditing(s);
+				if (s.getBearbeitungsbeginn() == null) {
+					Date myDate = new Date();
+					s.setBearbeitungsbeginn(myDate);
+				}
+				s.getProzess()
+						.getHistory()
+						.add(new HistoryEvent(s.getBearbeitungsbeginn(), s.getReihenfolge().doubleValue(), s.getTitel(), HistoryEventType.stepInWork,
+								s.getProzess()));
+
+				if (s.isTypImagesLesen() || s.isTypImagesSchreiben()) {
+					try {
+						new File(s.getProzess().getImagesOrigDirectory());
+					} catch (Exception e1) {
+
+					}
+					HelperSchritte.updateEditing(s);
+					this.myDav.DownloadToHome(s.getProzess(), s.getId().intValue(), !s.isTypImagesSchreiben());
+
+				}
+			}
+
+			try {
+				this.pdao.save(s.getProzess());
+
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+				myLogger.error("step couldn't get saved", e);
+			}
+		}
+		
+		return "BatchEdit";
+	}
+
 	public void saveProperties() {
 		try {
 			/*
@@ -614,7 +677,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomePage() {
-	
+
 		for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
 			Schritt step = iter.next();
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
@@ -638,7 +701,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomeHits() {
-		
+
 		for (Iterator<Schritt> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
 			Schritt step = iter.next();
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
