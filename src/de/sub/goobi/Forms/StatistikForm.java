@@ -11,11 +11,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.BenutzerDAO; //import de.sub.goobi.Persistence.HelperDAO;
-import de.sub.goobi.Persistence.BaseDAO;
+import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.Helper;
@@ -49,7 +48,7 @@ public class StatistikForm {
 			return new BenutzerDAO().count("from Benutzer");
 		} catch (DAOException e) {
 
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
 		}
 	}
@@ -64,7 +63,7 @@ public class StatistikForm {
 		try {
 			return new BenutzerDAO().count("from Benutzergruppe");
 		} catch (DAOException e) {
-			new Helper().setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
+			Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
 			return null;
 		}
 	}
@@ -79,7 +78,7 @@ public class StatistikForm {
 		try {
 			return new ProzessDAO().count("from Prozess");
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
 		}
 	}
@@ -95,7 +94,7 @@ public class StatistikForm {
 			return new SchrittDAO().count("from Schritt");
 		} catch (DAOException e) {
 			myLogger.error("Hibernate error", e);
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", e);
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
 			return Long.valueOf(-1);
 		}
 	}
@@ -153,6 +152,7 @@ public class StatistikForm {
 
 	
 
+	@SuppressWarnings("unchecked")
 	private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
 		/* aktuellen Benutzer ermitteln */
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -165,31 +165,31 @@ public class StatistikForm {
 			Criteria crit = session.createCriteria(Schritt.class);
 
 			/* Liste der IDs */
-			List trefferListe = new ArrayList();
+			List<Integer> trefferListe = new ArrayList<Integer>();
 
 			/* --------------------------------
 			 * die Treffer der Benutzergruppen
 			 * --------------------------------*/
 			Criteria critGruppen = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet)
-				critGruppen.add(Expression.or(Expression.eq("bearbeitungsstatus", Integer.valueOf(1)), Expression.like("bearbeitungsstatus", Integer
+				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
 						.valueOf(2))));
 			if (inOffen)
-				critGruppen.add(Expression.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
 			if (inBearbeitet)
-				critGruppen.add(Expression.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critGruppen.createCriteria("prozess", "proz");
-			critGruppen.add(Expression.eq("proz.istTemplate", Boolean.valueOf(false)));
+			critGruppen.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
 
 			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
 			critGruppen.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
-			critGruppen.add(Expression.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
+			critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
 			//TODO: Don't use Iterators
-			for (Iterator iter = critGruppen.list().iterator(); iter.hasNext();) {
+			for (Iterator<Schritt> iter = critGruppen.list().iterator(); iter.hasNext();) {
 				Schritt step = (Schritt) iter.next();
 				trefferListe.add(step.getId());
 			}
@@ -199,20 +199,20 @@ public class StatistikForm {
 			 * --------------------------------*/
 			Criteria critBenutzer = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet)
-				critBenutzer.add(Expression.or(Expression.eq("bearbeitungsstatus", Integer.valueOf(1)), Expression.like("bearbeitungsstatus", Integer
+				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
 						.valueOf(2))));
 			if (inOffen)
-				critBenutzer.add(Expression.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
 			if (inBearbeitet)
-				critBenutzer.add(Expression.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critBenutzer.createCriteria("prozess", "proz");
-			critBenutzer.add(Expression.eq("proz.istTemplate", Boolean.valueOf(false)));
+			critBenutzer.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
 
 			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
 			critBenutzer.createCriteria("benutzer", "nutzer");
-			critBenutzer.add(Expression.eq("nutzer.id", login.getMyBenutzer().getId()));
+			critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
 			//TODO: Don't use Iterators
@@ -224,11 +224,11 @@ public class StatistikForm {
 			/* --------------------------------
 			 * nun nur die Treffer übernehmen, die in der Liste sind
 			 * --------------------------------*/
-			crit.add(Expression.in("id", trefferListe));
+			crit.add(Restrictions.in("id", trefferListe));
 			return crit.list().size();
 
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
 			return 0;
 		}
 	}

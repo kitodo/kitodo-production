@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 //TODO: Replace with a VFS
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,268 +19,241 @@ import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.config.ConfigMain;
 
 public class WebDav {
-   private static final Logger myLogger = Logger.getLogger(WebDav.class);
+	private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
+	/*
+	 * ##################################################### ##################################################### ## ## Kopieren bzw. symbolische
+	 * Links für einen Prozess in das Benutzerhome ## #####################################################
+	 * ####################################################
+	 */
 
-   /*#####################################################
-    #####################################################
-    ##																															 
-    ##		Kopieren bzw. symbolische Links für einen Prozess in das Benutzerhome									
-    ##                                                   															    
-    #####################################################
-    ####################################################*/
+	/**
+	 * Retrieve all folders from one directory ================================================================
+	 */
 
-   /**
-    * Retrieve all folders from one directory
-   * ================================================================*/
+	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
+		List<String> rueckgabe = new ArrayList<String>();
+		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String VerzeichnisAlle;
 
-   public List<String> UploadFromHomeAlle(String inVerzeichnis) {
-      List<String> rueckgabe = new ArrayList<String>();
-      Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-      String VerzeichnisAlle;
+		try {
+			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+			// Helper.setTomcatBenutzerrechte(VerzeichnisAlle);
+		} catch (Exception ioe) {
+			myLogger.error("Exception UploadFromHomeAlle()", ioe);
+			Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
+			return rueckgabe;
+		}
 
-      try {
-         VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-         //         new Helper().setTomcatBenutzerrechte(VerzeichnisAlle);
-      } catch (Exception ioe) {
-         myLogger.error("Exception UploadFromHomeAlle()", ioe);
-         new Helper().setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
-         return rueckgabe;
-      }
+		// myLogger.debug("Upload-Verzeichnis: " + VerzeichnisAlle);
+		File benutzerHome = new File(VerzeichnisAlle);
 
-      //      myLogger.debug("Upload-Verzeichnis: " + VerzeichnisAlle);
-      File benutzerHome = new File(VerzeichnisAlle);
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith("]");
+			}
+		};
+		String[] dateien = benutzerHome.list(filter);
+		if (dateien == null) {
+			return new ArrayList<String>();
+		} else {
+			for (String data : dateien) {
+				if (data.endsWith("/") || data.endsWith("\\")) {
+					data = data.substring(0, data.length()-1);
+				}
+				if (data.contains("/")) {
+					data = data.substring(data.lastIndexOf("/"));
+				}
+			}
+			return new ArrayList<String>(Arrays.asList(dateien));
+		}
 
-      FilenameFilter filter = new FilenameFilter() {
-         public boolean accept(File dir, String name) {
-            return name.endsWith("]");
-         }
-      };
-      String[] dateien = benutzerHome.list(filter);
-      if (dateien == null) {
-         return new ArrayList<String>();
-      } else {
-         return new ArrayList<String>(Arrays.asList(dateien));
-      }
+	}
 
-   }
+	/**
+	 * Remove Folders from Directory ================================================================
+	 */
+	// TODO: Use generic types
+	public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
+		String VerzeichnisAlle;
+		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		try {
+			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+		} catch (Exception ioe) {
+			myLogger.error("Exception RemoveFromHomeAlle()", ioe);
+			Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
+			return;
+		}
 
-   /**
-    * Remove Folders from Directory
-   * ================================================================*/
-   //TODO: Use generic types
-   public void removeFromHomeAlle(List inList, String inVerzeichnis) {
-      String VerzeichnisAlle;
-      Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-      try {
-         VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-      } catch (Exception ioe) {
-         myLogger.error("Exception RemoveFromHomeAlle()", ioe);
-         new Helper().setFehlerMeldung("Upload abgebrochen, Fehler", ioe.getMessage());
-         return;
-      }
+		for (Iterator<String> it = inList.iterator(); it.hasNext();) {
+			String myname = (String) it.next();
+			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
+			command += VerzeichnisAlle + myname;
+			// myLogger.debug(command);
+			try {
+				Runtime.getRuntime().exec(command);
+			} catch (java.io.IOException ioe) {
+				myLogger.error("IOException UploadFromHomeAlle()", ioe);
+				Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+				return;
+			}
+		}
+	}
 
-      for (Iterator it = inList.iterator(); it.hasNext();) {
-         String myname = (String) it.next();
-         String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-         command += VerzeichnisAlle + myname;
-         //         myLogger.debug(command);
-         try {
-            Runtime.getRuntime().exec(command);
-         } catch (java.io.IOException ioe) {
-            myLogger.error("IOException UploadFromHomeAlle()", ioe);
-            new Helper().setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
-            return;
-         }
-      }
-   }
+	public void UploadFromHome(Prozess myProzess) {
+		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		UploadFromHome(aktuellerBenutzer, myProzess);
+	}
 
-   
+	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
+		String nach = "";
 
-   public void UploadFromHome(Prozess myProzess) {
-      Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-      UploadFromHome(aktuellerBenutzer, myProzess);
-   }
+		try {
+			nach = inBenutzer.getHomeDir();
+		} catch (Exception ioe) {
+			myLogger.error("Exception UploadFromHome(...)", ioe);
+			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+			return;
+		}
 
-   
+		/* prüfen, ob Benutzer Massenupload macht */
+		if (inBenutzer != null && inBenutzer.isMitMassendownload())
+			nach += myProzess.getProjekt().getTitel() + File.separator;
+		nach += myProzess.getTitel() + " [" + myProzess.getId() + "]";
 
-   public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
-      String nach = "";
+		/* Leerzeichen maskieren */
+		nach = nach.replaceAll(" ", "__");
+		File benutzerHome = new File(nach);
 
-      try {
-         nach = inBenutzer.getHomeDir();
-      } catch (Exception ioe) {
-         myLogger.error("Exception UploadFromHome(...)", ioe);
-         new Helper().setFehlerMeldung("UploadFromHome abgebrochen, Fehler", ioe.getMessage());
-         return;
-      }
+		String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
+		command += benutzerHome;
+		// myLogger.debug(command);
 
-      /* prüfen, ob Benutzer Massenupload macht */
-      if (inBenutzer != null && inBenutzer.isMitMassendownload())
-         nach += myProzess.getProjekt().getTitel() + File.separator;
-      nach += myProzess.getTitel() + " [" + myProzess.getId() + "]";
+		try {
+			// TODO: Use ProcessBuilder
+			Runtime.getRuntime().exec(command);
+		} catch (java.io.IOException ioe) {
+			myLogger.error("IOException UploadFromHome", ioe);
+			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+		}
+	}
 
-      /* Leerzeichen maskieren */
-      nach = nach.replaceAll(" ", "__");
-      File benutzerHome = new File(nach);
+	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
+		Helper help = new Helper();
+		saveTiffHeader(myProzess);
+		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String von = "";
+		String userHome = "";
 
-      String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-      command += benutzerHome;
-      //      myLogger.debug(command);
+		try {
+			von = myProzess.getImagesDirectory();
+			/* UserHome ermitteln */
+			userHome = aktuellerBenutzer.getHomeDir();
 
-      try {
-    	  //TODO: Use ProcessBuilder
-         Runtime.getRuntime().exec(command);
-      } catch (java.io.IOException ioe) {
-         myLogger.error("IOException UploadFromHome", ioe);
-         new Helper().setFehlerMeldung("UploadFromHome abgebrochen, Fehler", ioe.getMessage());
-      }
-   }
+			/* bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren */
+			if (aktuellerBenutzer.isMitMassendownload()) {
+				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
+				if (!projekt.exists())
+					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				projekt = new File(userHome + "fertig" + File.separator);
+				if (!projekt.exists())
+					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+			}
 
-   
+		} catch (Exception ioe) {
+			myLogger.error("Exception DownloadToHome()", ioe);
+			Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
+			return;
+		}
 
-   public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
-      Helper help = new Helper();
-      saveTiffHeader(myProzess);
-      Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-      String von = "";
-      String userHome = "";
+		/*
+		 * abhängig davon, ob der Download als "Massendownload" in einen Projektordner erfolgen soll oder nicht, das Zielverzeichnis definieren
+		 */
+		String processLinkName = myProzess.getTitel() + "__[" + myProzess.getId() + "]";
+		String nach = userHome;
+		if (aktuellerBenutzer.isMitMassendownload() && myProzess.getProjekt() != null)
+			nach += myProzess.getProjekt().getTitel() + File.separator;
+		nach += processLinkName;
 
-      try {
-         von = myProzess.getImagesDirectory();
-         /* UserHome ermitteln */
-         userHome = aktuellerBenutzer.getHomeDir();
+		/* Leerzeichen maskieren */
+		nach = nach.replaceAll(" ", "__");
 
-         /* bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren */
-         if (aktuellerBenutzer.isMitMassendownload()) {
-            File projekt = new File(userHome + myProzess.getProjekt().getTitel());
-            if (!projekt.exists())
-               help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
-            projekt = new File(userHome + "fertig" + File.separator);
-            if (!projekt.exists())
-               help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
-         }
+		myLogger.info("von: " + von);
+		myLogger.info("nach: " + nach);
 
-      } catch (Exception ioe) {
-         myLogger.error("Exception DownloadToHome()", ioe);
-         new Helper().setFehlerMeldung("DownloadToHome abgebrochen, Fehler", ioe.getMessage());
-         return;
-      }
+		File imagePfad = new File(von);
+		File benutzerHome = new File(nach);
 
-      /* abhängig davon, ob der Download als "Massendownload" in einen Projektordner erfolgen soll oder nicht, 
-       * das Zielverzeichnis definieren*/
-      String processLinkName = myProzess.getTitel() + "__[" + myProzess.getId() + "]";
-      String nach = userHome;
-      if (aktuellerBenutzer.isMitMassendownload() && myProzess.getProjekt() != null)
-         nach += myProzess.getProjekt().getTitel() + File.separator;
-      nach += processLinkName;
+		// wenn der Ziellink schon existiert, dann abbrechen
+		if (benutzerHome.exists())
+			return;
 
-      /* Leerzeichen maskieren */
-      nach = nach.replaceAll(" ", "__");
+		String command = ConfigMain.getParameter("script_createSymLink") + " ";
+		command += imagePfad + " " + benutzerHome + " ";
+		if (inNurLesen)
+			command += ConfigMain.getParameter("UserForImageReading", "root");
+		else
+			command += aktuellerBenutzer.getLogin();
+		try {
+			// Runtime.getRuntime().exec(command);
 
-      myLogger.info("von: " + von);
-      myLogger.info("nach: " + nach);
+			Helper.callShell2(command);
+			// Helper.setMeldung("Verzeichnis in Benutzerhome angelegt: ", processLinkName);
+		} catch (java.io.IOException ioe) {
+			myLogger.error("IOException DownloadToHome()", ioe);
+			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
+		} catch (InterruptedException e) {
+			myLogger.error("InterruptedException DownloadToHome()", e);
+			Helper.setFehlerMeldung("Download aborted, InterruptedException", e.getMessage());
+			myLogger.error(e);
+		}
+	}
 
-      File imagePfad = new File(von);
-      File benutzerHome = new File(nach);
+	private void saveTiffHeader(Prozess inProzess) {
+		try {
+			/* prüfen, ob Tiff-Header schon existiert */
+			if (new File(inProzess.getImagesDirectory() + "tiffwriter.conf").exists())
+				return;
+			TiffHeader tif = new TiffHeader(inProzess);
+			BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
+					+ "tiffwriter.conf"), "utf-8"));
+			outfile.write(tif.getTiffAlles());
+			outfile.close();
+		} catch (Exception e) {
+			Helper.setFehlerMeldung("Download aborted", e);
+			myLogger.error(e);
+		}
+	}
 
-     
-      // wenn der Ziellink schon existiert, dann abbrechen
-      if (benutzerHome.exists())
-         return;
+	public int getAnzahlBaende(String inVerzeichnis) {
+		try {
+			Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+			File benutzerHome = new File(VerzeichnisAlle);
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith("]");
+				}
+			};
+			return benutzerHome.list(filter).length;
+		} catch (Exception e) {
+			myLogger.error(e);
+			return 0;
+		}
+	}
 
-      String command = ConfigMain.getParameter("script_createSymLink") + " ";
-      command += imagePfad + " " + benutzerHome + " ";
-      if (inNurLesen)
-         command += ConfigMain.getParameter("UserForImageReading", "root");
-      else
-         command += aktuellerBenutzer.getLogin();
-      try {
-         //         Runtime.getRuntime().exec(command);
-
-         help.callShell2(command);
-         new Helper().setMeldung("Verzeichnis in Benutzerhome angelegt: ", processLinkName);
-      } catch (java.io.IOException ioe) {
-         myLogger.error("IOException DownloadToHome()", ioe);
-         help.setFehlerMeldung("Download abgebrochen, IOException", ioe.getMessage());
-      } catch (InterruptedException e) {
-         myLogger.error("InterruptedException DownloadToHome()", e);
-         help.setFehlerMeldung("Download abgebrochen, InterruptedException", e.getMessage());
-         e.printStackTrace();
-      }
-   }
-
-   
-
-   private void saveTiffHeader(Prozess inProzess) {
-      try {
-         /* prüfen, ob Tiff-Header schon existiert */
-         if (new File(inProzess.getImagesDirectory() + "tiffwriter.conf").exists())
-            return;
-         TiffHeader tif = new TiffHeader(inProzess);
-         BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess
-               .getImagesDirectory()
-               + "tiffwriter.conf"), "8859_1"));
-         outfile.write(tif.getTiffAlles());
-         outfile.close();
-      } catch (Exception e) {
-         new Helper().setFehlerMeldung("Download abgebrochen", e);
-         e.printStackTrace();
-      }
-   }
-
-   
-
-   public int getAnzahlBaende(String inVerzeichnis) {
-      try {
-         Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-         String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-         File benutzerHome = new File(VerzeichnisAlle);
-         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-               return name.endsWith("]");
-            }
-         };
-         return benutzerHome.list(filter).length;
-      } catch (Exception e) {
-         e.printStackTrace();
-         return 0;
-      }
-   }
-
-   
-
-   //TODO: Remove this Methods - Use FileUtils, as log as it's still there ;-)
-   /*
-   public int getAnzahlImages(String inVerzeichnis) {
-      try {
-         return getAnzahlImages2(new File(inVerzeichnis));
-      } catch (Exception e) {
-         e.printStackTrace();
-         return 0;
-      }
-   }
-
-   // Process all files and directories under dir
-   private int getAnzahlImages2(File inDir) {
-      int anzahl = 0;
-      if (inDir.isDirectory()) {
-         // die Images zählen
-     
-         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-               return name.endsWith(".tif");
-            }
-         };
-         anzahl = inDir.list(filter).length;
-
-         //die Unterverzeichnisse durchlaufen
-         String[] children = inDir.list();
-         for (int i = 0; i < children.length; i++) {
-            anzahl += getAnzahlImages2(new File(inDir, children[i]));
-         }
-      }
-      return anzahl;
-   }
-   */
+	// TODO: Remove this Methods - Use FileUtils, as log as it's still there ;-)
+	/*
+	 * public int getAnzahlImages(String inVerzeichnis) { try { return getAnzahlImages2(new File(inVerzeichnis)); } catch (Exception e) {
+	 * myLogger.error(e); return 0; } }
+	 * 
+	 * // Process all files and directories under dir private int getAnzahlImages2(File inDir) { int anzahl = 0; if (inDir.isDirectory()) { // die
+	 * Images zählen
+	 * 
+	 * FilenameFilter filter = new FilenameFilter() { public boolean accept(File dir, String name) { return name.endsWith(".tif"); } }; anzahl =
+	 * inDir.list(filter).length;
+	 * 
+	 * //die Unterverzeichnisse durchlaufen String[] children = inDir.list(); for (int i = 0; i < children.length; i++) { anzahl +=
+	 * getAnzahlImages2(new File(inDir, children[i])); } } return anzahl; }
+	 */
 }

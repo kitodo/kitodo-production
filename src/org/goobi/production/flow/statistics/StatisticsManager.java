@@ -49,8 +49,7 @@ import de.sub.goobi.Statistik.StatistikStatus;
 import de.sub.goobi.helper.Helper;
 
 /**
- * The Class StatisticsManager organizes all statistical questions by choosing
- * the right implementation depening on {@link StatisticsMode}
+ * The Class StatisticsManager organizes all statistical questions by choosing the right implementation depening on {@link StatisticsMode}
  * 
  * for old statistical question there will be generated jfreechart-datasets
  * 
@@ -58,8 +57,7 @@ import de.sub.goobi.helper.Helper;
  * @version 20.05.2009
  ****************************************************************************/
 public class StatisticsManager {
-	private static final Logger logger = Logger
-			.getLogger(StatisticsManager.class);
+	private static final Logger logger = Logger.getLogger(StatisticsManager.class);
 	/* simple JFreeChart Dataset for the old simple statistics */
 	private Dataset jfreeDataset;
 	/* internal StatisticsMode */
@@ -91,8 +89,7 @@ public class StatisticsManager {
 	 * @param inDataSource
 	 *            as {@link IDataSource}
 	 ****************************************************************************/
-	public StatisticsManager(StatisticsMode inMode, IDataSource inDataSource,
-			Locale locale) {
+	public StatisticsManager(StatisticsMode inMode, IDataSource inDataSource, Locale locale) {
 		this();
 		statisticMode = inMode;
 		myDataSource = inDataSource;
@@ -106,17 +103,15 @@ public class StatisticsManager {
 			switch (inMode) {
 
 			case SIMPLE_RUNTIME_STEPS:
-				jfreeDataset = StatistikLaufzeitSchritte
-						.getDiagramm(inDataSource.getSourceData());
+				jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
 				break;
 
 			default:
-				jfreeDataset = StatistikStatus.getDiagramm(inDataSource
-						.getSourceData());
+				jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
 				break;
 			}
 		}
-		if (myLocale==null) {
+		if (myLocale == null) {
 			myLocale = new Locale("de");
 		}
 	}
@@ -144,99 +139,89 @@ public class StatisticsManager {
 	}
 
 	/**
-	 * calculate statistics and retrieve List off {@link DataRow} from
-	 * {@link StatisticsMode} for presention and rendering
+	 * calculate statistics and retrieve List off {@link DataRow} from {@link StatisticsMode} for presention and rendering
 	 * 
 	 ****************************************************************************/
 	public void calculate() {
-		//TODO: Kill the evil Helper, use Observer pattern
-		Helper help = new Helper();
-		/* --------------------------------
-		 * if to-date is before from-date, show error message
-		 * --------------------------------*/
-		if (sourceDateFrom != null && sourceDateTo != null
-				&& sourceDateFrom.after(sourceDateTo)) {
-			help.setMeldung("myStatisticButton", "selectedDatesNotValide",
-					"selectedDatesNotValide");
+		/*
+		 * -------------------------------- if to-date is before from-date, show error message --------------------------------
+		 */
+		if (sourceDateFrom != null && sourceDateTo != null && sourceDateFrom.after(sourceDateTo)) {
+			Helper.setMeldung("myStatisticButton", "selectedDatesNotValide", "selectedDatesNotValide");
 			return;
 		}
 
-		/* --------------------------------
-		 * some debugging here
-		 * --------------------------------*/
-		logger.debug(sourceDateFrom + " - " + sourceDateTo + " - "
-				+ sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n"
-				+ targetTimeUnit + " - " + targetCalculationUnit + " - "
-				+ targetResultOutput + " - " + showAverage);
+		/*
+		 * -------------------------------- some debugging here --------------------------------
+		 */
+		logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
+				+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
 
-		/* --------------------------------
-		 * calulate the statistical results and save it as List of DataTables 
-		 * (because some statistical questions allow multiple tables and charts)
-		 * --------------------------------*/
+		/*
+		 * -------------------------------- calulate the statistical results and save it as List of DataTables (because some statistical questions
+		 * allow multiple tables and charts) --------------------------------
+		 */
 		IStatisticalQuestion question = statisticMode.getStatisticalQuestion();
 		try {
 			setTimeFrameToStatisticalQuestion(question);
-			
+
 			// picking up users input regarding loop Options
 			if (isRenderLoopOption()) {
 				try {
-					((StatQuestThroughput) question)
-							.setIncludeLoops(includeLoops);
-				} catch (Exception e) { //just in case -> shouldn't happen 
+					((StatQuestThroughput) question).setIncludeLoops(includeLoops);
+				} catch (Exception e) { // just in case -> shouldn't happen
 					logger.debug("unexpected Exception, wrong class loaded", e);
 				}
 			}
-			question.setTimeUnit(targetTimeUnit);
-			question.setCalculationUnit(targetCalculationUnit);
+			if (targetTimeUnit != null) {
+				question.setTimeUnit(targetTimeUnit);
+			}
+			if (targetCalculationUnit != null) {
+				question.setCalculationUnit(targetCalculationUnit);
+			}
 			renderingElements = new ArrayList<StatisticsRenderingElement>();
 			List<DataTable> myDataTables = question.getDataTables(myDataSource);
 
-			/* --------------------------------
-			 * if DataTables exist analyze them
-			 * --------------------------------*/
+			/*
+			 * -------------------------------- if DataTables exist analyze them --------------------------------
+			 */
 			if (myDataTables != null) {
 
-				/* --------------------------------
-				 * localize time frame for gui
-				 * --------------------------------*/
+				/*
+				 * -------------------------------- localize time frame for gui --------------------------------
+				 */
 				StringBuilder subname = new StringBuilder();
 				if (calculatedStartDate != null) {
-					subname.append(DateFormat.getDateInstance(DateFormat.SHORT,
-							myLocale).format(calculatedStartDate));
+					subname.append(DateFormat.getDateInstance(DateFormat.SHORT, myLocale).format(calculatedStartDate));
 				}
 				subname.append(" - ");
 				if (calculatedEndDate != null) {
-					subname.append(DateFormat.getDateInstance(DateFormat.SHORT,
-							myLocale).format(calculatedEndDate));
+					subname.append(DateFormat.getDateInstance(DateFormat.SHORT, myLocale).format(calculatedEndDate));
 				}
 				if (calculatedStartDate == null && calculatedEndDate == null) {
 					subname = new StringBuilder();
 				}
 
-				/* --------------------------------
-				 * run through all DataTables
-				 * --------------------------------*/
+				/*
+				 * -------------------------------- run through all DataTables --------------------------------
+				 */
 				for (DataTable dt : myDataTables) {
 					dt.setSubname(subname.toString());
-					StatisticsRenderingElement sre = new StatisticsRenderingElement(
-							dt, question);
+					StatisticsRenderingElement sre = new StatisticsRenderingElement(dt, question);
 					sre.createRenderer(showAverage);
 					renderingElements.add(sre);
 				}
 			}
 		} catch (UnsupportedOperationException e) {
-			help.setFehlerMeldung("myStatisticButton",
-					"errorOccuredWhileCalculatingStatistics", e);
+			Helper.setFehlerMeldung("StatisticButton", "errorOccuredWhileCalculatingStatistics", e);
 		}
 	}
 
 	/**
-	 * Depending on selected Dates oder time range, set the dates for the
-	 * statistical question here
+	 * Depending on selected Dates oder time range, set the dates for the statistical question here
 	 * 
 	 * @param question
-	 *            the {@link IStatisticalQuestion} where the dates should be
-	 *            set, if it is an implementation of
+	 *            the {@link IStatisticalQuestion} where the dates should be set, if it is an implementation of
 	 *            {@link IStatisticalQuestionLimitedTimeframe}
 	 *************************************************************************************/
 	private void setTimeFrameToStatisticalQuestion(IStatisticalQuestion question) {
@@ -253,22 +238,19 @@ public class StatisticsManager {
 				switch (sourceTimeUnit) {
 				case days:
 					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl,
-							Calendar.DATE, -1);
+					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -1);
 					break;
 
 				case weeks:
 					cl.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl,
-							Calendar.DATE, -7);
+					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -7);
 					break;
 
 				case months:
 					cl.set(Calendar.DAY_OF_MONTH, 1);
 					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl,
-							Calendar.MONTH, -1);
+					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -1);
 					break;
 
 				case quarters:
@@ -279,15 +261,13 @@ public class StatisticsManager {
 					}
 					cl.add(Calendar.MILLISECOND, -1);
 					calculatedEndDate = cl.getTime();
-					calculatedStartDate = calculateEndDateForTimeFrame(cl,
-							Calendar.MONTH, -3);
+					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -3);
 					break;
 
 				case years:
 					cl.set(Calendar.DAY_OF_YEAR, 1);
 					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl,
-							Calendar.YEAR, -1);
+					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
 					break;
 				}
 
@@ -300,8 +280,7 @@ public class StatisticsManager {
 				calculatedStartDate = sourceDateFrom;
 				calculatedEndDate = cl.getTime();
 			}
-			((IStatisticalQuestionLimitedTimeframe) question).setTimeFrame(
-					calculatedStartDate, calculatedEndDate);
+			((IStatisticalQuestionLimitedTimeframe) question).setTimeFrame(calculatedStartDate, calculatedEndDate);
 		} else {
 			calculatedStartDate = null;
 			calculatedEndDate = null;
@@ -315,8 +294,7 @@ public class StatisticsManager {
 		cl.set(Calendar.MILLISECOND, 0);
 	}
 
-	private Date calculateEndDateForTimeFrame(Calendar cl, int calenderUnit,
-			int faktor) {
+	private Date calculateEndDateForTimeFrame(Calendar cl, int calenderUnit, int faktor) {
 		cl.add(Calendar.MILLISECOND, 1);
 		cl.add(calenderUnit, sourceNumberOfTimeUnits * faktor);
 		return cl.getTime();
@@ -398,12 +376,10 @@ public class StatisticsManager {
 
 	/**
 	 * @param inUnits
-	 *            the sourceNumberOfTimeUnits to set given as String to show an
-	 *            empty text field in gui
+	 *            the sourceNumberOfTimeUnits to set given as String to show an empty text field in gui
 	 *************************************************************************************/
 	public void setSourceNumberOfTimeUnitsAsString(String inUnits) {
-		if (StringUtils.isNotBlank(inUnits)
-				&& StringUtils.isNumericSpace(inUnits)) {
+		if (StringUtils.isNotBlank(inUnits) && StringUtils.isNumericSpace(inUnits)) {
 			this.sourceNumberOfTimeUnits = Integer.parseInt(inUnits);
 		} else {
 			this.sourceNumberOfTimeUnits = 0;
@@ -516,57 +492,57 @@ public class StatisticsManager {
 	}
 
 	public static Locale getLocale() {
-		if (myLocale!=null) {
+		if (myLocale != null) {
 			return myLocale;
-		}else {
+		} else {
 			return new Locale("de");
 		}
 	}
-	
-	//	/**
-	//	 * get List of String for iterating over indizes, which can be used to
-	//	 * create html-tables, charts or csv-data
-	//	 * 
-	//	 * @return List of {@link String} of calculated results
-	//	 *************************************************************************************/
-	//	public List<String> getMyDataTableNames() {
-	//		return myDataTableNames;
-	//	}
+
+	// /**
+	// * get List of String for iterating over indizes, which can be used to
+	// * create html-tables, charts or csv-data
+	// *
+	// * @return List of {@link String} of calculated results
+	// *************************************************************************************/
+	// public List<String> getMyDataTableNames() {
+	// return myDataTableNames;
+	// }
 	//
-	//	/**
-	//	 * get List of HtmlTableRenderer for the calculated Datatables
-	//	 * 
-	//	 * @return List of {@link HtmlTableRenderer} of calculated HtmlTableRenderer
-	//	 *************************************************************************************/
-	//	public List<HtmlTableRenderer> getMyHtmlRenderer() {
-	//		return myHtmlRenderer;
-	//	}
+	// /**
+	// * get List of HtmlTableRenderer for the calculated Datatables
+	// *
+	// * @return List of {@link HtmlTableRenderer} of calculated HtmlTableRenderer
+	// *************************************************************************************/
+	// public List<HtmlTableRenderer> getMyHtmlRenderer() {
+	// return myHtmlRenderer;
+	// }
 	//
-	//	/**
-	//	 * render given {@link DataTable} as Chart and write it to response stream
-	//	 * 
-	//	 * @param out
-	//	 *            the {@link OutputStream} where to write
-	//	 * @param data
-	//	 *            the {@link DataTable} to use for chart generation
-	//	 * @throws IOException
-	//	 *             if an error occurs while imageIO is writing
-	//	 *************************************************************************************/
-	//	public void renderAsChart(OutputStream out, Object data) throws IOException {
-	//		if (data instanceof Integer) {
-	//			ChartRenderer ir = new ChartRenderer();
+	// /**
+	// * render given {@link DataTable} as Chart and write it to response stream
+	// *
+	// * @param out
+	// * the {@link OutputStream} where to write
+	// * @param data
+	// * the {@link DataTable} to use for chart generation
+	// * @throws IOException
+	// * if an error occurs while imageIO is writing
+	// *************************************************************************************/
+	// public void renderAsChart(OutputStream out, Object data) throws IOException {
+	// if (data instanceof Integer) {
+	// ChartRenderer ir = new ChartRenderer();
 	//			
-	//			if (question.isRendererInverted(ir)) {
-	//				ir.setDataTable(myDataTables.get((Integer) data).getDataTableInverted());
-	//			} else {
-	//				ir.setDataTable(myDataTables.get((Integer) data));
-	//			}
-	//			ir.setSize(800, 600);
-	//			ir.setShowMeanValues(showAverage);
-	//			BufferedImage image = (BufferedImage) ir.getRendering();
-	//			ImageIO.write(image, "png", out);
-	//		}
+	// if (question.isRendererInverted(ir)) {
+	// ir.setDataTable(myDataTables.get((Integer) data).getDataTableInverted());
+	// } else {
+	// ir.setDataTable(myDataTables.get((Integer) data));
+	// }
+	// ir.setSize(800, 600);
+	// ir.setShowMeanValues(showAverage);
+	// BufferedImage image = (BufferedImage) ir.getRendering();
+	// ImageIO.write(image, "png", out);
+	// }
 	//
-	//	}
+	// }
 
 }

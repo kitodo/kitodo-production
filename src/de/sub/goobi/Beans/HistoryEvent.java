@@ -21,9 +21,8 @@ public class HistoryEvent implements Serializable {
 	private Prozess process;
 
 	/**
-	 * This constructor is only public for hibernate usage. If you want to create a new
-	 * HistoryEvent please use HistoryEvent(Date date, Number inNumericValue, String inStringValue, 
-	 * HistoryEventType inHistoryEventType, Prozess process)
+	 * This constructor is only public for hibernate usage. If you want to create a new HistoryEvent please use HistoryEvent(Date date, Number
+	 * inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process)
 	 * 
 	 * 
 	 */
@@ -34,15 +33,14 @@ public class HistoryEvent implements Serializable {
 	/**
 	 * Please use only this constructor.
 	 * 
-	 * @param id
-	 *            - process Id
-	 * @param date
-	 * @param size
-	 *            - difference!
-	 * @param process
+	 * @param date Date of HistoryEvent
+	 * @param inNumericValue value as Number (pages, size,...) 
+	 * @param inStringValue value as string 
+	 * @param inHistoryEventType type of HistoryEvent ( {@link HistoryEventType} )
+	 * @param process process of HistoryEvent
 	 */
-	public HistoryEvent(Date date, Number inNumericValue, String inStringValue,
-			HistoryEventType inHistoryEventType, Prozess process) {
+
+	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process) {
 		super();
 		this.date = date;
 		numericValue = inNumericValue.doubleValue();
@@ -215,7 +213,7 @@ public class HistoryEvent implements Serializable {
 			if (!event.getStringValue().equals(this.getStringValue())) {
 				return false;
 			}
-		}catch  (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 

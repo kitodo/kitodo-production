@@ -8,9 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Session;
-
-import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.encryption.DesEncrypter;
@@ -37,18 +34,24 @@ public class Benutzer implements Serializable {
 	private boolean mitMassendownload = false;
 	private LdapGruppe ldapGruppe;
 	private String css;
+	private Set<Benutzereigenschaft> eigenschaften;
+
+	// private String lastFilter = null;
 
 	public Benutzer() {
 		benutzergruppen = new HashSet<Benutzergruppe>();
 		projekte = new HashSet<Projekt>();
 		schritte = new HashSet<Schritt>();
+		eigenschaften = new HashSet<Benutzereigenschaft>();
 	}
 
-	/*=======================================================
-	
-	                   Getter und Setter
-	                   
-	========================================================*/
+	/*
+	 * =======================================================
+	 * 
+	 * Getter und Setter
+	 * 
+	 * ========================================================
+	 */
 
 	public Integer getId() {
 		return id;
@@ -261,13 +264,6 @@ public class Benutzer implements Serializable {
 		if (projekte == null)
 			return new ArrayList<Projekt>();
 		else {
-			//         Hibernate.initialize(projekte);
-			//         System.out.println(projekte.size());
-			//         for (Iterator iter = projekte.iterator(); iter.hasNext();) {
-			//            Projekt p = (Projekt) iter.next();
-			//            System.out.println(p.getTitel());
-			//         }
-			//         System.out.println("projekte durchlaufen");
 			return new ArrayList<Projekt>(projekte);
 		}
 	}
@@ -288,13 +284,9 @@ public class Benutzer implements Serializable {
 		this.metadatenSprache = metadatenSprache;
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Helper									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ## Helper ##
+	 */
 
 	public boolean istPasswortKorrekt(String inPasswort) {
 		if (inPasswort == null || inPasswort.length() == 0) {
@@ -303,7 +295,7 @@ public class Benutzer implements Serializable {
 		} else {
 
 			/* Verbindung zum LDAP-Server aufnehmen und Login prüfen, wenn LDAP genutzt wird */
-		
+
 			if (ConfigMain.getBooleanParameter("ldap_use")) {
 				Ldap myldap = new Ldap();
 				return myldap.isUserPasswordCorrect(this, inPasswort);
@@ -322,14 +314,15 @@ public class Benutzer implements Serializable {
 
 	/**
 	 * BenutzerHome ermitteln und zurückgeben (entweder aus dem LDAP oder direkt aus der Konfiguration)
+	 * 
 	 * @return Path as String
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
 	public String getHomeDir() throws IOException, InterruptedException {
 		String rueckgabe = "";
 		/* wenn LDAP genutzt wird, HomeDir aus LDAP ermitteln, ansonsten aus der Konfiguration */
-	
+
 		if (ConfigMain.getBooleanParameter("ldap_use")) {
 			Ldap myldap = new Ldap();
 			rueckgabe = myldap.getUserHomeDirectory(this);
@@ -380,4 +373,101 @@ public class Benutzer implements Serializable {
 		this.css = css;
 	}
 
+	/*
+	 * added 05.05.2010 used for user filter
+	 */
+
+	/**
+	 * @return set of all properties
+	 */
+	public Set<Benutzereigenschaft> getEigenschaften() {
+		return eigenschaften;
+	}
+
+	/**
+	 * 
+	 * @param eigenschaften set of all properties
+	 */
+
+	public void setEigenschaften(Set<Benutzereigenschaft> eigenschaften) {
+		this.eigenschaften = eigenschaften;
+	}
+
+	/**
+	 * 
+	 * @return size of properties
+	 */
+	
+	public int getEigenschaftenSize() {
+		if (eigenschaften == null)
+			return 0;
+		else
+			return eigenschaften.size();
+	}
+
+	/**
+	 * 
+	 * @return List of all properties
+	 */
+	public List<Benutzereigenschaft> getEigenschaftenList() {
+		if (eigenschaften == null)
+			return new ArrayList<Benutzereigenschaft>();
+		else
+			return new ArrayList<Benutzereigenschaft>(eigenschaften);
+	}
+
+	/**
+	 * 
+	 * @return List of filters as strings
+	 */
+	
+	public List<String> getFilters() {
+		List<String> filters = new ArrayList<String>();
+		if (this.getEigenschaften() != null) {
+			for (Benutzereigenschaft hgp : this.getEigenschaftenList()) {
+				if (hgp.getTitel().equals("_filter")) {
+					filters.add(hgp.getWert());
+				}
+			}
+		}
+		return filters;
+	}
+
+	/**
+	 * adds a new filter to list
+	 * @param inFilter the filter to add
+	 */
+	
+	public void addFilter(String inFilter) {
+		if (eigenschaften == null) {
+			eigenschaften = new HashSet<Benutzereigenschaft>();
+		}
+		// no double entries here
+		for (Benutzereigenschaft be : eigenschaften) {
+			if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
+				return;
+			}
+		}
+		Benutzereigenschaft be = new Benutzereigenschaft();
+		be.setBenutzer(this);
+		be.setTitel("_filter");
+		be.setWert(inFilter);
+		eigenschaften.add(be);
+	}
+
+	
+	/**
+	 * removes filter from list
+	 * @param inFilter the filter to remove
+	 */
+	public void removeFilter(String inFilter) {
+		if (eigenschaften != null) {
+			for (Benutzereigenschaft be : eigenschaften) {
+				if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
+					eigenschaften.remove(be);
+					return;
+				}
+			}
+		}
+	}
 }

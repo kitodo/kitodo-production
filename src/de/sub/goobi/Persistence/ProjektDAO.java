@@ -7,8 +7,16 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ProjektDAO extends BaseDAO {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9050627256118458325L;
+
 	public Projekt save(Projekt t) throws DAOException {
 		storeObj(t);
+//		for (Prozess p : t.getProzesse()) {
+//			LuceneIndex.updateProcess(p);
+//		}
 		return (Projekt) retrieveObj(Projekt.class, t.getId());
 	}
 
@@ -20,15 +28,26 @@ public class ProjektDAO extends BaseDAO {
 	}
 
 	public void remove(Projekt t) throws DAOException {
-		if (t.getId() != null)
+		if (t.getId() != null) {
+//			for (Prozess p : t.getProzesse()) {
+//				LuceneIndex.deleteProcess(p);
+//			}
 			removeObj(t);
+		}
 	}
 
 	public void remove(Integer id) throws DAOException {
-		removeObj(Projekt.class, id);
+		if (id != null) {
+//			Projekt t = (Projekt) retrieveObj(Projekt.class, id);
+//			for (Prozess p : t.getProzesse()) {
+//				LuceneIndex.deleteProcess(p);
+//			}
+			removeObj(Projekt.class, id);
+		}
 	}
 
-	public List search(String query) throws DAOException {
+	@SuppressWarnings("unchecked")
+	public List<Projekt> search(String query) throws DAOException {
 		return retrieveObjs(query);
 	}
 

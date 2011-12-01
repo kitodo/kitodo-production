@@ -1,5 +1,4 @@
 package de.sub.goobi.config;
-//TODO: Move this into the GetOPAC Package
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,8 +42,11 @@ public class ConfigOpac {
             String address = config.getString("catalogue(" + i + ").config[@address]");
             String database = config.getString("catalogue(" + i + ").config[@database]");
             String iktlist = config.getString("catalogue(" + i + ").config[@iktlist]");
+            String cbs = config.getString("catalogue(" + i + ").config[@ucnf]", "");
+            if (!cbs.equals("")) {
+            	cbs = "&" + cbs;
+            }
             int port = config.getInt("catalogue(" + i + ").config[@port]");
-
             String charset = "iso-8859-1";
             if (config.getString("catalogue(" + i + ").config[@charset]") != null) {
             	charset = config.getString("catalogue(" + i + ").config[@charset]");
@@ -73,7 +75,7 @@ public class ConfigOpac {
             }
 
             ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, iktlist,
-                  port, charset, beautyList);
+                  port, charset, cbs, beautyList);
             return coc;
          }
       }

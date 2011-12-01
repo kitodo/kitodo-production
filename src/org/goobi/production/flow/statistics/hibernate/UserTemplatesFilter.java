@@ -29,7 +29,6 @@ import java.util.Observable;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.helper.Helper;
@@ -38,13 +37,14 @@ import de.sub.goobi.helper.PaginatingCriteria;
 /**
  * This class of IEvaluable filter implements the template filter
  * 
- *  @author Wulf Riebensahm
+ * @author Wulf Riebensahm
  ****************************************************************************/
 public class UserTemplatesFilter implements IEvaluableFilter {
 	private static final long serialVersionUID = -4062754600698521285L;
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria()
 	 */
 	public Criteria getCriteria() {
@@ -53,51 +53,52 @@ public class UserTemplatesFilter implements IEvaluableFilter {
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 		FilterHelper.criteriaBuilder(null, crit, true, null, null, null);
 
-		//FilterHelper.limitToUserAccessRights(crit);
-		//crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
+		// FilterHelper.limitToUserAccessRights(crit);
+		// crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
 
 		return crit;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
-	public String getName(){
-		throw new UnsupportedOperationException(this.getClass().getName()
-				+ " does not implement the method 'getName()'. This Filter is static");
+	public String getName() {
+		throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'getName()'. This Filter is static");
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter(java.lang.String)
 	 */
-	public void setFilter(String Filter){
-		throw new UnsupportedOperationException(this.getClass().getName()
-				+ " does not implement the method 'setFilter()'. This Filter is static");
+	public void setFilter(String Filter) {
+		throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setFilter()'. This Filter is static");
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName(java.lang.String)
 	 */
-	public void setName(String name){
-		throw new UnsupportedOperationException(this.getClass().getName()
-				+ " does not implement the method 'setName()'. This Filter is static");
+	public void setName(String name) {
+		throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setName()'. This Filter is static");
 
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL(java.lang.String)
 	 */
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException(this.getClass().getName()
-				+ " does not implement the method 'setSQL()'. This Filter is static");
+		throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setSQL()'. This Filter is static");
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	public IEvaluableFilter clone() {
@@ -106,6 +107,7 @@ public class UserTemplatesFilter implements IEvaluableFilter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
 	@SuppressWarnings("unchecked")
@@ -115,27 +117,33 @@ public class UserTemplatesFilter implements IEvaluableFilter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList()
 	 */
 	public List<Integer> getIDList() {
-		throw new UnsupportedOperationException("The filter " + this.getClass().getName() +  " does not support getIDList()");
+		throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support getIDList()");
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable()
 	 */
-	public Observable getObservable(){
-		throw new UnsupportedOperationException("The filter " + this.getClass().getName() +  " is not observable at this point");
+	public Observable getObservable() {
+		throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " is not observable at this point");
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone()
 	 */
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The filter " + this.getClass().getName() +  " does not support stepDone()");
+		throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support stepDone()");
 	}
 
+	public String stepDoneName() {
+		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDoneName() ");
+	}
 
 }

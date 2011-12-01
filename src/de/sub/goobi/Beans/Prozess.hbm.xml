@@ -21,29 +21,30 @@
 		<property name="sortHelperDocstructs" column="sortHelperDocstructs" type="integer"/>
 		<property name="sortHelperMetadata" column="sortHelperMetadata" type="integer"/>
 		<property name="erstellungsdatum" column="erstellungsdatum" type="timestamp"/>
+		<property name="wikifield" column="wikifield" type="string"/>
 		
-		<many-to-one name="projekt" class="de.sub.goobi.Beans.Projekt" column="ProjekteID" not-found="ignore"/>
+		<many-to-one name="projekt" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
 		
-		<many-to-one name="regelsatz" class="de.sub.goobi.Beans.Regelsatz" column="MetadatenKonfigurationID" not-found="ignore"/>
+		<many-to-one name="regelsatz" class="de.sub.goobi.Beans.Regelsatz" column="MetadatenKonfigurationID"/>
 		
 		<set name="schritte" cascade="all,delete-orphan" inverse="true" order-by="Reihenfolge" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Schritt" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Schritt"/>
 		</set>
 		
 		<set name="vorlagen" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Vorlage" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Vorlage"/>
 		</set>
 		
 		<set name="werkstuecke" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Werkstueck" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Werkstueck"/>
 		</set>
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
 			<key column="prozesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Prozesseigenschaft" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Prozesseigenschaft"/>
 		</set>
 		
 		<set name="history" cascade="all,delete-orphan" inverse="true" order-by="date">

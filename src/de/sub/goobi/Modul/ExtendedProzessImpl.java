@@ -22,7 +22,7 @@ import de.unigoettingen.goobi.module.api.exception.GoobiException;
  * @author Igor Toker
  */
 public class ExtendedProzessImpl extends ProcessImpl {
-   Helper help = new Helper();
+//   Helper help = new Helper();
    
    /**
     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten. 
@@ -47,13 +47,13 @@ public class ExtendedProzessImpl extends ProcessImpl {
       try {
          return ModuleServerForm.getProcessFromShortSession(sessionId).getFulltextFilePath();
       } catch (IOException e) {
-         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (InterruptedException e) {
-         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (SwapException e) {
-         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (DAOException e) {
-         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       }
    }
 
@@ -68,13 +68,13 @@ public class ExtendedProzessImpl extends ProcessImpl {
       try {
          return ModuleServerForm.getProcessFromShortSession(sessionId).getImagesDirectory();
       } catch (IOException e) {
-         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (InterruptedException e) {
-         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (SwapException e) {
-         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (DAOException e) {
-         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       }
    }
 
@@ -89,13 +89,13 @@ public class ExtendedProzessImpl extends ProcessImpl {
       try {
          return ModuleServerForm.getProcessFromShortSession(sessionId).getMetadataFilePath();
       } catch (IOException e) {
-         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (InterruptedException e) {
-         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (SwapException e) {
-         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       } catch (DAOException e) {
-         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       }
    }
 
@@ -114,13 +114,13 @@ public class ExtendedProzessImpl extends ProcessImpl {
       try {
 		myMap.put("tifdirectory", p.getImagesTifDirectory());
 		} catch (IOException e) {
-	        throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+	        throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
 		} catch (InterruptedException e) {
-	        throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+	        throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
 		} catch (SwapException e) {
-	        throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+	        throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
 		} catch (DAOException e) {
-	        throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));	
+	        throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));	
 	    }
 	    return myMap;
    }

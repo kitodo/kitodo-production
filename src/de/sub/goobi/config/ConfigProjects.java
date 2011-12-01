@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.log4j.Logger;
 
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.helper.Helper;
@@ -15,6 +17,7 @@ import de.sub.goobi.helper.Helper;
 public class ConfigProjects {
 	XMLConfiguration config;
 	private String projektTitel;
+	private static final Logger logger = Logger.getLogger(ConfigProjects.class);
 
 	public ConfigProjects(Projekt inProject) throws IOException {
 		this(inProject, new Helper().getGoobiConfigDirectory() + "projects.xml");
@@ -26,7 +29,7 @@ public class ConfigProjects {
 		try {
 			config = new XMLConfiguration(configPfad);
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			logger.error(e);
 			config = new XMLConfiguration();
 		}
 		config.setListDelimiter('&');
@@ -61,7 +64,7 @@ public class ConfigProjects {
 			String rueckgabe = config.getString(projektTitel + inParameter);
 			return cleanXmlFormatedString(rueckgabe);
 		} catch (RuntimeException e) {
-			e.printStackTrace();
+			logger.error(e);
 			return null;
 		}
 	}
@@ -120,7 +123,7 @@ public class ConfigProjects {
 		try {
 			return config.getLong(projektTitel + inParameter);
 		} catch (RuntimeException e) {
-			e.printStackTrace();
+			logger.error(e);
 			return 0;
 		}
 	}
@@ -136,8 +139,7 @@ public class ConfigProjects {
 		try {
 			return (List<String>) config.getList(projektTitel + inParameter);
 		} catch (RuntimeException e) {
-			//TODO: Use a Logger
-			e.printStackTrace();
+			logger.error(e);
 			return new ArrayList<String>();
 		}
 	}

@@ -30,7 +30,7 @@ public class TreeNodeStruct3 extends TreeNode {
 		this.label = label;
 		this.id = id;
 		//TODO: Use generics
-		children = new ArrayList();
+		children = new ArrayList<TreeNode>();
 	}
 
 	/* =============================================================== */

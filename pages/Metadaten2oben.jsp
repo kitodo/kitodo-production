@@ -58,7 +58,7 @@
 											value="#{Metadaten.treeProperties.fullexpanded?false:true}"
 											property="#{Metadaten.treeProperties.fullexpanded}" />
 									</h:commandLink>
-									<h:commandLink value="ImageSticky 0/1"
+									<h:commandLink value="stickyimage 0/1"
 										action="Metadaten2rechts" target="rechts"
 										styleClass="metadataHeaderLinks">
 										<x:updateActionListener
@@ -68,7 +68,7 @@
 									<h:outputText />
 								</h:panelGrid>
 							</htm:td>
-							<htm:td width="75px" align="right" valign="middle"
+							<htm:td width="105px" align="right" valign="middle"
 								style="padding:3px">
 								<x:inputText rendered="false" id="treeReload" forceId="true" />
 								<h:commandLink rendered="false" id="treeReloadButton"
@@ -83,6 +83,12 @@
 									title="english version" target="rechts">
 									<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
 									<f:param name="locale" value="en" />
+									<f:param name="ziel" value="Metadaten2rechts" />
+								</h:commandLink>
+								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
+									title="spanish version" target="rechts">
+									<h:graphicImage value="/newpages/images/flag_es_ganzklein.gif" />
+									<f:param name="locale" value="es" />
 									<f:param name="ziel" value="Metadaten2rechts" />
 								</h:commandLink>
 								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"

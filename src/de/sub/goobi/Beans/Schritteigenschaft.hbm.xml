@@ -16,8 +16,8 @@
 		<property name="datentyp" column="DatentypenID" type="integer" />
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
-				
-		<many-to-one name="schritt" class="de.sub.goobi.Beans.Schritt" column="schritteID" not-found="ignore"/>
+		<property name="container" column="container" type="integer" />	
+		<many-to-one name="schritt" class="de.sub.goobi.Beans.Schritt" column="schritteID"/>
 		
 	</class>
 

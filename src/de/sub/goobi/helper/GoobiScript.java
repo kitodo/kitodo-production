@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
@@ -48,14 +49,12 @@ import de.sub.goobi.helper.tasks.TiffWriterTask;
 //TODO: add some general mechanism for string-output of goobi scripts in jsp
 
 public class GoobiScript {
-	Helper help = new Helper();
 	HashMap<String, String> myParameters;
 	private static final Logger logger = Logger.getLogger(GoobiScript.class);
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	/**
-	 * Starten des Scripts
-	 * ================================================================
+	 * Starten des Scripts ================================================================
 	 */
 	public void execute(List<Prozess> inProzesse, String inScript) {
 		myParameters = new HashMap<String, String>();
@@ -65,9 +64,8 @@ public class GoobiScript {
 		StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken();
-			// System.out.println(tok);
 			if (tok.indexOf(":") == -1)
-				help.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
+				Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
 			else {
 				String myKey = tok.substring(0, tok.indexOf(":"));
 				String myValue = tok.substring(tok.indexOf(":") + 1);
@@ -79,7 +77,7 @@ public class GoobiScript {
 		 * -------------------------------- die passende Methode mit den richtigen Parametern übergeben --------------------------------
 		 */
 		if (myParameters.get("action") == null) {
-			help
+			Helper
 					.setFehlerMeldung(
 							"goobiScriptfield",
 							"missing action",
@@ -126,8 +124,11 @@ public class GoobiScript {
 			setRuleset(inProzesse);
 		} else if (myParameters.get("action").equals("exportDms")) {
 			exportDms(inProzesse, myParameters.get("exportImages"));
-		} else {
-			help
+		} else if (myParameters.get("action").equals("doit")) { 
+			exportDms(inProzesse, "false");
+		}
+		else {
+			Helper
 					.setFehlerMeldung(
 							"goobiScriptfield",
 							"Unbekannte Action",
@@ -154,12 +155,11 @@ public class GoobiScript {
 		// e.printStackTrace();
 		// }
 
-		help.setMeldung("goobiScriptfield", "", "GoobiScript beendet");
+		Helper.setMeldung("goobiScriptfield", "", "GoobiScript beendet");
 	}
 
 	/**
-	 * Prozesse auslagern
-	 * ================================================================
+	 * Prozesse auslagern ================================================================
 	 */
 	private void swapOutProzesses(List<Prozess> inProzesse) {
 		for (Prozess p : inProzesse) {
@@ -172,15 +172,14 @@ public class GoobiScript {
 			// ProcessSwapper ps = ProcessSwapper.getInstance();
 			// ps.swapOut(p);
 			// } catch (Exception e) {
-			// help.setFehlerMeldung("Fehler bei Auslagerung", e);
+			// Helper.setFehlerMeldung("Fehler bei Auslagerung", e);
 			// break;
 			// }
 		}
 	}
 
 	/**
-	 * Prozesse wieder einlagern
-	 * ================================================================
+	 * Prozesse wieder einlagern ================================================================
 	 */
 	private void swapInProzesses(List<Prozess> inProzesse) {
 		for (Prozess p : inProzesse) {
@@ -193,113 +192,108 @@ public class GoobiScript {
 			// ProcessSwapper ps = ProcessSwapper.getInstance();
 			// ps.swapIn(p);
 			// } catch (Exception e) {
-			// help.setFehlerMeldung("Fehler bei Einlagerung", e);
+			// Helper.setFehlerMeldung("Fehler bei Einlagerung", e);
 			// break;
 			// }
 		}
 	}
 
 	/**
-	 * voll allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen
-	 * ================================================================
+	 * voll allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen ================================================================
 	 */
 	private void importFromFileSystem(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("sourcefolder") == null || myParameters.get("sourcefolder").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "sourcefolder");
+			Helper.setFehlerMeldung("goobiScriptfield", "missing parameter: ", "sourcefolder");
 			return;
 		}
 
 		File sourceFolder = new File(myParameters.get("sourcefolder"));
 		if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
-			help.setFehlerMeldung("goobiScriptfield", "Das Verzeichnis " + myParameters.get("sourcefolder") + " existiert nicht");
+			Helper.setFehlerMeldung("goobiScriptfield", "Directory " + myParameters.get("sourcefolder") + " does not exisist");
 			return;
 		}
 		try {
 
 			for (Prozess p : inProzesse) {
-				System.out.println(p.getTitel());
-				File imagesFolder = new File(p.getImagesDirectory());
+				File imagesFolder = new File(p.getImagesOrigDirectory());
 				if (imagesFolder.list().length > 0)
-					help.setFehlerMeldung("goobiScriptfield", "", "Der Vorgang " + p.getTitel() + " [" + p.getId().intValue()
-							+ "] enthält bereits Daten im Imageordner");
+					Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue()
+							+ "] has allready data in image folder");
 				else {
 					File sourceFolderProzess = new File(sourceFolder, p.getTitel());
 					if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
-						help.setFehlerMeldung("goobiScriptfield", "", "Das Verzeichnis für den Vorgang " + p.getTitel() + " [" + p.getId().intValue()
-								+ "] existiert nicht im SourceFolder");
+						Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
+								+ "] is not existing");
 					} else {
 						CopyFile.copyDirectory(sourceFolderProzess, imagesFolder);
-						help.setMeldung("goobiScriptfield", "", "Das Verzeichnis für den Vorgang " + p.getTitel() + " [" + p.getId().intValue()
-								+ "] wurde kopiert");
+						Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
+								+ "] is copied");
 					}
-					help.setMeldung("goobiScriptfield", "", "Der Vorgang " + p.getTitel() + " [" + p.getId().intValue() + "] wurde kopiert");
+					Helper.setMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue() + "] is copied");
 				}
 			}
 		} catch (Exception e) {
-			help.setFehlerMeldung(e);
+			Helper.setFehlerMeldung(e);
 			logger.error(e);
 		}
 	}
 
 	/**
-	 * Regelsatz setzen
-	 * ================================================================
+	 * Regelsatz setzen ================================================================
 	 */
 	private void setRuleset(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("ruleset") == null || myParameters.get("ruleset").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "ruleset");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "ruleset");
 			return;
 		}
 
 		try {
 			RegelsatzDAO rdao = new RegelsatzDAO();
 			ProzessDAO pdao = new ProzessDAO();
-			List rulesets = rdao.search("from Regelsatz where titel='" + myParameters.get("ruleset") + "'");
+			List<Regelsatz> rulesets = rdao.search("from Regelsatz where titel='" + myParameters.get("ruleset") + "'");
 			if (rulesets == null || rulesets.size() == 0) {
-				help.setFehlerMeldung("goobiScriptfield", "Regelsatz nicht gefunden: ", "ruleset");
+				Helper.setFehlerMeldung("goobiScriptfield", "Could not found ruleset: ", "ruleset");
 				return;
 			}
 			Regelsatz regelsatz = (Regelsatz) rulesets.get(0);
 
 			for (Prozess p : inProzesse) {
-				System.out.println(p.getTitel());
 				p.setRegelsatz(regelsatz);
 				pdao.save(p);
 			}
 		} catch (Exception e) {
-			help.setFehlerMeldung(e);
+			Helper.setFehlerMeldung(e);
 			logger.error(e);
 		}
 	}
 
 	/**
-	 * Tauschen zweier Schritte gegeneinander
-	 * ================================================================
+	 * Tauschen zweier Schritte gegeneinander ================================================================
 	 */
 	private void swapSteps(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("swap1nr") == null || myParameters.get("swap1nr").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "swap1nr");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1nr");
 			return;
 		}
 		if (myParameters.get("swap2nr") == null || myParameters.get("swap2nr").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "swap2nr");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2nr");
 			return;
 		}
 		if (myParameters.get("swap1title") == null || myParameters.get("swap1title").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "swap1title");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1title");
 			return;
 		}
 		if (myParameters.get("swap2title") == null || myParameters.get("swap2title").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "swap2title");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2title");
 			return;
 		}
 		int reihenfolge1;
@@ -308,7 +302,7 @@ public class GoobiScript {
 			reihenfolge1 = Integer.parseInt(myParameters.get("swap1nr"));
 			reihenfolge2 = Integer.parseInt(myParameters.get("swap2nr"));
 		} catch (NumberFormatException e1) {
-			help.setFehlerMeldung("goobiScriptfield", "Ungültige Reihenfolgenummern verwendet: ", myParameters.get("swap1nr") + " - "
+			Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ", myParameters.get("swap1nr") + " - "
 					+ myParameters.get("swap2nr"));
 			return;
 		}
@@ -318,22 +312,13 @@ public class GoobiScript {
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
-			// System.out.println(proz.getTitel());
 			/*
 			 * -------------------------------- Swapsteps --------------------------------
 			 */
 			Schritt s1 = null;
 			Schritt s2 = null;
-			for (Iterator iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
+			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
 				Schritt s = (Schritt) iterator.next();
-				// System.out.println(s.getTitel() + " - " + s.getReihenfolge().intValue());
-				// System.out.println(s.getTitel().equals(myParameters.get("swap1title")));
-				// System.out.println(s.getReihenfolge().intValue() == Integer.parseInt((String) myParameters
-				// .get("swap1nr")));
-				// System.out.println(s.getTitel().equals(myParameters.get("swap2title")));
-				// System.out.println(s.getReihenfolge().intValue() == Integer.parseInt((String) myParameters
-				// .get("swap2nr")));
-
 				if (s.getTitel().equals(myParameters.get("swap1title")) && s.getReihenfolge().intValue() == reihenfolge1)
 					s1 = s;
 				if (s.getTitel().equals(myParameters.get("swap2title")) && s.getReihenfolge().intValue() == reihenfolge2)
@@ -349,29 +334,27 @@ public class GoobiScript {
 					sdao.save(s1);
 					sdao.save(s2);
 				} catch (DAOException e) {
-					help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern innerhalb des Tausches im Prozess: ", proz.getTitel() + " - "
+					Helper.setFehlerMeldung("goobiScriptfield", "Error on save while swapping steps in process: ", proz.getTitel() + " - "
 							+ s1.getTitel() + " : " + s2.getTitel());
-					logger.error("Fehler beim Speichern innerhalb des Tausches im Prozess: " + proz.getTitel() + " - " + s1.getTitel() + " : "
-							+ s2.getTitel(), e);
+					logger.error("Error on save while swapping process: " + proz.getTitel() + " - " + s1.getTitel() + " : " + s2.getTitel(), e);
 				}
 
-				help.setMeldung("goobiScriptfield", "Tausch im Prozess abgeschlossen: ", proz.getTitel());
+				Helper.setMeldung("goobiScriptfield", "Swapped steps in: ", proz.getTitel());
 			}
 
 		}
-		help.setMeldung("goobiScriptfield", "swapsteps abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "swapsteps finished: ");
 	}
 
 	/**
-	 * Schritte löschen
-	 * ================================================================
+	 * Schritte löschen ================================================================
 	 */
 	private void deleteStep(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
@@ -381,44 +364,43 @@ public class GoobiScript {
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
-				for (Iterator iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
+				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
 					Schritt s = (Schritt) iterator.next();
 					if (s.getTitel().equals(myParameters.get("steptitle"))) {
 						proz.getSchritte().remove(s);
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
-							help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-							logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+							logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 						}
-						help.setMeldung("goobiScriptfield", "Schritt im Prozess entfernt: ", proz.getTitel());
+						Helper.setMeldung("goobiScriptfield", "Removed step from process: ", proz.getTitel());
 						break;
 					}
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "deleteStep abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "deleteStep finished: ");
 	}
 
 	/**
-	 * Schritte hinzufuegen
-	 * ================================================================
+	 * Schritte hinzufuegen ================================================================
 	 */
 	private void addStep(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 		if (myParameters.get("number") == null || myParameters.get("number").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "number");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
 			return;
 		}
 
 		if (!StringUtils.isNumeric(myParameters.get("number"))) {
-			help.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
+			Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
 			return;
 		}
 
@@ -438,29 +420,28 @@ public class GoobiScript {
 			try {
 				sdao.save(proz);
 			} catch (DAOException e) {
-				help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-				logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+				Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+				logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 			}
-			help.setMeldung("goobiScriptfield", "Schritt in Prozess eingefügt: ", proz.getTitel());
+			Helper.setMeldung("goobiScriptfield", "Added step to process: ", proz.getTitel());
 		}
-		help.setMeldung("goobiScriptfield", "addStep abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "addStep finished: ");
 	}
 
 	/**
-	 * ShellScript an Schritt hängen
-	 * ================================================================
+	 * ShellScript an Schritt hängen ================================================================
 	 */
 	private void addShellScriptToStep(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
 			return;
 		}
 
 		if (myParameters.get("script") == null || myParameters.get("script").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
+			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
 			return;
 		}
 
@@ -470,40 +451,39 @@ public class GoobiScript {
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
-				for (Iterator iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
+				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
 					Schritt s = (Schritt) iterator.next();
 					if (s.getTitel().equals(myParameters.get("steptitle"))) {
 						s.setTypAutomatischScriptpfad(myParameters.get("script"));
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
-							help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-							logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+							logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 						}
-						help.setMeldung("goobiScriptfield", "Script im Schritt eingefuegt: ", proz.getTitel());
+						Helper.setMeldung("goobiScriptfield", "Added script to step: ", proz.getTitel());
 						break;
 					}
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "addShellScriptToStep abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "addShellScriptToStep finished: ");
 	}
 
 	/**
-	 * ShellScript an Schritt hängen
-	 * ================================================================
+	 * ShellScript an Schritt hängen ================================================================
 	 */
 	private void addModuleToStep(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
 		if (myParameters.get("module") == null || myParameters.get("module").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "module");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "module");
 			return;
 		}
 
@@ -513,45 +493,44 @@ public class GoobiScript {
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
-				for (Iterator iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
+				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
 					Schritt s = (Schritt) iterator.next();
 					if (s.getTitel().equals(myParameters.get("steptitle"))) {
 						s.setTypModulName(myParameters.get("module"));
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
-							help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-							logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+							logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 						}
-						help.setMeldung("goobiScriptfield", "Modul im Schritt eingefuegt: ", proz.getTitel());
+						Helper.setMeldung("goobiScriptfield", "Added module to step: ", proz.getTitel());
 						break;
 					}
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "addModuleToStep abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "addModuleToStep finished: ");
 	}
 
 	/**
-	 * Flag von Schritten setzen
-	 * ================================================================
+	 * Flag von Schritten setzen ================================================================
 	 */
 	private void setTaskProperty(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
 		if (myParameters.get("property") == null || myParameters.get("property").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "property");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "property");
 			return;
 		}
 
 		if (myParameters.get("value") == null || myParameters.get("value").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "value");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "value");
 			return;
 		}
 
@@ -560,13 +539,13 @@ public class GoobiScript {
 
 		if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
 				&& !property.equals("exportdms")) {
-			help.setFehlerMeldung("goobiScriptfield",
+			Helper.setFehlerMeldung("goobiScriptfield",
 					"wrong parameter 'property'; possible values: metadata, readimages, writeimages, validate, exportdms");
 			return;
 		}
 
 		if (!value.equals("true") && !value.equals("false")) {
-			help.setFehlerMeldung("goobiScriptfield", "wrong parameter 'value'; possible values: true, false");
+			Helper.setFehlerMeldung("goobiScriptfield", "wrong parameter 'value'; possible values: true, false");
 			return;
 		}
 
@@ -576,7 +555,7 @@ public class GoobiScript {
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
 			if (proz.getSchritte() != null) {
-				for (Iterator iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
+				for (Iterator<Schritt> iterator = proz.getSchritte().iterator(); iterator.hasNext();) {
 					Schritt s = (Schritt) iterator.next();
 					if (s.getTitel().equals(myParameters.get("steptitle"))) {
 
@@ -594,39 +573,38 @@ public class GoobiScript {
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
-							help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-							logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+							logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 						}
-						help.setMeldung("goobiScriptfield", "Eigenschaft im Schritt gesetzt: ", proz.getTitel());
+						Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitel());
 						break;
 					}
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "setTaskProperty abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "setTaskProperty abgeschlossen: ");
 	}
 
 	/**
-	 * Schritte auf bestimmten Status setzen
-	 * ================================================================
+	 * Schritte auf bestimmten Status setzen ================================================================
 	 */
 	private void setStepStatus(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
 		if (myParameters.get("status") == null || myParameters.get("status").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "status");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "status");
 			return;
 		}
 
 		if (!myParameters.get("status").equals("0") && !myParameters.get("status").equals("1") && !myParameters.get("status").equals("2")
 				&& !myParameters.get("status").equals("3")) {
-			help.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ", "(possible: 0=closed, 1=open, 2=in work, 3=finished");
+			Helper.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ", "(possible: 0=closed, 1=open, 2=in work, 3=finished");
 			return;
 		}
 
@@ -635,44 +613,43 @@ public class GoobiScript {
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
-			for (Iterator iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
+			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
 				Schritt s = (Schritt) iterator.next();
 				if (s.getTitel().equals(myParameters.get("steptitle"))) {
 					s.setBearbeitungsstatusAsString(myParameters.get("status"));
 					try {
 						sdao.save(s);
 					} catch (DAOException e) {
-						help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-						logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+						Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+						logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 					}
-					help.setMeldung("goobiScriptfield", "Schrittstatus gesetzt im Prozess: ", proz.getTitel());
+					Helper.setMeldung("goobiScriptfield", "stepstatus setted in process: ", proz.getTitel());
 					break;
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "setStepStatus abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "setStepStatus finished: ");
 	}
 
 	/**
-	 * Schritte auf bestimmten Reihenfolge setzen
-	 * ================================================================
+	 * Schritte auf bestimmten Reihenfolge setzen ================================================================
 	 */
 	private void setStepNumber(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 
 		if (myParameters.get("number") == null || myParameters.get("number").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "number");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
 			return;
 		}
 
 		if (!StringUtils.isNumeric(myParameters.get("number"))) {
-			help.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
+			Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
 			return;
 		}
 
@@ -681,52 +658,51 @@ public class GoobiScript {
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
-			for (Iterator iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
+			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
 				Schritt s = (Schritt) iterator.next();
 				if (s.getTitel().equals(myParameters.get("steptitle"))) {
 					s.setReihenfolge(Integer.parseInt(myParameters.get("number")));
 					try {
 						sdao.save(s);
 					} catch (DAOException e) {
-						help.setFehlerMeldung("goobiScriptfield", "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
-						logger.error("goobiScriptfield" + "Fehler beim Speichern im Prozess: " + proz.getTitel(), e);
+						Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
+						logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 					}
-					help.setMeldung("goobiScriptfield", "Schrittreihenfolge gesetzt im Prozess: ", proz.getTitel());
+					Helper.setMeldung("goobiScriptfield", "step order changed in process: ", proz.getTitel());
 					break;
 				}
 			}
 		}
-		help.setMeldung("goobiScriptfield", "setStepNumber abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "setStepNumber finished ");
 	}
 
 	/**
-	 * Benutzer zu Schritt hinzufügen
-	 * ================================================================
+	 * Benutzer zu Schritt hinzufügen ================================================================
 	 */
 	private void adduser(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 		if (myParameters.get("username") == null || myParameters.get("username").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "username");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "username");
 			return;
 		}
 		/* prüfen, ob ein solcher Benutzer existiert */
 		Benutzer myUser = null;
 		try {
-			List treffer = new BenutzerDAO().search("from Benutzer where login='" + myParameters.get("username") + "'");
+			List<Benutzer> treffer = new BenutzerDAO().search("from Benutzer where login='" + myParameters.get("username") + "'");
 			if (treffer != null && treffer.size() > 0)
 				myUser = (Benutzer) treffer.get(0);
 			else {
-				help.setFehlerMeldung("goobiScriptfield", "Unknown user: ", myParameters.get("username"));
+				Helper.setFehlerMeldung("goobiScriptfield", "Unknown user: ", myParameters.get("username"));
 				return;
 			}
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.adduser", e);
+			Helper.setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.adduser", e);
 			logger.error("goobiScriptfield" + "Error in GoobiScript.adduser: ", e);
 			return;
 		}
@@ -736,11 +712,8 @@ public class GoobiScript {
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
-			// System.out.println(proz.getTitel());
-			for (Iterator iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
+			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
 				Schritt s = (Schritt) iterator.next();
-				// System.out.println(s.getTitel());
-				// System.out.println(s.getTitel().equals(myParameters.get("steptitle")));
 				if (s.getTitel().equals(myParameters.get("steptitle"))) {
 					Set<Benutzer> myBenutzer = s.getBenutzer();
 					if (myBenutzer == null) {
@@ -752,46 +725,45 @@ public class GoobiScript {
 						try {
 							sdao.save(s);
 						} catch (DAOException e) {
-							new Helper().setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitel(), e);
 							logger.error("goobiScriptfield" + "Error while saving - " + proz.getTitel(), e);
 							return;
 						}
 					}
 				}
 			}
-			help.setMeldung("goobiScriptfield", "Benutzerzuweisung für Schritt abgeschlossen: ", proz.getTitel());
+			Helper.setMeldung("goobiScriptfield", "Added user to step: ", proz.getTitel());
 		}
-		help.setMeldung("goobiScriptfield", "", "adduser abgeschlossen.");
+		Helper.setMeldung("goobiScriptfield", "", "adduser finished.");
 	}
 
 	/**
-	 * Benutzergruppe zu Schritt hinzufügen
-	 * ================================================================
+	 * Benutzergruppe zu Schritt hinzufügen ================================================================
 	 */
 	private void addusergroup(List<Prozess> inProzesse) {
 		/*
 		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (myParameters.get("steptitle") == null || myParameters.get("steptitle").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
 			return;
 		}
 		if (myParameters.get("group") == null || myParameters.get("group").equals("")) {
-			help.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "group");
+			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "group");
 			return;
 		}
 		/* prüfen, ob ein solcher Benutzer existiert */
 		Benutzergruppe myGroup = null;
 		try {
-			List treffer = new BenutzergruppenDAO().search("from Benutzergruppe where titel='" + myParameters.get("group") + "'");
+			List<Benutzergruppe> treffer = new BenutzergruppenDAO().search("from Benutzergruppe where titel='" + myParameters.get("group") + "'");
 			if (treffer != null && treffer.size() > 0)
 				myGroup = (Benutzergruppe) treffer.get(0);
 			else {
-				help.setFehlerMeldung("goobiScriptfield", "Unknown group: ", myParameters.get("group"));
+				Helper.setFehlerMeldung("goobiScriptfield", "Unknown group: ", myParameters.get("group"));
 				return;
 			}
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.addusergroup", e);
+			Helper.setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.addusergroup", e);
 			return;
 		}
 
@@ -800,11 +772,8 @@ public class GoobiScript {
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
-			// System.out.println(proz.getTitel());
-			for (Iterator iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
+			for (Iterator<Schritt> iterator = proz.getSchritteList().iterator(); iterator.hasNext();) {
 				Schritt s = (Schritt) iterator.next();
-				// System.out.println(s.getTitel());
-				// System.out.println(s.getTitel().equals(myParameters.get("steptitle")));
 				if (s.getTitel().equals(myParameters.get("steptitle"))) {
 					Set<Benutzergruppe> myBenutzergruppe = s.getBenutzergruppen();
 					if (myBenutzergruppe == null) {
@@ -816,20 +785,19 @@ public class GoobiScript {
 						try {
 							sdao.save(s);
 						} catch (DAOException e) {
-							new Helper().setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitel(), e);
+							Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitel(), e);
 							return;
 						}
 					}
 				}
 			}
-			help.setMeldung("goobiScriptfield", "Benutzergruppenzuweisung für Schritt abgeschlossen: ", proz.getTitel());
+			Helper.setMeldung("goobiScriptfield", "added usergroup to step: ", proz.getTitel());
 		}
-		help.setMeldung("goobiScriptfield", "", "addusergroup abgeschlossen");
+		Helper.setMeldung("goobiScriptfield", "", "addusergroup finished");
 	}
 
 	/**
-	 * TiffHeader von den Prozessen löschen
-	 * ================================================================
+	 * TiffHeader von den Prozessen löschen ================================================================
 	 */
 	public void deleteTiffHeaderFile(List<Prozess> inProzesse) {
 		for (Prozess proz : inProzesse) {
@@ -837,17 +805,16 @@ public class GoobiScript {
 				File tiffheaderfile = new File(proz.getImagesDirectory() + "tiffwriter.conf");
 				if (tiffheaderfile.exists())
 					tiffheaderfile.delete();
-				help.setMeldung("goobiScriptfield", "TiffHeaderFile deleted: ", proz.getTitel());
+				Helper.setMeldung("goobiScriptfield", "TiffHeaderFile deleted: ", proz.getTitel());
 			} catch (Exception e) {
-				help.setFehlerMeldung("goobiScriptfield", "Error while deleting TiffHeader", e);
+				Helper.setFehlerMeldung("goobiScriptfield", "Error while deleting TiffHeader", e);
 			}
 		}
-		help.setMeldung("goobiScriptfield", "", "deleteTiffHeaderFile abgeschlossen");
+		Helper.setMeldung("goobiScriptfield", "", "deleteTiffHeaderFile finished");
 	}
 
 	/**
-	 * TiffHeader von den Prozessen neu schreiben
-	 * ================================================================
+	 * TiffHeader von den Prozessen neu schreiben ================================================================
 	 */
 	private void writeTiffHeader(List<Prozess> inProzesse) {
 		for (Iterator<Prozess> iter = inProzesse.iterator(); iter.hasNext();) {
@@ -859,8 +826,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Imagepfad in den Metadaten neu setzen (evtl. vorhandene zunächst löschen)
-	 * ================================================================
+	 * Imagepfad in den Metadaten neu setzen (evtl. vorhandene zunächst löschen) ================================================================
 	 */
 	public void updateImagePath(List<Prozess> inProzesse) {
 		for (Prozess proz : inProzesse) {
@@ -876,24 +842,28 @@ public class GoobiScript {
 					}
 				}
 				Metadata newmd = new Metadata(mdt);
-				newmd.setValue("./" + proz.getTitel() + DIRECTORY_SUFFIX);
+				if (SystemUtils.IS_OS_WINDOWS) {
+					newmd.setValue("file:/" + proz.getImagesDirectory() + proz.getTitel() + DIRECTORY_SUFFIX);
+				} else {
+					newmd.setValue("file://" + proz.getImagesDirectory() + proz.getTitel() + DIRECTORY_SUFFIX);
+				}
 				myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
 				proz.writeMetadataFile(myRdf);
-				help.setMeldung("goobiScriptfield", "ImagePath updated: ", proz.getTitel());
+				Helper.setMeldung("goobiScriptfield", "ImagePath updated: ", proz.getTitel());
 
 			} catch (ugh.exceptions.DocStructHasNoTypeException e) {
-				help.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
+				Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
 			} catch (UghHelperException e) {
-				help.setFehlerMeldung("UghHelperException", e.getMessage());
+				Helper.setFehlerMeldung("UghHelperException", e.getMessage());
 			} catch (MetadataTypeNotAllowedException e) {
-				help.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
+				Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
 
 			} catch (Exception e) {
-				help.setFehlerMeldung("goobiScriptfield", "Error while updating imagepath", e);
+				Helper.setFehlerMeldung("goobiScriptfield", "Error while updating imagepath", e);
 			}
 
 		}
-		help.setMeldung("goobiScriptfield", "", "updateImagePath abgeschlossen");
+		Helper.setMeldung("goobiScriptfield", "", "updateImagePath finished");
 
 	}
 

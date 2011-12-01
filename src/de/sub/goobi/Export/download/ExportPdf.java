@@ -29,6 +29,7 @@ import de.sub.goobi.Metadaten.MetadatenHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -55,8 +56,8 @@ public class ExportPdf extends ExportMets {
 		new File("");
 		File metsTempFile = File.createTempFile(myProzess.getTitel(), ".xml");
 		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile);
-		help.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
-		help.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
 
 		myLogger.debug("METS file created: " + metsTempFile);
 
@@ -98,7 +99,7 @@ public class ExportPdf extends ExportMets {
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
 						contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
 					}
-					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL());
+					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL() + "&targetFileName=" + myProzess.getTitel() + ".pdf");
 					/*
 					 * -------------------------------- mets data does not exist or is invalid --------------------------------
 					 */
@@ -124,7 +125,7 @@ public class ExportPdf extends ExportMets {
 					String imageString = url.substring(0, url.length() - 1);
 					String targetFileName = "&targetFileName=" + myProzess.getTitel() + ".pdf";
 					goobiContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
-
+					
 				}
 
 				/*
@@ -148,7 +149,6 @@ public class ExportPdf extends ExportMets {
 					File tempMets = new File(metsTempFile.toURI().toURL().toString());
 					tempMets.delete();
 				}
-				// TODO: Don't catch Exception (the super class)
 			} catch (Exception e) {
 
 				/*
@@ -162,7 +162,6 @@ public class ExportPdf extends ExportMets {
 					output.write(text);
 					output.close();
 				} catch (IOException e1) {
-					// logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
 				}
 				return;
 			} finally {

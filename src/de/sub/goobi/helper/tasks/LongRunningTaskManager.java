@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.sub.goobi.helper.Helper;
-
 public class LongRunningTaskManager {
    static LinkedList<LongRunningTask> tasks = new LinkedList<LongRunningTask>();
    private static LongRunningTaskManager lrtm;
-   Helper help = new Helper();
+//   Helper help = new Helper();
    static boolean running = false;
    Timer autoRunTimer;
 
@@ -45,25 +43,20 @@ public class LongRunningTaskManager {
     * ================================================================
     */
    private static void check_autoRunningTasks() {
-//      System.out.println("autostart geprüft");
       if (!running)
          return;
-//      System.out.println("ist running");
       for (LongRunningTask lrt : tasks) {
          if (lrt.getStatusProgress() > 0 && lrt.getStatusProgress() < 100)
             return;
       }
-//      System.out.println("kein Task läuft gerade, versuche, den ersten zu starten");
       if (tasks.size() > 0) {
          for (LongRunningTask lrt : tasks) {
             if (lrt.getStatusProgress() == 0) {
-//               System.out.println("erster Task wird gestartet");
                lrt.execute();
                return;
             }
          }
       }
-//      System.out.println("kein Task zum Starten da");
    }
 
    /**

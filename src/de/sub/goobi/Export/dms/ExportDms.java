@@ -1,7 +1,6 @@
 package de.sub.goobi.Export.dms;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -32,7 +31,6 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class ExportDms extends ExportMets {
 	private static final Logger myLogger = Logger.getLogger(ExportDms.class);
-	private Helper help = new Helper();
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 
@@ -90,10 +88,15 @@ public class ExportDms extends ExportMets {
 				break;
 			}
 
+				
+			
+			
 			newfile.setDigitalDocument(gdzfile.getDigitalDocument());
 			gdzfile = newfile;
+		
+				
 		} catch (Exception e) {
-			help.setFehlerMeldung("Export abgebrochen, xml-LeseFehler bei: " + myProzess.getTitel(), e);
+			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return;
 		}
@@ -133,19 +136,19 @@ public class ExportDms extends ExportMets {
 				zielVerzeichnis = benutzerHome.getAbsolutePath();
 				/* alte Import-Ordner löschen */
 				if (!Helper.deleteDir(benutzerHome)) {
-					help.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Import folder could not be cleared");
+					Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Import folder could not be cleared");
 					return;
 				}
 				/* alte Success-Ordner löschen */
 				File successFile = new File(myProzess.getProjekt().getDmsImportSuccessPath() + File.separator + myProzess.getTitel());
 				if (!Helper.deleteDir(successFile)) {
-					help.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Success folder could not be cleared");
+					Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Success folder could not be cleared");
 					return;
 				}
 				/* alte Error-Ordner löschen */
 				File errorfile = new File(myProzess.getProjekt().getDmsImportErrorPath() + File.separator + myProzess.getTitel());
 				if (!Helper.deleteDir(errorfile)) {
-					help.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Error folder could not be cleared");
+					Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Error folder could not be cleared");
 					return;
 				}
 
@@ -158,7 +161,7 @@ public class ExportDms extends ExportMets {
 			// wenn das Home existiert, erst löschen und dann neu anlegen
 			benutzerHome = new File(zielVerzeichnis);
 			if (!Helper.deleteDir(benutzerHome)) {
-				help.setFehlerMeldung("Export abgebrochen, Fehler bei: " + myProzess.getTitel(), "das Homeverzeichnis konnte nicht geleert werden");
+				Helper.setFehlerMeldung("Export canceled: " + myProzess.getTitel(), "could not delete home directory");
 				return;
 			}
 			prepareUserDirectory(zielVerzeichnis);
@@ -172,7 +175,7 @@ public class ExportDms extends ExportMets {
 				imageDownload(myProzess, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
 		} catch (Exception e) {
-			help.setFehlerMeldung("Export abgebrochen, Fehler bei: " + myProzess.getTitel(), e);
+			Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), e);
 			return;
 		}
 
@@ -195,7 +198,7 @@ public class ExportDms extends ExportMets {
 				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile);
 			}
 
-			help.setMeldung(null, myProzess.getTitel() + ": ", "DMS-Import wurde gestartet");
+			Helper.setMeldung(null, myProzess.getTitel() + ": ", "DMS-Export started");
 			DmsImportThread agoraThread = new DmsImportThread(myProzess, atsPpnBand);
 			agoraThread.start();
 			if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
@@ -206,13 +209,13 @@ public class ExportDms extends ExportMets {
 						agoraThread.stopThread();
 					}
 				} catch (InterruptedException e) {
-					help.setFehlerMeldung(myProzess.getTitel() + ": Fehler beim Import - ", e.getMessage());
-					myLogger.error(myProzess.getTitel() + ": Fehler beim Import", e);
+					Helper.setFehlerMeldung(myProzess.getTitel() + ": error on export - ", e.getMessage());
+					myLogger.error(myProzess.getTitel() + ": error on export", e);
 				}
 				if (agoraThread.rueckgabe.length() > 0)
-					help.setFehlerMeldung(myProzess.getTitel() + ": ", agoraThread.rueckgabe);
+					Helper.setFehlerMeldung(myProzess.getTitel() + ": ", agoraThread.rueckgabe);
 				else {
-					help.setMeldung(null, myProzess.getTitel() + ": ", "DMS-Import abgeschlossen");
+					Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
 					/* Success-Ordner wieder löschen */
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
 						File successFile = new File(myProzess.getProjekt().getDmsImportSuccessPath() + File.separator + myProzess.getTitel());
@@ -228,7 +231,7 @@ public class ExportDms extends ExportMets {
 				gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
 			}
 
-			help.setMeldung(null, myProzess.getTitel() + ": ", "Export abgeschlossen");
+			Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
 		}
 	}
 
@@ -239,7 +242,9 @@ public class ExportDms extends ExportMets {
 		/* trimm all metadata values */
 		if (inStruct.getAllMetadata() != null) {
 			for (Metadata md : inStruct.getAllMetadata()) {
-				md.setValue(md.getValue().trim());
+				if (md.getValue() != null) {
+					md.setValue(md.getValue().trim());
+				}
 			}
 		}
 
@@ -271,7 +276,7 @@ public class ExportDms extends ExportMets {
 		/*
 		 * -------------------------------- jetzt die Ausgangsordner in die Zielordner kopieren --------------------------------
 		 */
-		if (tifOrdner != null) {
+		if (tifOrdner.exists()) {
 			File zielTif = new File(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
@@ -284,18 +289,58 @@ public class ExportDms extends ExportMets {
 				try {
 					help.createUserDirectory(zielTif.getAbsolutePath(), myBenutzer.getLogin());
 				} catch (Exception e) {
-					help.setFehlerMeldung("Export abgebrochen, Fehler", "das Zielverzeichnis konnte nicht angelegt werden");
-					myLogger.error("Export abgebrochen, das Zielverzeichnis konnte nicht angelegt werden", e);
+					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+					myLogger.error("could not create destination directory", e);
 				}
 			}
 
 			/* jetzt den eigentlichen Kopiervorgang */
-			FilenameFilter filter = help.getFilter();
+
 			File[] dateien = tifOrdner.listFiles(MetadatenImagesHelper.filter);
 			for (int i = 0; i < dateien.length; i++) {
 				File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);
 			}
 		}
-	}
+		
+		File txtFolder = new File(myProzess.getTxtDirectory());
+		if (txtFolder.exists()) {
+			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_txt");
+			if (!destination.exists()) {
+				destination.mkdir();
+			}
+			File[] dateien = txtFolder.listFiles();
+			for (int i = 0; i < dateien.length; i++) {
+				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+				Helper.copyFile(dateien[i], meinZiel);
+			}
+		}
+		
+		
+		File wordFolder = new File(myProzess.getWordDirectory());
+		if (wordFolder.exists()) {
+			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_wc");
+			if (!destination.exists()) {
+				destination.mkdir();
+			}
+			File[] dateien = wordFolder.listFiles();
+			for (int i = 0; i < dateien.length; i++) {
+				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+				Helper.copyFile(dateien[i], meinZiel);
+			}
+		}
+		
+		File pdfFolder = new File(myProzess.getPdfDirectory());
+		if (pdfFolder.exists()) {
+			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_pdf");
+			if (!destination.exists()) {
+				destination.mkdir();
+			}
+			File[] dateien = pdfFolder.listFiles();
+			for (int i = 0; i < dateien.length; i++) {
+				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+				Helper.copyFile(dateien[i], meinZiel);
+			}
+		}
+	}	
 }

@@ -28,9 +28,7 @@ public class HibernateSessionLong {
     * @return an appropriate Session object
     */
    public Session getSession() throws HibernateException {
-      //		System.out.println("hibernate-Session erfragen");
-
-      //      Session sess = (Session) hibernateHolder.get();
+    
       if (sess == null) {
          if (factory == null) {
             mylogger.debug("getSession() - hibernate-Factory initialisieren", null);
@@ -38,9 +36,9 @@ public class HibernateSessionLong {
          }
          mylogger.debug("getSession() - hibernate-Session initialisieren", null);
          sess = factory.openSession();
-         //         hibernateHolder.set(sess);
+      
       }
-      //      System.out.println("hibernate-Session erfragt");
+    
       return sess;
    }
 

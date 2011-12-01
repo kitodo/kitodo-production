@@ -42,7 +42,7 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  */
 public class ExtendedDataImpl extends DataImpl {
    BeanHelper beanhelp = new BeanHelper();
-   Helper help = new Helper();
+//   Helper help = new Helper();
    private String isProcess = "PROCESS";
    private String isWorkpiece = "WORKPIECE";
    private String isTemplate = "TEMPLATE";
@@ -54,7 +54,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
    //TODO: Use generics
-   public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @SuppressWarnings("unchecked")
+public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.add(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -111,7 +112,7 @@ public class ExtendedDataImpl extends DataImpl {
       try {
          new ProzessDAO().save(p);
       } catch (DAOException e) {
-         throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       }
       return 0;
    }
@@ -179,7 +180,7 @@ public class ExtendedDataImpl extends DataImpl {
        * --------------------------------*/
       if (type.equals("") || type.equals(isProcess)) {
     	  //TODO: Use for loops
-         for (Iterator it = p.getEigenschaftenList().iterator(); it.hasNext();) {
+         for (Iterator<Prozesseigenschaft> it = p.getEigenschaftenList().iterator(); it.hasNext();) {
             Prozesseigenschaft pe = (Prozesseigenschaft) it.next();
             if (!pe.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(pe.getTitel(), String.valueOf(pe.getId().intValue()), pe
@@ -196,7 +197,7 @@ public class ExtendedDataImpl extends DataImpl {
             throw new GoobiException(1500, "Workpiece does not exist");
          Werkstueck w = (Werkstueck) p.getWerkstueckeList().get(count);
          //TODO: Use for loops
-         for (Iterator it = w.getEigenschaftenList().iterator(); it.hasNext();) {
+         for (Iterator<Werkstueckeigenschaft> it = w.getEigenschaftenList().iterator(); it.hasNext();) {
             Werkstueckeigenschaft we = (Werkstueckeigenschaft) it.next();
             if (!we.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(we.getTitel(), String.valueOf(we.getId().intValue()), we
@@ -213,7 +214,7 @@ public class ExtendedDataImpl extends DataImpl {
             throw new GoobiException(1500, "Template does not exist");
          Vorlage v = (Vorlage) p.getVorlagenList().get(count);
          //TODO: Use for loops
-         for (Iterator it = v.getEigenschaftenList().iterator(); it.hasNext();) {
+         for (Iterator<Vorlageeigenschaft> it = v.getEigenschaftenList().iterator(); it.hasNext();) {
             Vorlageeigenschaft ve = (Vorlageeigenschaft) it.next();
             if (!ve.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(ve.getTitel(), String.valueOf(ve.getId().intValue()), ve
@@ -230,7 +231,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/
    //TODO: Use generics
-   public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @SuppressWarnings("unchecked")
+public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.set(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -265,7 +267,6 @@ public class ExtendedDataImpl extends DataImpl {
       try {
     	 //TODO: Use generics
          List hits = new ProzessDAO().search(myquery);
-         System.out.println("Treffer für set" + hits.size() + " - " + hits.toString());
          if (hits.size() > 0) {
             if (type.equals("") || type.equals(isProcess)) {
                Prozesseigenschaft pe = (Prozesseigenschaft) hits.get(0);
@@ -285,7 +286,7 @@ public class ExtendedDataImpl extends DataImpl {
                   + " does not exist");
          }
       } catch (DAOException e) {
-         throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + help.getStacktraceAsString(e));
+         throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
       }
       return 0;
    }

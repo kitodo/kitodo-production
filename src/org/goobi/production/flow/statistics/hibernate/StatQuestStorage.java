@@ -104,7 +104,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 		List list = query.list();
 
 		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
-				this.getClass()).getTitle()
+				this.getClass()).getTitle() + " "
 				+ Helper.getTranslation("_inGB"));
 
 		DataRow dataRow;
@@ -125,7 +125,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
 				//dataRow.setName(new Converter(objArr[2]).getString());
 
-				dataRow.addValue("Storage Difference",
+				dataRow.addValue(Helper.getTranslation("storageDifference"),
 						(new Converter(objArr[0]).getGB()));
 
 			} catch (Exception e) {

@@ -56,7 +56,9 @@
 					<h:selectOneMenu value="#{Metadaten.paginierungArt}"
 						style="width: 250px" onchange="paginierungWertAnzeigen(this);">
 						<f:selectItem itemValue="1" itemLabel="#{msgs.arabisch}" />
+						<f:selectItem itemValue="4" itemLabel="#{msgs.arabischBracket}" />
 						<f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}" />
+						<f:selectItem itemValue="5" itemLabel="#{msgs.roemischBracket}" />
 						<f:selectItem itemValue="3" itemLabel="#{msgs.unnummeriert}" />
 					</h:selectOneMenu>
 					<htm:br />
@@ -106,6 +108,39 @@
 						value="/newpages/images/buttons/paginierung_blatt.png"
 						style="margin-left:4px;margin-right:6px;vertical-align:middle"
 						title="#{msgs.blattzaehlung}" />
+					
+					<a4j:commandLink
+						rendered="#{Metadaten.paginierungSeitenProImage!=4}"
+						title="#{msgs.blattzaehlungrectoverso}"
+						reRender="PaginierungActionBox,myMessages">
+						<h:graphicImage
+							value="/newpages/images/buttons/paginierung_blatt_rectoverso_inactive.png"
+							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+						<x:updateActionListener value="4"
+							property="#{Metadaten.paginierungSeitenProImage}" />
+					</a4j:commandLink>
+					<h:graphicImage
+						rendered="#{Metadaten.paginierungSeitenProImage==4}"
+						value="/newpages/images/buttons/paginierung_blatt_rectoverso.png"
+						style="margin-left:4px;margin-right:6px;vertical-align:middle"
+						title="#{msgs.blattzaehlungrectoverso}" />
+								
+					<a4j:commandLink
+						rendered="#{Metadaten.paginierungSeitenProImage!=5}"
+						title="#{msgs.seitenzaehlungrectoverso}"
+						reRender="PaginierungActionBox,myMessages">
+						<h:graphicImage
+							value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.png"
+							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+						<x:updateActionListener value="5"
+							property="#{Metadaten.paginierungSeitenProImage}" />
+					</a4j:commandLink>
+					<h:graphicImage
+						rendered="#{Metadaten.paginierungSeitenProImage==5}"
+						value="/newpages/images/buttons/paginierung_seite_rectoverso.png"
+						style="margin-left:4px;margin-right:6px;vertical-align:middle"
+						title="#{msgs.seitenzaehlungrectoverso}" />
+						
 					<htm:br />
 					<htm:br />
 

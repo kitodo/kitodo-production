@@ -29,6 +29,7 @@ import java.util.Observable;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
@@ -126,4 +127,7 @@ public class UserProcessesFilter implements IEvaluableFilter {
 		throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support stepDone()");
 	}
 
+	public String stepDoneName() {
+		return null;
+	}
 }

@@ -32,17 +32,22 @@
 		
 		<set name="benutzergruppen" table="benutzergruppenmitgliedschaft" lazy="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.Beans.Benutzergruppe" not-found="ignore"/>
+			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.Beans.Benutzergruppe"/>
 		</set>
 		
 		<set name="projekte" table="projektbenutzer" lazy="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="ProjekteID" class="de.sub.goobi.Beans.Projekt" not-found="ignore"/>
+			<many-to-many column="ProjekteID" class="de.sub.goobi.Beans.Projekt"/>
 		</set>
 		
 		<set name="schritte" table="schritteberechtigtebenutzer" inverse="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="schritteID" class="de.sub.goobi.Beans.Schritt" not-found="ignore"/>
+			<many-to-many column="schritteID" class="de.sub.goobi.Beans.Schritt"/>
+		</set>
+		
+		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel" lazy="false">
+			<key column="BenutzerID"/>
+			<one-to-many class="de.sub.goobi.Beans.Benutzereigenschaft"/>
 		</set>
 		
 	</class>

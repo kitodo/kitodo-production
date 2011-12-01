@@ -1,31 +1,35 @@
 package de.sub.goobi.Beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.goobi.production.api.property.xmlbasedprovider.Status;
+
+import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
-public class Schritteigenschaft implements Serializable {
+public class Schritteigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -443521810121056341L;
+	private Schritt schritt;
 	private Integer id;
 	private String titel;
 	private String wert;
-	private boolean istObligatorisch;
+	private Boolean istObligatorisch;
 	private Integer datentyp;
 	private String auswahl;
-	private Schritt schritt;
 	private Date creationDate;
+	private Integer container;
 
 	public Schritteigenschaft() {
+		istObligatorisch = false;
+		datentyp = PropertyType.String.getId();
+		creationDate = new Date();
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##                                                                                                                          
-	 ##                                                             Getter und Setter                                   
-	 ##                                                                                                                 
-	 #####################################################
-	 ####################################################*/
+	private List<String> valueList;
 
 	public String getAuswahl() {
 		return auswahl;
@@ -43,11 +47,14 @@ public class Schritteigenschaft implements Serializable {
 		this.id = id;
 	}
 
-	public boolean isIstObligatorisch() {
+	public Boolean isIstObligatorisch() {
+		if (istObligatorisch == null) {
+			istObligatorisch = false;
+		}
 		return istObligatorisch;
 	}
 
-	public void setIstObligatorisch(boolean istObligatorisch) {
+	public void setIstObligatorisch(Boolean istObligatorisch) {
 		this.istObligatorisch = istObligatorisch;
 	}
 
@@ -67,14 +74,6 @@ public class Schritteigenschaft implements Serializable {
 		this.wert = wert;
 	}
 
-	public Schritt getSchritt() {
-		return schritt;
-	}
-
-	public void setSchritt(Schritt schritt) {
-		this.schritt = schritt;
-	}
-
 	public void setCreationDate(Date creation) {
 		this.creationDate = creation;
 	}
@@ -87,6 +86,7 @@ public class Schritteigenschaft implements Serializable {
 	 * getter for datentyp set to private for hibernate
 	 * 
 	 * for use in programm use getType instead
+	 * 
 	 * @return datentyp as integer
 	 */
 	@SuppressWarnings("unused")
@@ -95,10 +95,10 @@ public class Schritteigenschaft implements Serializable {
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal 
-	 * use through hibernate, for changing datentyp use 
-	 * setType instead
-	 * @param datentyp as Integer
+	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
+	 * 
+	 * @param datentyp
+	 *            as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setDatentyp(Integer datentyp) {
@@ -108,10 +108,11 @@ public class Schritteigenschaft implements Serializable {
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
 	 * 
-	 * @param inType as {@link PropertyType}
+	 * @param inType
+	 *            as {@link PropertyType}
 	 */
 	public void setType(PropertyType inType) {
-		this.datentyp = inType.getValue();
+		this.datentyp = inType.getId();
 	}
 
 	/**
@@ -120,7 +121,66 @@ public class Schritteigenschaft implements Serializable {
 	 * @return current datentyp
 	 */
 	public PropertyType getType() {
-		return PropertyType.getTypeFromValue(datentyp);
+		if (datentyp == null) {
+			datentyp = PropertyType.String.getId();
+		}
+		return PropertyType.getById(datentyp);
 	}
 
+	public List<String> getValueList() {
+		if (valueList == null) {
+			valueList = new ArrayList<String>();
+		}
+		return valueList;
+	}
+
+	public void setValueList(List<String> valueList) {
+		this.valueList = valueList;
+	}
+
+
+	public Schritt getSchritt() {
+		return schritt;
+	}
+
+	public void setSchritt(Schritt schritt) {
+		this.schritt = schritt;
+	}
+
+	public Status getStatus() {
+		return Status.getStepStatus(schritt);
+	}
+
+	public IGoobiEntity getOwningEntity() {
+
+		return schritt;
+	}
+
+	public void setOwningEntity(IGoobiEntity inEntity) {
+		this.schritt = (Schritt) inEntity;
+	}
+	
+	public Integer getContainer() {
+		if (container == null) {
+			return 0;
+		}
+		return container;
+	}
+
+	public void setContainer(Integer order) {
+		if (order == null) {
+			order = 0;
+		}
+		this.container = order;
+	}
+
+	@Override
+	public String getNormalizedTitle() {
+		return titel.replace(" ", "_").trim();
+	}
+
+	@Override
+	public String getNormalizedValue() {
+		return wert.replace(" ", "_").trim();
+	}
 }

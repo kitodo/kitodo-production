@@ -40,7 +40,7 @@ public class ConfigMain implements Serializable{
 			try {
 				config = new PropertiesConfiguration(configPfad);
 			} catch (ConfigurationException e1) {
-				e1.printStackTrace();
+				myLogger.error(e1);
 				config = new PropertiesConfiguration();
 			}
 		}
@@ -84,7 +84,7 @@ public class ConfigMain implements Serializable{
 				}
 			} catch (Exception ioe) {
 				myLogger.error("IO error: " + ioe);
-				help.setFehlerMeldung("der ImageOrdner konnte nicht angelegt werden, Fehler", ioe.getMessage());
+				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
 		return filename;
@@ -103,12 +103,10 @@ public class ConfigMain implements Serializable{
 	 * @return Paramter als String
 	 */
 	public static String getParameter(String inParameter) {
-		//      System.out.println("gesuchter Parameter: " + inParameter);
 		try {
 			return config.getString(inParameter);
 		} catch (RuntimeException e) {
-			//TODO: use a logger
-			e.printStackTrace();
+			myLogger.error(e);
 			return "- keine Konfiguration gefunden -";
 		}
 	}
@@ -133,16 +131,21 @@ public class ConfigMain implements Serializable{
 	
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration
+	 * Ermitteln eines boolean-Paramters der Konfiguration, default if missing: false
 	 * 
 	 * @return Paramter als String
 	 */
 	public static boolean getBooleanParameter(String inParameter) {
-		try {
-			return config.getBoolean(inParameter);
-		} catch (RuntimeException e) {
-			return false;
-		}
+		return getBooleanParameter(inParameter, false);
+	}
+
+	/**
+	 * Ermitteln eines boolean-Paramters der Konfiguration
+	 * 
+	 * @return Paramter als String
+	 */
+	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
+		return config.getBoolean(inParameter, inDefault);
 	}
 
 	
@@ -156,8 +159,7 @@ public class ConfigMain implements Serializable{
 		try {
 			return config.getLong(inParameter, inDefault);
 		} catch (RuntimeException e) {
-			//TODO: use a logger
-			e.printStackTrace();
+			myLogger.error(e);
 			return 0;
 		}
 	}

@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Projekt" table="Projekte">
+	<class name="de.sub.goobi.Beans.Projekt" table="projekte">
 		<id name="id" column="ProjekteID" type="integer">
 			<generator class="native"/>
 		</id>
@@ -40,21 +40,28 @@
 		<property name="metsPointerPathAnchor" column="metsPointerPathAnchor" type="string"/>
 		<property name="metsPurl" column="metsPurl" type="string"/>
 		<property name="metsContentIDs" column="metsContentIDs" type="string"/>
+		<property name="startDate" column="startDate" type="timestamp"/>
+		<property name="endDate" column="endDate" type="timestamp"/>
+		<property name="numberOfPages" column="numberOfPages" type="integer"/>
+		<property name="numberOfVolumes" column="numberOfVolumes" type="integer"/>
+		
+	
 		
 		<set name="filegroups" cascade="all,delete-orphan" inverse="true">
             <key column="ProjekteID"/>
-            <one-to-many class="de.sub.goobi.Beans.ProjectFileGroup" not-found="ignore"/>
+            <one-to-many class="de.sub.goobi.Beans.ProjectFileGroup"/>
         </set>
         
         <set name="benutzer" table="projektbenutzer" inverse="true">
 			<key column="ProjekteID"/>
-			<many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer" not-found="ignore"/>
+			<many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer"/>
 		</set>
-		
-		<set name="prozesse" cascade="all,delete-orphan" inverse="true">
-			<key column="ProjekteID"/>
-			<one-to-many class="de.sub.goobi.Beans.Prozess" not-found="ignore"/>
-		</set>
+
+        <set name="prozesse" cascade="all,delete-orphan" inverse="true"
+        	lazy="true">
+        	<key column="ProjekteID" />
+        	<one-to-many class="de.sub.goobi.Beans.Prozess" />
+        </set>
 	</class>
 
 </hibernate-mapping>

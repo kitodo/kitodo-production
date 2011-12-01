@@ -16,9 +16,12 @@ public class SpracheForm {
    
 
    public SpracheForm() {
-	   //TODO: Change default language to English
-      locale = Locale.GERMANY;
-      FacesContext.getCurrentInstance().getViewRoot().setLocale(Locale.GERMANY);
+	   while (FacesContext.getCurrentInstance().getApplication().getSupportedLocales().hasNext()){
+		   locale = (Locale) FacesContext.getCurrentInstance().getApplication().getSupportedLocales().next();
+		   break;
+	   }
+//      locale = Locale.GERMANY;
+      FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
       Helper.loadLanguageBundle();
    }
 
@@ -30,8 +33,8 @@ public class SpracheForm {
     * @return Navigationsanweisung "null" als String - daher ein Reload der gleichen Seite mit neuer Sprache
     */
    public String SpracheUmschalten() {
-      Helper help = new Helper();
-      String aktuelleSprache = help.getRequestParameter("locale");
+//      Helper help = new Helper();
+      String aktuelleSprache = Helper.getRequestParameter("locale");
 
       if ("en".equals(aktuelleSprache))
          locale = Locale.UK;
@@ -42,9 +45,13 @@ public class SpracheForm {
       if ("ru".equals(aktuelleSprache))
          locale = new Locale("ru", "RU");
 
+		if ("es".equals(aktuelleSprache)) {
+			locale = new Locale("es");
+		}
+		
       FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
       Helper.loadLanguageBundle();
-      return help.getRequestParameter("ziel");
+      return Helper.getRequestParameter("ziel");
    }
 
    

@@ -26,7 +26,7 @@ public class BenutzergruppenForm extends BasisForm {
 			dao.save(myBenutzergruppe);
 			return "BenutzergruppenAlle";
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
 			return "";
 		}
 	}
@@ -35,7 +35,7 @@ public class BenutzergruppenForm extends BasisForm {
 		try {
 			dao.remove(myBenutzergruppe);
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
 			return "";
 		}
 		return "BenutzergruppenAlle";
@@ -51,7 +51,7 @@ public class BenutzergruppenForm extends BasisForm {
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
 		}
 		return "BenutzergruppenAlle";

@@ -15,12 +15,12 @@
 		
 		<set name="benutzer" table="benutzergruppenmitgliedschaft" inverse="true">
 			    <key column="BenutzerGruppenID"/>
-			    <many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer" not-found="ignore"/>
+			    <many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer"/>
 			</set>
 			
 		<set name="schritte" table="schritteberechtigtegruppen" inverse="true">
 			<key column="BenutzerGruppenID"/>
-			<many-to-many column="schritteID" class="de.sub.goobi.Beans.Schritt" not-found="ignore"/>
+			<many-to-many column="schritteID" class="de.sub.goobi.Beans.Schritt"/>
 		</set>
 		
 	</class>

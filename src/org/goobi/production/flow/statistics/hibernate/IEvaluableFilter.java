@@ -90,4 +90,6 @@ public interface IEvaluableFilter extends IDataSource {
 	 */
 	public Integer stepDone();
 
+	public String stepDoneName();
+
 }

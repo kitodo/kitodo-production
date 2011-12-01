@@ -6,76 +6,113 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Werkstueck implements Serializable {
-   private static final long serialVersionUID = 123266825187246791L;
-   private Integer id;
-   private Prozess prozess;
-   private Set<Werkstueckeigenschaft> eigenschaften;
+import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-   private boolean panelAusgeklappt = true;
+import de.sub.goobi.Beans.Property.DisplayPropertyList;
+import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.Beans.Property.IGoobiProperty;
 
-   public Werkstueck() {
-      eigenschaften = new HashSet<Werkstueckeigenschaft>();
-   }
+public class Werkstueck implements Serializable, IGoobiEntity {
+	private static final long serialVersionUID = 123266825187246791L;
+	private Integer id;
+	private Prozess prozess;
+	private Set<Werkstueckeigenschaft> eigenschaften;
+	private DisplayPropertyList displayProperties;
 
-   /*#####################################################
-    #####################################################
-    ##                                                                                                                          
-    ##                                                             Getter und Setter                                   
-    ##                                                                                                                 
-    #####################################################
-    ####################################################*/
+	private boolean panelAusgeklappt = true;
 
-   public Integer getId() {
-      return id;
-   }
+	public Werkstueck() {
+		eigenschaften = new HashSet<Werkstueckeigenschaft>();
+	}
 
-   public void setId(Integer id) {
-      this.id = id;
-   }
+	/*
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
+	 */
 
-   public Prozess getProzess() {
-      return prozess;
-   }
+	public Integer getId() {
+		return id;
+	}
 
-   public void setProzess(Prozess prozess) {
-      this.prozess = prozess;
-   }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-   public boolean isPanelAusgeklappt() {
-      return panelAusgeklappt;
-   }
+	public Prozess getProzess() {
+		return prozess;
+	}
 
-   public void setPanelAusgeklappt(boolean panelAusgeklappt) {
-      this.panelAusgeklappt = panelAusgeklappt;
-   }
+	public void setProzess(Prozess prozess) {
+		this.prozess = prozess;
+	}
 
-   public Set<Werkstueckeigenschaft> getEigenschaften() {
-      return eigenschaften;
-   }
+	public boolean isPanelAusgeklappt() {
+		return panelAusgeklappt;
+	}
 
-   public void setEigenschaften(Set<Werkstueckeigenschaft> eigenschaften) {
-      this.eigenschaften = eigenschaften;
-   }
+	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
+		this.panelAusgeklappt = panelAusgeklappt;
+	}
 
-   /*#####################################################
-    #####################################################
-    ##																															 
-    ##																Helper									
-    ##                                                   															    
-    #####################################################
-    ####################################################*/
+	public Set<Werkstueckeigenschaft> getEigenschaften() {
+		return eigenschaften;
+	}
 
-   public int getEigenschaftenSize() {
-      if (eigenschaften == null)
-         return 0;
-      else
-         return eigenschaften.size();
-   }
+	public void setEigenschaften(Set<Werkstueckeigenschaft> eigenschaften) {
+		this.eigenschaften = eigenschaften;
+	}
 
-   public List<Werkstueckeigenschaft> getEigenschaftenList() {
-      if (eigenschaften == null)
-         return new ArrayList<Werkstueckeigenschaft>();
-      return new ArrayList<Werkstueckeigenschaft>(eigenschaften);
-   }
+	/*
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
+	 */
+
+	public int getEigenschaftenSize() {
+		if (eigenschaften == null)
+			return 0;
+		else
+			return eigenschaften.size();
+	}
+
+	public List<Werkstueckeigenschaft> getEigenschaftenList() {
+		if (eigenschaften == null)
+			return new ArrayList<Werkstueckeigenschaft>();
+		return new ArrayList<Werkstueckeigenschaft>(eigenschaften);
+	}
+
+	public Status getStatus() {
+		return Status.getProductStatusFromEntity(this);
+	}
+
+	public List<IGoobiProperty> getProperties() {
+		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
+		returnlist.addAll(getEigenschaftenList());
+		return returnlist;
+	}
+	
+	public void addProperty(IGoobiProperty toAdd) {
+		eigenschaften.add((Werkstueckeigenschaft) toAdd);
+	}
+	
+	
+	public void removeProperty(IGoobiProperty toRemove) {
+		getEigenschaften().remove(toRemove);
+		toRemove.setOwningEntity(null);
+		
+	}
+	
+	/**
+	 * 
+	 * @return instance of {@link DisplayPropertyList}
+	 */
+	public DisplayPropertyList getDisplayProperties() {
+		if (displayProperties == null) {
+			displayProperties = new DisplayPropertyList(this);
+		}
+		return displayProperties;
+	}
+	
+	public void refreshProperties() {
+		displayProperties = null;
+	}
 }

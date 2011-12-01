@@ -1,5 +1,7 @@
 package de.sub.goobi.helper;
 //TODO: Check if this can be moved into UGH
+import org.apache.log4j.Logger;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -11,7 +13,7 @@ import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class XmlArtikelZaehlen {
-
+	private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);
 	public enum CountType {
 		METADATA, DOCSTRUCT;
 	}
@@ -32,7 +34,7 @@ public class XmlArtikelZaehlen {
 		try {
 			gdzfile = myProzess.readMetadataFile();
 		} catch (Exception e) {
-			new Helper().setFehlerMeldung("Ermittlung der Anzahl abgebrochen, xml-LeseFehler", e.getMessage());
+			Helper.setFehlerMeldung("xml error", e.getMessage());
 			return -1;
 		}
 
@@ -45,8 +47,8 @@ public class XmlArtikelZaehlen {
 			DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
 			rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
 		} catch (PreferencesException e1) {
-			new Helper().setFehlerMeldung("[" + myProzess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
-			e1.printStackTrace();
+			Helper.setFehlerMeldung("[" + myProzess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
+			logger.error(e1);
 			rueckgabe = 0;
 		}
 
@@ -57,7 +59,7 @@ public class XmlArtikelZaehlen {
 		try {
 			new ProzessDAO().save(myProzess);
 		} catch (DAOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return rueckgabe;
 	}

@@ -15,7 +15,7 @@
 		<property name="type" column="type" type="integer" />
 		<property name="date" column="date" type="timestamp" />
 				
-		<many-to-one name="process" class="de.sub.goobi.Beans.Prozess" column="processID" not-found="ignore"/>
+		<many-to-one name="process" class="de.sub.goobi.Beans.Prozess" column="processID"/>
 		
 	</class>
 

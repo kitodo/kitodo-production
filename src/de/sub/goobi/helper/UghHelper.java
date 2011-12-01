@@ -72,10 +72,16 @@ public class UghHelper {
 
 				return md;
 			} catch (MetadataTypeNotAllowedException e) {
-				myLogger.error(e);
+				myLogger.debug(e.getMessage());
+				return null;
 			}
 		}
-		return (Metadata) all.get(0);
+		if (all.size() != 0) {
+			return (Metadata) all.get(0);
+		} else {
+			return null;
+		}
+
 	}
 
 	/**
@@ -141,16 +147,16 @@ public class UghHelper {
 			md.setValue(inValue);
 			inStruct.addMetadata(md);
 		} catch (DocStructHasNoTypeException e) {
-			new Helper().setMeldung(null, "DocStructHasNoTypeException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue,
-					e.getMessage());
-			e.printStackTrace();
+			Helper.setMeldung(null, "DocStructHasNoTypeException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e
+					.getMessage());
+			myLogger.error(e);
 		} catch (MetadataTypeNotAllowedException e) {
-			new Helper().setMeldung(null, "MetadataTypeNotAllowedException: " + inStruct.getType().getName() + " - " + inMetadataType + " - "
-					+ inValue, e.getMessage());
-			e.printStackTrace();
+			Helper.setMeldung(null, "MetadataTypeNotAllowedException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e
+					.getMessage());
+			myLogger.error(e);
 		} catch (Exception e) {
-			new Helper().setMeldung(null, "Exception: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e.getMessage());
-			e.printStackTrace();
+			Helper.setMeldung(null, "Exception: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e.getMessage());
+			myLogger.error(e);
 		}
 	}
 
@@ -161,7 +167,7 @@ public class UghHelper {
 			return;
 		if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
 			// TODO: Use for loops
-			for (Iterator iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
+			for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
 				Metadata md = (Metadata) iter.next();
 				inStruct.removeMetadata(md);
 			}

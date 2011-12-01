@@ -17,8 +17,8 @@ public class OpacResponseHandler extends DefaultHandler {
 	String set = "";
 	int numberOfHits = 0;
 	
-	ArrayList opacResponseItemPpns = new ArrayList();
-	ArrayList opacResponseItemTitles = new ArrayList();
+	ArrayList<String> opacResponseItemPpns = new ArrayList<String>();
+	ArrayList<String> opacResponseItemTitles = new ArrayList<String>();
 
 	
 	public OpacResponseHandler() {
@@ -92,11 +92,11 @@ public class OpacResponseHandler extends DefaultHandler {
 		}
 	}
 	
-	public ArrayList getOpacResponseItemPpns() {
+	public ArrayList<String> getOpacResponseItemPpns() {
 		return opacResponseItemPpns;
 	}
 	
-	public ArrayList getOpacResponseItemTitles() {
+	public ArrayList<String> getOpacResponseItemTitles() {
 		return opacResponseItemTitles;
 	}
 

@@ -82,10 +82,22 @@ public class BeanHelper {
 			/* --------------------------------
 			 * Details des Schritts
 			 * --------------------------------*/
-			//TODO: Maybe we just need a clone method for a process?
 			Schritt stepneu = new Schritt();
 			stepneu.setTypAutomatisch(step.isTypAutomatisch());
-			stepneu.setAllScripts(step.getAllScripts());
+//			stepneu.setAllScripts(step.getAllScripts());
+			stepneu.setScriptname1(step.getScriptname1());
+			stepneu.setScriptname2(step.getScriptname2());
+			stepneu.setScriptname3(step.getScriptname3());
+			stepneu.setScriptname4(step.getScriptname4());
+			stepneu.setScriptname5(step.getScriptname5());
+			
+			stepneu.setTypAutomatischScriptpfad(step.getTypAutomatischScriptpfad());
+			stepneu.setTypAutomatischScriptpfad2(step.getTypAutomatischScriptpfad2());
+			stepneu.setTypAutomatischScriptpfad3(step.getTypAutomatischScriptpfad3());
+			stepneu.setTypAutomatischScriptpfad4(step.getTypAutomatischScriptpfad4());
+			stepneu.setTypAutomatischScriptpfad5(step.getTypAutomatischScriptpfad5());
+			
+			stepneu.setTypScriptStep(step.getTypScriptStep());
 			stepneu.setTypBeimAnnehmenAbschliessen(step.isTypBeimAnnehmenAbschliessen());
 			stepneu.setTypBeimAnnehmenModul(step.isTypBeimAnnehmenModul());
 			stepneu.setTypBeimAnnehmenModulUndAbschliessen(step.isTypBeimAnnehmenModulUndAbschliessen());
@@ -162,7 +174,7 @@ public class BeanHelper {
 				Werkstueckeigenschaft eig = iterator.next();
 				Werkstueckeigenschaft eigneu = new Werkstueckeigenschaft();
 				eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-				eigneu.setDatentyp(eig.getDatentyp());
+				eigneu.setType(eig.getType());
 				eigneu.setTitel(eig.getTitel());
 				eigneu.setWert(eig.getWert());
 				eigneu.setWerkstueck(werkneu);
@@ -182,7 +194,7 @@ public class BeanHelper {
 			Prozesseigenschaft eig = iterator.next();
 			Prozesseigenschaft eigneu = new Prozesseigenschaft();
 			eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-			eigneu.setDatentyp(eig.getDatentyp());
+			eigneu.setType(eig.getType());
 			eigneu.setTitel(eig.getTitel());
 			eigneu.setWert(eig.getWert());
 			eigneu.setProzess(prozessKopie);
@@ -209,7 +221,7 @@ public class BeanHelper {
 				Vorlageeigenschaft eig = iterator.next();
 				Vorlageeigenschaft eigneu = new Vorlageeigenschaft();
 				eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-				eigneu.setDatentyp(eig.getDatentyp());
+				eigneu.setType(eig.getType());
 				eigneu.setTitel(eig.getTitel());
 				eigneu.setWert(eig.getWert());
 				eigneu.setVorlage(vorneu);

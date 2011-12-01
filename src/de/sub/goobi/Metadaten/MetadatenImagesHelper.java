@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -39,10 +41,10 @@ import de.sub.goobi.helper.exceptions.SwapException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
-import de.unigoettingen.sub.commons.contentlib.imagelib.PngInterpreter;
+import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 public class MetadatenImagesHelper {
-
+	private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
 	private Prefs myPrefs;
 	private DigitalDocument mydocument;
 	private int myLastImage = 0;
@@ -53,12 +55,9 @@ public class MetadatenImagesHelper {
 	}
 
 	/**
-	 * Markus baut eine Seitenstruktur aus den vorhandenen Images
-	 * ---------------- Steps - ---------------- Validation of images compare
-	 * existing number images with existing number of page DocStructs if it is
-	 * the same don't do anything if DocStructs are less add new pages to
-	 * physicalDocStruct if images are less delete pages from the end of
-	 * pyhsicalDocStruct --------------------------------
+	 * Markus baut eine Seitenstruktur aus den vorhandenen Images ---------------- Steps - ---------------- Validation of images compare existing
+	 * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
+	 * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
 	 * 
 	 * @return null
 	 * @throws TypeNotAllowedForParentException
@@ -90,7 +89,11 @@ public class MetadatenImagesHelper {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
 				// mdForPath.setType(MDTypeForPath);
 				// TODO: add the possibilty for using other image formats
-				mdForPath.setValue("./" + inProzess.getTitel().trim() + "_tif");
+				if (SystemUtils.IS_OS_WINDOWS) {
+					mdForPath.setValue("file:/" + inProzess.getImagesDirectory() + inProzess.getTitel().trim() + "_tif");
+				} else {
+					mdForPath.setValue("file://" + inProzess.getImagesDirectory() + inProzess.getTitel().trim() + "_tif");
+				}
 				physicaldocstruct.addMetadata(mdForPath);
 			} catch (MetadataTypeNotAllowedException e1) {
 			} catch (DocStructHasNoTypeException e1) {
@@ -98,7 +101,7 @@ public class MetadatenImagesHelper {
 			mydocument.setPhysicalDocStruct(physicaldocstruct);
 		}
 
-		checkIfImagesValid(inProzess);
+		checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());
 
 		/*------------------------------- 
 		 * retrieve existing pages/images
@@ -118,8 +121,7 @@ public class MetadatenImagesHelper {
 				try {
 
 					/*
-					 * -------------------------------- die physischen Seiten
-					 * anlegen, sind nicht änderbar für den Benutzer
+					 * -------------------------------- die physischen Seiten anlegen, sind nicht änderbar für den Benutzer
 					 * --------------------------------
 					 */
 					physicaldocstruct.addChild(dsPage);
@@ -130,8 +132,7 @@ public class MetadatenImagesHelper {
 					dsPage.addMetadata(mdTemp);
 
 					/*
-					 * -------------------------------- die logischen
-					 * Seitennummern anlegen, die der Benutzer auch ändern kann
+					 * -------------------------------- die logischen Seitennummern anlegen, die der Benutzer auch ändern kann
 					 * --------------------------------
 					 */
 					mdt = myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -143,11 +144,9 @@ public class MetadatenImagesHelper {
 					// myLogger.debug("fertig mit Paginierung für Nr. " + i +
 					// " von " + myBildLetztes);
 				} catch (TypeNotAllowedAsChildException e) {
-					// TODO: Use a logger
-					e.printStackTrace();
+					logger.error(e);
 				} catch (MetadataTypeNotAllowedException e) {
-					// TODO: Use a logger
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 		}
@@ -161,8 +160,7 @@ public class MetadatenImagesHelper {
 					// return myLastImage;
 				}
 				/*
-				 * delete page DocStruct, if physical pagenumber higher than
-				 * last imagenumber
+				 * delete page DocStruct, if physical pagenumber higher than last imagenumber
 				 */
 				if (Integer.parseInt(mdts.get(0).getValue()) > myLastImage) {
 					physicaldocstruct.removeChild(page);
@@ -188,15 +186,19 @@ public class MetadatenImagesHelper {
 	public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation) throws ImageManagerException, IOException,
 			ImageManipulatorException {
 
+		int tmpSize  = inSize / 3;
+		if (tmpSize < 1) {
+			tmpSize = 1;
+		}
 		if (ConfigMain.getParameter("ContentServerUrl") == null) {
 			ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
-			RenderedImage ri = im.scaleImageByPixel(inSize, inSize, ImageManager.SCALE_BY_PERCENT, intRotation);
-			PngInterpreter pi = new PngInterpreter(ri);
+			RenderedImage ri = im.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
+			JpegInterpreter pi = new JpegInterpreter(ri);
 			FileOutputStream outputFileStream = new FileOutputStream(outFileName);
-			pi.writeToStream(outputFileStream);
+			pi.writeToStream(null, outputFileStream);
 			outputFileStream.close();
 		} else {
-			String cs = ConfigMain.getParameter("ContentServerUrl") + inFileName + "&scale=" + inSize + "&rotate=" + intRotation + "&format=png";
+			String cs = ConfigMain.getParameter("ContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation + "&format=jpg";
 			cs = cs.replace("\\", "/");
 			URL csUrl = new URL(cs);
 			HttpClient httpclient = new HttpClient();
@@ -227,13 +229,12 @@ public class MetadatenImagesHelper {
 	// Add a method to validate the image files
 
 	/**
-	 * die Images eines Prozesses auf Vollständigkeit prüfen
-	 * ================================================================
+	 * die Images eines Prozesses auf Vollständigkeit prüfen ================================================================
 	 * 
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public boolean checkIfImagesValid(Prozess inProzess) throws IOException, InterruptedException, SwapException, DAOException {
+	public boolean checkIfImagesValid(Prozess inProzess, String folder) throws IOException, InterruptedException, SwapException, DAOException {
 		boolean isValid = true;
 		myLastImage = 0;
 
@@ -241,11 +242,11 @@ public class MetadatenImagesHelper {
 		 * alle Bilder durchlaufen und dafür
 		 * die Seiten anlegen 
 		 * --------------------------------*/
-		File dir = new File(inProzess.getImagesTifDirectory());
+		File dir = new File(folder);
 		if (dir.exists()) {
 			String[] dateien = dir.list(new Helper().getFilter());
 			if (dateien == null || dateien.length == 0) {
-				new Helper().setFehlerMeldung("[" + inProzess.getTitel() + "] Keine Images vorhanden");
+				Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] No images found");
 				return false;
 			}
 
@@ -263,7 +264,7 @@ public class MetadatenImagesHelper {
 						curFile = (String) iterator.next();
 						int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
 						if (curFileNumber != counter + myDiff) {
-							new Helper().setFehlerMeldung("[" + inProzess.getTitel() + "] expected Image " + (counter + myDiff) + " but found File "
+							Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] expected Image " + (counter + myDiff) + " but found File "
 									+ curFile);
 							myDiff = curFileNumber - counter;
 							isValid = false;
@@ -272,13 +273,13 @@ public class MetadatenImagesHelper {
 				} catch (NumberFormatException e1) {
 					// TODO: Use a logger
 					isValid = false;
-					new Helper().setFehlerMeldung("[" + inProzess.getTitel() + "] Filename of image wrong - not an 8-digit-number: " + curFile);
+					Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] Filename of image wrong - not an 8-digit-number: " + curFile);
 				}
 				return isValid;
 			}
 			return true;
 		}
-		new Helper().setFehlerMeldung("[" + inProzess.getTitel() + "] No image-folder found");
+		Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] No image-folder found");
 		return false;
 	}
 
@@ -306,6 +307,14 @@ public class MetadatenImagesHelper {
 
 	}
 
+	/**
+	 * 
+	 * @param myProzess
+	 *            current process
+	 * @return sorted list with strings representing images of proces
+	 * @throws InvalidImagesException
+	 */
+
 	public ArrayList<String> getImageFiles(Prozess myProzess) throws InvalidImagesException {
 		File dir;
 		try {
@@ -332,6 +341,16 @@ public class MetadatenImagesHelper {
 		}
 	}
 
+	/**
+	 * 
+	 * @param myProzess
+	 *            current process
+	 * @param directory
+	 *            current folder
+	 * @return sorted list with strings representing images of proces
+	 * @throws InvalidImagesException
+	 */
+
 	public ArrayList<String> getImageFiles(Prozess myProzess, String directory) throws InvalidImagesException {
 		File dir;
 		try {
@@ -357,6 +376,10 @@ public class MetadatenImagesHelper {
 			return null;
 		}
 	}
+
+	/**
+	 * {@link FilenameFilter} for all sort of images
+	 */
 
 	public static FilenameFilter filter = new FilenameFilter() {
 		public boolean accept(File dir, String name) {

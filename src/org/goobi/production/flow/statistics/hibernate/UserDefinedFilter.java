@@ -24,6 +24,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * 
  */
 
+//import java.lang.ref.WeakReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +34,6 @@ import java.util.Observable;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Prozess;
@@ -60,6 +60,7 @@ import de.sub.goobi.helper.PaginatingCriteria;
  ****************************************************************************/
 public class UserDefinedFilter implements IEvaluableFilter {
 	private static final long serialVersionUID = 4715772407607416975L;
+//	private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private String myName = null;
 	private String myFilterExpression = null;
@@ -96,6 +97,20 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		// myCriteria is a WeakReference ... both cases needs to be evaluated,
 		// after gc the WeakReference
 		// object is still referenced but not the object referenced by it
+//		if (myCriteria == null ) {
+//			if (this.myIds == null) {
+//				if (this.getFilter() != null) {
+//					myCriteria = 
+//							createCriteriaFromFilterString(this.getFilter());
+//				}
+//			} else {
+//				myCriteria =
+//						createCriteriaFromIDList();
+//			}
+//		}
+//
+//		return myCriteria;
+//		
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (this.myIds == null) {
 				if (this.getFilter() != null) {
@@ -201,12 +216,15 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		 * by using a range the Criteria produces more than one item per
 		 * process, for each step it involves
 		 **/
-		if (myParameter.getCriticalQuery()) {
+//		if (myParameter.getCriticalQuery()) {
+		
 			createIDListFromCriteria(crit);
 			crit = null;
 			crit = createCriteriaFromIDList();
-		}
+//		}
 
+//		crit.add(Restrictions.in("id", crit.getIds()));
+		
 		return crit;
 	}
 
@@ -335,6 +353,20 @@ public class UserDefinedFilter implements IEvaluableFilter {
 			return this.exactStepDone;
 		}
 		
+	}
+
+	@Override
+	public String stepDoneName() {
+		String tosearch = "stepdone:";
+		if (myFilterExpression.contains(tosearch)) {
+			String myStepname = myFilterExpression.substring(myFilterExpression.indexOf(tosearch));
+			myStepname = myStepname.substring(tosearch.lastIndexOf(":")+1,myStepname.length());
+			if (myStepname.contains(" ")) {
+				myStepname = myStepname.substring(0, myStepname.indexOf(" "));
+			}
+			return myStepname;
+		}
+		return null;
 	}
 
 }

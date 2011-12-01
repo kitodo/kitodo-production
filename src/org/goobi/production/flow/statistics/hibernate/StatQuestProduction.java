@@ -45,34 +45,27 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 /**
- * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} 
- * and retrieves statistical Data about the productivity of the selected
- * processes, which are passed into this class via implemetations of the
- * IDataSource interface.
+ * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about the productivity of the
+ * selected processes, which are passed into this class via implemetations of the IDataSource interface.
  * 
- * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters
- * can be set before the productivity of the selected {@link Prozess}es is evaluated.
+ * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of the selected {@link Prozess}es is
+ * evaluated.
  * 
  * @author Wulf Riebensahm
- *
+ * @author Robert Sehr
  */
-public class StatQuestProduction implements
-		IStatisticalQuestionLimitedTimeframe {
+public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe {
 
-	//default value time filter is open
+	// default value time filter is open
 	Date timeFilterFrom;
 	Date timeFilterTo;
 
-	//default values set to days and volumesAndPages
+	// default values set to days and volumesAndPages
 	TimeUnit timeGrouping = TimeUnit.days;
 	private CalculationUnit cu = CalculationUnit.volumesAndPages;
 
-	
-
 	/**
-	 * IDataSource needs here to be an implementation of
-	 * hibernate.IEvaluableFilter, which is a hibernate based extension of
-	 * IDataSource
+	 * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based extension of IDataSource
 	 * 
 	 * (non-Javadoc)
 	 * 
@@ -81,10 +74,10 @@ public class StatQuestProduction implements
 	@SuppressWarnings("unchecked")
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
-		//contains an intger representing "reihenfolge" in schritte, as defined for this request
-		//if not defined it will trigger a fall back on a different way of retrieving the statistical data
+		// contains an intger representing "reihenfolge" in schritte, as defined for this request
+		// if not defined it will trigger a fall back on a different way of retrieving the statistical data
 		Integer exactStepDone = null;
-
+		String stepname = null;
 		List<DataTable> allTables = new ArrayList<DataTable>();
 
 		IEvaluableFilter originalFilter;
@@ -92,15 +85,18 @@ public class StatQuestProduction implements
 		if (dataSource instanceof IEvaluableFilter) {
 			originalFilter = (IEvaluableFilter) dataSource;
 		} else {
-			throw new UnsupportedOperationException(
-					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
-		//gathering some information from the filter passed by dataSource
-		//exactStepDone is very important ... 
+		// gathering some information from the filter passed by dataSource
+		// exactStepDone is very important ...
 
 		try {
 			exactStepDone = originalFilter.stepDone();
+		} catch (UnsupportedOperationException e1) {
+		}
+		try {
+			stepname = originalFilter.stepDoneName();
 		} catch (UnsupportedOperationException e1) {
 		}
 
@@ -110,31 +106,36 @@ public class StatQuestProduction implements
 			IDlist = originalFilter.getIDList();
 		} catch (UnsupportedOperationException e) {
 		}
-
+		String natSQL = "";
 		// adding time restrictions
-		String natSQL = new SQLProduction(timeFilterFrom, timeFilterTo,
-				timeGrouping, IDlist).getSQL(exactStepDone);
-
+		if (stepname == null) {
+			natSQL = new ImprovedSQLProduction(timeFilterFrom, timeFilterTo, timeGrouping, IDlist).getSQL(exactStepDone);
+		} else {
+			natSQL = new ImprovedSQLProduction(timeFilterFrom, timeFilterTo, timeGrouping, IDlist).getSQL(stepname);
+		}
 		Session session = Helper.getHibernateSession();
 
 		SQLQuery query = session.createSQLQuery(natSQL);
 
-		//needs to be there otherwise an exception is thrown
+		// needs to be there otherwise an exception is thrown
 		query.addScalar("volumes", Hibernate.INTEGER);
 		query.addScalar("pages", Hibernate.INTEGER);
 		query.addScalar("intervall", Hibernate.STRING);
 
 		List list = query.list();
 
-		StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(
-				this.getClass()).getTitle());
-		title.append(" (");
-		title.append(this.cu.getTitle());
-		title.append(")");
+		StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
+		 title.append(" (");
+		 title.append(this.cu.getTitle());
+		 if (stepname == null || stepname.equals("")) {
+		 title.append(")");
+		 } else {
+			 title.append(", " + stepname + " )");
+		 }
 
-		//building table for the Table
+		// building table for the Table
 		DataTable dtbl = new DataTable(title.toString());
-		//building a second table for the chart
+		// building a second table for the chart
 		DataTable dtblChart = new DataTable(title.toString());
 		// 
 		DataRow dataRowChart;
@@ -142,7 +143,7 @@ public class StatQuestProduction implements
 
 		// each data row comes out as an Array of Objects
 		// the only way to extract the data is by knowing
-		// in which order they come out 
+		// in which order they come out
 		for (Object obj : list) {
 			dataRowChart = new DataRow(null);
 			dataRow = new DataRow(null);
@@ -151,46 +152,37 @@ public class StatQuestProduction implements
 
 				// getting localized time group unit
 
-				//String identifier = timeGrouping.getTitle();
-				//setting row name with localized time group and the date/time extraction based on the group
+				// String identifier = timeGrouping.getTitle();
+				// setting row name with localized time group and the date/time extraction based on the group
 
 				dataRowChart.setName(new Converter(objArr[2]).getString() + "");
 				dataRow.setName(new Converter(objArr[2]).getString() + "");
-				//dataRow.setName(new Converter(objArr[2]).getString());
+				// dataRow.setName(new Converter(objArr[2]).getString());
 
 				// building up row depending on requested output having different fields
 				switch (this.cu) {
 
 				case volumesAndPages: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
-							(new Converter(objArr[0]).getDouble()));
-					dataRowChart.addValue(CalculationUnit.pages.getTitle()
-							+ " (*100)",
-							(new Converter(objArr[1]).getDouble()) / 100);
+					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+					dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)", (new Converter(objArr[1]).getDouble()) / 100);
 
-					dataRow.addValue(CalculationUnit.volumes.getTitle(),
-							(new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(),
-							(new Converter(objArr[1]).getDouble()));
+					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
 
 				}
 					break;
 
 				case volumes: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
-							(new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.volumes.getTitle(),
-							(new Converter(objArr[0]).getDouble()));
+					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
 
 				}
 					break;
 
 				case pages: {
 
-					dataRowChart.addValue(CalculationUnit.pages.getTitle(),
-							(new Converter(objArr[1]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(),
-							(new Converter(objArr[1]).getDouble()));
+					dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
 
 				}
 					break;
@@ -203,18 +195,16 @@ public class StatQuestProduction implements
 				dataRow.addValue(e.getMessage(), new Double(0));
 			}
 
-			//finally adding dataRow to DataTable and fetching next row
+			// finally adding dataRow to DataTable and fetching next row
 			// adding the extra table
 			dtblChart.addDataRow(dataRowChart);
 			dtbl.addDataRow(dataRow);
 		}
 
-		// a list of DataTables is expected as return Object, even if there is only one 
+		// a list of DataTables is expected as return Object, even if there is only one
 		// Data Table as it is here in this implementation
-		dtblChart.setUnitLabel(Helper.getTranslation(timeGrouping
-				.getSingularTitle()));
-		dtbl.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+		dtblChart.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
+		dtbl.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
 
 		dtblChart.setShowableInTable(false);
 		dtbl.setShowableInChart(false);
@@ -227,6 +217,7 @@ public class StatQuestProduction implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
 	 */
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
@@ -236,6 +227,7 @@ public class StatQuestProduction implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	public void setTimeUnit(TimeUnit timeGrouping) {
@@ -244,6 +236,7 @@ public class StatQuestProduction implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
 	public void setCalculationUnit(CalculationUnit cu) {
@@ -252,6 +245,7 @@ public class StatQuestProduction implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -260,6 +254,7 @@ public class StatQuestProduction implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
 	public String getNumberFormatPattern() {

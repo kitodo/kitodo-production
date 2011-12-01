@@ -2,6 +2,8 @@ package de.sub.goobi.Beans;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.config.ConfigMain;
@@ -13,6 +15,7 @@ public class Regelsatz implements Serializable {
 	private String datei;
 	private Prefs mypreferences;
 	private Boolean orderMetadataByRuleset = false;
+	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
 	/*#####################################################
 	 #####################################################
@@ -52,7 +55,7 @@ public class Regelsatz implements Serializable {
 			mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis")
 					+ datei);
 		} catch (PreferencesException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return mypreferences;
 	}

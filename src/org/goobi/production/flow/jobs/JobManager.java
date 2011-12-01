@@ -1,5 +1,28 @@
 package org.goobi.production.flow.jobs;
-
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. - http://gdz.sub.uni-goettingen.de - http://www.intranda.com
+ * 
+ * Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ),
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,15 +37,14 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
 
-import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 
 /**
- * HistoryManager organizes the history items of given {@link Prozess}
+ * JobManager organizes all scheduled jobs
  * 
  * @author Steffen Hankiewicz
  * @author Igor Toker
- * @version 24.05.2009
+ * @version 21.10.2009
  */
 public class JobManager implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(JobManager.class);
@@ -48,7 +70,7 @@ public class JobManager implements ServletContextListener {
 	}
 
 	/***************************************************************************
-	 * Starts timed updates of {@link HistoryJob}
+	 * Starts timed updates of {@link HistoryAnalyserJob}
 	 * 
 	 * @throws SchedulerException
 	 **************************************************************************/
@@ -56,10 +78,23 @@ public class JobManager implements ServletContextListener {
 		SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 		Scheduler sched = schedFact.getScheduler();
 		sched.start();
-		JobDetail jobDetail = new JobDetail(HistoryJob.JOBNAME, null, HistoryJob.class);
-		// get time from config
-		if (ConfigMain.getLongParameter("storageCalculationSchedule", -1) != -1) {
-			long msOfToday = ConfigMain.getLongParameter("storageCalculationSchedule", -1);
+		
+		initializeJob(new HistoryAnalyserJob(), "dailyHistoryAnalyser", sched);
+		initializeJob(new LuceneIndexJob(), "dailyLuceneIndex", sched);
+	}
+
+	/***************************************************************************
+	 * initializes given SimpleGoobiJob at given time
+	 * 
+	 * @throws SchedulerException
+	 **************************************************************************/
+	private static void initializeJob(IGoobiJob goobiJob, String configuredStartTimeProperty,Scheduler sched) throws SchedulerException{
+		logger.debug(goobiJob.getJobName());
+		JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());
+		
+		
+		if (ConfigMain.getLongParameter(configuredStartTimeProperty, -1) != -1) {
+			long msOfToday = ConfigMain.getLongParameter(configuredStartTimeProperty, -1);
 			Calendar cal = Calendar.getInstance();
 			cal.set(1984, 8, 11, 0, 0);
 			cal.set(Calendar.SECOND, 0);
@@ -71,29 +106,46 @@ public class JobManager implements ServletContextListener {
 
 			Trigger trigger = TriggerUtils.makeDailyTrigger(hour, min);
 			trigger.setStartTime(new Date());
-			trigger.setName(HistoryJob.JOBNAME + "_trigger");
+			trigger.setName(goobiJob.getJobName() + "_trigger");
 
-			logger.info("-= History Manager start time: " + hour + ":" + min + " =-");
+			logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
 			sched.scheduleJob(jobDetail, trigger);
 		}
 	}
-
+	
 	public void contextDestroyed(ServletContextEvent arg0) {
-		logger.debug("Start History Manager scheduler");
+		logger.debug("Start daily JobManager scheduler");
 		try {
 			stopTimedJobs();
 		} catch (SchedulerException e) {
-			logger.error("History Manager could not be stopped", e);
+			logger.error("daily JobManager could not be stopped", e);
 		}
 	}
 
 	public void contextInitialized(ServletContextEvent arg0) {
-		logger.debug("Start StorageHistoryManager scheduler");
+		logger.debug("Start daily JobManager scheduler");
 		try {
 			startTimedJobs();
 		} catch (SchedulerException e) {
-			logger.error("StorageHistoryManager could not be started", e);
+			logger.error("daily JobManager could not be started", e);
 		}
 	}
 
+	/***************************************************************************
+	 * get current time plus 60 seconds as milliseconds from midnight to debug jobmanager
+	 **************************************************************************/
+	public static void main(String[] args) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		Calendar calNow = Calendar.getInstance();
+		
+		logger.debug(calNow.getTime() + " --- "+ cal.getTime());
+		logger.debug("60 seconds from now in milliseconds from 0:00 are " + (calNow.getTimeInMillis()-cal.getTimeInMillis() + 60000));
+		
+	}
+	
 }

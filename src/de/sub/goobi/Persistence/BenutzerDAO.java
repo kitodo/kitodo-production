@@ -7,6 +7,11 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class BenutzerDAO extends BaseDAO {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 834210840673022251L;
+
 	public Benutzer save(Benutzer t) throws DAOException {
 		storeObj(t);
 		return (Benutzer) retrieveObj(Benutzer.class, t.getId());
@@ -28,7 +33,8 @@ public class BenutzerDAO extends BaseDAO {
 		removeObj(Benutzer.class, id);
 	}
 
-	public List search(String query) throws DAOException {
+	@SuppressWarnings("unchecked")
+	public List<Benutzer> search(String query) throws DAOException {
 		return retrieveObjs(query);
 	}
 

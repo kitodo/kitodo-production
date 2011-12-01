@@ -32,7 +32,7 @@ import de.unigoettingen.sub.search.opac.Query;
 
 public class ImportOpac {
 	private static final Logger myLogger = Logger.getLogger(ImportOpac.class);
-	private Helper help = new Helper();
+
 	private int hitcount;
 	private String gattung = "Aa";
 	private String atstsl;
@@ -55,8 +55,8 @@ public class ImportOpac {
 		coc = new ConfigOpac().getCatalogueByName(inKatalog);
 		if (coc == null)
 			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in opac.xml");
-		Catalogue cat = new Catalogue(coc.getDescription(), coc.getAddress(), coc.getPort(), coc.getDatabase());
-		help.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
+		Catalogue cat = new Catalogue(coc.getDescription(), coc.getAddress(), coc.getPort(), coc.getCbs(), coc.getDatabase());
+		Helper.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
 
 		GetOpac myOpac = new GetOpac(cat);
 		myOpac.setData_character_encoding(coc.getCharset());
@@ -92,10 +92,6 @@ public class ImportOpac {
 			/* Sammelband-PPN ermitteln */
 			String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
 			if (multiVolumePpn != "") {
-//				myLogger.debug(multiVolumePpn);
-				multiVolumePpn = multiVolumePpn.trim();
-//				myLogger.debug(multiVolumePpn);
-
 				/* Sammelband aus dem Opac holen */
 
 				myQuery = new Query(multiVolumePpn, "12");
@@ -166,8 +162,8 @@ public class ImportOpac {
 					 * selbst vorhanden sind
 					 */
 					if (myFirstHitParent.getChildren() != null) {
-						// TODO: Don't use Iterators
-						for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
+						
+						for (Iterator iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
 							Element ele = (Element) iter.next();
 							if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null)
 								myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
@@ -212,7 +208,7 @@ public class ImportOpac {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getGattung(Element inHit) {
-		// TODO: Don't use Iterators
+	
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = (Element) iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
@@ -226,7 +222,7 @@ public class ImportOpac {
 	@SuppressWarnings("unchecked")
 	private String getSubelementValue(Element inElement, String attributeValue) {
 		String rueckgabe = "";
-		// TODO: Don't use Iterators
+		
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = (Element) iter.next();
 			if (subElement.getAttributeValue("code").equals(attributeValue))
@@ -244,7 +240,6 @@ public class ImportOpac {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
-		// TODO: Don't use Iterators
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = (Element) iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
@@ -438,6 +433,9 @@ public class ImportOpac {
 		 */
 		// if (!gattung.startsWith("ab") && !gattung.startsWith("ob")) {
 		String autor = getElementFieldValue(myFirstHit, "028A", "a").toLowerCase();
+		if (autor == null || autor.equals("")) {
+			autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
+		}
 		atstsl = createAtstsl(myTitle, autor);
 
 		/*
@@ -513,12 +511,12 @@ public class ImportOpac {
 		}
 		/* im ATS-TSL die Umlaute ersetzen */
 		myAtsTsl = new UghHelper().convertUmlaut(myAtsTsl);
+		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
 	}
 
 	@SuppressWarnings("unchecked")
 	private Element getElementFromChildren(Element inHit, String inTagName) {
-		// TODO: Don't use Iterators
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = (Element) iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
@@ -545,7 +543,6 @@ public class ImportOpac {
 		myElement.setText(inHit.getText());
 		/* jetzt auch alle Attribute übernehmen */
 		if (inHit.getAttributes() != null) {
-			// TODO: Don't use Iterators
 			for (Iterator<Attribute> iter = inHit.getAttributes().iterator(); iter.hasNext();) {
 				Attribute att = (Attribute) iter.next();
 				myElement.getAttributes().add(new Attribute(att.getName(), att.getValue()));
@@ -553,8 +550,8 @@ public class ImportOpac {
 		}
 		/* jetzt auch alle Children übernehmen */
 		if (inHit.getChildren() != null) {
-			// TODO: Don't use Iterators
-			for (Iterator iter = inHit.getChildren().iterator(); iter.hasNext();) {
+	
+			for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 				Element ele = (Element) iter.next();
 				myElement.addContent(getCopyFromJdomElement(ele));
 			}
@@ -564,7 +561,7 @@ public class ImportOpac {
 
 	@SuppressWarnings("unchecked")
 	private String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
-		// TODO: Don't use Iterators
+	
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = (Element) iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
@@ -581,7 +578,7 @@ public class ImportOpac {
 	@SuppressWarnings("unchecked")
 	private String getFieldValue(Element inElement, String attributeValue) {
 		String rueckgabe = "";
-		// TODO: Don't use Iterators
+		
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = (Element) iter.next();
 			if (subElement.getAttributeValue("code").equals(attributeValue))
@@ -638,15 +635,15 @@ public class ImportOpac {
 			ConfigOpac co = new ConfigOpac();
 			ConfigOpacDoctype cod = co.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
 			if (cod == null) {
-				help.setFehlerMeldung("Unbekannte Gattung: ", gattung);
+				Helper.setFehlerMeldung("Unbekannte Gattung: ", gattung);
 				cod = new ConfigOpac().getAllDoctypes().get(0);
 				gattung = cod.getMappings().get(0);
-				help.setFehlerMeldung("changed docttype: ", gattung + " - " + cod.getTitle());
+				Helper.setFehlerMeldung("changed docttype: ", gattung + " - " + cod.getTitle());
 			}
 			return cod;
 		} catch (IOException e) {
 			myLogger.error("OpacDoctype unknown", e);
-			help.setFehlerMeldung("OpacDoctype unknown", e);
+			Helper.setFehlerMeldung("OpacDoctype unknown", e);
 			return null;
 		}
 	}

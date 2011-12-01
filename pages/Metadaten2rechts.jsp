@@ -7,14 +7,13 @@
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
 <f:view locale="#{SpracheForm.locale}">
-<%@include file="/newpages/inc/head.jsp"%>
-	
-	<body style="margin: 2px 2px 2px 2px" onload="addableTypenAnzeigen();TreeReloaden()">
+	<%@include file="/newpages/inc/head.jsp"%>
+
+	<body style="margin: 0px 2px 2px 2px" onload="addableTypenAnzeigen();TreeReloaden()">
 
 	<a4j:status>
 		<f:facet name="start">
-			<h:graphicImage value="/newpages/images/ajaxload_small.gif"
-				style="position: fixed;top: 35px;right: 15px;" />
+			<h:graphicImage value="/newpages/images/ajaxload_small.gif" style="position: fixed;top: 35px;right: 15px;" />
 		</f:facet>
 	</a4j:status>
 
@@ -27,111 +26,94 @@
     }
     counter();
 </script> --%>
+	<h:form id="formular1" style="margin:0px">
+		<htm:table id="navigation" cellpadding="2" cellspacing="0" style="position: fixed; margin-right: 4px; width:99,75%" styleClass="main_statistikboxen">
+			<htm:tr>
+				<htm:td styleClass="main_statistikboxen_row1" height="1px" colspan="2">
 
-	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0"
-		style="width:100%;height:100%" styleClass="main_statistikboxen">
+					<htm:table id="bla" width="100%" cellspacing="0" cellpadding="0">
+						<htm:tr>
+							<htm:td>
+								<h:panelGroup id="vdid3" rendered="#{not Metadaten.nurLesenModus}">
+
+									<h:commandLink id="vdid4" action="#{Metadaten.AnsichtAendern}" value="#{msgs.paginierung}" style="font-size: 11px;"
+										rendered="#{Metadaten.modusAnsicht != 'Paginierung'}">
+										<f:param id="vdid5" name="Ansicht" value="Paginierung" />
+									</h:commandLink>
+									<h:outputText id="vdid6" value="#{msgs.paginierung}" style="font-weight:bold;font-size: 11px"
+										rendered="#{Metadaten.modusAnsicht == 'Paginierung'}" />
+									<h:outputText id="vdid7" value=" | " style="font-size: 11px;" />
+
+									<h:commandLink id="vdid8" action="#{Metadaten.AnsichtAendern}" value="#{msgs.strukturdaten}" style="font-size: 11px;"
+										rendered="#{Metadaten.modusAnsicht != 'Strukturdaten'}">
+										<f:param id="vdid9" name="Ansicht" value="Strukturdaten" />
+									</h:commandLink>
+
+									<h:outputText id="vdid10" value="#{msgs.strukturdaten}" style="font-weight:bold;font-size: 11px;"
+										rendered="#{Metadaten.modusAnsicht == 'Strukturdaten'}" />
+									<h:outputText id="vdid11" value=" | " style="font-size: 11px;" />
+
+									<h:commandLink id="vdid12" action="#{Metadaten.AnsichtAendern}" value="#{msgs.metadaten}" style="font-size: 11px;"
+										rendered="#{Metadaten.modusAnsicht != 'Metadaten'}">
+										<f:param id="vdid13" name="Ansicht" value="Metadaten" />
+									</h:commandLink>
+
+									<h:outputText id="vdid14" value="#{msgs.metadaten}" style="font-weight:bold;font-size: 11px;"
+										rendered="#{Metadaten.modusAnsicht == 'Metadaten'}" />
+
+								</h:panelGroup>
+							</htm:td>
+
+							<htm:td align="right">
+								<h:commandLink action="#{Metadaten.BildAnzeigen}" rendered="#{Metadaten.bildAnzeigen==true}" value="#{msgs.metadatenBildAusblenden}"
+									style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}" />
+								<h:commandLink action="#{Metadaten.BildAnzeigen}" rendered="#{Metadaten.bildAnzeigen==false}" value="#{msgs.metadatenBildAnzeigen}"
+									style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}" />
+								<h:outputText value=" | " style="font-size: 11px;" />
+								<%-- Metadaten validieren --%>
+								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
+								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
+								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}" target="_parent" immediate="true"
+									id="returnButton" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
+								<%-- Metadaten schreiben --%>
+								<h:commandLink style="font-size:11px" action="#{Metadaten.Reload}" value="#{msgs.speichern}" rendered="#{not Metadaten.nurLesenModus}"
+									immediate="false" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
+								<%-- Metadaten schreiben und zurück gehen--%>
+								<h:commandLink style="font-size:11px" target="_parent" action="#{Metadaten.XMLschreiben}" value="#{msgs.speichernZurueck}"
+									rendered="#{not Metadaten.nurLesenModus}" immediate="false" />
+							</htm:td>
+						</htm:tr>
+					</htm:table>
+				</htm:td>
+			</htm:tr>
+		</htm:table>
+	</h:form>
+	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%; margin-top: 15px" styleClass="main_statistikboxen">
 
 		<htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
 			<htm:td>
-				<x:div
-					style="border: 2px solid black; padding:7px; background-color: #ffd;position: fixed;top: 20px;left: 20px;">
-					<h:outputText value="#{SessionForm.bitteAusloggen}"
-						style="color: red;font-weight: bold;font-size:30px" />
+				<x:div style="border: 2px solid black; padding:7px; background-color: #ffd;position: fixed;top: 20px;left: 20px;">
+					<h:outputText value="#{SessionForm.bitteAusloggen}" style="color: red;font-weight: bold;font-size:30px" />
 				</x:div>
 			</htm:td>
 		</htm:tr>
 
 		<htm:tr>
-			<htm:td styleClass="main_statistikboxen_row1" height="1px"
-				colspan="2">
-				<h:form id="formular1" style="margin:0px">
-					<htm:table width="100%" cellspacing="0" cellpadding="0">
-						<htm:tr>
-							<htm:td>
-								<h:panelGroup rendered="#{not Metadaten.nurLesenModus}">
-
-									<h:commandLink action="#{Metadaten.AnsichtAendern}"
-										value="#{msgs.paginierung}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Paginierung'}">
-										<f:param name="Ansicht" value="Paginierung" />
-									</h:commandLink>
-									<h:outputText value="#{msgs.paginierung}"
-										style="font-weight:bold;font-size: 11px"
-										rendered="#{Metadaten.modusAnsicht == 'Paginierung'}" />
-									<h:outputText value=" | " style="font-size: 11px;" />
-
-									<h:commandLink action="#{Metadaten.AnsichtAendern}"
-										value="#{msgs.strukturdaten}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Strukturdaten'}">
-										<f:param name="Ansicht" value="Strukturdaten" />
-									</h:commandLink>
-
-									<h:outputText value="#{msgs.strukturdaten}"
-										style="font-weight:bold;font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht == 'Strukturdaten'}" />
-									<h:outputText value=" | " style="font-size: 11px;" />
-
-									<h:commandLink action="#{Metadaten.AnsichtAendern}"
-										value="#{msgs.metadaten}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Metadaten'}">
-										<f:param name="Ansicht" value="Metadaten" />
-									</h:commandLink>
-
-									<h:outputText value="#{msgs.metadaten}"
-										style="font-weight:bold;font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht == 'Metadaten'}" />
-
-								</h:panelGroup>
-							</htm:td>
-							
-							<htm:td align="right">
-								<h:commandLink action="#{Metadaten.BildAnzeigen}"
-									rendered="#{Metadaten.bildAnzeigen==true}"
-									value="#{msgs.metadatenBildAusblenden}"
-									style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}" />
-								<h:commandLink action="#{Metadaten.BildAnzeigen}"
-									rendered="#{Metadaten.bildAnzeigen==false}"
-									value="#{msgs.metadatenBildAnzeigen}"
-									style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}" />
-								<h:outputText value=" | " style="font-size: 11px;" />
-								<%-- Metadaten validieren --%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.Validate}" value="#{msgs.validieren}"
-									rendered="#{not Metadaten.nurLesenModus}" />
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}"
-									target="_parent" immediate="true" id="returnButton"/>
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten schreiben --%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.Reload}" value="#{msgs.speichern}"
-									rendered="#{not Metadaten.nurLesenModus}" immediate="false" />
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten schreiben und zurück gehen--%>
-								<h:commandLink style="font-size:11px" target="_parent"
-									action="#{Metadaten.XMLschreiben}"
-									value="#{msgs.speichernZurueck}"
-									rendered="#{not Metadaten.nurLesenModus}" immediate="false" />
-							</htm:td>
-						</htm:tr>
-					</htm:table>
-				</h:form>
+			<htm:td styleClass="main_statistikboxen_row1" height="1px" colspan="2">
+												
+						
 			</htm:td>
 		</htm:tr>
 		<htm:tr valign="top" style="width:100%;height:100%">
 			<htm:td styleClass="metadatenGrauBackground">
 
-<h:panelGroup id="myMessages">
-				<%-- globale Warn- und Fehlermeldungen --%>
-				<h:messages globalOnly="true" errorClass="text_red"
-					infoClass="text_blue" showDetail="true" showSummary="true"
-					tooltip="true" />
-</h:panelGroup>
+				<h:panelGroup id="myMessages">
+					<%-- globale Warn- und Fehlermeldungen --%>
+					<h:messages globalOnly="false" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+				</h:panelGroup>
 
 				<%-- ########################################
 
@@ -145,13 +127,10 @@
 						<%@include file="incMeta/PersonenUndMetadaten.jsp"%>
 					</h:panelGroup>
 
-					<h:panelGroup
-						rendered="#{Metadaten.modusAnsicht =='Strukturdaten'}">
+					<h:panelGroup rendered="#{Metadaten.modusAnsicht =='Strukturdaten'}">
 						<htm:h3 style="margin-top:10px">
-							<h:outputText value="#{msgs.strukturdatenBearbeiten}"
-								rendered="#{not Metadaten.modusStrukturelementVerschieben}" />
-							<h:outputText value="#{msgs.docstructAnAndereStelleSchieben}"
-								rendered="#{Metadaten.modusStrukturelementVerschieben}" />
+							<h:outputText value="#{msgs.strukturdatenBearbeiten}" rendered="#{not Metadaten.modusStrukturelementVerschieben}" />
+							<h:outputText value="#{msgs.docstructAnAndereStelleSchieben}" rendered="#{Metadaten.modusStrukturelementVerschieben}" />
 						</htm:h3>
 						<%@include file="incMeta/Strukturdaten.jsp"%>
 					</h:panelGroup>
@@ -162,14 +141,14 @@
 						</htm:h3>
 						<%@include file="incMeta/Paginierung.jsp"%>
 					</h:panelGroup>
+					
+					
 				</h:form>
 			</htm:td>
 
-			<htm:td styleClass="metadatenGrauBackground"
-				rendered="#{Metadaten.bildAnzeigen==true}">
+			<htm:td styleClass="metadatenGrauBackground" rendered="#{Metadaten.bildAnzeigen==true}" style="top: 30px;">
 
-				<h:panelGroup id="BildArea"
-					style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 550px;':''}">
+				<h:panelGroup id="BildArea" style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
 					<%@include file="incMeta/Bild.jsp"%>
 				</h:panelGroup>
 
@@ -177,34 +156,23 @@
 		</htm:tr>
 
 		<htm:tr>
-			<htm:td styleClass="main_statistikboxen_row3" height="1px"
-				colspan="2">
+			<htm:td styleClass="main_statistikboxen_row3" height="1px" colspan="2">
 				<h:form id="formular4" style="margin:0px">
 					<htm:table width="100%" cellspacing="0" cellpadding="0">
 						<htm:tr>
 							<htm:td align="right">
 								<%-- Metadaten validieren --%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.Validate}" value="#{msgs.validieren}"
-									rendered="#{not Metadaten.nurLesenModus}" />
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
+								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}"
-									target="_parent" />
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
+								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}" target="_parent" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten schreiben --%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.Reload}" value="#{msgs.speichern}"
-									rendered="#{not Metadaten.nurLesenModus}" immediate="false" />
-								<h:outputText value=" | " style="font-size: 11px;"
-									rendered="#{not Metadaten.nurLesenModus}" />
+								<h:commandLink style="font-size:11px" action="#{Metadaten.Reload}" value="#{msgs.speichern}" rendered="#{not Metadaten.nurLesenModus}"
+									immediate="false" />
+								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten schreiben und zurück gehen--%>
-								<h:commandLink style="font-size:11px"
-									action="#{Metadaten.XMLschreiben}"
-									rendered="#{not Metadaten.nurLesenModus}"
+								<h:commandLink style="font-size:11px" action="#{Metadaten.XMLschreiben}" rendered="#{not Metadaten.nurLesenModus}"
 									value="#{msgs.speichernZurueck}" target="_parent" />
 							</htm:td>
 						</htm:tr>
@@ -303,11 +271,11 @@
 		if(element.value==3)
 			document.getElementById("paginierungWert").style.display='none';
 		
-		if(element.value==2){
+		if(element.value==2 || element.value==5){
 			document.getElementById("paginierungWert").style.display='inline';
 			document.getElementById("paginierungWert").value='I';
 		}
-		if(element.value==1){
+		if(element.value==1 || element.value==4){
 			document.getElementById("paginierungWert").style.display='inline';
 			document.getElementById("paginierungWert").value='1';
 		}
