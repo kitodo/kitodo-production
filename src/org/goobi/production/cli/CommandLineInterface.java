@@ -94,9 +94,9 @@ public class CommandLineInterface {
 
 		// Version.
 		if (commandLine.hasOption('V')) {
-			System.out.println("Goobi version: " + GoobiVersion.VERSION);
-			System.out.println("Goobi build date: " + GoobiVersion.BUILDDATE);
-			System.out.println("Goobi build version: " + GoobiVersion.BUILDVERSION);
+			System.out.println("Goobi version: " + GoobiVersion.getVersion());
+			System.out.println("Goobi build date: " + GoobiVersion.getBuilddate());
+			System.out.println("Goobi build version: " + GoobiVersion.getBuildversion());
 			return 0;
 		}
 		// testing command

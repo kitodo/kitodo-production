@@ -32,11 +32,11 @@ public class HelperForm {
 	public static final String CSS_PATH = "/css";
 
 	public String getBuildVersion() {
-		return GoobiVersion.BUILDVERSION;
+		return GoobiVersion.getBuildversion();
 	}
 
 	public String getVersion() {
-		return GoobiVersion.BUILDVERSION;
+		return GoobiVersion.getBuildversion();
 	}
 
 	/**
