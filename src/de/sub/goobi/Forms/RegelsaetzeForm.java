@@ -1,5 +1,6 @@
 package de.sub.goobi.Forms;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -15,6 +16,7 @@ public class RegelsaetzeForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
 	private Regelsatz myRegelsatz = new Regelsatz();
 	private RegelsatzDAO dao = new RegelsatzDAO();
+	private static final Logger logger = Logger.getLogger(RegelsaetzeForm.class);
 
 	public String Neu() {
 		myRegelsatz = new Regelsatz();
@@ -26,8 +28,8 @@ public class RegelsaetzeForm extends BasisForm {
 			dao.save(myRegelsatz);
 			return "RegelsaetzeAlle";
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-			e.printStackTrace();
+			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+			logger.error(e);
 			return "";
 		}
 	}
@@ -36,7 +38,7 @@ public class RegelsaetzeForm extends BasisForm {
 		try {
 			dao.remove(myRegelsatz);
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
 		}
 		return "RegelsaetzeAlle";
@@ -52,7 +54,7 @@ public class RegelsaetzeForm extends BasisForm {
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
 			return "";
 		}
 		return "RegelsaetzeAlle";

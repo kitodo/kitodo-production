@@ -26,7 +26,7 @@ public class LdapGruppenForm extends BasisForm {
 			dao.save(myLdapGruppe);
 			return "LdapGruppenAlle";
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+			Helper.setFehlerMeldung("Could not save", e.getMessage());
 			return "";
 		}
 	}
@@ -35,7 +35,7 @@ public class LdapGruppenForm extends BasisForm {
 		try {
 			dao.remove(myLdapGruppe);
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+			Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
 			return "";
 		}
 		return "LdapGruppenAlle";
@@ -51,7 +51,7 @@ public class LdapGruppenForm extends BasisForm {
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("Error on reading database", he.getMessage());
 			return "";
 		}
 		return "LdapGruppenAlle";

@@ -6,7 +6,6 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
@@ -19,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.TIFFEncodeParam;
@@ -42,9 +42,9 @@ public class Multipage {
 
    
 
-   private static PlanarImage readAsPlanarImage(String filename) {
-      return JAI.create("fileload", filename);
-   }
+//   private static PlanarImage readAsPlanarImage(String filename) {
+//      return JAI.create("fileload", filename);
+//   }
 
    
 
@@ -83,7 +83,7 @@ public class Multipage {
       TIFFEncodeParam param = new TIFFEncodeParam();
       param.setCompression(4);
       ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
-      Vector vector = new Vector();
+      Vector<RenderedImage> vector = new Vector<RenderedImage>();
       for (int i = 1; i < image.length; i++) {
          vector.add(image[i]);
       }

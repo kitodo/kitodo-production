@@ -8,9 +8,7 @@ package de.sub.goobi.Metadaten;
 //TODO: Don't use Iterators
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +59,6 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType) throws DocStructHasNoTypeException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
-		// System.out.println("aktuelles Doctruct vom Typ " +
 		// inOldDocstruct.getType().getName()
 		// + " soll werden zu " + inNewType);
 		DocStructType dst = myPrefs.getDocStrctTypeByName(inNewType);
@@ -80,10 +77,8 @@ public class MetadatenHelper implements Comparator<Object> {
 						addierbareTypenAlsStringListe.add(((MetadataType) iterator2.next()).getName());
 				}
 				if (addierbareTypenAlsStringListe.contains(md.getType().getName())) {
-					// System.out.println(md.getType().getName() + " erlaubt");
 					newDocstruct.addMetadata(md);
-				} // else System.out.println(md.getType().getName() + " nicht
-				// erlaubt");
+				} 
 			}
 		}
 
@@ -100,10 +95,8 @@ public class MetadatenHelper implements Comparator<Object> {
 						addierbareTypenAlsStringListe.add(((MetadataType) iterator2.next()).getName());
 				}
 				if (addierbareTypenAlsStringListe.contains(p.getType().getName())) {
-					// System.out.println(p.getType().getName() + " erlaubt");
 					newDocstruct.addPerson(p);
-				} // else System.out.println(p.getType().getName() + " nicht
-				// erlaubt");
+				} 
 			}
 		}
 
@@ -112,7 +105,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		 */
 		if (inOldDocstruct.getAllToReferences() != null) {
 			// TODO: get rid of Iterators, use a for Loop instead
-			for (Iterator iterator = inOldDocstruct.getAllToReferences().iterator(); iterator.hasNext();) {
+			for (Iterator<Reference> iterator = inOldDocstruct.getAllToReferences().iterator(); iterator.hasNext();) {
 				Reference p = (Reference) iterator.next();
 				newDocstruct.addReferenceTo(p.getTarget(), p.getType());
 			}
@@ -123,14 +116,12 @@ public class MetadatenHelper implements Comparator<Object> {
 		 */
 		if (inOldDocstruct.getAllChildren() != null) {
 			// TODO: get rid of Iterators, use a for Loop instead
-			for (Iterator iterator = inOldDocstruct.getAllChildren().iterator(); iterator.hasNext();) {
+			for (Iterator<DocStruct> iterator = inOldDocstruct.getAllChildren().iterator(); iterator.hasNext();) {
 				DocStruct dskind = (DocStruct) iterator.next();
 				if (newDocstruct.getType().getAllAllowedDocStructTypes().contains(dskind.getType().getName())) {
-					// System.out.println(dskind.getType().getName() + "
-					// erlaubt");
+				
 					newDocstruct.addChild(dskind);
-				} // else System.out.println(dskind.getType().getName() + "
-				// nicht erlaubt");
+				} 
 			}
 		}
 
@@ -141,7 +132,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		inOldDocstruct.getParent().addChild(newDocstruct);
 		int i = 1;
 		// TODO: get rid of Iterators, use a for Loop instead
-		for (Iterator iter = newDocstruct.getParent().getAllChildren().iterator(); iter.hasNext(); i++)
+		for (Iterator<DocStruct> iter = newDocstruct.getParent().getAllChildren().iterator(); iter.hasNext(); i++)
 			if ((DocStruct) iter.next() == inOldDocstruct)
 				break;
 		for (int j = newDocstruct.getParent().getAllChildren().size() - i; j > 0; j--)
@@ -206,7 +197,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
 		/* alle Elemente des Parents durchlaufen */
 		// TODO: get rid of Iterators, use a for Loop instead
-		for (Iterator iter = parent.getAllChildren().iterator(); iter.hasNext();) {
+		for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
 			DocStruct tempDS = (DocStruct) iter.next();
 
 			/* wenn das aktuelle Element das zu verschiebende ist */
@@ -261,7 +252,7 @@ public class MetadatenHelper implements Comparator<Object> {
 			if (dst != null)
 				newTypes.add(dst);
 			else {
-				new Helper().setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
+				Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
 				myLogger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
 			}
 		}
@@ -304,7 +295,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		inStruct.deleteUnusedPersonsAndMetadata();
 		if (inStruct.getAllChildren() != null && inStruct.getAllChildren().size() > 0) {
 			// TODO: get rid of Iterators, use a for Loop instead
-			for (Iterator it = inStruct.getAllChildren().iterator(); it.hasNext();) {
+			for (Iterator<DocStruct> it = inStruct.getAllChildren().iterator(); it.hasNext();) {
 				DocStruct ds = (DocStruct) it.next();
 				deleteAllUnusedElements(ds);
 			}
@@ -373,6 +364,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	 * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden DefaultDisplay-Metadaten ergänzen
 	 * ================================================================
 	 */
+	@SuppressWarnings("deprecation")
 	public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage, boolean inIsPerson, Prozess inProzess) {
 		List<MetadataType> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
 		/* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
@@ -380,7 +372,7 @@ public class MetadatenHelper implements Comparator<Object> {
 			for (MetadataType mdt : displayMetadataTypes) {
 				// check, if mdt is already in the allMDs Metadata list, if not
 				// - add it
-				if (inStruct.getAllMetadataByType(mdt).size() > 0) {
+				if (!(inStruct.getAllMetadataByType(mdt) != null && inStruct.getAllMetadataByType(mdt).size() != 0)) {
 					try {
 						if (mdt.getIsPerson()) {
 							Person p = new Person(mdt);
@@ -453,6 +445,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		 * --------------------- Typen und Suchbegriffe festlegen -------------------
 		 */
 		HashMap<String, String> types = new HashMap<String, String>();
+		types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
 		types.put("mets", "www.loc.gov/METS/".toLowerCase());
 		types.put("rdf", "<RDF:RDF ".toLowerCase());
 		types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
@@ -463,7 +456,6 @@ public class MetadatenHelper implements Comparator<Object> {
 		while ((bufRead.read(buffer)) >= 0) {
 
 			String temp = new String(buffer).toLowerCase();
-			// System.out.print(temp);
 			Iterator<Entry<String, String>> i = types.entrySet().iterator();
 			while (i.hasNext()) {
 				Entry<String, String> entry = (Entry<String, String>) i.next();
@@ -494,7 +486,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	 * Comparator für die Metadaten ================================================================
 	 */
 	// TODO: Uses generics, if possible
-	public class MetadataComparator implements Comparator {
+	public class MetadataComparator implements Comparator<Object> {
 		private String language = "de";
 
 		public MetadataComparator(String inLanguage) {

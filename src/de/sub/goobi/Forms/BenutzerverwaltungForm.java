@@ -22,7 +22,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -43,14 +42,14 @@ public class BenutzerverwaltungForm extends BasisForm {
 	private static final long serialVersionUID = -3635859455444639614L;
 	private Benutzer myClass = new Benutzer();
 	private BenutzerDAO dao = new BenutzerDAO();
-	private boolean hideInactiveUsers = false;
+	private boolean hideInactiveUsers = true;
 	private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
 	
 	public String Neu() {
 		myClass = new Benutzer();
-		myClass.setVorname("- Vorname -");
-		myClass.setNachname("- Nachname -");
-		myClass.setLogin("- Login -");
+		myClass.setVorname("");
+		myClass.setNachname("");
+		myClass.setLogin("");
 		myClass.setPasswortCrypt("Passwort");
 		return "BenutzerBearbeiten";
 	}
@@ -70,7 +69,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			crit.addOrder(Order.asc("vorname"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
 		}
 		return "BenutzerAlle";
@@ -96,9 +95,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 				crit.add(Restrictions.eq("istAktiv", true));
 
 			if (filter != null || filter.length() != 0) {
-				Disjunction ex = Expression.disjunction();
-				ex.add(Expression.like("vorname", "%" + filter + "%"));
-				ex.add(Expression.like("nachname", "%" + filter + "%"));
+				Disjunction ex = Restrictions.disjunction();
+				ex.add(Restrictions.like("vorname", "%" + filter + "%"));
+				ex.add(Restrictions.like("nachname", "%" + filter + "%"));
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
@@ -106,7 +105,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			page = new Page(crit, 0);
 			//calcHomeImages();
 		} catch (HibernateException he) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
 		}
 		return "BenutzerAlle";
@@ -127,24 +126,24 @@ public class BenutzerverwaltungForm extends BasisForm {
 				dao.save(myClass);
 				return "BenutzerAlle";
 			} else {
-				new Helper().setFehlerMeldung("", "loginBereitsVergeben");
+				Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
 				return "";
 			}
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-			e.printStackTrace();
+			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+			logger.error(e);
 			return "";
 		}
 	}
 
 	private boolean LoginValide(String inLogin) {
 		boolean valide = true;
-		String patternStr = "[A-Za-z0-9@_\\-]*";
+		String patternStr = "[A-Za-z0-9@_\\-.]*";
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher matcher = pattern.matcher(inLogin);
 		valide = matcher.matches();
 		if (!valide)
-			new Helper().setFehlerMeldung("", "Login enth�lt ungültige Zeichen");
+			Helper.setFehlerMeldung("", Helper.getTranslation("loginNotValid"));
 
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -159,7 +158,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			while ((str = in.readLine()) != null)
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
 					valide = false;
-					new Helper().setFehlerMeldung("", "Login " + str + " entspricht ungültiger Zeichenfolge");
+					Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
 				}
 			in.close();
 		} catch (IOException e) {
@@ -168,20 +167,20 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String Loeschen() {
-		myClass.setBenutzergruppen(new HashSet());
-		myClass.setProjekte(new HashSet());
+		myClass.setBenutzergruppen(new HashSet<Benutzergruppe>());
+		myClass.setProjekte(new HashSet<Projekt>());
 		myClass.setIstAktiv(false);
 		myClass.setIsVisible("deleted");
 		return "BenutzerAlle";
 	}
 
 	public String AusGruppeLoeschen() {
-		int gruppenID = Integer.parseInt(new Helper().getRequestParameter("ID"));
+		int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
 		//TODO: Use generics.
-		Set neu = new HashSet();
+		Set<Benutzergruppe> neu = new HashSet<Benutzergruppe>();
 		//TODO: Don't use Iterators
-		for (Iterator iter = myClass.getBenutzergruppen().iterator(); iter.hasNext();) {
+		for (Iterator<Benutzergruppe> iter = myClass.getBenutzergruppen().iterator(); iter.hasNext();) {
 			Benutzergruppe element = (Benutzergruppe) iter.next();
 			if (element.getId().intValue() != gruppenID)
 				neu.add(element);
@@ -191,22 +190,22 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuGruppeHinzufuegen() {
-		Integer gruppenID = Integer.valueOf(new Helper().getRequestParameter("ID"));
+		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			myClass.getBenutzergruppen().add(new BenutzergruppenDAO().get(gruppenID));
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
 		}
 		return "";
 	}
 
 	public String AusProjektLoeschen() {
-		int projektID = Integer.parseInt(new Helper().getRequestParameter("ID"));
+		int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
 		//TODO: Use generics.
-		Set neu = new HashSet();
+		Set<Projekt> neu = new HashSet<Projekt>();
 		//TODO: Don't use Iterators
-		for (Iterator iter = myClass.getProjekte().iterator(); iter.hasNext();) {
+		for (Iterator<Projekt> iter = myClass.getProjekte().iterator(); iter.hasNext();) {
 			Projekt element = (Projekt) iter.next();
 			if (element.getId().intValue() != projektID)
 				neu.add(element);
@@ -216,11 +215,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuProjektHinzufuegen() {
-		Integer projektID = Integer.valueOf(new Helper().getRequestParameter("ID"));
+		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			myClass.getProjekte().add(new ProjektDAO().get(projektID));
 		} catch (DAOException e) {
-			new Helper().setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
 		}
 		return "";
@@ -268,13 +267,13 @@ public class BenutzerverwaltungForm extends BasisForm {
 			try {
 				myClass.setLdapGruppe(new LdapGruppenDAO().get(inAuswahl));
 			} catch (DAOException e) {
-				new Helper().setFehlerMeldung("Ldapgruppe kann nicht zugewiesen werden", "");
-				e.printStackTrace();
+				Helper.setFehlerMeldung("Error on writing to database", "");
+				logger.error(e);
 			}
 	}
 
 	public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
-		List<SelectItem> myLdapGruppen = new ArrayList();
+		List<SelectItem> myLdapGruppen = new ArrayList<SelectItem>();
 		List<LdapGruppe> temp = new LdapGruppenDAO().search("from LdapGruppe ORDER BY titel");
 		for (LdapGruppe gru : temp) {
 			myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitel(), null));
@@ -291,9 +290,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Ldap myLdap = new Ldap();
 		try {
 			myLdap.createNewUser(myClass, myClass.getPasswortCrypt());
-			new Helper().setMeldung(null, "Ldap-Konfiguration erfolgreich geschrieben für: " + myClass.getNachVorname(), "");
+			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + myClass.getNachVorname(), "");
 		} catch (Exception e) {
-			logger.warn("Ldapeintrag konnte nicht erzeugt werden: " + e.getMessage());
+			logger.warn("Could not generate ldap entry: " + e.getMessage());
 		}
 		return "";
 	}

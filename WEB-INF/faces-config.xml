@@ -5,7 +5,15 @@
   "http://java.sun.com/dtd/web-facesconfig_1_0.dtd">
 
 <faces-config>
-	
+	 <application>
+	 	<locale-config>
+	 	<default-locale>en</default-locale>
+	 	<supported-locale>de</supported-locale>
+	 	<supported-locale>en</supported-locale>
+	 	<supported-locale>es</supported-locale>
+	 	</locale-config>
+	 </application>
+   
 	<!-- Startseite -->
 	<navigation-rule>
 		<navigation-case>
@@ -199,6 +207,14 @@
 			<to-view-id>/newpages/NewProcess/Page2.jsp</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+		
+	<!-- Bearbeitung von ProzessverwaltungKopie3 -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>ProzessverwaltungKopie3</from-outcome>
+			<to-view-id>/newpages/NewProcess/Page3.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- ++++++++++++++++++++++++ // Neuen Vorgang anlegen ++++++++++++++++++++++++++++ -->
 	
@@ -390,7 +406,7 @@
 	<managed-bean>
 		<managed-bean-name>ProjekteForm</managed-bean-name>
 		<managed-bean-class> de.sub.goobi.Forms.ProjekteForm </managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Prozesskopie -->

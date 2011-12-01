@@ -17,13 +17,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.flow.jobs.HistoryJob;
+import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.jobs.JobManager;
+import org.goobi.production.flow.jobs.LuceneIndexJob;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.quartz.SchedulerException;
 
 import ugh.dl.DocStruct;
@@ -55,7 +56,6 @@ import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.ldap.Ldap;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
@@ -65,7 +65,6 @@ public class AdministrationForm implements Serializable {
 	private boolean rusFullExport = false;
 	//TODO: Remove this
 	//private boolean olmsZaehlung = false;
-	private Helper help = new Helper();
 	//private String myPlugin;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
@@ -80,7 +79,7 @@ public class AdministrationForm implements Serializable {
 		String adminMd5 = ConfigMain.getParameter("superadminpassword");
 		istPasswortRichtig = (passwort.equals(adminMd5));
 		if (!istPasswortRichtig)
-			help.setFehlerMeldung("Falsches Passwort", "");
+			Helper.setFehlerMeldung("wrong passworwd", "");
 		return "";
 	}
 
@@ -101,9 +100,9 @@ public class AdministrationForm implements Serializable {
 	public void restartStorageCalculationScheduler() {
 		try {
 			JobManager.restartTimedJobs();
-			help.setMeldung("StorageHistoryManager scheduler restarted");
+			Helper.setMeldung("StorageHistoryManager scheduler restarted");
 		} catch (SchedulerException e) {
-			help.setFehlerMeldung("Error while restarting StorageHistoryManager scheduler", e);
+			Helper.setFehlerMeldung("Error while restarting StorageHistoryManager scheduler", e);
 		}
 	}
 
@@ -111,17 +110,27 @@ public class AdministrationForm implements Serializable {
 	 * run storage calculation for all processes now
 	 */
 	public void startStorageCalculationForAllProcessesNow() {
-		HistoryJob job = HistoryJob.getInstance();
+		HistoryAnalyserJob job = new HistoryAnalyserJob();
 		if (job.getIsRunning() == false) {
-			job.updateHistoryForAllProcesses();
-			help.setMeldung("scheduler calculation executed");
+			job.execute();
+			Helper.setMeldung("scheduler calculation executed");
 		} else {
-			help.setMeldung("Job is already running, try again in a few minutes");
+			Helper.setMeldung("Job is already running, try again in a few minutes");
 		}
 	}
 
 	public boolean isIstPasswortRichtig() {
 		return istPasswortRichtig;
+	}
+	
+	public void createIndex () {
+		LuceneIndexJob job = new LuceneIndexJob();
+		if (job.getIsRunning() == false) {
+			job.execute();
+			Helper.setMeldung("lucene indexer executed");
+		} else {
+			Helper.setMeldung("lucene indexer is already running, try again in a few minutes");
+		}
 	}
 
 	/*
@@ -171,17 +180,17 @@ public class AdministrationForm implements Serializable {
 			// cl.setClassAssertionStatus("de.sub.goobi.Plugins." + myPlugin,
 			// true);
 		} catch (MalformedURLException e) {
-			help.setFehlerMeldung("MalformedURLException: ", e.getMessage());
+			Helper.setFehlerMeldung("MalformedURLException: ", e.getMessage());
 		} catch (ClassNotFoundException e) {
-			help.setFehlerMeldung("ClassNotFoundException: ", e.getMessage());
+			Helper.setFehlerMeldung("ClassNotFoundException: ", e.getMessage());
 			// } catch (InstantiationException e) {
-			// help.setFehlerMeldung("InstantiationException: ",
+			// Helper.setFehlerMeldung("InstantiationException: ",
 			// e.getMessage());
 		} catch (IllegalAccessException e) {
-			help.setFehlerMeldung("IllegalAccessException: ", e.getMessage());
+			Helper.setFehlerMeldung("IllegalAccessException: ", e.getMessage());
 		}
-		help.setMeldung("------------------------------------------------------------------");
-		help.setMeldung("Plugin ausgeführt");
+		Helper.setMeldung("------------------------------------------------------------------");
+		Helper.setMeldung("Plugin ausgeführt");
 	}
 	*/
 
@@ -248,20 +257,20 @@ public class AdministrationForm implements Serializable {
 
 	public void ProzesseDurchlaufen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
-		List auftraege = dao.search("from Prozess");
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess auf = (Prozess) iter.next();
+		List<Prozess> auftraege = dao.search("from Prozess");
+		for (Prozess auf : auftraege) {
+//			Prozess auf = (Prozess) iter.next();
 			dao.save(auf);
 		}
-		help.setMeldung(null, "", "Artikel erfolgreich gezählt");
+		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
 	public void AnzahlenErmitteln() throws DAOException, IOException, InterruptedException, SwapException {
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 		ProzessDAO dao = new ProzessDAO();
-		List auftraege = dao.search("from Prozess");
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess auf = (Prozess) iter.next();
+		List<Prozess> auftraege = dao.search("from Prozess");
+		for (Prozess auf : auftraege) {
+//			Prozess auf = (Prozess) iter.next();
 
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
@@ -274,7 +283,7 @@ public class AdministrationForm implements Serializable {
 
 			dao.save(auf);
 		}
-		help.setMeldung(null, "", "Artikel erfolgreich gezählt");
+		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
 	//TODO: Remove this
@@ -285,28 +294,28 @@ public class AdministrationForm implements Serializable {
 
 		SchrittDAO dao = new SchrittDAO();
 		//TODO: Try to avoid SQL
-		List schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
-		for (Iterator iter = schritte.iterator(); iter.hasNext();) {
-			Schritt auf = (Schritt) iter.next();
+		List<Schritt> schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
+		for (Schritt auf : schritte) {
+//			Schritt auf = (Schritt) iter.next();
 			auf.setBenutzergruppen(neueGruppen);
 			dao.save(auf);
 		}
-		help.setMeldung(null, "", "Sici erfolgreich korrigiert");
+		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}
 
 	public void StandardRegelsatzSetzen() throws DAOException {
 		Regelsatz mk = new RegelsatzDAO().get(Integer.valueOf(1));
 
 		ProzessDAO dao = new ProzessDAO();
-		List auftraege = dao.search("from Prozess");
+		List<Prozess> auftraege = dao.search("from Prozess");
 		int i = 0;
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess auf = (Prozess) iter.next();
+		for (Prozess auf : auftraege) {
+			
 			auf.setRegelsatz(mk);
 			dao.save(auf);
 			myLogger.debug(auf.getId() + " - " + i++ + "von" + auftraege.size());
 		}
-		help.setMeldung(null, "", "Standard-Regelsatz erfolgreich gesetzt");
+		Helper.setMeldung(null, "", "Standard-ruleset successful set");
 	}
 
 	//TODO: Remove this
@@ -334,13 +343,13 @@ public class AdministrationForm implements Serializable {
 				File ziel = new File(ausgang.getParent() + File.separator + "orig_" + ausgang.getName());
 				CopyFile.copyDirectory(ausgang, ziel);
 			} catch (Exception e) {
-				help.setFehlerMeldung("Fehler bei den Messkatalogen", e);
+				Helper.setFehlerMeldung("Fehler bei den Messkatalogen", e);
 				return;
 			}
 
-			help.setMeldung(auf.getId() + " - " + auf.getTitel() + " erledigt");
+			Helper.setMeldung(auf.getId() + " - " + auf.getTitel() + " erledigt");
 		}
-		help.setMeldung(null, "", "MesskatalogeOrigOrdnerErstellen gesetzt");
+		Helper.setMeldung(null, "", "MesskatalogeOrigOrdnerErstellen gesetzt");
 	}
 	*/
 
@@ -351,11 +360,11 @@ public class AdministrationForm implements Serializable {
 	 * ####################################################
 	 */
 
-	//TODO: Remove this
-	public void LDAPtest() {
-		Ldap myldap = new Ldap();
-		help.setMeldung(null, "", "LDAP-Zugriff erfolgreich: " + myldap.isUserAlreadyExists("enders"));
-	}
+//	//TODO: Remove this
+//	public void LDAPtest() {
+//		Ldap myldap = new Ldap();
+//		Helper.setMeldung(null, "", "LDAP-Zugriff erfolgreich: " + myldap.isUserAlreadyExists("enders"));
+//	}
 
 	/*
 	 * #####################################################
@@ -368,16 +377,16 @@ public class AdministrationForm implements Serializable {
 		try {
 			DesEncrypter encrypter = new DesEncrypter();
 			BenutzerDAO dao = new BenutzerDAO();
-			List myBenutzer = dao.search("from Benutzer");
-			for (Iterator iter = myBenutzer.iterator(); iter.hasNext();) {
-				Benutzer ben = (Benutzer) iter.next();
+			List<Benutzer> myBenutzer = dao.search("from Benutzer");
+			for (Benutzer ben : myBenutzer) {
+//				Benutzer ben = (Benutzer) iter.next();
 				String passencrypted = encrypter.encrypt(ben.getPasswort());
 				ben.setPasswort(passencrypted);
 				dao.save(ben);
 			}
-			help.setMeldung(null, "", "die Passw�rter wurden erfolgreich verschl�sselt");
+			Helper.setMeldung(null, "", "passwords successful ciphered");
 		} catch (Exception e) {
-			help.setFehlerMeldung("die Passw�rter konnten nicht verschl�sselt werden: ", e.getMessage());
+			Helper.setFehlerMeldung("could not cipher passwords: ", e.getMessage());
 		}
 	}
 
@@ -391,12 +400,12 @@ public class AdministrationForm implements Serializable {
 
 	public void ProzesseDatumSetzen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
-		List auftraege = dao.search("from Prozess");
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess auf = (Prozess) iter.next();
+		List<Prozess> auftraege = dao.search("from Prozess");
+		for (Prozess auf : auftraege) {
+			
 
-			for (Iterator iterator = auf.getSchritteList().iterator(); iterator.hasNext();) {
-				Schritt s = (Schritt) iterator.next();
+			for (Schritt s  : auf.getSchritteList()) {
+			
 				if (s.getBearbeitungsbeginn() != null) {
 					auf.setErstellungsdatum(s.getBearbeitungsbeginn());
 					break;
@@ -404,7 +413,7 @@ public class AdministrationForm implements Serializable {
 			}
 			dao.save(auf);
 		}
-		help.setMeldung(null, "", "Datum erfolgreich gesetzt");
+		Helper.setMeldung(null, "", "created date");
 	}
 
 	/*
@@ -419,9 +428,9 @@ public class AdministrationForm implements Serializable {
 			try {
 				oop.startAnlegen();
 			} catch (Exception e) {
-				help.setFehlerMeldung(null, "Fehler aufgetreten: ", e.getMessage());
+				Helper.setFehlerMeldung(null, "Fehler aufgetreten: ", e.getMessage());
 			}
-			help.setMeldung(null, "", "Baende angelegt");
+			Helper.setMeldung(null, "", "Baende angelegt");
 		}
 	*/
 	/*
@@ -431,6 +440,7 @@ public class AdministrationForm implements Serializable {
 	 * ####################################################
 	 */
 
+	@SuppressWarnings("unchecked")
 	public void ImagepfadKorrigieren() throws DAOException {
 		UghHelper ughhelp = new UghHelper();
 		//	HibernateUtil.clearSession();
@@ -444,16 +454,15 @@ public class AdministrationForm implements Serializable {
 		// crit.add(Expression.and(Expression.eq("steps.reihenfolge", 6),
 		// Expression.eq(
 		// "steps.bearbeitungsstatus", 1)));
-		List auftraege = crit.list();
+		List<Prozess> auftraege = crit.list();
 
 		/* alle Prozesse durchlaufen */
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess p = (Prozess) iter.next();
+		for (Prozess p : auftraege) {
+			
 
 			if (p.getBenutzerGesperrt() != null) {
-				help.setFehlerMeldung("Metadaten gesperrt: ", p.getTitel());
+				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				help.setMeldung(null, "Metadaten werden verarbeitet: ", p.getTitel());
 				myLogger.debug("Prozess: " + p.getTitel());
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				Fileformat gdzfile;
@@ -471,48 +480,52 @@ public class AdministrationForm implements Serializable {
 						// Imagepfad errechnen
 						// * --------------------------------*/
 						// String atsPpnBand =
-						// bhelp.WerkstueckEigenschaftErmitteln(p, "ATS")
-						// + bhelp.WerkstueckEigenschaftErmitteln(p, "TSL") +
+						// bHelper.WerkstueckEigenschaftErmitteln(p, "ATS")
+						// + bHelper.WerkstueckEigenschaftErmitteln(p, "TSL") +
 						// "_";
-						// String ppn = bhelp.WerkstueckEigenschaftErmitteln(p,
+						// String ppn = bHelper.WerkstueckEigenschaftErmitteln(p,
 						// "PPN digital");
 						// if (!ppn.startsWith("PPN"))
 						// ppn = "PPN" + ppn;
 						// atsPpnBand += ppn;
 						// String bandnummer =
-						// bhelp.WerkstueckEigenschaftErmitteln(p, "Band");
+						// bHelper.WerkstueckEigenschaftErmitteln(p, "Band");
 						// if (bandnummer != null && bandnummer.length() > 0)
 						// atsPpnBand += "_" +
-						// bhelp.WerkstueckEigenschaftErmitteln(p, "Band");
+						// bHelper.WerkstueckEigenschaftErmitteln(p, "Band");
 						// md.setValue("./" + atsPpnBand + "_tif");
-						md.setValue("./" + p.getTitel().trim() + DIRECTORY_SUFFIX);
+						if (SystemUtils.IS_OS_WINDOWS) {
+							md.setValue("file:/" + p.getImagesDirectory() + p.getTitel().trim() + DIRECTORY_SUFFIX);
+						} else {
+							md.setValue("file://" + p.getImagesDirectory() + p.getTitel().trim() + DIRECTORY_SUFFIX);
+						}
 						p.writeMetadataFile(gdzfile);
-						help.setMeldung(null, "", "Imagepfad erfolgreich gesetzt: " + p.getTitel() + ": ./" + p.getTitel() + DIRECTORY_SUFFIX);
+						Helper.setMeldung(null, "", "Image path set: " + p.getTitel() + ": ./" + p.getTitel() + DIRECTORY_SUFFIX);
 					} else
-						help.setMeldung(null, "", "KEIN Imagepfad vorhanden: " + p.getTitel());
+						Helper.setMeldung(null, "", "No Image path available: " + p.getTitel());
 				} catch (ReadException e) {
-					help.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
-					help.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
-					help.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
-					help.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
-					help.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
-					help.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
-		help.setMeldung(null, "", "------------------------------------------------------------------");
-		help.setMeldung(null, "", "Imagepfade gesetzt");
+		Helper.setMeldung(null, "", "------------------------------------------------------------------");
+		Helper.setMeldung(null, "", "Image paths set");
 	}
 
 	/*
@@ -523,6 +536,7 @@ public class AdministrationForm implements Serializable {
 	 * ####################################################
 	 */
 
+	@SuppressWarnings("unchecked")
 	public void PPNsKorrigieren() throws DAOException {
 		UghHelper ughhelp = new UghHelper();
 
@@ -535,20 +549,19 @@ public class AdministrationForm implements Serializable {
 		// crit.add(Expression.and(Expression.eq("steps.reihenfolge", 6),
 		// Expression.eq(
 		// "steps.bearbeitungsstatus", 1)));
-		List auftraege = crit.list();
+		List<Prozess> auftraege = crit.list();
 
 		/* alle Prozesse durchlaufen */
-		for (Iterator iter = auftraege.iterator(); iter.hasNext();) {
-			Prozess p = (Prozess) iter.next();
+		for (Prozess p : auftraege) {
+		
 			if (p.getBenutzerGesperrt() != null) {
-				help.setFehlerMeldung("Metadaten gesperrt: ", p.getTitel());
+				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
 				String myBandnr = p.getTitel();
 				StringTokenizer tokenizer = new StringTokenizer(p.getTitel(), "_");
 				while (tokenizer.hasMoreTokens()) {
 					myBandnr = "_" + tokenizer.nextToken();
 				}
-				help.setMeldung(null, "Metadaten werden verarbeitet: ", p.getTitel() + " mit: " + myBandnr);
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				try {
 					Fileformat gdzfile = p.readMetadataFile();
@@ -559,7 +572,7 @@ public class AdministrationForm implements Serializable {
 
 					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDDigital");
 					MetadataType mdtPpnAnalog = ughhelp.getMetadataType(myPrefs, "CatalogIDSource");
-					List alleMetadaten;
+					List<? extends Metadata> alleMetadaten;
 
 					/* digitale PPN korrigieren */
 					if (dsFirst != null) {
@@ -569,7 +582,7 @@ public class AdministrationForm implements Serializable {
 							myLogger.debug(md.getValue());
 							if (!md.getValue().endsWith(myBandnr)) {
 								md.setValue(md.getValue() + myBandnr);
-								help.setMeldung(null, "PPN digital korrigiert: ", p.getTitel());
+								Helper.setMeldung(null, "PPN digital adjusted: ", p.getTitel());
 							}
 						}
 
@@ -580,7 +593,7 @@ public class AdministrationForm implements Serializable {
 							myLogger.debug(md1.getValue());
 							if (!md1.getValue().endsWith(myBandnr)) {
 								md1.setValue(md1.getValue() + myBandnr);
-								help.setMeldung(null, "PPN analog korrigiert: ", p.getTitel());
+								Helper.setMeldung(null, "PPN analog adjusted: ", p.getTitel());
 							}
 						}
 					}
@@ -588,12 +601,12 @@ public class AdministrationForm implements Serializable {
 					/* Collections korrigieren */
 					List<String> myKollektionenTitel = new ArrayList<String>();
 					MetadataType coltype = ughhelp.getMetadataType(myPrefs, "singleDigCollection");
-					ArrayList myCollections;
+					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
-						myCollections = new ArrayList(dsTop.getAllMetadataByType(coltype));
+						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
-							for (Iterator it = myCollections.iterator(); it.hasNext();) {
-								Metadata md = (Metadata) it.next();
+							for (Metadata md : myCollections) {
+							
 								if (myKollektionenTitel.contains(md.getValue()))
 									dsTop.removeMetadata(md);
 								else
@@ -603,10 +616,10 @@ public class AdministrationForm implements Serializable {
 					}
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype) != null) {
 						myKollektionenTitel = new ArrayList<String>();
-						myCollections = new ArrayList(dsFirst.getAllMetadataByType(coltype));
+						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
-							for (Iterator it = myCollections.iterator(); it.hasNext();) {
-								Metadata md = (Metadata) it.next();
+							for (Metadata md : myCollections) {
+//								Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue()))
 									dsFirst.removeMetadata(md);
 								else
@@ -618,28 +631,28 @@ public class AdministrationForm implements Serializable {
 					p.writeMetadataFile(gdzfile);
 
 				} catch (ReadException e) {
-					help.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
-					help.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
-					help.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
-					help.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
-					help.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
-					help.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
-		help.setMeldung(null, "", "------------------------------------------------------------------");
-		help.setMeldung(null, "", "PPNs korrigiert");
+		Helper.setMeldung(null, "", "------------------------------------------------------------------");
+		Helper.setMeldung(null, "", "PPNs adjusted");
 	}
 
 	/*
@@ -651,8 +664,8 @@ public class AdministrationForm implements Serializable {
 	 */
 
 	//TODO: Remove this
+	@SuppressWarnings("unchecked")
 	public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
-		Helper help = new Helper();
 		UghHelper ughhelp = new UghHelper();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
@@ -660,12 +673,12 @@ public class AdministrationForm implements Serializable {
 		crit.add(Restrictions.like("titel", "statjafud%"));
 		// crit.add(Expression.like("titel", "statjafud_PPN514401303_1880"));
 		/* alle Prozesse durchlaufen */
-		for (Iterator iter = crit.list().iterator(); iter.hasNext();) {
-			Prozess p = (Prozess) iter.next();
+		List<Prozess> pl = crit.list();
+		for (Prozess p : pl) {
+		
 			if (p.getBenutzerGesperrt() != null) {
-				help.setFehlerMeldung("Metadaten gesperrt: " + p.getTitel());
+				Helper.setFehlerMeldung("metadata locked: " + p.getTitel());
 			} else {
-				help.setMeldung("Metadaten werden verarbeitet: " + p.getTitel());
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				try {
 					Fileformat gdzfile = p.readMetadataFile();
@@ -674,9 +687,9 @@ public class AdministrationForm implements Serializable {
 
 					/* analoge PPN korrigieren */
 					if (dsTop != null) {
-						List alleMetadaten = dsTop.getAllMetadataByType(mdtPpnDigital);
+						List<? extends Metadata> alleMetadaten = dsTop.getAllMetadataByType(mdtPpnDigital);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
-							for (Iterator it = alleMetadaten.iterator(); it.hasNext();) {
+							for (Iterator<? extends Metadata> it = alleMetadaten.iterator(); it.hasNext();) {
 								Metadata md = (Metadata) it.next();
 								if (!md.getValue().startsWith("PPN")) {
 									md.setValue("PPN" + md.getValue());
@@ -686,30 +699,31 @@ public class AdministrationForm implements Serializable {
 						}
 					}
 				} catch (ReadException e) {
-					help.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
-					help.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
-					help.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
-					help.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
-					help.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
-					help.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
-		help.setMeldung("------------------------------------------------------------------");
-		help.setMeldung("PPNs korrigiert");
+		Helper.setMeldung("------------------------------------------------------------------");
+		Helper.setMeldung("PPNs adjusted");
 	}
 
+	@SuppressWarnings("unchecked")
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
 		UghHelper ughhelp = new UghHelper();
 		BeanHelper bhelp = new BeanHelper();
@@ -720,16 +734,15 @@ public class AdministrationForm implements Serializable {
 		crit.add(Restrictions.like("proj.titel", "UB-MannheimDigizeit"));
 
 		/* alle Prozesse durchlaufen */
-		for (Iterator iter = crit.list().iterator(); iter.hasNext();) {
+		for (Iterator<Prozess> iter = crit.list().iterator(); iter.hasNext();) {
 			Prozess p = (Prozess) iter.next();
 			if (p.getBenutzerGesperrt() != null) {
-				help.setFehlerMeldung("Metadaten gesperrt: ", p.getTitel());
+				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
 				String ppn = bhelp.WerkstueckEigenschaftErmitteln(p, "PPN digital").replace("PPN ", "").replace("PPN", "");
 				String jahr = bhelp.ScanvorlagenEigenschaftErmitteln(p, "Bandnummer");
 				String ppnAufBandebene = "PPN" + ppn + "_" + jahr;
 
-				help.setMeldung(null, "Metadaten werden verarbeitet: ", p.getTitel() + " mit: " + ppnAufBandebene);
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				try {
 					Fileformat gdzfile = p.readMetadataFile();
@@ -742,7 +755,7 @@ public class AdministrationForm implements Serializable {
 
 					/* digitale PPN korrigieren */
 					if (dsFirst != null) {
-						List alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnDigital);
+						List<? extends Metadata> alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnDigital);
 						if (alleMetadaten == null || alleMetadaten.size() == 0) {
 							Metadata md = new Metadata(mdtPpnDigital);
 							md.setValue(ppnAufBandebene);
@@ -753,11 +766,11 @@ public class AdministrationForm implements Serializable {
 					/* Collections korrigieren */
 					List<String> myKollektionenTitel = new ArrayList<String>();
 					MetadataType coltype = ughhelp.getMetadataType(myPrefs, "singleDigCollection");
-					ArrayList myCollections;
+					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null) {
-						myCollections = new ArrayList(dsTop.getAllMetadataByType(coltype));
+						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
-							for (Iterator it = myCollections.iterator(); it.hasNext();) {
+							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue()))
 									dsTop.removeMetadata(md);
@@ -768,9 +781,9 @@ public class AdministrationForm implements Serializable {
 					}
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype).size() > 0) {
 						myKollektionenTitel = new ArrayList<String>();
-						myCollections = new ArrayList(dsFirst.getAllMetadataByType(coltype));
+						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
 						if (myCollections != null && myCollections.size() > 0) {
-							for (Iterator it = myCollections.iterator(); it.hasNext();) {
+							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue()))
 									dsFirst.removeMetadata(md);
@@ -783,28 +796,28 @@ public class AdministrationForm implements Serializable {
 					p.writeMetadataFile(gdzfile);
 
 				} catch (ReadException e) {
-					help.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
-					help.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
-					help.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
-					help.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 				} catch (UghHelperException e) {
-					help.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
-					help.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
+					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
 					myLogger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
-		help.setMeldung(null, "", "------------------------------------------------------------------");
-		help.setMeldung(null, "", "PPNs korrigiert");
+		Helper.setMeldung(null, "", "------------------------------------------------------------------");
+		Helper.setMeldung(null, "", "PPNs adjusted");
 	}
 
 	/*
@@ -835,7 +848,6 @@ public class AdministrationForm implements Serializable {
 	// List myProzesse = crit.list();
 	// for (Iterator iter = myProzesse.iterator(); iter.hasNext();) {
 	// Prozess proz = (Prozess) iter.next();
-	// // System.out.println("-------------------------- " + proz.getTifPfad());
 	// File tifOrdner = new File(proz.getImagesTifDirectory());
 	// /* --------------------------------
 	// * jetzt die Images durchlaufen
@@ -846,18 +858,16 @@ public class AdministrationForm implements Serializable {
 	// counter++;
 	// TiffConverter tiffConv = new TiffConverter(proz.getImagesTifDirectory() +
 	// dateien[i].getName());
-	// // System.out.println(dateien[i].getName() + " - " +
 	// tiffConv.getTiffField(305));
 	// String tiffField = tiffConv.getTiffField(305).toLowerCase();
-	// // System.out.println(tiffField);
 	// if (!tiffField.contains("pixedit") && !tiffField.contains("photoshop"))
-	// help.setFehlerMeldung("nicht nachbearbeitet: " + proz.getTitel() + " - ",
+	// Helper.setFehlerMeldung("nicht nachbearbeitet: " + proz.getTitel() + " - ",
 	// proz.getImagesTifDirectory()
 	// + dateien[i].getName());
 	// }
 	// }
 	// }
-	// help.setMeldung(null, "", counter + " Images durchlaufen");
+	// Helper.setMeldung(null, "", counter + " Images durchlaufen");
 	// }
 	/*
 	 * #####################################################

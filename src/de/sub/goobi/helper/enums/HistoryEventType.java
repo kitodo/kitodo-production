@@ -31,7 +31,7 @@ public enum HistoryEventType {
 	docstructDiff(5, "docstructDiff", true, false, null),
 	
 	/** stepDone, order number and title */
-	stepDone(6, "stepDone", true, true, "max"),
+	stepDone(6, "stepDone", true, true, "min"),
 	
 	/** stepOpen, order number and title */
 	stepOpen(7, "stepOpen", true, true, "min"),
@@ -40,7 +40,25 @@ public enum HistoryEventType {
 	stepInWork(8, "stepInWork", true, true, null ),
 	
 	/** stepError, step order number, step title */
-	stepError(9, "stepError", true, true, null);
+	stepError(9, "stepError", true, true, null),
+	
+	/** stepError, step order number, step title */
+	stepLocked(10, "stepLocked", true, true, "max"),
+	
+	/** bitonal Difference - without function yet */
+	bitonal(11, "imagesBitonalDiff", true, false, null),
+	
+	/** grayscale Difference - without function yet */
+	grayScale(12, "imagesGrayScaleDiff", true, false, null),
+	
+	/** color Difference - without function yet */
+	color(13, "imagesColorDiff", true, false, null)
+	
+	
+	
+	;
+	
+	
 
 	private int value;
 	private String title;

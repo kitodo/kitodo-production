@@ -5,6 +5,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
+import org.apache.log4j.Logger;
+
 import de.sub.goobi.Beans.Regelsatz;
 import de.sub.goobi.Persistence.RegelsatzDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -12,7 +14,8 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class RegelsatzConverter implements Converter {
    public static final String CONVERTER_ID = "RegelsatzConverter";
-
+   private static final Logger logger = Logger.getLogger(RegelsatzConverter.class);
+   
    public Object getAsObject(FacesContext context, UIComponent component, String value)
          throws ConverterException {
       if (value == null) {
@@ -21,10 +24,10 @@ public class RegelsatzConverter implements Converter {
          try {
 				return (Regelsatz) new RegelsatzDAO().get(new Integer(value));
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				logger.error(e);
 				return "0";
 			} catch (DAOException e) {
-				e.printStackTrace();
+				logger.error(e);
 				return "0";
 			}
       }

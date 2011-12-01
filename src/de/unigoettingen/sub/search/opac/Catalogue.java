@@ -66,6 +66,7 @@ public class Catalogue {
     private String iktList;
     private String catalogue;
     private String description;
+    private String cbs = "";
     
     private String dataBase; 
     private String serverAddress;
@@ -117,7 +118,7 @@ public class Catalogue {
 		this.parseIktList(this.retrieveIktList());
 	}
 	
-	public Catalogue(String description, String serverAddress, int port, String database) throws IOException{
+	public Catalogue(String description, String serverAddress, int port, String cbs, String database) throws IOException{
        picaToKey = new HashMap();
        picaToDescription = new HashMap();
        this.description = description;
@@ -125,12 +126,14 @@ public class Catalogue {
        this.port = port;
        this.dataBase = database;
        this.iktList = "";
+       this.cbs=cbs;
        this.parseIktList(this.retrieveIktList());
    }
 	
-	public Catalogue(String description, String serverAddress, int port, String charset, String database) throws IOException {
-		this(description, serverAddress, port, database);
+	public Catalogue(String description, String serverAddress, int port, String charset, String cbs, String database) throws IOException {
+		this(description, serverAddress, port,cbs, database);
 		this.charset = charset;
+		
 	}
 	
     /***********************************************************************
@@ -405,6 +408,20 @@ public class Catalogue {
 	//eingefügt cm 8.5.2007
 	public String getIktNr (String key) {
 		return (String) picaToKey.get(key);
+	}
+
+	/**
+	 * @param cbs the cbs to set
+	 */
+	public void setCbs(String cbs) {
+		this.cbs = cbs;
+	}
+
+	/**
+	 * @return the cbs
+	 */
+	public String getCbs() {
+		return cbs;
 	}
 	
 

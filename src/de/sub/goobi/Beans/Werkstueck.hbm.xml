@@ -14,7 +14,7 @@
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true"  order-by="titel">
 			<key column="werkstueckeID"/>
-			<one-to-many class="de.sub.goobi.Beans.Werkstueckeigenschaft" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Werkstueckeigenschaft"/>
 		</set>
 		
 	</class>

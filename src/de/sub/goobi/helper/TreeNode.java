@@ -66,7 +66,7 @@ public class TreeNode {
    
    
 
-   @SuppressWarnings("unused")
+   @SuppressWarnings({ "unused", "unchecked" })
 	private List getChildrenAsList(List inList, int niveau,List inStriche,boolean VaterIstLetzter) {
       for (Iterator<TreeNode> it = children.iterator(); it.hasNext();) {
          TreeNode kind = it.next();
@@ -89,6 +89,7 @@ public class TreeNode {
 
    
 
+	@SuppressWarnings("unchecked")
 	private List getChildrenAsListMitStrichen(List inList, int niveau, TreeNode inNode, boolean istLetzter,
          boolean VaterIstLetzter, List inStriche) {
 
@@ -116,6 +117,7 @@ public class TreeNode {
    
    
 
+	@SuppressWarnings("unchecked")
 	private List getChildrenAsListAlle(List inList, int niveau, TreeNode inNode, boolean istLetzter,
          boolean VaterIstLetzter, List inStriche) {
 

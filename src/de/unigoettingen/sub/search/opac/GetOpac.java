@@ -1,7 +1,9 @@
 package de.unigoettingen.sub.search.opac;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +11,18 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -285,7 +292,8 @@ public class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort();
+		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress()
+				 + cat.getPort()+ cat.getCbs();
 
 		// if we can not use the cached result
 		if (!lastQuery.equals(querySummary)) {
@@ -327,7 +335,7 @@ public class GetOpac {
 		// if (getNumberOfHits(query) == 0){
 		// throw new Exception("No Hits");
 		// }
-		//            
+		//
 		// }
 
 		return xmlResult.toString();
@@ -355,7 +363,7 @@ public class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort();
+		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort()+ cat.getCbs();
 
 		// if we can not use the cached result
 		if (!lastQuery.equals(querySummary)) {
@@ -484,7 +492,7 @@ public class GetOpac {
 	public OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort();
+		String querySummary = query.getQueryUrl() + data_character_encoding + cat.getDataBase() + cat.getServerAddress() + cat.getPort()+ cat.getCbs();
 
 		if (verbose) {
 			System.out.println("Searching the opac for " + query.getQueryUrl());
@@ -626,7 +634,7 @@ public class GetOpac {
 	 *            The InputSource to parse
 	 * @return The resulting document
 	 **********************************************************************/
-	private Document getParsedDocument(InputSource source) {
+	public Document getParsedDocument(InputSource source) {
 		try {
 			return this.docBuilder.parse(source);
 		} catch (SAXException e) {
@@ -686,9 +694,9 @@ public class GetOpac {
 	private String retrieveDataFromOPAC(String url) throws IOException {
 
 		// if (verbose){
-		System.out.println("Retrieving URL: http://" + cat.getServerAddress() + ":" + cat.getPort() + url);
+		System.out.println("Retrieving URL: http://" + cat.getServerAddress() + ":" + cat.getPort()  + url + cat.getCbs());
 		// }
-		GetMethod opacRequest = new GetMethod("http://" + cat.getServerAddress() + ":" + cat.getPort() + url);
+		GetMethod opacRequest = new GetMethod("http://" + cat.getServerAddress() + ":" + cat.getPort() + url + cat.getCbs());
 
 		try {
 			this.opacClient.executeMethod(opacRequest);

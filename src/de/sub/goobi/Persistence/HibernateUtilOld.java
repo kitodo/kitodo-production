@@ -30,9 +30,9 @@ public class HibernateUtilOld {
 
 	private static Configuration configuration;
 	private static SessionFactory sessionFactory;
-	private static final ThreadLocal threadSession = new ThreadLocal();
-	private static final ThreadLocal threadTransaction = new ThreadLocal();
-	private static final ThreadLocal threadInterceptor = new ThreadLocal();
+	private static final ThreadLocal<Session> threadSession = new ThreadLocal<Session>();
+	private static final ThreadLocal<Transaction> threadTransaction = new ThreadLocal<Transaction>();
+	private static final ThreadLocal<Interceptor> threadInterceptor = new ThreadLocal<Interceptor>();
 
 	// Create the initial SessionFactory from the default configuration files
 	static {
@@ -214,6 +214,7 @@ public class HibernateUtilOld {
 	 *
 	 * @param session The Hibernate Session to be reconnected.
 	 */
+	@SuppressWarnings("deprecation")
 	public static void reconnect(Session session)
 		throws InfrastructureException {
 		try {

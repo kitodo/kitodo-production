@@ -180,8 +180,11 @@
 		if (myelement!=null){
 			myelement.click();
 		}
-		
+		var myelement1 = parent.rechts.document.getElementById("formular2:docStructReload");
+		if (myelement1!=null){
+			myelement1.click();
 		}
+	}
 	
 	var DHTML = (document.getElementById || document.all || document.layers);
 	var texttop = 10;

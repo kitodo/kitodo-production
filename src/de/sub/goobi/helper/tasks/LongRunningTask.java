@@ -98,7 +98,7 @@ public class LongRunningTask extends Thread {
    protected void setStatusMessage(String statusMessage) {
       this.statusMessage = statusMessage;
       if (!isSingleThread){
-         new Helper().setMeldung(statusMessage);
+         Helper.setMeldung(statusMessage);
          logger.debug(statusMessage);
       }
    }

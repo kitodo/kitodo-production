@@ -7,13 +7,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import ugh.dl.DigitalDocument;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
@@ -28,16 +30,16 @@ import de.sub.goobi.helper.exceptions.SwapException;
 //TODO: Check if some methods can declared static
 public class HelperSchritte {
 	SchrittDAO dao = new SchrittDAO();
-	Helper help = new Helper();
+	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritte.class);
 
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
-	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen
-	 * ================================================================
+	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
 	 */
-	public void SchrittAbschliessen(Schritt inSchritt) {
+	@SuppressWarnings("unchecked")
+	public void SchrittAbschliessen(Schritt inSchritt, boolean automatic) {
 		inSchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
 		HelperSchritte.updateEditing(inSchritt);
 		Date myDate = new Date();
@@ -45,30 +47,30 @@ public class HelperSchritte {
 		List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
 
 		inSchritt.getProzess().getHistory().add(
-			new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt.getProzess()));
+				new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
+						.getProzess()));
 		Session session = Helper.getHibernateSession();
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
-		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(
-			Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(Restrictions.ne("bearbeitungsstatus", 3)).add(
-			Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
+		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
+				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess").add(
+						Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
 
-		//      if (offeneSchritteGleicherReihenfolge != 0) {
-		//         List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
-		//               Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(
-		//                     Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId()))
-		//                     .createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
-		//         for (Iterator it = bla.iterator(); it.hasNext();) {
-		//            Schritt s = (Schritt) it.next();
-		//            System.out.println(s.getTitel() + s.getId().intValue());
-		//         }
-		//      }
+		// if (offeneSchritteGleicherReihenfolge != 0) {
+		// List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
+		// Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(
+		// Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId()))
+		// .createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
+		// for (Iterator it = bla.iterator(); it.hasNext();) {
+		// Schritt s = (Schritt) it.next();
+		// }
+		// }
 
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			
-			List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class).add(
-				Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(
-				Restrictions.idEq(inSchritt.getProzess().getId())).list();
+
+			List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class)
+					.add(Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+					.add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
 			int reihenfolge = 0;
 			// TODO: Don't use iterators, use for loops instead
 			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
@@ -86,12 +88,13 @@ public class HelperSchritte {
 					myStep.setEditTypeEnum(StepEditType.AUTOMATIC);
 
 					myStep.getProzess().getHistory().add(
-						new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep.getProzess()));
+							new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
+									.getProzess()));
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch() && !myStep.getAllScriptPaths().isEmpty()) {
 						automatischeSchritte.add(myStep);
 					}
-					System.out.println("auf offen gesetzt: " + myStep.getTitel());
+					System.out.println("opened: " + myStep.getTitel());
 				} else
 					break;
 			}
@@ -104,10 +107,17 @@ public class HelperSchritte {
 		} catch (DAOException e) {
 		}
 
-		/* --------------------------------
-		 * zum Schluss alle automatischen Schritte nehmen und deren Automatik ausführen
-		 * --------------------------------*/
-		//TODO: Don't use iterators, use for loops instead
+		if (automatic) {
+			try {
+				session.close();
+			} catch (Exception e) {
+			}
+		}
+		/*
+		 * -------------------------------- zum Schluss alle automatischen Schritte nehmen und deren Automatik ausführen
+		 * --------------------------------
+		 */
+		// TODO: Don't use iterators, use for loops instead
 		for (Iterator<Schritt> iter = automatischeSchritte.iterator(); iter.hasNext();) {
 			Schritt myStep = iter.next();
 			ScriptThread myThread = new ScriptThread(myStep);
@@ -144,73 +154,68 @@ public class HelperSchritte {
 	}
 
 	/**
-	 * Script des Schrittes ausführen
-	 * ================================================================
+	 * Script des Schrittes ausführen ================================================================
 	 * 
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public void executeScript(Schritt mySchritt, String script, boolean fullautomatic) throws SwapException, DAOException {
+	public void executeScript(Schritt mySchritt, String script, boolean fullautomatic) throws SwapException {
 
 		if (script == null || script.length() == 0)
 			return;
 
 		if (script.equals("copyOrig"))
-			copyOrig(mySchritt, fullautomatic);
-		else {
 			try {
-				/* Shell-Script aufrufen */
-				String tifpath = mySchritt.getProzess().getImagesTifDirectory();
-				String imagepath = mySchritt.getProzess().getImagesDirectory();
-				/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
-				if (tifpath.endsWith(File.separator))
-					tifpath = tifpath.substring(0, tifpath.length() - File.separator.length());
-				if (imagepath.endsWith(File.separator))
-					imagepath = imagepath.substring(0, imagepath.length() - File.separator.length());
-				//TODO: Use VariableReplacer for this stuff.
-				script = script.replace("{processid}", String.valueOf(mySchritt.getProzess().getId().intValue()));
-				script = script.replace("{processtitle}", mySchritt.getProzess().getTitel());
-				script = script.replace("{imagepath}", imagepath);
-				script = script.replace("{tifpath}", tifpath);
-				//            System.out.println(script);
-			} catch (IOException e1) {
-				help.setFehlerMeldung("IOException: ", e1.getMessage());
-			} catch (InterruptedException e1) {
-				help.setFehlerMeldung("InterruptedException: ", e1.getMessage());
+				copyOrig(mySchritt, fullautomatic);
+			} catch (DAOException e1) {
+				logger.error(e1);
 			}
+		else {
+			script = script.replace("{", "(").replace("}", ")");
+			DigitalDocument dd = null;
+			try {
+				dd = mySchritt.getProzess().readMetadataFile().getDigitalDocument();
+			} catch (PreferencesException e2) {
+				logger.error(e2);
+			} catch (ReadException e2) {
+				logger.error(e2);
+			} catch (WriteException e2) {
+				logger.error(e2);
+			} catch (IOException e2) {
+				logger.error(e2);
+			} catch (InterruptedException e2) {
+				logger.error(e2);
+			} catch (Exception e2) {
+				logger.error(e2);
+			}
+			VariableReplacer replacer = new VariableReplacer(dd, mySchritt.getProzess().getRegelsatz().getPreferences(), mySchritt.getProzess(),
+					mySchritt);
+			script = replacer.replace(script);
+			String stepId = String.valueOf(mySchritt.getId());
+			script = script.replace("(stepid)", stepId);
 
 			try {
 				logger.info("Calling the shell: " + script);
-				int rueckgabe = new Helper().callShell2(script);
+				int rueckgabe = Helper.callShell2(script);
 				if (fullautomatic) {
 					if (rueckgabe == 0)
-						closeStep(mySchritt);
+						closeStep(mySchritt, fullautomatic);
 					else
-						abortStep(mySchritt);
+						abortStep(mySchritt, fullautomatic);
 				}
-
-				//TODO: try to close the hibernate-session only, if not needed anymore
-//				FacesContext context = FacesContext.getCurrentInstance();
-//				if (context == null) {
-//					Helper.getHibernateSession().close();
-//				}
-				//				if (fullautomatic) {
-				//					Helper.getHibernateSession().close();
-				//				}
 			} catch (IOException e) {
-				help.setFehlerMeldung("IOException: ", e.getMessage());
+				Helper.setFehlerMeldung("IOException: ", e.getMessage());
 			} catch (InterruptedException e) {
-				help.setFehlerMeldung("InterruptedException: ", e.getMessage());
+				Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
 			}
 
 		}
 
 	}
 
-	//TODO: Make this more generic, prefix should be configurable, this should be a workflow step
+	// TODO: Make this more generic, prefix should be configurable, this should be a workflow step
 	/**
-	 * von dem Images-Ordner eine Kopie machen und als Orig-Ordner speichern
-	 * ================================================================
+	 * von dem Images-Ordner eine Kopie machen und als Orig-Ordner speichern ================================================================
 	 * 
 	 * @throws DAOException
 	 * @throws SwapException
@@ -218,76 +223,71 @@ public class HelperSchritte {
 	private void copyOrig(Schritt mySchritt, boolean fullautomatic) throws SwapException, DAOException {
 		/* Aktion ausführen, bei Fehlern auf offen setzen */
 		try {
-			//            File ausgang = new File(mySchritt.getProzess().getTifPfad());
+			// File ausgang = new File(mySchritt.getProzess().getTifPfad());
 			File ausgang = new File(mySchritt.getProzess().getImagesDirectory());
 			File ziel = new File(ausgang.getParent() + File.separator + DIRECTORY_PREFIX + ausgang.getName());
 			CopyFile.copyDirectory(ausgang, ziel);
 		} catch (IOException e) {
-			help.setFehlerMeldung("IOException: ", e.getMessage());
+			Helper.setFehlerMeldung("IOException: ", e.getMessage());
 			if (fullautomatic)
-				abortStep(mySchritt);
+				abortStep(mySchritt, true);
 			return;
 		} catch (InterruptedException e) {
-			help.setFehlerMeldung("InterruptedException: ", e.getMessage());
+			Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
 			if (fullautomatic)
-				abortStep(mySchritt);
+				abortStep(mySchritt, false);
 			return;
 		}
 		if (fullautomatic) {
-			closeStep(mySchritt);
+			closeStep(mySchritt, true);
 		}
 	}
 
 	/**
-	 * den Schritt abbrechen und zurück auf "offen" setzen
-	 * only called by fullautomatic steps
+	 * den Schritt abbrechen und zurück auf "offen" setzen only called by fullautomatic steps
 	 * ================================================================
 	 */
-	private void abortStep(Schritt mySchritt) {
-		//		try {
-		//			/* bei einem Fehler den Schritt zurücksetzen */
-		//			Schritt temp = dao.get(mySchritt.getId());
-		//			temp.setEditTypeEnum(StepEditType.AUTOMATIC);
-		//			temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-		//			dao.save(temp);
-		//		} catch (DAOException d) {
-		//			d.printStackTrace();
-		//		}
+	private void abortStep(Schritt mySchritt, boolean automatic) {
+		// try {
+		// /* bei einem Fehler den Schritt zurücksetzen */
+		// Schritt temp = dao.get(mySchritt.getId());
+		// temp.setEditTypeEnum(StepEditType.AUTOMATIC);
+		// temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
+		// dao.save(temp);
+		// } catch (DAOException d) {
+		// d.printStackTrace();
+		// }
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-		mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+		mySchritt.setBearbeitungsstatusEnum(StepStatus.OPEN);
 		try {
 			dao.save(mySchritt);
 		} catch (DAOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
 	/**
-	 * den Schritt erfolgreich beenden
-	 * only called by fullautomatic steps
-	 * ================================================================
+	 * den Schritt erfolgreich beenden only called by fullautomatic steps ================================================================
 	 */
-	private void closeStep(Schritt mySchritt) {
+	private void closeStep(Schritt mySchritt, boolean automatic) {
 		try {
 			Schritt temp = dao.get(mySchritt.getId());
 			temp.setEditTypeEnum(StepEditType.AUTOMATIC);
 			temp.setBearbeitungsstatusEnum(StepStatus.DONE);
 			dao.save(temp);
-			SchrittAbschliessen(temp);
+			SchrittAbschliessen(temp, automatic);
 		} catch (DAOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-		//		mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
-		SchrittAbschliessen(mySchritt);
+		// mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+		SchrittAbschliessen(mySchritt, automatic);
 	}
 
 	/**
 	 * set values of given step:
 	 * 
-	 * editing user to currently logged in user and 
-	 * date to current date 
+	 * editing user to currently logged in user and date to current date
 	 */
 	public static void updateEditing(Schritt mySchritt) {
 		mySchritt.setBearbeitungszeitpunkt(new Date());

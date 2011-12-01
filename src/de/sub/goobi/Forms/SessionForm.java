@@ -22,7 +22,8 @@ import de.sub.goobi.Beans.Benutzer;
 public class SessionForm {
    //   private static final Logger logger = Logger.getLogger(SessionForm.class);
    private int sessionZeit = 3600 * 2; // 2 Stunden
-   private List alleSessions = new ArrayList();
+   @SuppressWarnings("unchecked")
+private List alleSessions = new ArrayList();
    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
    private String aktuelleZeit = formatter.format(new Date());
    private String bitteAusloggen = "";
@@ -44,21 +45,22 @@ public class SessionForm {
 
    
 
-   public List getAlleSessions() {
-      try {
-         return alleSessions;
-      } catch (RuntimeException e) {
-         e.printStackTrace();
-         return null;
-      }
-   }
+	@SuppressWarnings("unchecked")
+	public List getAlleSessions() {
+		try {
+			return alleSessions;
+		} catch (RuntimeException e) {
+			return null;
+		}
+	}
 
    
 
-   private void sessionAdd(HttpSession insession) {
+   @SuppressWarnings("unchecked")
+private void sessionAdd(HttpSession insession) {
       //      logger.debug("sessionAdd-start");
       insession.setMaxInactiveInterval(sessionZeit);
-
+      
       //TODO: Remove this, it's ugly and evil.
       HashMap map = new HashMap();
       map.put("id", insession.getId());
@@ -98,7 +100,8 @@ public class SessionForm {
 
    
 
-   private void sessionsAufraeumen() {
+   @SuppressWarnings("unchecked")
+private void sessionsAufraeumen() {
       List temp = new ArrayList(alleSessions);
       for (Iterator iter = temp.iterator(); iter.hasNext();) {
          HashMap map = (HashMap) iter.next();
@@ -112,7 +115,8 @@ public class SessionForm {
 
    
 
-   public void sessionAktualisieren(HttpSession insession) {
+   @SuppressWarnings("unchecked")
+public void sessionAktualisieren(HttpSession insession) {
       //      logger.debug("sessionAktualisieren-start");
       boolean gefunden = false;
       aktuelleZeit = formatter.format(new Date());
@@ -133,12 +137,14 @@ public class SessionForm {
 
    
 
-   public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
+   @SuppressWarnings("unchecked")
+public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
       //      logger.debug("sessionBenutzerAktualisieren-start");
       for (Iterator iter = alleSessions.iterator(); iter.hasNext();) {
          HashMap map = (HashMap) iter.next();
          if (map.get("id").equals(insession.getId())) {
             if (inBenutzer != null) {
+               insession.setAttribute("User", inBenutzer.getNachVorname());
                map.put("user", inBenutzer.getNachVorname());
                map.put("userid", inBenutzer.getId());
                insession.setMaxInactiveInterval(inBenutzer.getSessiontimeout());
@@ -155,7 +161,8 @@ public class SessionForm {
    
 
    /* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
-   public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
+   @SuppressWarnings("unchecked")
+public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
       boolean rueckgabe = false;
       //TODO: Don't use Iterators
       for (Iterator iter = alleSessions.iterator(); iter.hasNext();) {
@@ -172,7 +179,8 @@ public class SessionForm {
 
    
 
-   public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
+   @SuppressWarnings("unchecked")
+public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
       List alleSessionKopie = new ArrayList(alleSessions);
     //TODO: Don't use Iterators
       for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {

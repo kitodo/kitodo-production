@@ -16,7 +16,7 @@
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
 			<key column="vorlagenID"/>
-			<one-to-many class="de.sub.goobi.Beans.Vorlageeigenschaft" not-found="ignore"/>
+			<one-to-many class="de.sub.goobi.Beans.Vorlageeigenschaft"/>
 		</set>
 		
 	</class>

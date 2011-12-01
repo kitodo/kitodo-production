@@ -30,7 +30,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
+
+import de.intranda.commons.chart.renderer.CSVRenderer;
 import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.ExcelRenderer;
 import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.renderer.PieChartRenderer;
@@ -41,9 +45,12 @@ public class StatisticsRenderingElement {
 	private IStatisticalQuestion myQuestion;
 	private DataTable dataTable;
 	private HtmlTableRenderer htmlTableRenderer;
+	private CSVRenderer csvRenderer;
+	private ExcelRenderer excelRenderer;
 	private String localImagePath;
 	private String imageUrl;
-
+	private static final Logger logger = Logger.getLogger(StatisticsRenderingElement.class);
+	
 	public StatisticsRenderingElement(DataTable inDataTable,
 			IStatisticalQuestion inQuestion) {
 		dataTable = inDataTable;
@@ -68,12 +75,20 @@ public class StatisticsRenderingElement {
 	 *************************************************************************************/
 	private void createHtmlRenderer() {
 		htmlTableRenderer = new HtmlTableRenderer();
+		csvRenderer = new CSVRenderer();
+		excelRenderer = new ExcelRenderer();
 		if (myQuestion.isRendererInverted(htmlTableRenderer)) {
 			htmlTableRenderer.setDataTable(dataTable.getDataTableInverted());
+			csvRenderer.setDataTable(dataTable.getDataTableInverted());
+			excelRenderer.setDataTable(dataTable.getDataTableInverted());
 		} else {
 			htmlTableRenderer.setDataTable(dataTable);
+			csvRenderer.setDataTable(dataTable);
+			excelRenderer.setDataTable(dataTable);
 		}
 		htmlTableRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
+		csvRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
+		excelRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());			
 	}
 
 	/*************************************************************************************
@@ -100,8 +115,7 @@ public class StatisticsRenderingElement {
 		try {
 			ImageIO.write(image, "png", outputfile);
 		} catch (IOException e) {
-			//TODO: Use a logger
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 	}
@@ -142,4 +156,12 @@ public class StatisticsRenderingElement {
 		return imageUrl;
 	}
 
+	public CSVRenderer getCsvRenderer() {
+		return csvRenderer;
+	}
+	
+	public ExcelRenderer getExcelRenderer() {
+		return excelRenderer;
+	}
+	
 }

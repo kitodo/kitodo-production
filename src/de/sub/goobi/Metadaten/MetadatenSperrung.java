@@ -76,8 +76,6 @@ public class MetadatenSperrung implements Serializable {
 		for (Iterator<Integer> iter = temp.keySet().iterator(); iter.hasNext();) {
 			Integer myKey = iter.next();
 			HashMap<String, String> intern = sperrungen.get(myKey);
-			// System.out.println(myKey);
-			// System.out.println("Benutzer ist: " + intern.get("Benutzer"));
 			if (intern.get("Benutzer").equals(inBenutzerString))
 				sperrungen.remove(myKey);
 		}

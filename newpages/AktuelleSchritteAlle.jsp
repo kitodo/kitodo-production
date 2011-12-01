@@ -7,7 +7,7 @@
 
 <%-- ######################################## 
 
-							Alle Aktuellen Schritte in der Ãœbersicht
+							Alle Aktuellen Schritte in der Ã?bersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="AktuelleSchritteForm"/>
@@ -26,11 +26,11 @@
 				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
 				<h:form id="mytaskform">
 					<%-- Breadcrumb --%>
-					<h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
-						<h:panelGroup>
-							<h:commandLink value="#{msgs.startseite}" action="newMain" />
+					<h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
+						<h:panelGroup id="id1">
+							<h:commandLink id="id2" value="#{msgs.startseite}" action="newMain" />
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
-							<h:outputText value="#{msgs.aktuelleSchritte}" />
+							<h:outputText id="id3" value="#{msgs.aktuelleSchritte}" />
 						</h:panelGroup>
 					</h:panelGrid>
 
@@ -38,13 +38,13 @@
 						<htm:tr>
 							<htm:td>
 
-								<%-- Ãœberschrift --%>
+								<%-- Ã?berschrift --%>
 								<htm:h3>
-									<h:outputText value="#{msgs.aktuelleSchritte}" />
+									<h:outputText id="id4" value="#{msgs.aktuelleSchritte}" />
 								</htm:h3>
 
 								<%-- globale Warn- und Fehlermeldungen --%>
-								<h:messages globalOnly="true" errorClass="text_red"
+								<h:messages id="id5" globalOnly="true" errorClass="text_red"
 									infoClass="text_blue" showDetail="true" showSummary="true"
 									tooltip="true" />
 

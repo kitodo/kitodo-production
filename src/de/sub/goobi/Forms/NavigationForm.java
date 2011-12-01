@@ -20,7 +20,6 @@ public class NavigationForm {
 	
 	public String JeniaPopupCloseAction(){       
 //       Helper help = new Helper();
-//       System.out.println("die ID lautet: " + help.getRequestParameter("ID"));
 //       BenutzerverwaltungForm bvf = (BenutzerverwaltungForm) Helper.getManagedBeanValue("#{BenutzerverwaltungForm}");
 //		bvf.getMyClass().setStandort("die ID lautet: " + help.getRequestParameter("ID"));
 //        try {

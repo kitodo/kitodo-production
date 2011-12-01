@@ -47,18 +47,19 @@ import de.sub.goobi.helper.Helper;
 
 public enum StatisticsMode {
 
-	/*	SIMPLE_STATUS_VOLUMES("statusOfVolumes", null, false, true), SIMPLE_USERGROUPS(
-				"statusForUsers", null, false, true),  */
-	
-	SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false),
-	PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false, false, false), 
-	STATUS_VOLUMES(	"statusOfVolumes", StatQuestVolumeStatus.class, false, false, false), 
-	USERGROUPS(	"statusForUsers", StatQuestUsergroups.class, false, false, false),
+	/*
+	 * SIMPLE_STATUS_VOLUMES("statusOfVolumes", null, false, true), SIMPLE_USERGROUPS( "statusForUsers", null, false, true),
+	 */
+
+	SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false), 
+	PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false,false, false), 
+	STATUS_VOLUMES("statusOfVolumes", StatQuestVolumeStatus.class, false, false, false), 
+	USERGROUPS("statusForUsers",StatQuestUsergroups.class, false, false, false),
 	// the following statistcs are the new statistics from june 2009
 	THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true), 
-	CORRECTIONS("errorTracking", StatQuestCorrections.class, false, false, true), 
+	CORRECTIONS("errorTracking", StatQuestCorrections.class, false,	false, true), 
 	STORAGE("storageCalculator", StatQuestStorage.class, false, false, true), 
-	PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);
+	PRODUCTION("productionStatistics",	StatQuestProduction.class, false, false, true);
 
 	private IStatisticalQuestion question;
 	private String title;
@@ -69,9 +70,8 @@ public enum StatisticsMode {
 	/**
 	 * private constructor,
 	 ****************************************************************************/
-	private StatisticsMode(String inTitle,
-			Class<? extends IStatisticalQuestion> inQuestion,
-			Boolean renderIncludeLoops, Boolean isSimpleStatistic, Boolean restrictDate) {
+	private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops, Boolean isSimpleStatistic,
+			Boolean restrictDate) {
 		title = inTitle;
 		if (inQuestion != null) {
 			try {
@@ -128,12 +128,9 @@ public enum StatisticsMode {
 	 * 
 	 * @return {@link StatisticsMode}
 	 ****************************************************************************/
-	public static StatisticsMode getByClassName(
-			Class<? extends IStatisticalQuestion> inQuestion) {
+	public static StatisticsMode getByClassName(Class<? extends IStatisticalQuestion> inQuestion) {
 		for (StatisticsMode sm : values()) {
-			if (sm.getStatisticalQuestion() != null
-					&& sm.getStatisticalQuestion().getClass().getName().equals(
-							inQuestion.getName())) {
+			if (sm.getStatisticalQuestion() != null && sm.getStatisticalQuestion().getClass().getName().equals(inQuestion.getName())) {
 				return sm;
 			}
 		}
@@ -144,8 +141,8 @@ public enum StatisticsMode {
 	public Boolean isRenderIncludeLoops() {
 		return this.renderIncludeLoops;
 	}
-	
-	public String getMode(){
+
+	public String getMode() {
 		return this.title;
 	}
 

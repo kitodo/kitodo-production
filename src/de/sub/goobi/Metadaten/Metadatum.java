@@ -33,9 +33,6 @@ public class Metadatum {
    private int identifier;
    private Prefs myPrefs;
    private Prozess myProcess;
-//   private String outputType;
-//   private ArrayList<Item> valueList;
-//   private DisplayCase myDisplayCase;
    private HashMap<String, DisplayCase> myValues = new HashMap<String, DisplayCase>();
    private List<SelectItem> items;
    private List<String> selectedItems;
@@ -52,15 +49,12 @@ public class Metadatum {
       for (BindState state : BindState.values()) {
     	  myValues.put(state.getTitle(), new DisplayCase(myProcess, state.getTitle(), md.getType().getName()));    	  
       }
-//      myDisplayCase = new DisplayCase(myProcess, md.getType().getName());
-//      setOutputType();
    }
 
    public ArrayList<Item> getWert() {
 	   String value = md.getValue();
 	   if (value != null) {
 		   for (Item i : myValues.get(Modes.getBindState().getTitle()).getItemList()){
-//		   for (Item i : myDisplayCase.getItemList()){
 			   if (i.getValue().equals(value)) {
 				  i.setIsSelected(true);
 			   } else {
@@ -123,29 +117,12 @@ public class Metadatum {
     *****************************************************/
 
 	
-//   public void setValueList() {
-//	   String curState = Modes.getBindState().getTitle();
-//	   valueList = myValues.get(curState).getItemList();	
-//   }
-	
-//   public void setOutputType() {
-//	   this.outputType = myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
-//   }
 	
    public String getOutputType() {
 	   return myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
    }
 	
    
-//   public ArrayList<Item> getValueList() {	   
-//	   valueList = myValues.get(Modes.getBindState().getTitle()).getItemList();
-//	   if (valueList.isEmpty()&& md.getValue()!=null) {
-//		   valueList.add(new Item(md.getType().getName(), md.getValue(), true));
-//	   } else if (valueList.isEmpty() && md.getValue() == null) {
-//		   valueList.add(new Item(md.getType().getName(),"",true));
-//	   }
-//	   return valueList;
-//   }
    
    public List<SelectItem> getItems() {
 	   items = new ArrayList<SelectItem>();

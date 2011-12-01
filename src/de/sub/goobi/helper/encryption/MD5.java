@@ -65,7 +65,6 @@ public class MD5 {
          md = MessageDigest.getInstance("MD5"); // getting a 'MD5-Instance'
          encryptMsg = md.digest(text.getBytes()); // solving the MD5-Hash
       } catch (NoSuchAlgorithmException e) {
-         System.out.println("No Such Algorithm Exception!");
       }
 
       String swap = ""; // swap-string for the result

@@ -63,20 +63,15 @@ public class DesEncrypter {
 
 	/* =============================================================== */
 	public String encrypt(String str) {
-		// System.out.println("encrypt 1");
 		if (str == null)
 			str = "";
-		// System.out.println("encrypt 2: " + str);
 		try {
 			// Encode the string into bytes using utf-8
 			byte[] utf8 = str.getBytes("UTF8");
-			// System.out.println("encrypt 3: " + utf8.toString());
-			// System.out.println("encrypt 3,5: " + ecipher);
 			if (ecipher == null)
 				Initialise(pass);
 			// Encrypt
 			byte[] enc = ecipher.doFinal(utf8);
-			// System.out.println("encrypt 4: " + enc.toString());
 			// Encode bytes to base64 to get a string
 			return new String(Base64.encodeBase64(enc));
 		} catch (BadPaddingException e) {

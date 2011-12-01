@@ -28,11 +28,11 @@
 				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
 				<h:form id="myform">
 					<%-- Breadcrumb --%>
-					<h:panelGrid columns="1" styleClass="layoutInhaltKopf">
-						<h:panelGroup>
-							<h:commandLink value="#{msgs.startseite}" action="newMain" />
+					<h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
+						<h:panelGroup id="id1">
+							<h:commandLink id="id2" value="#{msgs.startseite}" action="newMain" />
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
-							<h:outputText value="#{msgs.administrationsaufgaben}" />
+							<h:outputText id="id3" value="#{msgs.administrationsaufgaben}" />
 						</h:panelGroup>
 					</h:panelGrid>
 
@@ -40,11 +40,11 @@
 						<htm:tr>
 							<htm:td>
 								<htm:h3>
-									<h:outputText value="#{msgs.administrationsaufgaben}" />
+									<h:outputText id="id4" value="#{msgs.administrationsaufgaben}" />
 								</htm:h3>
 
 								<%-- globale Warn- und Fehlermeldungen --%>
-								<h:messages globalOnly="true" errorClass="text_red"
+								<h:messages id="id5" globalOnly="true" errorClass="text_red"
 									infoClass="text_blue" showDetail="true" showSummary="true"
 									tooltip="true" layout="table"
 									style="margin-bottom:15px;display:block" />
@@ -54,7 +54,7 @@
 									styleClass="eingabeBoxen">
 									<htm:tr>
 										<htm:td styleClass="eingabeBoxen_row1">
-											<h:outputText value="#{msgs.administrationsaufgaben}" />
+											<h:outputText id="id6" value="#{msgs.administrationsaufgaben}" />
 										</htm:td>
 									</htm:tr>
 									<htm:tr>
@@ -64,8 +64,8 @@
 											<h:panelGroup
 												rendered="#{not AdministrationForm.istPasswortRichtig && (LoginForm.maximaleBerechtigung == 1)}">
 												<h:panelGrid id="panel1" columns="2">
-													<h:outputText value="Passwort" />
-													<h:panelGroup>
+													<h:outputText id="id7" value="Passwort" />
+													<h:panelGroup id="id8">
 														<h:inputSecret id="pw"
 															value="#{AdministrationForm.passwort}" />
 														<h:message id="mess1" for="pw" style="color: red" />
@@ -79,31 +79,31 @@
 											<h:panelGroup
 												rendered="#{AdministrationForm.istPasswortRichtig && (LoginForm.maximaleBerechtigung == 1)}">
 
-												<h:commandLink value="Prozesse durchlaufen" rendered="false"
+												<h:commandLink id="id9" value="Prozesse durchlaufen" rendered="false"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.ProzesseDurchlaufen}" />
 												<htm:br />
 
 												<%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke --%>
-												<h:panelGroup>
+												<h:panelGroup id="id10">
 													<jd:hideableController for="bitteAusloggen"
 														title="#{msgs.benutzerZumAusloggenAuffordern}">
 														<h:outputText
 															value="#{msgs.benutzerZumAusloggenAuffordern}" />
 													</jd:hideableController>
 													<jd:hideableArea id="bitteAusloggen" saveState="view">
-														<h:panelGrid columns="2" style="margin-left:40px;"
+														<h:panelGrid id="id11" columns="2" style="margin-left:40px;"
 															rowClasses="top"
 															columnClasses="standardTable_Column,standardTable_ColumnRight">
-															<h:outputText value="#{msgs.bemerkung}" />
-															<h:inputTextarea style="width:350px;height:80px"
+															<h:outputText id="id12" value="#{msgs.bemerkung}" />
+															<h:inputTextarea id="id13" style="width:350px;height:80px"
 																value="#{SessionForm.bitteAusloggen}" />
 
-															<h:outputText value="" />
-															<h:commandLink action="#{NavigationForm.Reload}"
+															<h:outputText id="id14" value="" />
+															<h:commandLink id="id15" action="#{NavigationForm.Reload}"
 																title="#{msgs.uebernehmen}"
 																onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-																<h:outputText value="#{msgs.uebernehmen}" />
+																<h:outputText id="id16" value="#{msgs.uebernehmen}" />
 															</h:commandLink>
 														</h:panelGrid>
 													</jd:hideableArea>
@@ -117,8 +117,14 @@
 													immediate="true"
 													onclick="changeToText()"
 													oncomplete="changeToLink()" >
-													<h:outputText value="Run complete history analyser job now" />
+													<h:outputText id="id17" value="Run complete history analyser job now" />
 												</a4j:commandLink>
+												<htm:br />
+												<h:commandLink id="adminid23"
+													value="Lucene Index neu erzeugen"
+													onclick="if (!confirm('#{msgs.sicher}?')) return"
+													action="#{AdministrationForm.createIndex}" />
+												<htm:br />
 												
 												
 												<x:outputText id="rendertext" forceId="true" value="Run complete history analyser job now" style="display:none"/>
@@ -127,7 +133,7 @@
 												
 												<h:commandLink
 													action="#{AdministrationForm.restartStorageCalculationScheduler}">
-													<h:outputText value="Restart automatic job manager" />
+													<h:outputText id="id18" value="Restart automatic job manager" />
 												</h:commandLink>
 												<htm:br />
 												<htm:br />
@@ -139,63 +145,63 @@
 												<%-- 
 												<h:commandLink
 													action="#{AdministrationForm.startStorageCalculationForAllProcessesNow}">
-													<h:outputText value="storage calculator now" />
+													<h:outputText id="id19" value="storage calculator now" />
 												</h:commandLink>
 												<htm:br />
  												 --%>
 												<%-- 
 												<h:commandLink
 													action="#{AdministrationForm.OlmsOnlineBaendeAnlegen}">
-													<h:outputText value="Olms Online - Baende anlegen" />
+													<h:outputText id="id20" value="Olms Online - Baende anlegen" />
 												</h:commandLink>
 												<htm:br />
 												 --%>
 
-												<h:commandLink action="#{NavigationForm.Reload}"
+												<h:commandLink id="id21" action="#{NavigationForm.Reload}"
 													title="#{AdministrationForm.rusFullExport}">
 													<x:updateActionListener
 														value="#{AdministrationForm.rusFullExport?false:true}"
 														property="#{AdministrationForm.rusFullExport}" />
 													<h:outputText
 														value="#{msgs.russischeMetadatenExportieren}: " />
-													<h:outputText value="#{AdministrationForm.rusFullExport}" />
+													<h:outputText id="id22" value="#{AdministrationForm.rusFullExport}" />
 												</h:commandLink>
 												<htm:br />
 												<%-- 
 												<htm:br />
-												<h:commandLink value="Groovy Test"
+												<h:commandLink id="id23" value="Groovy Test"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.GroovyTest}" />
 												<htm:br />
 												--%>
-												<h:commandLink value="Sici korrigieren" rendered="false"
+												<h:commandLink id="id24" value="Sici korrigieren" rendered="false"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.SiciKorr}" />
 												<htm:br />
 
-												<h:commandLink value="ProzesseDatumSetzen" rendered="true"
+												<h:commandLink id="id25" value="ProzesseDatumSetzen" rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.ProzesseDatumSetzen}" />
 												<htm:br />
 
-												<h:commandLink value="RusDmlBaendeTiffPruefen"
+												<h:commandLink id="id26" value="RusDmlBaendeTiffPruefen"
 													rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.RusDmlBaendeTiffPruefen}" />
 												<htm:br />
 
-												<h:commandLink value="Imagepfad korrigieren" rendered="true"
+												<h:commandLink id="id27" value="Imagepfad korrigieren" rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.ImagepfadKorrigieren}" />
 												<htm:br />
 
-												<h:commandLink value="MesskatalogeOrigOrdner erstellen"
+												<h:commandLink id="id28" value="MesskatalogeOrigOrdner erstellen"
 													rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.MesskatalogeOrigOrdnerErstellen}" />
 												<htm:br />
 
-												<h:commandLink value="PPNs korrigieren" rendered="true"
+												<h:commandLink id="id29" value="PPNs korrigieren" rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.PPNsKorrigieren}" />
 												<htm:br />
@@ -214,17 +220,17 @@
 													action="#{AdministrationForm.PPNsFuerStatistischesJahrbuchKorrigieren2}" />
 												<htm:br />
 
-												<h:commandLink value="Anzahlen ermitteln" rendered="false"
+												<h:commandLink id="id30" value="Anzahlen ermitteln" rendered="true"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.AnzahlenErmitteln}" />
 												<htm:br />
 
-												<h:commandLink value="LDAP testen" rendered="false"
+												<h:commandLink id="id31" value="LDAP testen" rendered="false"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.LDAPtest}" />
 												<htm:br />
 
-												<h:commandLink value="Regelsatz festlegen" rendered="false"
+												<h:commandLink id="id32" value="Regelsatz festlegen" rendered="false"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.StandardRegelsatzSetzen}" />
 												<htm:br />
@@ -232,13 +238,13 @@
 
 												<%-- Classloader-Plugin --%>
 												<%-- 
-												<h:outputLabel for="plugins" value="#{msgs.Plugins}" />
+												<h:outputLabel id="id33" for="plugins" value="#{msgs.Plugins}" />
 												<h:selectOneMenu id="plugins"
 													value="#{AdministrationForm.myPlugin}">
-													<si:selectItems value="#{AdministrationForm.myPluginList}"
+													<si:selectItems id="id34" value="#{AdministrationForm.myPluginList}"
 														var="step" itemLabel="#{step}" itemValue="#{step}" />
 												</h:selectOneMenu>
-												<h:commandLink value="Plugin ausführen"
+												<h:commandLink id="id35" value="Plugin ausführen"
 													onclick="if (!confirm('#{msgs.sicher}?')) return"
 													action="#{AdministrationForm.startPlugin}" />
 

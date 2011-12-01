@@ -93,7 +93,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
       setStatusProgress(50);
       try {
         setStatusMessage("copying process folder");
-        help.copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
+        Helper.copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
       } catch (IOException e) {
     	  logger.warn("IOException:", e);
          setStatusMessage("IOException in copyDirectory: " + e.getMessage());
@@ -102,7 +102,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
       }
       setStatusProgress(80);
       /* delete all in ProcessDataDirectory */
-      help.deleteInDir(new File(fileIn.getAbsolutePath()));
+      Helper.deleteInDir(new File(fileIn.getAbsolutePath()));
 
       /* ---------------------
        * xml-Datei schreiben

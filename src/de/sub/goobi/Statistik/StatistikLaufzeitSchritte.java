@@ -37,10 +37,8 @@ public class StatistikLaufzeitSchritte {
 			Date datoDifference = new Date(difference);
 			Calendar differenz = Calendar.getInstance();
 			differenz.setTime(datoDifference);
-			//			int summe = differenz.get(Calendar.HOUR_OF_DAY);
-			//			summe += (differenz.get(Calendar.DAY_OF_YEAR) -1) * 24;
+			
 			int summe = differenz.get(Calendar.DAY_OF_YEAR);
-			//			System.out.println("Gesamt: " + summe);
 			return summe;
 		} else
 			return 1;

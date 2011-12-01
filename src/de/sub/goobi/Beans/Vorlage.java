@@ -6,12 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Vorlage implements Serializable {
+import org.goobi.production.api.property.xmlbasedprovider.Status;
+
+import de.sub.goobi.Beans.Property.DisplayPropertyList;
+import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.Beans.Property.IGoobiProperty;
+
+public class Vorlage implements Serializable, IGoobiEntity {
    private static final long serialVersionUID = 1736135433162833277L;
    private Integer id;
    private String herkunft;
    private Prozess prozess;
    private Set<Vorlageeigenschaft> eigenschaften;
+	private DisplayPropertyList displayProperties;
 
    private boolean panelAusgeklappt = true;
 
@@ -89,4 +96,39 @@ public class Vorlage implements Serializable {
          return new ArrayList<Vorlageeigenschaft>();
       return new ArrayList<Vorlageeigenschaft>(eigenschaften);
    }
+   
+	public Status getStatus() {
+		return Status.getResourceStatusFromEntity(this);
+	}
+	
+	public List<IGoobiProperty> getProperties() {
+		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
+		returnlist.addAll(getEigenschaftenList());
+		return returnlist;
+	}	
+	public void addProperty(IGoobiProperty toAdd) {
+		eigenschaften.add((Vorlageeigenschaft) toAdd);
+	}
+	
+	
+	public void removeProperty(IGoobiProperty toRemove) {
+		getEigenschaften().remove(toRemove);
+		toRemove.setOwningEntity(null);
+		
+	}
+	
+	/**
+	 * 
+	 * @return instance of {@link DisplayPropertyList}
+	 */
+	public DisplayPropertyList getDisplayProperties() {
+		if (displayProperties == null) {
+			displayProperties = new DisplayPropertyList(this);
+		}
+		return displayProperties;
+	}
+	
+	public void refreshProperties() {
+		displayProperties = null;
+	}
 }

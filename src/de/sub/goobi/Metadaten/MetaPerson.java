@@ -66,20 +66,32 @@ public class MetaPerson {
    
 
    public String getVorname() {
+	   if (p.getFirstname()==null) {
+		   return "";
+	   }
       return p.getFirstname();
    }
 
    public void setVorname(String inVorname) {
+	   if (inVorname == null) {
+		   inVorname = "";
+	   }
       p.setFirstname(inVorname);
    }
 
    
 
    public String getNachname() {
+	   if (p.getLastname()==null) {
+		   return "";
+	   }
       return p.getLastname();
    }
 
    public void setNachname(String inNachname) {
+	   if (inNachname == null) {
+		   inNachname = "";
+	   }
       p.setLastname(inNachname);
    }
 

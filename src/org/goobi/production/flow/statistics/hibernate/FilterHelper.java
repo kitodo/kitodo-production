@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
+import org.goobi.production.flow.IlikeExpression;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -86,6 +87,7 @@ class FilterHelper {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void limitToUserAssignedSteps(Conjunction con,
 			Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
 		/* show only open Steps or those in use by current user */
@@ -479,6 +481,7 @@ class FilterHelper {
 		// to set flags which are subsequently used
 		Boolean flagSteps = false;
 		Boolean flagProcesses = false;
+		@SuppressWarnings("unused")
 		Boolean flagSetCritProjects = false;
 
 		if (crit.getClassName() == Prozess.class.getName()) {
@@ -491,6 +494,7 @@ class FilterHelper {
 
 		// keeping a reference to the passed criteria
 		Criteria inCrit = crit;
+		@SuppressWarnings("unused")
 		Criteria critProject = null;
 		Criteria critProcess = null;
 
@@ -644,6 +648,7 @@ class FilterHelper {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
+				
 				conjProcesses.add(Restrictions.not(Restrictions.like("titel",
 						"%" + tok.substring(1) + "%")));
 
@@ -653,7 +658,8 @@ class FilterHelper {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
-				conjProcesses.add(Restrictions.like("titel", "%" + tok + "%"));
+				
+				conjProcesses.add(IlikeExpression.ilike("titel", "*" + tok + "*", '!'));
 			}
 		}
 
@@ -797,7 +803,7 @@ class FilterHelper {
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e);
 				message = "filterpart '"
 						+ filterPart.substring(filterPartTitleLength)
 						+ "' in '" + filterPart + "' caused an error\n";

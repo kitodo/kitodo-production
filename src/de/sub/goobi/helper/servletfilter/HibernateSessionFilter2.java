@@ -25,6 +25,7 @@ public class HibernateSessionFilter2 implements Filter {
 
 	/*===============================================================*/
 
+	@SuppressWarnings("deprecation")
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		//      long startzeit = System.currentTimeMillis();
 		HttpServletRequest myRequest = (HttpServletRequest) request;

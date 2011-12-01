@@ -2,12 +2,16 @@ package de.sub.goobi.Beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.goobi.production.flow.statistics.StepInformation;
+
+import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 
-//TODO Serialize this as XML to be able to copy the settings.
 
 public class Projekt implements Serializable {
 	private static final long serialVersionUID = -8543713331407761617L;
@@ -41,6 +45,12 @@ public class Projekt implements Serializable {
 	private String metsPurl = "";
 	private String metsContentIDs = "";
 
+	private List<StepInformation> commonWorkFlow = null;
+	private Date startDate;
+	private Date endDate;
+	private Integer numberOfPages;
+	private Integer numberOfVolumes;
+	
 	public Projekt() {
 		prozesse = new HashSet<Prozess>();
 		benutzer = new HashSet<Benutzer>();
@@ -301,4 +311,108 @@ public class Projekt implements Serializable {
 		this.fileFormatDmsExport = fileFormatDmsExport;
 	}
 
+	/**
+	 * 
+	 * @return a list with informations for each step on workflow
+	 */
+	
+	public List<StepInformation> getWorkFlow () {
+		if (this.commonWorkFlow == null) {
+			if (this.id != null) {
+				this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(this);
+			} else {
+				this.commonWorkFlow = new ArrayList<StepInformation>();
+			}
+		}
+		return this.commonWorkFlow;
+	}
+	
+	/**
+	 * 
+	 * @return number of volumes for this project
+	 */
+	
+	public Integer getNumberOfVolumes() {
+		if (numberOfVolumes == null) {
+			numberOfVolumes = 0;
+		}
+		return numberOfVolumes;
+	}
+
+	/**
+	 * 
+	 * @param numberOfVolumes for this project
+	 */
+	
+	public void setNumberOfVolumes(Integer numberOfVolumes) {
+		this.numberOfVolumes = numberOfVolumes;
+	}
+
+
+	/*************************************************************************************
+	 * Getter for NumberOfPages
+	 * 
+	 * @return the NumberOfPages
+	 *************************************************************************************/
+	public Integer getNumberOfPages() {
+		if (numberOfPages == null) {
+			numberOfPages = 0;
+		}
+		return numberOfPages;
+	}
+
+	/**************************************************************************************
+	 * Setter for NumberOfPages
+	 * 
+	 * @param NumberOfPages
+	 *            the NumberOfPages to set
+	 **************************************************************************************/
+	public void setNumberOfPages(Integer numberOfPages) {
+		this.numberOfPages = numberOfPages;
+	}
+
+
+	/*************************************************************************************
+	 * Getter for StartDate
+	 * 
+	 * @return the StartDate
+	 *************************************************************************************/
+	public Date getStartDate() {
+		if (startDate == null){
+			startDate = new Date();
+		}
+		return startDate;
+	}
+
+	/**************************************************************************************
+	 * Setter for StartDate
+	 * 
+	 * @param StartDate
+	 *            the StartDate to set
+	 **************************************************************************************/
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	/*************************************************************************************
+	 * Getter for EndDate
+	 * 
+	 * @return the EndDate
+	 *************************************************************************************/
+	public Date getEndDate() {
+		if (endDate == null){
+			endDate= new Date();
+		}
+		return endDate;
+	}
+
+	/**************************************************************************************
+	 * Setter for EndDate
+	 * 
+	 * @param EndDate
+	 *            the EndDate to set
+	 **************************************************************************************/
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 }

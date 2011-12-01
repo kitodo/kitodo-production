@@ -1,7 +1,4 @@
 package de.sub.goobi.config;
-//TODO: Move this into the GetOPAC Package
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -17,7 +15,6 @@ import org.jdom.output.DOMOutputter;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
-//TODO: This should probably extend the GetOPAC Catalogue class
 public class ConfigOpacCatalogue {
    private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
    private String title = "";
@@ -26,6 +23,7 @@ public class ConfigOpacCatalogue {
    private String database = "";
    private String iktlist = "";
    private int port = 80;
+   private String cbs;
    private String charset = "iso-8859-1";
    private ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
 
@@ -44,10 +42,11 @@ public class ConfigOpacCatalogue {
    
    //Constructor that also takes a charset, a quick hack for DPD-81
    public ConfigOpacCatalogue(String title, String desciption, String address, String database,
-	         String iktlist, int port, String charset, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList) {
+	         String iktlist, int port, String charset, String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList) {
 	      //Call the contructor above
 	   	  this(title, desciption, address, database, iktlist, port,  inBeautifySetList);
 	      this.charset = charset;
+	      this.setCbs(cbs);
 	   }
    
 
@@ -183,5 +182,21 @@ public class ConfigOpacCatalogue {
       }
 
    }
+
+
+/**
+ * @param cbs the cbs to set
+ */
+public void setCbs(String cbs) {
+	this.cbs = cbs;
+}
+
+
+/**
+ * @return the cbs
+ */
+public String getCbs() {
+	return cbs;
+}
 
 }

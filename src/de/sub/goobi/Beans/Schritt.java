@@ -1,6 +1,7 @@
 package de.sub.goobi.Beans;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,11 +9,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.goobi.production.api.property.xmlbasedprovider.Status;
+
+import de.sub.goobi.Beans.Property.DisplayPropertyList;
+import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 
-public class Schritt implements Serializable {
+public class Schritt implements Serializable, IGoobiEntity {
 	private static final long serialVersionUID = 6831844584239811846L;
 	private Integer id;
 	private String titel;
@@ -57,9 +63,12 @@ public class Schritt implements Serializable {
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
+	private DisplayPropertyList displayProperties;
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+
 	
 	public Schritt() {
-		titel = "- kein Titel -";
+		titel = "";
 		eigenschaften = new HashSet<Schritteigenschaft>();
 		benutzer = new HashSet<Benutzer>();
 		benutzergruppen = new HashSet<Benutzergruppe>();
@@ -88,8 +97,22 @@ public class Schritt implements Serializable {
 		this.bearbeitungsbeginn = bearbeitungsbeginn;
 	}
 
+	public String getStartDate() {
+		if (bearbeitungsbeginn != null) {
+			return formatter.format(bearbeitungsbeginn);
+		}
+		return "";
+	}
+	
 	public Date getBearbeitungsende() {
 		return bearbeitungsende;
+	}
+	
+	public String getEndDate() {
+		if (bearbeitungsende != null) {
+			return formatter.format(bearbeitungsende);
+		}
+		return "";
 	}
 
 	public String getBearbeitungsendeAsFormattedString() {
@@ -259,6 +282,10 @@ public class Schritt implements Serializable {
 
 	public String getTitel() {
 		return titel;
+	}
+	
+	public String getNormalizedTitle() {
+		return titel.replace(" ", "_");
 	}
 
 	public void setTitel(String titel) {
@@ -496,7 +523,6 @@ public class Schritt implements Serializable {
 		if (bearbeitungsbenutzer != null && bearbeitungsbenutzer.getId() != null
 				&& bearbeitungsbenutzer.getId().intValue() != 0)
 			rueckgabe += " (" + bearbeitungsbenutzer.getNachVorname() + ")";
-		//      System.out.println(rueckgabe);
 		return rueckgabe;
 	}
 
@@ -623,19 +649,19 @@ public class Schritt implements Serializable {
 	
 	public HashMap<String, String> getAllScripts(){
 		HashMap<String,String> answer = new HashMap<String, String>();
-		if (typAutomatischScriptpfad != null) {
+		if (typAutomatischScriptpfad != null && !typAutomatischScriptpfad.equals("")) {
 			answer.put(scriptname1, typAutomatischScriptpfad);
 		}
-		if (typAutomatischScriptpfad2 != null) {
+		if (typAutomatischScriptpfad2 != null && !typAutomatischScriptpfad2.equals("")) {
 			answer.put(scriptname2, typAutomatischScriptpfad2);
 		}
-		if (typAutomatischScriptpfad3 != null) {
+		if (typAutomatischScriptpfad3 != null && !typAutomatischScriptpfad3.equals("")) {
 			answer.put(scriptname3, typAutomatischScriptpfad3);
 		}
-		if (typAutomatischScriptpfad4 != null) {
+		if (typAutomatischScriptpfad4 != null && !typAutomatischScriptpfad4.equals("")) {
 			answer.put(scriptname4, typAutomatischScriptpfad4);
 		}
-		if (typAutomatischScriptpfad5 != null) {
+		if (typAutomatischScriptpfad5 != null && !typAutomatischScriptpfad5.equals("")) {
 			answer.put(scriptname5, typAutomatischScriptpfad5);
 		}		
 		return answer;
@@ -690,5 +716,40 @@ public class Schritt implements Serializable {
 		return answer;
 		
 	}
+	public Status getStatus() {
+		return Status.getStepStatus(this);
+	}
 	
+	public List<IGoobiProperty> getProperties() {
+		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
+		returnlist.addAll(getEigenschaftenList());
+		return returnlist;
+	}
+	public void addProperty(IGoobiProperty toAdd) {
+		eigenschaften.add((Schritteigenschaft) toAdd);
+	}
+	
+	
+	public void removeProperty(IGoobiProperty toRemove) {
+		getEigenschaften().remove(toRemove);
+		toRemove.setOwningEntity(null);
+		
+	}
+	
+	/**
+	 * 
+	 * @return instance of {@link DisplayPropertyList}
+	 */
+	public DisplayPropertyList getDisplayProperties() {
+		if (displayProperties == null) {
+			displayProperties = new DisplayPropertyList(this);
+		}
+		return displayProperties;
+	}
+	
+	public void refreshProperties() {
+		displayProperties = null;
+		getDisplayProperties();
+		
+	}
 }

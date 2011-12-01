@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.ScrollableResults;
 
 import de.sub.goobi.Forms.LoginForm;
 
@@ -22,6 +21,7 @@ import de.sub.goobi.Forms.LoginForm;
  * @author Gavin King
  * @author Eric Broyles
  */
+@SuppressWarnings("unchecked")
 public class Page implements Serializable { //implements Iterator
 	private static final long serialVersionUID = -290320409344472392L;
 	//TODO: Use generics
@@ -109,7 +109,7 @@ public class Page implements Serializable { //implements Iterator
 			 */
 			//			results = criteria.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
 		} catch (HibernateException e) {
-			logger.error("Failed to get paginated results: " + e.getMessage());
+			logger.error("Failed to get paginated results: " + e);
 		}
 	}
 

@@ -101,7 +101,7 @@ public class ImportRussland {
       /* --------------------------------
        * alle Zeilen durchlaufen
        * --------------------------------*/
-      List listeDaten = new ArrayList();
+      List<String> listeDaten = new ArrayList<String>();
       while ((line = reader.readLine()) != null) {
          //         myLogger.info(line);
          if (line.length() == 0) {
@@ -110,7 +110,7 @@ public class ImportRussland {
              * Daten aus der gesammelten Liste ausgewertet werden */
             AbsatzAuswerten(listeDaten);
             /* Liste wieder zurücksetzen */
-            listeDaten = new ArrayList();
+            listeDaten = new ArrayList<String>();
 
          } else if (!line.substring(0, 1).equals("+")) {
             /* wenn zeile kein Kommentar ist, Zeile in Liste für Auswertung übernehmen */
@@ -128,7 +128,7 @@ public class ImportRussland {
 
    
 
-   private void AbsatzAuswerten(List inListe) throws ugh.exceptions.MetadataTypeNotAllowedException,
+   private void AbsatzAuswerten(List<String> inListe) throws ugh.exceptions.MetadataTypeNotAllowedException,
          WrongImportFileException {
       if (inListe.size() == 0)
          return;
@@ -149,9 +149,9 @@ public class ImportRussland {
 
    
 
-   private void ZeitschriftDetails(List inListe) throws MetadataTypeNotAllowedException {
+   private void ZeitschriftDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       /* zunächst alle Details durchlaufen und der Zeitschrift hinzufügenl  */
-      for (Iterator iter = inListe.iterator(); iter.hasNext();) {
+      for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
          String meineDetailNr = meinDetail.substring(0, 3);
          //			myLogger.debug("---- " + meinDetail);
@@ -177,11 +177,11 @@ public class ImportRussland {
 
    
 
-   private void BandDetails(List inListe) throws MetadataTypeNotAllowedException {
+   private void BandDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       DocStruct ds = logicalTopstruct.getAllChildren().get(0);
       //      myLogger.info(ds.getType().getName());
       /* zunächst alle Details durchlaufen und dem Band hinzufügenl  */
-      for (Iterator iter = inListe.iterator(); iter.hasNext();) {
+      for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
          String meineDetailNr = meinDetail.substring(0, 3);
 
@@ -199,14 +199,14 @@ public class ImportRussland {
 
    
 
-   private void ArtikelDetails(List inListe) throws MetadataTypeNotAllowedException, WrongImportFileException {
+   private void ArtikelDetails(List<String> inListe) throws MetadataTypeNotAllowedException, WrongImportFileException {
       boolean artikelGefunden = false;
 
       /* --------------------------------
        * zunächst alle Details durchlaufen und die ZBL-ID des Artikels ermitteln
        * --------------------------------*/
       String zblID = "";
-      for (Iterator iter = inListe.iterator(); iter.hasNext();) {
+      for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
          if (meinDetail.substring(0, 3).equals("090")) {
 //            myLogger.info("ZBL-Identifier ist " + meinDetail.substring(4).trim());
@@ -228,13 +228,13 @@ public class ImportRussland {
       //		myLogger.info(band.getType().getName());
       List<DocStruct> listHefte = band.getAllChildren();
       if (listHefte != null) {
-         for (Iterator iter = listHefte.iterator(); iter.hasNext();) {
+         for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
             DocStruct heft = (DocStruct) iter.next();
             List<DocStruct> listArtikel = heft.getAllChildren();
             if (listArtikel != null) {
 
                /* jetzt alle Artikel durchlaufen, bis der richtige Artikel gefunden wurde */
-               for (Iterator iter1 = listArtikel.iterator(); iter1.hasNext();) {
+               for (Iterator<DocStruct> iter1 = listArtikel.iterator(); iter1.hasNext();) {
                   DocStruct artikel = (DocStruct) iter1.next();
 //                  myLogger.info(artikel.getType().getName());
                   if (artikel.getAllMetadataByType(mdt_id).size() > 0 || artikel.getAllMetadataByType(mdt_tempId).size() > 0) {
@@ -248,7 +248,7 @@ public class ImportRussland {
                         //                     myLogger.info("------------ Artikel gefunden -------------");
                         artikelGefunden = true;
                         /* jetzt alle Details durchlaufen und dem Artikel hinzufügenl  */
-                        for (Iterator iter2 = inListe.iterator(); iter2.hasNext();) {
+                        for (Iterator<String> iter2 = inListe.iterator(); iter2.hasNext();) {
                            String meinDetail = (String) iter2.next();
                            String meineDetailNr = meinDetail.substring(0, 3);
 
@@ -305,8 +305,8 @@ public class ImportRussland {
        * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das gesuchte löschen
        * --------------------------------*/
       if (inStrukturelement.getAllVisibleMetadata() != null) {
-         LinkedList listMetas = new LinkedList(inStrukturelement.getAllMetadata());
-         for (Iterator iter = listMetas.iterator(); iter.hasNext();) {
+         LinkedList<Metadata> listMetas = new LinkedList<Metadata>(inStrukturelement.getAllMetadata());
+         for (Iterator<Metadata> iter = listMetas.iterator(); iter.hasNext();) {
             Metadata meta = (Metadata) iter.next();
             String myMetaName = meta.getType().getName();
 

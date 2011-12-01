@@ -27,7 +27,6 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
-import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -92,8 +91,7 @@ public class ExportMets {
 			SwapException, DAOException, TypeNotAllowedForParentException {
 
 		/*
-		 * -------------------------------- Read Document
-		 * --------------------------------
+		 * -------------------------------- Read Document --------------------------------
 		 */
 		myPrefs = myProzess.getRegelsatz().getPreferences();
 		String atsPpnBand = myProzess.getTitel();
@@ -110,7 +108,7 @@ public class ExportMets {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		writeMetsFile(myProzess, targetFileName, gdzfile);
-		help.setMeldung(null, myProzess.getTitel() + ": ", "Export abgeschlossen");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
 	}
 
 	/**
@@ -125,7 +123,7 @@ public class ExportMets {
 		try {
 			help.createUserDirectory(target, myBenutzer.getLogin());
 		} catch (Exception e) {
-			help.setFehlerMeldung("Export abgebrochen, Das Homeverzeichnis konnte nicht angelegt werden: " + inTargetFolder, e);
+			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
 		return target;
 	}
@@ -145,6 +143,7 @@ public class ExportMets {
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 */
+	@SuppressWarnings("deprecation")
 	protected void writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile) throws PreferencesException, WriteException,
 			IOException, InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 
@@ -152,19 +151,18 @@ public class ExportMets {
 		String imageFolderPath = myProzess.getImagesDirectory();
 		File imageFolder = new File(imageFolderPath);
 		/*
-		 *  before creating mets file, change relative path to absolute -
+		 * before creating mets file, change relative path to absolute -
 		 */
 		DigitalDocument dd = gdzfile.getDigitalDocument();
 		if (dd.getFileSet() == null) {
-			help.setMeldung(myProzess.getTitel() + ": digital document does not contain images; temporarily adding them for mets file creation");
+			Helper.setMeldung(myProzess.getTitel() + ": digital document does not contain images; temporarily adding them for mets file creation");
 
 			MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
 			mih.createPagination(myProzess);
 		}
 
 		/*
-		 *  get the topstruct element of the digital document depending on anchor property
-		 * 
+		 * get the topstruct element of the digital document depending on anchor property
 		 */
 		DocStruct topElement = dd.getLogicalDocStruct();
 		if (myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
@@ -177,19 +175,17 @@ public class ExportMets {
 		}
 
 		/*
-		 * -------------------------------- 
-		 * if the top element does not have any image related, set them all
-		 *  --------------------------------
+		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
 		 */
 		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
-				help.setMeldung(myProzess.getTitel()
+				Helper.setMeldung(myProzess.getTitel()
 						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
 				for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				help.setMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
+				Helper.setMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
 				dd = null;
 			}
 		}
@@ -210,13 +206,12 @@ public class ExportMets {
 			mm.setDigitalDocument(dd);
 
 			/*
-			 * -------------------------------- wenn Filegroups definiert
-			 * wurden, werden diese jetzt in die Metsstruktur übernommen
+			 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 			 * --------------------------------
 			 */
 			// Replace all pathes with the given VariableReplacer, also the file
 			// group pathes!
-			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), myPrefs);
+			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), myPrefs, myProzess, null);
 			Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
 			if (myFilegroups != null && myFilegroups.size() > 0) {
 				for (ProjectFileGroup pfg : myFilegroups) {
@@ -250,16 +245,15 @@ public class ExportMets {
 			pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
 
-			if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-				ArrayList<String> images = new ArrayList<String>();
-				try {
-					images = new MetadatenImagesHelper(myPrefs, dd).getImageFiles(myProzess);
-					dd.overrideContentFiles(images);
-				} catch (InvalidImagesException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+			ArrayList<String> images = new ArrayList<String>();
+			try {
+				images = new MetadatenImagesHelper(myPrefs, dd).getImageFiles(myProzess);
+				dd.overrideContentFiles(images);
+			} catch (InvalidImagesException e) {
+				myLogger.error(e);
 			}
+			// }
 			mm.write(targetFileName);
 		}
 	}

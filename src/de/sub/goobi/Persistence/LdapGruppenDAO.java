@@ -5,6 +5,7 @@ import java.util.List;
 import de.sub.goobi.Beans.LdapGruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
 
+@SuppressWarnings("serial")
 public class LdapGruppenDAO extends BaseDAO {
 
 	public LdapGruppe save(LdapGruppe t) throws DAOException {
