@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
@@ -112,6 +111,17 @@ public class BatchHelper {
 			return;
 		}
 		this.processProperty.transfer();
+
+		Prozess p = this.currentStep.getProzess();
+		List<Prozesseigenschaft> props = p.getEigenschaftenList();
+		for (Prozesseigenschaft pe : props) {
+			if (pe.getTitel() == null) {
+				p.getEigenschaften().remove(pe);
+			}
+		}
+		if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+			this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+		}
 		try {
 			this.pdao.save(this.currentStep.getProzess());
 			Helper.setMeldung("Properties saved");
@@ -134,29 +144,41 @@ public class BatchHelper {
 		pe.setContainer(this.processProperty.getContainer());
 
 		for (Schritt s : this.steps) {
-
 			Prozess process = s.getProzess();
+			if (!s.equals(this.currentStep)) {
 
-			if (pe.getTitel() != null) {
-				boolean match = false;
+				if (pe.getTitel() != null) {
+					boolean match = false;
 
-				for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
-					if (processPe.getTitel() != null) {
-						if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
-							processPe.setWert(pe.getWert());
-							match = true;
-							break;
+					for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
+						if (processPe.getTitel() != null) {
+							if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+								processPe.setWert(pe.getWert());
+								match = true;
+								break;
+							}
 						}
 					}
+					if (!match) {
+						Prozesseigenschaft p = new Prozesseigenschaft();
+						p.setTitel(pe.getTitel());
+						p.setWert(pe.getWert());
+						p.setContainer(pe.getContainer());
+						p.setType(pe.getType());
+						p.setProzess(process);
+						process.getEigenschaften().add(p);
+					}
 				}
-				if (!match) {
-					Prozesseigenschaft p = new Prozesseigenschaft();
-					p.setTitel(pe.getTitel());
-					p.setWert(pe.getWert());
-					p.setContainer(pe.getContainer());
-					p.setType(pe.getType());
-					p.setProzess(process);
-					process.getEigenschaften().add(p);
+			} else {
+				if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
+					process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+				}
+			}
+
+			List<Prozesseigenschaft> props = process.getEigenschaftenList();
+			for (Prozesseigenschaft peig : props) {
+				if (peig.getTitel() == null) {
+					process.getEigenschaften().remove(peig);
 				}
 			}
 
@@ -168,7 +190,6 @@ public class BatchHelper {
 				Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
 			}
 		}
-
 	}
 
 	private void loadProcessProperties(Schritt s) {
@@ -181,68 +202,68 @@ public class BatchHelper {
 		Collections.sort(this.containers);
 	}
 
-	// TODO validierung nur bei abgeben, nicht bei normalen speichern
-	public void saveProcessProperties() {
-		boolean valid = true;
-		for (IProperty p : this.processPropertyList) {
-			if (!p.isValid()) {
-				Helper.setFehlerMeldung("Property " + p.getName() + " is not valid");
-				valid = false;
-			}
-		}
 
-		if (valid) {
-			List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
-
-			for (ProcessProperty p : this.processPropertyList) {
-				Prozesseigenschaft pe = new Prozesseigenschaft();
-				pe.setTitel(p.getName());
-				pe.setWert(p.getValue());
-				pe.setContainer(p.getContainer());
-				peList.add(pe);
-				p.transfer();
-			}
-
-			for (Schritt s : this.steps) {
-
-				Prozess process = s.getProzess();
-				for (Prozesseigenschaft pe : peList) {
-					if (pe.getTitel() != null) {
-						boolean match = false;
-
-						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
-							if (processPe.getTitel() != null) {
-								if (pe.getTitel().equals(processPe.getTitel())) {
-									processPe.setWert(pe.getWert());
-									match = true;
-									break;
-								}
-							}
-						}
-						if (!match) {
-							Prozesseigenschaft p = new Prozesseigenschaft();
-							p.setTitel(pe.getTitel());
-							p.setWert(pe.getWert());
-							p.setContainer(pe.getContainer());
-							p.setType(pe.getType());
-							p.setProzess(process);
-							process.getEigenschaften().add(p);
-						}
-					}
-
-					try {
-						this.pdao.save(process);
-						Helper.setMeldung("Properties saved");
-					} catch (DAOException e) {
-						logger.error(e);
-						Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
-					}
-				}
-			}
-
-		}
-
-	}
+//	public void saveProcessProperties() {
+//		boolean valid = true;
+//		for (IProperty p : this.processPropertyList) {
+//			if (!p.isValid()) {
+//				Helper.setFehlerMeldung("Property " + p.getName() + " is not valid");
+//				valid = false;
+//			}
+//		}
+//
+//		if (valid) {
+//			List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
+//
+//			for (ProcessProperty p : this.processPropertyList) {
+//				Prozesseigenschaft pe = new Prozesseigenschaft();
+//				pe.setTitel(p.getName());
+//				pe.setWert(p.getValue());
+//				pe.setContainer(p.getContainer());
+//				peList.add(pe);
+//				p.transfer();
+//			}
+//
+//			for (Schritt s : this.steps) {
+//
+//				Prozess process = s.getProzess();
+//				for (Prozesseigenschaft pe : peList) {
+//					if (pe.getTitel() != null) {
+//						boolean match = false;
+//
+//						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
+//							if (processPe.getTitel() != null) {
+//								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+//									processPe.setWert(pe.getWert());
+//									match = true;
+//									break;
+//								}
+//							}
+//						}
+//						if (!match) {
+//							Prozesseigenschaft p = new Prozesseigenschaft();
+//							p.setTitel(pe.getTitel());
+//							p.setWert(pe.getWert());
+//							p.setContainer(pe.getContainer());
+//							p.setType(pe.getType());
+//							p.setProzess(process);
+//							process.getEigenschaften().add(p);
+//						}
+//					}
+//
+//					try {
+//						this.pdao.save(process);
+//						Helper.setMeldung("Properties saved");
+//					} catch (DAOException e) {
+//						logger.error(e);
+//						Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+//					}
+//				}
+//			}
+//
+//		}
+//
+//	}
 
 	// private void saveWithoutValidation() {
 	// List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
@@ -406,7 +427,10 @@ public class BatchHelper {
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
-		saveProcessProperties();
+		for (ProcessProperty pp : this.processPropertyList) {
+			this.processProperty = pp;
+			saveCurrentPropertyForAll();
+		}
 		for (Schritt s : this.steps) {
 
 			if (s.isTypImagesSchreiben()) {

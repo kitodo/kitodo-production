@@ -319,11 +319,11 @@ public class ProcessProperty implements IProperty {
 	 */
 	@Override
 	public void transfer() {
-		if (this.value != null && this.value.length() > 0) {
+//		if (this.value != null && this.value.length() > 0) {
 			this.prozesseigenschaft.setWert(this.value);
 			this.prozesseigenschaft.setTitel(this.name);
 			this.prozesseigenschaft.setContainer(this.container);
-		}
+//		}
 	}
 
 	public List<String> getValueList() {
