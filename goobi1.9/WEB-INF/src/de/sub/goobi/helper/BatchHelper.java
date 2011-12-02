@@ -7,10 +7,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
+import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
@@ -699,4 +701,43 @@ public class BatchHelper {
 		this.mySolutionID = mySolutionID;
 	}
 
+	
+	
+
+	/**
+	 * sets new value for wiki field
+	 * 
+	 * @param inString
+	 */
+	
+	private String addToWikiField = "";
+	
+	public void setWikiField(String inString) {
+		this.currentStep.getProzess().setWikifield(inString);
+	}
+	public String getWikiField() {
+		return this.currentStep.getProzess().getWikifield();
+
+	}
+
+	public String getAddToWikiField() {
+		return this.addToWikiField;
+	}
+
+	public void setAddToWikiField(String addToWikiField) {
+		this.addToWikiField = addToWikiField;
+	}
+
+	public void addToWikiField() {
+		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+		this.currentStep.getProzess().setWikifield(this.currentStep.getProzess().getWikifield() + WikiFieldHelper.getWikiMessage("user", message));
+		this.addToWikiField = "";
+		try {
+			this.pdao.save(this.currentStep.getProzess());
+		} catch (DAOException e) {
+			logger.error(e);
+		}
+	}
+	
 }

@@ -54,9 +54,12 @@
 											<htm:td>
 												<h:selectOneMenu value="#{AktuelleSchritteForm.batchHelper.processName}">
 													<si:selectItems var="process" value="#{AktuelleSchritteForm.batchHelper.processNameList}" itemLabel="#{process}" itemValue="#{process}" />
-													<a4j:support event="onchange" reRender="editBatch,details" />
+											<%-- 		<a4j:support event="onchange" reRender="editBatch,details" />  --%>
 												</h:selectOneMenu>
-
+												<h:commandButton action="#{NavigationForm.Reload}" value="#{msgs.reload}" />
+												
+												
+												
 											</htm:td>
 										</htm:tr>
 									</htm:table>

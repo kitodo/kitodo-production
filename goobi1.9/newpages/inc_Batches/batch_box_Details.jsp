@@ -102,10 +102,46 @@
 
 						</htm:table>
 					</htm:td>
+					
 				</htm:tr>
 
 
 			</htm:table>
 		</htm:td>
+					<htm:td>
+
+						<h:form id="htmleditorform">
+							<h:inputText id="myTextArea" value="#{AktuelleSchritteForm.batchHelper.wikiField}" style="width: 50%" />
+						</h:form>
+
+						<h:form id="addToWikiForm">
+							<h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.batchHelper.addToWikiField}" style="width: 60%" />
+							<h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.batchHelper.addToWikiField}" />
+						</h:form>
+
+					</htm:td>
 	</htm:tr>
 </htm:table>
+
+<script src="../js/tiny_mce/tiny_mce.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+        tinyMCE.init({
+        	mode : "exact",
+        	elements : "htmleditorform:myTextArea",
+        	theme : "advanced",
+        	width : "100%",
+          height : "200",
+          plugins : "safari,pagebreak,style,table,save,advhr,emotions,iespell,inlinepopups,insertdatetime,preview,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking",
+          readonly : 1,
+
+        	// Theme options
+        	theme_advanced_buttons1 : "save,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontsizeselect",
+        	theme_advanced_buttons2 : "",
+        	theme_advanced_buttons3 : "",
+        	theme_advanced_toolbar_location : "top",
+        	theme_advanced_toolbar_align : "left",
+        	theme_advanced_statusbar_location : "bottom",
+        	theme_advanced_resizing : true,
+        });
+        </script>
