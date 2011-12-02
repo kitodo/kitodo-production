@@ -38,7 +38,7 @@
 
 							<htm:tr>
 								<htm:td width="150">
-									<h:outputText value="#{msgs.titel}:" />
+									<h:outputText value="#{msgs.processTitle}:" />
 								</htm:td>
 								<htm:td>
 									<h:outputText value="#{AktuelleSchritteForm.batchHelper.processName}" />

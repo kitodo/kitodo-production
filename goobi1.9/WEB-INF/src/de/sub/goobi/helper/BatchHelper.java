@@ -35,10 +35,11 @@ public class BatchHelper {
 	public BatchHelper(List<Schritt> steps) {
 		this.steps = steps;
 		for (Schritt s : steps) {
-		
+
 			this.processNameList.add(s.getProzess().getTitel());
 		}
 		this.currentStep = steps.get(0);
+		this.processName = this.currentStep.getProzess().getTitel();
 		loadProcessProperties(this.currentStep);
 	}
 
@@ -57,7 +58,7 @@ public class BatchHelper {
 	public void setCurrentStep(Schritt currentStep) {
 		this.currentStep = currentStep;
 	}
-	
+
 	/*
 	 * properties
 	 */
@@ -77,8 +78,7 @@ public class BatchHelper {
 	public List<ProcessProperty> getProcessProperties() {
 		return this.processPropertyList;
 	}
-	
-	
+
 	private List<String> processNameList = new ArrayList<String>();
 
 	public List<String> getProcessNameList() {
@@ -88,8 +88,6 @@ public class BatchHelper {
 	public void setProcessNameList(List<String> processNameList) {
 		this.processNameList = processNameList;
 	}
-
-	
 
 	private String processName = "";
 
@@ -107,10 +105,71 @@ public class BatchHelper {
 			}
 		}
 	}
-	
-	
-	
-	
+
+	public void saveCurrentProperty() {
+		if (!this.processProperty.isValid()) {
+			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+			return;
+		}
+		this.processProperty.transfer();
+		try {
+			this.pdao.save(this.currentStep.getProzess());
+			Helper.setMeldung("Properties saved");
+		} catch (DAOException e) {
+			logger.error(e);
+			Helper.setFehlerMeldung("Properties could not be saved");
+		}
+	}
+
+	public void saveCurrentPropertyForAll() {
+		if (!this.processProperty.isValid()) {
+			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+			return;
+		}
+		this.processProperty.transfer();
+
+		Prozesseigenschaft pe = new Prozesseigenschaft();
+		pe.setTitel(this.processProperty.getName());
+		pe.setWert(this.processProperty.getValue());
+		pe.setContainer(this.processProperty.getContainer());
+
+		for (Schritt s : this.steps) {
+
+			Prozess process = s.getProzess();
+
+			if (pe.getTitel() != null) {
+				boolean match = false;
+
+				for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
+					if (processPe.getTitel() != null) {
+						if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+							processPe.setWert(pe.getWert());
+							match = true;
+							break;
+						}
+					}
+				}
+				if (!match) {
+					Prozesseigenschaft p = new Prozesseigenschaft();
+					p.setTitel(pe.getTitel());
+					p.setWert(pe.getWert());
+					p.setContainer(pe.getContainer());
+					p.setType(pe.getType());
+					p.setProzess(process);
+					process.getEigenschaften().add(p);
+				}
+			}
+
+			try {
+				this.pdao.save(process);
+				Helper.setMeldung("Properties saved");
+			} catch (DAOException e) {
+				logger.error(e);
+				Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+			}
+		}
+
+	}
 
 	private void loadProcessProperties(Schritt s) {
 		this.processPropertyList = PropertyParser.getPropertiesForStep(s);
@@ -396,9 +455,6 @@ public class BatchHelper {
 	 * Error management
 	 */
 
-
-	
-	
 	// public String ReportProblem() {
 	// BatchDisplayItem bdi = this.batch.getCurrentStep();
 	// for (Prozess p : this.batch.getBatchList()) {
@@ -618,6 +674,5 @@ public class BatchHelper {
 	public void setMySolutionID(Integer mySolutionID) {
 		this.mySolutionID = mySolutionID;
 	}
-
 
 }

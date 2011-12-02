@@ -48,12 +48,6 @@
 						<x:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{process_item}" />
 						<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
 					</h:commandLink>
-					<%-- duplicate 
-					<h:commandLink action="#{ProzessverwaltungForm.duplicateProperty}">
-						<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-						<x:updateActionListener value="#{process_item}" property="#{ProzessverwaltungForm.processProperty}" />
-					</h:commandLink>
-					--%>
 				</htm:td>
 			</htm:tr>
 		</x:dataList>

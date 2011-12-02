@@ -301,7 +301,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		// if only one step is asigned for this batch, use the single
 
 		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
-		
+
 		if (currentStepsOfBatch.size() == 1) {
 			return SchrittDurchBenutzerUebernehmen();
 		}
@@ -849,11 +849,11 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void setStep(Schritt step) {
 		this.mySchritt = step;
 	}
-	
+
 	public Schritt getStep() {
 		return this.mySchritt;
 	}
-	
+
 	public String getModusBearbeiten() {
 		return this.modusBearbeiten;
 	}
@@ -1089,10 +1089,10 @@ public class AktuelleSchritteForm extends BasisForm {
 				myLogger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
 			}
-
 		}
-
 	}
+
+	
 
 	private void saveWithoutValidation() {
 		for (IProperty p : this.processPropertyList) {
@@ -1150,17 +1150,17 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
-//		if (this.processProperty.getProzesseigenschaft().getId() != null) {
-			this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
-//			this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
-//		}
-			try {
-				this.pdao.save(this.mySchritt.getProzess());
-			} catch (DAOException e) {
-				myLogger.error(e);
-				Helper.setFehlerMeldung("Properties could not be deleted");
-			}
-//		saveWithoutValidation();
+		// if (this.processProperty.getProzesseigenschaft().getId() != null) {
+		this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
+		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
+		// }
+		try {
+			this.pdao.save(this.mySchritt.getProzess());
+		} catch (DAOException e) {
+			myLogger.error(e);
+			Helper.setFehlerMeldung("Properties could not be deleted");
+		}
+		// saveWithoutValidation();
 		loadProcessProperties();
 	}
 
