@@ -22,14 +22,16 @@
 				<h:outputLabel id="uaid4" for="from" value="#{msgs.zeitraum} #{msgs.from}" style="width:150px" />
 				<h:panelGroup id="uaid5">
 					<x:inputCalendar id="from" style="width:110px" value="#{Form.statisticsManager3.sourceDateFrom}" renderAsPopup="true"
-						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" imageLocation="/newpages/images/calendarImages"
+						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" 
+						styleClass="projekteBearbeiten"
+						imageLocation="/newpages/images/calendarImages"
 						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
 				</h:panelGroup>
 
 				<h:outputLabel id="uaid6" for="to" value="#{msgs.to}" />
 				<h:panelGroup id="uaid7">
 					<x:inputCalendar id="to" style="width:110px" value="#{Form.statisticsManager3.sourceDateTo}" renderAsPopup="true" renderPopupButtonAsImage="true"
-						popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" imageLocation="/newpages/images/calendarImages"
+						popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" imageLocation="/newpages/images/calendarImages" styleClass="projekteBearbeiten"
 						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
 				</h:panelGroup>
 
@@ -115,8 +117,9 @@
 
 			<h:outputText id="uaid34" value="#{element.htmlTableRenderer.rendering}" escape="false"
 				rendered="#{element.dataTable.showableInTable && (Form.statisticsManager3.targetResultOutput== 'table' || Form.statisticsManager3.targetResultOutput=='chartAndTable')}" />
-			
-			<h:commandLink action="#{Form.CreateExcel}" title="#{msgs.createExcel}" rendered="#{element.dataTable.showableInTable && (Form.statisticsManager3.targetResultOutput== 'table' || Form.statisticsManager3.targetResultOutput=='chartAndTable')}">
+
+			<h:commandLink action="#{Form.CreateExcel}" title="#{msgs.createExcel}"
+				rendered="#{element.dataTable.showableInTable && (Form.statisticsManager3.targetResultOutput== 'table' || Form.statisticsManager3.targetResultOutput=='chartAndTable')}">
 				<h:graphicImage value="/newpages/images/buttons/excel20.png" />
 				<h:outputText value="  #{msgs.createExcel}" />
 				<x:updateActionListener value="#{element}" property="#{Form.myCurrentTable}" />

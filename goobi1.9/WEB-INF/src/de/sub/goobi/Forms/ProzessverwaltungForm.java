@@ -1698,6 +1698,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		Collections.sort(this.containers);
 	}
 
+	// TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern
 	public void saveProcessProperties() {
 		boolean valid = true;
 		for (IProperty p : this.processPropertyList) {
@@ -1723,7 +1724,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	}
 
-	public void saveWithoutValidation() {
+	private void saveWithoutValidation() {
 		for (IProperty p : this.processPropertyList) {
 			p.transfer();
 		}
@@ -1779,10 +1780,17 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
-		if (this.processProperty.getProzesseigenschaft().getId() != null) {
-			this.myProzess.removeProperty(this.processProperty.getProzesseigenschaft());
-		}
-		saveWithoutValidation();
+//		if (this.processProperty.getProzesseigenschaft().getId() != null) {
+			this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
+//			this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
+//		}
+			try {
+				this.dao.save(this.myProzess);
+			} catch (DAOException e) {
+				logger.error(e);
+				Helper.setFehlerMeldung("Properties could not be deleted");
+			}
+//		saveWithoutValidation();
 		loadProcessProperties();
 	}
 

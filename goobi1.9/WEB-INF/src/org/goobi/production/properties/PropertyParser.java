@@ -181,7 +181,8 @@ public class PropertyParser {
 		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
 		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-		for (Prozesseigenschaft pe : mySchritt.getProzess().getEigenschaften()) {
+		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList(); 
+		for (Prozesseigenschaft pe : plist) {
 
 			for (ProcessProperty pp : listClone) {
 				// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all

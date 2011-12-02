@@ -22,7 +22,7 @@
 				<h:outputLabel id="uaid4" for="from" value="#{msgs.zeitraum} #{msgs.from}" style="width:150px" />
 				<h:panelGroup id="uaid5">
 					<x:inputCalendar id="from" style="width:110px" value="#{Form.statisticsManager4.sourceDateFrom}" renderAsPopup="true"
-						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}"
+						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" styleClass="projekteBearbeiten"
 						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" imageLocation="/newpages/images/calendarImages" />
 				</h:panelGroup>
 
@@ -30,7 +30,7 @@
 				<h:panelGroup id="uaid7">
 					<x:inputCalendar id="to" style="width:110px" value="#{Form.statisticsManager4.sourceDateTo}" renderAsPopup="true" renderPopupButtonAsImage="true"
 						popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"
-						imageLocation="/newpages/images/calendarImages" />
+						imageLocation="/newpages/images/calendarImages" styleClass="projekteBearbeiten"/>
 				</h:panelGroup>
 
 				<h:outputText id="uaid8" style="font-weight:bold" value=" - #{msgs.orLast} - " />

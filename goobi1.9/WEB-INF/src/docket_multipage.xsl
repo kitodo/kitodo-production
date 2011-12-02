@@ -13,8 +13,11 @@
 			<fo:page-sequence master-reference="A5-landscape">
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block font-family="sans-serif" font-weight="bold" font-size="16pt" margin-top="20pt">
+
+						<xsl:value-of select="goobi:process/goobi:project"></xsl:value-of>
 						TODO Batch-Informationen, vielleicht batchid:Wert als
 						barcode oder so
+
 					</fo:block>
 				</fo:flow>
 			</fo:page-sequence>

@@ -46,13 +46,21 @@
 				<h:outputLabel for="from" value="#{msgs.zeitraum} #{msgs.von}" style="width:150px" />
 				<h:panelGroup>
 					<x:inputCalendar id="from" style="width:110px" value="#{ProzessverwaltungForm.statisticsManager.sourceDateFrom}" renderAsPopup="true"
-						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" />
+						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" 
+						imageLocation="/newpages/images/calendarImages"
+						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" 
+						styleClass="projekteBearbeiten"
+						/>
 				</h:panelGroup>
 
 				<h:outputLabel for="to" value="#{msgs.bis}" />
 				<h:panelGroup>
 					<x:inputCalendar id="to" style="width:110px" value="#{ProzessverwaltungForm.statisticsManager.sourceDateTo}" renderAsPopup="true"
-						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" />
+						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" 
+						imageLocation="/newpages/images/calendarImages"
+						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" 
+						styleClass="projekteBearbeiten"
+						/>
 				</h:panelGroup>
 
 				<h:outputText style="font-weight:bold" value=" - #{msgs.orLast} - " />

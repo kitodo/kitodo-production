@@ -101,7 +101,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private IEvaluableFilter myFilteredDataSource;
 	private String scriptPath;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private String addToWikiField;
+	private String addToWikiField = "";
 	private static String DONEDIRECTORYNAME = "fertig/";
 	private ProzessDAO pdao;
 	private Boolean flagWait = false;
@@ -1150,10 +1150,17 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
-		if (this.processProperty.getProzesseigenschaft().getId() != null) {
-			this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
-		}
-		saveWithoutValidation();
+//		if (this.processProperty.getProzesseigenschaft().getId() != null) {
+			this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
+//			this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
+//		}
+			try {
+				this.pdao.save(this.mySchritt.getProzess());
+			} catch (DAOException e) {
+				myLogger.error(e);
+				Helper.setFehlerMeldung("Properties could not be deleted");
+			}
+//		saveWithoutValidation();
 		loadProcessProperties();
 	}
 

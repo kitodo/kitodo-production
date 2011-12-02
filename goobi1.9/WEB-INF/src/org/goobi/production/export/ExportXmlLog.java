@@ -158,8 +158,11 @@ public class ExportXmlLog implements IProcessDataExport {
 		processElements.add(comment);
 
 		// Batch b = process.getBatch();
-		// if (b != null) {
-		// Element batch = new Element("batch", xmlns);
+		if (process.getBatchID() != null) {
+			Element batch = new Element("batch", xmlns);
+			batch.setText(String.valueOf(process.getBatchID()));
+			processElements.add(batch);
+		}
 		// batch.setAttribute("batchIdentifier", String.valueOf(b.getId()));
 		// batch.setAttribute("batchTitle", b.getTitle());
 		//
@@ -458,8 +461,8 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-//			 FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
-//			 outp.output(answer, fos);
+			// FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
+			// outp.output(answer, fos);
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 

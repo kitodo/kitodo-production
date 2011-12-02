@@ -166,7 +166,7 @@
 				onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')" >
 				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>
-			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveWithoutValidation}">
+			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveProcessProperties}">
 				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>
 		</htm:td>

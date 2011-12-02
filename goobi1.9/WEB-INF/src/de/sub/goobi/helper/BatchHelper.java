@@ -33,7 +33,11 @@ public class BatchHelper {
 	private Schritt currentStep;
 
 	public BatchHelper(List<Schritt> steps) {
-		this.setSteps(steps);
+		this.steps = steps;
+		for (Schritt s : steps) {
+		
+			this.processNameList.add(s.getProzess().getTitel());
+		}
 		this.currentStep = steps.get(0);
 		loadProcessProperties(this.currentStep);
 	}
@@ -50,6 +54,10 @@ public class BatchHelper {
 		return this.currentStep;
 	}
 
+	public void setCurrentStep(Schritt currentStep) {
+		this.currentStep = currentStep;
+	}
+	
 	/*
 	 * properties
 	 */
@@ -69,6 +77,40 @@ public class BatchHelper {
 	public List<ProcessProperty> getProcessProperties() {
 		return this.processPropertyList;
 	}
+	
+	
+	private List<String> processNameList = new ArrayList<String>();
+
+	public List<String> getProcessNameList() {
+		return this.processNameList;
+	}
+
+	public void setProcessNameList(List<String> processNameList) {
+		this.processNameList = processNameList;
+	}
+
+	
+
+	private String processName = "";
+
+	public String getProcessName() {
+		return this.processName;
+	}
+
+	public void setProcessName(String processName) {
+		this.processName = processName;
+		for (Schritt s : this.steps) {
+			if (s.getProzess().getTitel().equals(processName)) {
+				this.currentStep = s;
+				loadProcessProperties(this.currentStep);
+				break;
+			}
+		}
+	}
+	
+	
+	
+	
 
 	private void loadProcessProperties(Schritt s) {
 		this.processPropertyList = PropertyParser.getPropertiesForStep(s);
@@ -89,12 +131,10 @@ public class BatchHelper {
 				valid = false;
 			}
 		}
-		
 
 		if (valid) {
 			List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
 
-			
 			for (ProcessProperty p : this.processPropertyList) {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setTitel(p.getName());
@@ -133,6 +173,7 @@ public class BatchHelper {
 
 					try {
 						this.pdao.save(process);
+						Helper.setMeldung("Properties saved");
 					} catch (DAOException e) {
 						logger.error(e);
 						Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
@@ -144,43 +185,43 @@ public class BatchHelper {
 
 	}
 
-//	private void saveWithoutValidation() {
-//		List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
-//		for (ProcessProperty p : this.processPropertyList) {
-//			p.transfer();
-//			peList.add(p.getProzesseigenschaft());
-//		}
-//
-//		for (Schritt s : this.steps) {
-//			Prozess process = s.getProzess();
-//			for (Prozesseigenschaft pe : peList) {
-//				boolean match = false;
-//				for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
-//					if (pe.getTitel().equals(processPe.getTitel())) {
-//						processPe.setWert(pe.getWert());
-//						match = true;
-//						break;
-//					}
-//				}
-//				if (!match) {
-//					Prozesseigenschaft p = new Prozesseigenschaft();
-//					p.setTitel(pe.getTitel());
-//					p.setWert(pe.getWert());
-//					p.setContainer(pe.getContainer());
-//					p.setType(pe.getType());
-//					process.getEigenschaften().add(p);
-//				}
-//
-//			}
-//			try {
-//				this.pdao.save(process);
-//			} catch (DAOException e) {
-//				logger.error(e);
-//				Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
-//			}
-//		}
-//
-//	}
+	// private void saveWithoutValidation() {
+	// List<Prozesseigenschaft> peList = new ArrayList<Prozesseigenschaft>();
+	// for (ProcessProperty p : this.processPropertyList) {
+	// p.transfer();
+	// peList.add(p.getProzesseigenschaft());
+	// }
+	//
+	// for (Schritt s : this.steps) {
+	// Prozess process = s.getProzess();
+	// for (Prozesseigenschaft pe : peList) {
+	// boolean match = false;
+	// for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
+	// if (pe.getTitel().equals(processPe.getTitel())) {
+	// processPe.setWert(pe.getWert());
+	// match = true;
+	// break;
+	// }
+	// }
+	// if (!match) {
+	// Prozesseigenschaft p = new Prozesseigenschaft();
+	// p.setTitel(pe.getTitel());
+	// p.setWert(pe.getWert());
+	// p.setContainer(pe.getContainer());
+	// p.setType(pe.getType());
+	// process.getEigenschaften().add(p);
+	// }
+	//
+	// }
+	// try {
+	// this.pdao.save(process);
+	// } catch (DAOException e) {
+	// logger.error(e);
+	// Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+	// }
+	// }
+	//
+	// }
 
 	private List<Integer> containers = new ArrayList<Integer>();
 
@@ -286,7 +327,7 @@ public class BatchHelper {
 	}
 
 	public String BatchDurchBenutzerZurueckgeben() {
-	
+
 		for (Schritt s : this.steps) {
 
 			this.myDav.UploadFromHome(s.getProzess());
@@ -350,4 +391,233 @@ public class BatchHelper {
 		answer.addAll(getCurrentStep().getAllScripts().keySet());
 		return answer;
 	}
+
+	/*
+	 * Error management
+	 */
+
+
+	
+	
+	// public String ReportProblem() {
+	// BatchDisplayItem bdi = this.batch.getCurrentStep();
+	// for (Prozess p : this.batch.getBatchList()) {
+	// if (p.getId() == this.process) {
+	// Schritt currentStep = p.getFirstOpenStep();
+	// if (currentStep.getTitel().equals(bdi.getStepTitle()) && currentStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)
+	// && currentStep.getBearbeitungsbenutzer().equals(this.batch.getUser())) {
+	//
+	// myLogger.debug("mySchritt.ID: " + currentStep.getId().intValue());
+	// myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+	// this.myDav.UploadFromHome(p);
+	// Date myDate = new Date();
+	// currentStep.setBearbeitungsstatusEnum(StepStatus.LOCKED);
+	// currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
+	// HelperSchritte.updateEditing(currentStep);
+	// currentStep.setBearbeitungsbeginn(null);
+	//
+	// try {
+	// SchrittDAO dao = new SchrittDAO();
+	// Schritt temp = dao.get(this.myProblemID);
+	// temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
+	// // if (temp.getPrioritaet().intValue() == 0)
+	// temp.setCorrectionStep();
+	// temp.setBearbeitungsende(null);
+	// Schritteigenschaft se = new Schritteigenschaft();
+	// Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+	//
+	// se.setTitel(Helper.getTranslation("Korrektur notwendig"));
+	// se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+	// se.setType(PropertyType.messageError);
+	// se.setCreationDate(myDate);
+	// se.setSchritt(temp);
+	// temp.getEigenschaften().add(se);
+	// dao.save(temp);
+	// currentStep
+	// .getProzess()
+	// .getHistory()
+	// .add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
+	// .getProzess()));
+	// /*
+	// * alle Schritte zwischen dem aktuellen und dem
+	// * Korrekturschritt wieder schliessen
+	// */
+	// @SuppressWarnings("unchecked")
+	// List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+	// .add(Restrictions.le("reihenfolge", currentStep.getReihenfolge()))
+	// .add(Restrictions.gt("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge"))
+	// .createCriteria("prozess").add(Restrictions.idEq(currentStep.getProzess().getId())).list();
+	// for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+	// Schritt step = iter.next();
+	// step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
+	// // if (step.getPrioritaet().intValue() == 0)
+	// step.setCorrectionStep();
+	// step.setBearbeitungsende(null);
+	// Schritteigenschaft seg = new Schritteigenschaft();
+	// seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
+	// seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
+	// seg.setSchritt(step);
+	// seg.setType(PropertyType.messageImportant);
+	// seg.setCreationDate(new Date());
+	// step.getEigenschaften().add(seg);
+	// dao.save(step);
+	// }
+	//
+	// /*
+	// * den Prozess aktualisieren, so dass der
+	// * Sortierungshelper gespeichert wird
+	// */
+	// new ProzessDAO().save(currentStep.getProzess());
+	// } catch (DAOException e) {
+	// }
+	//
+	// this.problemMessage = "";
+	// this.myProblemID = 0;
+	// }
+	// }
+	// }
+	// return FilterAlleStart();
+	//
+	// }
+	//
+	// @SuppressWarnings("unchecked")
+	// public List<Schritt> getPreviousStepsForProblemReporting() {
+	// List<Schritt> alleVorherigenSchritte = null;
+	// BatchDisplayItem bdi = this.batch.getCurrentStep();
+	// for (Prozess p : this.batch.getBatchList()) {
+	// if (p.getId() == this.process) {
+	// Schritt currentStep = p.getFirstOpenStep();
+	// if (currentStep.getTitel().equals(bdi.getStepTitle()) && currentStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)
+	// && currentStep.getBearbeitungsbenutzer().equals(this.batch.getUser())) {
+	// alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
+	// .add(Restrictions.lt("reihenfolge", currentStep.getReihenfolge())).addOrder(Order.asc("reihenfolge"))
+	// .createCriteria("prozess").add(Restrictions.idEq(this.process)).list();
+	// }
+	// }
+	// }
+	//
+	// return alleVorherigenSchritte;
+	// }
+	//
+	// @SuppressWarnings("unchecked")
+	// public List<Schritt> getNextStepsForProblemSolution() {
+	// List<Schritt> alleNachfolgendenSchritte = null;
+	// // BatchDisplayItem bdi = this.batch.getCurrentStep();
+	// for (Prozess p : this.batch.getBatchList()) {
+	// if (p.getId() == this.process) {
+	// Schritt currentStep = p.getFirstOpenStep();
+	// alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
+	// .add(Restrictions.ge("reihenfolge", currentStep.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
+	// .addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.process)).list();
+	// }
+	// }
+	// return alleNachfolgendenSchritte;
+	// }
+	//
+	// @SuppressWarnings("unchecked")
+	// public String SolveProblem() {
+	// BatchDisplayItem bdi = this.batch.getCurrentStep();
+	// for (Prozess p : this.batch.getBatchList()) {
+	// if (p.getId() == this.process) {
+	// Schritt currentStep = p.getFirstOpenStep();
+	// if (currentStep.getTitel().equals(bdi.getStepTitle()) && currentStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)
+	// && currentStep.getBearbeitungsbenutzer().equals(this.batch.getUser())) {
+	//
+	// Date now = new Date();
+	// this.myDav.UploadFromHome(p);
+	// currentStep.setBearbeitungsstatusEnum(StepStatus.DONE);
+	// currentStep.setBearbeitungsende(now);
+	// currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
+	// HelperSchritte.updateEditing(currentStep);
+	//
+	// try {
+	// SchrittDAO dao = new SchrittDAO();
+	// Schritt temp = dao.get(this.mySolutionID);
+	//
+	// /*
+	// * alle Schritte zwischen dem aktuellen und dem
+	// * Korrekturschritt wieder schliessen
+	// */
+	// List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+	// .add(Restrictions.ge("reihenfolge", currentStep.getReihenfolge()))
+	// .add(Restrictions.le("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge"))
+	// .createCriteria("prozess").add(Restrictions.idEq(p.getId())).list();
+	// for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+	// Schritt step = iter.next();
+	// step.setBearbeitungsstatusEnum(StepStatus.DONE);
+	// step.setBearbeitungsende(now);
+	// step.setPrioritaet(Integer.valueOf(0));
+	// if (step.getId().intValue() == temp.getId().intValue()) {
+	// step.setBearbeitungsstatusEnum(StepStatus.OPEN);
+	// step.setCorrectionStep();
+	// step.setBearbeitungsende(null);
+	// // step.setBearbeitungsbeginn(null);
+	// step.setBearbeitungszeitpunkt(now);
+	// }
+	// Schritteigenschaft seg = new Schritteigenschaft();
+	// seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+	// Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+	// seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+	// + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+	// seg.setSchritt(step);
+	// seg.setType(PropertyType.messageImportant);
+	// seg.setCreationDate(new Date());
+	// step.getEigenschaften().add(seg);
+	// dao.save(step);
+	// }
+	//
+	// /*
+	// * den Prozess aktualisieren, so dass der
+	// * Sortierungshelper gespeichert wird
+	// */
+	// new ProzessDAO().save(p);
+	// } catch (DAOException e) {
+	// }
+	//
+	// this.solutionMessage = "";
+	// this.mySolutionID = 0;
+	// }
+	// }
+	// }
+	// return FilterAlleStart();
+	// }
+
+	private Integer myProblemID;
+	private Integer mySolutionID;
+	private String problemMessage;
+	private String solutionMessage;
+
+	public String getProblemMessage() {
+		return this.problemMessage;
+	}
+
+	public void setProblemMessage(String problemMessage) {
+		this.problemMessage = problemMessage;
+	}
+
+	public Integer getMyProblemID() {
+		return this.myProblemID;
+	}
+
+	public void setMyProblemID(Integer myProblemID) {
+		this.myProblemID = myProblemID;
+	}
+
+	public String getSolutionMessage() {
+		return this.solutionMessage;
+	}
+
+	public void setSolutionMessage(String solutionMessage) {
+		this.solutionMessage = solutionMessage;
+	}
+
+	public Integer getMySolutionID() {
+		return this.mySolutionID;
+	}
+
+	public void setMySolutionID(Integer mySolutionID) {
+		this.mySolutionID = mySolutionID;
+	}
+
+
 }

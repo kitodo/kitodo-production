@@ -23,14 +23,14 @@
 				<h:panelGroup id="uaid5">
 					<x:inputCalendar id="from" style="width:110px" value="#{Form.statisticsManager2.sourceDateFrom}" renderAsPopup="true"
 						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" imageLocation="/newpages/images/calendarImages"
-						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
+						popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" styleClass="projekteBearbeiten"/>
 				</h:panelGroup>
 
 				<h:outputLabel id="uaid6" for="to" value="#{msgs.to}" />
 				<h:panelGroup id="uaid7">
 					<x:inputCalendar id="to" style="width:110px" value="#{Form.statisticsManager2.sourceDateTo}" renderAsPopup="true" renderPopupButtonAsImage="true"
 						popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"
-						imageLocation="/newpages/images/calendarImages" />
+						imageLocation="/newpages/images/calendarImages" styleClass="projekteBearbeiten" />
 				</h:panelGroup>
 
 				<h:outputText id="uaid8" style="font-weight:bold" value=" - #{msgs.orLast} - " />

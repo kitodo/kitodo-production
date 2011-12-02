@@ -112,7 +112,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private static String FORMAT = "";
 
 	private DisplayPropertyList displayProperties;
-	private String wikifield;
+	private String wikifield = "";
 
 	public Prozess() {
 		this.swappedOut = false;

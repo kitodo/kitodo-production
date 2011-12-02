@@ -53,6 +53,7 @@ public class ProcessProperty implements IProperty {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
+//		this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -296,6 +297,10 @@ public class ProcessProperty implements IProperty {
 		// }else{
 		// p.setContainer(this.container.intValue()+1);
 		// }
+		Prozesseigenschaft pe = new Prozesseigenschaft();
+		pe.setProzess(getProzesseigenschaft().getProzess());
+		p.setProzesseigenschaft(pe);
+		getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
 		p.setName(this.name);
 		p.setValidation(this.validation);
 		p.setType(this.type);
@@ -314,11 +319,11 @@ public class ProcessProperty implements IProperty {
 	 */
 	@Override
 	public void transfer() {
-//		if (this.value != null && this.value.length() > 0) {
+		if (this.value != null && this.value.length() > 0) {
 			this.prozesseigenschaft.setWert(this.value);
 			this.prozesseigenschaft.setTitel(this.name);
 			this.prozesseigenschaft.setContainer(this.container);
-//		}
+		}
 	}
 
 	public List<String> getValueList() {
