@@ -23,7 +23,7 @@
 			</htm:th>
 		</htm:thead>
 
-		<x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+		<x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex" >
 			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}">
 				<htm:tr rendered="#{process_item.container==container}" styleClass="standardTable_Row1">
 					<htm:td styleClass="standardTable_Column">

@@ -55,6 +55,7 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Export.dms.ExportDms;
@@ -1079,9 +1080,20 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 
 		if (valid) {
-			for (IProperty p : this.processPropertyList) {
+			for (ProcessProperty p : this.processPropertyList) {
 				p.transfer();
+				if (!this.mySchritt.getProzess().getEigenschaften().contains(p.getProzesseigenschaft())) {
+					this.mySchritt.getProzess().getEigenschaften().add(p.getProzesseigenschaft());
+				}
 			}
+			Prozess p = this.mySchritt.getProzess();
+			List<Prozesseigenschaft> props =p.getEigenschaftenList();
+			for (Prozesseigenschaft pe : props) {
+				if (pe.getTitel() == null) {
+					p.getEigenschaften().remove(pe);
+				}
+			}
+			
 			try {
 				this.pdao.save(this.mySchritt.getProzess());
 				Helper.setMeldung("Properties saved");
@@ -1092,6 +1104,32 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
+	
+	public void saveCurrentProperty() {
+		if (!this.processProperty.isValid()) {
+			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+			return;
+		}
+		this.processProperty.transfer();
+
+		Prozess p = this.mySchritt.getProzess();
+		List<Prozesseigenschaft> props = p.getEigenschaftenList();
+		for (Prozesseigenschaft pe : props) {
+			if (pe.getTitel() == null) {
+				p.getEigenschaften().remove(pe);
+			}
+		}
+		if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+			this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+		}
+		try {
+			this.pdao.save(this.mySchritt.getProzess());
+			Helper.setMeldung("Properties saved");
+		} catch (DAOException e) {
+			myLogger.error(e);
+			Helper.setFehlerMeldung("Properties could not be saved");
+		}
+	}
 	
 
 	private void saveWithoutValidation() {

@@ -1709,9 +1709,20 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 
 		if (valid) {
-			for (IProperty p : this.processPropertyList) {
+			for (ProcessProperty p : this.processPropertyList) {
 				p.transfer();
+				if (!this.myProzess.getEigenschaften().contains(p.getProzesseigenschaft())) {
+					this.myProzess.getEigenschaften().add(p.getProzesseigenschaft());
+				}
 			}
+		
+			List<Prozesseigenschaft> props =this.myProzess.getEigenschaftenList();
+			for (Prozesseigenschaft pe : props) {
+				if (pe.getTitel() == null) {
+					this.myProzess.getEigenschaften().remove(pe);
+				}
+			}
+			
 			try {
 				this.dao.save(this.myProzess);
 				Helper.setMeldung("Properties saved");
@@ -1719,22 +1730,37 @@ public class ProzessverwaltungForm extends BasisForm {
 				logger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
 			}
-
 		}
-
 	}
 
-	private void saveWithoutValidation() {
-		for (IProperty p : this.processPropertyList) {
-			p.transfer();
+	
+	public void saveCurrentProperty() {
+		if (!this.processProperty.isValid()) {
+			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+			return;
+		}
+		this.processProperty.transfer();
+
+	
+		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
+		for (Prozesseigenschaft pe : props) {
+			if (pe.getTitel() == null) {
+				this.myProzess.getEigenschaften().remove(pe);
+			}
+		}
+		if (!this.myProzess.getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+			this.myProzess.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
 		}
 		try {
 			this.dao.save(this.myProzess);
+			Helper.setMeldung("Properties saved");
 		} catch (DAOException e) {
 			logger.error(e);
 			Helper.setFehlerMeldung("Properties could not be saved");
 		}
 	}
+
+	
 
 	private List<Integer> containers = new ArrayList<Integer>();
 
@@ -1762,7 +1788,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		for (ProcessProperty pt : plist) {
 			ProcessProperty newProp = pt.getClone(newContainerNumber);
 			this.processPropertyList.add(newProp);
-			saveWithoutValidation();
+			saveProcessProperties();
 		}
 
 		return "";
@@ -1797,7 +1823,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	public void duplicateProperty() {
 		ProcessProperty pt = this.processProperty.getClone(0);
 		this.processPropertyList.add(pt);
-		saveWithoutValidation();
+		saveProcessProperties();
 	}
 
 	public void createNewProperty() {
@@ -1810,7 +1836,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		pp.setProzesseigenschaft(pe);
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
-		saveWithoutValidation();
+		saveProcessProperties();
 	}
 
 }
