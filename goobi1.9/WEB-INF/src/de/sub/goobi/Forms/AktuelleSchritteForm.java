@@ -1103,7 +1103,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 		}
 	}
-
 	
 	public void saveCurrentProperty() {
 		if (!this.processProperty.isValid()) {
@@ -1180,6 +1179,13 @@ public class AktuelleSchritteForm extends BasisForm {
 		return this.containers;
 	}
 
+	public int getPropertyListSize() {
+		if (processPropertyList == null) {
+			return 0;
+		}
+		return this.processPropertyList.size();
+	}
+
 	public List<ProcessProperty> getSortedProperties() {
 		Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
 		Collections.sort(this.processPropertyList, comp);
@@ -1206,6 +1212,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		ProcessProperty pt = this.processProperty.getClone(0);
 		this.processPropertyList.add(pt);
 		saveWithoutValidation();
+		loadProcessProperties();
 	}
 
 	public BatchHelper getBatchHelper() {
