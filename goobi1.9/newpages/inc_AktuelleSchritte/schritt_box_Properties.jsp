@@ -12,13 +12,13 @@
 <%-- ++++++++++++++++     Properties      ++++++++++++++++ --%>
 <%-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ --%>
 
-<h:form id="propform2">
+<h:form id="propform2" rendered="#{AktuelleSchritteForm.propertyListSize>0}">
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
-				<h:outputText value="#{msgs.erweiterteEigenschaften}" />
+				<h:outputText value="#{msgs.erweiterteEigenschaften} - #{AktuelleSchritteForm.propertyListSize}" />
 			</htm:td>
 		</htm:tr>
 

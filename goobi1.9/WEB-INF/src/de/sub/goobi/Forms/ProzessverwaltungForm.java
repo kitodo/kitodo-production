@@ -1798,6 +1798,13 @@ public class ProzessverwaltungForm extends BasisForm {
 		return this.containers;
 	}
 
+	public int getContainersSize() {
+		if (containers == null) {
+			return 0;
+		}
+		return this.containers.size();
+	}
+
 	public List<ProcessProperty> getSortedProperties() {
 		Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
 		Collections.sort(this.processPropertyList, comp);

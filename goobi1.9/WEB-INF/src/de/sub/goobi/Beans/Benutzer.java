@@ -158,17 +158,18 @@ public class Benutzer implements Serializable {
 	public Integer getTabellengroesse() {
 		if (this.tabellengroesse == null) {
 			return Integer.valueOf(10);
-		} else if (this.tabellengroesse > 100) {
-			return Integer.valueOf(100);
-		}
+		} 
+//		else if (this.tabellengroesse > 100) {
+//			return Integer.valueOf(100);
+//		}
 
 		return this.tabellengroesse;
 	}
 
 	public void setTabellengroesse(Integer tabellengroesse) {
-		if (tabellengroesse > 100) {
-			tabellengroesse = Integer.valueOf(100);
-		}
+//		if (tabellengroesse > 100) {
+//			tabellengroesse = Integer.valueOf(100);
+//		}
 		this.tabellengroesse = tabellengroesse;
 	}
 
