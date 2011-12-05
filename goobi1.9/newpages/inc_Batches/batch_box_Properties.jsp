@@ -23,11 +23,11 @@
 			</htm:th>
 		</htm:thead>
 
-		<x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex" >
-			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}">
+		<x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
 				<htm:tr rendered="#{process_item.container==container}" styleClass="standardTable_Row1">
 					<htm:td styleClass="standardTable_Column">
-						<h:outputText value="#{process_item.name}" />
+						<h:outputText value="#{process_item.name} propertyIndex: #{propInd} containerIndex: #{rowIndex}" />
 					</htm:td>
 					<htm:td styleClass="standardTable_Column">
 						<h:outputText value="#{process_item.value}" rendered="#{process_item.type.name == 'date'}">
@@ -37,17 +37,17 @@
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered">
 						<%-- Bearbeiten-Schaltknopf --%>
-						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
+						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
-						
-						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}"
-										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
-										<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-										<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
+
+						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}" 
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
 						</h:commandLink>
 					</htm:td>
 				</htm:tr>
@@ -81,14 +81,14 @@
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 				<x:dataList var="myprocess_item" value="#{AktuelleSchritteForm.batchHelper.containerProperties}">
-			
-			<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">--%>
+
+					<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">--%>
 					<h:panelGrid columns="2">
 
 
 
 
-						<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: "  />
+						<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: " />
 						<%-- textarea --%>
 						<h:panelGroup id="prpvw15_1" rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
 							<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" />
@@ -134,8 +134,8 @@
 						</h:panelGroup>
 
 					</h:panelGrid>
-			<%-- 	</x:aliasBean>--%>
-			</x:dataList>
+					<%-- 	</x:aliasBean>--%>
+				</x:dataList>
 			</htm:td>
 		</htm:tr>
 
@@ -146,15 +146,15 @@
 				</h:commandButton>
 			</htm:td>
 			<htm:td styleClass="eingabeBoxen_row3" align="right">
-			<%-- 
+				<%-- 
 				<h:commandButton value="#{msgs.loeschen}" action="#{AktuelleSchritteForm.deleteProperty}"
 					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
 					<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="" />
 				</h:commandButton>
-			--%>				
-				
+			--%>
+
 				<h:commandButton value="#{msgs.uebernehmenOne}" action="#{AktuelleSchritteForm.batchHelper.saveCurrentProperty}">
-				
+
 					<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="" />
 				</h:commandButton>
 				<h:commandButton value="#{msgs.uebernehmenForAll}" action="#{AktuelleSchritteForm.batchHelper.saveCurrentPropertyForAll}">

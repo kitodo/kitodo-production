@@ -319,7 +319,7 @@
 
 		<%-- Bearbeiten-Schaltknopf (fremder Schritt) --%>
 		<h:commandLink action="AktuelleSchritteBearbeiten" id="view2"
-			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id}"
+			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && !item.batchStep}"
 			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin3b.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
@@ -331,8 +331,14 @@
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
-		<%--TODO add batch implementation for this --%>
+		<%-- edit batch step --%>
 		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep}"
+			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
+			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
+		</h:commandLink>
+		<%-- edit batch step --%>
+		<h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
