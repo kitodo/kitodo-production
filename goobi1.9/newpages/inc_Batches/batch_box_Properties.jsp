@@ -43,6 +43,12 @@
 							<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
+						
+						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}"
+										rendered="#{property.type.name != 'messageerror' && property.type.name != 'messageimportant' && property.type.name != 'messagenormal'}">
+										<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+										<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
+						</h:commandLink>
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
@@ -74,7 +80,9 @@
 		<%-- Formular für die Bearbeitung der Eigenschaft --%>
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
-				<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">
+				<x:dataList var="myprocess_item" value="#{AktuelleSchritteForm.batchHelper.containerProperties}">
+			
+			<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">--%>
 					<h:panelGrid columns="2">
 
 
@@ -126,7 +134,8 @@
 						</h:panelGroup>
 
 					</h:panelGrid>
-				</x:aliasBean>
+			<%-- 	</x:aliasBean>--%>
+			</x:dataList>
 			</htm:td>
 		</htm:tr>
 
@@ -142,7 +151,7 @@
 					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
 					<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="" />
 				</h:commandButton>
-			--%>	
+			--%>				
 				
 				<h:commandButton value="#{msgs.uebernehmenOne}" action="#{AktuelleSchritteForm.batchHelper.saveCurrentProperty}">
 				

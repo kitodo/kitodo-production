@@ -1169,7 +1169,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		for (ProcessProperty pt : plist) {
 			ProcessProperty newProp = pt.getClone(newContainerNumber);
 			this.processPropertyList.add(newProp);
-			saveWithoutValidation();
+			this.processProperty = newProp;
+			saveCurrentProperty();
+			loadProcessProperties();
 		}
 
 		return "";
@@ -1180,7 +1182,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public int getPropertyListSize() {
-		if (processPropertyList == null) {
+		if (this.processPropertyList == null) {
 			return 0;
 		}
 		return this.processPropertyList.size();
@@ -1198,6 +1200,13 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
 		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
 		// }
+		
+		List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
+		for (Prozesseigenschaft pe : props) {
+			if (pe.getTitel() == null) {
+				this.mySchritt.getProzess().getEigenschaften().remove(pe);
+			}
+		}
 		try {
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -1211,7 +1220,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void duplicateProperty() {
 		ProcessProperty pt = this.processProperty.getClone(0);
 		this.processPropertyList.add(pt);
-		saveWithoutValidation();
+		this.processProperty = pt;
+		saveCurrentProperty();
 		loadProcessProperties();
 	}
 
