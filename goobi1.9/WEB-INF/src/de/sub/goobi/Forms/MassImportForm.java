@@ -569,9 +569,11 @@ public class MassImportForm {
 	 */
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
-		this.plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-		if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
-			this.allFilenames = this.plugin.getAllFilenames();
+		if (currentPlugin != null) {
+			this.plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
+				this.allFilenames = this.plugin.getAllFilenames();
+			}
 		}
 	}
 
