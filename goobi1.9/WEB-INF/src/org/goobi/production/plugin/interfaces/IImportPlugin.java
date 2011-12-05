@@ -49,13 +49,15 @@ public interface IImportPlugin extends IPlugin {
 	
 	public String getProcessTitle();
 
-	public List<Record> splitRecords(String records);
-	
 	public List<ImportObject> generateFiles(List<Record> records);
 	
 	public void setImportFolder(String folder);
 	
+	public List<Record> splitRecords(String records);
+
 	public List<Record> generateRecordsFromFile();
+
+	public List<Record> generateRecordsFromFilenames(List<String> filenames);
 	
 	public void setFile(File importFile);
 	
@@ -64,5 +66,9 @@ public interface IImportPlugin extends IPlugin {
 	public List<ImportType> getImportTypes();
 	
 	public List<ImportProperty> getProperties();
+	
+	public List<String> getAllFilenames();
+	
+	
 	
 }

@@ -84,6 +84,7 @@ public class MassImportForm {
 	private List<String> usablePluginsForRecords = new ArrayList<String>();
 	private List<String> usablePluginsForIDs = new ArrayList<String>();
 	private List<String> usablePluginsForFiles = new ArrayList<String>();
+	private List<String> usablePluginsForFolder = new ArrayList<String>();
 	private final ImportPluginLoader ipl = new ImportPluginLoader();
 	private String currentPlugin = "";
 	private IImportPlugin plugin;
@@ -95,13 +96,14 @@ public class MassImportForm {
 	private UploadedFile uploadedFile = null;
 
 	private List<Prozess> processList;
-	
+
 	public MassImportForm() {
 
 		// usablePlugins = ipl.getTitles();
 		this.usablePluginsForRecords = this.ipl.getPluginsForType(ImportType.Record);
 		this.usablePluginsForIDs = this.ipl.getPluginsForType(ImportType.ID);
 		this.usablePluginsForFiles = this.ipl.getPluginsForType(ImportType.FILE);
+		this.usablePluginsForFolder = this.ipl.getPluginsForType(ImportType.FOLDER);
 
 	}
 
@@ -166,15 +168,32 @@ public class MassImportForm {
 		}
 	}
 
+	private List<String> allFilenames = new ArrayList<String>();
+	private List<String> selectedFilenames = new ArrayList<String>();
+
+	public List<String> getAllFilenames() {
+
+		return this.allFilenames;
+	}
+
+	public void setAllFilenames(List<String> allFilenames) {
+		this.allFilenames = allFilenames;
+	}
+
+	public List<String> getSelectedFilenames() {
+		return this.selectedFilenames;
+	}
+
+	public void setSelectedFilenames(List<String> selectedFilenames) {
+		this.selectedFilenames = selectedFilenames;
+	}
+
 	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Integer batchId = null;
-			if (answer.size()>0){
-				Session session = Helper.getHibernateSession();
-				batchId = 1+ (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
-			}
+
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
@@ -205,9 +224,8 @@ public class MassImportForm {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
-			}
-			// found list with records
-			else if (StringUtils.isNotEmpty(this.records)) {
+			} else if (StringUtils.isNotEmpty(this.records)) {
+				// found list with records
 				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
 				this.plugin.setImportFolder(tempfolder);
 
@@ -217,12 +235,22 @@ public class MassImportForm {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
+			} else if (this.selectedFilenames.size() > 0) {
+				this.plugin.setImportFolder(tempfolder);
+				this.plugin.setPrefs(prefs);
+				List<Record> recordList = this.plugin.generateRecordsFromFilenames(this.selectedFilenames);
+				for (Record r : recordList) {
+					r.setCollections(this.digitalCollections);
+				}
+				answer = this.plugin.generateFiles(recordList);
 			}
 
-			// Batch b = new Batch();
-
+			if (answer.size() > 1) {
+				Session session = Helper.getHibernateSession();
+				batchId = 1 + (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+			}
 			for (ImportObject io : answer) {
-				if (batchId!=null){
+				if (batchId != null) {
 					io.setBatchId(batchId);
 				}
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
@@ -230,9 +258,8 @@ public class MassImportForm {
 					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
 					if (p == null) {
 						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed");
-						
-					}
-					else {
+
+					} else {
 						Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
 						this.processList.add(p);
 					}
@@ -338,7 +365,7 @@ public class MassImportForm {
 		// if (format == null) {
 		// return false;
 		// }
-		if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)) {
+		if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null) && this.selectedFilenames.size() == 0) {
 			return false;
 		}
 		return true;
@@ -543,6 +570,9 @@ public class MassImportForm {
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
 		this.plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+		if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
+			this.allFilenames = this.plugin.getAllFilenames();
+		}
 	}
 
 	/**
@@ -613,7 +643,7 @@ public class MassImportForm {
 	}
 
 	public String nextPage() {
-		if (StringUtils.isEmpty(this.idList) && this.importFile == null && StringUtils.isEmpty(this.records)) {
+		if (!testForData()) {
 			Helper.setFehlerMeldung("missingData");
 			return "";
 		}
@@ -636,15 +666,14 @@ public class MassImportForm {
 		this.processList = processList;
 	}
 
-	// public ImportConfiguration getImportConfiguration() {
-	// return this.ic;
-	// }
-	//
-	// public void setImportConfiguration(ImportConfiguration ic) {
-	// this.ic = ic;
-	// }
+	public List<String> getUsablePluginsForFolder() {
+		return this.usablePluginsForFolder;
+	}
 
-	
+	public void setUsablePluginsForFolder(List<String> usablePluginsForFolder) {
+		this.usablePluginsForFolder = usablePluginsForFolder;
+	}
+
 	public String downloadDocket() {
 		logger.debug("generate docket for process list");
 		String rootpath = ConfigMain.getParameter("xsltFolder");
@@ -658,8 +687,6 @@ public class MassImportForm {
 			response.setContentType(contentType);
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
-		
-			
 			// write docket to servlet output stream
 			try {
 				ServletOutputStream out = response.getOutputStream();
@@ -674,5 +701,5 @@ public class MassImportForm {
 		}
 		return "";
 	}
-	
+
 }

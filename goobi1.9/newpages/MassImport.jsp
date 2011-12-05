@@ -155,6 +155,33 @@
 
 													</x:panelTab>
 
+													<x:panelTab label="#{msgs.folderImport}" id="folder">
+														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
+															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
+															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.titel}" />
+
+															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
+															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
+																<si:selectItems value="#{MassImportForm.possibleDigitalCollection}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+															</h:selectManyListbox>
+
+															<h:outputLabel for="plugins3" value="#{msgs.importplugin}:" />
+															<h:selectOneMenu id="plugins3" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
+																<a4j:support event="onchange" reRender="formupload" />
+																<si:selectItems value="#{MassImportForm.usablePluginsForFolder}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+															</h:selectOneMenu>
+															
+															<h:outputLabel for="filenames" value="#{msgs.filenames}:" />
+															
+															<h:selectManyListbox value="#{MassImportForm.selectedFilenames}" id="filenames"> 
+																<si:selectItems itemLabel="#{file}" itemValue="#{file}" var="file" value="#{MassImportForm.allFilenames}" />
+															
+															</h:selectManyListbox>
+
+														</h:panelGrid>
+													</x:panelTab>
+
 												</x:panelTabbedPane>
 
 											</htm:td>

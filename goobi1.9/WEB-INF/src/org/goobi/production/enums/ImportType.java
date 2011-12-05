@@ -30,7 +30,7 @@ public enum ImportType {
 	
 	
 	
-	Record("1","record"), ID("2", "id"), FILE("3","file");
+	Record("1","record"), ID("2", "id"), FILE("3","file"), FOLDER("4", "folder");
 	
 	private String id;
 	private String title;
