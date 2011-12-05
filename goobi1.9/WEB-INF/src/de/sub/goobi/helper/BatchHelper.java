@@ -112,24 +112,28 @@ public class BatchHelper {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 			return;
 		}
-		this.processProperty.transfer();
+		List<ProcessProperty> ppList = getContainerProperties();
+		for (ProcessProperty pp : ppList) {
+			this.processProperty = pp;
+			this.processProperty.transfer();
 
-		Prozess p = this.currentStep.getProzess();
-		List<Prozesseigenschaft> props = p.getEigenschaftenList();
-		for (Prozesseigenschaft pe : props) {
-			if (pe.getTitel() == null) {
-				p.getEigenschaften().remove(pe);
+			Prozess p = this.currentStep.getProzess();
+			List<Prozesseigenschaft> props = p.getEigenschaftenList();
+			for (Prozesseigenschaft pe : props) {
+				if (pe.getTitel() == null) {
+					p.getEigenschaften().remove(pe);
+				}
 			}
-		}
-		if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-			this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
-		}
-		try {
-			this.pdao.save(this.currentStep.getProzess());
-			Helper.setMeldung("Properties saved");
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("Properties could not be saved");
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			}
+			try {
+				this.pdao.save(this.currentStep.getProzess());
+				Helper.setMeldung("Properties saved");
+			} catch (DAOException e) {
+				logger.error(e);
+				Helper.setFehlerMeldung("Properties could not be saved");
+			}
 		}
 	}
 
@@ -138,58 +142,62 @@ public class BatchHelper {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 			return;
 		}
-		this.processProperty.transfer();
+		List<ProcessProperty> ppList = getContainerProperties();
+		for (ProcessProperty pp : ppList) {
+			this.processProperty = pp;
+			this.processProperty.transfer();
 
-		Prozesseigenschaft pe = new Prozesseigenschaft();
-		pe.setTitel(this.processProperty.getName());
-		pe.setWert(this.processProperty.getValue());
-		pe.setContainer(this.processProperty.getContainer());
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(this.processProperty.getName());
+			pe.setWert(this.processProperty.getValue());
+			pe.setContainer(this.processProperty.getContainer());
 
-		for (Schritt s : this.steps) {
-			Prozess process = s.getProzess();
-			if (!s.equals(this.currentStep)) {
+			for (Schritt s : this.steps) {
+				Prozess process = s.getProzess();
+				if (!s.equals(this.currentStep)) {
 
-				if (pe.getTitel() != null) {
-					boolean match = false;
+					if (pe.getTitel() != null) {
+						boolean match = false;
 
-					for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
-						if (processPe.getTitel() != null) {
-							if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
-								processPe.setWert(pe.getWert());
-								match = true;
-								break;
+						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
+							if (processPe.getTitel() != null) {
+								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+									processPe.setWert(pe.getWert());
+									match = true;
+									break;
+								}
 							}
 						}
+						if (!match) {
+							Prozesseigenschaft p = new Prozesseigenschaft();
+							p.setTitel(pe.getTitel());
+							p.setWert(pe.getWert());
+							p.setContainer(pe.getContainer());
+							p.setType(pe.getType());
+							p.setProzess(process);
+							process.getEigenschaften().add(p);
+						}
 					}
-					if (!match) {
-						Prozesseigenschaft p = new Prozesseigenschaft();
-						p.setTitel(pe.getTitel());
-						p.setWert(pe.getWert());
-						p.setContainer(pe.getContainer());
-						p.setType(pe.getType());
-						p.setProzess(process);
-						process.getEigenschaften().add(p);
+				} else {
+					if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
+						process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
 					}
 				}
-			} else {
-				if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
-					process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
-				}
-			}
 
-			List<Prozesseigenschaft> props = process.getEigenschaftenList();
-			for (Prozesseigenschaft peig : props) {
-				if (peig.getTitel() == null) {
-					process.getEigenschaften().remove(peig);
+				List<Prozesseigenschaft> props = process.getEigenschaftenList();
+				for (Prozesseigenschaft peig : props) {
+					if (peig.getTitel() == null) {
+						process.getEigenschaften().remove(peig);
+					}
 				}
-			}
 
-			try {
-				this.pdao.save(process);
-				Helper.setMeldung("Properties saved");
-			} catch (DAOException e) {
-				logger.error(e);
-				Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+				try {
+					this.pdao.save(process);
+					Helper.setMeldung("Properties saved");
+				} catch (DAOException e) {
+					logger.error(e);
+					Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+				}
 			}
 		}
 	}
@@ -235,7 +243,7 @@ public class BatchHelper {
 		Collections.sort(this.processPropertyList, comp);
 		return this.processPropertyList;
 	}
-	
+
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
 		int currentContainer = this.processProperty.getContainer();
@@ -248,121 +256,7 @@ public class BatchHelper {
 		} else {
 			answer.add(this.processProperty);
 		}
-		
-		return answer;
-	}
-	
-	
 
-	/*
-	 * actions
-	 */
-
-	private String script;
-	private WebDav myDav = new WebDav();
-
-	public String getScript() {
-		return this.script;
-	}
-
-	public void setScript(String script) {
-		this.script = script;
-	}
-
-	public void executeScript() {
-		for (Schritt step : this.steps) {
-
-			if (step.getAllScripts().containsKey(this.script)) {
-
-				String scriptPath = step.getAllScripts().get(this.script);
-				try {
-					new HelperSchritte().executeScript(step, scriptPath, false);
-				} catch (SwapException e) {
-					logger.error(e);
-				}
-			}
-		}
-
-	}
-
-	public void ExportDMS() {
-		for (Schritt step : this.steps) {
-			ExportDms export = new ExportDms();
-			try {
-				export.startExport(step.getProzess());
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("Error on export", e.getMessage());
-				logger.error(e);
-			}
-		}
-	}
-
-	public String BatchDurchBenutzerZurueckgeben() {
-
-		for (Schritt s : this.steps) {
-
-			this.myDav.UploadFromHome(s.getProzess());
-			s.setBearbeitungsstatusEnum(StepStatus.OPEN);
-			if (s.isCorrectionStep()) {
-				s.setBearbeitungsbeginn(null);
-			}
-			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-			HelperSchritte.updateEditing(s);
-
-			try {
-				this.pdao.save(s.getProzess());
-			} catch (DAOException e) {
-			}
-		}
-		return "AktuelleSchritteAlle";
-	}
-
-	public String BatchDurchBenutzerAbschliessen() {
-		for (ProcessProperty pp : this.processPropertyList) {
-			this.processProperty = pp;
-			saveCurrentPropertyForAll();
-		}
-		for (Schritt s : this.steps) {
-
-			if (s.isTypImagesSchreiben()) {
-				try {
-					s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
-					HistoryAnalyserJob.updateHistory(s.getProzess());
-				} catch (Exception e) {
-					Helper.setFehlerMeldung("Error while calculation of storage and images", e);
-				}
-			}
-
-			if (s.isTypBeimAbschliessenVerifizieren()) {
-				if (s.isTypMetadaten() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
-					MetadatenVerifizierung mv = new MetadatenVerifizierung();
-					mv.setAutoSave(true);
-					if (!mv.validate(s.getProzess())) {
-						return "";
-					}
-				}
-				if (s.isTypImagesSchreiben()) {
-					MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-					try {
-						if (!mih.checkIfImagesValid(s.getProzess(), s.getProzess().getImagesOrigDirectory())) {
-							return "";
-						}
-					} catch (Exception e) {
-						Helper.setFehlerMeldung("Error on image validation: ", e);
-					}
-				}
-			}
-
-			this.myDav.UploadFromHome(s.getProzess());
-			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-			new HelperSchritte().SchrittAbschliessen(s, false);
-		}
-		return "AktuelleSchritteAlle";
-	}
-
-	public List<String> getScriptnames() {
-		List<String> answer = new ArrayList<String>();
-		answer.addAll(getCurrentStep().getAllScripts().keySet());
 		return answer;
 	}
 
@@ -694,4 +588,115 @@ public class BatchHelper {
 		}
 	}
 
+	/*
+	 * actions
+	 */
+
+	private String script;
+	private WebDav myDav = new WebDav();
+
+	public String getScript() {
+		return this.script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
+	}
+
+	public void executeScript() {
+		for (Schritt step : this.steps) {
+
+			if (step.getAllScripts().containsKey(this.script)) {
+
+				String scriptPath = step.getAllScripts().get(this.script);
+				try {
+					new HelperSchritte().executeScript(step, scriptPath, false);
+				} catch (SwapException e) {
+					logger.error(e);
+				}
+			}
+		}
+
+	}
+
+	public void ExportDMS() {
+		for (Schritt step : this.steps) {
+			ExportDms export = new ExportDms();
+			try {
+				export.startExport(step.getProzess());
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Error on export", e.getMessage());
+				logger.error(e);
+			}
+		}
+	}
+
+	public String BatchDurchBenutzerZurueckgeben() {
+
+		for (Schritt s : this.steps) {
+
+			this.myDav.UploadFromHome(s.getProzess());
+			s.setBearbeitungsstatusEnum(StepStatus.OPEN);
+			if (s.isCorrectionStep()) {
+				s.setBearbeitungsbeginn(null);
+			}
+			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
+			HelperSchritte.updateEditing(s);
+
+			try {
+				this.pdao.save(s.getProzess());
+			} catch (DAOException e) {
+			}
+		}
+		return "AktuelleSchritteAlle";
+	}
+
+	public String BatchDurchBenutzerAbschliessen() {
+		for (ProcessProperty pp : this.processPropertyList) {
+			this.processProperty = pp;
+			saveCurrentPropertyForAll();
+		}
+		for (Schritt s : this.steps) {
+
+			if (s.isTypImagesSchreiben()) {
+				try {
+					s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
+					HistoryAnalyserJob.updateHistory(s.getProzess());
+				} catch (Exception e) {
+					Helper.setFehlerMeldung("Error while calculation of storage and images", e);
+				}
+			}
+
+			if (s.isTypBeimAbschliessenVerifizieren()) {
+				if (s.isTypMetadaten() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+					MetadatenVerifizierung mv = new MetadatenVerifizierung();
+					mv.setAutoSave(true);
+					if (!mv.validate(s.getProzess())) {
+						return "";
+					}
+				}
+				if (s.isTypImagesSchreiben()) {
+					MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
+					try {
+						if (!mih.checkIfImagesValid(s.getProzess(), s.getProzess().getImagesOrigDirectory())) {
+							return "";
+						}
+					} catch (Exception e) {
+						Helper.setFehlerMeldung("Error on image validation: ", e);
+					}
+				}
+			}
+
+			this.myDav.UploadFromHome(s.getProzess());
+			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
+			new HelperSchritte().SchrittAbschliessen(s, false);
+		}
+		return "AktuelleSchritteAlle";
+	}
+
+	public List<String> getScriptnames() {
+		List<String> answer = new ArrayList<String>();
+		answer.addAll(getCurrentStep().getAllScripts().keySet());
+		return answer;
+	}
 }
