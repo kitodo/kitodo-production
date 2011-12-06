@@ -1818,22 +1818,87 @@ public class ProzessverwaltungForm extends BasisForm {
 		saveProcessProperties();
 	}
 
+//	public List<ProcessProperty> getContainerProperties() {
+//		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+//		int currentContainer = this.processProperty.getContainer();
+//		if (currentContainer > 0) {
+//			for (ProcessProperty pp : this.processPropertyList) {
+//				if (pp.getContainer() == currentContainer) {
+//					answer.add(pp);
+//				}
+//			}
+//		} else {
+//			answer.add(this.processProperty);
+//		}
+//		
+//		return answer;
+//	}
+//	
+	
+//	public String duplicateContainer() {
+//		Integer currentContainer = this.processProperty.getContainer();
+//		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+//		// search for all properties in container
+//		for (ProcessProperty pt : this.processPropertyList) {
+//			if (pt.getContainer() == currentContainer) {
+//				plist.add(pt);
+//			}
+//		}
+//		int newContainerNumber = 0;
+//		if (currentContainer > 0) {
+//			newContainerNumber++;
+//			// find new unused container number
+//			boolean search = true;
+//			while (search) {
+//				if (!this.containers.contains(newContainerNumber)) {
+//					search = false;
+//				} else {
+//					newContainerNumber++;
+//				}
+//			}
+//		}
+//		// clone properties
+//		for (ProcessProperty pt : plist) {
+//			ProcessProperty newProp = pt.getClone(newContainerNumber);
+//			this.processPropertyList.add(newProp);
+//			this.processProperty = newProp;
+//			saveCurrentProperty();
+//		}
+//		loadProcessProperties();
+//
+//		return "";
+//	}
+	
+	
+	
+	private Integer container;
+	
+	public Integer getContainer() {
+		return this.container;
+	}
+	public void setContainer(Integer container) {
+		if (container != null && container > 0) {
+			this.processProperty = getContainerProperties().get(0);
+		}
+		this.container = container;
+	}
+
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-		int currentContainer = this.processProperty.getContainer();
-		if (currentContainer > 0) {
+//		int currentContainer = this.processProperty.getContainer();
+		
+		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
-				if (pp.getContainer() == currentContainer) {
+				if (pp.getContainer() == this.container) {
 					answer.add(pp);
 				}
 			}
 		} else {
 			answer.add(this.processProperty);
 		}
-		
+
 		return answer;
 	}
-	
 	
 	public String duplicateContainer() {
 		Integer currentContainer = this.processProperty.getContainer();
@@ -1867,6 +1932,16 @@ public class ProzessverwaltungForm extends BasisForm {
 		loadProcessProperties();
 
 		return "";
+	}
+	
+	public List<ProcessProperty> getContainerlessProperties() {
+		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+		for (ProcessProperty pp : this.processPropertyList) {
+			if (pp.getContainer() == 0) {
+				answer.add(pp);
+			}
+		}
+		return answer;
 	}
 	
 	public void createNewProperty() {

@@ -272,7 +272,7 @@ public class PropertyParser {
 			// 'eigenschaften'
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
-		for (Prozesseigenschaft pe : process.getEigenschaften()) {
+		for (Prozesseigenschaft pe : plist) {
 
 			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
 			if (pe.getTitel() != null) {
