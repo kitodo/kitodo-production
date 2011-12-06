@@ -121,13 +121,13 @@ public class BatchHelper {
 	}
 
 	public void saveCurrentProperty() {
-		if (!this.processProperty.isValid()) {
-			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-			return;
-		}
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
+			if (!this.processProperty.isValid()) {
+				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				return;
+			}
 			this.processProperty.transfer();
 
 			Prozess p = this.currentStep.getProzess();
@@ -151,13 +151,13 @@ public class BatchHelper {
 	}
 
 	public void saveCurrentPropertyForAll() {
-		if (!this.processProperty.isValid()) {
-			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-			return;
-		}
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
+			if (!this.processProperty.isValid()) {
+				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				return;
+			}
 			this.processProperty.transfer();
 
 			Prozesseigenschaft pe = new Prozesseigenschaft();
@@ -256,13 +256,36 @@ public class BatchHelper {
 		Collections.sort(this.processPropertyList, comp);
 		return this.processPropertyList;
 	}
+	public List<ProcessProperty> getContainerlessProperties() {
+		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+		for (ProcessProperty pp : this.processPropertyList) {
+			if (pp.getContainer() == 0) {
+				answer.add(pp);
+			}
+		}
+		return answer;
+	}
+	
+	
+	private Integer container;
+	
+	public Integer getContainer() {
+		return this.container;
+	}
+	public void setContainer(Integer container) {
+		if (container != null && container > 0) {
+			this.processProperty = getContainerProperties().get(0);
+		}
+		this.container = container;
+	}
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-		int currentContainer = this.processProperty.getContainer();
-		if (currentContainer > 0) {
+//		int currentContainer = this.processProperty.getContainer();
+		
+		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
-				if (pp.getContainer() == currentContainer) {
+				if (pp.getContainer() == this.container) {
 					answer.add(pp);
 				}
 			}
