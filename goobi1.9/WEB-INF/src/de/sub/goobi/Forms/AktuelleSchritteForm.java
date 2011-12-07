@@ -141,7 +141,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	@SuppressWarnings("unchecked")
 	public String FilterAlleStart() {
-		Helper.createNewHibernateSession();
+//		Helper.createNewHibernateSession();
 		if (this.page != null && this.page.getTotalResults() != 0) {
 			SchrittDAO dao = new SchrittDAO();
 			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
@@ -305,7 +305,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		// if only one step is asigned for this batch, use the single
 
-		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
+//		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
 
 		if (currentStepsOfBatch.size() == 1) {
 			return SchrittDurchBenutzerUebernehmen();

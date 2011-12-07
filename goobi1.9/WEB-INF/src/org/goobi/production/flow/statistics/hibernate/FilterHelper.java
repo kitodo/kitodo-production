@@ -74,6 +74,8 @@ class FilterHelper {
 			aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
 		} catch (DAOException e) {
 			logger.warn("DAOException", e);
+		} catch (Exception e) {
+			logger.warn("Exception", e);
 		}
 		if (aktuellerNutzer != null) {
 			if (loginForm.getMaximaleBerechtigung() > 1) {
