@@ -107,6 +107,10 @@ public class AktuelleSchritteForm extends BasisForm {
 	private ProzessDAO pdao;
 	private Boolean flagWait = false;
 	private BatchHelper batchHelper;
+	private List<Integer> containers = new ArrayList<Integer>();
+	private Integer container;
+	private List<ProcessProperty> processPropertyList;
+	private ProcessProperty processProperty;
 
 	public AktuelleSchritteForm() {
 		this.anzeigeAnpassen = new HashMap<String, Boolean>();
@@ -1043,10 +1047,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	// TODO property
 
-	private List<ProcessProperty> processPropertyList;
-
-	private ProcessProperty processProperty;
-
 	public ProcessProperty getProcessProperty() {
 		return this.processProperty;
 	}
@@ -1087,13 +1087,13 @@ public class AktuelleSchritteForm extends BasisForm {
 				}
 			}
 			Prozess p = this.mySchritt.getProzess();
-			List<Prozesseigenschaft> props =p.getEigenschaftenList();
+			List<Prozesseigenschaft> props = p.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
 					p.getEigenschaften().remove(pe);
 				}
 			}
-			
+
 			try {
 				this.pdao.save(this.mySchritt.getProzess());
 				Helper.setMeldung("Properties saved");
@@ -1103,7 +1103,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 		}
 	}
-	
+
 	public void saveCurrentProperty() {
 		if (!this.processProperty.isValid()) {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
@@ -1130,9 +1130,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
-	private List<Integer> containers = new ArrayList<Integer>();
-
-
 	public List<Integer> getContainers() {
 		return this.containers;
 	}
@@ -1156,7 +1153,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
 		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
 		// }
-		
+
 		List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
@@ -1188,6 +1185,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void setBatchHelper(BatchHelper batchHelper) {
 		this.batchHelper = batchHelper;
 	}
+
 	public List<ProcessProperty> getContainerlessProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
 		for (ProcessProperty pp : this.processPropertyList) {
@@ -1197,13 +1195,11 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		return answer;
 	}
-	
-	
-	private Integer container;
-	
+
 	public Integer getContainer() {
 		return this.container;
 	}
+
 	public void setContainer(Integer container) {
 		if (container != null && container > 0) {
 			this.processProperty = getContainerProperties().get(0);
@@ -1213,8 +1209,8 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-//		int currentContainer = this.processProperty.getContainer();
-		
+		// int currentContainer = this.processProperty.getContainer();
+
 		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
 				if (pp.getContainer() == this.container) {
@@ -1227,7 +1223,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 		return answer;
 	}
-	
+
 	public String duplicateContainer() {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();

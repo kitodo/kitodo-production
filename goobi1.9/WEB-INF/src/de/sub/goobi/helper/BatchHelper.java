@@ -44,7 +44,10 @@ public class BatchHelper {
 	private static final Logger logger = Logger.getLogger(BatchHelper.class);
 	private Schritt currentStep;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+	private List<ProcessProperty> processPropertyList;
+	private ProcessProperty processProperty;
+	private List<Integer> containers = new ArrayList<Integer>();
+	private Integer container;
 	
 	public BatchHelper(List<Schritt> steps) {
 		this.steps = steps;
@@ -76,10 +79,6 @@ public class BatchHelper {
 	/*
 	 * properties
 	 */
-
-	private List<ProcessProperty> processPropertyList;
-
-	private ProcessProperty processProperty;
 
 	public ProcessProperty getProcessProperty() {
 		return this.processProperty;
@@ -238,8 +237,6 @@ public class BatchHelper {
 		Collections.sort(this.containers);
 	}
 
-	private List<Integer> containers = new ArrayList<Integer>();
-
 	public List<Integer> getContainers() {
 		return this.containers;
 	}
@@ -265,10 +262,7 @@ public class BatchHelper {
 		}
 		return answer;
 	}
-	
-	
-	private Integer container;
-	
+		
 	public Integer getContainer() {
 		return this.container;
 	}

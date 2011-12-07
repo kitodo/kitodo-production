@@ -125,6 +125,10 @@ public class ProzessverwaltungForm extends BasisForm {
 	private StatisticsRenderingElement myCurrentTable;
 	private boolean showClosedProcesses = false;
 	private boolean showArchivedProjects = false;
+	private List<ProcessProperty> processPropertyList;
+	private ProcessProperty processProperty;
+	private List<Integer> containers = new ArrayList<Integer>();
+	private Integer container;
 
 	private boolean showStatistics = false;
 
@@ -1672,9 +1676,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	// TODO property
 
-	private List<ProcessProperty> processPropertyList;
-
-	private ProcessProperty processProperty;
+	
 
 	public ProcessProperty getProcessProperty() {
 		return this.processProperty;
@@ -1762,11 +1764,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	
-
-	private List<Integer> containers = new ArrayList<Integer>();
-
-
-	
 	public int getPropertyListSize() {
 		if (this.processPropertyList == null) {
 			return 0;
@@ -1817,61 +1814,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList.add(pt);
 		saveProcessProperties();
 	}
-
-//	public List<ProcessProperty> getContainerProperties() {
-//		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-//		int currentContainer = this.processProperty.getContainer();
-//		if (currentContainer > 0) {
-//			for (ProcessProperty pp : this.processPropertyList) {
-//				if (pp.getContainer() == currentContainer) {
-//					answer.add(pp);
-//				}
-//			}
-//		} else {
-//			answer.add(this.processProperty);
-//		}
-//		
-//		return answer;
-//	}
-//	
-	
-//	public String duplicateContainer() {
-//		Integer currentContainer = this.processProperty.getContainer();
-//		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
-//		// search for all properties in container
-//		for (ProcessProperty pt : this.processPropertyList) {
-//			if (pt.getContainer() == currentContainer) {
-//				plist.add(pt);
-//			}
-//		}
-//		int newContainerNumber = 0;
-//		if (currentContainer > 0) {
-//			newContainerNumber++;
-//			// find new unused container number
-//			boolean search = true;
-//			while (search) {
-//				if (!this.containers.contains(newContainerNumber)) {
-//					search = false;
-//				} else {
-//					newContainerNumber++;
-//				}
-//			}
-//		}
-//		// clone properties
-//		for (ProcessProperty pt : plist) {
-//			ProcessProperty newProp = pt.getClone(newContainerNumber);
-//			this.processPropertyList.add(newProp);
-//			this.processProperty = newProp;
-//			saveCurrentProperty();
-//		}
-//		loadProcessProperties();
-//
-//		return "";
-//	}
-	
-	
-	
-	private Integer container;
 	
 	public Integer getContainer() {
 		return this.container;
