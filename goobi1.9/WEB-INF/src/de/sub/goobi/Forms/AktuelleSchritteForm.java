@@ -1129,53 +1129,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			Helper.setFehlerMeldung("Properties could not be saved");
 		}
 	}
-	
-
-	private void saveWithoutValidation() {
-		for (IProperty p : this.processPropertyList) {
-			p.transfer();
-		}
-		try {
-			this.pdao.save(this.mySchritt.getProzess());
-		} catch (DAOException e) {
-			myLogger.error(e);
-			Helper.setFehlerMeldung("Properties could not be saved");
-		}
-	}
 
 	private List<Integer> containers = new ArrayList<Integer>();
 
-//	public String duplicateContainer() {
-//		Integer currentContainer = this.processProperty.getContainer();
-//		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
-//		// search for all properties in container
-//		for (ProcessProperty pt : this.processPropertyList) {
-//			if (pt.getContainer() == currentContainer) {
-//				plist.add(pt);
-//			}
-//		}
-//
-//		// find new unused container number
-//		boolean search = true;
-//		int newContainerNumber = 1;
-//		while (search) {
-//			if (!this.containers.contains(newContainerNumber)) {
-//				search = false;
-//			} else {
-//				newContainerNumber++;
-//			}
-//		}
-//		// clone properties
-//		for (ProcessProperty pt : plist) {
-//			ProcessProperty newProp = pt.getClone(newContainerNumber);
-//			this.processPropertyList.add(newProp);
-//			this.processProperty = newProp;
-//			saveCurrentProperty();
-//			loadProcessProperties();
-//		}
-//
-//		return "";
-//	}
 
 	public List<Integer> getContainers() {
 		return this.containers;

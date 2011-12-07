@@ -60,6 +60,7 @@ public class SchrittDAO extends BaseDAO {
 	}
 
 	public void remove(Integer id) throws DAOException {
+		@SuppressWarnings("unused")
 		Schritt t = (Schritt) retrieveObj(Schritt.class, id);
 		removeObj(Schritt.class, id);
 //		LuceneIndex.updateProcess(t.getProzess());

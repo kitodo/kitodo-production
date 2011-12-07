@@ -69,4 +69,9 @@ public class BenutzerDAO extends BaseDAO {
 	public Long count(String query) throws DAOException {
 		return retrieveAnzahl(query);
 	}
+	
+	public void refresh(Benutzer t) {
+		Object o = t;
+		refresh(o);
+	}
 }
