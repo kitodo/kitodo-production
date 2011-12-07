@@ -344,6 +344,11 @@
 		<converter-class>de.sub.goobi.Converter.RegelsatzConverter</converter-class>
 	</converter>
 	
+	<!-- Process Converter for Select-Boxes -->
+	<converter>
+		<converter-id>ProcessConverter</converter-id>
+		<converter-class>de.sub.goobi.Converter.ProcessConverter</converter-class>
+	</converter>
 	<!-- StatisticsTimeUnitConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsTimeUnitConverter</converter-id>

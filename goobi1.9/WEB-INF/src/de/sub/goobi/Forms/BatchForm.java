@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -30,6 +31,8 @@ package de.sub.goobi.Forms;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
@@ -41,12 +44,12 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-public class BatchForm {
+public class BatchForm extends BasisForm {
+
+	private static final long serialVersionUID = 8234897225425856549L;
 
 	private static final Logger logger = Logger.getLogger(BatchForm.class);
 
-	private Integer batchNumber;
-	private Prozess process;
 	private List<Prozess> currentProcesses;
 	private List<Prozess> selectedProcesses;
 	private List<Integer> currentBatches;
@@ -56,19 +59,6 @@ public class BatchForm {
 	private IEvaluableFilter myFilteredDataSource;
 	private int MAX_HITS = 100;
 
-	public int getSizeOfBatch() {
-		loadData();
-		return this.currentProcesses.size();
-	}
-
-	public Integer getBatchNumber() {
-		return this.batchNumber;
-	}
-
-	public void setBatchNumber(Integer batchNumber) {
-		this.batchNumber = batchNumber;
-	}
-
 	public List<Prozess> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
@@ -77,23 +67,38 @@ public class BatchForm {
 		this.currentProcesses = currentProcesses;
 	}
 
-	public void loadBatchFromProcess() {
-		this.batchNumber = this.process.getBatchID();
-		loadData();
+	private void cleanData() {
+		this.processfilter = "";
+		this.batchfilter = "";
+		this.selectedBatches = new ArrayList<Integer>();
+		this.selectedProcesses = new ArrayList<Prozess>();
 	}
 
-	public void loadProcessesFromBatch() {
-		loadData();
+	public void loadBatchData() {
+		this.selectedBatches = new ArrayList<Integer>();
+		this.currentBatches = new ArrayList<Integer>();
+		for (Prozess p : this.selectedProcesses) {
+			if (p.getBatchID() != null && !this.currentBatches.contains(p.getBatchID())) {
+				this.currentBatches.add(p.getBatchID());
+			}
+		}
+		cleanData();
 	}
 
-	private void loadData() {
+	public void loadProcessData() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("batchID", this.batchNumber));
+		crit.setMaxResults(this.MAX_HITS);
+		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		if (this.selectedBatches.size() > 0) {
+			crit.add(Restrictions.in("batchID", this.selectedBatches));
+		}
 		this.currentProcesses = crit.list();
+		cleanData();
 	}
 
 	public void filterProcesses() {
+
 		if (this.processfilter == null) {
 			this.processfilter = "";
 		}
@@ -102,12 +107,10 @@ public class BatchForm {
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 		crit.setMaxResults(this.MAX_HITS);
 		this.currentProcesses = crit.list();
+		cleanData();
 	}
 
 	public void filterBatches() {
-		if (this.batchfilter == null) {
-			// list all
-		}
 		Integer number = null;
 		try {
 			number = new Integer(this.batchfilter);
@@ -118,15 +121,45 @@ public class BatchForm {
 			Session session = Helper.getHibernateSession();
 			Query query = session.createQuery("select distinct batchID from Prozess");
 			query.setMaxResults(this.MAX_HITS);
-			List<Integer> allBatches =  query.list(); 
+			List<Integer> allBatches = query.list();
 			this.currentBatches = new ArrayList<Integer>();
 			for (Integer in : allBatches) {
 				if (in != null && Integer.toString(in).contains(this.batchfilter)) {
 					this.currentBatches.add(in);
 				}
 			}
- 		}
-		
+		} else {
+			Session session = Helper.getHibernateSession();
+			Query query = session.createQuery("select distinct batchID from Prozess");
+			query.setMaxResults(this.MAX_HITS);
+			this.currentBatches = query.list();
+			if (this.currentBatches.contains(null)) {
+				this.currentBatches.remove(null);
+			}
+		}
+		cleanData();
+	}
+
+	public List<SelectItem> getCurrentProcessesAsSelectItems() {
+		List<SelectItem> answer = new ArrayList<SelectItem>();
+		for (Prozess p : this.currentProcesses) {
+			answer.add(new SelectItem(p, p.getTitel()));
+		}
+		return answer;
+	}
+
+	public List<SelectItem> getCurrentBatchesAsSelectItems() {
+		List<SelectItem> answer = new ArrayList<SelectItem>();
+		Session session = Helper.getHibernateSession();
+		for (int in : this.currentBatches) {
+			Criteria crit = session.createCriteria(Prozess.class);
+			crit.add(Restrictions.eq("batchID", in));
+			// TODO text aus message generieren
+			String text = "Batch " + in + " (" + crit.list().size() + " Vorgänge)";
+			answer.add(new SelectItem(in, text));
+		}
+
+		return answer;
 	}
 
 	public String getBatchfilter() {
@@ -169,15 +202,9 @@ public class BatchForm {
 		this.selectedBatches = selectedBatches;
 	}
 
-	public static void main(String[] args) {
-		BatchForm bf = new BatchForm();
-		bf.setBatchNumber(20);
-		bf.setBatchfilter("2");
-		bf.filterBatches();
-		logger.error(bf.getCurrentBatches());
-		// bf.setProcessfilter("klei");
-//		bf.filterProcesses();
-//		logger.error(bf.currentProcesses.size());
-		// logger.error(bf.getSizeOfBatch());
+	public String FilterAlleStart() {
+		filterBatches();
+		filterProcesses();
+		return "BatchesAll";
 	}
 }
