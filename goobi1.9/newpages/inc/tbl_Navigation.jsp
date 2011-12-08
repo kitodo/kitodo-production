@@ -128,7 +128,8 @@
 								<f:verbatim>&#8250; </f:verbatim>
 							</h:panelGroup>
 							<h:outputText value="#{msgs.batches}" />
-							
+							<x:updateActionListener
+								property="#{BatchForm.modusBearbeiten}" value="" />
 							<x:updateActionListener property="#{NavigationForm.aktuell}"
 								value="44" />
 						</h:commandLink>

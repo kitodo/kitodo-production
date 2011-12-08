@@ -52,6 +52,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Batch;
+import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 
@@ -70,7 +71,9 @@ public class BatchForm extends BasisForm {
 	private IEvaluableFilter myFilteredDataSource;
 	private int MAX_HITS = 100;
 	private ProzessDAO dao = new ProzessDAO();
-
+	private String modusBearbeiten = "";
+	
+	
 	public List<Prozess> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
@@ -79,12 +82,12 @@ public class BatchForm extends BasisForm {
 		this.currentProcesses = currentProcesses;
 	}
 
-	private void cleanData() {
-		this.processfilter = "";
-		this.batchfilter = "";
-		this.selectedBatches = new ArrayList<String>();
-		this.selectedProcesses = new ArrayList<Prozess>();
-	}
+	// private void cleanData() {
+	// this.processfilter = "";
+	// this.batchfilter = "";
+	// this.selectedBatches = new ArrayList<String>();
+	// this.selectedProcesses = new ArrayList<Prozess>();
+	// }
 
 	public void loadBatchData() {
 		this.currentBatches = new ArrayList<Batch>();
@@ -119,7 +122,7 @@ public class BatchForm extends BasisForm {
 			crit.add(Restrictions.in("batchID", ids));
 		}
 		this.currentProcesses = crit.list();
-		cleanData();
+		// cleanData();
 	}
 
 	public void filterProcesses() {
@@ -328,7 +331,7 @@ public class BatchForm extends BasisForm {
 	public void createNewBatch() {
 		if (this.selectedProcesses.size() > 0) {
 			Session session = Helper.getHibernateSession();
-			Integer newBatchId =  1 + (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+			Integer newBatchId = 1 + (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
 			for (Prozess p : this.selectedProcesses) {
 				p.setBatchID(newBatchId);
 				try {
@@ -342,4 +345,43 @@ public class BatchForm extends BasisForm {
 		FilterAlleStart();
 	}
 
+	/*
+	 * properties
+	 */
+	private BatchProcessHelper batchHelper;
+	
+	public String editProperties() {
+		if (this.selectedBatches.size() == 0) {
+			Helper.setFehlerMeldung("noBatchSelected");
+			return "";
+		} else if (this.selectedBatches.size() > 1) {
+			Helper.setFehlerMeldung("toḾanyBatchesSelected");
+			return "";
+		} else {
+			Session session = Helper.getHibernateSession();
+			Criteria crit = session.createCriteria(Prozess.class);
+			crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+			List<Integer> ids = new ArrayList<Integer>();
+			crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
+			List<Prozess> propertyBatch = crit.list();
+			this.batchHelper = new BatchProcessHelper(propertyBatch);
+			return "BatchProperties";
+		}		
+	}
+
+	public BatchProcessHelper getBatchHelper() {
+		return this.batchHelper;
+	}
+
+	public void setBatchHelper(BatchProcessHelper batchHelper) {
+		this.batchHelper = batchHelper;
+	}
+
+	public String getModusBearbeiten() {
+		return modusBearbeiten;
+	}
+
+	public void setModusBearbeiten(String modusBearbeiten) {
+		this.modusBearbeiten = modusBearbeiten;
+	}
 }

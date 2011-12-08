@@ -78,6 +78,11 @@
 														<h:outputText value="#{msgs.deleteBatch}" />
 													</h:commandLink>
 
+													<h:commandLink action="#{BatchForm.editProperties}">
+														<h:graphicImage  alt="/newpages/images/buttons/edit.gif" value="/newpages/images/buttons/edit.gif" style="vertical-align:middle"  />
+														<h:outputText value="#{msgs.editProperties}"/>
+													</h:commandLink>
+
 
 												</h:panelGrid>
 											</htm:td>
@@ -90,8 +95,6 @@
 														<h:inputText value="#{BatchForm.processfilter}" />
 														<h:commandButton action="#{BatchForm.filterProcesses}" value="#{msgs.filter}" title="#{msgs.filter}" />
 													</h:panelGroup>
-
-													<h:outputText value="#{msgs.prozesse}" />
 
 													<h:selectManyListbox value="#{BatchForm.selectedProcesses}" converter="ProcessConverter" size="20">
 														<f:selectItems value="#{BatchForm.currentProcessesAsSelectItems}" />

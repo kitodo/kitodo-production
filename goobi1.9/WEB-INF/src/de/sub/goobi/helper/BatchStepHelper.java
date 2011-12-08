@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -62,21 +63,20 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-
-public class BatchHelper {
+public class BatchStepHelper {
 
 	private List<Schritt> steps;
 	private ProzessDAO pdao = new ProzessDAO();
 	private SchrittDAO stepDAO = new SchrittDAO();
-	private static final Logger logger = Logger.getLogger(BatchHelper.class);
+	private static final Logger logger = Logger.getLogger(BatchStepHelper.class);
 	private Schritt currentStep;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
 	private List<Integer> containers = new ArrayList<Integer>();
 	private Integer container;
-	
-	public BatchHelper(List<Schritt> steps) {
+
+	public BatchStepHelper(List<Schritt> steps) {
 		this.steps = steps;
 		for (Schritt s : steps) {
 
@@ -168,7 +168,7 @@ public class BatchHelper {
 			}
 			try {
 				this.pdao.save(this.currentStep.getProzess());
-				Helper.setMeldung("Properties saved");
+				Helper.setMeldung("Property saved");
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
@@ -177,6 +177,7 @@ public class BatchHelper {
 	}
 
 	public void saveCurrentPropertyForAll() {
+		boolean error = false;
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
@@ -232,12 +233,15 @@ public class BatchHelper {
 
 				try {
 					this.pdao.save(process);
-					Helper.setMeldung("Properties saved");
 				} catch (DAOException e) {
+					error = true;
 					logger.error(e);
 					Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
 				}
 			}
+		}
+		if (!error) {
+			Helper.setMeldung("Properties saved");
 		}
 	}
 
@@ -280,33 +284,35 @@ public class BatchHelper {
 		Collections.sort(this.processPropertyList, comp);
 		return this.processPropertyList;
 	}
+
 	public List<ProcessProperty> getContainerlessProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
 		for (ProcessProperty pp : this.processPropertyList) {
-			if (pp.getContainer() == 0) {
+			if (pp.getContainer() == 0 && pp.getName() != null) {
 				answer.add(pp);
 			}
 		}
 		return answer;
 	}
-		
+
 	public Integer getContainer() {
 		return this.container;
 	}
+
 	public void setContainer(Integer container) {
+		this.container = container;
 		if (container != null && container > 0) {
 			this.processProperty = getContainerProperties().get(0);
 		}
-		this.container = container;
 	}
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-//		int currentContainer = this.processProperty.getContainer();
-		
+		// int currentContainer = this.processProperty.getContainer();
+
 		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
-				if (pp.getContainer() == this.container) {
+				if (pp.getContainer() == this.container && pp.getName() != null) {
 					answer.add(pp);
 				}
 			}
@@ -351,7 +357,6 @@ public class BatchHelper {
 		return "";
 	}
 
-	
 	private void saveStep() {
 		Prozess p = this.currentStep.getProzess();
 		List<Prozesseigenschaft> props = p.getEigenschaftenList();
@@ -366,8 +371,8 @@ public class BatchHelper {
 			logger.error(e);
 		}
 	}
-	
-	
+
+	// TODO wird nur für currentStep ausgeführt
 	public String duplicateContainerForAll() {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
@@ -477,13 +482,13 @@ public class BatchHelper {
 				seg.setType(PropertyType.messageImportant);
 				seg.setCreationDate(new Date());
 				step.getEigenschaften().add(seg);
-//				this.stepDAO.save(step);
+				// this.stepDAO.save(step);
 			}
 
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-//			this.pdao.save(this.currentStep.getProzess());
+			// this.pdao.save(this.currentStep.getProzess());
 		} catch (DAOException e) {
 		}
 	}
@@ -570,7 +575,7 @@ public class BatchHelper {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-//			this.pdao.save(this.currentStep.getProzess());
+			// this.pdao.save(this.currentStep.getProzess());
 		} catch (DAOException e) {
 		}
 	}

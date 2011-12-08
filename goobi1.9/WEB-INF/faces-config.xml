@@ -266,6 +266,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+		<navigation-rule>
+		<navigation-case>
+			<from-outcome>BatchProperties</from-outcome>
+			<to-view-id>/newpages/BatchProperties.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- Projekte -->
 	<navigation-rule>
 		<navigation-case>
