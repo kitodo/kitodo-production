@@ -25,7 +25,7 @@
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="mytaskform">
+					<h:form id="mytaskform" rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2))}">
 						<%-- Breadcrumb --%>
 						<h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
 							<h:panelGroup id="id1">
@@ -57,20 +57,26 @@
 														<h:inputText value="#{BatchForm.batchfilter}" />
 														<h:commandButton action="#{BatchForm.filterBatches}" title="#{msgs.filter}" value="#{msgs.filter}" />
 													</h:panelGroup>
-													<h:selectManyListbox value="#{BatchForm.selectedBatches}"  size="20">
-													<%-- 	<f:selectItems value="#{BatchForm.currentBatchesAsSelectItems}" />--%>
-														<si:selectItems var="bla" value="#{BatchForm.currentBatchesAsSelectItems}" itemLabel="#{bla.label}" itemValue="#{bla.value}"/>
+													<h:selectManyListbox value="#{BatchForm.selectedBatches}" size="20">
+														<si:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch.batchLabel}" itemValue="#{batch.batchId}" />
 													</h:selectManyListbox>
 
-													<%-- 		<h:selectManyListbox value="#{BatchForm.selectedBatches}" size="20">
-														<f:selectItems value="#{BatchForm.currentBatchesAsSelectItems}" />
-													</h:selectManyListbox>
---%>
 
-													<h:commandLink action="#{BatchForm.loadProcessData}" value="#{msgs.loadProcessData}" />
+													<h:commandLink action="#{BatchForm.loadProcessData}">
+														<h:graphicImage alt="/newpages/images/ajaxload_small.gif" value="/newpages/images/ajaxload_small.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.loadProcessData}" />
+													</h:commandLink>
 
+													<h:commandLink action="#{BatchForm.downloadDocket}">
+														<h:graphicImage alt="/newpages/images/buttons/laufzettel_wide.png" value="/newpages/images/buttons/laufzettel_wide.png"
+															style="vertical-align:middle" />
+														<h:outputText value="#{msgs.laufzettelDrucken}" />
+													</h:commandLink>
 
-
+													<h:commandLink action="#{BatchForm.deleteBatch}">
+														<h:graphicImage alt="/newpages/images/buttons/delete.gif" value="/newpages/images/buttons/delete.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.deleteBatch}" />
+													</h:commandLink>
 
 
 												</h:panelGrid>
@@ -91,9 +97,25 @@
 														<f:selectItems value="#{BatchForm.currentProcessesAsSelectItems}" />
 													</h:selectManyListbox>
 
-													<h:commandLink action="#{BatchForm.loadBatchData}" value="#{msgs.loadBatchData}" />
+													<h:commandLink action="#{BatchForm.loadBatchData}">
+														<h:graphicImage alt="/newpages/images/ajaxload_small.gif" value="/newpages/images/ajaxload_small.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.loadBatchData}" />
+													</h:commandLink>
 
+													<h:commandLink action="#{BatchForm.addProcessesToBatch}">
+														<h:graphicImage alt="/newpages/images/plus.gif" value="/newpages/images/plus.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.addToBatch}" />
+													</h:commandLink>
 
+													<h:commandLink action="#{BatchForm.removeProcessesFromBatch}">
+														<h:graphicImage alt="/newpages/images/minus.gif" value="/newpages/images/minus.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.removeFromBatch}" />
+													</h:commandLink>
+													
+													<h:commandLink action="#{BatchForm.createNewBatch}">
+														<h:graphicImage alt="/newpages/images/buttons/star_blue.gif" value="/newpages/images/buttons/star_blue.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.createNewBatch}" />
+													</h:commandLink>
 
 
 												</h:panelGrid>

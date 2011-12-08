@@ -141,7 +141,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	@SuppressWarnings("unchecked")
 	public String FilterAlleStart() {
-//		Helper.createNewHibernateSession();
+		Helper.createNewHibernateSession();
 		if (this.page != null && this.page.getTotalResults() != 0) {
 			SchrittDAO dao = new SchrittDAO();
 			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {

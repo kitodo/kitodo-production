@@ -279,7 +279,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public String FilterAktuelleProzesse() {
-//		Helper.createNewHibernateSession();
+		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 
@@ -350,7 +350,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Anzeige der Sammelbände filtern
 	 */
 	public String FilterAlleStart() {
-//		Helper.createNewHibernateSession();
+		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		/*

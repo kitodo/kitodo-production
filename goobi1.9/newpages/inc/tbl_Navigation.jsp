@@ -121,6 +121,7 @@
 
 						<%-- batches --%>
 						<h:commandLink styleClass="mlink"
+						rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
 							action="#{BatchForm.FilterAlleStart}"
 							style="#{NavigationForm.aktuell == '44' ? 'font-weight: bold;':'font-weight:normal ;'}">
 							<h:panelGroup rendered="#{NavigationForm.aktuell == '44'}">
