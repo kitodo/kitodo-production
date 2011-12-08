@@ -46,6 +46,7 @@ import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Prozess;
@@ -132,7 +133,7 @@ public class BatchForm extends BasisForm {
 		}
 		this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
 		Criteria crit = this.myFilteredDataSource.getCriteria();
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		crit.addOrder(Order.desc("erstellungsdatum"));
 		crit.setMaxResults(this.MAX_HITS);
 		this.currentProcesses = crit.list();
 	}
@@ -146,8 +147,9 @@ public class BatchForm extends BasisForm {
 		}
 		if (number != null) {
 			Session session = Helper.getHibernateSession();
-			Query query = session.createQuery("select distinct batchID from Prozess");
+			Query query = session.createQuery("select distinct batchID from Prozess order by batchID desc");
 			query.setMaxResults(this.MAX_HITS);
+		
 			List<Integer> allBatches = query.list();
 			this.currentBatches = new ArrayList<Batch>();
 			for (Integer in : allBatches) {
@@ -157,7 +159,7 @@ public class BatchForm extends BasisForm {
 			}
 		} else {
 			Session session = Helper.getHibernateSession();
-			Query query = session.createQuery("select distinct batchID from Prozess");
+			Query query = session.createQuery("select distinct batchID from Prozess order by batchID desc");
 			query.setMaxResults(this.MAX_HITS);
 			List<Integer> ids = query.list();
 			this.currentBatches = new ArrayList<Batch>();
@@ -378,7 +380,7 @@ public class BatchForm extends BasisForm {
 	}
 
 	public String getModusBearbeiten() {
-		return modusBearbeiten;
+		return this.modusBearbeiten;
 	}
 
 	public void setModusBearbeiten(String modusBearbeiten) {
