@@ -125,7 +125,7 @@ public class BeanHelper {
 			stepneu.setTypAutomatischScriptpfad3(step.getTypAutomatischScriptpfad3());
 			stepneu.setTypAutomatischScriptpfad4(step.getTypAutomatischScriptpfad4());
 			stepneu.setTypAutomatischScriptpfad5(step.getTypAutomatischScriptpfad5());
-			
+			stepneu.setBatchStep(step.getBatchStep());
 			stepneu.setTypScriptStep(step.getTypScriptStep());
 			stepneu.setTypBeimAnnehmenAbschliessen(step.isTypBeimAnnehmenAbschliessen());
 			stepneu.setTypBeimAnnehmenModul(step.isTypBeimAnnehmenModul());
