@@ -238,6 +238,33 @@
 		</f:facet>
 		<h:outputText value="#{item.benutzerGesperrt.nachVorname}" rendered="#{item.prozess.benutzerGesperrt != null}" />
 	</x:column>
+	
+	<%-- +++++++++++++++++  Batch ID ++++++++++++++++++++++++ --%>
+	<x:column style="text-align:center" rendered="#{AktuelleSchritteForm.anzeigeAnpassen['batchId']}">
+		<f:facet name="header">
+			<x:div>
+				<%-- Header --%>
+				<h:outputText value="#{msgs.batch}" />
+				<%-- Sortierung Asc --%>
+				<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}" id="sort19a" rendered="#{AktuelleSchritteForm.sortierung=='batchAsc'}">
+					<h:graphicImage value="/newpages/images/sorting/asc.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchDesc" />
+				</h:commandLink>
+				<%-- Sortierung Desc --%>
+				<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}" id="sort20a" rendered="#{AktuelleSchritteForm.sortierung=='batchDesc'}">
+					<h:graphicImage value="/newpages/images/sorting/desc.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchAsc" />
+				</h:commandLink>
+				<%-- Sortierung none --%>
+				<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}" id="sort21a"
+					rendered="#{AktuelleSchritteForm.sortierung!='batchDesc' && AktuelleSchritteForm.sortierung!='batchAsc'}">
+					<h:graphicImage value="/newpages/images/sorting/none.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{AktuelleSchritteForm.sortierung}" value="batchAsc" />
+				</h:commandLink>
+			</x:div>
+		</f:facet>
+		<h:outputText value="#{item.prozess.batchID}" rendered="#{item.prozess.batchID != null}" />
+	</x:column>
 
 	<x:column style="text-align:center">
 		<f:facet name="header">

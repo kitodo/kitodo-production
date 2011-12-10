@@ -85,6 +85,9 @@
 						<h:outputText value="#{msgs.id}" />
 						<h:selectBooleanCheckbox
 							value="#{AktuelleSchritteForm.anzeigeAnpassen['processId']}" />
+						<h:outputText value="#{msgs.batch}" />
+						<h:selectBooleanCheckbox
+							value="#{AktuelleSchritteForm.anzeigeAnpassen['batchId']}" />
 
 						<h:outputText value="#{msgs.module}" />
 						<h:selectBooleanCheckbox

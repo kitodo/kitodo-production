@@ -116,6 +116,16 @@
 							value="#{ProzessverwaltungForm.myProzess.id}" />
 					</htm:td>
 				</htm:tr>
+				
+				<htm:tr>
+					<htm:td width="150">
+						<h:outputText styleClass="text_light" value="#{msgs.batch}:" />
+					</htm:td>
+					<htm:td>
+						<h:outputText styleClass="text_light"
+							value="#{ProzessverwaltungForm.myProzess.batchID}" />
+					</htm:td>
+				</htm:tr>
 			</htm:table>
 
 		</htm:td>

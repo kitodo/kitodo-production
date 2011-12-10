@@ -82,6 +82,33 @@
 		<h:outputText value="#{item.id}" />
 	</x:column>
 
+	<%-- +++++++++++++++++  BatchID ++++++++++++++++++++++++ --%>
+<x:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}">
+		<f:facet name="header">
+			<x:div>
+				<%-- Header --%>
+				<h:outputText value="#{msgs.batch}" />
+				<%-- Sortierung Asc --%>
+				<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort13a" rendered="#{ProzessverwaltungForm.sortierung=='batchAsc'}">
+					<h:graphicImage value="/newpages/images/sorting/asc.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchDesc" />
+				</h:commandLink>
+				<%-- Sortierung Desc --%>
+				<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort14a" rendered="#{ProzessverwaltungForm.sortierung=='batchDesc'}">
+					<h:graphicImage value="/newpages/images/sorting/desc.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc" />
+				</h:commandLink>
+				<%-- Sortierung none --%>
+				<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort15a"
+					rendered="#{ProzessverwaltungForm.sortierung!='batchDesc' && ProzessverwaltungForm.sortierung!='batchAsc'}">
+					<h:graphicImage value="/newpages/images/sorting/none.gif" style="vertical-align:middle;margin-left:5px" />
+					<x:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc" />
+				</h:commandLink>
+			</x:div>
+		</f:facet>
+		<h:outputText value="#{item.batchID}" rendered="#{item.batchID != null}" />
+	</x:column>
+	
 	<%-- +++++++++++++++++  alle Schritte auflisten mit Ajax ++++++++++++++++++++++++ --%>
 	<x:column rendered="true" id="ajaxcolumn" style="text-align:left">
 		<f:facet name="header">

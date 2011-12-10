@@ -452,6 +452,9 @@
 							<h:outputText value="#{msgs.id}" />
 							<h:selectBooleanCheckbox id="check2"
 								value="#{ProzessverwaltungForm.anzeigeAnpassen['processId']}" />
+							<h:outputText value="#{msgs.batch}" />
+							<h:selectBooleanCheckbox id="check2a"
+								value="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}" />
 							<h:outputText value="#{msgs.vorgangsdatum}" />
 							<h:selectBooleanCheckbox id="check3"
 								value="#{ProzessverwaltungForm.anzeigeAnpassen['processDate']}" />

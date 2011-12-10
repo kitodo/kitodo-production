@@ -140,6 +140,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.anzeigeAnpassen.put("swappedOut", false);
 		this.anzeigeAnpassen.put("selectionBoxes", false);
 		this.anzeigeAnpassen.put("processId", false);
+		this.anzeigeAnpassen.put("batchId", false);
 		this.sortierung = "titelAsc";
 		/*
 		 * Vorgangsdatum generell anzeigen?
@@ -434,6 +435,12 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 		if (this.sortierung.equals("titelDesc")) {
 			order = Order.desc("titel");
+		}
+		if (this.sortierung.equals("batchAsc")) {
+			order = Order.asc("batchID");
+		}
+		if (this.sortierung.equals("batchDesc")) {
+			order = Order.desc("batchID");
 		}
 
 		if (this.sortierung.equals("projektAsc")) {

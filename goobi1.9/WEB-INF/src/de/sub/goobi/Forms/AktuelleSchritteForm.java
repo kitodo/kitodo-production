@@ -118,6 +118,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.anzeigeAnpassen.put("selectionBoxes", false);
 		this.anzeigeAnpassen.put("processId", false);
 		this.anzeigeAnpassen.put("modules", false);
+		this.anzeigeAnpassen.put("batchId", false);
 		this.pdao = new ProzessDAO();
 		/*
 		 * --------------------- Vorgangsdatum generell anzeigen? -------------------
@@ -193,6 +194,12 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		if (this.sortierung.equals("prozessDesc")) {
 			order = Order.desc("proc.titel");
+		}
+		if (this.sortierung.equals("batchAsc")) {
+			order = Order.asc("proc.batchID");
+		}
+		if (this.sortierung.equals("batchDesc")) {
+			order = Order.desc("proc.batchID");
 		}
 		if (this.sortierung.equals("prozessdateAsc")) {
 			order = Order.asc("proc.erstellungsdatum");
