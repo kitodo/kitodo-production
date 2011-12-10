@@ -18,9 +18,6 @@
 <htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
 
-
-
-
 	<htm:thead styleClass="standardTable_Header">
 		<htm:th>
 			<h:outputText value="#{msgs.titel}" />
@@ -33,31 +30,27 @@
 		</htm:th>
 	</htm:thead>
 
-
-
-
 		<x:dataList var="container" value="#{ProzessverwaltungForm.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
 			<x:dataList var="proc" value="#{ProzessverwaltungForm.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
 				<htm:tr rendered="#{container == 0}" styleClass="standardTable_Row1">
 					<htm:td>
 						<%-- property title --%>
-						<h:outputText value="#{proc.name}" />
+						<h:outputText value="A: #{proc.name}" />
 					</htm:td>
 					<htm:td>
 						<%-- property value--%>
-						<h:outputText value="#{proc.value}" />
+						<h:outputText value="B: #{proc.value}" />
 					</htm:td>
-					<htm:td>
-
+					<htm:td styleClass="standardTable_ColumnCentered">
+						<%-- property action: Edit --%>
 						<h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 							<x:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}" />
 							<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
-					<%-- 		<a4j:support event="onchange" reRender="editBatch" />--%>
+							<%-- <a4j:support event="onchange" reRender="editBatch" />--%>
 						</h:commandLink>
-
-						<h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}"
-							>
+						<%-- property action: Duplicate --%>
+						<h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
 							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 							<x:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}" />
 						</h:commandLink>

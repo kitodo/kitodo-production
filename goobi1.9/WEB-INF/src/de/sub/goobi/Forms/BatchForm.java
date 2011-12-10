@@ -44,6 +44,7 @@ import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -106,7 +107,10 @@ public class BatchForm extends BasisForm {
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("batchID", id));
 		// TODO text aus message generieren
-		String text = "Batch " + id + " (" + crit.list().size() + " Vorgänge)";
+		
+		String msg1 = Helper.getTranslation("batch");
+		String msg2 = Helper.getTranslation("prozesse");
+		String text = msg1 + " " + id + " (" + crit.list().size() + " " + msg2 + ")";
 		return new Batch(id, text);
 	}
 
@@ -134,8 +138,13 @@ public class BatchForm extends BasisForm {
 		this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
 		Criteria crit = this.myFilteredDataSource.getCriteria();
 		crit.addOrder(Order.desc("erstellungsdatum"));
+		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 		crit.setMaxResults(this.MAX_HITS);
-		this.currentProcesses = crit.list();
+		try {
+			this.currentProcesses = crit.list();
+		} catch (HibernateException e) {
+			this.currentProcesses = new ArrayList<Prozess>();
+		}
 	}
 
 	public void filterBatches() {
