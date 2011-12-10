@@ -39,7 +39,7 @@ public class ConfigPlugins {
 	private static final Logger logger = Logger.getLogger(ConfigPlugins.class);
 
 	public static XMLConfiguration getPluginConfig(IPlugin inPlugin) {
-		String file = "plugin_config_" + inPlugin.getClass().getSimpleName() + ".xml";
+		String file = "plugin_" + inPlugin.getClass().getSimpleName() + ".xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + file);

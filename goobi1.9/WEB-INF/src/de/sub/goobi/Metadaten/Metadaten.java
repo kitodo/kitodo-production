@@ -565,7 +565,7 @@ public class Metadaten {
 		// myProzesseID = Helper.getRequestParameter("ProzesseID");
 
 		/*
-		 * re-reading the ruleset.xml file
+		 * re-reading the config for display rules
 		 */
 		ConfigDispayRules.getInstance().refresh();
 

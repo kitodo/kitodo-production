@@ -46,7 +46,7 @@ public class ConfigProjects {
 	private static final Logger logger = Logger.getLogger(ConfigProjects.class);
 
 	public ConfigProjects(Projekt inProject) throws IOException {
-		this(inProject, new Helper().getGoobiConfigDirectory() + "projects.xml");
+		this(inProject, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
 	}
 
 	public ConfigProjects(Projekt inProject, String configPfad) throws IOException {

@@ -61,7 +61,7 @@ public class GUIExceptionWrapper extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/*
-	 * Example for GoobiConfig.properties
+	 * Example for goobi_config.properties
 	 * 
 	 * #use this to turn this feature on or off (true/false) 
 	 * err_userHandling=true
@@ -84,7 +84,7 @@ public class GUIExceptionWrapper extends Exception {
 	 * 
 	 * err_emailBody=An error ocurred in Goobi. Please add to this message a short description of what you just did in Goobi  when this error occurred.
 	 * err_emailMessage=If this error occurred for the first time you could <a href\="{0}"> send an email to the developers </a> to support the developement of Goobi. Please mind further requests for information within the email.
-	 * err_fallBackMessage=There was an error in the programms execution. <br/> Unfortunately the more user and developer friendly feature of a link provided for the continuation of work  <br/> and the bug reporting in GoobiConfig.properties via email is disabled or not sufficiently set up. <br/> <br/> Please request your administrator to change the settings in GoobiConfig.properties for a user friendly display of this error.
+	 * err_fallBackMessage=There was an error in the programms execution. <br/> Unfortunately the more user and developer friendly feature of a link provided for the continuation of work  <br/> and the bug reporting in goobi_config.properties via email is disabled or not sufficiently set up. <br/> <br/> Please request your administrator to change the settings in goobi_config.properties for a user friendly display of this error.
 	 * err_linkText=You may ignore the stack trace ignorieren and continue your work with a click <a href\="{0}"> here </a>. <br/>If this doesn't work you may hace to use the naviagation or even restart the application by logging out and back in.
 	 * err_noMailService=The feature to notify the development team by email from here is disabled
 	 * err_subjectLine=Goobi Application Error

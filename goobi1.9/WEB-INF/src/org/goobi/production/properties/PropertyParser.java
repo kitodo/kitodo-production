@@ -51,7 +51,7 @@ public class PropertyParser {
 	private void readConfigAsSample() {
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);
@@ -112,7 +112,7 @@ public class PropertyParser {
 		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);
@@ -224,7 +224,7 @@ public class PropertyParser {
 		String projectTitle = process.getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		String path = new Helper().getGoobiConfigDirectory() + "config_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);

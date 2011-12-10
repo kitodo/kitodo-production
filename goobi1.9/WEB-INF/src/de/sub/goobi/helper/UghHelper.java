@@ -217,7 +217,7 @@ public class UghHelper {
 			try {
 				HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 				String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
-						+ "opaclanguages.txt";
+						+ "goobi_opacLanguages.txt";
 				FileInputStream fis = new FileInputStream(filename);
 				InputStreamReader isr = new InputStreamReader(fis, "UTF8");
 				BufferedReader in = new BufferedReader(isr);
@@ -245,7 +245,7 @@ public class UghHelper {
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opacumlaut.txt";
+		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "goobi_opacUmlaut.txt";
 
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		try {

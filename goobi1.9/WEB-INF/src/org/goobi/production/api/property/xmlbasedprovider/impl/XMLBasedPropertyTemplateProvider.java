@@ -51,7 +51,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	
 	private static XMLBasedPropertyTemplateProvider instance = null;
 	// TODO replace it with real one
-	private String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "propertyTemplates.xml";
+	private String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_propertyTemplates.xml";
 	private ArrayList<PropertyTemplate> propertyList;
 //	private IGoobiEntity entity;
 

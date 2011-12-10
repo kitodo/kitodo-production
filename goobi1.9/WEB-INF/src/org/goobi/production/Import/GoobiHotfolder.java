@@ -157,7 +157,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		logger.trace("config 2");
 
 		try {
-			 XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "config_hotfolder.xml");
+			 XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
 //			XMLConfiguration config = new XMLConfiguration("config_hotfolder.xml");
 
 			logger.trace("config 3");

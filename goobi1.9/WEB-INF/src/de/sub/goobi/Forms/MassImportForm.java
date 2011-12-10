@@ -122,7 +122,7 @@ public class MassImportForm {
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollections = new ArrayList<String>();
 		ArrayList<String> defaultCollections = new ArrayList<String>();
-		String filename = this.help.getGoobiConfigDirectory() + "digitalCollections.xml";
+		String filename = this.help.getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;

@@ -18,7 +18,7 @@
 		jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true
 		 -->
 		<property name="hibernate.connection.url">
-			jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true
+			jdbc:mysql://localhost/goobi_wellcome?autoReconnect=true&amp;autoReconnectForPools=true
 		</property>
 		<property name="hibernate.connection.username">goobi</property>
 		<property name="hibernate.connection.password">goobi</property>

@@ -53,7 +53,7 @@ public final class ConfigDispayRules {
 	 */
 
 	private ConfigDispayRules() {
-		configPfad = this.helper.getGoobiConfigDirectory() + "ruleSet.xml";
+		configPfad = this.helper.getGoobiConfigDirectory() + "goobi_metadataDisplayRules.xml";
 		try {
 			config = new XMLConfiguration(configPfad);
 			config.setReloadingStrategy(new FileChangedReloadingStrategy());

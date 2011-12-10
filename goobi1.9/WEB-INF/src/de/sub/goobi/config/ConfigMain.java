@@ -55,7 +55,7 @@ public class ConfigMain implements Serializable {
 	private ConfigMain() {
 		PropertiesConfiguration.setDefaultListDelimiter('&');
 		if (configPfad == null) {
-			configPfad = "GoobiConfig.properties";
+			configPfad = "goobi_config.properties";
 		}
 		try {
 			config = new PropertiesConfiguration(configPfad);

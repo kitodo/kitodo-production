@@ -81,7 +81,7 @@ public class ImportOpac {
 		 */
 		this.coc = new ConfigOpac().getCatalogueByName(inKatalog);
 		if (this.coc == null) {
-			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in opac.xml");
+			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in goobi_opac.xml");
 		}
 		Catalogue cat = new Catalogue(this.coc.getDescription(), this.coc.getAddress(), this.coc.getPort(), this.coc.getCbs(), this.coc.getDatabase());
 		if (verbose) {
