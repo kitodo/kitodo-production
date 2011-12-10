@@ -1,4 +1,4 @@
-package Messages;
+package de.sub.goobi.config;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,63 +26,29 @@ package Messages;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.ResourceBundle;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.log4j.Logger;
+import org.goobi.production.plugin.interfaces.IPlugin;
 
-import javax.faces.context.FacesContext;
+import de.sub.goobi.helper.Helper;
 
-import de.sub.goobi.config.ConfigMain;
+public class ConfigPlugins {
+	
+	private static final Logger logger = Logger.getLogger(ConfigPlugins.class);
 
-public class Messages {
-	private static final String BUNDLE_NAME = "Messages.intmessages"; //$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	 static  ResourceBundle localBundle;
-
-	private Messages() {
-	}
-
-	public static String getString(String key) {
-		File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
-		if (file.exists()) {
-			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
-
-			try {
-				final URL resourceURL = file.toURI().toURL();
-				URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-					@Override
-					public URLClassLoader run() {
-						return new URLClassLoader(new URL[] { resourceURL });
-					}
-				});
-				localBundle = ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
-			} catch (Exception e) {
-			}
-			
-		}
-
-		// Load local message bundle from classpath
+	public static XMLConfiguration getPluginConfig(IPlugin inPlugin) {
+		String file = "plugin_config_" + inPlugin.getClass().getSimpleName() + ".xml";
+		XMLConfiguration config;
 		try {
-			if (localBundle != null) {
-				if (localBundle.containsKey(key)) {
-					String trans = localBundle.getString(key);
-					return trans;
-				}
-				if (localBundle.containsKey(key.toLowerCase())) {
-					return localBundle.getString(key.toLowerCase());
-				}
-			}
-		} catch (RuntimeException e) {
+			config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + file);
+		} catch (ConfigurationException e) {
+			logger.error(e);
+			config = new XMLConfiguration();
 		}
-		try {
-			String msg = RESOURCE_BUNDLE.getString(key);
-			return msg;
-		} catch (RuntimeException e) {
-			return key;
-		}
+		config.setListDelimiter('&');
+		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+		return config;
 	}
 }

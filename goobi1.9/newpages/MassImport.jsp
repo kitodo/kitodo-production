@@ -79,7 +79,10 @@
 														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
+															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															
+															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
@@ -93,7 +96,7 @@
 																<si:selectItems value="#{MassImportForm.usablePluginsForRecords}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
-															<h:outputLabel for="records" value="#{msgs.records}" />
+															<h:outputLabel for="records" value="#{msgs.records}:" />
 															<h:inputTextarea id="records" value="#{MassImportForm.records}" styleClass="processMassImport" style="height: 400px;" />
 
 
@@ -105,7 +108,10 @@
 														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
+															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															
+															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
@@ -130,7 +136,10 @@
 														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
+															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															
+															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
@@ -158,7 +167,11 @@
 													<x:panelTab label="#{msgs.folderImport}" id="folder">
 														<h:panelGrid columns="2" width="100%" border="0" style="font-size:12;margin-left:30px" rowClasses="rowTop"
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
+
+															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															
+															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
@@ -172,11 +185,10 @@
 																<si:selectItems value="#{MassImportForm.usablePluginsForFolder}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 															
-															<h:outputLabel for="filenames" value="#{msgs.filenames}:" />
+															<h:outputLabel for="filenames" value="#{msgs.dateien}:" />
 															
-															<h:selectManyListbox value="#{MassImportForm.selectedFilenames}" id="filenames"> 
+															<h:selectManyListbox value="#{MassImportForm.selectedFilenames}" id="filenames" styleClass="processMassImport" style="height: 300px;"> 
 																<si:selectItems itemLabel="#{file}" itemValue="#{file}" var="file" value="#{MassImportForm.allFilenames}" />
-															
 															</h:selectManyListbox>
 
 														</h:panelGrid>
@@ -192,12 +204,8 @@
 												<h:commandButton id="id121" value="#{msgs.abbrechen}" action="ProzessverwaltungAlle" immediate="true" />
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
-
-
 												<h:commandButton id="next" value="#{msgs.weiter}" action="#{MassImportForm.nextPage}" rendered="#{MassImportForm.hasNextPage}" />
-
 												<h:commandButton id="save" value="#{msgs.speichern}" action="#{MassImportForm.convertData}" rendered="#{!MassImportForm.hasNextPage}" />
-
 											</htm:td>
 
 										</htm:tr>
