@@ -1043,7 +1043,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void addToWikiField() {
 		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		this.mySchritt.getProzess().setWikifield(this.mySchritt.getProzess().getWikifield() + WikiFieldHelper.getWikiMessage("user", message));
+		this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"user", message));
 		this.addToWikiField = "";
 		try {
 			this.pdao.save(this.mySchritt.getProzess());

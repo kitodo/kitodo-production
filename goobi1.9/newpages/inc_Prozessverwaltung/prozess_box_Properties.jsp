@@ -62,7 +62,7 @@
 				<htm:tr rendered="#{container != 0 && process_item.container==container}" styleClass="standardTable_Row1">
 				
 					<htm:td>
-						<h:outputText value="#{process_item.name} - #{propInd} - #{propCount}" />
+						<h:outputText value="#{process_item.name}" />
 					</htm:td>
 					<htm:td>
 						<h:outputText value="#{process_item.value}" />

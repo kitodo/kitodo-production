@@ -645,7 +645,7 @@ public class BatchStepHelper {
 	public void addToWikiField() {
 		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		this.currentStep.getProzess().setWikifield(this.currentStep.getProzess().getWikifield() + WikiFieldHelper.getWikiMessage("user", message));
+		this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(),"user", message));
 		this.addToWikiField = "";
 		try {
 			this.pdao.save(this.currentStep.getProzess());

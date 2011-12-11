@@ -10,6 +10,25 @@
 	<htm:tr style="vertical-align:top">
 		<htm:td>
 
+			<h:form>
+				<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
+					<htm:tr>
+						<htm:td styleClass="eingabeBoxen_row1">
+							<h:outputText value="#{msgs.processesInThisBatch}" />
+						</htm:td>
+					</htm:tr>
+					<htm:tr>
+						<htm:td styleClass="eingabeBoxen_row2">
+							<h:outputText value="#{msgs.showDataForProcess}: " />
+							<h:selectOneMenu value="#{AktuelleSchritteForm.batchHelper.processName}">
+								<si:selectItems var="process" value="#{AktuelleSchritteForm.batchHelper.processNameList}" itemLabel="#{process}" itemValue="#{process}" />
+							</h:selectOneMenu>
+							<h:commandButton action="#{NavigationForm.Reload}" value="#{msgs.reload}" />
+						</htm:td>
+					</htm:tr>
+				</htm:table>
+			</h:form>
+
 			<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="main_statistikboxen" id="details">
 
 				<htm:tr>

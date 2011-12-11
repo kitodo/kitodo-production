@@ -48,22 +48,6 @@
 
 								<%-- globale Warn- und Fehlermeldungen --%>
 								<h:messages id="id7" globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
-								<h:form>
-									<htm:table>
-										<htm:tr>
-											<htm:td>
-												<h:selectOneMenu value="#{AktuelleSchritteForm.batchHelper.processName}">
-													<si:selectItems var="process" value="#{AktuelleSchritteForm.batchHelper.processNameList}" itemLabel="#{process}" itemValue="#{process}" />
-											<%-- 		<a4j:support event="onchange" reRender="editBatch,details" />  --%>
-												</h:selectOneMenu>
-												<h:commandButton action="#{NavigationForm.Reload}" value="#{msgs.reload}" />
-												
-												
-												
-											</htm:td>
-										</htm:tr>
-									</htm:table>
-								</h:form>
 
 								<%@include file="inc_Batches/batch_box_Details.jsp"%>
 

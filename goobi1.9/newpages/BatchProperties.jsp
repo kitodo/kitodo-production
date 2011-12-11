@@ -251,11 +251,11 @@
 				</h:commandButton>
 			</htm:td>
 			<htm:td styleClass="eingabeBoxen_row3" align="right">
-				<h:commandButton value="#{msgs.uebernehmenOne}" action="#{BatchForm.batchHelper.saveCurrentProperty}">
+				<h:commandButton value="#{msgs.applyToThisProcess}" action="#{BatchForm.batchHelper.saveCurrentProperty}">
 
 					<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="" />
 				</h:commandButton>
-				<h:commandButton value="#{msgs.uebernehmenForAll}" action="#{BatchForm.batchHelper.saveCurrentPropertyForAll}">
+				<h:commandButton value="#{msgs.applyToAllProcesses}" action="#{BatchForm.batchHelper.saveCurrentPropertyForAll}">
 					<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="" />
 				</h:commandButton>
 			</htm:td>
