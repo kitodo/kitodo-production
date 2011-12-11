@@ -31,7 +31,7 @@
 							<h:panelGroup id="id2">
 								<h:commandLink id="id3" value="#{msgs.startseite}" action="newMain" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:commandLink id="id4" value="#{msgs.batches}" action="AktuelleSchritteAlle" />
+								<h:commandLink id="id4" value="#{msgs.aktuelleSchritte}" action="AktuelleSchritteAlle" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:outputText id="id5" value="#{msgs.detailsOfBatch}" />
 							</h:panelGroup>
@@ -41,9 +41,9 @@
 						<htm:tr>
 							<htm:td>
 
-								<%-- �?berschrift --%>
+								<%-- Ueberschrift --%>
 								<htm:h3>
-									<h:outputText id="id6" value="#{msgs.batches}" />
+									<h:outputText id="id6" value="#{msgs.batch}" />
 								</htm:h3>
 
 								<%-- globale Warn- und Fehlermeldungen --%>

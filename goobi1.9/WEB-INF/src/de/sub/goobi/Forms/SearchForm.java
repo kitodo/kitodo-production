@@ -108,7 +108,10 @@ public class SearchForm {
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
 		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.processPropertyTitles.add((String) it.next());
+			String itstr = (String) it.next();
+			if (itstr!=null){
+				this.processPropertyTitles.add(itstr);
+			}
 		}
 
 		crit = session.createCriteria(Schritteigenschaft.class);

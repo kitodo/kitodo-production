@@ -36,8 +36,9 @@ import java.util.regex.Pattern;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 
-public class ProcessProperty implements IProperty {
+public class ProcessProperty implements IProperty, Serializable {
 
+	private static final long serialVersionUID = 6413183995622426678L;
 	private String name;
 	private Integer container;
 	private String validation;
@@ -297,10 +298,13 @@ public class ProcessProperty implements IProperty {
 		// }else{
 		// p.setContainer(this.container.intValue()+1);
 		// }
-		Prozesseigenschaft pe = new Prozesseigenschaft();
-		pe.setProzess(getProzesseigenschaft().getProzess());
-		p.setProzesseigenschaft(pe);
-		getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
+		
+//TODO: FIXME hier werden eigenschaften hinzugefügt, scheinbar auch leere?
+//		Prozesseigenschaft pe = new Prozesseigenschaft();
+//		pe.setProzess(getProzesseigenschaft().getProzess());
+//		p.setProzesseigenschaft(pe);
+//		getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
+
 		p.setName(this.name);
 		p.setValidation(this.validation);
 		p.setType(this.type);

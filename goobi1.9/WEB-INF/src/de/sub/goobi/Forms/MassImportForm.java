@@ -197,10 +197,11 @@ public class MassImportForm {
 			// found list with ids
 			Prefs prefs = this.template.getRegelsatz().getPreferences();
 			String tempfolder = ConfigMain.getParameter("tempfolder");
+			this.plugin.setImportFolder(tempfolder);
+			this.plugin.setPrefs(prefs);
+			
 			if (StringUtils.isNotEmpty(this.idList)) {
 				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				this.plugin.setImportFolder(tempfolder);
-				this.plugin.setPrefs(prefs);
 				List<String> ids = this.plugin.splitIds(this.idList);
 				List<Record> recordList = new ArrayList<Record>();
 				for (String id : ids) {
@@ -215,9 +216,6 @@ public class MassImportForm {
 			} else if (this.importFile != null) {
 				// uploaded file
 				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				this.plugin.setImportFolder(tempfolder);
-
-				this.plugin.setPrefs(prefs);
 				this.plugin.setFile(this.importFile);
 				List<Record> recordList = this.plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
@@ -227,17 +225,12 @@ public class MassImportForm {
 			} else if (StringUtils.isNotEmpty(this.records)) {
 				// found list with records
 				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
-				this.plugin.setImportFolder(tempfolder);
-
-				this.plugin.setPrefs(prefs);
 				List<Record> recordList = this.plugin.splitRecords(this.records);
 				for (Record r : recordList) {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
 			} else if (this.selectedFilenames.size() > 0) {
-				this.plugin.setImportFolder(tempfolder);
-				this.plugin.setPrefs(prefs);
 				List<Record> recordList = this.plugin.generateRecordsFromFilenames(this.selectedFilenames);
 				for (Record r : recordList) {
 					r.setCollections(this.digitalCollections);

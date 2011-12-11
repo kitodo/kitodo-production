@@ -21,11 +21,6 @@
 				<htm:tr>
 					<htm:td styleClass="main_statistikboxen_row2">
 
-	
-					
-						
-
-
 						<htm:table border="0" width="90%" cellpadding="2">
 							<htm:tr>
 								<htm:td width="150">

@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -64,6 +66,27 @@ import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.config.ConfigMain;
 
 public class Helper implements Serializable, Observer {
+
+	   /**
+	   * Always treat de-serialization as a full-blown constructor, by
+	   * validating the final state of the de-serialized object.
+	   */
+	   private void readObject(     ObjectInputStream aInputStream
+	   ) throws ClassNotFoundException, IOException {
+	    
+	  }
+
+	    /**
+	    * This is the default implementation of writeObject.
+	    * Customise if necessary.
+	    */
+	    private void writeObject(
+	      ObjectOutputStream aOutputStream
+	    ) throws IOException {
+
+	    }
+	
+	
 
 	private static final Logger myLogger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;

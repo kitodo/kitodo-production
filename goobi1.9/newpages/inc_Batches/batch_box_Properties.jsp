@@ -8,6 +8,9 @@
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
 <h:form id="propform2" rendered="#{AktuelleSchritteForm.batchHelper.containersSize>0}">
+	<htm:h4>
+	<h:outputText value="#{msgs.erweiterteEigenschaften}" />
+	</htm:h4>
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
 		rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft'}">

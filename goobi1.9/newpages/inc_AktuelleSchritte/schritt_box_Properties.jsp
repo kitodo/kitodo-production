@@ -18,7 +18,7 @@
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
-				<h:outputText value="#{msgs.erweiterteEigenschaften} - #{AktuelleSchritteForm.propertyListSize}" />
+				<h:outputText value="#{msgs.erweiterteEigenschaften}" />
 			</htm:td>
 		</htm:tr>
 

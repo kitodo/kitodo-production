@@ -265,6 +265,7 @@ public class PropertyParser {
 				for (int j = 0; j <= count; j++) {
 					pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
 				}
+				logger.debug("add property A " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				properties.add(pp);
 
 			}
@@ -274,7 +275,8 @@ public class PropertyParser {
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
 		for (Prozesseigenschaft pe : plist) {
 
-			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
+			
+			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all			
 			if (pe.getTitel() != null) {
 
 				for (ProcessProperty pp : listClone) {
@@ -290,6 +292,7 @@ public class PropertyParser {
 							pnew.setProzesseigenschaft(pe);
 							pnew.setValue(pe.getWert());
 							pnew.setContainer(pe.getContainer());
+							logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 							properties.add(pnew);
 						}
 					}
@@ -317,11 +320,13 @@ public class PropertyParser {
 				pp.setValue(pe.getWert());
 				pp.setContainer(pe.getContainer());
 				pp.setType(Type.TEXT);
+				logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				properties.add(pp);
 
 			}
 		}
-
+		logger.debug("all properties are " + properties.size());
+		
 		return properties;
 	}
 }

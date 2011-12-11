@@ -348,26 +348,26 @@
 		<h:commandLink action="AktuelleSchritteBearbeiten" id="view2"
 			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && !item.batchStep}"
 			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
-			<h:graphicImage value="/newpages/images/buttons/admin3b.gif" />
+			<h:graphicImage value="/newpages/images/buttons/admin1c.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
 		</h:commandLink>
 
 		<%-- edit batch step --%>
 		<h:commandLink id="batch" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'OPEN' && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
+			<h:graphicImage value="/newpages/images/buttons/admin3a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%-- edit batch step --%>
 		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
+			<h:graphicImage value="/newpages/images/buttons/admin3.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%-- edit batch step --%>
 		<h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
-			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
+			<h:graphicImage value="/newpages/images/buttons/admin3c.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 	</x:column>
