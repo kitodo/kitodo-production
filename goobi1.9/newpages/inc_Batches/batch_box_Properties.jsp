@@ -38,7 +38,7 @@
 						<%-- property value--%>
 						<h:outputText value="#{proc.value}" />
 					</htm:td>
-					<htm:td>
+					<htm:td styleClass="standardTable_ColumnCentered">
 
 						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
 							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
@@ -69,7 +69,7 @@
 					<h:outputText value="#{process_item.value}" />
 				</htm:td>
 			
-				<htm:td styleClass="standardTable_ColumnCentered" style="border-bottom:red">
+				<htm:td styleClass="standardTable_ColumnCentered" >
 					<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
 						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />

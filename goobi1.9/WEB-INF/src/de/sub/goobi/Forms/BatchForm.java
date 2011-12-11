@@ -342,7 +342,12 @@ public class BatchForm extends BasisForm {
 	public void createNewBatch() {
 		if (this.selectedProcesses.size() > 0) {
 			Session session = Helper.getHibernateSession();
-			Integer newBatchId = 1 + (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+			Integer newBatchId = 1;
+			try {
+				newBatchId += (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+			} catch (Exception e1) {
+			}
+			
 			for (Prozess p : this.selectedProcesses) {
 				p.setBatchID(newBatchId);
 				try {
