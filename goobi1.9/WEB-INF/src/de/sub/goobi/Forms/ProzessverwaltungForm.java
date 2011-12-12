@@ -1765,6 +1765,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			logger.error(e);
 			Helper.setFehlerMeldung("Properties could not be saved");
 		}
+		loadProcessProperties();
 		return "";
 	}
 
