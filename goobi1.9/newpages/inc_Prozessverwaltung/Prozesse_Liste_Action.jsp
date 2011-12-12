@@ -8,7 +8,7 @@
 <%-- ++++++++++++++++     Action      ++++++++++++++++ --%>
 <htm:table cellpadding="3" cellspacing="0" width="100%"
 	styleClass="eingabeBoxen" style="margin-top:20px"
-	rendered="#{ProzessverwaltungForm.page.totalResults > 0 && (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
+	rendered="#{ProzessverwaltungForm.page.totalResults > 0 && ProzessverwaltungForm.modusAnzeige=='aktuell' && (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
 	<htm:tr>
 		<htm:td styleClass="eingabeBoxen_row1">
 			<h:outputText value="#{msgs.moeglicheAktionen}" />

@@ -757,6 +757,7 @@ public class BatchStepHelper {
 			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
 			new HelperSchritte().SchrittAbschliessen(s, false);
 		}
+		Helper.createNewHibernateSession();
 		return "AktuelleSchritteAlle";
 	}
 

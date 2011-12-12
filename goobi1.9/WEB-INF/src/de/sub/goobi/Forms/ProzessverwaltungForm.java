@@ -1101,7 +1101,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setReload(String bla) {
-		Reload();
+//		Reload();
 	}
 
 	public String Reload() {

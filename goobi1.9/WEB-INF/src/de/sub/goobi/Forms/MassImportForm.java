@@ -240,7 +240,13 @@ public class MassImportForm {
 
 			if (answer.size() > 1) {
 				Session session = Helper.getHibernateSession();
-				batchId = 1 + (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+				
+				batchId = 1;
+				try {
+					batchId += (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
+				} catch (Exception e1) {
+				}
+				
 			}
 			for (ImportObject io : answer) {
 				if (batchId != null) {
