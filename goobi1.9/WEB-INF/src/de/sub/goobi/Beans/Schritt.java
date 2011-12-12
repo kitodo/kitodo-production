@@ -668,19 +668,19 @@ public class Schritt implements Serializable, IGoobiEntity {
 	
 	public ArrayList<String> getAllScriptPaths() {
 		ArrayList<String> answer = new ArrayList<String>();
-		if (this.typAutomatischScriptpfad != null) {
+		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
 			answer.add(this.typAutomatischScriptpfad);
 		}
-		if (this.typAutomatischScriptpfad2 != null) {
+		if (this.typAutomatischScriptpfad2 != null && !this.typAutomatischScriptpfad2.equals("")) {
 			answer.add(this.typAutomatischScriptpfad2);
 		}
-		if (this.typAutomatischScriptpfad3 != null) {
+		if (this.typAutomatischScriptpfad3 != null && !this.typAutomatischScriptpfad3.equals("")) {
 			answer.add(this.typAutomatischScriptpfad3);
 		}
-		if (this.typAutomatischScriptpfad4 != null) {
+		if (this.typAutomatischScriptpfad4 != null && !this.typAutomatischScriptpfad4.equals("")) {
 			answer.add(this.typAutomatischScriptpfad4);
 		}
-		if (this.typAutomatischScriptpfad5 != null) {
+		if (this.typAutomatischScriptpfad5 != null && !this.typAutomatischScriptpfad5.equals("")) {
 			answer.add(this.typAutomatischScriptpfad5);
 		}
 		return answer;

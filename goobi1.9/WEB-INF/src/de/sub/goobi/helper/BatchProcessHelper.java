@@ -95,6 +95,10 @@ public class BatchProcessHelper {
 		this.processProperty = processProperty;
 	}
 
+	public int getPropertyListSize() {
+		return this.processPropertyList.size();
+	}
+	
 	public List<ProcessProperty> getProcessProperties() {
 		return this.processPropertyList;
 	}

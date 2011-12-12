@@ -13,7 +13,7 @@
 	</htm:h4>
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
-		rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft'}">
+		rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.batchHelper.propertyListSize>0}">
 
 		<htm:thead styleClass="standardTable_Header">
 			<htm:th>
@@ -137,7 +137,7 @@
 
 
 	<%-- Box für die Bearbeitung der Details --%>
-	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft'}">
+	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
@@ -189,10 +189,7 @@
 		
 								<%--  Boolean --%>
 								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
-									<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="width: 500px;margin-right:15px" id="prpvw15_4_1">
-										<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
-										<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
-									</h:selectOneMenu>
+										<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" />
 								</h:panelGroup>
 		
 								<%--  Date  --%>

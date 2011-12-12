@@ -7,7 +7,7 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 
 
-<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+<h:panelGroup  rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 
 	<%-- ++++++++++++++++     // Import      ++++++++++++++++ --%>

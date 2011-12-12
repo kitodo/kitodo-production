@@ -51,6 +51,7 @@ import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Export.dms.ExportDms;
+import de.sub.goobi.Forms.AktuelleSchritteForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Persistence.ProzessDAO;
@@ -119,6 +120,10 @@ public class BatchStepHelper {
 		return this.processPropertyList;
 	}
 
+	public int getPropertyListSize() {
+		return this.processPropertyList.size();
+	}
+	
 	private List<String> processNameList = new ArrayList<String>();
 
 	public List<String> getProcessNameList() {
@@ -417,7 +422,8 @@ public class BatchStepHelper {
 		this.problemMessage = "";
 		this.myProblemID = 0;
 		saveStep();
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	public String ReportProblemForAll() {
@@ -429,8 +435,8 @@ public class BatchStepHelper {
 		}
 		this.problemMessage = "";
 		this.myProblemID = 0;
-
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	private void reportProblem() {
@@ -518,7 +524,8 @@ public class BatchStepHelper {
 		this.solutionMessage = "";
 		this.mySolutionID = 0;
 
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	public String SolveProblemForAll() {
@@ -526,7 +533,8 @@ public class BatchStepHelper {
 		this.solutionMessage = "";
 		this.mySolutionID = 0;
 
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	private void solveProblem() {
@@ -645,13 +653,27 @@ public class BatchStepHelper {
 	public void addToWikiField() {
 		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(),"user", message));
+		this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "user", message));
 		this.addToWikiField = "";
 		try {
 			this.pdao.save(this.currentStep.getProzess());
 		} catch (DAOException e) {
 			logger.error(e);
 		}
+	}
+
+	public void addToWikiFieldForAll() {
+		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+		for (Schritt s : this.steps) {
+			s.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(s.getProzess().getWikifield(), "user", message));
+			try {
+				this.pdao.save(s.getProzess());
+			} catch (DAOException e) {
+				logger.error(e);
+			}
+		}
+		this.addToWikiField = "";
 	}
 
 	/*
@@ -714,7 +736,8 @@ public class BatchStepHelper {
 			} catch (DAOException e) {
 			}
 		}
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
@@ -758,7 +781,8 @@ public class BatchStepHelper {
 			new HelperSchritte().SchrittAbschliessen(s, false);
 		}
 		Helper.createNewHibernateSession();
-		return "AktuelleSchritteAlle";
+		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+		return asf.FilterAlleStart();
 	}
 
 	public List<String> getScriptnames() {

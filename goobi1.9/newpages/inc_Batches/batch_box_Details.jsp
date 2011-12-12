@@ -128,9 +128,10 @@
 							<h:inputText id="myTextArea" value="#{AktuelleSchritteForm.batchHelper.wikiField}" style="width: 50%" />
 						</h:form>
 
-						<h:form id="addToWikiForm">
+						<h:form id="addToWikiForm"  rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 							<h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.batchHelper.addToWikiField}" style="width: 60%" />
 							<h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{AktuelleSchritteForm.batchHelper.addToWikiField}" />
+							<h:commandButton value="#{msgs.nachrichtHinzufuegenForAll}" action="#{AktuelleSchritteForm.batchHelper.addToWikiFieldForAll}" />
 						</h:form>
 
 					</htm:td>

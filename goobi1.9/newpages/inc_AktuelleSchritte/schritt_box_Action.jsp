@@ -139,7 +139,7 @@
 						</h:commandLink>
 
 						<h:commandLink id="action4"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2 != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
 							title="#{AktuelleSchritteForm.mySchritt.scriptname2}">
 						<x:updateActionListener

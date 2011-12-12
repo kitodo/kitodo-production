@@ -143,13 +143,13 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public String FilterAlleStart() {
 		Helper.createNewHibernateSession();
-		if (this.page != null && this.page.getTotalResults() != 0) {
-			SchrittDAO dao = new SchrittDAO();
-			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
-				dao.refresh(step);
-			}
-		}
+//		if (this.page != null && this.page.getTotalResults() != 0) {
+//			SchrittDAO dao = new SchrittDAO();
+//			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
+//				Schritt step = iter.next();
+//				dao.refresh(step);
+//			}
+//		}
 		try {
 			// if (this.filter.toLowerCase().startsWith("lucene")) {
 			// this.myFilteredDataSource = new LuceneStepFilter();
@@ -352,6 +352,35 @@ public class AktuelleSchritteForm extends BasisForm {
 				Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
 				myLogger.error("step couldn't get saved", e);
 			}
+		}
+		this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
+		return "BatchesEdit";
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String BatchesEdit() {
+		// find all steps with same batch id and step status
+		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
+
+		String steptitle = this.mySchritt.getTitel();
+		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
+		if (batchNumber != null) {
+			// only steps with same title
+			Criteria crit = this.myFilteredDataSource.getCriteria();
+			crit.add(Restrictions.eq("titel", steptitle));
+
+			// only steps with same batchid
+			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			currentStepsOfBatch = crit.list();
+		} else {
+			return "AktuelleSchritteBearbeiten";
+		}
+		// if only one step is asigned for this batch, use the single
+
+//		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
+
+		if (currentStepsOfBatch.size() == 1) {
+			return "AktuelleSchritteBearbeiten";
 		}
 		this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
 		return "BatchesEdit";

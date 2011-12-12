@@ -1101,7 +1101,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setReload(String bla) {
-//		Reload();
+		// Reload();
 	}
 
 	public String Reload() {
@@ -1742,10 +1742,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	public void saveCurrentProperty() {
+	public String saveCurrentProperty() {
 		if (!this.processProperty.isValid()) {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-			return;
+			return "";
 		}
 		this.processProperty.transfer();
 
@@ -1765,6 +1765,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			logger.error(e);
 			Helper.setFehlerMeldung("Properties could not be saved");
 		}
+		return "";
 	}
 
 	public int getPropertyListSize() {
@@ -1794,7 +1795,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
 		// if (this.processProperty.getProzesseigenschaft().getId() != null) {
-		this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
+		this.myProzess.getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
 		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
 		// }
 		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
@@ -1851,10 +1852,14 @@ public class ProzessverwaltungForm extends BasisForm {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container
-		for (ProcessProperty pt : this.processPropertyList) {
-			if (pt.getContainer() == currentContainer) {
-				plist.add(pt);
+		if (currentContainer != 0) {
+			for (ProcessProperty pt : this.processPropertyList) {
+				if (pt.getContainer() == currentContainer) {
+					plist.add(pt);
+				}
 			}
+		} else {
+			plist.add(this.processProperty);
 		}
 		int newContainerNumber = 0;
 		if (currentContainer > 0) {
@@ -1872,6 +1877,13 @@ public class ProzessverwaltungForm extends BasisForm {
 		// clone properties
 		for (ProcessProperty pt : plist) {
 			ProcessProperty newProp = pt.getClone(newContainerNumber);
+			if (newProp.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.myProzess);
+				newProp.setProzesseigenschaft(pe);
+				this.myProzess.getEigenschaften().add(pe);
+			}
+
 			this.processPropertyList.add(newProp);
 			this.processProperty = newProp;
 			saveCurrentProperty();
@@ -1904,7 +1916,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		pp.setProzesseigenschaft(pe);
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
-		saveProcessProperties();
+		// saveProcessProperties();
 	}
 
 }

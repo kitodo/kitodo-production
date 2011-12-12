@@ -237,7 +237,7 @@ public class MassImportForm {
 				}
 				answer = this.plugin.generateFiles(recordList);
 			}
-
+		
 			if (answer.size() > 1) {
 				Session session = Helper.getHibernateSession();
 				

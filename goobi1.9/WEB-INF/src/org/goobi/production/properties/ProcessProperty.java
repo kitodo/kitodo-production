@@ -54,7 +54,7 @@ public class ProcessProperty implements IProperty, Serializable {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
-//		this.prozesseigenschaft = new Prozesseigenschaft();
+		// this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -298,12 +298,12 @@ public class ProcessProperty implements IProperty, Serializable {
 		// }else{
 		// p.setContainer(this.container.intValue()+1);
 		// }
-		
-//TODO: FIXME hier werden eigenschaften hinzugefügt, scheinbar auch leere?
-//		Prozesseigenschaft pe = new Prozesseigenschaft();
-//		pe.setProzess(getProzesseigenschaft().getProzess());
-//		p.setProzesseigenschaft(pe);
-//		getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
+
+		// TODO: FIXME hier werden eigenschaften hinzugefügt, scheinbar auch leere?
+		// Prozesseigenschaft pe = new Prozesseigenschaft();
+		// pe.setProzess(getProzesseigenschaft().getProzess());
+		// p.setProzesseigenschaft(pe);
+		// getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
 
 		p.setName(this.name);
 		p.setValidation(this.validation);
@@ -323,11 +323,13 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 	@Override
 	public void transfer() {
-//		if (this.value != null && this.value.length() > 0) {
+
+		
+			// if (this.value != null && this.value.length() > 0) {
 			this.prozesseigenschaft.setWert(this.value);
 			this.prozesseigenschaft.setTitel(this.name);
 			this.prozesseigenschaft.setContainer(this.container);
-//		}
+		// }
 	}
 
 	public List<String> getValueList() {
@@ -347,7 +349,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	}
 
 	public boolean getBooleanValue() {
-		if (this.value.equalsIgnoreCase("true")) {
+		if (this.value != null && this.value.equalsIgnoreCase("true")) {
 			return true;
 		} else {
 			return false;
@@ -372,5 +374,12 @@ public class ProcessProperty implements IProperty, Serializable {
 			return new Integer(o1.getContainer()).compareTo(new Integer(o2.getContainer()));
 		}
 
+	}
+
+	public boolean getIsNew() {
+		if (this.name == null || this.name.length() == 0) {
+			return true;
+		}
+		return false;
 	}
 }

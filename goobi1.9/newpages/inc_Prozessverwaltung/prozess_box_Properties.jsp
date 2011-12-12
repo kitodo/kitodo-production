@@ -129,10 +129,16 @@
 						<htm:tr>		
 							<htm:td>
 								<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{ProzessverwaltungForm.processProperty}">--%>
-								<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: " />
+								<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: " rendered="#{!myprocess_item.isNew}"/>
+								
 							</htm:td>
 							<htm:td>
-				
+								
+								<h:panelGroup rendered="#{myprocess_item.isNew}" >
+									<h:inputText id="title" value="#{myprocess_item.name}" required="true" />
+								<x:message for="title" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}" />
+								</h:panelGroup>
+								
 								<%-- textarea --%>
 								<h:panelGroup id="prpvw15_1" rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
 									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" />
@@ -190,12 +196,12 @@
 			</h:commandButton>
 		</htm:td>
 		<htm:td styleClass="eingabeBoxen_row3" align="right">
-			 <%-- 
+			 
 				<h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteProperty}"
 					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
 					<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 				</h:commandButton>
-			--%>
+			
 
 			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}">
 
