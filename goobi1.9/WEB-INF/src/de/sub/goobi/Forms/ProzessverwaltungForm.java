@@ -1742,32 +1742,37 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	public String saveCurrentProperty() {
-		if (!this.processProperty.isValid()) {
-			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-			return "";
-		}
-		this.processProperty.transfer();
+	
+	public void saveCurrentProperty() {
+		List<ProcessProperty> ppList = getContainerProperties();
+		for (ProcessProperty pp : ppList) {
+			this.processProperty = pp;
+			if (!this.processProperty.isValid()) {
+				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				return;
+			}
+			this.processProperty.transfer();
 
-		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
-		for (Prozesseigenschaft pe : props) {
-			if (pe.getTitel() == null) {
-				this.myProzess.getEigenschaften().remove(pe);
+			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
+			for (Prozesseigenschaft pe : props) {
+				if (pe.getTitel() == null) {
+					this.myProzess.getEigenschaften().remove(pe);
+				}
+			}
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			}
+			try {
+				this.dao.save(this.myProzess);
+				Helper.setMeldung("Property saved");
+			} catch (DAOException e) {
+				logger.error(e);
+				Helper.setFehlerMeldung("Properties could not be saved");
 			}
 		}
-		if (!this.myProzess.getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-			this.myProzess.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
-		}
-		try {
-			this.dao.save(this.myProzess);
-			Helper.setMeldung("Properties saved");
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("Properties could not be saved");
-		}
-		loadProcessProperties();
-		return "";
 	}
+	
+
 
 	public int getPropertyListSize() {
 		if (this.processPropertyList == null) {
@@ -1794,11 +1799,13 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void deleteProperty() {
-		this.processPropertyList.remove(this.processProperty);
-		// if (this.processProperty.getProzesseigenschaft().getId() != null) {
-		this.myProzess.getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
-		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
-		// }
+		List<ProcessProperty> ppList = getContainerProperties();
+		for (ProcessProperty pp : ppList) {
+			this.processPropertyList.remove(pp);
+			this.myProzess.getEigenschaften().remove(pp.getProzesseigenschaft());
+			
+		}
+		
 		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
@@ -1911,10 +1918,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		ProcessProperty pp = new ProcessProperty();
 		pp.setType(Type.TEXT);
 		pp.setContainer(0);
-		Prozesseigenschaft pe = new Prozesseigenschaft();
-		pe.setProzess(this.myProzess);
-		this.myProzess.getEigenschaften().add(pe);
-		pp.setProzesseigenschaft(pe);
+//		Prozesseigenschaft pe = new Prozesseigenschaft();
+//		pe.setProzess(this.myProzess);
+//		this.myProzess.getEigenschaften().add(pe);
+//		pp.setProzesseigenschaft(pe);
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
 		// saveProcessProperties();

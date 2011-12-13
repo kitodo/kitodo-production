@@ -74,8 +74,7 @@ public class BatchForm extends BasisForm {
 	private int MAX_HITS = 100;
 	private ProzessDAO dao = new ProzessDAO();
 	private String modusBearbeiten = "";
-	
-	
+
 	public List<Prozess> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
@@ -83,13 +82,6 @@ public class BatchForm extends BasisForm {
 	public void setCurrentProcesses(List<Prozess> currentProcesses) {
 		this.currentProcesses = currentProcesses;
 	}
-
-	// private void cleanData() {
-	// this.processfilter = "";
-	// this.batchfilter = "";
-	// this.selectedBatches = new ArrayList<String>();
-	// this.selectedProcesses = new ArrayList<Prozess>();
-	// }
 
 	public void loadBatchData() {
 		this.currentBatches = new ArrayList<Batch>();
@@ -105,13 +97,21 @@ public class BatchForm extends BasisForm {
 		Session session = Helper.getHibernateSession();
 
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("batchID", id));
-		// TODO text aus message generieren
-		
+		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		if (id != null) {
+			crit.add(Restrictions.eq("batchID", id));
+		} else {
+			crit.add(Restrictions.isNull("batchID"));
+		}
 		String msg1 = Helper.getTranslation("batch");
 		String msg2 = Helper.getTranslation("prozesse");
-		String text = msg1 + " " + id + " (" + crit.list().size() + " " + msg2 + ")";
-		return new Batch(id, text);
+		if (id != null) {
+			String text = msg1 + " " + id + " (" + crit.list().size() + " " + msg2 + ")";
+			return new Batch(id, text);
+		} else {
+			String text = Helper.getTranslation("withoutBatch") + " (" + crit.list().size() + " " + msg2 + ")";
+			return new Batch(null, text);
+		}
 	}
 
 	public void loadProcessData() {
@@ -121,13 +121,18 @@ public class BatchForm extends BasisForm {
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 		List<Integer> ids = new ArrayList<Integer>();
 		for (String s : this.selectedBatches) {
-			ids.add(new Integer(s));
+			if (s != null && !s.equals("") && !s.equals("null")) {
+				ids.add(new Integer(s));
+			}
 		}
 		if (this.selectedBatches.size() > 0) {
-			crit.add(Restrictions.in("batchID", ids));
+			if (this.selectedBatches.contains(null)|| this.selectedBatches.contains("null")) {
+				crit.add(Restrictions.isNull("batchID"));
+			} else {
+				crit.add(Restrictions.in("batchID", ids));
+			}
 		}
 		this.currentProcesses = crit.list();
-		// cleanData();
 	}
 
 	public void filterProcesses() {
@@ -158,7 +163,7 @@ public class BatchForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			Query query = session.createQuery("select distinct batchID from Prozess order by batchID desc");
 			query.setMaxResults(this.MAX_HITS);
-		
+
 			List<Integer> allBatches = query.list();
 			this.currentBatches = new ArrayList<Batch>();
 			for (Integer in : allBatches) {
@@ -173,9 +178,7 @@ public class BatchForm extends BasisForm {
 			List<Integer> ids = query.list();
 			this.currentBatches = new ArrayList<Batch>();
 			for (Integer in : ids) {
-				if (in != null) {
-					this.currentBatches.add(generateBatch(in));
-				}
+				this.currentBatches.add(generateBatch(in));
 			}
 		}
 	}
@@ -262,7 +265,6 @@ public class BatchForm extends BasisForm {
 				response.setContentType(contentType);
 				response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
-				// write docket to servlet output stream
 				try {
 					ServletOutputStream out = response.getOutputStream();
 					ExportDocket ern = new ExportDocket();
@@ -347,7 +349,7 @@ public class BatchForm extends BasisForm {
 				newBatchId += (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
 			} catch (Exception e1) {
 			}
-			
+
 			for (Prozess p : this.selectedProcesses) {
 				p.setBatchID(newBatchId);
 				try {
@@ -365,7 +367,7 @@ public class BatchForm extends BasisForm {
 	 * properties
 	 */
 	private BatchProcessHelper batchHelper;
-	
+
 	public String editProperties() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -382,7 +384,7 @@ public class BatchForm extends BasisForm {
 			List<Prozess> propertyBatch = crit.list();
 			this.batchHelper = new BatchProcessHelper(propertyBatch);
 			return "BatchProperties";
-		}		
+		}
 	}
 
 	public BatchProcessHelper getBatchHelper() {
