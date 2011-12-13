@@ -5,8 +5,8 @@ import java.util.List;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
 
 public class StatistikStatus {
 

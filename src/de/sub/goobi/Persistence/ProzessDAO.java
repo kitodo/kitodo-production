@@ -2,7 +2,7 @@ package de.sub.goobi.Persistence;
 
 import java.util.List;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ProzessDAO extends BaseDAO {

@@ -2,7 +2,7 @@ package de.sub.goobi.Persistence;
 
 import java.util.List;
 
-import de.sub.goobi.Beans.Projekt;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ProjektDAO extends BaseDAO {

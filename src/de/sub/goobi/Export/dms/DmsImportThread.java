@@ -6,7 +6,7 @@ import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 

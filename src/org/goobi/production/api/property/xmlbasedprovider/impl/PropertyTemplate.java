@@ -37,16 +37,16 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Beans.Vorlage;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueck;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
-import de.sub.goobi.Beans.Property.IGoobiEntity;
-import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.Property.IGoobiEntity;
+import de.sub.goobi.beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 /**********************************************************************************
@@ -322,7 +322,7 @@ public class PropertyTemplate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setProperty(de.sub.goobi.Beans.Property.IGoobiProperty)
+	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setProperty(de.sub.goobi.beans.Property.IGoobiProperty)
 	 */
 
 	public boolean setProperty(IGoobiProperty inProp) {
@@ -429,7 +429,7 @@ public class PropertyTemplate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setOwningEntity(de.sub.goobi.Beans.Property.IGoobiEntity)
+	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setOwningEntity(de.sub.goobi.beans.Property.IGoobiEntity)
 	 */
 	public void setOwningEntity(IGoobiEntity inEntity) {
 		owningEntity = inEntity;

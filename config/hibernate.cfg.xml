@@ -46,22 +46,22 @@
  		<property name="hbm2ddl.auto">update</property> 
 		
 		<!-- Die einzelnen Mappings -->
-		<mapping resource="de/sub/goobi/Beans/Benutzergruppe.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Benutzereigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Benutzer.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Prozess.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Prozesseigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Schritt.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Schritteigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Werkstueck.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Werkstueckeigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Vorlage.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Vorlageeigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Projekt.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/Regelsatz.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/LdapGruppe.hbm.xml" />
-		<mapping resource="de/sub/goobi/Beans/ProjectFileGroup.hbm.xml" />
-        <mapping resource="de/sub/goobi/Beans/HistoryEvent.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Benutzergruppe.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Benutzereigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Benutzer.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Prozess.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Prozesseigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Schritt.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Schritteigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Werkstueck.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Werkstueckeigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Vorlage.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Vorlageeigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Projekt.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/Regelsatz.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/LdapGruppe.hbm.xml" />
+		<mapping resource="de/sub/goobi/beans/ProjectFileGroup.hbm.xml" />
+        <mapping resource="de/sub/goobi/beans/HistoryEvent.hbm.xml" />
         
 	</session-factory>
 

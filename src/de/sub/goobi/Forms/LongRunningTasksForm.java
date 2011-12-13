@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 

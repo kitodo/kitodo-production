@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
-import de.sub.goobi.Beans.Projekt;
+import de.sub.goobi.beans.Projekt;
 
 
 

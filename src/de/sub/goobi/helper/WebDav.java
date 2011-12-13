@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.config.ConfigMain;
 

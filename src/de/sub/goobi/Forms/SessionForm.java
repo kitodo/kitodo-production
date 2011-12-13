@@ -11,7 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import de.sub.goobi.Beans.Benutzer;
+import de.sub.goobi.beans.Benutzer;
 
 /**
  * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions 

@@ -1,6 +1,6 @@
 package org.goobi.production.search.api;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

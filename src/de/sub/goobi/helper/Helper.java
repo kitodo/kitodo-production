@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jdom.Element;
 
-import de.sub.goobi.Beans.Benutzer;
+import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.config.ConfigMain;

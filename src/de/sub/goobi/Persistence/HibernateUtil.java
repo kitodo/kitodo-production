@@ -3,20 +3,20 @@ package de.sub.goobi.Persistence;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Benutzergruppe;
-import de.sub.goobi.Beans.LdapGruppe;
-import de.sub.goobi.Beans.ProjectFileGroup;
-import de.sub.goobi.Beans.Projekt;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Regelsatz;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Beans.Vorlage;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueck;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.beans.LdapGruppe;
+import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
 
 public class HibernateUtil {
 

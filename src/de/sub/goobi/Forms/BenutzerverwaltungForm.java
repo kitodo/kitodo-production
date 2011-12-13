@@ -25,10 +25,10 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Benutzergruppe;
-import de.sub.goobi.Beans.LdapGruppe;
-import de.sub.goobi.Beans.Projekt;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.beans.LdapGruppe;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.LdapGruppenDAO;

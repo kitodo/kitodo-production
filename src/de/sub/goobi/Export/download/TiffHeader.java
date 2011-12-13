@@ -9,9 +9,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Werkstueck;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
 
 //TODO: This should be transformed into a genral API for image metadata, without the need ofusing the Perl implementation (https://jira.bibforge.org/jira/browse/DPD-84)  
 

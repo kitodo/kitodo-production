@@ -26,7 +26,7 @@ package org.goobi.production.chart;
 
 import java.util.List;
 
-import de.sub.goobi.Beans.Projekt;
+import de.sub.goobi.beans.Projekt;
 
 
 

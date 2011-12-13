@@ -24,7 +24,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.Metadaten.MetadatenHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.config.ConfigMain;

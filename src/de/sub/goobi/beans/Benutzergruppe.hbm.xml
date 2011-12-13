@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.beans.Benutzergruppe" table="benutzergruppen">
+		<id name="id" column="BenutzergruppenID" type="integer">
+			<generator class="native" />
+		</id>
+
+		<property name="titel" column="titel" type="string" />
+		<property name="berechtigung" column="berechtigung" type="integer" />
+		
+		<set name="benutzer" table="benutzergruppenmitgliedschaft" inverse="true">
+			    <key column="BenutzerGruppenID"/>
+			    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer"/>
+			</set>
+			
+		<set name="schritte" table="schritteberechtigtegruppen" inverse="true">
+			<key column="BenutzerGruppenID"/>
+			<many-to-many column="schritteID" class="de.sub.goobi.beans.Schritt"/>
+		</set>
+		
+	</class>
+
+</hibernate-mapping>

@@ -2,7 +2,7 @@ package de.sub.goobi.Persistence;
 
 import java.util.List;
 
-import de.sub.goobi.Beans.Benutzergruppe;
+import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class BenutzergruppenDAO extends BaseDAO {

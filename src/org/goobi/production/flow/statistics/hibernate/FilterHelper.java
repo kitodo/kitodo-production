@@ -39,10 +39,10 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Projekt;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;

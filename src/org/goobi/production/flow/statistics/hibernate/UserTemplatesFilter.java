@@ -30,7 +30,7 @@ import java.util.Observable;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 

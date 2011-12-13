@@ -13,7 +13,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;

@@ -2,7 +2,7 @@ package de.sub.goobi.Persistence;
 
 import java.util.List;
 
-import de.sub.goobi.Beans.Regelsatz;
+import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class RegelsatzDAO extends BaseDAO {

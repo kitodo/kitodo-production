@@ -26,11 +26,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import Messages.Messages;
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.HistoryEvent;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.HistoryEvent;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.Export.dms.ExportDms;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;

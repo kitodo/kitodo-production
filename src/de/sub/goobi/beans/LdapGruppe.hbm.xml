@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.beans.LdapGruppe" table="ldapgruppen">
+		<id name="id" column="ldapgruppenID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="titel" column="titel" type="string"/>
+		<property name="homeDirectory" column="homeDirectory" type="string"/>
+		<property name="gidNumber" column="gidNumber" type="string"/>
+		<property name="userDN" column="userDN" type="string"/>
+		<property name="objectClasses" column="objectClasses" type="string"/>
+		<property name="sambaSID" column="sambaSID" type="string"/>
+		<property name="sn" column="sn" type="string"/>
+		<property name="uid" column="uid" type="string"/>
+		<property name="description" column="description" type="string"/>
+		<property name="displayName" column="displayName" type="string"/>
+		<property name="gecos" column="gecos" type="string"/>
+		<property name="loginShell" column="loginShell" type="string"/>
+		<property name="sambaAcctFlags" column="sambaAcctFlags" type="string"/>
+		<property name="sambaLogonScript" column="sambaLogonScript" type="string"/>
+		<property name="sambaPrimaryGroupSID" column="sambaPrimaryGroupSID" type="string"/>
+
+		<property name="sambaPwdMustChange" column="sambaPwdMustChange" type="string"/>
+		<property name="sambaPasswordHistory" column="sambaPasswordHistory" type="string"/>
+		<property name="sambaLogonHours" column="sambaLogonHours" type="string"/>
+		<property name="sambaKickoffTime" column="sambaKickoffTime" type="string"/>
+
+	</class>
+
+</hibernate-mapping>

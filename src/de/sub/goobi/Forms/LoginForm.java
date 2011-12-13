@@ -12,8 +12,8 @@ import java.util.Set;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Benutzergruppe;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.Metadaten.MetadatenSperrung;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;

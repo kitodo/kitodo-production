@@ -14,7 +14,7 @@ import org.goobi.api.display.enums.BindState;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 //TODO: Use a correct comment here

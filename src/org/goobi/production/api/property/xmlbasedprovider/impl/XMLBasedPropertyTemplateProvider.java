@@ -32,7 +32,7 @@ import org.goobi.production.api.property.xmlbasedprovider.IPropertyTemplatesProv
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.jdom.JDOMException;
 
-import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.beans.Property.IGoobiEntity;
 import de.sub.goobi.config.ConfigMain;
 
 /**************************************************************************************************

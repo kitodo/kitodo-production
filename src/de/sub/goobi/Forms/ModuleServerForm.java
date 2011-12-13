@@ -20,8 +20,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.Modul.ExtendedDataImpl;
 import de.sub.goobi.Modul.ExtendedProzessImpl;
 import de.sub.goobi.Persistence.ProzessDAO;

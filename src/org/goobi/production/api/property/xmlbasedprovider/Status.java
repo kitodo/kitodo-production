@@ -24,11 +24,11 @@ package org.goobi.production.api.property.xmlbasedprovider;
  * exception statement from your version.
  * 
  */
-import de.sub.goobi.Beans.Projekt;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Vorlage;
-import de.sub.goobi.Beans.Werkstueck;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Werkstueck;
 
 /**
  * simple POJO class to generate PropertyTemplate for a IGoobiEntity

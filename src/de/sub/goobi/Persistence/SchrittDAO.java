@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.goobi.production.search.lucene.LuceneIndex;
 
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class SchrittDAO extends BaseDAO {
