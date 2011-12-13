@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.download;
+package de.sub.goobi.export.download;
 
 //TODO: Move parts of this into ContentServer2
 

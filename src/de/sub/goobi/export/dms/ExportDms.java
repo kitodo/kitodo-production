@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.dms;
+package de.sub.goobi.export.dms;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Export.download.ExportMets;
+import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.config.ConfigMain;

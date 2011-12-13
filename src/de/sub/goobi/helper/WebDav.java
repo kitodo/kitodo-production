@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Export.download.TiffHeader;
+import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.config.ConfigMain;
 
 public class WebDav {

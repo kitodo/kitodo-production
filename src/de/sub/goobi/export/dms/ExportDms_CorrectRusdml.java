@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.dms;
+package de.sub.goobi.export.dms;
 
 //TODO: Remove this class
 import java.util.ArrayList;

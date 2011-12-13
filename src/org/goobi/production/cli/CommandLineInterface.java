@@ -26,7 +26,7 @@ import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.Export.dms.ExportDms;
+import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;

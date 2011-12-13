@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.download;
+package de.sub.goobi.export.download;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Export.dms.ExportDms_CorrectRusdml;
+import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.config.ConfigProjects;

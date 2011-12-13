@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.download;
+package de.sub.goobi.export.download;
 
 import java.io.IOException;
 import java.sql.SQLException;

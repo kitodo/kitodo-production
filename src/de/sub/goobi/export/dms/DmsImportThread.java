@@ -1,4 +1,4 @@
-package de.sub.goobi.Export.dms;
+package de.sub.goobi.export.dms;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -27,7 +27,7 @@ import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.Export.dms.ExportDms;
+import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
