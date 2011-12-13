@@ -1,4 +1,4 @@
-package de.sub.goobi.Modul;
+package de.sub.goobi.modul;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

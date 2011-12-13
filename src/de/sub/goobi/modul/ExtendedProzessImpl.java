@@ -1,4 +1,4 @@
-package de.sub.goobi.Modul;
+package de.sub.goobi.modul;
 
 import java.io.IOException;
 import java.util.HashMap;

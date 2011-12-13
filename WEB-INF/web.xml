@@ -195,7 +195,7 @@
 
 	<!--
 		Listener für die Modularisierung <listener> <listener-class>
-		de.sub.goobi.Modul.ModulListener </listener-class> </listener>
+		de.sub.goobi.modul.ModulListener </listener-class> </listener>
 	-->
 
 	<!-- Listener for JobManager -->

@@ -1,4 +1,4 @@
-package de.sub.goobi.Modul;
+package de.sub.goobi.modul;
 
 import java.util.ArrayList;
 import java.util.HashMap;

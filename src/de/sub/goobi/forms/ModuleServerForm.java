@@ -22,8 +22,8 @@ import org.jdom.input.SAXBuilder;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.Modul.ExtendedDataImpl;
-import de.sub.goobi.Modul.ExtendedProzessImpl;
+import de.sub.goobi.modul.ExtendedDataImpl;
+import de.sub.goobi.modul.ExtendedProzessImpl;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
