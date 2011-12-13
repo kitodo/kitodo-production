@@ -159,6 +159,12 @@ public class BatchStepHelper {
 				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 				return;
 			}
+			if (this.processProperty.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.currentStep.getProzess());
+				this.processProperty.setProzesseigenschaft(pe);
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+			}
 			this.processProperty.transfer();
 
 			Prozess p = this.currentStep.getProzess();
@@ -190,6 +196,12 @@ public class BatchStepHelper {
 				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 				return;
 			}
+			if (this.processProperty.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.currentStep.getProzess());
+				this.processProperty.setProzesseigenschaft(pe);
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+			}	
 			this.processProperty.transfer();
 
 			Prozesseigenschaft pe = new Prozesseigenschaft();

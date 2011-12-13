@@ -1719,6 +1719,12 @@ public class ProzessverwaltungForm extends BasisForm {
 
 		if (valid) {
 			for (ProcessProperty p : this.processPropertyList) {
+				if (p.getProzesseigenschaft() == null) {
+					Prozesseigenschaft pe = new Prozesseigenschaft();
+					pe.setProzess(this.myProzess);
+					p.setProzesseigenschaft(pe);
+					this.myProzess.getEigenschaften().add(pe);
+				}	
 				p.transfer();
 				if (!this.myProzess.getEigenschaften().contains(p.getProzesseigenschaft())) {
 					this.myProzess.getEigenschaften().add(p.getProzesseigenschaft());
@@ -1751,6 +1757,12 @@ public class ProzessverwaltungForm extends BasisForm {
 				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 				return;
 			}
+			if (this.processProperty.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.myProzess);
+				this.processProperty.setProzesseigenschaft(pe);
+				this.myProzess.getEigenschaften().add(pe);
+			}
 			this.processProperty.transfer();
 
 			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
@@ -1770,6 +1782,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				Helper.setFehlerMeldung("Properties could not be saved");
 			}
 		}
+		loadProcessProperties();
 	}
 	
 

@@ -323,8 +323,6 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 	@Override
 	public void transfer() {
-
-		
 			// if (this.value != null && this.value.length() > 0) {
 			this.prozesseigenschaft.setWert(this.value);
 			this.prozesseigenschaft.setTitel(this.name);

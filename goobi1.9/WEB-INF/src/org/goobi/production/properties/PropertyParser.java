@@ -111,7 +111,11 @@ public class PropertyParser {
 		String stepTitle = mySchritt.getTitel();
 		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
-
+		
+		if (mySchritt.getProzess().isIstTemplate()) {
+			return properties;
+		}
+		
 		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {
@@ -223,7 +227,9 @@ public class PropertyParser {
 	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
 		String projectTitle = process.getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
-
+		if (process.isIstTemplate()) {
+			return properties;
+		}
 		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {

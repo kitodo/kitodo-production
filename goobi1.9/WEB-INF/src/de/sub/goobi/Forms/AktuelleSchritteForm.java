@@ -1117,6 +1117,12 @@ public class AktuelleSchritteForm extends BasisForm {
 
 		if (valid) {
 			for (ProcessProperty p : this.processPropertyList) {
+				if (p.getProzesseigenschaft() == null) {
+					Prozesseigenschaft pe = new Prozesseigenschaft();
+					pe.setProzess(this.mySchritt.getProzess());
+					p.setProzesseigenschaft(pe);
+					this.mySchritt.getProzess().getEigenschaften().add(pe);
+				}	
 				p.transfer();
 				if (!this.mySchritt.getProzess().getEigenschaften().contains(p.getProzesseigenschaft())) {
 					this.mySchritt.getProzess().getEigenschaften().add(p.getProzesseigenschaft());
@@ -1144,6 +1150,12 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (!this.processProperty.isValid()) {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 			return;
+		}
+		if (this.processProperty.getProzesseigenschaft() == null) {
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setProzess(this.myProzess);
+			this.processProperty.setProzesseigenschaft(pe);
+			this.myProzess.getEigenschaften().add(pe);
 		}
 		this.processProperty.transfer();
 

@@ -173,10 +173,9 @@
 
 								<%--  Boolean --%>
 								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
-									<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="width: 500px;margin-right:15px" id="prpvw15_4_1">
-										<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
-										<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
-									</h:selectOneMenu>
+									<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}">
+									</h:selectBooleanCheckbox>
+									
 								</h:panelGroup>
 
 								<%--  Date  --%>
@@ -191,7 +190,7 @@
 				</htm:table>
 			</htm:td>
 		</htm:tr>
-	</h:form>
+	
 	<htm:tr>
 		<htm:td styleClass="eingabeBoxen_row3" align="left">
 			<h:commandButton value="#{msgs.abbrechen}" action="#{NavigationForm.Reload}" immediate="true">
@@ -206,11 +205,11 @@
 			</h:commandButton>
 
 
-			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}" onclick="return confirm('test123')">
+			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}" onclick="return confirm('jjjjjjj')">
 				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>
 		</htm:td>
 	</htm:tr>
-
+</h:form>
 
 </htm:table>
