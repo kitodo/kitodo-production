@@ -20,9 +20,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Metadaten.MetadatenHelper;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
-import de.sub.goobi.Metadaten.MetadatenVerifizierung;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 

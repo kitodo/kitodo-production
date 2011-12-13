@@ -26,7 +26,7 @@ import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;

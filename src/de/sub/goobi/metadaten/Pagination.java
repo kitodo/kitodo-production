@@ -1,4 +1,4 @@
-package de.sub.goobi.Metadaten;
+package de.sub.goobi.metadaten;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

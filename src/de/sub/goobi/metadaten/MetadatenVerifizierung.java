@@ -1,4 +1,4 @@
-package de.sub.goobi.Metadaten;
+package de.sub.goobi.metadaten;
 
 import java.io.IOException;
 import java.util.ArrayList;

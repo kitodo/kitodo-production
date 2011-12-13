@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.Metadaten.MetadatenSperrung;
+import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.config.ConfigMain;

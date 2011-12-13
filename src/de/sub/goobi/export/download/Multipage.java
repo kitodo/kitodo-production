@@ -24,7 +24,7 @@ import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;

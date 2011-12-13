@@ -3,7 +3,7 @@ package de.sub.goobi.helper;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 /**
  * File Utils collection

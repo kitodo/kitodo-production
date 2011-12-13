@@ -1,4 +1,4 @@
-package de.sub.goobi.Metadaten;
+package de.sub.goobi.metadaten;
 
 //TODO: Look if this can be merged into UGH
 //TODO: Don't use arrays
