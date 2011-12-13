@@ -205,7 +205,7 @@
 			</h:commandButton>
 
 
-			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}" onclick="return confirm('jjjjjjj')">
+			<h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}">
 				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>
 		</htm:td>

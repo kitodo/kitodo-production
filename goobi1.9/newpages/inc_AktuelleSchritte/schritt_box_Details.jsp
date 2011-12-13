@@ -132,7 +132,7 @@
         	elements : "htmleditorform:myTextArea",
         	theme : "advanced",
         	width : "100%",
-          height : "200",
+          height : "200px",
           plugins : "safari,pagebreak,style,table,save,advhr,emotions,iespell,inlinepopups,insertdatetime,preview,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking",
           readonly : 1,
 
@@ -143,6 +143,6 @@
         	theme_advanced_toolbar_location : "top",
         	theme_advanced_toolbar_align : "left",
         	theme_advanced_statusbar_location : "bottom",
-        	theme_advanced_resizing : true,
+        	theme_advanced_resizing : true
         });
         </script>
