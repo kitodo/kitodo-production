@@ -30,7 +30,7 @@ import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.persistence.HibernateUtilOld;
 import de.sub.goobi.config.ConfigMain;
 
 //TODO: Check if more method can be made static

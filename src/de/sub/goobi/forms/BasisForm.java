@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.Persistence.BenutzerDAO;
+import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;

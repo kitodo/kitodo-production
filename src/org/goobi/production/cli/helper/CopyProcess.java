@@ -46,7 +46,7 @@ import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigOpac;
 import de.sub.goobi.config.ConfigOpacDoctype;

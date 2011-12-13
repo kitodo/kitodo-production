@@ -45,7 +45,7 @@ import de.intranda.commons.chart.results.ChartDraw.ChartType;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Persistence.ProjektDAO;
+import de.sub.goobi.persistence.ProjektDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;

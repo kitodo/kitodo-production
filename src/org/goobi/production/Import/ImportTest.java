@@ -13,7 +13,7 @@ import java.io.Writer;
 import org.goobi.production.enums.ImportFormat;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ImportTest {

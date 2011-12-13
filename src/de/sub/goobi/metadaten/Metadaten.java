@@ -46,7 +46,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.Import.ImportOpac;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;

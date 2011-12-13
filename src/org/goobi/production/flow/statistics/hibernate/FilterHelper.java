@@ -44,7 +44,7 @@ import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.Persistence.BenutzerDAO;
+import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 import de.sub.goobi.helper.enums.StepStatus;

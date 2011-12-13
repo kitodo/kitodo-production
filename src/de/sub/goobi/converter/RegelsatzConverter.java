@@ -8,7 +8,7 @@ import javax.faces.convert.ConverterException;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.Persistence.RegelsatzDAO;
+import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 

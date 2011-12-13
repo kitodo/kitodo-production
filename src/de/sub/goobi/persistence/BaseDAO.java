@@ -1,4 +1,4 @@
-package de.sub.goobi.Persistence;
+package de.sub.goobi.persistence;
 
 //TODO: What's the licence of this file?
 //TODO: Use Generics

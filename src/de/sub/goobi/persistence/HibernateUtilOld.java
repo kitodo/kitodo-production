@@ -1,4 +1,4 @@
-package de.sub.goobi.Persistence;
+package de.sub.goobi.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

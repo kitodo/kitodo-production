@@ -10,7 +10,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;

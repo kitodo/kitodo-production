@@ -1,4 +1,4 @@
-package de.sub.goobi.Persistence;
+package de.sub.goobi.persistence;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
@@ -21,8 +22,8 @@ import org.hibernate.context.ManagedSessionContext;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
-public class HibernateSessionConversationFilterWithoutTransaction implements Filter {
-	private static final Logger log = Logger.getLogger(HibernateSessionConversationFilterWithoutTransaction.class);
+public class HibernateSessionConversationFilter implements Filter {
+	private static final Logger log = Logger.getLogger(HibernateSessionConversationFilter.class);
 
 	private SessionFactory sf;
 
@@ -61,7 +62,6 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " ManagedSessionContext", e));
 		}
 
-		/* ############################ UNCOMMENTED TRANSACTIONS IN FILTER - START ###################################
 		try {
 			currentSession.beginTransaction();
 		} catch (HibernateException e) {
@@ -69,7 +69,6 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 			ManagedSessionContext.unbind(sf);
 			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " BeginTransaction", e));
 		}
-		############################ UNCOMMENTED TRANSACTIONS IN FILTER - END ################################### */
 
 		// #################################
 		// #################################
@@ -91,10 +90,7 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 			try {
 				currentSession = ManagedSessionContext.unbind(sf);
 				//				currentSession.flush();
-
-				/* ############################ UNCOMMENTED TRANSACTIONS IN FILTER - START ###################################
 				currentSession.getTransaction().commit();
-				############################ UNCOMMENTED TRANSACTIONS IN FILTER - END ################################### */
 
 			} catch (Exception e2) {
 				e.setStackTrace(e2.getStackTrace());
@@ -115,8 +111,8 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 			currentSession = ManagedSessionContext.unbind(sf);
 			//			currentSession.flush();
 
-			// for the purpose of rollback we catch exception here and notify gui of error
-			/* ############################## UNCOMMENTED TRANSACTIONS IN FILTER - START ################
+			// for the purpose of rollback we catch exception here and notify
+			// gui of error
 			try {
 				currentSession.getTransaction().commit();
 			} catch (Exception e) {
@@ -136,7 +132,6 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 							+ "Data is probably not saved", e));
 				}
 			}
-			 ############################## UNCOMMENTED TRANSACTIONS IN FILTER - END ################ */
 
 			// now we update the hibernate session in the http session
 			// or delete it in there

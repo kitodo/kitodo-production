@@ -1,4 +1,4 @@
-package de.sub.goobi.Persistence;
+package de.sub.goobi.persistence;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;

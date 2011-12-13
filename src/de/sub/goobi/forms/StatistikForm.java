@@ -14,9 +14,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.Persistence.BenutzerDAO;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.ProzessDAO;
+import de.sub.goobi.persistence.SchrittDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.goobi.production.GoobiVersion;
 
 import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.Persistence.RegelsatzDAO;
+import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;

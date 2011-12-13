@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 
-import de.sub.goobi.Persistence.HibernateSessionLong;
+import de.sub.goobi.persistence.HibernateSessionLong;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
 // TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 
-// de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work like it should
+// de.sub.goobi.persistence.HibernateSessionConversationFilter does not work like it should
 public class HibernateSessionFilter2 implements Filter {
 	//   private static final Logger mylogger = Logger.getLogger(HibernateSessionFilter2.class);
 

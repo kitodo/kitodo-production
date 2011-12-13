@@ -124,7 +124,7 @@
     <!-- 	
     <filter>
 		<filter-name>HibernateFilter</filter-name>
-		<filter-class>de.sub.goobi.Persistence.HibernateSessionConversationFilter</filter-class> 
+		<filter-class>de.sub.goobi.persistence.HibernateSessionConversationFilter</filter-class>
 	</filter>
 	 -->
 	

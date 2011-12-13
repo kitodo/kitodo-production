@@ -12,7 +12,7 @@ import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
 import org.goobi.production.api.property.xmlbasedprovider.impl.XMLBasedPropertyTemplateProvider;
 import org.jdom.JDOMException;
 
-import de.sub.goobi.Persistence.SimpleDAO;
+import de.sub.goobi.persistence.SimpleDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.exceptions.DAOException;

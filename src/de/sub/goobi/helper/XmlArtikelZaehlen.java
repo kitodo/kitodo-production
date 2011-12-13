@@ -9,7 +9,7 @@ import ugh.dl.Metadata;
 import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class XmlArtikelZaehlen {

@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
 import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.Persistence.RegelsatzDAO;
+import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;

@@ -1,4 +1,4 @@
-package de.sub.goobi.Persistence;
+package de.sub.goobi.persistence;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

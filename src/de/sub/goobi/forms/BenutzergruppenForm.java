@@ -6,7 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
 import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.Persistence.BenutzergruppenDAO;
+import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
