@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.Forms.ModuleServerForm;
+import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;

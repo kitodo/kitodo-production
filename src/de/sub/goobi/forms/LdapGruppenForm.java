@@ -1,60 +1,60 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.Persistence.BenutzergruppenDAO;
+import de.sub.goobi.beans.LdapGruppe;
+import de.sub.goobi.Persistence.LdapGruppenDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
-public class BenutzergruppenForm extends BasisForm {
-	private static final long serialVersionUID = 8051160917458068675L;
-	private Benutzergruppe myBenutzergruppe = new Benutzergruppe();
-	private BenutzergruppenDAO dao = new BenutzergruppenDAO();
+public class LdapGruppenForm extends BasisForm {
+	private static final long serialVersionUID = -5644561256582235244L;
+	private LdapGruppe myLdapGruppe = new LdapGruppe();
+	private LdapGruppenDAO dao = new LdapGruppenDAO();
 
 	public String Neu() {
-		myBenutzergruppe = new Benutzergruppe();
-		return "BenutzergruppenBearbeiten";
+		myLdapGruppe = new LdapGruppe();
+		return "LdapGruppenBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
-			dao.save(myBenutzergruppe);
-			return "BenutzergruppenAlle";
+			dao.save(myLdapGruppe);
+			return "LdapGruppenAlle";
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+			Helper.setFehlerMeldung("Could not save", e.getMessage());
 			return "";
 		}
 	}
 
 	public String Loeschen() {
 		try {
-			dao.remove(myBenutzergruppe);
+			dao.remove(myLdapGruppe);
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
+			Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
 			return "";
 		}
-		return "BenutzergruppenAlle";
+		return "LdapGruppenAlle";
 	}
 
 	public String FilterKein() {
 		try {
-			//	HibernateUtil.clearSession();
+			//	  HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
 			//	session.flush();
 				session.clear();
-			Criteria crit = session.createCriteria(Benutzergruppe.class);
+			Criteria crit = session.createCriteria(LdapGruppe.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
+			Helper.setFehlerMeldung("Error on reading database", he.getMessage());
 			return "";
 		}
-		return "BenutzergruppenAlle";
+		return "LdapGruppenAlle";
 	}
 
 	public String FilterKeinMitZurueck() {
@@ -70,13 +70,12 @@ public class BenutzergruppenForm extends BasisForm {
 	 #####################################################
 	 ####################################################*/
 
-	public Benutzergruppe getMyBenutzergruppe() {
-		return myBenutzergruppe;
+	public LdapGruppe getMyLdapGruppe() {
+		return myLdapGruppe;
 	}
 
-	public void setMyBenutzergruppe(Benutzergruppe myBenutzergruppe) {
-		Helper.getHibernateSession().clear();
-		this.myBenutzergruppe = myBenutzergruppe;
+	public void setMyLdapGruppe(LdapGruppe myLdapGruppe) {
+		this.myLdapGruppe = myLdapGruppe;
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 //TODO: Use generics
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

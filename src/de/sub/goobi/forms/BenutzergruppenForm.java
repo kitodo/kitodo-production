@@ -1,63 +1,60 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.Persistence.RegelsatzDAO;
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
-public class RegelsaetzeForm extends BasisForm {
-	private static final long serialVersionUID = -445707928042517243L;
-	private Regelsatz myRegelsatz = new Regelsatz();
-	private RegelsatzDAO dao = new RegelsatzDAO();
-	private static final Logger logger = Logger.getLogger(RegelsaetzeForm.class);
+public class BenutzergruppenForm extends BasisForm {
+	private static final long serialVersionUID = 8051160917458068675L;
+	private Benutzergruppe myBenutzergruppe = new Benutzergruppe();
+	private BenutzergruppenDAO dao = new BenutzergruppenDAO();
 
 	public String Neu() {
-		myRegelsatz = new Regelsatz();
-		return "RegelsaetzeBearbeiten";
+		myBenutzergruppe = new Benutzergruppe();
+		return "BenutzergruppenBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
-			dao.save(myRegelsatz);
-			return "RegelsaetzeAlle";
+			dao.save(myBenutzergruppe);
+			return "BenutzergruppenAlle";
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-			logger.error(e);
+			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
 			return "";
 		}
 	}
 
 	public String Loeschen() {
 		try {
-			dao.remove(myRegelsatz);
+			dao.remove(myBenutzergruppe);
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
 			return "";
 		}
-		return "RegelsaetzeAlle";
+		return "BenutzergruppenAlle";
 	}
 
 	public String FilterKein() {
 		try {
-			//	  HibernateUtil.clearSession();
+			//	HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
 			//	session.flush();
 				session.clear();
-			Criteria crit = session.createCriteria(Regelsatz.class);
+			Criteria crit = session.createCriteria(Benutzergruppe.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
 		}
-		return "RegelsaetzeAlle";
+		return "BenutzergruppenAlle";
 	}
 
 	public String FilterKeinMitZurueck() {
@@ -73,12 +70,13 @@ public class RegelsaetzeForm extends BasisForm {
 	 #####################################################
 	 ####################################################*/
 
-	public Regelsatz getMyRegelsatz() {
-		return myRegelsatz;
+	public Benutzergruppe getMyBenutzergruppe() {
+		return myBenutzergruppe;
 	}
 
-	public void setMyRegelsatz(Regelsatz inPreference) {
+	public void setMyBenutzergruppe(Benutzergruppe myBenutzergruppe) {
 		Helper.getHibernateSession().clear();
-		this.myRegelsatz = inPreference;
+		this.myBenutzergruppe = myBenutzergruppe;
 	}
+
 }

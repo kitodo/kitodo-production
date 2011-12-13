@@ -1,44 +1,47 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.LdapGruppe;
-import de.sub.goobi.Persistence.LdapGruppenDAO;
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.Persistence.RegelsatzDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
-public class LdapGruppenForm extends BasisForm {
-	private static final long serialVersionUID = -5644561256582235244L;
-	private LdapGruppe myLdapGruppe = new LdapGruppe();
-	private LdapGruppenDAO dao = new LdapGruppenDAO();
+public class RegelsaetzeForm extends BasisForm {
+	private static final long serialVersionUID = -445707928042517243L;
+	private Regelsatz myRegelsatz = new Regelsatz();
+	private RegelsatzDAO dao = new RegelsatzDAO();
+	private static final Logger logger = Logger.getLogger(RegelsaetzeForm.class);
 
 	public String Neu() {
-		myLdapGruppe = new LdapGruppe();
-		return "LdapGruppenBearbeiten";
+		myRegelsatz = new Regelsatz();
+		return "RegelsaetzeBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
-			dao.save(myLdapGruppe);
-			return "LdapGruppenAlle";
+			dao.save(myRegelsatz);
+			return "RegelsaetzeAlle";
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Could not save", e.getMessage());
+			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+			logger.error(e);
 			return "";
 		}
 	}
 
 	public String Loeschen() {
 		try {
-			dao.remove(myLdapGruppe);
+			dao.remove(myRegelsatz);
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
+			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
 		}
-		return "LdapGruppenAlle";
+		return "RegelsaetzeAlle";
 	}
 
 	public String FilterKein() {
@@ -47,14 +50,14 @@ public class LdapGruppenForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			//	session.flush();
 				session.clear();
-			Criteria crit = session.createCriteria(LdapGruppe.class);
+			Criteria crit = session.createCriteria(Regelsatz.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("Error on reading database", he.getMessage());
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
 			return "";
 		}
-		return "LdapGruppenAlle";
+		return "RegelsaetzeAlle";
 	}
 
 	public String FilterKeinMitZurueck() {
@@ -70,12 +73,12 @@ public class LdapGruppenForm extends BasisForm {
 	 #####################################################
 	 ####################################################*/
 
-	public LdapGruppe getMyLdapGruppe() {
-		return myLdapGruppe;
+	public Regelsatz getMyRegelsatz() {
+		return myRegelsatz;
 	}
 
-	public void setMyLdapGruppe(LdapGruppe myLdapGruppe) {
-		this.myLdapGruppe = myLdapGruppe;
+	public void setMyRegelsatz(Regelsatz inPreference) {
+		Helper.getHibernateSession().clear();
+		this.myRegelsatz = inPreference;
 	}
-
 }

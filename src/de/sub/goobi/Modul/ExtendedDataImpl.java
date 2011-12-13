@@ -12,7 +12,7 @@ import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.Forms.ModuleServerForm;
+import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;

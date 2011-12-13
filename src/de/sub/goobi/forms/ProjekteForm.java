@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

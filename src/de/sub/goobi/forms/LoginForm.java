@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 //TODO: Move Parts of this into a authentification API
 import java.io.File;

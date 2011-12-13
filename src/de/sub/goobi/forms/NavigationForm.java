@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigMain;
 

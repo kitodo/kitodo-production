@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 //TODO: Use generics.
 //TODO: use consts for files and URL fragments

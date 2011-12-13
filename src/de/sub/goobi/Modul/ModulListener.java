@@ -5,7 +5,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Forms.ModuleServerForm;
+import de.sub.goobi.forms.ModuleServerForm;
 
 public class ModulListener implements ServletContextListener {
    private static final Logger myLogger = Logger.getLogger(ModulListener.class);

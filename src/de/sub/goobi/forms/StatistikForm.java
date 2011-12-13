@@ -1,4 +1,4 @@
-package de.sub.goobi.Forms;
+package de.sub.goobi.forms;
 
 import java.util.ArrayList;
 import java.util.Calendar;

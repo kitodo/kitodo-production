@@ -43,7 +43,7 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.Forms.LoginForm;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
