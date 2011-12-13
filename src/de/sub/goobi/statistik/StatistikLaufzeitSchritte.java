@@ -1,4 +1,4 @@
-package de.sub.goobi.Statistik;
+package de.sub.goobi.statistik;
 
 import java.util.Calendar;
 import java.util.Date;

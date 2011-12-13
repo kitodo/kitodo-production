@@ -1,4 +1,4 @@
-package de.sub.goobi.Statistik;
+package de.sub.goobi.statistik;
 
 import java.util.List;
 
