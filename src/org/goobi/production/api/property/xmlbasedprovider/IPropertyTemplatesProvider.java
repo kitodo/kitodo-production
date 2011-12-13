@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
 
-import de.sub.goobi.beans.Property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiEntity;
 
 public interface IPropertyTemplatesProvider {
 

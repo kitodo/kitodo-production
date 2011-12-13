@@ -1,4 +1,4 @@
-package de.sub.goobi.beans.Property;
+package de.sub.goobi.beans.property;
 
 import java.util.List;
 

@@ -11,9 +11,9 @@ import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.beans.Property.DisplayPropertyList;
-import de.sub.goobi.beans.Property.IGoobiEntity;
-import de.sub.goobi.beans.Property.IGoobiProperty;
+import de.sub.goobi.beans.property.DisplayPropertyList;
+import de.sub.goobi.beans.property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;

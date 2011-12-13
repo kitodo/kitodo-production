@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.beans.Property.DisplayPropertyList;
-import de.sub.goobi.beans.Property.IGoobiEntity;
-import de.sub.goobi.beans.Property.IGoobiProperty;
+import de.sub.goobi.beans.property.DisplayPropertyList;
+import de.sub.goobi.beans.property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiProperty;
 
 public class Werkstueck implements Serializable, IGoobiEntity {
 	private static final long serialVersionUID = 123266825187246791L;

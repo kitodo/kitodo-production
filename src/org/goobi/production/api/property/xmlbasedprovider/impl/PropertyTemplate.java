@@ -45,8 +45,8 @@ import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.beans.Property.IGoobiEntity;
-import de.sub.goobi.beans.Property.IGoobiProperty;
+import de.sub.goobi.beans.property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 /**********************************************************************************
@@ -322,7 +322,7 @@ public class PropertyTemplate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setProperty(de.sub.goobi.beans.Property.IGoobiProperty)
+	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setProperty(de.sub.goobi.beans.property.IGoobiProperty)
 	 */
 
 	public boolean setProperty(IGoobiProperty inProp) {
@@ -429,7 +429,7 @@ public class PropertyTemplate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setOwningEntity(de.sub.goobi.beans.Property.IGoobiEntity)
+	 * @see org.goobi.production.api.property.xmlbasedprovider.impl.IPropertyTemplate#setOwningEntity(de.sub.goobi.beans.property.IGoobiEntity)
 	 */
 	public void setOwningEntity(IGoobiEntity inEntity) {
 		owningEntity = inEntity;

@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.beans.Property.IGoobiEntity;
-import de.sub.goobi.beans.Property.IGoobiProperty;
+import de.sub.goobi.beans.property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 public class Schritteigenschaft implements Serializable, IGoobiProperty {

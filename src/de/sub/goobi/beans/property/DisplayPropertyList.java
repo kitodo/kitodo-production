@@ -1,4 +1,4 @@
-package de.sub.goobi.beans.Property;
+package de.sub.goobi.beans.property;
 
 import java.io.IOException;
 import java.util.ArrayList;
