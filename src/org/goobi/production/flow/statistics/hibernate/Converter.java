@@ -54,7 +54,7 @@ class Converter {
 					new DateFormatSymbols(StatisticsManager.getLocale()));
 		} catch (NullPointerException e) {
 			logger
-					.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
+					.error("Class statistics.hibernate.converter Error, can't get FacesContext");
 		}
 	}
 

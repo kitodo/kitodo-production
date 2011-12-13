@@ -306,28 +306,28 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- RuleSet Converter for Select-Boxes -->
+	<!-- RuleSet converter for Select-Boxes -->
 	<converter>
 		<converter-id>RegelsatzConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.RegelsatzConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.RegelsatzConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticsTimeUnitConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsTimeUnitConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsTimeUnitConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsTimeUnitConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticResultOutputConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsResultOutputConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsResultOutputConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsResultOutputConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticCalculationUnitConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsCalculationUnitConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsCalculationUnitConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsCalculationUnitConverter</converter-class>
 	</converter>
 	
 	<!-- Beans (formaly known as config_Beans.xml) -->
