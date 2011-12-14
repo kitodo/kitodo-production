@@ -655,7 +655,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		Helper.setMeldung(null, "ExportFinished", "");
 	}
 
-	// TODO move messages into Messages
+	// TODO move messages into messages
 	public String UploadFromHomeAlle() {
 		WebDav myDav = new WebDav();
 		List<String> folder = myDav.UploadFromHomeAlle("fertig/");
@@ -664,7 +664,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		return "";
 	}
 
-	// TODO move messages into Messages
+	// TODO move messages into messages
 	public String UploadFromHome() {
 		WebDav myDav = new WebDav();
 		myDav.UploadFromHome(myProzess);

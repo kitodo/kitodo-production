@@ -1,4 +1,4 @@
-package Messages;
+package messages;
 
 import java.io.File;
 import java.net.URL;
@@ -10,7 +10,7 @@ import javax.faces.context.FacesContext;
 import de.sub.goobi.config.ConfigMain;
 
 public class Messages {
-	private static final String BUNDLE_NAME = "Messages.intmessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "messages.intmessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	 static  ResourceBundle localBundle;

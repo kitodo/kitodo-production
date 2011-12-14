@@ -303,10 +303,10 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * Mit dieser Methode werden die Messages abgearbeitet
+	 * Mit dieser Methode werden die messages abgearbeitet
 	 * 
 	 * @param message
-	 *            Messages
+	 *            messages
 	 * @param modules
 	 *            GoobiModuleManager ================================================================
 	 */
@@ -328,7 +328,7 @@ public class ModuleServerForm {
 						 * beschrieben
 						 */
 						if (message.body.type.equals("trigger")) {
-							// behandlung aller trigger Messages
+							// behandlung aller trigger messages
 							/*
 							 * Behandlung von "trigger - END"
 							 */
@@ -342,7 +342,7 @@ public class ModuleServerForm {
 								}
 							}
 						} else if (message.body.type.equals("log")) {
-							// behandlung aller log Messages
+							// behandlung aller log messages
 						}
 					}
 				}

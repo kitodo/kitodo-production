@@ -161,7 +161,7 @@ public class Helper implements Serializable, Observer {
 			}
 			return;
 		}
-//		ResourceBundle bundle = ResourceBundle.getBundle("Messages.messages", context.getViewRoot().getLocale());
+//		ResourceBundle bundle = ResourceBundle.getBundle("messages.messages", context.getViewRoot().getLocale());
 		String msg = "";
 		String beschr = "";
 		try {
@@ -318,7 +318,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static void loadLanguageBundle() {
-		bundle = ResourceBundle.getBundle("Messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		bundle = ResourceBundle.getBundle("messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		File file = new File(ConfigMain.getParameter("localMessages"));
 		if (file.exists()) {
 			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath

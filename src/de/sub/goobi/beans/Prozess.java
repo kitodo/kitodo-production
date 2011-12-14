@@ -193,7 +193,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			try {
 				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
 			} catch (Exception e) {
-				// TODO Meldung in Messages implementieren
+				// TODO Meldung in messages implementieren
 				Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
 			}
 		}
