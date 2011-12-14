@@ -54,7 +54,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import de.sub.goobi.config.ConfigMain;
 
 /********************************************************************************************************
- * Import Data from the XML-File, created by FireburnExporter to the GoobiDB.
+ * mport Data from the XML-File, created by FireburnExporter to the GoobiDB.
  * 
  * @author Igor Toker
  * 

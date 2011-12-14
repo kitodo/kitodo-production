@@ -55,7 +55,7 @@ import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.Import.ImportOpac;
+import de.sub.goobi.importer.ImportOpac;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
