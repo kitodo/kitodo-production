@@ -1,4 +1,4 @@
-package org.goobi.production.Import;
+package org.goobi.production.importer;
 
 import java.io.BufferedReader;
 import java.io.File;

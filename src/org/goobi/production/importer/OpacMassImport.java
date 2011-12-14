@@ -1,4 +1,4 @@
-package org.goobi.production.Import;
+package org.goobi.production.importer;
 
 import java.io.IOException;
 import java.util.ArrayList;

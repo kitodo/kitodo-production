@@ -1,4 +1,4 @@
-package de.sub.goobi.Import;
+package de.sub.goobi.importer;
 //TODO: Is this still needed?
 
 import java.io.BufferedReader;

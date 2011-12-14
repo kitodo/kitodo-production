@@ -1,4 +1,4 @@
-package de.sub.goobi.Import;
+package de.sub.goobi.importer;
 
 import java.io.IOException;
 import java.util.Iterator;
