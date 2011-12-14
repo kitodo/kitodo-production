@@ -19,7 +19,7 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 //TODO: Try to move this methods to UGH (ugh.util.UGHUtils would be a better place)

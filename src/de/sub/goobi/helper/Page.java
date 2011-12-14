@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 
-import de.sub.goobi.Forms.LoginForm;
+import de.sub.goobi.forms.LoginForm;
 
 /**
  * This class provides pagination for displaying results from a large result set

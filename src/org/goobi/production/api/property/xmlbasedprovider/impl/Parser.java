@@ -34,7 +34,7 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.Beans.Property.IGoobiEntity;
+import de.sub.goobi.beans.property.IGoobiEntity;
 import de.sub.goobi.helper.enums.PropertyType;
 
 /******************************************************************************

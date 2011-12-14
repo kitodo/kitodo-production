@@ -2,7 +2,7 @@ package de.sub.goobi.helper;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 

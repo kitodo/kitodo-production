@@ -43,28 +43,28 @@
 	<!-- Bean für Sessions -->
 	<managed-bean>
 		<managed-bean-name>SessionForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.SessionForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.SessionForm</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Metadaten -->
 	<managed-bean>
 		<managed-bean-name>Metadaten</managed-bean-name>
-		<managed-bean-class>de.sub.goobi.Metadaten.Metadaten </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.metadaten.Metadaten</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 		
 	<!-- Bean für Metadaten-Sperrung -->
 	<managed-bean>
 		<managed-bean-name>MetadatenSperrung</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Metadaten.MetadatenSperrung </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.metadaten.MetadatenSperrung</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für lang laufende (administrative) Aufgaben -->
 	<managed-bean>
 		<managed-bean-name>LongRunningTasksForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.LongRunningTasksForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.LongRunningTasksForm</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.beans.ProjectFileGroup" table="projectfilegroups">
+		<id name="id" column="ProjectFileGroupID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="name" column="name" type="string"/>
+		<property name="path" column="path" type="string"/>
+		<property name="mimetype" column="mimetype" type="string"/>
+		<property name="suffix" column="suffix" type="string"/>
+		
+		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
+				
+	</class>
+
+</hibernate-mapping>

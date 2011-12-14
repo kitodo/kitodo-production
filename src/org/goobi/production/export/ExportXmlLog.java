@@ -42,14 +42,14 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Beans.Vorlage;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueck;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 /**

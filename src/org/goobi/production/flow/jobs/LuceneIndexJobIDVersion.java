@@ -37,8 +37,8 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.exception.GenericJDBCException;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 

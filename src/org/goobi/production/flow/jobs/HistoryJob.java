@@ -16,10 +16,10 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import de.sub.goobi.Beans.HistoryEvent;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
+import de.sub.goobi.beans.HistoryEvent;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;

@@ -34,7 +34,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 

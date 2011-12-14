@@ -41,7 +41,7 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 /**
@@ -157,7 +157,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 				dataRowChart.setName(new Converter(objArr[2]).getString() + "");
 				dataRow.setName(new Converter(objArr[2]).getString() + "");
-				// dataRow.setName(new Converter(objArr[2]).getString());
+				// dataRow.setName(new converter(objArr[2]).getString());
 
 				// building up row depending on requested output having different fields
 				switch (this.cu) {

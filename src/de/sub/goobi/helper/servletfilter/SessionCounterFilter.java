@@ -19,7 +19,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import de.sub.goobi.Forms.SessionForm;
+import de.sub.goobi.forms.SessionForm;
 
 
 public class SessionCounterFilter implements Filter {

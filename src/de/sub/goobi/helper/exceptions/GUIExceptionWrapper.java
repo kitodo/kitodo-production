@@ -18,7 +18,7 @@ import de.sub.goobi.helper.Helper;
  * @author Wulf
  * @version 12/10/2009
  * 
- * Variables in Messages Bundle:
+ * Variables in messages Bundle:
  * err_emailBody -> message in the email before the stack trace
  * err_emailMessage -> message displayed if email is enabled in GoobiConfig: err_userHandling=true 
  * err_fallBackMessage -> messgae displayed if feature is turned off in GoobiConfig
@@ -52,7 +52,7 @@ public class GUIExceptionWrapper extends Exception {
 	 * 
 	 * ######################
 	 * 
-	 * the displayed messages are taken from the Messages Package
+	 * the displayed messages are taken from the messages Package
 	 * 
 	 * Here the current example for messgaes_en.properties
 	 * 

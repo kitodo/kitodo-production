@@ -182,8 +182,8 @@
 
     <!-- Copy message resource bundles -->
     <target name="copy-message-resources" depends="init">
-        <copy todir="${build.classes}/Messages">
-            <fileset dir="${java.src.dir}/Messages">
+        <copy todir="${build.classes}/messages">
+            <fileset dir="${java.src.dir}/messages">
                 <include name="*.properties"/>
             </fileset>
         </copy>

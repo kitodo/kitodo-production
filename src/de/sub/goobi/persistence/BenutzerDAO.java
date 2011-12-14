@@ -1,0 +1,44 @@
+package de.sub.goobi.persistence;
+
+import java.util.List;
+
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.helper.exceptions.DAOException;
+
+public class BenutzerDAO extends BaseDAO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 834210840673022251L;
+
+	public Benutzer save(Benutzer t) throws DAOException {
+		storeObj(t);
+		return (Benutzer) retrieveObj(Benutzer.class, t.getId());
+	}
+
+	public Benutzer get(Integer id) throws DAOException {
+		Benutzer rueckgabe = (Benutzer) retrieveObj(Benutzer.class, id);
+		if (rueckgabe == null)
+			throw new DAOException("Object can not be found in database");
+		return rueckgabe;
+	}
+
+	public void remove(Benutzer t) throws DAOException {
+		if (t.getId() != null)
+			removeObj(t);
+	}
+
+	public void remove(Integer id) throws DAOException {
+		removeObj(Benutzer.class, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Benutzer> search(String query) throws DAOException {
+		return retrieveObjs(query);
+	}
+
+	public Long count(String query) throws DAOException {
+		return retrieveAnzahl(query);
+	}
+}

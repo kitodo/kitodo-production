@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.jenia.org/jsf/dynamic" prefix="jd"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
-<a4j:loadBundle basename="Messages.messages" var="msgs" />
+<a4j:loadBundle basename="messages.messages" var="msgs" />
 
 <htm:h4>
 	<h:outputText value="#{msgs.meineAufgabenMsg}" />

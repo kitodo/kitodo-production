@@ -30,7 +30,7 @@ import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 
 
 public class DisplayCase {

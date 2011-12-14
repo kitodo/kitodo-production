@@ -11,7 +11,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Projekt;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.helper.Helper;
 
 public class ConfigProjects {

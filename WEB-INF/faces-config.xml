@@ -306,28 +306,28 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- RuleSet Converter for Select-Boxes -->
+	<!-- RuleSet converter for Select-Boxes -->
 	<converter>
 		<converter-id>RegelsatzConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.RegelsatzConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.RegelsatzConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticsTimeUnitConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsTimeUnitConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsTimeUnitConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsTimeUnitConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticResultOutputConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsResultOutputConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsResultOutputConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsResultOutputConverter</converter-class>
 	</converter>
 	
 	<!-- StatisticCalculationUnitConverter for Select-Boxes -->
 	<converter>
 		<converter-id>StatisticsCalculationUnitConverter</converter-id>
-		<converter-class>de.sub.goobi.Converter.StatisticsCalculationUnitConverter</converter-class>
+		<converter-class>de.sub.goobi.converter.StatisticsCalculationUnitConverter</converter-class>
 	</converter>
 	
 	<!-- Beans (formaly known as config_Beans.xml) -->
@@ -335,112 +335,112 @@
 	<!-- BenutzerverwaltungForm -->
 	<managed-bean>
 		<managed-bean-name>BenutzerverwaltungForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.BenutzerverwaltungForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.BenutzerverwaltungForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- PreferencesForm -->
 	<managed-bean>
 		<managed-bean-name>RegelsaetzeForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.RegelsaetzeForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.RegelsaetzeForm</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- LdapGruppenForm -->
 	<managed-bean>
 		<managed-bean-name>LdapGruppenForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.LdapGruppenForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.LdapGruppenForm</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- BenutzergruppenForm -->
 	<managed-bean>
 		<managed-bean-name>BenutzergruppenForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.BenutzergruppenForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.BenutzergruppenForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- LoginForm -->
 	<managed-bean>
 		<managed-bean-name>LoginForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.LoginForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.LoginForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- SpracheForm -->
 	<managed-bean>
 		<managed-bean-name>SpracheForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.SpracheForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.SpracheForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- NavigationForm -->
 	<managed-bean>
 		<managed-bean-name>NavigationForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.NavigationForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.NavigationForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- StatistikForm -->
 	<managed-bean>
 		<managed-bean-name>StatistikForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.StatistikForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.StatistikForm</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Administrationsaufgaben -->
 	<managed-bean>
 		<managed-bean-name>AdministrationForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.AdministrationForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.AdministrationForm</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Prozessverwaltung -->
 	<managed-bean>
 		<managed-bean-name>ProzessverwaltungForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.ProzessverwaltungForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.ProzessverwaltungForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Projekte -->
 	<managed-bean>
 		<managed-bean-name>ProjekteForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.ProjekteForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.ProjekteForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Prozesskopie -->
 	<managed-bean>
 		<managed-bean-name>ProzesskopieForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.ProzesskopieForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.ProzesskopieForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Bean für Aktuelle Schritte -->
 	<managed-bean>
 		<managed-bean-name>AktuelleSchritteForm</managed-bean-name>
-		<managed-bean-class> de.sub.goobi.Forms.AktuelleSchritteForm </managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.AktuelleSchritteForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- Helper-Bean -->
 	<managed-bean>
 		<managed-bean-name>HelperForm</managed-bean-name>
-		<managed-bean-class>de.sub.goobi.Forms.HelperForm</managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.HelperForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ModuleServer-Bean -->
 	<managed-bean>
 		<managed-bean-name>ModuleServerForm</managed-bean-name>
-		<managed-bean-class>de.sub.goobi.Forms.ModuleServerForm</managed-bean-class>
+		<managed-bean-class>de.sub.goobi.forms.ModuleServerForm</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- HibernateSessionLong-Bean -->
     <managed-bean>
        <managed-bean-name>HibernateSessionLong</managed-bean-name>
-       <managed-bean-class>de.sub.goobi.Persistence.HibernateSessionLong</managed-bean-class>
+       <managed-bean-class>de.sub.goobi.persistence.HibernateSessionLong</managed-bean-class>
        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 	

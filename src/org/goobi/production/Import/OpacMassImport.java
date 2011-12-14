@@ -16,7 +16,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.unigoettingen.sub.search.opac.Catalogue;
