@@ -37,15 +37,16 @@
 								<h:panelGroup id="vdid3" rendered="#{not Metadaten.nurLesenModus}">
 
 									<h:commandLink id="vdid4" action="#{Metadaten.AnsichtAendern}" value="#{msgs.paginierung}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Paginierung'}">
+										rendered="#{Metadaten.modusAnsicht != 'Paginierung'}" accesskey="P">
 										<f:param id="vdid5" name="Ansicht" value="Paginierung" />
 									</h:commandLink>
+
 									<h:outputText id="vdid6" value="#{msgs.paginierung}" style="font-weight:bold;font-size: 11px"
 										rendered="#{Metadaten.modusAnsicht == 'Paginierung'}" />
 									<h:outputText id="vdid7" value=" | " style="font-size: 11px;" />
 
 									<h:commandLink id="vdid8" action="#{Metadaten.AnsichtAendern}" value="#{msgs.strukturdaten}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Strukturdaten'}">
+										rendered="#{Metadaten.modusAnsicht != 'Strukturdaten'}" accesskey="S">
 										<f:param id="vdid9" name="Ansicht" value="Strukturdaten" />
 									</h:commandLink>
 
@@ -54,7 +55,7 @@
 									<h:outputText id="vdid11" value=" | " style="font-size: 11px;" />
 
 									<h:commandLink id="vdid12" action="#{Metadaten.AnsichtAendern}" value="#{msgs.metadaten}" style="font-size: 11px;"
-										rendered="#{Metadaten.modusAnsicht != 'Metadaten'}">
+										rendered="#{Metadaten.modusAnsicht != 'Metadaten'}" accesskey="M">
 										<f:param id="vdid13" name="Ansicht" value="Metadaten" />
 									</h:commandLink>
 
