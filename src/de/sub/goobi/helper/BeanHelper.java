@@ -101,6 +101,7 @@ public class BeanHelper {
 			stepneu.setTypBeimAnnehmenAbschliessen(step.isTypBeimAnnehmenAbschliessen());
 			stepneu.setTypBeimAnnehmenModul(step.isTypBeimAnnehmenModul());
 			stepneu.setTypBeimAnnehmenModulUndAbschliessen(step.isTypBeimAnnehmenModulUndAbschliessen());
+			stepneu.setTypModulName(step.getTypModulName());
 			stepneu.setTypExportDMS(step.isTypExportDMS());
 			stepneu.setTypExportRus(step.isTypExportRus());
 			stepneu.setTypImagesLesen(step.isTypImagesLesen());
