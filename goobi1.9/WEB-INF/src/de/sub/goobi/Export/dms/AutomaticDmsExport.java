@@ -47,6 +47,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.download.ExportMets;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
@@ -96,6 +97,7 @@ public class AutomaticDmsExport extends ExportMets {
 	public void startExport(Prozess myProzess) throws IOException, InterruptedException, WriteException, PreferencesException,
 			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
+		new ProzessDAO().refresh(myProzess);
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt());
 		String atsPpnBand = myProzess.getTitel();

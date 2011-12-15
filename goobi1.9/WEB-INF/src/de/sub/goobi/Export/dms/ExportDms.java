@@ -98,6 +98,7 @@ public class ExportDms extends ExportMets {
 			MetadataTypeNotAllowedException, ExportFileException,
 			UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
+		
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt());
 		String atsPpnBand = myProzess.getTitel();

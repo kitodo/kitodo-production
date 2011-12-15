@@ -36,9 +36,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
- * 			- http://digiverso.com 
- * 			- http://www.intranda.com
+ * Visit the websites for more information. - http://digiverso.com - http://www.intranda.com
  * 
  * Copyright 2011, intranda GmbH, Göttingen
  * 
@@ -79,30 +77,32 @@ public class HelperSchritte {
 		inSchritt.setBearbeitungsende(myDate);
 		List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
 
-		inSchritt.getProzess().getHistory().add(
-				new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
+		inSchritt
+				.getProzess()
+				.getHistory()
+				.add(new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
 						.getProzess()));
 
 		Session session;
-//		if (automatic) {
-//		if (false) {
-//			try {
-//				session = HibernateUtilOld.getSessionFactory().getCurrentSession();
-//				if (session == null) {
-//					session = HibernateUtilOld.getSessionFactory().openSession();
-//				}
-//			} catch (Exception e) {
-//				session = HibernateUtilOld.getSession();
-//			}
-//		} else {
-			session = Helper.getHibernateSession();
-//		}
+		// if (automatic) {
+		// if (false) {
+		// try {
+		// session = HibernateUtilOld.getSessionFactory().getCurrentSession();
+		// if (session == null) {
+		// session = HibernateUtilOld.getSessionFactory().openSession();
+		// }
+		// } catch (Exception e) {
+		// session = HibernateUtilOld.getSession();
+		// }
+		// } else {
+		session = Helper.getHibernateSession();
+		// }
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
 		// TODO FIXME Exception in thread "Thread-4514" org.hibernate.SessionException: Session is closed!
 		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
-				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess").add(
-						Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
+				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess")
+				.add(Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
 
 		// if (offeneSchritteGleicherReihenfolge != 0) {
 		// List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
@@ -137,11 +137,12 @@ public class HelperSchritte {
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditTypeEnum(StepEditType.AUTOMATIC);
 
-					myStep.getProzess().getHistory().add(
-							new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
+					myStep.getProzess()
+							.getHistory()
+							.add(new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
 									.getProzess()));
 					/* wenn es ein automatischer Schritt mit Script ist */
-					if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty()|| myStep.isTypExportDMS())) {
+					if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty() || myStep.isTypExportDMS())) {
 						automatischeSchritte.add(myStep);
 					}
 					System.out.println("opened: " + myStep.getTitel());
@@ -158,12 +159,12 @@ public class HelperSchritte {
 		} catch (DAOException e) {
 		}
 
-//		if (automatic) {
-//			try {
-//				session.close();
-//			} catch (Exception e) {
-//			}
-//		}
+		// if (automatic) {
+		// try {
+		// session.close();
+		// } catch (Exception e) {
+		// }
+		// }
 		/*
 		 * -------------------------------- zum Schluss alle automatischen Schritte nehmen und deren Automatik ausführen
 		 * --------------------------------
@@ -203,8 +204,7 @@ public class HelperSchritte {
 			}
 		}
 	}
-	
-	
+
 	public void executeDmsExport(Schritt mySchritt, boolean fullautomatic) {
 		AutomaticDmsExport dms = new AutomaticDmsExport();
 		try {
@@ -228,7 +228,7 @@ public class HelperSchritte {
 		} catch (UghHelperException e) {
 			abortStep(mySchritt, fullautomatic);
 			return;
-		
+
 		} catch (SwapException e) {
 			abortStep(mySchritt, fullautomatic);
 			return;
@@ -245,11 +245,8 @@ public class HelperSchritte {
 			abortStep(mySchritt, fullautomatic);
 			return;
 		}
-	
-			
-		
+
 	}
-	
 
 	/**
 	 * Script des Schrittes ausführen ================================================================
@@ -258,7 +255,7 @@ public class HelperSchritte {
 	 * @throws SwapException
 	 */
 	public void executeScript(Schritt mySchritt, String script, boolean fullautomatic) throws SwapException {
-
+		this.dao.refresh(mySchritt);
 		if (script == null || script.length() == 0) {
 			return;
 		}
@@ -382,7 +379,7 @@ public class HelperSchritte {
 			logger.error(e);
 		}
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-		 mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+		mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
 		SchrittAbschliessen(mySchritt, automatic);
 	}
 
