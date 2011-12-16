@@ -7,7 +7,7 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 
 
-<h:panelGroup  rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 
 	<%-- ++++++++++++++++     // Import      ++++++++++++++++ --%>
@@ -50,87 +50,67 @@
 
 						<%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke --%>
 						<h:panelGroup>
-							<jd:hideableController for="korrektur" id="korrekturswitcher"
-								title="#{msgs.korrekturmeldungAnVorherigeStationSenden}">
-								<h:graphicImage
-									value="/newpages/images/buttons/step_back_20px.gif"
-									style="margin-right:3px;vertical-align:middle" />
-								<h:outputText
-									value="#{msgs.korrekturmeldungAnVorherigeStationSenden}" />
+							<jd:hideableController for="korrektur" id="korrekturswitcher" title="#{msgs.korrekturmeldungAnVorherigeStationSenden}">
+								<h:graphicImage value="/newpages/images/buttons/step_back_20px.gif" style="margin-right:3px;vertical-align:middle" />
+								<h:outputText value="#{msgs.korrekturmeldungAnVorherigeStationSenden}" />
 							</jd:hideableController>
 
 							<jd:hideableArea id="korrektur" saveState="view">
-								<h:panelGrid columns="2" style="margin-left:40px;" id="grid3"
-									rowClasses="top"
-									columnClasses="standardTable_Column,standardTable_ColumnRight">
+								<h:panelGrid columns="2" style="margin-left:40px;" id="grid3" rowClasses="top" columnClasses="standardTable_Column,standardTable_ColumnRight">
 									<h:outputText value="#{msgs.zurueckZuArbeitsschritt}" />
-									<h:selectOneMenu style="width:350px"
-										value="#{AktuelleSchritteForm.batchHelper.myProblemID}">
-										<si:selectItems
-											value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}"
-											var="step1" itemLabel="#{step1.titelMitBenutzername}"
-											itemValue="#{step1.id}" />
+									<h:selectOneMenu style="width:350px" value="#{AktuelleSchritteForm.batchHelper.myProblemStep}">
+										<f:selectItems value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}" />
+										<%-- <si:selectItems value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}" var="step1"
+											itemLabel="#{step1.titelMitBenutzername}" itemValue="#{step1.id}" />--%>
 									</h:selectOneMenu>
 									<h:outputText value="#{msgs.bemerkung}" />
-									<h:inputTextarea style="width:350px;height:80px"
-										value="#{AktuelleSchritteForm.batchHelper.problemMessage}" />
+									<h:inputTextarea style="width:350px;height:80px" value="#{AktuelleSchritteForm.batchHelper.problemMessage}" />
 									<h:outputText value="" />
-									
-									<h:commandLink id="action130"
-										action="#{AktuelleSchritteForm.batchHelper.ReportProblemForSingle}"
-										title="#{msgs.korrekturmeldungSenden}"
-										onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-										<h:outputText value="#{msgs.korrekturmeldungSendenSingle}" />
-									</h:commandLink>
-									<h:commandLink id="action131"
-										action="#{AktuelleSchritteForm.batchHelper.ReportProblemForAll}"
-										title="#{msgs.korrekturmeldungSenden}"
-										onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-										<h:outputText value="#{msgs.korrekturmeldungSendenForAll}" />
-									</h:commandLink>
+									<h:panelGroup>
+										<h:commandLink id="action130" action="#{AktuelleSchritteForm.batchHelper.ReportProblemForSingle}" title="#{msgs.korrekturmeldungSenden}"
+											onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+											<h:outputText value="#{msgs.korrekturmeldungSendenSingle}" />
+										</h:commandLink>
+										<h:outputText value=" | "/>
+										<h:commandLink id="action131" action="#{AktuelleSchritteForm.batchHelper.ReportProblemForAll}" title="#{msgs.korrekturmeldungSenden}"
+											onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+											<h:outputText value="#{msgs.korrekturmeldungSendenForAll}" />
+										</h:commandLink>
+									</h:panelGroup>
 								</h:panelGrid>
 							</jd:hideableArea>
 						</h:panelGroup>
 
 						<%-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke --%>
 						<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet>9}">
-							<jd:hideableController for="solution" id="solutionswitcher"
-								title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">
-								<h:graphicImage
-									value="/newpages/images/buttons/step_for_20px.gif"
-									style="margin-right:3px;vertical-align:middle" />
-								<h:outputText
-									value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}" />
+							<jd:hideableController for="solution" id="solutionswitcher" title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">
+								<h:graphicImage value="/newpages/images/buttons/step_for_20px.gif" style="margin-right:3px;vertical-align:middle" />
+								<h:outputText value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}" />
 							</jd:hideableController>
 
 							<jd:hideableArea id="solution" saveState="view">
-								<h:panelGrid columns="2" style="margin-left:40px;"
-									rowClasses="top" id="grid1"
-									columnClasses="standardTable_Column,standardTable_ColumnRight">
+								<h:panelGrid columns="2" style="margin-left:40px;" rowClasses="top" id="grid1" columnClasses="standardTable_Column,standardTable_ColumnRight">
 									<h:outputText value="#{msgs.weiterZuArbeitsschritt}" />
-									<h:selectOneMenu style="width:350px" id="select1"
-										value="#{AktuelleSchritteForm.batchHelper.mySolutionID}">
-										<si:selectItems
-											value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}"
-											var="step2" itemLabel="#{step2.titelMitBenutzername}"
-											itemValue="#{step2.id}" />
+									<h:selectOneMenu style="width:350px" id="select1" value="#{AktuelleSchritteForm.batchHelper.mySolutionStep}">
+										<f:selectItems value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}" />
+									
+										<%-- <si:selectItems value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}" var="step2"
+											itemLabel="#{step2.titelMitBenutzername}" itemValue="#{step2.id}" />--%>
 									</h:selectOneMenu>
 									<h:outputText value="#{msgs.bemerkung}" />
-									<h:inputTextarea style="width:350px;height:80px" id="input1"
-										value="#{AktuelleSchritteForm.batchHelper.solutionMessage}" />
+									<h:inputTextarea style="width:350px;height:80px" id="input1" value="#{AktuelleSchritteForm.batchHelper.solutionMessage}" />
 									<h:outputText value="" />
-									<h:commandLink id="action140"
-										action="#{AktuelleSchritteForm.batchHelper.SolveProblemForSingle}"
-										title="#{msgs.meldungUeberProblemloesungSenden}"
-										onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-										<h:outputText value="#{msgs.meldungUeberProblemloesungSendenSingle}" />
-									</h:commandLink>
-									<h:commandLink id="action141"
-										action="#{AktuelleSchritteForm.batchHelper.SolveProblemForAll}"
-										title="#{msgs.meldungUeberProblemloesungSenden}"
-										onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-										<h:outputText value="#{msgs.meldungUeberProblemloesungSendenForAll}" />
-									</h:commandLink>
+									<h:panelGroup>
+										<h:commandLink id="action140" action="#{AktuelleSchritteForm.batchHelper.SolveProblemForSingle}"
+											title="#{msgs.meldungUeberProblemloesungSenden}" onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+											<h:outputText value="#{msgs.meldungUeberProblemloesungSendenSingle}" />
+										</h:commandLink>
+										<h:outputText value=" | "/>
+										<h:commandLink id="action141" action="#{AktuelleSchritteForm.batchHelper.SolveProblemForAll}"
+											title="#{msgs.meldungUeberProblemloesungSenden}" onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+											<h:outputText value="#{msgs.meldungUeberProblemloesungSendenForAll}" />
+										</h:commandLink>
+									</h:panelGroup>
 								</h:panelGrid>
 							</jd:hideableArea>
 						</h:panelGroup>

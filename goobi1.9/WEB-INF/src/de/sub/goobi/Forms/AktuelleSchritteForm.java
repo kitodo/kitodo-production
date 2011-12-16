@@ -306,6 +306,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			// only steps with same batchid
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			crit.add(Restrictions.eq("batchStep", true));
 			currentStepsOfBatch = crit.list();
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
@@ -368,6 +369,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			// only steps with same title
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			crit.add(Restrictions.eq("titel", steptitle));
+			crit.add(Restrictions.eq("batchStep", true));
 
 			// only steps with same batchid
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));

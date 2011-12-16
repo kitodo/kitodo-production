@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -123,7 +125,7 @@ public class BatchStepHelper {
 	public int getPropertyListSize() {
 		return this.processPropertyList.size();
 	}
-	
+
 	private List<String> processNameList = new ArrayList<String>();
 
 	public List<String> getProcessNameList() {
@@ -201,7 +203,7 @@ public class BatchStepHelper {
 				pe.setProzess(this.currentStep.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
 				this.currentStep.getProzess().getEigenschaften().add(pe);
-			}	
+			}
 			this.processProperty.transfer();
 
 			Prozesseigenschaft pe = new Prozesseigenschaft();
@@ -432,7 +434,7 @@ public class BatchStepHelper {
 		this.myDav.UploadFromHome(this.currentStep.getProzess());
 		reportProblem();
 		this.problemMessage = "";
-		this.myProblemID = 0;
+		this.myProblemStep = "";
 		saveStep();
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
@@ -446,7 +448,7 @@ public class BatchStepHelper {
 			saveStep();
 		}
 		this.problemMessage = "";
-		this.myProblemID = 0;
+		this.myProblemStep = "";
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
 	}
@@ -459,50 +461,57 @@ public class BatchStepHelper {
 		this.currentStep.setBearbeitungsbeginn(null);
 
 		try {
-
-			Schritt temp = this.stepDAO.get(this.myProblemID);
-			temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-			// if (temp.getPrioritaet().intValue() == 0)
-			temp.setCorrectionStep();
-			temp.setBearbeitungsende(null);
-			Schritteigenschaft se = new Schritteigenschaft();
-			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-
-			se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-			se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-			se.setType(PropertyType.messageError);
-			se.setCreationDate(myDate);
-			se.setSchritt(temp);
-			temp.getEigenschaften().add(se);
-			this.stepDAO.save(temp);
-			this.currentStep
-					.getProzess()
-					.getHistory()
-					.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp.getProzess()));
-			/*
-			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
-			 */
-			@SuppressWarnings("unchecked")
-			List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
-					.add(Restrictions.le("reihenfolge", this.currentStep.getReihenfolge()))
-					.add(Restrictions.gt("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
-					.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
-			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
-				step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-				// if (step.getPrioritaet().intValue() == 0)
-				step.setCorrectionStep();
-				step.setBearbeitungsende(null);
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
-				// this.stepDAO.save(step);
+			Schritt temp = null;
+			for (Schritt s : this.currentStep.getProzess().getSchritteList()) {
+				if (s.getTitel().equals(this.myProblemStep)) {
+					temp = s;
+				}
 			}
+			if (temp != null) {
+				// Schritt temp = this.stepDAO.get(this.currentStep.getId());
+				temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
+				// if (temp.getPrioritaet().intValue() == 0)
+				temp.setCorrectionStep();
+				temp.setBearbeitungsende(null);
+				Schritteigenschaft se = new Schritteigenschaft();
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 
+				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
+				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+				se.setType(PropertyType.messageError);
+				se.setCreationDate(myDate);
+				se.setSchritt(temp);
+				temp.getEigenschaften().add(se);
+				this.stepDAO.save(temp);
+				this.currentStep
+						.getProzess()
+						.getHistory()
+						.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
+								.getProzess()));
+				/*
+				 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
+				 */
+				@SuppressWarnings("unchecked")
+				List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+						.add(Restrictions.le("reihenfolge", this.currentStep.getReihenfolge()))
+						.add(Restrictions.gt("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+						.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
+				for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+					Schritt step = iter.next();
+					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
+					// if (step.getPrioritaet().intValue() == 0)
+					step.setCorrectionStep();
+					step.setBearbeitungsende(null);
+					Schritteigenschaft seg = new Schritteigenschaft();
+					seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
+					seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
+					seg.setSchritt(step);
+					seg.setType(PropertyType.messageImportant);
+					seg.setCreationDate(new Date());
+					step.getEigenschaften().add(seg);
+					// this.stepDAO.save(step);
+				}
+			}
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -512,38 +521,49 @@ public class BatchStepHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Schritt> getPreviousStepsForProblemReporting() {
+	public List<SelectItem> getPreviousStepsForProblemReporting() {
+		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Schritt> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
 				.add(Restrictions.lt("reihenfolge", this.currentStep.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
 				.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
-
-		return alleVorherigenSchritte;
+		for (Schritt s : alleVorherigenSchritte) {
+			answer.add(new SelectItem(s.getTitel(), s.getTitelMitBenutzername()));
+		}
+		return answer;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Schritt> getNextStepsForProblemSolution() {
+	public List<SelectItem> getNextStepsForProblemSolution() {
+		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Schritt> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
 				.add(Restrictions.ge("reihenfolge", this.currentStep.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
 				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
-		return alleNachfolgendenSchritte;
+		for (Schritt s : alleNachfolgendenSchritte) {
+			answer.add(new SelectItem(s.getTitel(), s.getTitelMitBenutzername()));
+		}
+		return answer;
 	}
 
 	public String SolveProblemForSingle() {
-		for (Schritt s : this.steps) {
-			this.currentStep = s;
-			solveProblem();
-		}
+		// for (Schritt s : this.steps) {
+		// this.currentStep = s;
+		solveProblem();
+		saveStep();
+		// }
 		this.solutionMessage = "";
-		this.mySolutionID = 0;
+		this.mySolutionStep = "";
 
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
 	}
 
 	public String SolveProblemForAll() {
-		solveProblem();
+		for (Schritt s : this.steps) {
+			this.currentStep = s;
+			solveProblem();
+		}
 		this.solutionMessage = "";
-		this.mySolutionID = 0;
+		this.mySolutionStep = "";
 
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
@@ -558,40 +578,46 @@ public class BatchStepHelper {
 		HelperSchritte.updateEditing(this.currentStep);
 
 		try {
-			Schritt temp = this.stepDAO.get(this.mySolutionID);
-
-			/*
-			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
-			 */
-			@SuppressWarnings("unchecked")
-			List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
-					.add(Restrictions.ge("reihenfolge", this.currentStep.getReihenfolge()))
-					.add(Restrictions.le("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
-					.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
-			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
-				step.setBearbeitungsstatusEnum(StepStatus.DONE);
-				step.setBearbeitungsende(now);
-				step.setPrioritaet(Integer.valueOf(0));
-				if (step.getId().intValue() == temp.getId().intValue()) {
-					step.setBearbeitungsstatusEnum(StepStatus.OPEN);
-					step.setCorrectionStep();
-					step.setBearbeitungsende(null);
-					// step.setBearbeitungsbeginn(null);
-					step.setBearbeitungszeitpunkt(now);
+			Schritt temp = null;
+			for (Schritt s : this.currentStep.getProzess().getSchritteList()) {
+				if (s.getTitel().equals(this.mySolutionStep)) {
+					temp = s;
 				}
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
-				this.stepDAO.save(step);
 			}
-
+			// Schritt temp = this.stepDAO.get(this.currentStep.getId());
+			if (temp != null) {
+				/*
+				 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
+				 */
+				@SuppressWarnings("unchecked")
+				List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+						.add(Restrictions.ge("reihenfolge", this.currentStep.getReihenfolge()))
+						.add(Restrictions.le("reihenfolge", temp.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+						.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
+				for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+					Schritt step = iter.next();
+					step.setBearbeitungsstatusEnum(StepStatus.DONE);
+					step.setBearbeitungsende(now);
+					step.setPrioritaet(Integer.valueOf(0));
+					if (step.getId().intValue() == temp.getId().intValue()) {
+						step.setBearbeitungsstatusEnum(StepStatus.OPEN);
+						step.setCorrectionStep();
+						step.setBearbeitungsende(null);
+						// step.setBearbeitungsbeginn(null);
+						step.setBearbeitungszeitpunkt(now);
+					}
+					Schritteigenschaft seg = new Schritteigenschaft();
+					seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+					seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+							+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+					seg.setSchritt(step);
+					seg.setType(PropertyType.messageImportant);
+					seg.setCreationDate(new Date());
+					step.getEigenschaften().add(seg);
+					this.stepDAO.save(step);
+				}
+			}
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -600,8 +626,8 @@ public class BatchStepHelper {
 		}
 	}
 
-	private Integer myProblemID;
-	private Integer mySolutionID;
+	private String myProblemStep;
+	private String mySolutionStep;
 	private String problemMessage;
 	private String solutionMessage;
 
@@ -613,12 +639,12 @@ public class BatchStepHelper {
 		this.problemMessage = problemMessage;
 	}
 
-	public Integer getMyProblemID() {
-		return this.myProblemID;
+	public String getMyProblemStep() {
+		return this.myProblemStep;
 	}
 
-	public void setMyProblemID(Integer myProblemID) {
-		this.myProblemID = myProblemID;
+	public void setMyProblemStep(String myProblemStep) {
+		this.myProblemStep = myProblemStep;
 	}
 
 	public String getSolutionMessage() {
@@ -629,12 +655,12 @@ public class BatchStepHelper {
 		this.solutionMessage = solutionMessage;
 	}
 
-	public Integer getMySolutionID() {
-		return this.mySolutionID;
+	public String getMySolutionStep() {
+		return this.mySolutionStep;
 	}
 
-	public void setMySolutionID(Integer mySolutionID) {
-		this.mySolutionID = mySolutionID;
+	public void setMySolutionStep(String mySolutionStep) {
+		this.mySolutionStep = mySolutionStep;
 	}
 
 	/**
@@ -753,10 +779,10 @@ public class BatchStepHelper {
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
-//		for (ProcessProperty pp : this.processPropertyList) {
-//			this.processProperty = pp;
-//			saveCurrentPropertyForAll();
-//		}
+		// for (ProcessProperty pp : this.processPropertyList) {
+		// this.processProperty = pp;
+		// saveCurrentPropertyForAll();
+		// }
 		for (Schritt s : this.steps) {
 
 			if (s.isTypImagesSchreiben()) {
