@@ -126,7 +126,7 @@ public class BatchForm extends BasisForm {
 			}
 		}
 		if (this.selectedBatches.size() > 0) {
-			if (this.selectedBatches.contains(null)|| this.selectedBatches.contains("null")) {
+			if (this.selectedBatches.contains(null) || this.selectedBatches.contains("null")) {
 				crit.add(Restrictions.isNull("batchID"));
 			} else {
 				crit.add(Restrictions.in("batchID", ids));
@@ -284,22 +284,26 @@ public class BatchForm extends BasisForm {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 		} else if (this.selectedBatches.size() == 1) {
-			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Prozess.class);
-			crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-			List<Integer> ids = new ArrayList<Integer>();
-			crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
-			List<Prozess> deleteList = crit.list();
-			{
-				for (Prozess p : deleteList) {
-					p.setBatchID(null);
-					try {
-						this.dao.save(p);
-					} catch (DAOException e) {
-						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-						logger.error(e);
+			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
+				Session session = Helper.getHibernateSession();
+				Criteria crit = session.createCriteria(Prozess.class);
+				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+				List<Integer> ids = new ArrayList<Integer>();
+				crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
+				List<Prozess> deleteList = crit.list();
+				{
+					for (Prozess p : deleteList) {
+						p.setBatchID(null);
+						try {
+							this.dao.save(p);
+						} catch (DAOException e) {
+							Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+							logger.error(e);
+						}
 					}
 				}
+			} else {
+				Helper.setFehlerMeldung("noBatchSelected");
 			}
 		} else {
 			Helper.setFehlerMeldung("toḾanyBatchesSelected");
@@ -314,15 +318,19 @@ public class BatchForm extends BasisForm {
 		} else if (this.selectedBatches.size() > 1) {
 			Helper.setFehlerMeldung("toḾanyBatchesSelected");
 		} else {
-			Integer batchid = new Integer(this.selectedBatches.get(0));
-			for (Prozess p : this.selectedProcesses) {
-				p.setBatchID(batchid);
-				try {
-					this.dao.save(p);
-				} catch (DAOException e) {
-					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-					logger.error(e);
+			try {
+				Integer batchid = new Integer(this.selectedBatches.get(0));
+				for (Prozess p : this.selectedProcesses) {
+					p.setBatchID(batchid);
+					try {
+						this.dao.save(p);
+					} catch (DAOException e) {
+						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+						logger.error(e);
+					}
 				}
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("noBatchSelected");
 			}
 		}
 		FilterAlleStart();
@@ -376,14 +384,19 @@ public class BatchForm extends BasisForm {
 			Helper.setFehlerMeldung("toḾanyBatchesSelected");
 			return "";
 		} else {
-			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Prozess.class);
-			crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-			List<Integer> ids = new ArrayList<Integer>();
-			crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
-			List<Prozess> propertyBatch = crit.list();
-			this.batchHelper = new BatchProcessHelper(propertyBatch);
-			return "BatchProperties";
+			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
+				Session session = Helper.getHibernateSession();
+				Criteria crit = session.createCriteria(Prozess.class);
+				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+				List<Integer> ids = new ArrayList<Integer>();
+				crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
+				List<Prozess> propertyBatch = crit.list();
+				this.batchHelper = new BatchProcessHelper(propertyBatch);
+				return "BatchProperties";
+			} else {
+				Helper.setFehlerMeldung("noBatchSelected");
+				return "";
+			}
 		}
 	}
 

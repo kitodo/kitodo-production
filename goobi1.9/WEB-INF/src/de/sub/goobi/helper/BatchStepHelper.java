@@ -753,10 +753,10 @@ public class BatchStepHelper {
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
-		for (ProcessProperty pp : this.processPropertyList) {
-			this.processProperty = pp;
-			saveCurrentPropertyForAll();
-		}
+//		for (ProcessProperty pp : this.processPropertyList) {
+//			this.processProperty = pp;
+//			saveCurrentPropertyForAll();
+//		}
 		for (Schritt s : this.steps) {
 
 			if (s.isTypImagesSchreiben()) {
