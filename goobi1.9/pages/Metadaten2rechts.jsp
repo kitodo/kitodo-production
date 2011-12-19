@@ -147,7 +147,7 @@
 
 			<htm:td rendered="#{Metadaten.bildAnzeigen==true}" style="top: 30px;">
 
-				<h:panelGroup id="BildArea" style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
+				<h:panelGroup id="BildArea2" style="#{Metadaten.treeProperties.imageSticky?'position: fixed;top: 30px;left: 600px;':''}">
 					<%@include file="incMeta/Bild.jsp"%>
 				</h:panelGroup>
 

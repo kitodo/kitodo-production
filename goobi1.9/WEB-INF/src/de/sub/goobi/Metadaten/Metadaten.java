@@ -87,8 +87,7 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
- * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
  * 
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
@@ -174,8 +173,7 @@ public class Metadaten {
 	private HashMap<String, Boolean> treeProperties;
 
 	/**
-	 * Konstruktor
-	 * ================================================================
+	 * Konstruktor ================================================================
 	 */
 	public Metadaten() {
 		this.treeProperties = new HashMap<String, Boolean>();
@@ -187,11 +185,9 @@ public class Metadaten {
 	}
 
 	/**
-	 * die Anzeige der Details ändern (z.B. nur die Metadaten anzeigen, oder nur
-	 * die Paginierungssequenzen)
+	 * die Anzeige der Details ändern (z.B. nur die Metadaten anzeigen, oder nur die Paginierungssequenzen)
 	 * 
-	 * @return Navigationsanweisung "null" als String (also gleiche Seite
-	 *         reloaden)
+	 * @return Navigationsanweisung "null" als String (also gleiche Seite reloaden)
 	 */
 	public String AnsichtAendern() {
 		this.modusAnsicht = Helper.getRequestParameter("Ansicht");
@@ -322,8 +318,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * wenn TitleDocMain, dann gleich Sortiertitel mit gleichem Inhalt
-		 * anlegen
+		 * wenn TitleDocMain, dann gleich Sortiertitel mit gleichem Inhalt anlegen
 		 */
 		if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
 			try {
@@ -403,8 +398,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Rollen zurückgeben
-	 * ================================================================
+	 * die noch erlaubten Rollen zurückgeben ================================================================
 	 */
 	public ArrayList<SelectItem> getAddableRollen() {
 		return this.metahelper.getAddablePersonRoles(this.myDocStruct, "");
@@ -435,14 +429,12 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Metadaten zurückgeben
-	 * ================================================================
+	 * die noch erlaubten Metadaten zurückgeben ================================================================
 	 */
 	public ArrayList<SelectItem> getAddableMetadataTypes() {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
 		/*
-		 * -------------------------------- zuerst mal alle addierbaren
-		 * Metadatentypen ermitteln --------------------------------
+		 * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 		if (types == null) {
@@ -450,8 +442,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * --------------------- alle Metadatentypen, die keine Person sind,
-		 * oder mit einem Unterstrich anfangen rausnehmen -------------------
+		 * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
 		 */
 		for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
 			if (mdt.getIsPerson()) {
@@ -460,8 +451,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren
-		 * --------------------------------
+		 * -------------------------------- die Metadatentypen sortieren --------------------------------
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
@@ -493,13 +483,11 @@ public class Metadaten {
 	}
 
 	/**
-	 * die MetadatenTypen zurückgeben
-	 * ================================================================
+	 * die MetadatenTypen zurückgeben ================================================================
 	 */
 	public SelectItem[] getMetadatenTypen() {
 		/*
-		 * -------------------------------- zuerst mal die addierbaren
-		 * Metadatentypen ermitteln --------------------------------
+		 * -------------------------------- zuerst mal die addierbaren Metadatentypen ermitteln --------------------------------
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 
@@ -509,23 +497,20 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren
-		 * --------------------------------
+		 * -------------------------------- die Metadatentypen sortieren --------------------------------
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
 		Collections.sort(types, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen
-		 * Größe anlegen --------------------------------
+		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
 		 */
 		int zaehler = types.size();
 		SelectItem myTypen[] = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in
-		 * das Array packen --------------------------------
+		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
 		 */
 		zaehler = 0;
 		for (MetadataType mdt : types) {
@@ -538,8 +523,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- alle Typen, die einen Unterstrich
-		 * haben nochmal rausschmeissen --------------------------------
+		 * -------------------------------- alle Typen, die einen Unterstrich haben nochmal rausschmeissen --------------------------------
 		 */
 		SelectItem myTypenOhneUnterstrich[] = new SelectItem[zaehler];
 		for (int i = 0; i < zaehler; i++) {
@@ -549,11 +533,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Metadaten
-	 * lesen und schreiben ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Metadaten lesen und schreiben
+	 * ## ##################################################### ####################################################
 	 */
 
 	/**
@@ -624,8 +605,7 @@ public class Metadaten {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws PreferencesException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -645,8 +625,7 @@ public class Metadaten {
 		readAllTifFolders();
 
 		/*
-		 * -------------------------------- Dokument einlesen
-		 * --------------------------------
+		 * -------------------------------- Dokument einlesen --------------------------------
 		 */
 		this.gdzfile = this.myProzess.readMetadataFile();
 		this.mydocument = this.gdzfile.getDigitalDocument();
@@ -655,8 +634,7 @@ public class Metadaten {
 		this.imagehelper = new MetadatenImagesHelper(this.myPrefs, this.mydocument);
 
 		/*
-		 * -------------------------------- Das Hauptelement ermitteln
-		 * --------------------------------
+		 * -------------------------------- Das Hauptelement ermitteln --------------------------------
 		 */
 
 		// TODO: think something up, how to handle a not matching ruleset
@@ -688,8 +666,7 @@ public class Metadaten {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws PreferencesException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -700,8 +677,7 @@ public class Metadaten {
 	 * 
 	 * @throws InterruptedException
 	 * @throws IOException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -709,8 +685,7 @@ public class Metadaten {
 	 */
 	public String XMLschreiben() {
 		/*
-		 * für den Prozess nochmal die Metadaten durchlaufen und die Daten
-		 * speichern
+		 * für den Prozess nochmal die Metadaten durchlaufen und die Daten speichern
 		 */
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 
@@ -729,8 +704,7 @@ public class Metadaten {
 		/* xml-Datei speichern */
 		// MetadatenDebuggen(gdzfile.getDigitalDocument().getLogicalDocStruct());
 		/*
-		 * --------------------- vor dem Speichern alle ungenutzen Docstructs
-		 * rauswerfen -------------------
+		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
 		 */
 		this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
 
@@ -749,8 +723,7 @@ public class Metadaten {
 	 * vom aktuellen Strukturelement alle Metadaten einlesen
 	 * 
 	 * @param inStrukturelement
-	 *            ==============================================================
-	 *            ==
+	 *            ============================================================== ==
 	 */
 
 	private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
@@ -759,8 +732,7 @@ public class Metadaten {
 		LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
 
 		/*
-		 * -------------------------------- alle Metadaten ermitteln
-		 * --------------------------------
+		 * -------------------------------- alle Metadaten ermitteln --------------------------------
 		 */
 		// if (inStrukturelement != null &&
 		// inStrukturelement.getAllVisibleMetadata() != null
@@ -770,8 +742,7 @@ public class Metadaten {
 		// lsMeta.add(new Metadatum((Metadata) iter.next(), 0, myPrefs));
 		// }
 		/*
-		 * -------------------------------- alle Metadaten und die
-		 * DefaultDisplay-Werte anzeigen --------------------------------
+		 * -------------------------------- alle Metadaten und die DefaultDisplay-Werte anzeigen --------------------------------
 		 */
 		List<? extends Metadata> myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, this.myProzess);
@@ -782,8 +753,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- alle Personen ermitteln
-		 * --------------------------------
+		 * -------------------------------- alle Personen ermitteln --------------------------------
 		 */
 		// if (inStrukturelement != null && inStrukturelement.getAllPersons() !=
 		// null
@@ -793,8 +763,7 @@ public class Metadaten {
 		// lsPers.add(new MetaPerson((Person) iter.next(), 0, myPrefs));
 		// }
 		/*
-		 * -------------------------------- alle Personen und die
-		 * DefaultDisplay-Werte ermitteln --------------------------------
+		 * -------------------------------- alle Personen und die DefaultDisplay-Werte ermitteln --------------------------------
 		 */
 		myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), true, this.myProzess);
@@ -808,17 +777,14 @@ public class Metadaten {
 		this.myPersonen = lsPers;
 
 		/*
-		 * -------------------------------- die zugehörigen Seiten ermitteln
-		 * --------------------------------
+		 * -------------------------------- die zugehörigen Seiten ermitteln --------------------------------
 		 */
 		StructSeitenErmitteln(this.myDocStruct);
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Treeview ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Treeview ##
+	 * ##################################################### ####################################################
 	 */
 
 	@SuppressWarnings("rawtypes")
@@ -828,8 +794,7 @@ public class Metadaten {
 		List<DocStruct> status = new ArrayList<DocStruct>();
 
 		/*
-		 * -------------------------------- den Ausklapp-Zustand aller Knoten
-		 * erfassen --------------------------------
+		 * -------------------------------- den Ausklapp-Zustand aller Knoten erfassen --------------------------------
 		 */
 		if (this.tree3 != null) {
 			for (Iterator iter = this.tree3.getChildrenAsList().iterator(); iter.hasNext();) {
@@ -845,8 +810,7 @@ public class Metadaten {
 			return "Metadaten3links";
 		}
 		/*
-		 * -------------------------------- Die Struktur als Tree3 aufbereiten
-		 * --------------------------------
+		 * -------------------------------- Die Struktur als Tree3 aufbereiten --------------------------------
 		 */
 		String label = this.logicalTopstruct.getType().getNameByLanguage(
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
@@ -858,8 +822,7 @@ public class Metadaten {
 		MetadatenalsTree3Einlesen2(this.logicalTopstruct, this.tree3);
 
 		/*
-		 * -------------------------------- den Ausklappzustand nach dem
-		 * neu-Einlesen wieder herstellen --------------------------------
+		 * -------------------------------- den Ausklappzustand nach dem neu-Einlesen wieder herstellen --------------------------------
 		 */
 		for (Iterator iter = this.tree3.getChildrenAsListAlle().iterator(); iter.hasNext();) {
 			map = (HashMap) iter.next();
@@ -884,8 +847,7 @@ public class Metadaten {
 	 * Metadaten in Tree3 ausgeben
 	 * 
 	 * @param inStrukturelement
-	 *            ==============================================================
-	 *            ==
+	 *            ============================================================== ==
 	 */
 	private void MetadatenalsTree3Einlesen2(DocStruct inStrukturelement, TreeNodeStruct3 OberKnoten) {
 		OberKnoten.setMainTitle(MetadatenErmitteln(inStrukturelement, "TitleDocMain"));
@@ -906,8 +868,7 @@ public class Metadaten {
 
 		// int zaehler = 0;
 		/*
-		 * -------------------------------- vom aktuellen Strukturelement alle
-		 * Kinder in den Tree packen --------------------------------
+		 * -------------------------------- vom aktuellen Strukturelement alle Kinder in den Tree packen --------------------------------
 		 */
 		List<DocStruct> meineListe = inStrukturelement.getAllChildren();
 		if (meineListe != null) {
@@ -930,8 +891,7 @@ public class Metadaten {
 	 * Metadaten gezielt zurückgeben
 	 * 
 	 * @param inStrukturelement
-	 *            ==============================================================
-	 *            ==
+	 *            ============================================================== ==
 	 */
 	private String MetadatenErmitteln(DocStruct inStrukturelement, String inTyp) {
 		String rueckgabe = "";
@@ -970,8 +930,7 @@ public class Metadaten {
 		MetadatenalsBeanSpeichern(inStruct);
 
 		/*
-		 * -------------------------------- die Selektion kenntlich machen
-		 * --------------------------------
+		 * -------------------------------- die Selektion kenntlich machen --------------------------------
 		 */
 		for (Iterator iter = this.tree3.getChildrenAsListAlle().iterator(); iter.hasNext();) {
 
@@ -989,8 +948,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * Knoten nach oben schieben
-	 * ================================================================
+	 * Knoten nach oben schieben ================================================================
 	 */
 	public String KnotenUp() {
 		try {
@@ -1002,8 +960,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * Knoten nach unten schieben
-	 * ================================================================
+	 * Knoten nach unten schieben ================================================================
 	 */
 	public String KnotenDown() {
 		try {
@@ -1018,8 +975,7 @@ public class Metadaten {
 	 * Knoten zu einer anderen Stelle
 	 * 
 	 * @throws TypeNotAllowedAsChildException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 */
 	public String KnotenVerschieben() throws TypeNotAllowedAsChildException {
 		this.myDocStruct.getParent().removeChild(this.myDocStruct);
@@ -1034,8 +990,7 @@ public class Metadaten {
 	 * Knoten nach oben schieben
 	 * 
 	 * @throws IOException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 */
 	public String KnotenDelete() throws IOException {
 		if (this.myDocStruct != null && this.myDocStruct.getParent() != null) {
@@ -1055,8 +1010,7 @@ public class Metadaten {
 	 * @throws TypeNotAllowedForParentException
 	 * @throws TypeNotAllowedAsChildException
 	 * @throws TypeNotAllowedAsChildException
-	 *             ============================================================
-	 *             == ==
+	 *             ============================================================ == ==
 	 */
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 		// myLogger.warn("eingefügt wird: " + neuesElementWohin);
@@ -1064,16 +1018,13 @@ public class Metadaten {
 		// addDocStructType2);
 
 		/*
-		 * -------------------------------- prüfen, wohin das Strukturelement
-		 * gepackt werden soll, anschliessend entscheiden, welches
-		 * Strukturelement gewählt wird und abschliessend richtig einfügen
-		 * --------------------------------
+		 * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
+		 * gewählt wird und abschliessend richtig einfügen --------------------------------
 		 */
 
 		DocStruct ds = null;
 		/*
-		 * -------------------------------- vor das aktuelle Element
-		 * --------------------------------
+		 * -------------------------------- vor das aktuelle Element --------------------------------
 		 */
 		if (this.neuesElementWohin.equals("1")) {
 			if (this.addDocStructType1 == null || this.addDocStructType1.equals("")) {
@@ -1115,8 +1066,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- hinter das aktuelle Element
-		 * --------------------------------
+		 * -------------------------------- hinter das aktuelle Element --------------------------------
 		 */
 		if (this.neuesElementWohin.equals("2")) {
 			DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
@@ -1151,8 +1101,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- als erstes Child
-		 * --------------------------------
+		 * -------------------------------- als erstes Child --------------------------------
 		 */
 		if (this.neuesElementWohin.equals("3")) {
 			DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
@@ -1178,8 +1127,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- als letztes Child
-		 * --------------------------------
+		 * -------------------------------- als letztes Child --------------------------------
 		 */
 		if (this.neuesElementWohin.equals("4")) {
 			DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
@@ -1203,32 +1151,26 @@ public class Metadaten {
 	}
 
 	/**
-	 * mögliche Docstructs als Kind zurückgeben
-	 * ================================================================
+	 * mögliche Docstructs als Kind zurückgeben ================================================================
 	 */
 	public SelectItem[] getAddableDocStructTypenAlsKind() {
 		return this.metahelper.getAddableDocStructTypen(this.myDocStruct, false);
 	}
 
 	/**
-	 * mögliche Docstructs als Nachbar zurückgeben
-	 * ================================================================
+	 * mögliche Docstructs als Nachbar zurückgeben ================================================================
 	 */
 	public SelectItem[] getAddableDocStructTypenAlsNachbar() {
 		return this.metahelper.getAddableDocStructTypen(this.myDocStruct, true);
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Strukturdaten: Seiten ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Strukturdaten: Seiten ##
+	 * ##################################################### ####################################################
 	 */
 
 	/**
-	 * Markus baut eine Seitenstruktur aus den vorhandenen Images
-	 * ================================================================
+	 * Markus baut eine Seitenstruktur aus den vorhandenen Images ================================================================
 	 * 
 	 * @throws DAOException
 	 * @throws SwapException
@@ -1240,8 +1182,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Seiten ermitteln
-	 * ================================================================
+	 * alle Seiten ermitteln ================================================================
 	 */
 	private void retrieveAllImages() {
 		DigitalDocument mydocument = null;
@@ -1275,8 +1216,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Seiten des aktuellen Strukturelements ermitteln
-	 * ================================================================
+	 * alle Seiten des aktuellen Strukturelements ermitteln ================================================================
 	 */
 	private void StructSeitenErmitteln(DocStruct inStrukturelement) {
 		if (inStrukturelement == null) {
@@ -1287,8 +1227,7 @@ public class Metadaten {
 		int imageNr = 0;
 		if (listReferenzen != null) {
 			/*
-			 * -------------------------------- Referenzen sortieren
-			 * --------------------------------
+			 * -------------------------------- Referenzen sortieren --------------------------------
 			 */
 			Collections.sort(listReferenzen, new Comparator<Reference>() {
 				@Override
@@ -1330,8 +1269,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * Wenn eine Verkn�pfung zwischen Strukturelement und Bildern sein soll,
-		 * das richtige Bild anzeigen
+		 * Wenn eine Verkn�pfung zwischen Strukturelement und Bildern sein soll, das richtige Bild anzeigen
 		 */
 		// myLogger.info("erste Seite ist Image " + imageNr);
 		if (this.bildZuStrukturelement) {
@@ -1340,8 +1278,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Seiten des aktuellen Strukturelements ermitteln 2
-	 * ================================================================
+	 * alle Seiten des aktuellen Strukturelements ermitteln 2 ================================================================
 	 */
 	private void StructSeitenErmitteln2(DocStruct inStrukturelement, int inZaehler) {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -1357,8 +1294,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * noch für Testzweck zum direkten öffnen der richtigen Startseite 3
-	 * ================================================================
+	 * noch für Testzweck zum direkten öffnen der richtigen Startseite 3 ================================================================
 	 */
 	private int StructSeitenErmitteln3(DocStruct inStrukturelement) {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
@@ -1393,8 +1329,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Knoten des Baums expanden oder collapsen
-	 * ================================================================
+	 * alle Knoten des Baums expanden oder collapsen ================================================================
 	 */
 	public String TreeExpand() {
 		this.tree3.expandNodes(this.treeProperties.get("fullexpanded"));
@@ -1402,10 +1337,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Bilder-Anzeige ## #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Bilder-Anzeige ##
+	 * ##################################################### ####################################################
 	 */
 
 	public String BildBlaetternVor() {
@@ -1427,8 +1360,7 @@ public class Metadaten {
 		BildErmitteln(tempint);
 		return "";
 	}
-	
-	
+
 	public void rotateLeft() {
 		if (this.myImageRotation < 90) {
 			this.myImageRotation = 360;
@@ -1508,8 +1440,7 @@ public class Metadaten {
 
 	private void BildErmitteln(int welches) {
 		/*
-		 * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild
-		 * nicht neu umrechnen
+		 * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
 		 */
 		myLogger.trace("start BildErmitteln 1");
 		if (!this.bildAnzeigen) {
@@ -1585,8 +1516,7 @@ public class Metadaten {
 					String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
 					myLogger.trace("myPfad: " + myPfad);
 					/*
-					 * den Counter für die Bild-ID auf einen neuen Wert setzen,
-					 * damit nichts gecacht wird
+					 * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
 					 */
 					this.myBildCounter++;
 					myLogger.trace("myBildCounter: " + this.myBildCounter);
@@ -1638,17 +1568,13 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Sperrung der
-	 * Metadaten aktualisieren oder prüfen ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Sperrung der Metadaten
+	 * aktualisieren oder prüfen ## ##################################################### ####################################################
 	 */
 
 	private boolean SperrungAktualisieren() {
 		/*
-		 * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer
-		 * gilt, Sperrung aktualisieren
+		 * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer gilt, Sperrung aktualisieren
 		 */
 		if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
 				&& this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
@@ -1667,11 +1593,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Navigationsanweisungen ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Navigationsanweisungen ##
+	 * ##################################################### ####################################################
 	 */
 
 	/**
@@ -1691,19 +1614,15 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Transliteration bestimmter Felder ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Transliteration bestimmter
+	 * Felder ## ##################################################### ####################################################
 	 */
 
 	public String Transliterieren() {
 		Metadata md = this.curMetadatum.getMd();
 
 		/*
-		 * -------------------------------- wenn es ein russischer Titel ist,
-		 * dessen Transliterierungen anzeigen --------------------------------
+		 * -------------------------------- wenn es ein russischer Titel ist, dessen Transliterierungen anzeigen --------------------------------
 		 */
 		if (md.getType().getName().equals("RUSMainTitle")) {
 			Transliteration trans = new Transliteration();
@@ -1734,8 +1653,7 @@ public class Metadaten {
 		Person md = this.curPerson.getP();
 
 		/*
-		 * -------------------------------- wenn es ein russischer Autor ist,
-		 * dessen Transliterierungen anlegen --------------------------------
+		 * -------------------------------- wenn es ein russischer Autor ist, dessen Transliterierungen anlegen --------------------------------
 		 */
 		if (md.getRole().equals("Author")) {
 			Transliteration trans = new Transliteration();
@@ -1769,17 +1687,13 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## aus einer
-	 * Liste von PPNs Strukturelemente aus dem Opac ## holen und dem aktuellen
-	 * Strukturelement unterordnen ##
-	 * #####################################################
+	 * ##################################################### ##################################################### ## ## aus einer Liste von PPNs
+	 * Strukturelemente aus dem Opac ## holen und dem aktuellen Strukturelement unterordnen ## #####################################################
 	 * ####################################################
 	 */
 
 	/**
-	 * mehrere PPNs aus dem Opac abfragen und dem aktuellen Strukturelement
-	 * unterordnen
+	 * mehrere PPNs aus dem Opac abfragen und dem aktuellen Strukturelement unterordnen
 	 * ================================================================
 	 */
 	public String AddAdditionalOpacPpns() {
@@ -1804,8 +1718,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * eine PPN aus dem Opac abfragen und dessen Metadaten dem aktuellen
-	 * Strukturelement zuweisen
+	 * eine PPN aus dem Opac abfragen und dessen Metadaten dem aktuellen Strukturelement zuweisen
 	 * ================================================================
 	 */
 	public String AddMetadaFromOpacPpn() {
@@ -1825,8 +1738,7 @@ public class Metadaten {
 					}
 
 					/*
-					 * wenn der Metadatentyp in der Liste der erlaubten Typen,
-					 * dann hinzufügen
+					 * wenn der Metadatentyp in der Liste der erlaubten Typen, dann hinzufügen
 					 */
 					for (Iterator<Metadata> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata().iterator(); it.hasNext();) {
 						Metadata m = it.next();
@@ -1850,11 +1762,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * Metadatenvalidierung ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Metadatenvalidierung ##
+	 * ##################################################### ####################################################
 	 */
 
 	public void Validate() {
@@ -1864,10 +1773,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Auswahl der
-	 * Seiten über Ajax ## #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Auswahl der Seiten über Ajax
+	 * ## ##################################################### ####################################################
 	 */
 
 	public String getAjaxSeiteStart() {
@@ -1946,16 +1853,14 @@ public class Metadaten {
 	}
 
 	/**
-	 * die Seiten über die Ajax-Felder festlegen
-	 * ================================================================
+	 * die Seiten über die Ajax-Felder festlegen ================================================================
 	 */
 	public void AjaxSeitenStartUndEndeSetzen() {
 		boolean startseiteOk = false;
 		boolean endseiteOk = false;
 
 		/*
-		 * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
-		 * überhaupt existiert
+		 * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite überhaupt existiert
 		 */
 		for (int i = 0; i < this.alleSeiten.length; i++) {
 			SelectItem si = this.alleSeiten[i];
@@ -1980,8 +1885,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
-	 * ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String SeitenStartUndEndeSetzen() {
 		if (!SperrungAktualisieren()) {
@@ -2007,8 +1911,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
-	 * ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 
 	public String SeitenVonChildrenUebernehmen() {
@@ -2042,8 +1945,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
-	 * ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildErsteSeiteAnzeigen() {
 		this.bildAnzeigen = true;
@@ -2061,8 +1963,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
-	 * ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildLetzteSeiteAnzeigen() {
 		this.bildAnzeigen = true;
@@ -2080,8 +1981,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * ausgewählte Seiten dem aktuellen Strukturelement hinzufügen
-	 * ================================================================
+	 * ausgewählte Seiten dem aktuellen Strukturelement hinzufügen ================================================================
 	 */
 	public String SeitenHinzu() {
 		/* alle markierten Seiten durchlaufen */
@@ -2092,8 +1992,7 @@ public class Metadaten {
 			boolean schonEnthalten = false;
 
 			/*
-			 * wenn schon References vorhanden, prüfen, ob schon enthalten, erst
-			 * dann zuweisen
+			 * wenn schon References vorhanden, prüfen, ob schon enthalten, erst dann zuweisen
 			 */
 			if (this.myDocStruct.getAllToReferences("logical_physical") != null) {
 				for (Iterator<Reference> iter = this.myDocStruct.getAllToReferences("logical_physical").iterator(); iter.hasNext();) {
@@ -2118,8 +2017,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * ausgewählte Seiten aus dem Strukturelement entfernen
-	 * ================================================================
+	 * ausgewählte Seiten aus dem Strukturelement entfernen ================================================================
 	 */
 	public String SeitenWeg() {
 		for (int i = 0; i < this.structSeitenAuswahl.length; i++) {
@@ -2137,10 +2035,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## OCR ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## OCR ##
+	 * ##################################################### ####################################################
 	 */
 
 	public boolean isShowOcrButton() {
@@ -2201,10 +2097,8 @@ public class Metadaten {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Getter und
-	 * Setter ## #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
 	 */
 
 	public int getBildNummer() {
