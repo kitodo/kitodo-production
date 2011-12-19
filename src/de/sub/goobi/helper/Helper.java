@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.DateFormat;
@@ -318,20 +319,32 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static void loadLanguageBundle() {
+		myLogger.info("Loading message bundles.");
 		bundle = ResourceBundle.getBundle("messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		File file = new File(ConfigMain.getParameter("localMessages"));
-		if (file.exists()) {
-			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
+		localBundle = loadLocalMessageBundleIfAvailable();
+	}
 
-			try {
-				URL resourceURL = file.toURI().toURL();
-				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-				localBundle = ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
-			} catch (Exception e) {
+	/**
+	  * Load local message bundle from file system only if file exists.
+	  *
+	  * @return Resource bundle for local messages. Returns NULL if no local message bundle could be found.
+	  */
+	private static ResourceBundle loadLocalMessageBundleIfAvailable() {
+		String localMessages = ConfigMain.getParameter("localMessages");
+		if (localMessages != null) {
+			File file = new File(localMessages);
+			if (file.exists()) {
+				myLogger.info("Local message bundle found: " + localMessages);
+				try {
+					URL resourceURL = file.toURI().toURL();
+					URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
+					return ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
+				} catch (java.net.MalformedURLException muex) {
+					myLogger.error("Error reading local message bundle", muex);
+				}
 			}
 		}
-
-
+		return null;
 	}
 
 	public static String getTranslation(String dbTitel) {
