@@ -34,6 +34,7 @@
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
     <property name="build.javac.target" value="1.5"/>
+    <property name="build.javac.source" value="1.5"/>
 
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
@@ -201,6 +202,7 @@
     <!-- Compile application -->
     <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
         <javac includeAntRuntime="false" srcdir="${java.src.dir}" destdir="${build.classes}"
+               source="${build.javac.source}"
                target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
@@ -211,6 +213,7 @@
     <!-- Compile unit tests -->
     <target name="compile-tests" depends="compile">
         <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes}"
+               source="${build.javac.source}"
                target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
