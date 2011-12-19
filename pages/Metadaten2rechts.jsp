@@ -74,7 +74,7 @@
 								<%-- Metadaten validieren --%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
+								<%-- Metadaten nicht schreiben, nur zurÃ¼ck gehen--%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}" target="_parent" immediate="true"
 									id="returnButton" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
@@ -82,7 +82,7 @@
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Reload}" value="#{msgs.speichern}" rendered="#{not Metadaten.nurLesenModus}"
 									immediate="false" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten schreiben und zurück gehen--%>
+								<%-- Metadaten schreiben und zurÃ¼ck gehen--%>
 								<h:commandLink style="font-size:11px" target="_parent" action="#{Metadaten.XMLschreiben}" value="#{msgs.speichernZurueck}"
 									rendered="#{not Metadaten.nurLesenModus}" immediate="false" />
 							</htm:td>
@@ -165,14 +165,14 @@
 								<%-- Metadaten validieren --%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Validate}" value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten nicht schreiben, nur zurück gehen--%>
+								<%-- Metadaten nicht schreiben, nur zurÃ¼ck gehen--%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.goZurueck}" value="#{msgs.zurueck}" target="_parent" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
 								<%-- Metadaten schreiben --%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.Reload}" value="#{msgs.speichern}" rendered="#{not Metadaten.nurLesenModus}"
 									immediate="false" />
 								<h:outputText value=" | " style="font-size: 11px;" rendered="#{not Metadaten.nurLesenModus}" />
-								<%-- Metadaten schreiben und zurück gehen--%>
+								<%-- Metadaten schreiben und zurÃ¼ck gehen--%>
 								<h:commandLink style="font-size:11px" action="#{Metadaten.XMLschreiben}" rendered="#{not Metadaten.nurLesenModus}"
 									value="#{msgs.speichernZurueck}" target="_parent" />
 							</htm:td>
@@ -188,7 +188,7 @@
 </f:view>
 
 <script type="text/javascript"><!--
-	// Funktion, die Änderungen prüft
+	// Funktion, die Ã„nderungen prÃ¼ft
  	function styleAnpassen(element){
   		// element.className = "metadatenInputChange";
   		// document.getElementById("formular4:DatenGeaendert").value = "1";
@@ -201,7 +201,7 @@
   }
 
  function styleAnpassenPerson(element){
- 		// bei den DropDowns-den Parent (als die <td>) als Rahmen ändern
+ 		// bei den DropDowns-den Parent (als die <td>) als Rahmen Ã¤ndern
   		// element.parentNode.className = "metadatenInputChange";
   		// document.getElementById("formular4:DatenGeaendert").value = "1";
   		// document.getElementById("formular2:y1").style.display='block';

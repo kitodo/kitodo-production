@@ -7,7 +7,7 @@
 
 <%-- ######################################## 
 				
-								Prozessdaten (für alle DocTypes)
+	Prozessdaten (fÃ¼r alle DocTypes)
 					
 	#########################################--%>
 
@@ -15,7 +15,7 @@
 <h:panelGrid columns="3" border="0" width="90%" align="center"
 	rowClasses="rowMiddle"
 	rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
-	<%-- aus den bereits vorhandenen Prozessen einen auswählen --%>
+	<%-- aus den bereits vorhandenen Prozessen einen auswÃ¤hlen --%>
 	<h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}"
 		rendered="#{ProzesskopieForm.useTemplates}" />
 	<h:selectOneMenu value="#{ProzesskopieForm.auswahl}"
@@ -30,7 +30,7 @@
 			style="vertical-align:middle; margin-right:3px" />
 		<h:outputText value="#{msgs.uebernehmen}" />
 	</h:commandLink>
-	<%-- aus dem Opac auswählen --%>
+	<%-- aus dem Opac auswÃ¤hlen --%>
 	<h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
 		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
 

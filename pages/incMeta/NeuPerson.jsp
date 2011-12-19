@@ -5,7 +5,7 @@
 
 <%-- ########################################
 
-                     			Formular für neue Person
+	Formular fÃ¼r neue Person
 
   #########################################--%>
 <h:panelGroup rendered="#{Metadaten.modusHinzufuegenPerson}">

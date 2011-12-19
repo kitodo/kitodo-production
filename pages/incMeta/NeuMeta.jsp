@@ -7,7 +7,7 @@
 
 <%-- ########################################
 
-                                 Formular für neue Metadaten
+	Formular fÃ¼r neue Metadaten
 
 #########################################--%>
 <h:panelGroup rendered="#{Metadaten.modusHinzufuegen}">

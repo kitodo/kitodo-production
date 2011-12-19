@@ -7,7 +7,7 @@
 
 <%-- ######################################## 
 
-							Alle Aktuellen Schritte in der Ã?bersicht
+	Alle Aktuellen Schritte in der Ãœbersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="AktuelleSchritteForm"/>
@@ -38,7 +38,7 @@
 						<htm:tr>
 							<htm:td>
 
-								<%-- Ã?berschrift --%>
+								<%-- Ãƒ?berschrift --%>
 								<htm:h3>
 									<h:outputText id="id4" value="#{msgs.aktuelleSchritte}" />
 								</htm:h3>
