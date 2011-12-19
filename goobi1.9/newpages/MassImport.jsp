@@ -50,7 +50,7 @@
 									</htm:h3>
 
 									<%-- globale Warn- und Fehlermeldungen --%>
-									<h:messages id="id8" globalOnly="false" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+									<h:messages id="id8" globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
 									<%-- Box für die Bearbeitung der Details --%>
 									<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" id="table1">

@@ -206,7 +206,7 @@
 						<h:panelGrid columns="1" style="margin-left:40px">
 
 
-							<h:messages errorClass="text_red" globalOnly="false"
+							<h:messages errorClass="text_red" globalOnly="true"
 								infoClass="text_blue" showDetail="true" showSummary="true"
 								tooltip="true" />
 

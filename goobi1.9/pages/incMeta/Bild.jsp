@@ -200,6 +200,11 @@
 	<h:outputText value="#{msgs.aktuellerOrdner}: " />
 	<h:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}">
 		<si:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+	<%-- 	<a4j:support action="#{Metadaten.BildBlaettern}" event="onchange" reRender="myBild" >
+		<f:param name="Anzahl" value="0" />
+		</a4j:support>
+		--%>
+		
 		<s:submitOnEvent for="cmdOrdnerWechseln" event="change" />
 	</h:selectOneMenu>
 	<x:commandButton id="cmdOrdnerWechseln" action="#{Metadaten.BildBlaettern}" value="#{msgs.ordnerWechseln}" style="display:none">

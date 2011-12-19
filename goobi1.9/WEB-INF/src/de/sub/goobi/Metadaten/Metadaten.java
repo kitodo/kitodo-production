@@ -1427,7 +1427,8 @@ public class Metadaten {
 		BildErmitteln(tempint);
 		return "";
 	}
-
+	
+	
 	public void rotateLeft() {
 		if (this.myImageRotation < 90) {
 			this.myImageRotation = 360;

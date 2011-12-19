@@ -78,6 +78,15 @@ public class BatchStepHelper {
 	private ProcessProperty processProperty;
 	private List<Integer> containers = new ArrayList<Integer>();
 	private Integer container;
+	private String myProblemStep;
+	private String mySolutionStep;
+	private String problemMessage;
+	private String solutionMessage;
+	private String processName = "";
+	private String addToWikiField = "";
+	private String script;
+	private WebDav myDav = new WebDav();
+	private List<String> processNameList = new ArrayList<String>();
 
 	public BatchStepHelper(List<Schritt> steps) {
 		this.steps = steps;
@@ -126,8 +135,6 @@ public class BatchStepHelper {
 		return this.processPropertyList.size();
 	}
 
-	private List<String> processNameList = new ArrayList<String>();
-
 	public List<String> getProcessNameList() {
 		return this.processNameList;
 	}
@@ -135,8 +142,6 @@ public class BatchStepHelper {
 	public void setProcessNameList(List<String> processNameList) {
 		this.processNameList = processNameList;
 	}
-
-	private String processName = "";
 
 	public String getProcessName() {
 		return this.processName;
@@ -481,6 +486,9 @@ public class BatchStepHelper {
 				se.setType(PropertyType.messageError);
 				se.setCreationDate(myDate);
 				se.setSchritt(temp);
+				this.currentStep.getProzess().setWikifield(
+						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "error", this.problemMessage));
+
 				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
 				this.currentStep
@@ -561,6 +569,7 @@ public class BatchStepHelper {
 		for (Schritt s : this.steps) {
 			this.currentStep = s;
 			solveProblem();
+			saveStep();
 		}
 		this.solutionMessage = "";
 		this.mySolutionStep = "";
@@ -618,6 +627,8 @@ public class BatchStepHelper {
 					this.stepDAO.save(step);
 				}
 			}
+			this.currentStep.getProzess().setWikifield(
+					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", this.solutionMessage));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -625,11 +636,6 @@ public class BatchStepHelper {
 		} catch (DAOException e) {
 		}
 	}
-
-	private String myProblemStep;
-	private String mySolutionStep;
-	private String problemMessage;
-	private String solutionMessage;
 
 	public String getProblemMessage() {
 		return this.problemMessage;
@@ -668,8 +674,6 @@ public class BatchStepHelper {
 	 * 
 	 * @param inString
 	 */
-
-	private String addToWikiField = "";
 
 	public void setWikiField(String inString) {
 		this.currentStep.getProzess().setWikifield(inString);
@@ -717,9 +721,6 @@ public class BatchStepHelper {
 	/*
 	 * actions
 	 */
-
-	private String script;
-	private WebDav myDav = new WebDav();
 
 	public String getScript() {
 		return this.script;

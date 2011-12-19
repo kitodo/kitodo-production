@@ -555,6 +555,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			se.setType(PropertyType.messageError);
 			se.setCreationDate(myDate);
 			se.setSchritt(temp);
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"error", this.problemMessage));
 			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
@@ -620,7 +621,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		try {
 			SchrittDAO dao = new SchrittDAO();
 			Schritt temp = dao.get(this.mySolutionID);
-
 			/*
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
@@ -654,6 +654,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"info", this.solutionMessage));
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 		}

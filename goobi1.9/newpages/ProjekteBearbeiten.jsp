@@ -61,7 +61,7 @@
 									</htm:h3>
 
 									<%-- globale Warn- und Fehlermeldungen --%>
-									<h:messages id="id8" globalOnly="false" errorClass="text_red"
+									<h:messages id="id8" globalOnly="true" errorClass="text_red"
 										infoClass="text_blue" showDetail="true" showSummary="true"
 										tooltip="true" />
 

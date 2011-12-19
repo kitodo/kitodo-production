@@ -111,7 +111,7 @@
 
 				<h:panelGroup id="myMessages">
 					<%-- globale Warn- und Fehlermeldungen --%>
-					<h:messages globalOnly="false" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+					<h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 				</h:panelGroup>
 
 				<%-- ########################################
