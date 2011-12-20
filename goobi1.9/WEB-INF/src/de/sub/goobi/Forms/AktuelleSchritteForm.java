@@ -892,6 +892,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void setStep(Schritt step) {
 		this.mySchritt = step;
+		loadProcessProperties();
 	}
 
 	public Schritt getStep() {
@@ -1140,7 +1141,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 
 			try {
-				this.pdao.save(this.mySchritt.getProzess());
+				this.pdao.save(p);
 				Helper.setMeldung("Properties saved");
 			} catch (DAOException e) {
 				myLogger.error(e);
