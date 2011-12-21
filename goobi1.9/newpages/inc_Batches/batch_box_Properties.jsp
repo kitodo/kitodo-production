@@ -7,9 +7,9 @@
 <%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
-<h:form id="propform2" rendered="#{AktuelleSchritteForm.batchHelper.containersSize>0}">
+<h:form id="propform2" rendered="#{AktuelleSchritteForm.batchHelper.propertyListSize>0}">
 	<htm:h4>
-	<h:outputText value="#{msgs.erweiterteEigenschaften}" />
+		<h:outputText value="#{msgs.erweiterteEigenschaften}" />
 	</htm:h4>
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
@@ -58,41 +58,42 @@
 				</htm:tr>
 			</x:dataList>
 
-		<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-				
-			<htm:tr rendered="#{container != 0 && process_item.container==container}" styleClass="standardTable_Row1">
-				
-				<htm:td>
-					<h:outputText value="#{process_item.name}" />
-				</htm:td>
-				<htm:td>
-					<h:outputText value="#{process_item.value}" />
-				</htm:td>
-			
-				<htm:td styleClass="standardTable_ColumnCentered" >
-					<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
-						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
-							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
-							<a4j:support event="onchange" reRender="editBatch" />
-						</h:commandLink>
-						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />				
-						</h:commandLink>
-					</h:panelGroup>
-				</htm:td>
+			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
 
+				<htm:tr rendered="#{container != 0 && process_item.container==container}" styleClass="standardTable_Row1">
+
+					<htm:td>
+						<h:outputText value="#{process_item.name}" />
+					</htm:td>
+					<htm:td>
+						<h:outputText value="#{process_item.value}" />
+					</htm:td>
+
+					<htm:td styleClass="standardTable_ColumnCentered">
+						<h:panelGroup
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
+							<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
+								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
+								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
+								<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
+								<a4j:support event="onchange" reRender="editBatch" />
+							</h:commandLink>
+							<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
+								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
+							</h:commandLink>
+						</h:panelGroup>
+					</htm:td>
+
+				</htm:tr>
+			</x:dataList>
+
+			<htm:tr rendered="#{rowIndex + 1 < rowCount}">
+				<htm:td colspan="3" styleClass="standardTable_Row1">
+					<h:outputText value="&nbsp;" escape="false" />
+				</htm:td>
 			</htm:tr>
 		</x:dataList>
-
-		<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-			<htm:td colspan="3" styleClass="standardTable_Row1">
-				<h:outputText value="&nbsp;" escape="false" />
-			</htm:td>
-		</htm:tr>
-	</x:dataList>
 
 		<%-- 
 		</x:dataList>
@@ -137,7 +138,8 @@
 
 
 	<%-- Box für die Bearbeitung der Details --%>
-	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
+		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
@@ -149,11 +151,11 @@
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 				<htm:table>
-				
+
 					<x:dataList var="myprocess_item" value="#{AktuelleSchritteForm.batchHelper.containerProperties}">
 
-					<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">--%>
-					<htm:tr>		
+						<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{AktuelleSchritteForm.batchHelper.processProperty}">--%>
+						<htm:tr>
 							<htm:td>
 								<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: " />
 							</htm:td>
@@ -165,7 +167,7 @@
 
 								<%-- numbers only --%>
 								<h:panelGroup id="prpvw15_1mnk" rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
-		
+
 									<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}">
 										<f:validateLongRange minimum="0" />
 									</h:inputText>
@@ -178,7 +180,7 @@
 											itemValue="#{myprocess_items}" />
 									</h:selectOneMenu>
 								</h:panelGroup>
-		
+
 								<%--  SelectManyMenu --%>
 								<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
 									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5">
@@ -186,12 +188,12 @@
 											itemValue="#{myprocess_items}" />
 									</h:selectManyListbox>
 								</h:panelGroup>
-		
+
 								<%--  Boolean --%>
 								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
-										<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" />
+									<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" />
 								</h:panelGroup>
-		
+
 								<%--  Date  --%>
 								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
 									<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.value}"
@@ -200,8 +202,8 @@
 								</h:panelGroup>
 
 							</htm:td>
-						</htm:tr>	
-				</x:dataList>
+						</htm:tr>
+					</x:dataList>
 				</htm:table>
 			</htm:td>
 		</htm:tr>
