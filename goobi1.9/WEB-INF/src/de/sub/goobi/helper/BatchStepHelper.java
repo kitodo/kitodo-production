@@ -35,6 +35,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
 
@@ -76,7 +78,7 @@ public class BatchStepHelper {
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
-	private List<Integer> containers = new ArrayList<Integer>();
+	private Map<Integer, Integer> containers = new TreeMap<Integer, Integer>();
 	private Integer container;
 	private String myProblemStep;
 	private String mySolutionStep;
@@ -276,23 +278,26 @@ public class BatchStepHelper {
 			pList.add(step.getProzess());
 		}
 		for (ProcessProperty pt : this.processPropertyList) {
-			if (!this.containers.contains(pt.getContainer())) {
-				this.containers.add(pt.getContainer());
+			if (!this.containers.keySet().contains(pt.getContainer())) {
+				this.containers.put(pt.getContainer(), 1);
+			} else {
+				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
 			}
 		}
 		for (Prozess p : pList) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
-				if (!this.containers.contains(pe.getContainer())) {
-					this.containers.add(pe.getContainer());
+				if (!this.containers.keySet().contains(pe.getContainer())) {
+					this.containers.put(pe.getContainer(), 1);
+				} else {
+					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
-
 			}
 		}
-
-		Collections.sort(this.containers);
+		
+//		Collections.sort(this.containers);
 	}
 
-	public List<Integer> getContainers() {
+	public Map<Integer, Integer> getContainers() {
 		return this.containers;
 	}
 
@@ -362,7 +367,7 @@ public class BatchStepHelper {
 			// find new unused container number
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;
@@ -396,7 +401,6 @@ public class BatchStepHelper {
 		}
 	}
 
-	// TODO wird nur für currentStep ausgeführt
 	public String duplicateContainerForAll() {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
@@ -412,7 +416,7 @@ public class BatchStepHelper {
 			newContainerNumber++;
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;

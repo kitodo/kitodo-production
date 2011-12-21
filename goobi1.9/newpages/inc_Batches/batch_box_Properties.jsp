@@ -6,6 +6,8 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 <%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 
 <h:form id="propform2" rendered="#{AktuelleSchritteForm.batchHelper.propertyListSize>0}">
 	<htm:h4>
@@ -26,116 +28,94 @@
 				<h:outputText value="#{msgs.auswahl}" />
 			</htm:th>
 		</htm:thead>
+		
 
-		<x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
-			<x:dataList var="proc" value="#{AktuelleSchritteForm.batchHelper.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-				<htm:tr rendered="#{container == 0}" styleClass="standardTable_Row1">
-					<htm:td>
-						<%-- property title --%>
-						<h:outputText value="#{proc.name}" />
-					</htm:td>
-					<htm:td>
-						<%-- property value--%>
-						<h:outputText value="#{proc.value}" />
-					</htm:td>
-					<htm:td styleClass="standardTable_ColumnCentered">
-
-						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
-							<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="0" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
-							<a4j:support event="onchange" reRender="editBatch" />
-						</h:commandLink>
-
-						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
-						</h:commandLink>
-					</htm:td>
-				</htm:tr>
-			</x:dataList>
-
-			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-
-				<htm:tr rendered="#{container != 0 && process_item.container==container}" styleClass="standardTable_Row1">
-
-					<htm:td>
-						<h:outputText value="#{process_item.name}" />
-					</htm:td>
-					<htm:td>
-						<h:outputText value="#{process_item.value}" />
-					</htm:td>
-
-					<htm:td styleClass="standardTable_ColumnCentered">
-						<h:panelGroup
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
-							<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
-								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
-								<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
-								<a4j:support event="onchange" reRender="editBatch" />
-							</h:commandLink>
-							<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
-							</h:commandLink>
-						</h:panelGroup>
-					</htm:td>
-
-				</htm:tr>
-			</x:dataList>
-
-			<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-				<htm:td colspan="3" styleClass="standardTable_Row1">
-					<h:outputText value="&nbsp;" escape="false" />
-				</htm:td>
-			</htm:tr>
-		</x:dataList>
-
-		<%-- 
-		</x:dataList>
-					<htm:td styleClass="standardTable_Column">
-						<h:outputText value="#{process_item.name} propertyIndex: #{propInd} containerIndex: #{rowIndex}" />
-					</htm:td>
-					<htm:td styleClass="standardTable_Column">
-						<h:outputText value="#{process_item.value}" rendered="#{process_item.type.name == 'date'}">
-							<f:convertDateTime dateStyle="medium" />
-						</h:outputText>
-						<h:outputText value="#{process_item.value}" rendered="#{process_item.type.name != 'date'}" />
-					</htm:td>
-					<htm:td styleClass="standardTable_ColumnCentered">
---%>
-		<%-- Bearbeiten-Schaltknopf --%>
-		<%--						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
-							<a4j:support event="onchange" reRender="editBatch" />
-						</h:commandLink>
---%>
-		<%-- 						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{process_item}" />
-						</h:commandLink>
-					</htm:td>
-				</htm:tr>
-			</x:dataList>
-
-			<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-				<htm:td colspan="3" styleClass="standardTable_Row1">
-					<h:outputText value="&nbsp;" escape="false" />
-				</htm:td>
-			</htm:tr>
-		</x:dataList>
---%>
+	
 	</htm:table>
+				<h:outputText value="abc"/>
+	
 	<%-- // Box für die Bearbeitung der Details --%>
+	<x:dataTable var="cont" value="#{AktuelleSchritteForm.batchHelper.containers}" >
+		<htm:tr>
+			<htm:td>
+			<h:outputText value="#{cont}"/>
+			<h:outputText value="sdgjklhsdajklsdghjkl"/>
+				<h:outputText value="#{cont.key}"/>
+				<h:outputText value="#{cont.value}"/>
+			</htm:td>
+		</htm:tr>
+	
+	</x:dataTable>
 
+<%-- 
+
+    <x:dataList var="container" value="#{AktuelleSchritteForm.batchHelper.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+            <x:dataList var="proc" value="#{AktuelleSchritteForm.batchHelper.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+                <htm:tr rendered="#{container == 0}" styleClass="standardTable_Row1">
+                    <htm:td>
+                       
+                        <h:outputText value="#{proc.name}" />
+                    </htm:td>
+                    <htm:td>
+                        <h:outputText value="#{proc.value}" />
+                    </htm:td>
+                    <htm:td styleClass="standardTable_ColumnCentered">
+
+                        <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
+                            rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+                            <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                            <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
+                            <x:updateActionListener property="#{BatchForm.batchHelper.container}" value="0" />
+                            <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
+                            <a4j:support event="onchange" reRender="editBatch" />
+                        </h:commandLink>
+
+                        <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}"
+                            rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+                            <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                            <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
+                        </h:commandLink>
+                    </htm:td>
+                </htm:tr>
+            </x:dataList>
+
+            <x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+
+                <htm:tr rendered="#{container != 0 && process_item.container==container}" styleClass="standardTable_Row1">
+
+                    <htm:td>
+                        <h:outputText value="#{process_item.name}" />
+                    </htm:td>
+                    <htm:td>
+                        <h:outputText value="#{process_item.value}" />
+                    </htm:td>
+
+                    <htm:td styleClass="standardTable_ColumnCentered">
+                        <h:panelGroup
+                            rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
+                            <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
+                                <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                                <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
+                                <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
+                                <a4j:support event="onchange" reRender="editBatch" />
+                            </h:commandLink>
+                            <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
+                                <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                                <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
+                            </h:commandLink>
+                        </h:panelGroup>
+                    </htm:td>
+
+                </htm:tr>
+            </x:dataList>
+
+            <htm:tr rendered="#{rowIndex + 1 < rowCount}">
+                <htm:td colspan="3" styleClass="standardTable_Row1">
+                    <h:outputText value="&nbsp;" escape="false" />
+                </htm:td>
+            </htm:tr>
+        </x:dataList>
+--%>
 
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
