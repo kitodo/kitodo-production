@@ -68,7 +68,6 @@ public interface IImportPlugin extends IPlugin {
 	public List<ImportProperty> getProperties();
 	
 	public List<String> getAllFilenames();
-	
-	
-	
+
+	public void deleteFiles(List<String> selectedFilenames);	
 }

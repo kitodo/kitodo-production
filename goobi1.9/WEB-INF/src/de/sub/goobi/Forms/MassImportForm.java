@@ -236,6 +236,7 @@ public class MassImportForm {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
+				this.plugin.deleteFiles(this.selectedFilenames);
 			}
 		
 			if (answer.size() > 1) {
