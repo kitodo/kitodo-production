@@ -30,7 +30,7 @@
   --%>
 
 <h:panelGroup
-	rendered="#{AktuelleSchritteForm.aktuellerBenutzerIstBerechtigt && AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+	rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 	<%-- ++++++++++++++++     Import      ++++++++++++++++ --%>
 	<htm:table cellpadding="3" cellspacing="0" width="100%"
