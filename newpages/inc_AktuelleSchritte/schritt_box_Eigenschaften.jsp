@@ -60,8 +60,7 @@
 				<h:outputText value="#{item.wert}" />
 			</h:column>
 
-			<h:column
-				rendered="#{AktuelleSchritteForm.aktuellerBenutzerIstBerechtigt}">
+			<h:column>
 				<f:facet name="header">
 					<h:outputText value="#{msgs.auswahl}" />
 				</f:facet>
