@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -90,6 +92,7 @@ import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -127,7 +130,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	private boolean showArchivedProjects = false;
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
-	private List<Integer> containers = new ArrayList<Integer>();
+	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 
 	private boolean showStatistics = false;
@@ -1698,13 +1701,25 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void loadProcessProperties() {
+		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
+		// for (ProcessProperty pt : this.processPropertyList) {
+		// if (!this.containers.contains(pt.getContainer())) {
+		// this.containers.add(pt.getContainer());
+		// }
+		// }
+		// Collections.sort(this.containers);
 		for (ProcessProperty pt : this.processPropertyList) {
-			if (!this.containers.contains(pt.getContainer())) {
-				this.containers.add(pt.getContainer());
+			if (!this.containers.keySet().contains(pt.getContainer())) {
+				PropertyListObject plo = new PropertyListObject(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
+			} else {
+				PropertyListObject plo = this.containers.get(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
 			}
 		}
-		Collections.sort(this.containers);
 	}
 
 	// TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern
@@ -1724,7 +1739,7 @@ public class ProzessverwaltungForm extends BasisForm {
 					pe.setProzess(this.myProzess);
 					p.setProzesseigenschaft(pe);
 					this.myProzess.getEigenschaften().add(pe);
-				}	
+				}
 				p.transfer();
 				if (!this.myProzess.getEigenschaften().contains(p.getProzesseigenschaft())) {
 					this.myProzess.getEigenschaften().add(p.getProzesseigenschaft());
@@ -1748,7 +1763,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	
 	public void saveCurrentProperty() {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
@@ -1784,8 +1798,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 		loadProcessProperties();
 	}
-	
-
 
 	public int getPropertyListSize() {
 		if (this.processPropertyList == null) {
@@ -1794,8 +1806,12 @@ public class ProzessverwaltungForm extends BasisForm {
 		return this.processPropertyList.size();
 	}
 
-	public List<Integer> getContainers() {
+	public Map<Integer, PropertyListObject> getContainers() {
 		return this.containers;
+	}
+
+	public List<Integer> getContainerList() {
+		return new ArrayList<Integer>(this.containers.keySet());
 	}
 
 	public int getContainersSize() {
@@ -1816,9 +1832,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		for (ProcessProperty pp : ppList) {
 			this.processPropertyList.remove(pp);
 			this.myProzess.getEigenschaften().remove(pp.getProzesseigenschaft());
-			
+
 		}
-		
+
 		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
@@ -1873,14 +1889,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container
-		if (currentContainer != 0) {
-			for (ProcessProperty pt : this.processPropertyList) {
-				if (pt.getContainer() == currentContainer) {
-					plist.add(pt);
-				}
+		for (ProcessProperty pt : this.processPropertyList) {
+			if (pt.getContainer() == currentContainer) {
+				plist.add(pt);
 			}
-		} else {
-			plist.add(this.processProperty);
 		}
 		int newContainerNumber = 0;
 		if (currentContainer > 0) {
@@ -1888,7 +1900,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			// find new unused container number
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;
@@ -1898,13 +1910,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		// clone properties
 		for (ProcessProperty pt : plist) {
 			ProcessProperty newProp = pt.getClone(newContainerNumber);
-			if (newProp.getProzesseigenschaft() == null) {
-				Prozesseigenschaft pe = new Prozesseigenschaft();
-				pe.setProzess(this.myProzess);
-				newProp.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
-			}
-
 			this.processPropertyList.add(newProp);
 			this.processProperty = newProp;
 			saveCurrentProperty();
@@ -1912,6 +1917,49 @@ public class ProzessverwaltungForm extends BasisForm {
 		loadProcessProperties();
 
 		return "";
+
+		// Integer currentContainer = this.processProperty.getContainer();
+		// List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+		// // search for all properties in container
+		// if (currentContainer != 0) {
+		// for (ProcessProperty pt : this.processPropertyList) {
+		// if (pt.getContainer() == currentContainer) {
+		// plist.add(pt);
+		// }
+		// }
+		// } else {
+		// plist.add(this.processProperty);
+		// }
+		// int newContainerNumber = 0;
+		// if (currentContainer > 0) {
+		// newContainerNumber++;
+		// // find new unused container number
+		// boolean search = true;
+		// while (search) {
+		// if (!this.containers.contains(newContainerNumber)) {
+		// search = false;
+		// } else {
+		// newContainerNumber++;
+		// }
+		// }
+		// }
+		// // clone properties
+		// for (ProcessProperty pt : plist) {
+		// ProcessProperty newProp = pt.getClone(newContainerNumber);
+		// if (newProp.getProzesseigenschaft() == null) {
+		// Prozesseigenschaft pe = new Prozesseigenschaft();
+		// pe.setProzess(this.myProzess);
+		// newProp.setProzesseigenschaft(pe);
+		// this.myProzess.getEigenschaften().add(pe);
+		// }
+		//
+		// this.processPropertyList.add(newProp);
+		// this.processProperty = newProp;
+		// saveCurrentProperty();
+		// }
+		// loadProcessProperties();
+		//
+		// return "";
 	}
 
 	public List<ProcessProperty> getContainerlessProperties() {
@@ -1931,10 +1979,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		ProcessProperty pp = new ProcessProperty();
 		pp.setType(Type.TEXT);
 		pp.setContainer(0);
-//		Prozesseigenschaft pe = new Prozesseigenschaft();
-//		pe.setProzess(this.myProzess);
-//		this.myProzess.getEigenschaften().add(pe);
-//		pp.setProzesseigenschaft(pe);
+		// Prozesseigenschaft pe = new Prozesseigenschaft();
+		// pe.setProzess(this.myProzess);
+		// this.myProzess.getEigenschaften().add(pe);
+		// pp.setProzesseigenschaft(pe);
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
 		// saveProcessProperties();

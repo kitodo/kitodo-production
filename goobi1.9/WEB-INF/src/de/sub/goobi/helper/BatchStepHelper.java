@@ -78,7 +78,7 @@ public class BatchStepHelper {
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
-	private Map<Integer, Integer> containers = new TreeMap<Integer, Integer>();
+	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 	private String myProblemStep;
 	private String mySolutionStep;
@@ -272,6 +272,7 @@ public class BatchStepHelper {
 	}
 
 	private void loadProcessProperties(Schritt s) {
+		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForStep(s);
 		List<Prozess> pList = new ArrayList<Prozess>();
 		for (Schritt step : this.steps) {
@@ -279,17 +280,28 @@ public class BatchStepHelper {
 		}
 		for (ProcessProperty pt : this.processPropertyList) {
 			if (!this.containers.keySet().contains(pt.getContainer())) {
-				this.containers.put(pt.getContainer(), 1);
+				PropertyListObject plo = new PropertyListObject(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
 			} else {
-				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
+				PropertyListObject plo = this.containers.get(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
 			}
 		}
+//		for (ProcessProperty pt : this.processPropertyList) {
+//			if (!this.containers.keySet().contains(pt.getContainer())) {
+//				this.containers.put(pt.getContainer(), 1);
+//			} else {
+//				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
+//			}
+//		}
 		for (Prozess p : pList) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 				if (!this.containers.keySet().contains(pe.getContainer())) {
-					this.containers.put(pe.getContainer(), 1);
-				} else {
-					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
+					this.containers.put(pe.getContainer(), null);
+//				} else {
+//					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
 			}
 		}
@@ -297,7 +309,7 @@ public class BatchStepHelper {
 //		Collections.sort(this.containers);
 	}
 
-	public Map<Integer, Integer> getContainers() {
+	public Map<Integer, PropertyListObject> getContainers() {
 		return this.containers;
 	}
 
@@ -832,5 +844,9 @@ public class BatchStepHelper {
 		List<String> answer = new ArrayList<String>();
 		answer.addAll(getCurrentStep().getAllScripts().keySet());
 		return answer;
+	}
+	
+	public List<Integer> getContainerList() {
+		return new ArrayList<Integer>(this.containers.keySet());
 	}
 }
