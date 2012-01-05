@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
@@ -73,6 +75,7 @@ import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
@@ -107,7 +110,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private ProzessDAO pdao;
 	private Boolean flagWait = false;
 	private BatchStepHelper batchHelper;
-	private List<Integer> containers = new ArrayList<Integer>();
+	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
@@ -1100,13 +1103,25 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	private void loadProcessProperties() {
+		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
+		// for (ProcessProperty pt : this.processPropertyList) {
+		// if (!this.containers.contains(pt.getContainer())) {
+		// this.containers.add(pt.getContainer());
+		// }
+		// }
+		// Collections.sort(this.containers);
 		for (ProcessProperty pt : this.processPropertyList) {
-			if (!this.containers.contains(pt.getContainer())) {
-				this.containers.add(pt.getContainer());
+			if (!this.containers.keySet().contains(pt.getContainer())) {
+				PropertyListObject plo = new PropertyListObject(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
+			} else {
+				PropertyListObject plo = this.containers.get(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
 			}
 		}
-		Collections.sort(this.containers);
 	}
 
 	// TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern
@@ -1151,6 +1166,9 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public void saveCurrentProperty() {
+	List<ProcessProperty> ppList = getContainerProperties();
+	for (ProcessProperty pp : ppList) {
+		this.processProperty = pp;
 		if (!this.processProperty.isValid()) {
 			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 			return;
@@ -1163,27 +1181,64 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		this.processProperty.transfer();
 
-		Prozess p = this.mySchritt.getProzess();
-		List<Prozesseigenschaft> props = p.getEigenschaftenList();
+		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				p.getEigenschaften().remove(pe);
+				this.myProzess.getEigenschaften().remove(pe);
 			}
 		}
-		if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-			this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+		if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+			this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
 		}
 		try {
 			this.pdao.save(this.mySchritt.getProzess());
-			Helper.setMeldung("Properties saved");
+			Helper.setMeldung("Property saved");
 		} catch (DAOException e) {
 			myLogger.error(e);
 			Helper.setFehlerMeldung("Properties could not be saved");
 		}
 	}
+	loadProcessProperties();
+}
+	
+//	public void saveCurrentProperty() {
+//		if (!this.processProperty.isValid()) {
+//			Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+//			return;
+//		}
+//		if (this.processProperty.getProzesseigenschaft() == null) {
+//			Prozesseigenschaft pe = new Prozesseigenschaft();
+//			pe.setProzess(this.myProzess);
+//			this.processProperty.setProzesseigenschaft(pe);
+//			this.myProzess.getEigenschaften().add(pe);
+//		}
+//		this.processProperty.transfer();
+//
+//		Prozess p = this.mySchritt.getProzess();
+//		List<Prozesseigenschaft> props = p.getEigenschaftenList();
+//		for (Prozesseigenschaft pe : props) {
+//			if (pe.getTitel() == null) {
+//				p.getEigenschaften().remove(pe);
+//			}
+//		}
+//		if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+//			this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+//		}
+//		try {
+//			this.pdao.save(this.mySchritt.getProzess());
+//			Helper.setMeldung("Properties saved");
+//		} catch (DAOException e) {
+//			myLogger.error(e);
+//			Helper.setFehlerMeldung("Properties could not be saved");
+//		}
+//	}
 
-	public List<Integer> getContainers() {
+	public Map<Integer, PropertyListObject> getContainers() {
 		return this.containers;
+	}
+
+	public List<Integer> getContainerList() {
+		return new ArrayList<Integer>(this.containers.keySet());
 	}
 
 	public int getPropertyListSize() {
@@ -1291,7 +1346,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			// find new unused container number
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;

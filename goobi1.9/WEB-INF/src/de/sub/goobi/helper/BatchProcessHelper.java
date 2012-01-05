@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
@@ -49,7 +51,7 @@ public class BatchProcessHelper {
 	private Prozess currentProcess;
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
-	private List<Integer> containers = new ArrayList<Integer>();
+	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 
 	public BatchProcessHelper(List<Prozess> processes) {
@@ -242,26 +244,40 @@ public class BatchProcessHelper {
 	}
 
 	private void loadProcessProperties(Prozess process) {
-		this.processPropertyList = PropertyParser.getPropertiesForProcess(process);
-
+		this.containers = new TreeMap<Integer, PropertyListObject>();
+		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
+		
 		for (ProcessProperty pt : this.processPropertyList) {
-			if (!this.containers.contains(pt.getContainer())) {
-				this.containers.add(pt.getContainer());
+			if (!this.containers.keySet().contains(pt.getContainer())) {
+				PropertyListObject plo = new PropertyListObject(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
+			} else {
+				PropertyListObject plo = this.containers.get(pt.getContainer());
+				plo.addToList(pt);
+				this.containers.put(pt.getContainer(), plo);
 			}
 		}
+//		for (ProcessProperty pt : this.processPropertyList) {
+//			if (!this.containers.keySet().contains(pt.getContainer())) {
+//				this.containers.put(pt.getContainer(), 1);
+//			} else {
+//				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
+//			}
+//		}
 		for (Prozess p : this.processes) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
-				if (!this.containers.contains(pe.getContainer())) {
-					this.containers.add(pe.getContainer());
+				if (!this.containers.keySet().contains(pe.getContainer())) {
+					this.containers.put(pe.getContainer(), null);
+//				} else {
+//					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
-
 			}
 		}
-
-		Collections.sort(this.containers);
+		
 	}
 
-	public List<Integer> getContainers() {
+	public Map<Integer, PropertyListObject> getContainers() {
 		return this.containers;
 	}
 
@@ -290,6 +306,10 @@ public class BatchProcessHelper {
 
 	public Integer getContainer() {
 		return this.container;
+	}
+	
+	public List<Integer> getContainerList() {
+		return new ArrayList<Integer>(this.containers.keySet());
 	}
 
 	public void setContainer(Integer container) {
@@ -331,7 +351,7 @@ public class BatchProcessHelper {
 			// find new unused container number
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;
@@ -366,7 +386,7 @@ public class BatchProcessHelper {
 			newContainerNumber++;
 			boolean search = true;
 			while (search) {
-				if (!this.containers.contains(newContainerNumber)) {
+				if (!this.containers.containsKey(newContainerNumber)) {
 					search = false;
 				} else {
 					newContainerNumber++;
