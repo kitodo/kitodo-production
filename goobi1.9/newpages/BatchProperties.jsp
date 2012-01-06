@@ -78,11 +78,11 @@
 										</htm:td>
 
 										<htm:td width="50%">
-											<h:form>
 												<htm:h4>
 													<h:outputText id="id4a" value="#{msgs.eigenschaften}" />
 												</htm:h4>
 
+											<h:form>
 
 
 
@@ -207,25 +207,25 @@
 																		<%-- 	<x:aliasBean alias="#{myprocess_item}" value="#{BatchForm.batchHelper.processProperty}">--%>
 																		<htm:tr>
 																			<htm:td>
-																				<h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px" value="#{myprocess_item.name}: " />
+																				<h:outputText id="eigenschafttitel" style="margin-right:15px" value="#{myprocess_item.name}: " />
 																			</htm:td>
 																			<htm:td>
 																				<%-- textarea --%>
 																				<h:panelGroup id="prpvw15_1" rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
-																					<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" />
+																					<h:inputText id="file" style="margin-right:15px" value="#{myprocess_item.value}" />
 																				</h:panelGroup>
 
 																				<%-- numbers only --%>
 																				<h:panelGroup id="prpvw15_1mnk" rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
 
-																					<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}">
+																					<h:inputText id="numberstuff122334mnktodo" style="margin-right:15px" value="#{myprocess_item.value}">
 																						<f:validateLongRange minimum="0" />
 																					</h:inputText>
 																				</h:panelGroup>
 
 																				<%--  SelectOneMenu --%>
 																				<h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
-																					<h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px" id="prpvw15_2_1">
+																					<h:selectOneMenu value="#{myprocess_item.value}" style="margin-right:15px" id="prpvw15_2_1">
 																						<si:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 																							itemValue="#{myprocess_items}" />
 																					</h:selectOneMenu>
@@ -233,7 +233,7 @@
 
 																				<%--  SelectManyMenu --%>
 																				<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
-																					<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5">
+																					<h:selectManyListbox id="prpvw15_3_1" style="margin-right:15px" value="#{myprocess_item.valueList}" size="5">
 																						<si:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 																							itemValue="#{myprocess_items}" />
 																					</h:selectManyListbox>
@@ -242,7 +242,7 @@
 																				<%--  Boolean --%>
 																				<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
 																					<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" />
-																					<%-- 			<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="width: 500px;margin-right:15px" id="prpvw15_4_1">
+																					<%-- 			<h:selectOneMenu value="#{myprocess_item.booleanValue}" style="margin-right:15px" id="prpvw15_4_1">
 																		<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
 																		<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
 																	</h:selectOneMenu>
@@ -251,7 +251,7 @@
 
 																				<%--  Date  --%>
 																				<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
-																					<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.value}"
+																					<rich:calendar id="prpvw15_5_1" style="margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.value}"
 																						enableManualInput="true">
 																					</rich:calendar>
 																				</h:panelGroup>
