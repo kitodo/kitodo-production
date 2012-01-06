@@ -1912,7 +1912,21 @@ public class ProzessverwaltungForm extends BasisForm {
 			ProcessProperty newProp = pt.getClone(newContainerNumber);
 			this.processPropertyList.add(newProp);
 			this.processProperty = newProp;
-			saveCurrentProperty();
+			if (this.processProperty.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.myProzess);
+				this.processProperty.setProzesseigenschaft(pe);
+				this.myProzess.getEigenschaften().add(pe);
+			}
+			this.processProperty.transfer();
+
+		}
+		try {
+			this.dao.save(this.myProzess);
+			Helper.setMeldung("Property saved");
+		} catch (DAOException e) {
+			logger.error(e);
+			Helper.setFehlerMeldung("Properties could not be saved");
 		}
 		loadProcessProperties();
 

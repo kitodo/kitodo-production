@@ -124,10 +124,7 @@
 																		<a4j:support event="onchange" reRender="editBatch" />
 																	</h:commandLink>
 
-																	<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-																		<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-																		<x:updateActionListener property="#{BatchForm.batchHelper.processProperty}" value="#{proc}" />
-																	</h:commandLink>
+																	
 																</htm:td>
 															</htm:tr>
 														</x:dataList>
@@ -147,7 +144,7 @@
 																<htm:td>
 																	<h:outputText value="#{process_item.value}" />
 																</htm:td>
-																<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
+																<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{BatchForm.batchHelper.containers[container].propertyListSizeString}"
 																	rendered="#{propInd ==0}">
 																	<%-- edit container --%>
 																	<h:panelGroup>
@@ -157,10 +154,7 @@
 																			<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="eigenschaft" />
 																			<a4j:support event="onchange" reRender="editBatch" />
 																		</h:commandLink>
-																		<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-																			<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-																			<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="#{container}" />
-																		</h:commandLink>
+																		
 																	</h:panelGroup>
 																</htm:td>
 															</htm:tr>

@@ -75,7 +75,7 @@ class FilterHelper {
 		} catch (DAOException e) {
 			logger.warn("DAOException", e);
 		} catch (Exception e) {
-			logger.warn("Exception", e);
+			logger.trace("Exception", e);
 		}
 		if (aktuellerNutzer != null) {
 			if (loginForm.getMaximaleBerechtigung() > 1) {

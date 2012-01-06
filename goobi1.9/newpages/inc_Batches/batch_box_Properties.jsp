@@ -50,11 +50,7 @@
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
 
-						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
-						</h:commandLink>
+						
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
@@ -84,10 +80,7 @@
 								<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
 								<a4j:support event="onchange" reRender="editBatch" />
 							</h:commandLink>
-							<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
-							</h:commandLink>
+						
 						</h:panelGroup>
 					</htm:td>
 				</htm:tr>
