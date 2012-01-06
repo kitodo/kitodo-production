@@ -84,10 +84,16 @@
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
 
-					
+
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
+			
+		<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
+			<htm:td colspan="3" styleClass="standardTable_Row1">
+				<h:outputText value="&nbsp;" escape="false" />
+			</htm:td>
+		</htm:tr>
 
 			<x:dataList var="process_item" value="#{AktuelleSchritteForm.containers[container].propertyList}" rowCountVar="propCount" rowIndexVar="propInd">
 				<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
@@ -97,7 +103,7 @@
 					<htm:td>
 						<h:outputText value="#{process_item.value}" />
 					</htm:td>
-					<htm:td styleClass="standardTable_ColumnCentered" rowspan="''+#{AktuelleSchritteForm.containers[container].propertyListSize}"
+					<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 						rendered="#{propInd ==0}">
 						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 							<h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}">
@@ -110,22 +116,12 @@
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
-
-
-
-
-
-
-			<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-				<htm:td colspan="3" styleClass="standardTable_Row1">
-					<h:outputText value="&nbsp;" escape="false" />
-				</htm:td>
-			</htm:tr>
+	
 		</x:dataList>
 	</htm:table>
 
 
-<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
+	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
 		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
 
 		<htm:tr>
@@ -213,7 +209,7 @@
 
 					<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="" />
 				</h:commandButton>
-				
+
 			</htm:td>
 		</htm:tr>
 	</htm:table>

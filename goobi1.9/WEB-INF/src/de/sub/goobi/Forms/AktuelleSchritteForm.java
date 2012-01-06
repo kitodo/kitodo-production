@@ -317,7 +317,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		// if only one step is asigned for this batch, use the single
 
 //		Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
-
+		if (currentStepsOfBatch.size() == 0) {
+			return "";
+		}
 		if (currentStepsOfBatch.size() == 1) {
 			return SchrittDurchBenutzerUebernehmen();
 		}
@@ -357,6 +359,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				myLogger.error("step couldn't get saved", e);
 			}
 		}
+		
 		this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
 		return "BatchesEdit";
 	}

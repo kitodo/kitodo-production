@@ -12,7 +12,7 @@
 	<%@include file="inc/head.jsp"%>
 	<body>
 
-		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable" align="center" >
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable" align="center">
 			<%@include file="inc/tbl_Kopf.jsp"%>
 			<htm:tr>
 				<%@include file="inc/tbl_Navigation.jsp"%>
@@ -83,110 +83,113 @@
 													<h:outputText id="id4a" value="#{msgs.eigenschaften}" />
 												</htm:h4>
 
-											
-									
-									
-									
-									
-									
-									<htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
-		rendered="#{BatchForm.modusBearbeiten!='eigenschaft' && BatchForm.batchHelper.propertyListSize>0}">
-
-		<htm:thead styleClass="standardTable_Header">
-			<htm:th>
-				<h:outputText value="#{msgs.titel}" />
-			</htm:th>
-			<htm:th>
-				<h:outputText value="#{msgs.wert}" />
-			</htm:th>
-			<htm:th>
-				<h:outputText value="#{msgs.auswahl}" />
-			</htm:th>
-		</htm:thead>
-
-
-		<x:dataList var="container" value="#{BatchForm.batchHelper.containerList}" rowCountVar="rowCount" rowIndexVar="rowIndex">
-			<x:dataList var="proc" value="#{BatchForm.batchHelper.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-				<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
-					<htm:td>
-						<h:outputText value="#{proc.name}" />
-					</htm:td>
-					<htm:td>
-						<h:outputText value="#{proc.value}" />
-					</htm:td>
-					<htm:td styleClass="standardTable_ColumnCentered">
-
-						<h:commandLink action="BatchProperties" title="#{msgs.bearbeiten}">
-							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-							<x:updateActionListener property="#{BatchForm.batchHelper.processProperty}" value="#{proc}" />
-							<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="0" />
-							<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="eigenschaft" />
-							<a4j:support event="onchange" reRender="editBatch" />
-						</h:commandLink>
-
-						<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-							<x:updateActionListener property="#{BatchForm.batchHelper.processProperty}" value="#{proc}" />
-						</h:commandLink>
-					</htm:td>
-				</htm:tr>
-			</x:dataList>
-
-			<x:dataList var="process_item" value="#{BatchForm.batchHelper.containers[container].propertyList}" rowCountVar="propCount"
-				rowIndexVar="propInd">
-				<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
-					<htm:td>
-						<h:outputText value="#{process_item.name}" />
-					</htm:td>
-					<htm:td>
-						<h:outputText value="#{process_item.value}" />					
-					</htm:td>
-					<htm:td styleClass="standardTable_ColumnCentered" rowspan="''+#{BatchForm.batchHelper.containers[container].propertyListSize}"
-						rendered="#{propInd ==0}">
-						<%-- edit container --%>
-						<h:panelGroup>
-							<h:commandLink action="BatchProperties" title="#{msgs.bearbeiten}">
-								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
-								<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="#{container}" />
-								<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="eigenschaft" />
-								<a4j:support event="onchange" reRender="editBatch" />
-							</h:commandLink>
-							<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
-								<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="#{container}" />
-							</h:commandLink>
-						</h:panelGroup>
-					</htm:td>
-				</htm:tr>
-			</x:dataList>
-
-
-
-			<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-				<htm:td colspan="3" styleClass="standardTable_Row1">
-					<h:outputText value="&nbsp;" escape="false" />
-				</htm:td>
-			</htm:tr>
-		</x:dataList>
 
 
 
 
-		<%-- 
+
+
+												<htm:table cellspacing="1px" cellpadding="1px" width="100%" styleClass="standardTable"
+													rendered="#{BatchForm.modusBearbeiten!='eigenschaft' && BatchForm.batchHelper.propertyListSize>0}">
+
+													<htm:thead styleClass="standardTable_Header">
+														<htm:th>
+															<h:outputText value="#{msgs.titel}" />
+														</htm:th>
+														<htm:th>
+															<h:outputText value="#{msgs.wert}" />
+														</htm:th>
+														<htm:th>
+															<h:outputText value="#{msgs.auswahl}" />
+														</htm:th>
+													</htm:thead>
+
+
+													<x:dataList var="container" value="#{BatchForm.batchHelper.containerList}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+														<x:dataList var="proc" value="#{BatchForm.batchHelper.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+															<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
+																<htm:td>
+																	<h:outputText value="#{proc.name}" />
+																</htm:td>
+																<htm:td>
+																	<h:outputText value="#{proc.value}" />
+																</htm:td>
+																<htm:td styleClass="standardTable_ColumnCentered">
+
+																	<h:commandLink action="BatchProperties" title="#{msgs.bearbeiten}">
+																		<h:graphicImage value="/newpages/images/buttons/edit.gif" />
+																		<x:updateActionListener property="#{BatchForm.batchHelper.processProperty}" value="#{proc}" />
+																		<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="0" />
+																		<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="eigenschaft" />
+																		<a4j:support event="onchange" reRender="editBatch" />
+																	</h:commandLink>
+
+																	<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
+																		<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+																		<x:updateActionListener property="#{BatchForm.batchHelper.processProperty}" value="#{proc}" />
+																	</h:commandLink>
+																</htm:td>
+															</htm:tr>
+														</x:dataList>
+
+														<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
+															<htm:td colspan="3" styleClass="standardTable_Row1">
+																<h:outputText value="&nbsp;" escape="false" />
+															</htm:td>
+														</htm:tr>
+
+														<x:dataList var="process_item" value="#{BatchForm.batchHelper.containers[container].propertyList}" rowCountVar="propCount"
+															rowIndexVar="propInd">
+															<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
+																<htm:td>
+																	<h:outputText value="#{process_item.name}" />
+																</htm:td>
+																<htm:td>
+																	<h:outputText value="#{process_item.value}" />
+																</htm:td>
+																<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
+																	rendered="#{propInd ==0}">
+																	<%-- edit container --%>
+																	<h:panelGroup>
+																		<h:commandLink action="BatchProperties" title="#{msgs.bearbeiten}">
+																			<h:graphicImage value="/newpages/images/buttons/edit.gif" />
+																			<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="#{container}" />
+																			<x:updateActionListener property="#{BatchForm.modusBearbeiten}" value="eigenschaft" />
+																			<a4j:support event="onchange" reRender="editBatch" />
+																		</h:commandLink>
+																		<h:commandLink action="#{BatchForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
+																			<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+																			<x:updateActionListener property="#{BatchForm.batchHelper.container}" value="#{container}" />
+																		</h:commandLink>
+																	</h:panelGroup>
+																</htm:td>
+															</htm:tr>
+														</x:dataList>
+
+
+
+
+
+													</x:dataList>
+
+
+
+
+													<%-- 
 	<h:outputText value="Nummer: #{container}" />
 		<h:outputText value="  Anzahl: #{BatchForm.batchHelper.containers[container]}" />
 		<htm:br />
 		rendered="#{propInd + 1 == propCount}"
 --%>
 
-	</htm:table>
-									
-									
-									
-									
-									
-									
-									
+												</htm:table>
+
+
+
+
+
+
+
 
 												<%-- // Box für die Bearbeitung der Details --%>
 												<h:panelGroup rendered="#{BatchForm.modusBearbeiten=='eigenschaft'}">

@@ -63,6 +63,12 @@
 			</htm:tr>
 		</x:dataList>
 
+		<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
+			<htm:td colspan="3" styleClass="standardTable_Row1">
+				<h:outputText value="&nbsp;" escape="false" />
+			</htm:td>
+		</htm:tr>
+
 		<x:dataList var="process_item" value="#{ProzessverwaltungForm.containers[container].propertyList}" rowCountVar="propCount" rowIndexVar="propInd">
 			<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
 				<htm:td>
@@ -71,7 +77,7 @@
 				<htm:td>
 					<h:outputText value="#{process_item.value}" />
 				</htm:td>
-				<htm:td styleClass="standardTable_ColumnCentered" rowspan="''+#{ProzessverwaltungForm.containers[container].propertyListSize}"
+				<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 					rendered="#{propInd ==0}">
 					<%-- edit container --%>
 					<h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
@@ -120,11 +126,7 @@
 			</htm:tr>
 		</x:dataList>
 --%>
-		<htm:tr rendered="#{rowIndex + 1 < rowCount}">
-			<htm:td colspan="3" styleClass="standardTable_Row1">
-				<h:outputText value="&nbsp;" escape="false" />
-			</htm:td>
-		</htm:tr>
+
 	</x:dataList>
 
 

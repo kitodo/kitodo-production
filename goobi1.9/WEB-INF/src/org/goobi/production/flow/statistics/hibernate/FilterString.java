@@ -17,7 +17,7 @@ public class FilterString {
 	public static final String ID = "id:";
 	public static final String PROCESS = "process:";
 	public static final String WORKPIECE = "workpiece:";
-	
+	public static final String BATCH = "batch:";
 	
 	// german
 	public static final String PROZESSEIGENSCHAFT = "prozesseigenschaft:";
@@ -33,7 +33,7 @@ public class FilterString {
 	public static final String VORLAGE = "vorlage:";
 	public static final String PROZESS = "prozess:";
 	public static final String WERKSTUECK = "werkstueck:";
-	
+	public static final String GRUPPE = "gruppe:";
 	
 	
 }

@@ -29,4 +29,8 @@ public class PropertyListObject {
 	public int getPropertyListSize() {
 		return this.propertyList.size();
 	}
+	
+	public String getPropertyListSizeString() {
+		return ""+this.propertyList.size();
+	}
 }

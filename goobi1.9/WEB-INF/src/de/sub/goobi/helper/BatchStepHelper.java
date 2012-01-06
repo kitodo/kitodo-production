@@ -96,9 +96,11 @@ public class BatchStepHelper {
 
 			this.processNameList.add(s.getProzess().getTitel());
 		}
-		this.currentStep = steps.get(0);
-		this.processName = this.currentStep.getProzess().getTitel();
-		loadProcessProperties(this.currentStep);
+		if (steps.size() > 0) {
+			this.currentStep = steps.get(0);
+			this.processName = this.currentStep.getProzess().getTitel();
+			loadProcessProperties(this.currentStep);
+		}
 	}
 
 	public List<Schritt> getSteps() {
@@ -289,24 +291,24 @@ public class BatchStepHelper {
 				this.containers.put(pt.getContainer(), plo);
 			}
 		}
-//		for (ProcessProperty pt : this.processPropertyList) {
-//			if (!this.containers.keySet().contains(pt.getContainer())) {
-//				this.containers.put(pt.getContainer(), 1);
-//			} else {
-//				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
-//			}
-//		}
+		// for (ProcessProperty pt : this.processPropertyList) {
+		// if (!this.containers.keySet().contains(pt.getContainer())) {
+		// this.containers.put(pt.getContainer(), 1);
+		// } else {
+		// this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
+		// }
+		// }
 		for (Prozess p : pList) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 				if (!this.containers.keySet().contains(pe.getContainer())) {
 					this.containers.put(pe.getContainer(), null);
-//				} else {
-//					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
+					// } else {
+					// this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
 			}
 		}
-		
-//		Collections.sort(this.containers);
+
+		// Collections.sort(this.containers);
 	}
 
 	public Map<Integer, PropertyListObject> getContainers() {
@@ -845,7 +847,7 @@ public class BatchStepHelper {
 		answer.addAll(getCurrentStep().getAllScripts().keySet());
 		return answer;
 	}
-	
+
 	public List<Integer> getContainerList() {
 		return new ArrayList<Integer>(this.containers.keySet());
 	}
