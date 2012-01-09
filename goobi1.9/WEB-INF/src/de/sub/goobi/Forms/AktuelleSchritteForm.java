@@ -304,7 +304,10 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			Criteria crit = this.myFilteredDataSource.getCriteria();
+			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+			userdefined.setFilterModes(true, false);
+			userdefined.setFilter("");
+			Criteria crit = userdefined.getCriteria();
 			crit.add(Restrictions.eq("titel", steptitle));
 
 			// only steps with same batchid
