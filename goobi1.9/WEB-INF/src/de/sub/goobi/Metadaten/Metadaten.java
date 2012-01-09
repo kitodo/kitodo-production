@@ -1433,6 +1433,18 @@ public class Metadaten {
 			this.allTifFolders.add(verzeichnisse[i]);
 		}
 
+		if (this.currentTifFolder == null || this.currentTifFolder.length() == 0) {
+			if (ConfigMain.getParameter("folderSuffix", null) != null) {
+				String suffix = ConfigMain.getParameter("folderSuffix");
+				for (String directory : this.allTifFolders) {
+					if (directory.endsWith(suffix)) {
+						this.currentTifFolder = directory;
+						break;
+					}
+				}
+			}
+		}
+		
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
 			this.currentTifFolder = new File(this.myProzess.getImagesTifDirectory()).getName();
 		}
