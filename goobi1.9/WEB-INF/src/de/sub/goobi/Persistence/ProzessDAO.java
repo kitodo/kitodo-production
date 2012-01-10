@@ -26,6 +26,7 @@ package de.sub.goobi.Persistence;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.util.ArrayList;
 import java.util.List;
 
 import de.sub.goobi.Beans.Prozess;
@@ -42,6 +43,12 @@ public class ProzessDAO extends BaseDAO {
 		return (Prozess) retrieveObj(Prozess.class, t.getId());
 	}
 
+	public void saveList(List<Prozess> list) throws DAOException {
+		List<Object> l = new ArrayList<Object>();
+		l.addAll(list);
+		storeList(l);
+	}
+	
 	public Prozess get(Integer id) throws DAOException {
 		Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
 		if (rueckgabe == null) {

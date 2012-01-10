@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.goobi.production.properties.ProcessProperty;
+import org.goobi.production.properties.PropertyParser;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -43,7 +45,6 @@ import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Vorlage;
 import de.sub.goobi.Beans.Vorlageeigenschaft;
@@ -239,9 +240,10 @@ public class VariableReplacer {
 
 			for (MatchResult r : findRegexMatches("\\(process\\.([\\w.]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
-				for (Prozesseigenschaft pe : this.process.getEigenschaftenList()) {
-					if (pe.getTitel().equalsIgnoreCase(propertyTitle)) {
-						inString = inString.replace(r.group(), pe.getWert());
+				List<ProcessProperty> ppList = PropertyParser.getPropertiesForProcess(this.process);
+				for (ProcessProperty pe : ppList) {
+					if (pe.getName().equalsIgnoreCase(propertyTitle)) {
+						inString = inString.replace(r.group(), pe.getValue());
 						break;
 					}
 				}

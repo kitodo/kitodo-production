@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -78,7 +79,7 @@ public abstract class BaseDAO implements Serializable {
 	 *            the id of the class type
 	 * @throws DAOException
 	 */
-	@SuppressWarnings( { "deprecation", "rawtypes" })
+	@SuppressWarnings({ "deprecation", "rawtypes" })
 	protected void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -179,6 +180,24 @@ public abstract class BaseDAO implements Serializable {
 			session.flush();
 			session.connection().commit();
 
+		} catch (HibernateException he) {
+			rollback();
+			throw new DAOException(he);
+		} catch (SQLException sqle) {
+			rollback();
+			throw new DAOException(sqle);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	protected void storeList(List<Object> list) throws DAOException {
+		try {
+			Session session = Helper.getHibernateSession();
+			for (Object obj : list) {
+				session.saveOrUpdate(obj);
+			}
+			session.flush();
+			session.connection().commit();
 		} catch (HibernateException he) {
 			rollback();
 			throw new DAOException(he);
