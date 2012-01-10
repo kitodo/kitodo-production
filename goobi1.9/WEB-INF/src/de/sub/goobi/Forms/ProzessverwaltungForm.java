@@ -35,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -47,7 +49,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.goobi.production.flow.statistics.StatisticsManager;
@@ -67,6 +74,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
 
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
@@ -1640,6 +1651,61 @@ public class ProzessverwaltungForm extends BasisForm {
 
 			} catch (IOException e) {
 
+			}
+		}
+	}
+
+	public void GenerateResultAsPdf() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		if (!facesContext.getResponseComplete()) {
+
+			/*
+			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 */
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+			try {
+				ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+				String contentType = servletContext.getMimeType("search.pdf");
+				response.setContentType(contentType);
+				response.setHeader("Content-Disposition", "attachment;filename=\"search.pdf\"");
+				ServletOutputStream out = response.getOutputStream();
+
+				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses, this.showArchivedProjects);
+				HSSFWorkbook wb = sr.getResult();
+				Vector<Vector<HSSFCell>> cellVectorHolder = new Vector<Vector<HSSFCell>>();
+				HSSFSheet mySheet = wb.getSheetAt(0);
+				Iterator<Row> rowIter = mySheet.rowIterator();
+				while (rowIter.hasNext()) {
+					HSSFRow myRow = (HSSFRow) rowIter.next();
+					Iterator<Cell> cellIter = myRow.cellIterator();
+					Vector<HSSFCell> cellStoreVector = new Vector<HSSFCell>();
+					while (cellIter.hasNext()) {
+						HSSFCell myCell = (HSSFCell) cellIter.next();
+						cellStoreVector.addElement(myCell);
+					}
+					cellVectorHolder.addElement(cellStoreVector);
+				}
+				Document document = new Document();
+				PdfWriter.getInstance(document, out);
+				document.open();
+				StringBuffer sb = new StringBuffer();
+				for (int i = 1; i < cellVectorHolder.size(); i++) {
+					Vector<HSSFCell> cellStoreVector = cellVectorHolder.elementAt(i);
+					for (int j = 0; j < cellStoreVector.size(); j++) {
+						HSSFCell myCell = cellStoreVector.elementAt(j);
+						// TODO aufhübschen und nicht toString() nutzen
+						String stringCellValue = myCell.toString() + " ";
+						sb.append(stringCellValue);
+					}
+
+				}
+				document.add(new Paragraph(sb.toString()));
+
+				document.close();
+				out.flush();
+				facesContext.responseComplete();
+
+			} catch (Exception e) {
 			}
 		}
 	}

@@ -365,7 +365,7 @@
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%-- edit batch step --%>
-		<h:commandLink id="batchInWorkOther" action="BatchesEdit" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && item.batchStep}"
+		<h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.BatchesEdit}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && item.batchStep}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin3c.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
