@@ -119,6 +119,12 @@ public class Pagination {
 			return null;
 		}
 
+		// return and set error message when 'uncounted' and 'foliation' selected as options
+		if ((paginationMode == COUNTING_FOLIATION_RECTOVERSO) && (paginationType.equals(PAGINATION_UNCOUNTED))) {
+			Helper.setFehlerMeldung("pagination.error.uncountedFoliationNotAllowed");
+			return null;
+		}
+
 		// set "uncounted" pagination value
 		if (paginationType.equals(PAGINATION_UNCOUNTED)) {
 			paginationStartValue = "uncounted";
