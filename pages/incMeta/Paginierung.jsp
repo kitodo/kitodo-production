@@ -86,7 +86,9 @@
 					<htm:br />
 					<x:inputText id="paginierungWert" forceId="true"
 						value="#{Metadaten.paginierungWert}"
-						style="width: 250px;margin-top:15px;margin-bottom:5px" />
+						style="width: 250px;margin-top:15px;margin-bottom:5px">
+                        <script type="text/javascript" ></script>
+                    </x:inputText>
 					<htm:br />
 
 					<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
