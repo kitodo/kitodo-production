@@ -313,6 +313,15 @@
 				</h:panelGroup>
 
 				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
+					<h:graphicImage value="/newpages/images/buttons/pdf.png" style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
+					<h:commandLink  action="#{ProzessverwaltungForm.generateResultAsPdf}"
+						 title="#{msgs.createPdf}">
+							<h:outputText value="#{msgs.createPdf}" />
+					</h:commandLink>
+				</h:panelGroup>
+
+
+				<h:panelGroup rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}">
 					<jd:hideableController for="anzahlen" id="countswitcher"
 						title="#{msgs.anzahlMetadatenUndImagesErmitteln}">
 						<h:graphicImage

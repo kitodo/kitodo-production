@@ -65,7 +65,6 @@ import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenSperrung;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
-import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.SimpleDAO;
@@ -143,16 +142,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	/**
 	 * Anzeige der Schritte
 	 */
-	@SuppressWarnings("unchecked")
 	public String FilterAlleStart() {
-		Helper.createNewHibernateSession();
-//		if (this.page != null && this.page.getTotalResults() != 0) {
-//			SchrittDAO dao = new SchrittDAO();
-//			for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
-//				Schritt step = iter.next();
-//				dao.refresh(step);
-//			}
-//		}
+//		Helper.createNewHibernateSession();
 		try {
 			// if (this.filter.toLowerCase().startsWith("lucene")) {
 			// this.myFilteredDataSource = new LuceneStepFilter();
@@ -163,7 +154,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			// this.nurEigeneSchritte);
 			// this.myFilteredDataSource.setFilter(this.filter.substring("lucene".length()));
 			// } else {
-			HibernateUtil.clearSession();
+//			HibernateUtil.clearSession();
 			this.myFilteredDataSource = new UserDefinedStepFilter();
 			this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
 			((UserDefinedStepFilter) this.myFilteredDataSource).setFilterModes(this.nurOffeneSchritte, this.nurEigeneSchritte);

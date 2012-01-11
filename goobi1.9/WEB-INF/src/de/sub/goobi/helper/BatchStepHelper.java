@@ -837,7 +837,6 @@ public class BatchStepHelper {
 			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
 			new HelperSchritte().SchrittAbschliessen(s, false);
 		}
-		Helper.createNewHibernateSession();
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
 	}

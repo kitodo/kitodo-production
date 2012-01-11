@@ -30,7 +30,6 @@ package de.sub.goobi.Forms;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +52,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Batch;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
 
 public class BatchForm extends BasisForm {
 
@@ -72,7 +73,7 @@ public class BatchForm extends BasisForm {
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
 	private int MAX_HITS = 100;
-//	private ProzessDAO dao = new ProzessDAO();
+	private ProzessDAO dao = new ProzessDAO();
 	private String modusBearbeiten = "";
 
 	public List<Prozess> getCurrentProcesses() {
@@ -116,6 +117,7 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loadProcessData() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
@@ -137,6 +139,7 @@ public class BatchForm extends BasisForm {
 		this.currentProcesses = crit.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void filterProcesses() {
 
 		if (this.processfilter == null) {
@@ -154,6 +157,7 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void filterBatches() {
 		Integer number = null;
 		try {
@@ -239,6 +243,7 @@ public class BatchForm extends BasisForm {
 		return "BatchesAll";
 	}
 
+	@SuppressWarnings("unchecked")
 	public String downloadDocket() {
 		logger.debug("generate docket for process list");
 		String rootpath = ConfigMain.getParameter("xsltFolder");
@@ -252,7 +257,7 @@ public class BatchForm extends BasisForm {
 			Criteria crit = session.createCriteria(Prozess.class);
 			crit.setMaxResults(this.MAX_HITS);
 			crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-			List<Integer> ids = new ArrayList<Integer>();
+//			List<Integer> ids = new ArrayList<Integer>();
 			crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
 			docket = crit.list();
 		} else {
@@ -282,6 +287,7 @@ public class BatchForm extends BasisForm {
 		return "";
 	}
 
+	@SuppressWarnings("unchecked")
 	public void deleteBatch() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -290,26 +296,24 @@ public class BatchForm extends BasisForm {
 				Session session = Helper.getHibernateSession();
 				Criteria crit = session.createCriteria(Prozess.class);
 				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-				List<Integer> ids = new ArrayList<Integer>();
+//				List<Integer> ids = new ArrayList<Integer>();
 				crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
 				List<Prozess> deleteList = crit.list();
 				{
 					for (Prozess p : deleteList) {
 						p.setBatchID(null);
-						try {
-							session.saveOrUpdate(p);
-						} catch (Exception e) {
-							Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-							logger.error(e);
-						}
+//						try {
+//							session.saveOrUpdate(p);
+//						} catch (Exception e) {
+//							Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//							logger.error(e);
+//						}
 					}
 					try {
-						session.flush();
-						session.connection().commit();
-					} catch (HibernateException e) {
-						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-						logger.error(e);
-					} catch (SQLException e) {
+					this.dao.saveList(deleteList);
+//						session.flush();
+//						session.connection().commit();
+					} catch (DAOException e) {
 						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
 						logger.error(e);
 					}
@@ -331,27 +335,28 @@ public class BatchForm extends BasisForm {
 			Helper.setFehlerMeldung("toḾanyBatchesSelected");
 		} else {
 			try {
-				Session session = Helper.getHibernateSession();
+//				Session session = Helper.getHibernateSession();
 				Integer batchid = new Integer(this.selectedBatches.get(0));
 				for (Prozess p : this.selectedProcesses) {
 					p.setBatchID(batchid);
-					try {
-						session.saveOrUpdate(p);
-					} catch (Exception e) {
-						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-						logger.error(e);
-					}
+//					try {
+//						session.saveOrUpdate(p);
+//					} catch (Exception e) {
+//						Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//						logger.error(e);
+//					}
 				}
-				try {
-					session.flush();
-					session.connection().commit();
-				} catch (HibernateException e) {
-					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-					logger.error(e);
-				} catch (SQLException e) {
-					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-					logger.error(e);
-				}
+				this.dao.saveList(this.selectedProcesses);
+//				try {
+//					session.flush();
+//					session.connection().commit();
+//				} catch (HibernateException e) {
+//					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//					logger.error(e);
+//				} catch (SQLException e) {
+//					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//					logger.error(e);
+//				}
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("noBatchSelected");
 			}
@@ -360,25 +365,26 @@ public class BatchForm extends BasisForm {
 	}
 
 	public void removeProcessesFromBatch() {
-		Session session = Helper.getHibernateSession();
+//		Session session = Helper.getHibernateSession();
 		for (Prozess p : this.selectedProcesses) {
 			p.setBatchID(null);
-			try {
-				session.saveOrUpdate(p);
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-				logger.error(e);
-			}
+//			try {
+//				session.saveOrUpdate(p);
+//			} catch (Exception e) {
+//				Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//				logger.error(e);
+//			}
 		}
 		try {
-			session.flush();
-			session.connection().commit();
-		} catch (HibernateException e) {
+		this.dao.saveList(this.selectedProcesses);
+//			session.flush();
+//			session.connection().commit();
+		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error, could not update", e.getMessage());
 			logger.error(e);
-		} catch (SQLException e) {
-			Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-			logger.error(e);
+//		} catch (SQLException e) {
+//			Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//			logger.error(e);
 		}
 		FilterAlleStart();
 	}
@@ -394,20 +400,21 @@ public class BatchForm extends BasisForm {
 
 			for (Prozess p : this.selectedProcesses) {
 				p.setBatchID(newBatchId);
-				try {
-					session.saveOrUpdate(p);
-				} catch (Exception e) {
-					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-					logger.error(e);
-				}
+//				try {
+//					session.saveOrUpdate(p);
+//				} catch (Exception e) {
+//					Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//					logger.error(e);
+//				}
 			}
 			try {
-				session.flush();
-				session.connection().commit();
-			} catch (HibernateException e) {
-				Helper.setFehlerMeldung("Error, could not update", e.getMessage());
-				logger.error(e);
-			} catch (SQLException e) {
+			this.dao.saveList(this.selectedProcesses);
+//				session.flush();
+//				session.connection().commit();
+//			} catch (HibernateException e) {
+//				Helper.setFehlerMeldung("Error, could not update", e.getMessage());
+//				logger.error(e);
+			} catch (DAOException e) {
 				Helper.setFehlerMeldung("Error, could not update", e.getMessage());
 				logger.error(e);
 			}
@@ -420,6 +427,7 @@ public class BatchForm extends BasisForm {
 	 */
 	private BatchProcessHelper batchHelper;
 
+	@SuppressWarnings("unchecked")
 	public String editProperties() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -432,7 +440,7 @@ public class BatchForm extends BasisForm {
 				Session session = Helper.getHibernateSession();
 				Criteria crit = session.createCriteria(Prozess.class);
 				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-				List<Integer> ids = new ArrayList<Integer>();
+//				List<Integer> ids = new ArrayList<Integer>();
 				crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
 				List<Prozess> propertyBatch = crit.list();
 				this.batchHelper = new BatchProcessHelper(propertyBatch);

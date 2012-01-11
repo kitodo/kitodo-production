@@ -100,8 +100,9 @@ public class HibernateSessionLong {
    }
 
    public Session getNewSession() throws HibernateException {
-	   sess.close();
-	   sess=null;
+	   this.sess.clear();
+	   this.sess.close();
+	   this.sess=null;
 	   return getSession();
    }
    

@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -76,7 +75,9 @@ import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfWriter;
 
 import de.sub.goobi.Beans.Benutzer;
@@ -296,7 +297,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public String FilterAktuelleProzesse() {
-		Helper.createNewHibernateSession();
+//		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 
@@ -367,7 +368,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Anzeige der Sammelbände filtern
 	 */
 	public String FilterAlleStart() {
-		Helper.createNewHibernateSession();
+//		Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		/*
@@ -1119,8 +1120,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String Reload() {
-		Helper.createNewHibernateSession();
-		Helper.getHibernateSession().clear();
+//		Helper.createNewHibernateSession();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
 			Helper.getHibernateSession().refresh(this.mySchritt);
 		}
@@ -1655,7 +1655,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	public void GenerateResultAsPdf() {
+	public void generateResultAsPdf() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
 
@@ -1672,34 +1672,37 @@ public class ProzessverwaltungForm extends BasisForm {
 
 				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses, this.showArchivedProjects);
 				HSSFWorkbook wb = sr.getResult();
-				Vector<Vector<HSSFCell>> cellVectorHolder = new Vector<Vector<HSSFCell>>();
+				List<List<HSSFCell>> rowList = new ArrayList<List<HSSFCell>>();
 				HSSFSheet mySheet = wb.getSheetAt(0);
 				Iterator<Row> rowIter = mySheet.rowIterator();
 				while (rowIter.hasNext()) {
 					HSSFRow myRow = (HSSFRow) rowIter.next();
 					Iterator<Cell> cellIter = myRow.cellIterator();
-					Vector<HSSFCell> cellStoreVector = new Vector<HSSFCell>();
+					List<HSSFCell> row = new ArrayList<HSSFCell>();
 					while (cellIter.hasNext()) {
 						HSSFCell myCell = (HSSFCell) cellIter.next();
-						cellStoreVector.addElement(myCell);
+						row.add(myCell);
 					}
-					cellVectorHolder.addElement(cellStoreVector);
+					rowList.add(row);
 				}
 				Document document = new Document();
+				Rectangle a4quer = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
 				PdfWriter.getInstance(document, out);
+				document.setPageSize(a4quer);
 				document.open();
-				StringBuffer sb = new StringBuffer();
-				for (int i = 1; i < cellVectorHolder.size(); i++) {
-					Vector<HSSFCell> cellStoreVector = cellVectorHolder.elementAt(i);
-					for (int j = 0; j < cellStoreVector.size(); j++) {
-						HSSFCell myCell = cellStoreVector.elementAt(j);
+				for (int i = 1; i < rowList.size(); i++) {
+					StringBuffer sb = new StringBuffer();
+					List<HSSFCell> row = rowList.get(i);
+					for (int j = 0; j < row.size(); j++) {
+						HSSFCell myCell = row.get(j);
 						// TODO aufhübschen und nicht toString() nutzen
 						String stringCellValue = myCell.toString() + " ";
 						sb.append(stringCellValue);
 					}
+					sb.append(Character.LINE_SEPARATOR);
+					document.add(new Paragraph(sb.toString()));
 
 				}
-				document.add(new Paragraph(sb.toString()));
 
 				document.close();
 				out.flush();
