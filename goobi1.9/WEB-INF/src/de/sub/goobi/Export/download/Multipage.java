@@ -49,7 +49,6 @@ import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -82,7 +81,7 @@ public class Multipage {
 //            return name.endsWith(".tif");
 //         }
 //      };
-      String[] dateien = dir.list(MetadatenImagesHelper.filter);
+      String[] dateien = dir.list(Helper.imageNameFilter);
 
       /* keine Tifs vorhanden, also raus */
       if (dateien == null) {

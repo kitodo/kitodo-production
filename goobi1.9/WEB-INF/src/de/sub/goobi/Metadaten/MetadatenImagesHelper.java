@@ -31,7 +31,6 @@ import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -373,7 +372,7 @@ public class MetadatenImagesHelper {
 			throw new InvalidImagesException(e);
 		}
 		/* Verzeichnis einlesen */
-		String[] dateien = dir.list(new Helper().getFilter());
+		String[] dateien = dir.list(Helper.imageNameFilter);
 		ArrayList<String> dataList = new ArrayList<String>();
 		if (dateien != null && dateien.length > 0) {
 			for (int i = 0; i < dateien.length; i++) {
@@ -435,7 +434,7 @@ public class MetadatenImagesHelper {
 			throw new InvalidImagesException(e);
 		}
 		/* Verzeichnis einlesen */
-		String[] dateien = dir.list(new Helper().getFilter());
+		String[] dateien = dir.list(Helper.imageNameFilter);
 		ArrayList<String> dataList = new ArrayList<String>();
 		if (dateien != null && dateien.length > 0) {
 			for (int i = 0; i < dateien.length; i++) {
@@ -452,36 +451,36 @@ public class MetadatenImagesHelper {
 		}
 	}
 
-	/**
-	 * {@link FilenameFilter} for all sort of images
-	 */
-
-	public static FilenameFilter filter = new FilenameFilter() {
-		@Override
-		public boolean accept(File dir, String name) {
-			boolean validImage = false;
-			// jpeg
-			if (name.endsWith("jpg") || name.endsWith("JPG") || name.endsWith("jpeg") || name.endsWith("JPEG")) {
-				validImage = true;
-			}
-			if (name.endsWith(".tif") || name.endsWith(".TIF")) {
-				validImage = true;
-			}
-			// png
-			if (name.endsWith(".png") || name.endsWith(".PNG")) {
-				validImage = true;
-			}
-			// gif
-			if (name.endsWith(".gif") || name.endsWith(".GIF")) {
-				validImage = true;
-			}
-			// jpeg2000
-			if (name.endsWith(".jp2") || name.endsWith(".JP2")) {
-				validImage = true;
-			}
-
-			return validImage;
-		}
-	};
+//	/**
+//	 * {@link FilenameFilter} for all sort of images
+//	 */
+//
+//	public static FilenameFilter filter = new FilenameFilter() {
+//		@Override
+//		public boolean accept(File dir, String name) {
+//			boolean validImage = false;
+//			// jpeg
+//			if (name.endsWith("jpg") || name.endsWith("JPG") || name.endsWith("jpeg") || name.endsWith("JPEG")) {
+//				validImage = true;
+//			}
+//			if (name.endsWith(".tif") || name.endsWith(".TIF")) {
+//				validImage = true;
+//			}
+//			// png
+//			if (name.endsWith(".png") || name.endsWith(".PNG")) {
+//				validImage = true;
+//			}
+//			// gif
+//			if (name.endsWith(".gif") || name.endsWith(".GIF")) {
+//				validImage = true;
+//			}
+//			// jpeg2000
+//			if (name.endsWith(".jp2") || name.endsWith(".JP2")) {
+//				validImage = true;
+//			}
+//
+//			return validImage;
+//		}
+//	};
 
 }

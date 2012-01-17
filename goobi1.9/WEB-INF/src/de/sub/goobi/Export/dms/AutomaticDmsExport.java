@@ -45,7 +45,6 @@ import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.download.ExportMets;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
@@ -385,7 +384,7 @@ public class AutomaticDmsExport extends ExportMets {
 
 			/* jetzt den eigentlichen Kopiervorgang */
 
-			File[] dateien = tifOrdner.listFiles(MetadatenImagesHelper.filter);
+			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
 				File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);

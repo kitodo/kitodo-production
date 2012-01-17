@@ -67,26 +67,19 @@ import de.sub.goobi.config.ConfigMain;
 
 public class Helper implements Serializable, Observer {
 
-	   /**
-	   * Always treat de-serialization as a full-blown constructor, by
-	   * validating the final state of the de-serialized object.
-	   */
-	   private void readObject(     ObjectInputStream aInputStream
-	   ) throws ClassNotFoundException, IOException {
-	    
-	  }
+	/**
+	 * Always treat de-serialization as a full-blown constructor, by validating the final state of the de-serialized object.
+	 */
+	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
-	    /**
-	    * This is the default implementation of writeObject.
-	    * Customise if necessary.
-	    */
-	    private void writeObject(
-	      ObjectOutputStream aOutputStream
-	    ) throws IOException {
+	}
 
-	    }
-	
-	
+	/**
+	 * This is the default implementation of writeObject. Customise if necessary.
+	 */
+	private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+
+	}
 
 	private static final Logger myLogger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;
@@ -275,17 +268,17 @@ public class Helper implements Serializable, Observer {
 		InputStream is = null;
 		InputStream es = null;
 		OutputStream out = null;
-		
+
 		try {
 			myLogger.debug("execute Shellcommand callShell2: " + command);
 			if (command == null || command.length() == 0) {
-				return ;
+				return;
 			}
 			Process process = Runtime.getRuntime().exec(command);
 			is = process.getInputStream();
 			es = process.getErrorStream();
 			out = process.getOutputStream();
-		
+
 			process.waitFor();
 		} finally {
 			if (is != null) {
@@ -579,11 +572,9 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	public FilenameFilter getFilter() {
-		return this.imageNameFilter;
-	}
+	
 
-	FilenameFilter imageNameFilter = new FilenameFilter() {
+	public static FilenameFilter imageNameFilter = new FilenameFilter() {
 		@Override
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
@@ -601,16 +592,15 @@ public class Helper implements Serializable, Observer {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
 				fileOk = true;
-//			} else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
-//				fileOk = true;
+				// } else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
+				// fileOk = true;
 			}
 			return fileOk;
 		}
 	};
-	
-	
+
 	public static FilenameFilter dataFilter = new FilenameFilter() {
-		
+
 		@Override
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
@@ -626,6 +616,20 @@ public class Helper implements Serializable, Observer {
 			} else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.avi")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.mp4")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.mp3")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.wav")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.wmv")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.flv")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.ogg")) {
 				fileOk = true;
 			}
 			return fileOk;

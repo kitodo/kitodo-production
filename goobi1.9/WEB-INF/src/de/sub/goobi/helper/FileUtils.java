@@ -28,8 +28,6 @@ package de.sub.goobi.helper;
  */import java.io.File;
 import java.io.FilenameFilter;
 
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
-
 /**
  * File Utils collection
  * 
@@ -58,7 +56,7 @@ public class FileUtils {
 //					return name.toLowerCase().endsWith(ext.toLowerCase());
 //				}
 //			};
-			anzahl = inDir.list(MetadatenImagesHelper.filter).length;
+			anzahl = inDir.list(Helper.imageNameFilter).length;
 
 			/* --------------------------------
 			 * die Unterverzeichnisse durchlaufen
