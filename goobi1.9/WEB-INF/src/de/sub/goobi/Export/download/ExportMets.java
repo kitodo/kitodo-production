@@ -290,7 +290,7 @@ public class ExportMets {
 			List<String> images = new ArrayList<String>();
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen
-				images = new MetadatenImagesHelper(this.myPrefs, dd).getImageFiles(myProzess);
+				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
 				dd.overrideContentFiles(images);
 			} catch (IndexOutOfBoundsException e) {
 				myLogger.error(e);

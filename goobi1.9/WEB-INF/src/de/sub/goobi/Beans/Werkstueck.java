@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.hibernate.Hibernate;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
@@ -95,6 +96,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 */
 
 	public int getEigenschaftenSize() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -103,6 +105,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	}
 
 	public List<Werkstueckeigenschaft> getEigenschaftenList() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return new ArrayList<Werkstueckeigenschaft>();
 		}
@@ -123,6 +126,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
+		Hibernate.initialize(getEigenschaften());
 		this.eigenschaften.add((Werkstueckeigenschaft) toAdd);
 	}
 	

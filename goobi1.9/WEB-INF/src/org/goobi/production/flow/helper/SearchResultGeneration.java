@@ -28,7 +28,7 @@ public class SearchResultGeneration {
 	}
 
 	public HSSFWorkbook getResult() {
-		// long start = System.currentTimeMillis();
+//		 long start = System.currentTimeMillis();
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
 		Criteria crit = myFilteredDataSource.getCriteria();
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -46,7 +46,7 @@ public class SearchResultGeneration {
 		// 500 results for testing
 		@SuppressWarnings("unchecked")
 		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-
+//		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(500).list();
 	
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -96,12 +96,14 @@ public class SearchResultGeneration {
 			// p.getSchritteSize() + " steps");
 			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6) + " / "
 					+ p.getSortHelperStatus().substring(6));
-//			 cell6.setCellValue(p.getSchritteSize());
+//			if (p.getEigenschaftenList().size()> 0) {
+//				cell6.setCellValue(p.getEigenschaftenList().get(0).getWert());
+//			}
 
 			rowcounter++;
 		}
-		// long end = System.currentTimeMillis();
-		// System.out.println(end - start);
+//		 long end = System.currentTimeMillis();
+//		 System.out.println(end - start);
 		return wb;
 	}
 }

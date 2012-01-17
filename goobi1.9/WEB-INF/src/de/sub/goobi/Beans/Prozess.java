@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
+import org.hibernate.Hibernate;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -98,7 +99,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Regelsatz regelsatz;
 	// private Batch batch;
 	private Integer batchID;
-
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
@@ -439,6 +439,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getSchritteSize() {
+		 Hibernate.initialize(this.schritte);
 		if (this.schritte == null) {
 			return 0;
 		} else {
@@ -447,6 +448,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Schritt> getSchritteList() {
+		Hibernate.initialize(this.schritte);
 		List<Schritt> temp = new ArrayList<Schritt>();
 		if (this.schritte != null) {
 			temp.addAll(this.schritte);
@@ -455,6 +457,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getHistorySize() {
+		Hibernate.initialize(this.history);
 		if (this.history == null) {
 			return 0;
 		} else {
@@ -463,6 +466,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<HistoryEvent> getHistoryList() {
+		Hibernate.initialize(this.history);
 		List<HistoryEvent> temp = new ArrayList<HistoryEvent>();
 		if (this.history != null) {
 			temp.addAll(this.history);
@@ -471,6 +475,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getEigenschaftenSize() {
+		Hibernate.initialize(this.eigenschaften);
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -479,6 +484,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Prozesseigenschaft> getEigenschaftenList() {
+		Hibernate.initialize(this.eigenschaften);
 		if (this.eigenschaften == null) {
 			return new ArrayList<Prozesseigenschaft>();
 		} else {
@@ -487,6 +493,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getWerkstueckeSize() {
+		Hibernate.initialize(this.werkstuecke);
 		if (this.werkstuecke == null) {
 			return 0;
 		} else {
@@ -495,6 +502,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Werkstueck> getWerkstueckeList() {
+		Hibernate.initialize(this.werkstuecke);
 		if (this.werkstuecke == null) {
 			return new ArrayList<Werkstueck>();
 		} else {
@@ -503,6 +511,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getVorlagenSize() {
+		Hibernate.initialize(this.vorlagen);
 		if (this.vorlagen == null) {
 			this.vorlagen = new HashSet<Vorlage>();
 		}
@@ -510,6 +519,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Vorlage> getVorlagenList() {
+		Hibernate.initialize(this.vorlagen);
 		if (this.vorlagen == null) {
 			this.vorlagen = new HashSet<Vorlage>();
 		}
@@ -609,7 +619,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int offen = 0;
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
-
+		Hibernate.initialize(this.schritte);
 		for (Schritt step : this.schritte) {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
@@ -639,7 +649,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int offen = 0;
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
-
+		Hibernate.initialize(this.schritte);
 		for (Schritt step : this.schritte) {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
@@ -659,7 +669,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		int offen = 0;
 		int inBearbeitung = 0;
 		int abgeschlossen = 0;
-
+		Hibernate.initialize(this.schritte);
 		for (Schritt step : this.schritte) {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				abgeschlossen++;
@@ -717,6 +727,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
 		checkForMetadataFile();
+		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
 		// createBackupFile(getNumberOfBackups());
@@ -824,6 +835,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
+		Hibernate.initialize(getRegelsatz());
 		switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
 		case METS:
 			ff = new MetsMods(this.regelsatz.getPreferences());
@@ -849,6 +861,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Fileformat readMetadataAsTemplateFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
 			DAOException {
+		Hibernate.initialize(getRegelsatz());
 		if (new File(getTemplateFilePath()).exists()) {
 			Fileformat ff = null;
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
@@ -951,6 +964,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
+		Hibernate.initialize(this.eigenschaften);
 		this.eigenschaften.add((Prozesseigenschaft) toAdd);
 	}
 
@@ -1022,18 +1036,32 @@ public class Prozess implements Serializable, IGoobiEntity {
 			Object o = method.invoke(this);
 			return (String) o;
 		} catch (SecurityException e) {
-			myLogger.error(e);
+		
 		} catch (NoSuchMethodException e) {
-			myLogger.error(e);
+		
 		} catch (IllegalArgumentException e) {
-			myLogger.error(e);
 		} catch (IllegalAccessException e) {
-			myLogger.error(e);
 		} catch (InvocationTargetException e) {
-			myLogger.error(e);
 		}
 
-		// TODO Auto-generated method stub
+		try {
+			String folder = this.getImagesTifDirectory();
+			folder = folder.substring(0, folder.lastIndexOf("_"));
+			folder = folder + "_" + methodName;
+			if (new File(folder).exists()) {
+				return folder;
+			}
+			
+			} catch (SwapException e) {
+			
+			} catch (DAOException e) {
+			
+			} catch (IOException e) {
+			
+			} catch (InterruptedException e) {
+			
+			}
+
 		return null;
 	}
 

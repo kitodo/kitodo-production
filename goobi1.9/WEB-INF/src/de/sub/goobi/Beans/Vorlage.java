@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -33,123 +34,118 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.hibernate.Hibernate;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 
 public class Vorlage implements Serializable, IGoobiEntity {
-   private static final long serialVersionUID = 1736135433162833277L;
-   private Integer id;
-   private String herkunft;
-   private Prozess prozess;
-   private Set<Vorlageeigenschaft> eigenschaften;
+	private static final long serialVersionUID = 1736135433162833277L;
+	private Integer id;
+	private String herkunft;
+	private Prozess prozess;
+	private Set<Vorlageeigenschaft> eigenschaften;
 	private DisplayPropertyList displayProperties;
 
-   private boolean panelAusgeklappt = true;
+	private boolean panelAusgeklappt = true;
 
-   public Vorlage() {
-      this.eigenschaften = new HashSet<Vorlageeigenschaft>();
-   }
-
-   /*#####################################################
-    #####################################################
-    ##                                                                                                                          
-    ##                                                             Getter und Setter                                   
-    ##                                                                                                                 
-    #####################################################
-    ####################################################*/
-
-   @Override
-public Integer getId() {
-      return this.id;
-   }
-
-   public void setId(Integer id) {
-      this.id = id;
-   }
-
-   public Prozess getProzess() {
-      return this.prozess;
-   }
-
-   public void setProzess(Prozess prozess) {
-      this.prozess = prozess;
-   }
-
-   public boolean isPanelAusgeklappt() {
-      return this.panelAusgeklappt;
-   }
-
-   public void setPanelAusgeklappt(boolean panelAusgeklappt) {
-      this.panelAusgeklappt = panelAusgeklappt;
-   }
-
-   public Set<Vorlageeigenschaft> getEigenschaften() {
-      return this.eigenschaften;
-   }
-
-   public void setEigenschaften(Set<Vorlageeigenschaft> eigenschaften) {
-      this.eigenschaften = eigenschaften;
-   }
-   
-   
-
-   /*#####################################################
-    #####################################################
-    ##																															 
-    ##																Helper									
-    ##                                                   															    
-    #####################################################
-    ####################################################*/
-
-   public String getHerkunft() {
-      return this.herkunft;
-   }
-
-   public void setHerkunft(String herkunft) {
-      this.herkunft = herkunft;
-   }
-
-   public int getEigenschaftenSize() {
-      if (this.eigenschaften == null) {
-		return 0;
-	} else {
-		return this.eigenschaften.size();
+	public Vorlage() {
+		this.eigenschaften = new HashSet<Vorlageeigenschaft>();
 	}
-   }
 
-   public List<Vorlageeigenschaft> getEigenschaftenList() {
-      if (this.eigenschaften == null) {
-		return new ArrayList<Vorlageeigenschaft>();
+	/*
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
+	 */
+
+	@Override
+	public Integer getId() {
+		return this.id;
 	}
-      return new ArrayList<Vorlageeigenschaft>(this.eigenschaften);
-   }
-   
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Prozess getProzess() {
+		return this.prozess;
+	}
+
+	public void setProzess(Prozess prozess) {
+		this.prozess = prozess;
+	}
+
+	public boolean isPanelAusgeklappt() {
+		return this.panelAusgeklappt;
+	}
+
+	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
+		this.panelAusgeklappt = panelAusgeklappt;
+	}
+
+	public Set<Vorlageeigenschaft> getEigenschaften() {
+		return this.eigenschaften;
+	}
+
+	public void setEigenschaften(Set<Vorlageeigenschaft> eigenschaften) {
+		this.eigenschaften = eigenschaften;
+	}
+
+	/*
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
+	 */
+
+	public String getHerkunft() {
+		return this.herkunft;
+	}
+
+	public void setHerkunft(String herkunft) {
+		this.herkunft = herkunft;
+	}
+
+	public int getEigenschaftenSize() {
+		Hibernate.initialize(getEigenschaften());
+		if (this.eigenschaften == null) {
+			return 0;
+		} else {
+			return this.eigenschaften.size();
+		}
+	}
+
+	public List<Vorlageeigenschaft> getEigenschaftenList() {
+		Hibernate.initialize(getEigenschaften());
+		if (this.eigenschaften == null) {
+			return new ArrayList<Vorlageeigenschaft>();
+		}
+		return new ArrayList<Vorlageeigenschaft>(this.eigenschaften);
+	}
+
 	@Override
 	public Status getStatus() {
 		return Status.getResourceStatusFromEntity(this);
 	}
-	
+
 	@Override
 	public List<IGoobiProperty> getProperties() {
 		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
-	}	
+	}
+
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
 		this.eigenschaften.add((Vorlageeigenschaft) toAdd);
 	}
-	
-	
+
 	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
@@ -160,7 +156,7 @@ public Integer getId() {
 		}
 		return this.displayProperties;
 	}
-	
+
 	@Override
 	public void refreshProperties() {
 		this.displayProperties = null;

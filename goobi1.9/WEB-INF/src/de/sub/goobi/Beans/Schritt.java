@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.hibernate.Hibernate;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
@@ -372,6 +373,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 ####################################################*/
 
 	public int getEigenschaftenSize() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -380,6 +382,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Schritteigenschaft> getEigenschaftenList() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return new ArrayList<Schritteigenschaft>();
 		}
@@ -387,6 +390,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public int getBenutzerSize() {
+		Hibernate.initialize(getBenutzer());
 		if (this.benutzer == null) {
 			return 0;
 		} else {
@@ -395,6 +399,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Benutzer> getBenutzerList() {
+		Hibernate.initialize(getBenutzer());
 		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
 		}
@@ -402,6 +407,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public int getBenutzergruppenSize() {
+		Hibernate.initialize(getBenutzergruppen());
 		if (this.benutzergruppen == null) {
 			return 0;
 		} else {
@@ -410,6 +416,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
+		Hibernate.initialize(getBenutzergruppen());
 		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
 		}
@@ -767,7 +774,8 @@ public class Schritt implements Serializable, IGoobiEntity {
 		return returnlist;
 	}
 	@Override
-	public void addProperty(IGoobiProperty toAdd) {
+	public void addProperty(IGoobiProperty toAdd) {		
+		Hibernate.initialize(getEigenschaften());
 		this.eigenschaften.add((Schritteigenschaft) toAdd);
 	}
 	

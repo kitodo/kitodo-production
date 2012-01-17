@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -63,7 +64,7 @@ public class HelperSchritte {
 	SchrittDAO dao = new SchrittDAO();
 	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritte.class);
-
+	ProzessDAO pdao = new ProzessDAO();
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
@@ -96,6 +97,7 @@ public class HelperSchritte {
 		// }
 		// } else {
 		session = Helper.getHibernateSession();
+		session.update(inSchritt);
 		// }
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
@@ -154,8 +156,8 @@ public class HelperSchritte {
 
 		try {
 			/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
-			new ProzessDAO().save(inSchritt.getProzess());
-			session.evict(inSchritt.getProzess());
+			this.pdao.save(inSchritt.getProzess());
+//			session.evict(inSchritt.getProzess());
 		} catch (DAOException e) {
 		}
 
@@ -255,6 +257,9 @@ public class HelperSchritte {
 	 * @throws SwapException
 	 */
 	public void executeScript(Schritt mySchritt, String script, boolean fullautomatic) throws SwapException {
+		Helper.getHibernateSession();
+		Hibernate.initialize(mySchritt.getProzess());
+		Hibernate.initialize(mySchritt.getProzess().getRegelsatz());
 		this.dao.refresh(mySchritt);
 		if (script == null || script.length() == 0) {
 			return;

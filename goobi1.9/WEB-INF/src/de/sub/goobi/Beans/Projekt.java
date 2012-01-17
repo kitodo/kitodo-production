@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.flow.statistics.StepInformation;
+import org.hibernate.Hibernate;
 
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
@@ -215,6 +216,7 @@ public class Projekt implements Serializable {
 	}
 
 	public ArrayList<ProjectFileGroup> getFilegroupsList() {
+		Hibernate.initialize(getFilegroups());
 		if (this.filegroups == null) {
 			this.filegroups = new HashSet<ProjectFileGroup>();
 		}

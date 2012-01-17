@@ -255,6 +255,9 @@ public class Helper implements Serializable, Observer {
 		} catch (Exception e) {
 			sess = HibernateUtilOld.getSession();
 		}
+		if (!sess.isOpen()) {
+			sess = HibernateUtilOld.getSession();
+		}
 		return sess;
 	}
 
@@ -597,6 +600,32 @@ public class Helper implements Serializable, Observer {
 			} else if (name.matches(prefix + "\\.[pP][nN][gG]")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
+				fileOk = true;
+//			} else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
+//				fileOk = true;
+			}
+			return fileOk;
+		}
+	};
+	
+	
+	public static FilenameFilter dataFilter = new FilenameFilter() {
+		
+		@Override
+		public boolean accept(File dir, String name) {
+			boolean fileOk = false;
+			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
+			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[jJ][pP][2]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[pP][nN][gG]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
 				fileOk = true;
 			}
 			return fileOk;

@@ -64,6 +64,9 @@ public class HibernateSessionLong {
          this.sess = factory.openSession();
       
       }
+      if (!this.sess.isOpen()) {
+    	 this.sess = factory.openSession(); 
+      }
     
       return this.sess;
    }

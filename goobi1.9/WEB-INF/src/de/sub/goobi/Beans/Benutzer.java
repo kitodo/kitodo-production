@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
+
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.encryption.DesEncrypter;
@@ -57,10 +59,10 @@ public class Benutzer implements Serializable {
 	private Set<Schritt> schritte;
 	private Set<Schritt> bearbeitungsschritte;
 	private Set<Projekt> projekte;
+	private Set<Benutzereigenschaft> eigenschaften;
 	private boolean mitMassendownload = false;
 	private LdapGruppe ldapGruppe;
 	private String css;
-	private Set<Benutzereigenschaft> eigenschaften;
 
 	// private String lastFilter = null;
 
@@ -210,6 +212,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
+Hibernate.initialize(getBenutzergruppen());
 		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
 		} else {
@@ -231,6 +234,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getSchritteSize() {
+		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
 			return 0;
 		} else {
@@ -239,6 +243,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public List<Schritt> getSchritteList() {
+		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
 			return new ArrayList<Schritt>();
 		} else {
@@ -259,6 +264,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getBearbeitungsschritteSize() {
+		Hibernate.initialize(getBearbeitungsschritte());
 		if (this.bearbeitungsschritte == null) {
 			return 0;
 		} else {
@@ -267,6 +273,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public List<Schritt> getBearbeitungsschritteList() {
+		Hibernate.initialize(getBearbeitungsschritte());
 		if (this.bearbeitungsschritte == null) {
 			this.bearbeitungsschritte = new HashSet<Schritt>();
 		}
@@ -287,6 +294,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public int getProjekteSize() {
+		Hibernate.initialize(getProjekte());
 		if (this.projekte == null) {
 			return 0;
 		} else {
@@ -295,6 +303,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public List<Projekt> getProjekteList() {
+		Hibernate.initialize(getProjekte());
 		if (this.projekte == null) {
 			return new ArrayList<Projekt>();
 		} else {
@@ -439,6 +448,7 @@ public class Benutzer implements Serializable {
 	 */
 	
 	public int getEigenschaftenSize() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -451,6 +461,7 @@ public class Benutzer implements Serializable {
 	 * @return List of all properties
 	 */
 	public List<Benutzereigenschaft> getEigenschaftenList() {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			return new ArrayList<Benutzereigenschaft>();
 		} else {
@@ -481,6 +492,7 @@ public class Benutzer implements Serializable {
 	 */
 	
 	public void addFilter(String inFilter) {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften == null) {
 			this.eigenschaften = new HashSet<Benutzereigenschaft>();
 		}
@@ -503,6 +515,7 @@ public class Benutzer implements Serializable {
 	 * @param inFilter the filter to remove
 	 */
 	public void removeFilter(String inFilter) {
+		Hibernate.initialize(getEigenschaften());
 		if (this.eigenschaften != null) {
 			for (Benutzereigenschaft be : this.eigenschaften) {
 				if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {

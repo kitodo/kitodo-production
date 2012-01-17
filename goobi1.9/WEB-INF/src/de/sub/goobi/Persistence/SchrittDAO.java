@@ -79,4 +79,9 @@ public class SchrittDAO extends BaseDAO {
 		Object o = t;
 		refresh(o);
 	}
+	
+	public void update(Schritt t) {
+		Object o = t;
+		updateObj(o);
+	}
 }

@@ -32,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
+
 /**
  * Usergroups owning different access rights, represented by integer values
  * 
@@ -114,6 +116,7 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public List<Benutzer> getBenutzerList() {
+		Hibernate.initialize(getBenutzer());
 		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
 		} else {
@@ -130,6 +133,7 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public int getSchritteSize() {
+		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
 			return 0;
 		} else {
@@ -138,6 +142,7 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public List<Schritt> getSchritteList() {
+		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
 			this.schritte = new HashSet<Schritt>();
 		}

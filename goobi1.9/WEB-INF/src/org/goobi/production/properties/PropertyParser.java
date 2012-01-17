@@ -7,6 +7,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
@@ -108,6 +109,8 @@ public class PropertyParser {
 	}
 
 	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
+		Hibernate.initialize(mySchritt.getProzess());
+		Hibernate.initialize(mySchritt.getProzess().getProjekt());
 		String stepTitle = mySchritt.getTitel();
 		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
@@ -225,6 +228,7 @@ public class PropertyParser {
 	}
 
 	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
+		Hibernate.initialize(process.getProjekt());
 		String projectTitle = process.getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 		if (process.isIstTemplate()) {

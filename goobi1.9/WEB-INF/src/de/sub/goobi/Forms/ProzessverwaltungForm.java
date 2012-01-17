@@ -1770,6 +1770,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void loadProcessProperties() {
+		this.dao.refresh(this.myProzess);
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
 		// for (ProcessProperty pt : this.processPropertyList) {

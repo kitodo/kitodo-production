@@ -80,4 +80,8 @@ public class ProzessDAO extends BaseDAO {
 		Object o = t;
 		refresh(o);
 	}
+	public void update(Prozess t) {
+		Object o = t;
+		updateObj(o);
+	}
 }
