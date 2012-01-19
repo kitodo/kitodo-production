@@ -1168,7 +1168,6 @@ public class ProzesskopieForm {
 
 		if (newTitle.endsWith("_"))
 			newTitle = newTitle.substring(0, newTitle.length() - 1);
-		newTitle = newTitle.replaceAll("[\\W]", "");
 		prozessKopie.setTitel(newTitle);
 		CalcTiffheader();
 	}
