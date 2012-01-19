@@ -1168,7 +1168,11 @@ public class ProzesskopieForm {
 
 		if (newTitle.endsWith("_"))
 			newTitle = newTitle.substring(0, newTitle.length() - 1);
-		prozessKopie.setTitel(newTitle);
+
+		// remove non-ascii characters for the sake of TIFF header limits
+		String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
+		prozessKopie.setTitel(filteredTitle);
+
 		CalcTiffheader();
 	}
 
