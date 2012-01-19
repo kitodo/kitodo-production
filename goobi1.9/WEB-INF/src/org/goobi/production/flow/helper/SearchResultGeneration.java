@@ -13,6 +13,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.helper.Helper;
 
 public class SearchResultGeneration {
@@ -72,6 +73,8 @@ public class SearchResultGeneration {
 		HSSFCell headercell6 = row0.createCell(6);
 		headercell6.setCellValue(Helper.getTranslation("Status"));
 
+		HSSFCell headercell7 = row0.createCell(7);
+		headercell7.setCellValue(Helper.getTranslation("AltRefNo"));
 	
 		
 		int rowcounter = 2;
@@ -91,14 +94,20 @@ public class SearchResultGeneration {
 			cell5.setCellValue(p.getProjekt().getTitel());
 
 			HSSFCell cell6 = row.createCell(6);
-			// if (p.getFortschritt1()==100)
-			// cell6.setCellValue(p.getFortschritt1() + "% of " +
-			// p.getSchritteSize() + " steps");
+
 			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6) + " / "
 					+ p.getSortHelperStatus().substring(6));
-//			if (p.getEigenschaftenList().size()> 0) {
-//				cell6.setCellValue(p.getEigenschaftenList().get(0).getWert());
-//			}
+			
+			if (p.getEigenschaftenList().size()> 0) {
+				for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
+					if (pe.getTitel().equals("AltRefNo")) {
+						HSSFCell cell7 = row.createCell(7);
+						cell7.setCellValue(pe.getWert());
+						break;
+					}
+				}
+			}
+
 
 			rowcounter++;
 		}
