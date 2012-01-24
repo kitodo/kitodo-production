@@ -1178,6 +1178,39 @@ public class Metadaten {
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
 		this.imagehelper.createPagination(this.myProzess);
 		retrieveAllImages();
+		
+		// added new 
+		DocStruct log = this.mydocument.getLogicalDocStruct();
+		if (log.getType().isAnchor()) {
+			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
+				log = log.getAllChildren().get(0);
+			} else {
+				return "";
+			}
+		}
+for (Metadatum md : this.alleSeitenNeu) {
+	
+}
+		
+		if (log.getAllChildren() != null) {
+			for (Iterator<DocStruct> iter = log.getAllChildren().iterator(); iter.hasNext();) {
+				DocStruct child = iter.next();
+				List<Reference> childRefs = child.getAllReferences("to");
+				for (Reference toAdd : childRefs) {
+					boolean match = false;
+					for (Reference ref : log.getAllReferences("to")) {
+						if (ref.getTarget().equals(toAdd.getTarget())) {
+							match = true;
+							break;
+						}
+					}
+					if (!match) {
+						log.getAllReferences("to").add(toAdd);
+					}
+
+				}
+			}
+		}
 		return "";
 	}
 
@@ -1444,7 +1477,7 @@ public class Metadaten {
 				}
 			}
 		}
-		
+
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
 			this.currentTifFolder = new File(this.myProzess.getImagesTifDirectory()).getName();
 		}

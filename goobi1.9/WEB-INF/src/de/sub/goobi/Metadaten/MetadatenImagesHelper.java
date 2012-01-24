@@ -102,6 +102,13 @@ public class MetadatenImagesHelper {
 			DAOException {
 		DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
+		DocStruct log = this.mydocument.getLogicalDocStruct();
+		if (log.getType().isAnchor()) {
+			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
+				log = log.getAllChildren().get(0);
+			}
+		}
+		
 		/*-------------------------------- 
 		 * der physische Baum wird nur
 		 * angelegt, wenn er noch nicht existierte
@@ -160,7 +167,7 @@ public class MetadatenImagesHelper {
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
-
+					
 					/*
 					 * -------------------------------- die logischen
 					 * Seitennummern anlegen, die der Benutzer auch ändern kann
@@ -171,7 +178,9 @@ public class MetadatenImagesHelper {
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
-
+					log.addReferenceTo(dsPage, "logical_physical");
+							
+							
 					// myLogger.debug("fertig mit Paginierung für Nr. " + i +
 					// " von " + myBildLetztes);
 				} catch (TypeNotAllowedAsChildException e) {

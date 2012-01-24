@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -36,7 +37,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
+import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
@@ -57,7 +61,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private Date bearbeitungsende;
 	private Integer editType;
 	private Benutzer bearbeitungsbenutzer;
-	//   private Integer typ;
+	// private Integer typ;
 	private short homeverzeichnisNutzen;
 
 	private boolean typMetadaten = false;
@@ -94,7 +98,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private DisplayPropertyList displayProperties;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
-	
 	public Schritt() {
 		this.titel = "";
 		this.eigenschaften = new HashSet<Schritteigenschaft>();
@@ -105,13 +108,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 		setBearbeitungsstatusEnum(StepStatus.LOCKED);
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##                                                                                                                          
-	 ##   Getter und Setter                                   
-	 ##                                                                                                                 
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
+	 */
 
 	public Date getBearbeitungsbeginn() {
 		return this.bearbeitungsbeginn;
@@ -131,11 +131,11 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		return "";
 	}
-	
+
 	public Date getBearbeitungsende() {
 		return this.bearbeitungsende;
 	}
-	
+
 	public String getEndDate() {
 		if (this.bearbeitungsende != null) {
 			return this.formatter.format(this.bearbeitungsende);
@@ -150,51 +150,54 @@ public class Schritt implements Serializable, IGoobiEntity {
 	public void setBearbeitungsende(Date bearbeitungsende) {
 		this.bearbeitungsende = bearbeitungsende;
 	}
-	
+
 	/**
 	 * getter for editType set to private for hibernate
 	 * 
 	 * for use in programm use getEditTypeEnum instead
+	 * 
 	 * @return editType as integer
 	 */
 	@SuppressWarnings("unused")
 	private Integer getEditType() {
 		return this.editType;
 	}
-	
+
 	/**
-	 * set editType to defined integer. only for internal 
-	 * use through hibernate, for changing editType use 
-	 * setEditTypeEnum instead
-	 * @param editType as Integer
+	 * set editType to defined integer. only for internal use through hibernate, for changing editType use setEditTypeEnum instead
+	 * 
+	 * @param editType
+	 *            as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setEditType(Integer editType) {
 		this.editType = editType;
 	}
-	
+
 	/**
 	 * set editType to specific value from {@link StepEditType}
 	 * 
-	 * @param inType as {@link StepEditType}
+	 * @param inType
+	 *            as {@link StepEditType}
 	 */
-	public void setEditTypeEnum(StepEditType inType){
+	public void setEditTypeEnum(StepEditType inType) {
 		this.editType = inType.getValue();
 	}
-	
+
 	/**
 	 * get editType as {@link StepEditType}
 	 * 
 	 * @return current bearbeitungsstatus
 	 */
-	public StepEditType getEditTypeEnum(){
+	public StepEditType getEditTypeEnum() {
 		return StepEditType.getTypeFromValue(this.editType);
 	}
-	
+
 	/**
 	 * getter for Bearbeitunsstatus set to private for hibernate
 	 * 
 	 * for use in programm use getBearbeitungsstatusEnum instead
+	 * 
 	 * @return bearbeitungsstatus as integer
 	 */
 	@SuppressWarnings("unused")
@@ -203,31 +206,33 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * set bearbeitungsstatus to defined integer. only for internal 
-	 * use through hibernate, for changing bearbeitungsstatus use 
+	 * set bearbeitungsstatus to defined integer. only for internal use through hibernate, for changing bearbeitungsstatus use
 	 * setBearbeitungsstatusEnum instead
-	 * @param bearbeitungsstatus as Integer
+	 * 
+	 * @param bearbeitungsstatus
+	 *            as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setBearbeitungsstatus(Integer bearbeitungsstatus) {
 		this.bearbeitungsstatus = bearbeitungsstatus;
 	}
-	
+
 	/**
 	 * set bearbeitungsstatus to specific value from {@link StepStatus}
 	 * 
-	 * @param inStatus as {@link StepStatus}
+	 * @param inStatus
+	 *            as {@link StepStatus}
 	 */
-	public void setBearbeitungsstatusEnum(StepStatus inStatus){
+	public void setBearbeitungsstatusEnum(StepStatus inStatus) {
 		this.bearbeitungsstatus = inStatus.getValue();
 	}
-	
+
 	/**
 	 * get bearbeitungsstatus as {@link StepStatus}
 	 * 
 	 * @return current bearbeitungsstatus
 	 */
-	public StepStatus getBearbeitungsstatusEnum(){
+	public StepStatus getBearbeitungsstatusEnum() {
 		return StepStatus.getStatusFromValue(this.bearbeitungsstatus);
 	}
 
@@ -277,18 +282,18 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.prioritaet = prioritaet;
 	}
 
-	/*  if you change anything in the logic of priorities
-	 * make sure that you catch dependencies on this system
-	 * which are not directly related to priorities
+	/*
+	 * if you change anything in the logic of priorities make sure that you catch dependencies on this system which are not directly related to
+	 * priorities
 	 */
-	public Boolean isCorrectionStep(){
-		return (this.prioritaet==10);
+	public Boolean isCorrectionStep() {
+		return (this.prioritaet == 10);
 	}
 
-	public void setCorrectionStep(){
-		this.prioritaet=10;
+	public void setCorrectionStep() {
+		this.prioritaet = 10;
 	}
-	
+
 	public Prozess getProzess() {
 		return this.prozess;
 	}
@@ -312,7 +317,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	public String getTitel() {
 		return this.titel;
 	}
-	
+
 	public String getNormalizedTitle() {
 		return this.titel.replace(" ", "_");
 	}
@@ -321,13 +326,13 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.titel = titel;
 	}
 
-	//   public Integer getTyp() {
-	//      return typ;
-	//   }
+	// public Integer getTyp() {
+	// return typ;
+	// }
 	//
-	//   public void setTyp(Integer typ) {
-	//      this.typ = typ;
-	//   }
+	// public void setTyp(Integer typ) {
+	// this.typ = typ;
+	// }
 
 	public boolean isPanelAusgeklappt() {
 		return this.panelAusgeklappt;
@@ -364,13 +369,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.benutzergruppen = benutzergruppen;
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Helper									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
+	 */
 
 	public int getEigenschaftenSize() {
 		Hibernate.initialize(getEigenschaften());
@@ -542,8 +544,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.typModulName = typModulName;
 	}
 
-
-
 	public boolean isSelected() {
 		return this.selected;
 	}
@@ -552,21 +552,17 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.selected = selected;
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##											Helper									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
+	 */
 
 	/**
 	 * @return Rückgabe des Schritttitels sowie (sofern vorhanden) den Benutzer mit vollständigem Namen
 	 */
 	public String getTitelMitBenutzername() {
 		String rueckgabe = this.titel;
-		if (this.bearbeitungsbenutzer != null && this.bearbeitungsbenutzer.getId() != null
-				&& this.bearbeitungsbenutzer.getId().intValue() != 0) {
+		if (this.bearbeitungsbenutzer != null && this.bearbeitungsbenutzer.getId() != null && this.bearbeitungsbenutzer.getId().intValue() != 0) {
 			rueckgabe += " (" + this.bearbeitungsbenutzer.getNachVorname() + ")";
 		}
 		return rueckgabe;
@@ -585,7 +581,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public Boolean getTypScriptStep() {
-		if (this.typScriptStep==null) {
+		if (this.typScriptStep == null) {
 			this.typScriptStep = false;
 		}
 		return this.typScriptStep;
@@ -598,8 +594,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	public String getScriptname1() {
 		return this.scriptname1;
 	}
-	
-	
+
 	public String getTypAutomatischScriptpfad() {
 		return this.typAutomatischScriptpfad;
 	}
@@ -612,7 +607,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.scriptname2 = scriptname2;
 	}
 
-	
 	public String getScriptname2() {
 		return this.scriptname2;
 	}
@@ -672,7 +666,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	public String getTypAutomatischScriptpfad5() {
 		return this.typAutomatischScriptpfad5;
 	}
-	
+
 	public ArrayList<String> getAllScriptPaths() {
 		ArrayList<String> answer = new ArrayList<String>();
 		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
@@ -692,9 +686,9 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		return answer;
 	}
-	
-	public HashMap<String, String> getAllScripts(){
-		HashMap<String,String> answer = new HashMap<String, String>();
+
+	public HashMap<String, String> getAllScripts() {
+		HashMap<String, String> answer = new HashMap<String, String>();
 		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
 			answer.put(this.scriptname1, this.typAutomatischScriptpfad);
 		}
@@ -709,84 +703,85 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		if (this.typAutomatischScriptpfad5 != null && !this.typAutomatischScriptpfad5.equals("")) {
 			answer.put(this.scriptname5, this.typAutomatischScriptpfad5);
-		}		
+		}
 		return answer;
 	}
-	
-	public void setAllScripts(HashMap<String,String> paths){
+
+	public void setAllScripts(HashMap<String, String> paths) {
 		Set<String> keys = paths.keySet();
 		ArrayList<String> keyList = new ArrayList<String>();
 		for (String key : keys) {
 			keyList.add(key);
 		}
 		int size = keyList.size();
-		if (size > 0){
+		if (size > 0) {
 			this.scriptname1 = keyList.get(0);
 			this.typAutomatischScriptpfad = paths.get(keyList.get(0));
 		}
-		if (size > 1){
+		if (size > 1) {
 			this.scriptname2 = keyList.get(1);
 			this.typAutomatischScriptpfad2 = paths.get(keyList.get(1));
 		}
-		if (size > 2){
+		if (size > 2) {
 			this.scriptname3 = keyList.get(2);
 			this.typAutomatischScriptpfad3 = paths.get(keyList.get(2));
 		}
-		if (size > 3){
+		if (size > 3) {
 			this.scriptname4 = keyList.get(3);
 			this.typAutomatischScriptpfad4 = paths.get(keyList.get(3));
 		}
-		if (size > 4){
+		if (size > 4) {
 			this.scriptname5 = keyList.get(4);
 			this.typAutomatischScriptpfad5 = paths.get(keyList.get(4));
 		}
 	}
-	
-	public String getListOfPaths(){
+
+	public String getListOfPaths() {
 		String answer = "";
-		if (this.scriptname1!=null){
-			answer+=this.scriptname1;
+		if (this.scriptname1 != null) {
+			answer += this.scriptname1;
 		}
-		if (this.scriptname2!=null){
-			answer= answer+"; "+this.scriptname2;
+		if (this.scriptname2 != null) {
+			answer = answer + "; " + this.scriptname2;
 		}
-		if (this.scriptname3!=null){
-			answer= answer+"; "+this.scriptname3;
-		}		
-		if (this.scriptname4!=null){
-			answer= answer+"; "+this.scriptname4;
+		if (this.scriptname3 != null) {
+			answer = answer + "; " + this.scriptname3;
 		}
-		if (this.scriptname5!=null){
-			answer= answer+"; "+this.scriptname5;
+		if (this.scriptname4 != null) {
+			answer = answer + "; " + this.scriptname4;
+		}
+		if (this.scriptname5 != null) {
+			answer = answer + "; " + this.scriptname5;
 		}
 		return answer;
-		
+
 	}
+
 	@Override
 	public Status getStatus() {
 		return Status.getStepStatus(this);
 	}
-	
+
 	@Override
 	public List<IGoobiProperty> getProperties() {
 		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
 	}
+
 	@Override
-	public void addProperty(IGoobiProperty toAdd) {		
+	public void addProperty(IGoobiProperty toAdd) {
 		Hibernate.initialize(getEigenschaften());
 		this.eigenschaften.add((Schritteigenschaft) toAdd);
 	}
-	
-	
+
 	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
@@ -797,14 +792,14 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		return this.displayProperties;
 	}
-	
+
 	@Override
 	public void refreshProperties() {
 		this.displayProperties = null;
 		getDisplayProperties();
-		
+
 	}
-	
+
 	/*
 	 * batch step information
 	 */
@@ -815,7 +810,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 		}
 		return this.batchStep;
 	}
-	
+
 	public Boolean isBatchStep() {
 		if (this.batchStep == null) {
 			this.batchStep = Boolean.valueOf(false);
@@ -830,5 +825,25 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.batchStep = batchStep;
 	}
 
-	
+	public boolean getBatchSize() {
+
+		Integer batchNumber = this.prozess.getBatchID();
+		if (batchNumber != null) {
+			// only steps with same title
+			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+			userdefined.setFilterModes(true, false);
+			userdefined.setFilter("");
+			Criteria crit = userdefined.getCriteria();
+			crit.add(Restrictions.eq("titel", this.titel));
+
+			// only steps with same batchid
+			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			crit.add(Restrictions.eq("batchStep", true));
+			if (crit.list().size() > 1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

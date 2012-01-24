@@ -287,6 +287,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 		try {
 			Helper.deleteDir(new File(this.myProzess.getProcessDataDirectory()));
+			File ocr = new File(this.myProzess.getOcrDirectory());
+			if (ocr.exists()) {
+				Helper.deleteDir(ocr);
+			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
 		}
@@ -297,7 +301,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public String FilterAktuelleProzesse() {
-//		Helper.createNewHibernateSession();
+		// Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 
@@ -368,7 +372,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Anzeige der Sammelbände filtern
 	 */
 	public String FilterAlleStart() {
-//		Helper.createNewHibernateSession();
+		// Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		/*
@@ -1120,7 +1124,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String Reload() {
-//		Helper.createNewHibernateSession();
+		// Helper.createNewHibernateSession();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
 			Helper.getHibernateSession().refresh(this.mySchritt);
 		}

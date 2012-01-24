@@ -76,6 +76,9 @@ public class SearchResultGeneration {
 		HSSFCell headercell7 = row0.createCell(7);
 		headercell7.setCellValue(Helper.getTranslation("AltRefNo"));
 	
+		HSSFCell headercell8 = row0.createCell(8);
+		headercell8.setCellValue(Helper.getTranslation("b-number"));
+		
 		
 		int rowcounter = 2;
 		for (Prozess p : pl) {
@@ -103,7 +106,10 @@ public class SearchResultGeneration {
 					if (pe.getTitel().equals("AltRefNo")) {
 						HSSFCell cell7 = row.createCell(7);
 						cell7.setCellValue(pe.getWert());
-						break;
+					}
+					else if (pe.getTitel().equals("b-number")) {
+						HSSFCell cell8 = row.createCell(8);
+						cell8.setCellValue(pe.getWert());
 					}
 				}
 			}

@@ -611,6 +611,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 		this.erstellungsdatum = erstellungsdatum;
 	}
 
+	public String getErstellungsdatumAsString() {
+		return Helper.getDateAsFormattedString(this.erstellungsdatum);
+	}
+	
 	/*
 	 * Auswertung des Fortschritts
 	 */
