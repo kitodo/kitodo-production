@@ -205,7 +205,7 @@
 
 
 		</f:facet>
-		<h:outputText value="#{item.erstellungsdatumAsString}" />
+		<h:outputText value="#{item.erstellungsdatum}" />
 	</x:column>
 
 	<%-- +++++++++++++++++  Status ++++++++++++++++++++++++ --%>

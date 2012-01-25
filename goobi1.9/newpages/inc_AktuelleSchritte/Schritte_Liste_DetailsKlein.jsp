@@ -46,7 +46,7 @@
 						<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungsbeginn}" />
+						<h:outputText value="#{item.bearbeitungsbeginnAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
 				<htm:tr rendered="#{item.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
@@ -54,7 +54,7 @@
 						<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungszeitpunkt}" />
+						<h:outputText value="#{item.bearbeitungszeitpunktAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
 				<htm:tr rendered="#{item.bearbeitungsbenutzer.id !=0 && item.bearbeitungsbenutzer !=null && !HelperForm.anonymized}">

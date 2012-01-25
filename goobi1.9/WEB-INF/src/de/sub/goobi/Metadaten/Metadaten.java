@@ -1188,9 +1188,7 @@ public class Metadaten {
 				return "";
 			}
 		}
-for (Metadatum md : this.alleSeitenNeu) {
-	
-}
+
 		
 		if (log.getAllChildren() != null) {
 			for (Iterator<DocStruct> iter = log.getAllChildren().iterator(); iter.hasNext();) {

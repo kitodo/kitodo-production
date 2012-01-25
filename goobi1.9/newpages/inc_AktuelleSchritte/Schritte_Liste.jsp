@@ -157,7 +157,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.prozess.erstellungsdatumAsString}" />
+		<h:outputText value="#{item.prozess.erstellungsdatum}" />
 	</x:column>
 
 	<x:column style="text-align:center" rendered="#{AktuelleSchritteForm.anzeigeAnpassen['modules']}">

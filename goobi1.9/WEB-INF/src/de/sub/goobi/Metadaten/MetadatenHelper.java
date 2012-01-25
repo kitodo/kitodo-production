@@ -86,34 +86,35 @@ public class MetadatenHelper implements Comparator<Object> {
 		/*
 		 * -------------------------------- alle Metadaten hinzufügen --------------------------------
 		 */
+		if (inOldDocstruct.getAllMetadata() != null && inOldDocstruct.getAllMetadata().size() > 0) {
+			for (Metadata old : inOldDocstruct.getAllMetadata()) {
+				boolean match = false;
 
-		for (Metadata old : inOldDocstruct.getAllMetadata()) {
-			boolean match = false;
-
-			if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-				for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
-					if (mt.getName().equals(old.getType().getName())) {
-						match = true;
-						break;
+				if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
+					for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
+						if (mt.getName().equals(old.getType().getName())) {
+							match = true;
+							break;
+						}
 					}
-				}
-				if (!match) {
-					try {
+					if (!match) {
+						try {
+							newDocstruct.addMetadata(old);
+						} catch (Exception e) {
+							Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
+									+ newDocstruct.getType().getName());
+							return inOldDocstruct;
+						}
+					} else {
 						newDocstruct.addMetadata(old);
-					} catch (Exception e) {
-						Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
-								+ newDocstruct.getType().getName());
-						return inOldDocstruct;
 					}
 				} else {
-					newDocstruct.addMetadata(old);
+					Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
+							+ newDocstruct.getType().getName());
+					return inOldDocstruct;
 				}
-			} else {
-				Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element " + newDocstruct.getType().getName());
-				return inOldDocstruct;
 			}
 		}
-
 		/*
 		 * -------------------------------- alle Personen hinzufügen --------------------------------
 		 */
