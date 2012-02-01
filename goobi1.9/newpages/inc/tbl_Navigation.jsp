@@ -244,7 +244,7 @@
                                 value="36" />
                         </h:commandLink>
 
-						<%-- Administrationsaufgaben --%>
+						<%-- Administrationsaufgaben 
 						<h:commandLink styleClass="mlink" action="Administrationsaufgaben" id="admin"
 							style="#{NavigationForm.aktuell == '37' ? 'font-weight: bold;':'font-weight:normal ;'}">
 							<h:panelGroup rendered="#{NavigationForm.aktuell == '37'}">
@@ -254,7 +254,7 @@
 							<x:updateActionListener property="#{NavigationForm.aktuell}"
 								value="37" />
 						</h:commandLink>
-
+						--%>
 					</h:panelGroup>
 
 					<%-- ################            Benutzereinstellungen              ######################--%>

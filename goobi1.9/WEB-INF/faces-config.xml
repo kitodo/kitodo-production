@@ -161,7 +161,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>Administrationsaufgaben</from-outcome>
-			<to-view-id>/newpages/Administrationsaufgaben.jsp</to-view-id>
+			<to-view-id>/newpages/admin.jsp</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
