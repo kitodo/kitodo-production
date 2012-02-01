@@ -191,12 +191,17 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	public String Loeschen() {
+		if (this.myProjekt.getBenutzer().size() > 0) {
+			Helper.setFehlerMeldung("userAssignedError");
+			return "";
+		} else {
 		try {
 			this.dao.remove(this.myProjekt);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete", e.getMessage());
 			myLogger.error(e.getMessage());
 			return "";
+		}
 		}
 		return "ProjekteAlle";
 	}

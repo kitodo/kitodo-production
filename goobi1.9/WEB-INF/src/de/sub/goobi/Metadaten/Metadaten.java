@@ -648,6 +648,14 @@ public class Metadaten {
 
 		BildErmitteln(0);
 		retrieveAllImages();
+		if (this.mydocument.getPhysicalDocStruct() == null || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
+				|| this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0) {
+			try {
+				createPagination();
+			} catch (TypeNotAllowedForParentException e) {
+				
+			}
+		}
 		// MetadatenImLogAusgeben(logicalTopstruct);
 		MetadatenalsBeanSpeichern(this.logicalTopstruct);
 		MetadatenalsTree3Einlesen1();
@@ -1178,8 +1186,8 @@ public class Metadaten {
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
 		this.imagehelper.createPagination(this.myProzess);
 		retrieveAllImages();
-		
-		// added new 
+
+		// added new
 		DocStruct log = this.mydocument.getLogicalDocStruct();
 		if (log.getType().isAnchor()) {
 			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
@@ -1189,7 +1197,6 @@ public class Metadaten {
 			}
 		}
 
-		
 		if (log.getAllChildren() != null) {
 			for (Iterator<DocStruct> iter = log.getAllChildren().iterator(); iter.hasNext();) {
 				DocStruct child = iter.next();

@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -160,18 +162,18 @@ public class Benutzer implements Serializable {
 	public Integer getTabellengroesse() {
 		if (this.tabellengroesse == null) {
 			return Integer.valueOf(10);
-		} 
-//		else if (this.tabellengroesse > 100) {
-//			return Integer.valueOf(100);
-//		}
+		}
+		// else if (this.tabellengroesse > 100) {
+		// return Integer.valueOf(100);
+		// }
 
 		return this.tabellengroesse;
 	}
 
 	public void setTabellengroesse(Integer tabellengroesse) {
-//		if (tabellengroesse > 100) {
-//			tabellengroesse = Integer.valueOf(100);
-//		}
+		// if (tabellengroesse > 100) {
+		// tabellengroesse = Integer.valueOf(100);
+		// }
 		this.tabellengroesse = tabellengroesse;
 	}
 
@@ -212,7 +214,10 @@ public class Benutzer implements Serializable {
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
-Hibernate.initialize(getBenutzergruppen());
+		try {
+			Hibernate.initialize(this.benutzergruppen);
+		} catch (HibernateException e) {
+		}
 		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
 		} else {
@@ -234,7 +239,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public int getSchritteSize() {
-		Hibernate.initialize(getSchritte());
+		try {
+			Hibernate.initialize(this.schritte);
+		} catch (HibernateException e) {
+		}
 		if (this.schritte == null) {
 			return 0;
 		} else {
@@ -243,7 +251,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public List<Schritt> getSchritteList() {
-		Hibernate.initialize(getSchritte());
+		try {
+			Hibernate.initialize(this.schritte);
+		} catch (HibernateException e) {
+		}
 		if (this.schritte == null) {
 			return new ArrayList<Schritt>();
 		} else {
@@ -264,7 +275,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public int getBearbeitungsschritteSize() {
-		Hibernate.initialize(getBearbeitungsschritte());
+		try {
+			Hibernate.initialize(this.bearbeitungsschritte);
+		} catch (HibernateException e) {
+		}
 		if (this.bearbeitungsschritte == null) {
 			return 0;
 		} else {
@@ -273,7 +287,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public List<Schritt> getBearbeitungsschritteList() {
-		Hibernate.initialize(getBearbeitungsschritte());
+		try {
+			Hibernate.initialize(this.bearbeitungsschritte);
+		} catch (HibernateException e) {
+		}
 		if (this.bearbeitungsschritte == null) {
 			this.bearbeitungsschritte = new HashSet<Schritt>();
 		}
@@ -294,7 +311,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public int getProjekteSize() {
-		Hibernate.initialize(getProjekte());
+		try {
+			Hibernate.initialize(this.projekte);
+		} catch (HibernateException e) {
+		}
 		if (this.projekte == null) {
 			return 0;
 		} else {
@@ -303,7 +323,10 @@ Hibernate.initialize(getBenutzergruppen());
 	}
 
 	public List<Projekt> getProjekteList() {
-		Hibernate.initialize(getProjekte());
+		try {
+			Hibernate.initialize(this.projekte);
+		} catch (HibernateException e) {
+		}
 		if (this.projekte == null) {
 			return new ArrayList<Projekt>();
 		} else {
@@ -435,7 +458,8 @@ Hibernate.initialize(getBenutzergruppen());
 
 	/**
 	 * 
-	 * @param eigenschaften set of all properties
+	 * @param eigenschaften
+	 *            set of all properties
 	 */
 
 	public void setEigenschaften(Set<Benutzereigenschaft> eigenschaften) {
@@ -446,9 +470,12 @@ Hibernate.initialize(getBenutzergruppen());
 	 * 
 	 * @return size of properties
 	 */
-	
+
 	public int getEigenschaftenSize() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -461,7 +488,10 @@ Hibernate.initialize(getBenutzergruppen());
 	 * @return List of all properties
 	 */
 	public List<Benutzereigenschaft> getEigenschaftenList() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return new ArrayList<Benutzereigenschaft>();
 		} else {
@@ -473,7 +503,7 @@ Hibernate.initialize(getBenutzergruppen());
 	 * 
 	 * @return List of filters as strings
 	 */
-	
+
 	public List<String> getFilters() {
 		List<String> filters = new ArrayList<String>();
 		if (this.getEigenschaften() != null) {
@@ -488,11 +518,16 @@ Hibernate.initialize(getBenutzergruppen());
 
 	/**
 	 * adds a new filter to list
-	 * @param inFilter the filter to add
+	 * 
+	 * @param inFilter
+	 *            the filter to add
 	 */
-	
+
 	public void addFilter(String inFilter) {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			this.eigenschaften = new HashSet<Benutzereigenschaft>();
 		}
@@ -509,13 +544,17 @@ Hibernate.initialize(getBenutzergruppen());
 		this.eigenschaften.add(be);
 	}
 
-	
 	/**
 	 * removes filter from list
-	 * @param inFilter the filter to remove
+	 * 
+	 * @param inFilter
+	 *            the filter to remove
 	 */
 	public void removeFilter(String inFilter) {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften != null) {
 			for (Benutzereigenschaft be : this.eigenschaften) {
 				if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {

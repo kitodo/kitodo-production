@@ -116,7 +116,12 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	public List<Benutzer> getBenutzerList() {
+		try {
 		Hibernate.initialize(getBenutzer());
+		} catch (org.hibernate.HibernateException e) {
+			
+		}
+		
 		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
 		} else {

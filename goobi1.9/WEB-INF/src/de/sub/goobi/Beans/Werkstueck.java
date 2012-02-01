@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -34,6 +35,7 @@ import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
@@ -96,7 +98,10 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 */
 
 	public int getEigenschaftenSize() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -105,7 +110,10 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	}
 
 	public List<Werkstueckeigenschaft> getEigenschaftenList() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return new ArrayList<Werkstueckeigenschaft>();
 		}
@@ -123,21 +131,23 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 		returnlist.addAll(getEigenschaftenList());
 		return returnlist;
 	}
-	
+
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		this.eigenschaften.add((Werkstueckeigenschaft) toAdd);
 	}
-	
-	
+
 	@Override
 	public void removeProperty(IGoobiProperty toRemove) {
 		getEigenschaften().remove(toRemove);
 		toRemove.setOwningEntity(null);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
@@ -148,7 +158,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 		}
 		return this.displayProperties;
 	}
-	
+
 	@Override
 	public void refreshProperties() {
 		this.displayProperties = null;

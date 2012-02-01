@@ -54,8 +54,26 @@ public class SearchResultGeneration {
 		HSSFSheet sheet = wb.createSheet("Search results");
 		
 		HSSFRow title = sheet.createRow(0);
-		HSSFCell titleCell = title.createCell(0);
-		titleCell.setCellValue(this.filter);
+		HSSFCell titleCell1 = title.createCell(0);
+		titleCell1.setCellValue(this.filter);
+		HSSFCell titleCell2 = title.createCell(1);
+		titleCell2.setCellValue("");
+		HSSFCell titleCell3 = title.createCell(2);
+		titleCell3.setCellValue("");
+		HSSFCell titleCell4 = title.createCell(3);
+		titleCell4.setCellValue("");
+		HSSFCell titleCell5 = title.createCell(4);
+		titleCell5.setCellValue("");
+		HSSFCell titleCell6 = title.createCell(5);
+		titleCell6.setCellValue("");
+		
+		HSSFCell titleCell7 = title.createCell(6);
+		titleCell7.setCellValue("");
+		HSSFCell titleCell8 = title.createCell(7);
+		titleCell8.setCellValue("");
+		
+		HSSFCell titleCell9 = title.createCell(8);
+		titleCell9.setCellValue("");
 		
 		HSSFRow row0 = sheet.createRow(1);
 		HSSFCell headercell0 = row0.createCell(0);
@@ -100,15 +118,16 @@ public class SearchResultGeneration {
 
 			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6) + " / "
 					+ p.getSortHelperStatus().substring(6));
-			
+			HSSFCell cell7 = row.createCell(7);
+			cell7.setCellValue("");
+			HSSFCell cell8 = row.createCell(8);
+			cell8.setCellValue("");
 			if (p.getEigenschaftenList().size()> 0) {
 				for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 					if (pe.getTitel().equals("AltRefNo")) {
-						HSSFCell cell7 = row.createCell(7);
 						cell7.setCellValue(pe.getWert());
 					}
 					else if (pe.getTitel().equals("b-number")) {
-						HSSFCell cell8 = row.createCell(8);
 						cell8.setCellValue(pe.getWert());
 					}
 				}

@@ -40,6 +40,7 @@ import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
@@ -375,7 +376,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 */
 
 	public int getEigenschaftenSize() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -384,7 +388,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Schritteigenschaft> getEigenschaftenList() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return new ArrayList<Schritteigenschaft>();
 		}
@@ -392,7 +399,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public int getBenutzerSize() {
-		Hibernate.initialize(getBenutzer());
+		try {
+			Hibernate.initialize(this.benutzer);
+		} catch (HibernateException e) {
+		}
 		if (this.benutzer == null) {
 			return 0;
 		} else {
@@ -401,7 +411,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Benutzer> getBenutzerList() {
-		Hibernate.initialize(getBenutzer());
+		try {
+			Hibernate.initialize(this.benutzer);
+		} catch (HibernateException e) {
+		}
 		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
 		}
@@ -409,7 +422,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public int getBenutzergruppenSize() {
-		Hibernate.initialize(getBenutzergruppen());
+		try {
+			Hibernate.initialize(this.benutzergruppen);
+		} catch (HibernateException e) {
+		}
 		if (this.benutzergruppen == null) {
 			return 0;
 		} else {
@@ -418,7 +434,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public List<Benutzergruppe> getBenutzergruppenList() {
-		Hibernate.initialize(getBenutzergruppen());
+		try {
+			Hibernate.initialize(this.benutzergruppen);
+		} catch (HibernateException e) {
+		}
 		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
 		}
@@ -771,7 +790,10 @@ public class Schritt implements Serializable, IGoobiEntity {
 
 	@Override
 	public void addProperty(IGoobiProperty toAdd) {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		this.eigenschaften.add((Schritteigenschaft) toAdd);
 	}
 

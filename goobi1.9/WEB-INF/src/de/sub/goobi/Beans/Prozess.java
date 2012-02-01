@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -439,7 +440,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getSchritteSize() {
-		 Hibernate.initialize(this.schritte);
+		try {
+			Hibernate.initialize(this.schritte);
+		} catch (HibernateException e) {
+		}
 		if (this.schritte == null) {
 			return 0;
 		} else {
@@ -448,7 +452,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Schritt> getSchritteList() {
-		Hibernate.initialize(this.schritte);
+		try {
+			Hibernate.initialize(this.schritte);
+		} catch (HibernateException e) {
+		}
 		List<Schritt> temp = new ArrayList<Schritt>();
 		if (this.schritte != null) {
 			temp.addAll(this.schritte);
@@ -457,7 +464,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getHistorySize() {
-		Hibernate.initialize(this.history);
+		try {
+			Hibernate.initialize(this.history);
+		} catch (HibernateException e) {
+		}
 		if (this.history == null) {
 			return 0;
 		} else {
@@ -466,7 +476,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<HistoryEvent> getHistoryList() {
-		Hibernate.initialize(this.history);
+		try {
+			Hibernate.initialize(this.history);
+		} catch (HibernateException e) {
+		}
 		List<HistoryEvent> temp = new ArrayList<HistoryEvent>();
 		if (this.history != null) {
 			temp.addAll(this.history);
@@ -475,7 +488,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getEigenschaftenSize() {
-		Hibernate.initialize(this.eigenschaften);
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -484,7 +500,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Prozesseigenschaft> getEigenschaftenList() {
-		Hibernate.initialize(this.eigenschaften);
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return new ArrayList<Prozesseigenschaft>();
 		} else {
@@ -493,7 +512,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getWerkstueckeSize() {
-		Hibernate.initialize(this.werkstuecke);
+		try {
+			Hibernate.initialize(this.werkstuecke);
+		} catch (HibernateException e) {
+		}
 		if (this.werkstuecke == null) {
 			return 0;
 		} else {
@@ -502,7 +524,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Werkstueck> getWerkstueckeList() {
-		Hibernate.initialize(this.werkstuecke);
+		try {
+			Hibernate.initialize(this.werkstuecke);
+		} catch (HibernateException e) {
+		}
 		if (this.werkstuecke == null) {
 			return new ArrayList<Werkstueck>();
 		} else {
@@ -511,7 +536,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public int getVorlagenSize() {
-		Hibernate.initialize(this.vorlagen);
+		try {
+			Hibernate.initialize(this.vorlagen);
+		} catch (HibernateException e) {
+		}
 		if (this.vorlagen == null) {
 			this.vorlagen = new HashSet<Vorlage>();
 		}
@@ -519,7 +547,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public List<Vorlage> getVorlagenList() {
-		Hibernate.initialize(this.vorlagen);
+		try {
+			Hibernate.initialize(this.vorlagen);
+		} catch (HibernateException e) {
+		}
 		if (this.vorlagen == null) {
 			this.vorlagen = new HashSet<Vorlage>();
 		}
@@ -614,7 +645,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public String getErstellungsdatumAsString() {
 		return Helper.getDateAsFormattedString(this.erstellungsdatum);
 	}
-	
+
 	/*
 	 * Auswertung des Fortschritts
 	 */
@@ -1040,9 +1071,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 			Object o = method.invoke(this);
 			return (String) o;
 		} catch (SecurityException e) {
-		
+
 		} catch (NoSuchMethodException e) {
-		
+
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
@@ -1055,16 +1086,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 			if (new File(folder).exists()) {
 				return folder;
 			}
-			
-			} catch (SwapException e) {
-			
-			} catch (DAOException e) {
-			
-			} catch (IOException e) {
-			
-			} catch (InterruptedException e) {
-			
-			}
+
+		} catch (SwapException e) {
+
+		} catch (DAOException e) {
+
+		} catch (IOException e) {
+
+		} catch (InterruptedException e) {
+
+		}
 
 		return null;
 	}

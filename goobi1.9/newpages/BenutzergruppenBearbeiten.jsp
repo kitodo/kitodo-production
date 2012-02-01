@@ -120,10 +120,12 @@
 													action="BenutzergruppenAlle" immediate="true" />
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
+											
 												<h:commandButton id="id22" value="#{msgs.loeschen}"
 													action="#{BenutzergruppenForm.Loeschen}"
 													onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
 													rendered="#{BenutzergruppenForm.myBenutzergruppe.id != null}" />
+									
 												<h:commandButton id="absenden" value="#{msgs.speichern}"
 													action="#{BenutzergruppenForm.Speichern}" />
 											</htm:td>

@@ -78,6 +78,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 import de.sub.goobi.Beans.Benutzer;
@@ -1694,18 +1695,27 @@ public class ProzessverwaltungForm extends BasisForm {
 				PdfWriter.getInstance(document, out);
 				document.setPageSize(a4quer);
 				document.open();
-				for (int i = 1; i < rowList.size(); i++) {
-					StringBuffer sb = new StringBuffer();
-					List<HSSFCell> row = rowList.get(i);
-					for (int j = 0; j < row.size(); j++) {
-						HSSFCell myCell = row.get(j);
-						// TODO aufhübschen und nicht toString() nutzen
-						String stringCellValue = myCell.toString() + " ";
-						sb.append(stringCellValue);
-					}
-					sb.append(Character.LINE_SEPARATOR);
-					document.add(new Paragraph(sb.toString()));
+				if (rowList.size() > 0) {
+					Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
+					
+					document.add(p);
+					PdfPTable table = new PdfPTable(9);
+					table.setSpacingBefore(20);
+					for (int i = 1; i < rowList.size(); i++) {
 
+						// StringBuffer sb = new StringBuffer();
+						List<HSSFCell> row = rowList.get(i);
+						for (int j = 0; j < row.size(); j++) {
+							HSSFCell myCell = row.get(j);
+							// TODO aufhübschen und nicht toString() nutzen
+
+							String stringCellValue = myCell.toString();
+							table.addCell(stringCellValue);
+							// sb.append(stringCellValue);
+						}
+
+					}
+					document.add(table);
 				}
 
 				document.close();

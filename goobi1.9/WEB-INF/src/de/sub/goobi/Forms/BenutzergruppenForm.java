@@ -35,7 +35,6 @@ import org.hibernate.criterion.Order;
 
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
-import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.SimpleDAO;
 import de.sub.goobi.helper.Helper;
@@ -73,11 +72,8 @@ public class BenutzergruppenForm extends BasisForm {
 				this.dao.save(this.myBenutzergruppe);
 			}
 			if (this.myBenutzergruppe.getSchritte().size() > 0) {
-				for (Schritt s : this.myBenutzergruppe.getSchritte()) {
-					s.getBenutzergruppen().remove(this.myBenutzergruppe);
-				}
-				this.myBenutzergruppe.setSchritte(new HashSet<Schritt>());
-				this.dao.save(this.myBenutzergruppe);
+				Helper.setFehlerMeldung("userGroupAssignedError");
+				return "";
 			}
 			this.dao.remove(this.myBenutzergruppe);
 		} catch (DAOException e) {

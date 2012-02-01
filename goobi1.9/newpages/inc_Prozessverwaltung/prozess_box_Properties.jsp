@@ -219,7 +219,6 @@
 	</htm:tr>
 
 	<%-- Formular für die Bearbeitung der Eigenschaft --%>
-	<h:form>
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 				<htm:table>
@@ -304,6 +303,5 @@
 				</h:commandButton>
 			</htm:td>
 		</htm:tr>
-	</h:form>
 
 </htm:table>

@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
@@ -106,7 +107,10 @@ public class Vorlage implements Serializable, IGoobiEntity {
 	}
 
 	public int getEigenschaftenSize() {
-		Hibernate.initialize(getEigenschaften());
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		if (this.eigenschaften == null) {
 			return 0;
 		} else {
@@ -115,8 +119,10 @@ public class Vorlage implements Serializable, IGoobiEntity {
 	}
 
 	public List<Vorlageeigenschaft> getEigenschaftenList() {
-		Hibernate.initialize(getEigenschaften());
-		if (this.eigenschaften == null) {
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}		if (this.eigenschaften == null) {
 			return new ArrayList<Vorlageeigenschaft>();
 		}
 		return new ArrayList<Vorlageeigenschaft>(this.eigenschaften);
