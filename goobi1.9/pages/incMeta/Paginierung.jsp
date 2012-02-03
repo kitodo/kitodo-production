@@ -69,7 +69,7 @@
 					<htm:br />
 
 					<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
-						title="#{msgs.seitenzaehlung}" reRender="PaginierungActionBox,myMessages">
+						title="#{msgs.seitenzaehlung}" reRender="PaginierungActionBox,myMessages,mygrid10">
 						<h:graphicImage
 							value="/newpages/images/buttons/paginierung_seite_inactive.png"
 							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -83,7 +83,7 @@
 						title="#{msgs.seitenzaehlung}" />
 
 					<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=2}"
-						title="#{msgs.spaltenzaehlung}" reRender="PaginierungActionBox,myMessages">
+						title="#{msgs.spaltenzaehlung}" reRender="PaginierungActionBox,myMessages,mygrid10">
 						<h:graphicImage
 							value="/newpages/images/buttons/paginierung_spalte_inactive.png"
 							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -97,7 +97,7 @@
 						title="#{msgs.spaltenzaehlung}" />
 
 					<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=3}"
-						title="#{msgs.blattzaehlung}" reRender="PaginierungActionBox,myMessages">
+						title="#{msgs.blattzaehlung}" reRender="PaginierungActionBox,myMessages,mygrid10">
 						<h:graphicImage
 							value="/newpages/images/buttons/paginierung_blatt_inactive.png"
 							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -113,7 +113,7 @@
 					<a4j:commandLink
 						rendered="#{Metadaten.paginierungSeitenProImage!=4}"
 						title="#{msgs.blattzaehlungrectoverso}"
-						reRender="PaginierungActionBox,myMessages">
+						reRender="PaginierungActionBox,myMessages,mygrid10">
 						<h:graphicImage
 							value="/newpages/images/buttons/paginierung_blatt_rectoverso_inactive.png"
 							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -129,7 +129,7 @@
 					<a4j:commandLink
 						rendered="#{Metadaten.paginierungSeitenProImage!=5}"
 						title="#{msgs.seitenzaehlungrectoverso}"
-						reRender="PaginierungActionBox,myMessages">
+						reRender="PaginierungActionBox,myMessages,mygrid10">
 						<h:graphicImage
 							value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.png"
 							style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -146,7 +146,7 @@
 					<htm:br />
 
 					<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}"
-						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages" >
+						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10" >
 						<h:outputText value="#{msgs.nurDieMarkiertenSeiten}" />
 						<x:updateActionListener
 							property="#{Metadaten.paginierungAbSeiteOderMarkierung}"
@@ -154,7 +154,7 @@
 					</a4j:commandLink>
 					<htm:br style="margin-top:15px" />
 					<a4j:commandLink id="s5" action="#{Metadaten.Paginierung}"
-						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages" >
+						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10" >
 						<h:outputText value="#{msgs.abDerErstenMarkiertenSeite}" />
 						<x:updateActionListener
 							property="#{Metadaten.paginierungAbSeiteOderMarkierung}"
