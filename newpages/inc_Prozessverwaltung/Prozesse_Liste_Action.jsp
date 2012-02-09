@@ -280,7 +280,8 @@
 											onclick="document.getElementById('goobiScriptfield').value='action:setTaskProperty \"steptitle:TITEL_SCHRITT\" property:metadata_readimages_writeimages_validate_exportdms value:true_OR_false'" />
 										<h:outputText styleClass="goobiScriptLink" value="tiffWriter"
 											onclick="document.getElementById('goobiScriptfield').value='action:tiffWriter'" />
-
+										<h:outputText styleClass="goobiScriptLink" value="exportDms"
+											onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:false'" />
 									</htm:td>
 								</htm:tr>
 								<htm:tr>
