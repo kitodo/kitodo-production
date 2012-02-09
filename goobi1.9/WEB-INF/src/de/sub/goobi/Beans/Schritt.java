@@ -853,7 +853,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 		if (batchNumber != null) {
 			// only steps with same title
 			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			userdefined.setFilterModes(true, false);
+			userdefined.setFilterModes(false, false);
 			userdefined.setFilter("");
 			Criteria crit = userdefined.getCriteria();
 			crit.add(Restrictions.eq("titel", this.titel));
