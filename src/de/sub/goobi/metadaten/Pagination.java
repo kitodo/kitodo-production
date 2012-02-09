@@ -153,8 +153,13 @@ public class Pagination {
 			}
 
 			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
+				if (paginationType.equals(PAGINATION_ROMAN_BRACKET) || paginationType.equals(PAGINATION_ROMAN)) {
+					nextPaginationLabel = getNextPaginationLabel(firstPageNumber, paginationBaseValue, currentPageNumber);
+				} else {
+					nextPaginationLabel = getRectoVersoSuffixForFoliation(currentPageNumber);
+				}
 			}
+
 			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
 					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
@@ -193,8 +198,8 @@ public class Pagination {
 		return actualPaginationLabel;
 	}
 
-	private String getRectoVersoSuffixForFoliation(int imageNumber) {
-		return imageNumber + "v " + (imageNumber + 1) + "r";
+	private String getRectoVersoSuffixForFoliation(double number) {
+		return number + "v " + (number + 1) + "r";
 	}
 
 	private String getRectoVersoSuffixForPagination(double number) {
@@ -351,12 +356,7 @@ public class Pagination {
 			}
 
 			if (paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
-				// if (paginationType.equals(PAGINATION_UNCOUNTED)) {
-				// if (i == 1) {
-				nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
-				// } else {
-				// nextPaginationLabel = getRectoVersoSuffixForFoliation(i + 1);
-				// }
+				nextPaginationLabel = getRectoVersoSuffixForFoliation(currentPageNumber);
 			}
 			if (paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (paginationType.equals(PAGINATION_UNCOUNTED)) {
