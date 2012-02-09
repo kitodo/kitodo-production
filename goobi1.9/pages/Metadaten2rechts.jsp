@@ -96,7 +96,7 @@
 		</htm:table>
 	</h:form>
 	<br/>
-	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%; top:20px;">
+	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%; top:20px;margin-top:20px">
 
 		<htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
 			<htm:td>

@@ -285,7 +285,7 @@ public class MetadatenVerifizierung {
 			String number = dst.getNumberOfMetadataType(mdt);
 			List<? extends Metadata> ll = inStruct.getAllMetadataByType(mdt);
 			int real = 0;
-			if (ll.size() > 0) {
+//			if (ll.size() > 0) {
 				real = ll.size();
 
 				if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
@@ -306,7 +306,7 @@ public class MetadatenVerifizierung {
 							+ Helper.getTranslation("MetadataNotEnoughElements"));
 				}
 			}
-		}
+//		}
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
 		if (inStruct.getAllChildren() != null) {
 			for (DocStruct child : inStruct.getAllChildren()) {

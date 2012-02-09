@@ -175,6 +175,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<HistoryEvent> getHistory() {
+		try {
+			Hibernate.initialize(this.history);
+		} catch (HibernateException e) {
+		}
 		if (this.history == null) {
 			this.history = new HashSet<HistoryEvent>();
 		}
@@ -210,6 +214,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public Set<Prozesseigenschaft> getEigenschaften() {
+		try {
+			Hibernate.initialize(this.eigenschaften);
+		} catch (HibernateException e) {
+		}
 		return this.eigenschaften;
 	}
 

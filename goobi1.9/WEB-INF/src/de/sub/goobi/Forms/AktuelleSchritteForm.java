@@ -1175,20 +1175,21 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		if (this.processProperty.getProzesseigenschaft() == null) {
 			Prozesseigenschaft pe = new Prozesseigenschaft();
-			pe.setProzess(this.myProzess);
+			pe.setProzess(this.mySchritt.getProzess());
 			this.processProperty.setProzesseigenschaft(pe);
 			this.myProzess.getEigenschaften().add(pe);
 		}
 		this.processProperty.transfer();
 
-		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
+		List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				this.myProzess.getEigenschaften().remove(pe);
+				this.mySchritt.getProzess().getEigenschaften().remove(pe);
 			}
 		}
-		if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-			this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+		if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
+			this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			this.processProperty.getProzesseigenschaft().setProzess(this.mySchritt.getProzess());
 		}
 		try {
 			this.pdao.save(this.mySchritt.getProzess());
