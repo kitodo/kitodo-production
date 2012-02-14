@@ -264,7 +264,7 @@ public class MassImportForm {
 						this.processList.add(p);
 					}
 				} else {
-					Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + " error code is: " + io.getProcessTitle());
+					Helper.setFehlerMeldung("import failed for: " + io.getProcessTitle() + " Error message is: " + io.getErrorMessage());
 				}
 			}
 			if (answer.size() != this.processList.size()) {

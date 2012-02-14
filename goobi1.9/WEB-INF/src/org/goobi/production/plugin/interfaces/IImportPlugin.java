@@ -34,6 +34,8 @@ import org.goobi.production.Import.Record;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.properties.ImportProperty;
 
+import de.sub.goobi.helper.exceptions.ImportPluginException;
+
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 
@@ -43,7 +45,7 @@ public interface IImportPlugin extends IPlugin {
 	
 	public void setData(Record r);
 	
-	public Fileformat convertData();
+	public Fileformat convertData() throws ImportPluginException;
 	
 	public String getImportFolder();
 	
