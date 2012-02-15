@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.sub.goobi.Beans.Benutzer;
+import de.sub.goobi.beans.Benutzer;
 
 @Ignore("Crashing") 
 public class BenutzerTest {
