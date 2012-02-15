@@ -31,47 +31,66 @@ import javax.faces.context.FacesContext;
 
 import de.sub.goobi.config.ConfigMain;
 
+import org.apache.log4j.Logger;
+
 public class Messages {
 	private static final String BUNDLE_NAME = "messages.intmessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	 static  ResourceBundle localBundle;
+	static  ResourceBundle localBundle;
+
+	private static final Logger myLogger = Logger.getLogger(Messages.class);
 
 	private Messages() {
 	}
 
 	public static String getString(String key) {
-		File file = new File(ConfigMain.getParameter("localMessages"));
-		if (file.exists()) {
-			// Load local message bundle from file system only if file exists; if value not exists in bundle, use default bundle from classpath
-
-			try {
-				URL resourceURL = file.toURI().toURL();
-				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-				localBundle = ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
-			} catch (Exception e) {
+		// load local message bundle if not yet loaded
+		if (localBundle == null) {
+			localBundle = loadLocalMessageBundleIfAvailable();
+		}
+		
+		// do local translation
+		if (localBundle != null) {
+			if (localBundle.containsKey(key)) {
+				String trans = localBundle.getString(key);
+				return trans;
 			}
-			
+			if (localBundle.containsKey(key.toLowerCase())) {
+				return localBundle.getString(key.toLowerCase());
+			}
 		}
 
-		// Load local message bundle from classpath
-		try {
-			if (localBundle != null) {
-				if (localBundle.containsKey(key)) {
-					String trans = localBundle.getString(key);
-					return trans;
-				}
-				if (localBundle.containsKey(key.toLowerCase())) {
-					return localBundle.getString(key.toLowerCase());
-				}
-			}
-		} catch (RuntimeException e) {
-		}
-		try {
+		// fallback to default resource bundle
+		if (RESOURCE_BUNDLE.containsKey(key)) {
 			String msg = RESOURCE_BUNDLE.getString(key);
 			return msg;
-		} catch (RuntimeException e) {
+		} else {
 			return key;
 		}
 	}
+
+	/**
+	  * Load local message bundle from file system only if file exists.
+	  *
+	  * @return Resource bundle for local messages. Returns NULL if no local message bundle could be found.
+	  */
+	private static ResourceBundle loadLocalMessageBundleIfAvailable() {
+		String localMessages = ConfigMain.getParameter("localMessages");
+		if (localMessages != null) {
+			File file = new File(localMessages);
+			if (file.exists()) {
+				myLogger.info("Local message bundle found: " + localMessages);
+				try {
+					URL resourceURL = file.toURI().toURL();
+					URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
+					return ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
+				} catch (java.net.MalformedURLException muex) {
+					myLogger.error("Error reading local message bundle", muex);
+				}
+			}
+		}
+		return null;
+	}
+
 }
