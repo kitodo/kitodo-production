@@ -237,7 +237,7 @@ public class ExportDms extends ExportMets {
 				if (agoraThread.rueckgabe.length() > 0)
 					Helper.setFehlerMeldung(myProzess.getTitel() + ": ", agoraThread.rueckgabe);
 				else {
-					Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+					Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 					/* Success-Ordner wieder löschen */
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
 						File successFile = new File(myProzess.getProjekt().getDmsImportSuccessPath() + File.separator + myProzess.getTitel());
@@ -253,7 +253,7 @@ public class ExportDms extends ExportMets {
 				gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
 			}
 
-			Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+			Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 		}
 	}
 

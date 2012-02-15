@@ -130,7 +130,7 @@ public class ExportMets {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		writeMetsFile(myProzess, targetFileName, gdzfile);
-		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 	}
 
 	/**
