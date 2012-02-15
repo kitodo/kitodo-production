@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+
+ "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		<!-- SQL - Einstellungen -->
+		<property name="dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="hibernate.connection.driver_class"> com.mysql.jdbc.Driver </property>
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost/testdata
+		</property>
+		<property name="hibernate.connection.username">goobi</property>
+		<property name="hibernate.connection.password">goobi</property>
+
+		<!-- connection pool -->
+		<property name="hibernate.c3p0.max_size">10</property>
+		<property name="hibernate.c3p0.min_size">1</property>
+		<property name="hibernate.c3p0.timeout">5000</property>
+		<property name="hibernate.c3p0.max_statements">100</property>
+		<property name="hibernate.c3p0.idle_test_period">3000</property>
+		<property name="hibernate.c3p0.acquire_increment">1</property>
+		<property name="hibernate.c3p0.validate">false</property>
+
+		<!-- Echo all executed SQL to stdout -->
+		<property name="show_sql">false</property>
+		<property name="hibernate.cglib.use_reflection_optimizer">true</property>
+		
+		<!-- Drop and re-create the database schema on startup -->
+ 		 <property name="hbm2ddl.auto">update</property> 
+		
+		<!-- Die einzelnen Mappings -->
+		 <mapping resource="de/sub/goobi/Beans/Benutzergruppe.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Benutzer.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Prozess.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Prozesseigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Schritt.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Schritteigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Werkstueck.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Werkstueckeigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Vorlage.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Vorlageeigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Projekt.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Regelsatz.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/LdapGruppe.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/ProjectFileGroup.hbm.xml" />
+        <mapping resource="de/sub/goobi/Beans/HistoryEvent.hbm.xml" /> 
+        
+	</session-factory>
+
+</hibernate-configuration>
