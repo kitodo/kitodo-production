@@ -130,7 +130,7 @@ public class ExportMets {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		writeMetsFile(myProzess, targetFileName, gdzfile);
-		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 	}
 
 	/**
@@ -268,10 +268,12 @@ public class ExportMets {
 			mm.setMptrAnchorUrl(pointer);
 
 			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-			ArrayList<String> images = new ArrayList<String>();
 			try {
-				images = new MetadatenImagesHelper(myPrefs, dd).getImageFiles(myProzess);
-				dd.overrideContentFiles(images);
+				MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
+				ArrayList<String> images = mih.getImageFiles(myProzess);
+				if (images != null) {
+					dd.overrideContentFiles(images);
+				}
 			} catch (InvalidImagesException e) {
 				myLogger.error(e);
 			}
