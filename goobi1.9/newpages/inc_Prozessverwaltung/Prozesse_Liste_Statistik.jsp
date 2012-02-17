@@ -53,7 +53,7 @@
 						/>
 				</h:panelGroup>
 
-				<h:outputLabel for="to" value="#{msgs.bis}" />
+				<h:outputLabel for="to" value="#{msgs.to}" />
 				<h:panelGroup>
 					<x:inputCalendar id="to" style="width:110px" value="#{ProzessverwaltungForm.statisticsManager.sourceDateTo}" renderAsPopup="true"
 						renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" 
