@@ -268,6 +268,25 @@ public class PaginatorTest {
         assertPagenumberSequence(paginator, new String[]{"[ III ]", "[ IV ]", "[ V ]"});
     }
 
+    @Test
+    public void fictitiousPaginationUsingFoliation() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ARABIC)
+                .setPaginationStartValue("1")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.FOLIATION)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[ 1 ]", "[ 1 ]", "[ 2 ]", "[ 2 ]"});
+    }
+
     private void assertPagenumberSequence(Paginator paginator,
                                           String[] sequence) {
 
