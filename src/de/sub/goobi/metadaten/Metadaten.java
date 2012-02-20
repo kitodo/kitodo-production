@@ -1268,24 +1268,71 @@ public class Metadaten {
 		return rueckgabe;
 	}
 
-	/**
-	 * die Paginierung ändern
-	 */
+    /**
+     * die Paginierung ändern
+     * ================================================================
+     */
+    public String Paginierung() {
 
-	public String Paginierung() {
-		Pagination p = new Pagination(alleSeitenAuswahl, alleSeitenNeu, paginierungAbSeiteOderMarkierung, paginierungArt, paginierungSeitenProImage,
-				paginierungWert);
-		String result = p.doPagination();
-		/*
-		 * zum Schluss nochmal alle Seiten neu einlesen
-		 */
-		alleSeitenAuswahl = null;
-		retrieveAllImages();
-		if (!SperrungAktualisieren()) {
-			return "SperrungAbgelaufen";
+		int[] pageSelection = new int[alleSeitenAuswahl.length];
+		for(int i = 0; i < alleSeitenAuswahl.length; i++) {
+			pageSelection[i] = Integer.parseInt(alleSeitenAuswahl[i]);
 		}
-		return result;
-	}
+
+		Paginator.Mode mode;
+		switch (paginierungSeitenProImage) {
+			case 2: mode = Paginator.Mode.COLUMNS;
+				break;
+			case 3: mode = Paginator.Mode.FOLIATION;
+				break;
+			case 4: mode = Paginator.Mode.RECTOVERSO;
+				break;
+			default: mode = Paginator.Mode.PAGES;
+		}
+
+		Paginator.Type type;
+		switch (Integer.parseInt(paginierungArt)) {
+			case 1: type = Paginator.Type.ARABIC;
+				break;
+			case 2: type = Paginator.Type.ROMAN;
+				break;
+			default: type = Paginator.Type.UNCOUNTED;
+				break;
+		}
+
+		Paginator.Scope scope;
+		switch (paginierungAbSeiteOderMarkierung) {
+			case 1: scope = Paginator.Scope.FROMFIRST;
+				break;
+			default: scope = Paginator.Scope.SELECTED;
+				break;
+		}
+
+		try {
+    	    Paginator p = new Paginator()
+                .setPageSelection(pageSelection)
+                .setPagesToPaginate(alleSeitenNeu)
+                .setPaginationScope(scope)
+                .setPaginationType(type)
+                .setPaginationMode(mode)
+                .setPaginationStartValue(paginierungWert);
+			p.run();
+		} catch (IllegalArgumentException iae) {
+			help.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
+		}
+
+        /*
+           * -------------------------------- zum Schluss nochmal alle Seiten neu
+           * einlesen --------------------------------
+           */
+        alleSeitenAuswahl = null;
+        retrieveAllImages();
+        if (!SperrungAktualisieren()) {
+            return "SperrungAbgelaufen";
+        }
+
+        return null;
+    }
 
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
