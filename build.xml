@@ -307,9 +307,9 @@
 		<fail unless="junit.test.name" message="Property not set: junit.test.name"/>
         <junit>
             <classpath refid="test.classpath"/>
-            <test name="${junit.test.name}"	haltonfailure="yes">
-				<formatter type="plain" usefile="false"/>
-			</test>
+            <formatter type="plain" usefile="false"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" unless="junit.test.methods"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" methods="${junit.test.methods}" if="junit.test.methods"/>
         </junit>
     </target>
 
