@@ -294,7 +294,6 @@
 
     <!-- JUnit tests -->
     <target name="junit" depends="compile-tests" description="Run JUnit tests">
-
         <junit printsummary="on">
             <classpath refid="test.classpath"/>
             <formatter type="xml" usefile="true"/>
@@ -302,7 +301,16 @@
                 <fileset dir="${build.classes}" includes="**/*Test.class"/>
             </batchtest>
         </junit>
+    </target>
 
+    <target name="run-test" depends="compile-tests" description="Run specific JUnit test">
+		<fail unless="junit.test.name" message="Property not set: junit.test.name"/>
+        <junit>
+            <classpath refid="test.classpath"/>
+            <test name="${junit.test.name}"	haltonfailure="yes">
+				<formatter type="plain" usefile="false"/>
+			</test>
+        </junit>
     </target>
 
 </project>
