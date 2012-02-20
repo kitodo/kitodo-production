@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Paginator {
 
-	public enum Mode {
+    public enum Mode {
 		PAGES, COLUMNS, FOLIATION, RECTOVERSO
 	}
 
@@ -56,6 +56,8 @@ public class Paginator {
 	private String paginationStartValue = "uncounted";
 
 	private Type paginationType = Paginator.Type.UNCOUNTED;
+
+    private boolean fictitiousPagination = false;
 
 	/**
 	 * Perform pagination.
@@ -110,6 +112,10 @@ public class Paginator {
 		List sequence =
 				determineSequenceFromPaginationType(increment, start, end);
 
+        if (fictitiousPagination) {
+            sequence = addSquareBracketsToEachInSequence(sequence);
+        }
+
 		if (paginationMode == Paginator.Mode.FOLIATION) {
 			sequence = cloneEachInSequence(sequence);
 		} else if ((paginationMode == Paginator.Mode.RECTOVERSO) && (paginationType != Paginator.Type.UNCOUNTED)) {
@@ -119,7 +125,16 @@ public class Paginator {
 		return sequence;
 	}
 
-	private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
+    private List addSquareBracketsToEachInSequence(List sequence) {
+        List<Object> fictitiousSequence = new ArrayList<Object>(sequence.size());
+        for (Object o : sequence) {
+			String newLabel = o.toString();
+			fictitiousSequence.add("[ " + newLabel + " ]");
+        }
+		return fictitiousSequence;
+    }
+
+    private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
 		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
 		for (Object o : sequence) {
 			String newLabel = o.toString();
@@ -290,5 +305,15 @@ public class Paginator {
 		return this;
 	}
 
+    /**
+     * Enable or disable fictitious pagination using square bracktes around numbers.
+     *
+     * @param b True, fictitious pagination. False, regular pagination.
+     * @return  This object for fluent interfacing.
+     */
+    public Paginator setFictitious(boolean b) {
+        this.fictitiousPagination = b;
+        return this;
+    }
 
 }

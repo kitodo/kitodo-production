@@ -213,6 +213,42 @@ public class PaginatorTest {
         assertPagenumberSequence(paginator, new String[]{"uncounted", "1r", "1v", "2r"});
     }
 
+    @Test
+    public void fictitiousArabicPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ARABIC)
+                .setPaginationStartValue("50")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.PAGES)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[ 50 ]", "[ 51 ]", "[ 52 ]"});
+    }
+
+    @Test
+    public void fictitiousRomanNumberPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ROMAN)
+                .setPaginationStartValue("III")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.PAGES)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[ III ]", "[ IV ]", "[ V ]"});
+    }
+
     private void assertPagenumberSequence(Paginator paginator,
                                           String[] sequence) {
 
