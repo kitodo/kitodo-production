@@ -232,6 +232,25 @@ public class PaginatorTest {
     }
 
     @Test
+    public void fictitiousArabicRectoVersoPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ARABIC)
+                .setPaginationStartValue("4711")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.RECTOVERSO)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[ 4711 ]r", "[ 4711 ]v", "[ 4712 ]r", "[ 4712 ]v"});
+    }
+
+    @Test
     public void fictitiousRomanNumberPagination() {
         Paginator paginator = new Paginator()
                 .setPageSelection(new int[]{0})
