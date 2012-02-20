@@ -38,43 +38,43 @@ class MockMetadatum implements Metadatum {
     }
 
     public MockMetadatum(String value) {
-	this.value = value;
+        this.value = value;
     }
 
     public int getIdentifier() {
-	return 0;
+        return 0;
     }
 
     public List<SelectItem> getItems() {
-	return null;
+        return null;
     }
 
     public Metadata getMd() {
-	return null;
+        return null;
     }
 
     public String getOutputType() {
-	return null;
+        return null;
     }
 
     public String getSelectedItem() {
-	return null;
+        return null;
     }
 
     public List<String> getSelectedItems() {
-	return null;
+        return null;
     }
 
     public String getTyp() {
-	return null;
+        return null;
     }
 
     public String getValue() {
-	return value;
+        return value;
     }
 
     public ArrayList<Item> getWert() {
-	return null;
+        return null;
     }
 
     public void setIdentifier(int identifier) {
@@ -99,7 +99,7 @@ class MockMetadatum implements Metadatum {
     }
 
     public void setWert(String inWert) {
-	value = inWert;
+        value = inWert;
     }
 
 }
