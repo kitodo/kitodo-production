@@ -447,7 +447,7 @@ public class Metadaten {
 			myList.add(new SelectItem(mdt.getName(), metahelper.getMetadatatypeLanguage(mdt)));
 			try {
 				Metadata md = new Metadata(mdt);
-				Metadatum mdum = new Metadatum(md, counter, myPrefs, myProzess);
+				Metadatum mdum = new MetadatumImpl(md, counter, myPrefs, myProzess);
 				counter++;
 				tempMetadatumList.add(mdum);
 
@@ -728,7 +728,7 @@ public class Metadaten {
 				.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, myProzess);
 		if (myTempMetadata != null)
 			for (Metadata metadata : myTempMetadata)
-				lsMeta.add(new Metadatum(metadata, 0, myPrefs, myProzess));
+				lsMeta.add(new MetadatumImpl(metadata, 0, myPrefs, myProzess));
 
 		/*
 		 * -------------------------------- alle Personen ermitteln --------------------------------
@@ -1169,7 +1169,7 @@ public class Metadaten {
 			for (DocStruct mySeitenDocStruct : meineListe) {
 				List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
 				for (Metadata meineSeite : mySeitenDocStructMetadaten) {
-					alleSeitenNeu[zaehler] = new Metadatum(meineSeite, zaehler, myPrefs, myProzess);
+					alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, myPrefs, myProzess);
 					alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
 							.trim()
 							+ ": " + meineSeite.getValue());
@@ -1247,7 +1247,7 @@ public class Metadaten {
 		if (listMetadaten == null || listMetadaten.size() == 0)
 			return;
 		for (Metadata meineSeite : listMetadaten) {
-			structSeitenNeu[inZaehler] = new Metadatum(meineSeite, inZaehler, myPrefs, myProzess);
+			structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, myPrefs, myProzess);
 			structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
 					.trim()
 					+ ": " + meineSeite.getValue());
@@ -2046,7 +2046,7 @@ public class Metadaten {
 		MetadataType mdt = myPrefs.getMetadataTypeByName(tempTyp);
 		try {
 			Metadata md = new Metadata(mdt);
-			selectedMetadatum = new Metadatum(md, myMetadaten.size() + 1, myPrefs, myProzess);
+			selectedMetadatum = new MetadatumImpl(md, myMetadaten.size() + 1, myPrefs, myProzess);
 		} catch (MetadataTypeNotAllowedException e) {
 			myLogger.error(e.getMessage());
 		}

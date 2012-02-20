@@ -3,11 +3,9 @@
  * mass digitization.
  *
  * Visit the websites for more information.
- *    - http://gdz.sub.uni-goettingen.de
- *    - http://www.goobi.org
- *    - http://launchpad.net/goobi-production
- *
- * Copyright 2011, Center for Retrospective Digitization, Göttingen (GDZ),
+ *     - http://gdz.sub.uni-goettingen.de
+ *     - http://www.goobi.org
+ *     - http://launchpad.net/goobi-production
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
