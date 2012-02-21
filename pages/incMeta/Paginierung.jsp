@@ -78,16 +78,21 @@
 					<h:selectOneMenu value="#{Metadaten.paginierungArt}"
 						style="width: 250px" onchange="paginierungWertAnzeigen(this);">
 						<f:selectItem itemValue="1" itemLabel="#{msgs.arabisch}" />
-						<f:selectItem itemValue="4" itemLabel="#{msgs.arabischBracket}" />
 						<f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}" />
-						<f:selectItem itemValue="5" itemLabel="#{msgs.roemischBracket}" />
 						<f:selectItem itemValue="3" itemLabel="#{msgs.unnummeriert}" />
 					</h:selectOneMenu>
+
 					<htm:br />
+
 					<x:inputText id="paginierungWert" forceId="true"
 						value="#{Metadaten.paginierungWert}"
 						style="width: 250px;margin-top:15px;margin-bottom:5px"/>
 					<htm:br />
+
+                    <htm:div style="margin: 15px">
+                        <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
+                        <h:selectBooleanCheckbox id="checkbox-fictitious" value="#{Metadaten.fictitious}"/>
+                    </htm:div>
 
 					<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
 						title="#{msgs.seitenzaehlung}" reRender="PaginierungActionBox,myMessages">

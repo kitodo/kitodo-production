@@ -127,6 +127,7 @@ public class Metadaten {
 	private int paginierungAbSeiteOderMarkierung;
 	private String paginierungArt;
 	private int paginierungSeitenProImage = 1; // 1=normale Paginierung, 2=zwei
+    private boolean fictitious = false;
 	// Spalten auf einem Image,
 	// 3=nur jede zweite Seite hat
 	// Seitennummer
@@ -447,7 +448,7 @@ public class Metadaten {
 			myList.add(new SelectItem(mdt.getName(), metahelper.getMetadatatypeLanguage(mdt)));
 			try {
 				Metadata md = new Metadata(mdt);
-				Metadatum mdum = new Metadatum(md, counter, myPrefs, myProzess);
+				Metadatum mdum = new MetadatumImpl(md, counter, myPrefs, myProzess);
 				counter++;
 				tempMetadatumList.add(mdum);
 
@@ -728,7 +729,7 @@ public class Metadaten {
 				.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, myProzess);
 		if (myTempMetadata != null)
 			for (Metadata metadata : myTempMetadata)
-				lsMeta.add(new Metadatum(metadata, 0, myPrefs, myProzess));
+				lsMeta.add(new MetadatumImpl(metadata, 0, myPrefs, myProzess));
 
 		/*
 		 * -------------------------------- alle Personen ermitteln --------------------------------
@@ -1169,7 +1170,7 @@ public class Metadaten {
 			for (DocStruct mySeitenDocStruct : meineListe) {
 				List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
 				for (Metadata meineSeite : mySeitenDocStructMetadaten) {
-					alleSeitenNeu[zaehler] = new Metadatum(meineSeite, zaehler, myPrefs, myProzess);
+					alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, myPrefs, myProzess);
 					alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
 							.trim()
 							+ ": " + meineSeite.getValue());
@@ -1247,7 +1248,7 @@ public class Metadaten {
 		if (listMetadaten == null || listMetadaten.size() == 0)
 			return;
 		for (Metadata meineSeite : listMetadaten) {
-			structSeitenNeu[inZaehler] = new Metadatum(meineSeite, inZaehler, myPrefs, myProzess);
+			structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, myPrefs, myProzess);
 			structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
 					.trim()
 					+ ": " + meineSeite.getValue());
@@ -1268,24 +1269,74 @@ public class Metadaten {
 		return rueckgabe;
 	}
 
-	/**
-	 * die Paginierung ändern
-	 */
+    /**
+     * die Paginierung ändern
+     * ================================================================
+     */
+    public String Paginierung() {
 
-	public String Paginierung() {
-		Pagination p = new Pagination(alleSeitenAuswahl, alleSeitenNeu, paginierungAbSeiteOderMarkierung, paginierungArt, paginierungSeitenProImage,
-				paginierungWert);
-		String result = p.doPagination();
-		/*
-		 * zum Schluss nochmal alle Seiten neu einlesen
-		 */
-		alleSeitenAuswahl = null;
-		retrieveAllImages();
-		if (!SperrungAktualisieren()) {
-			return "SperrungAbgelaufen";
+		int[] pageSelection = new int[alleSeitenAuswahl.length];
+		for(int i = 0; i < alleSeitenAuswahl.length; i++) {
+			pageSelection[i] = Integer.parseInt(alleSeitenAuswahl[i]);
 		}
-		return result;
-	}
+
+		Paginator.Mode mode;
+		switch (paginierungSeitenProImage) {
+			case 2: mode = Paginator.Mode.COLUMNS;
+				break;
+			case 3: mode = Paginator.Mode.FOLIATION;
+				break;
+			case 4: mode = Paginator.Mode.RECTOVERSO;
+				break;
+            case 5: mode = Paginator.Mode.RECTOVERSO_FOLIATION;
+                break;
+			default: mode = Paginator.Mode.PAGES;
+		}
+
+		Paginator.Type type;
+		switch (Integer.parseInt(paginierungArt)) {
+			case 1: type = Paginator.Type.ARABIC;
+				break;
+			case 2: type = Paginator.Type.ROMAN;
+				break;
+			default: type = Paginator.Type.UNCOUNTED;
+				break;
+		}
+
+		Paginator.Scope scope;
+		switch (paginierungAbSeiteOderMarkierung) {
+			case 1: scope = Paginator.Scope.FROMFIRST;
+				break;
+			default: scope = Paginator.Scope.SELECTED;
+				break;
+		}
+
+		try {
+    	    Paginator p = new Paginator()
+                .setPageSelection(pageSelection)
+                .setPagesToPaginate(alleSeitenNeu)
+                .setPaginationScope(scope)
+                .setPaginationType(type)
+                .setPaginationMode(mode)
+                .setFictitious(fictitious)
+                .setPaginationStartValue(paginierungWert);
+			p.run();
+		} catch (IllegalArgumentException iae) {
+			help.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
+		}
+
+        /*
+           * -------------------------------- zum Schluss nochmal alle Seiten neu
+           * einlesen --------------------------------
+           */
+        alleSeitenAuswahl = null;
+        retrieveAllImages();
+        if (!SperrungAktualisieren()) {
+            return "SperrungAbgelaufen";
+        }
+
+        return null;
+    }
 
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
@@ -2046,7 +2097,7 @@ public class Metadaten {
 		MetadataType mdt = myPrefs.getMetadataTypeByName(tempTyp);
 		try {
 			Metadata md = new Metadata(mdt);
-			selectedMetadatum = new Metadatum(md, myMetadaten.size() + 1, myPrefs, myProzess);
+			selectedMetadatum = new MetadatumImpl(md, myMetadaten.size() + 1, myPrefs, myProzess);
 		} catch (MetadataTypeNotAllowedException e) {
 			myLogger.error(e.getMessage());
 		}
@@ -2439,4 +2490,11 @@ public class Metadaten {
 		return true;
 	}
 
+    public boolean getFictitious() {
+        return fictitious;
+    }
+
+    public void setFictitious(boolean fictitious) {
+        this.fictitious = fictitious;
+    }
 }
