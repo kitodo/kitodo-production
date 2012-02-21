@@ -81,7 +81,7 @@ public class ExportPdf extends ExportMets {
 		 */
 		new File("");
 		File metsTempFile = File.createTempFile(myProzess.getTitel(), ".xml");
-		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile);
+		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile, true);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
 

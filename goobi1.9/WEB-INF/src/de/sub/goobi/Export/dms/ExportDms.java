@@ -243,7 +243,7 @@ public class ExportDms extends ExportMets {
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
 				writeMetsFile(myProzess, benutzerHome + File.separator
-						+ atsPpnBand + ".xml", gdzfile);
+						+ atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				/* ...wenn nicht, nur ein Fileformat schreiben. */
 				gdzfile.write(benutzerHome + File.separator + atsPpnBand
@@ -254,7 +254,7 @@ public class ExportDms extends ExportMets {
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
 				writeMetsFile(myProzess, benutzerHome + File.separator
-						+ atsPpnBand + ".mets.xml", gdzfile);
+						+ atsPpnBand + ".mets.xml", gdzfile, false);
 			}
 
 			Helper.setMeldung(null, myProzess.getTitel() + ": ",
@@ -297,7 +297,7 @@ public class ExportDms extends ExportMets {
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				writeMetsFile(myProzess, zielVerzeichnis + atsPpnBand + ".xml",
-						gdzfile);
+						gdzfile, false);
 			} else {
 				gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
 			}

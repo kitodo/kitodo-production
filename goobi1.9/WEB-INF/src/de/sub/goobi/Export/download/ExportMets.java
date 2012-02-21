@@ -134,7 +134,7 @@ public class ExportMets {
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
-		writeMetsFile(myProzess, targetFileName, gdzfile);
+		writeMetsFile(myProzess, targetFileName, gdzfile, false);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
 	}
 
@@ -171,10 +171,11 @@ public class ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@SuppressWarnings("deprecation")
-	protected void writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile) throws PreferencesException, WriteException,
+	protected void writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup) throws PreferencesException, WriteException,
 			IOException, InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
+		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = myProzess.getImagesDirectory();
 		File imageFolder = new File(imageFolderPath);
 		/*

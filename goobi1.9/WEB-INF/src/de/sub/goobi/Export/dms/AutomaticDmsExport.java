@@ -208,7 +208,7 @@ public class AutomaticDmsExport extends ExportMets {
 		if (myProzess.getProjekt().isUseDmsImport()) {
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
-				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile);
+				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				/* ...wenn nicht, nur ein Fileformat schreiben. */
 				gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
@@ -216,7 +216,7 @@ public class AutomaticDmsExport extends ExportMets {
 
 			/* ggf. sollen im Export mets und rdf geschrieben werden */
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile);
+				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
 			}
 
 			Helper.setMeldung(null, myProzess.getTitel() + ": ", "DMS-Export started");
