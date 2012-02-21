@@ -1288,6 +1288,8 @@ public class Metadaten {
 				break;
 			case 4: mode = Paginator.Mode.RECTOVERSO;
 				break;
+            case 5: mode = Paginator.Mode.RECTOVERSO_FOLIATION;
+                break;
 			default: mode = Paginator.Mode.PAGES;
 		}
 

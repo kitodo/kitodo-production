@@ -38,7 +38,7 @@ import java.util.List;
 public class Paginator {
 
     public enum Mode {
-		PAGES, COLUMNS, FOLIATION, RECTOVERSO
+		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO
 	}
 
 	public enum Type {ARABIC, ROMAN, UNCOUNTED}
@@ -116,13 +116,23 @@ public class Paginator {
             sequence = addSquareBracketsToEachInSequence(sequence);
         }
 
-		if (paginationMode == Paginator.Mode.FOLIATION) {
-			sequence = cloneEachInSequence(sequence);
-		} else if ((paginationMode == Paginator.Mode.RECTOVERSO) && (paginationType != Paginator.Type.UNCOUNTED)) {
-			sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
-		}
+        if (paginationMode == Paginator.Mode.FOLIATION) {
 
-		return sequence;
+            sequence = cloneEachInSequence(sequence);
+
+        } else if (paginationType != Paginator.Type.UNCOUNTED) {
+            if (paginationMode == Paginator.Mode.RECTOVERSO) {
+
+                sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
+
+            } else if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
+
+                sequence = addRectoVersoSuffixToEachInSequence(sequence);
+
+            }
+        }
+
+        return sequence;
 	}
 
     private List addSquareBracketsToEachInSequence(List sequence) {
@@ -140,6 +150,17 @@ public class Paginator {
 			String newLabel = o.toString();
 			rectoversoSequence.add(newLabel + "r");
 			rectoversoSequence.add(newLabel + "v");
+		}
+
+		sequence = rectoversoSequence;
+		return sequence;
+	}
+
+    private List addRectoVersoSuffixToEachInSequence(List sequence) {
+		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
+		for (Object o : sequence) {
+			String newLabel = o.toString();
+			rectoversoSequence.add(newLabel + "r " + newLabel + "v");
 		}
 
 		sequence = rectoversoSequence;

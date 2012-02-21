@@ -287,6 +287,59 @@ public class PaginatorTest {
         assertPagenumberSequence(paginator, new String[]{"[1]", "[1]", "[2]", "[2]"});
     }
 
+    @Test
+    public void rectoVersoPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ARABIC)
+                .setPaginationStartValue("1")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"1r 1v", "2r 2v", "3r 3v"});
+    }
+
+    @Test
+    public void fictitiousRectoVersoPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ARABIC)
+                .setPaginationStartValue("1")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[1]r [1]v", "[2]r [2]v", "[3]r [3]v"});
+    }
+
+    @Test
+    public void fictitiousRomanRectoVersoPagination() {
+        Paginator paginator = new Paginator()
+                .setPageSelection(new int[]{0})
+                .setPaginationType(Paginator.Type.ROMAN)
+                .setPaginationStartValue("XX")
+                .setPaginationScope(Paginator.Scope.FROMFIRST)
+                .setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION)
+                .setFictitious(true)
+                .setPagesToPaginate(new Metadatum[]{
+                        new MockMetadatum(),
+                        new MockMetadatum(),
+                        new MockMetadatum()
+                });
+        paginator.run();
+        assertPagenumberSequence(paginator, new String[]{"[XX]r [XX]v", "[XXI]r [XXI]v", "[XXII]r [XXII]v"});
+    }
+
     private void assertPagenumberSequence(Paginator paginator,
                                           String[] sequence) {
 
