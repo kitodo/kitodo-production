@@ -127,6 +127,7 @@ public class Metadaten {
 	private int paginierungAbSeiteOderMarkierung;
 	private String paginierungArt;
 	private int paginierungSeitenProImage = 1; // 1=normale Paginierung, 2=zwei
+    private boolean fictitious = false;
 	// Spalten auf einem Image,
 	// 3=nur jede zweite Seite hat
 	// Seitennummer
@@ -1315,6 +1316,7 @@ public class Metadaten {
                 .setPaginationScope(scope)
                 .setPaginationType(type)
                 .setPaginationMode(mode)
+                .setFictitious(fictitious)
                 .setPaginationStartValue(paginierungWert);
 			p.run();
 		} catch (IllegalArgumentException iae) {
@@ -2486,4 +2488,11 @@ public class Metadaten {
 		return true;
 	}
 
+    public boolean getFictitious() {
+        return fictitious;
+    }
+
+    public void setFictitious(boolean fictitious) {
+        this.fictitious = fictitious;
+    }
 }
