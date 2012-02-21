@@ -129,7 +129,7 @@ public class Paginator {
         List<Object> fictitiousSequence = new ArrayList<Object>(sequence.size());
         for (Object o : sequence) {
 			String newLabel = o.toString();
-			fictitiousSequence.add("[ " + newLabel + " ]");
+			fictitiousSequence.add("[" + newLabel + "]");
         }
 		return fictitiousSequence;
     }
