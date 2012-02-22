@@ -100,11 +100,6 @@ public class Parser {
 		// Name
 		String name = element.getAttributeValue(NAME);
 		property.setName(name);
-		// Position
-		// if (element.getAttribute(POSITION) != null) {
-		// property.setPosition(Integer.valueOf(element
-		// .getAttributeValue(POSITION)));
-		// }
 		// Required
 		if (element.getAttribute(REQUIRED) != null) {
 			property.setRequired(Boolean.valueOf(element.getAttributeValue(REQUIRED)));

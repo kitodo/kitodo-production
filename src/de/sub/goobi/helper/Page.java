@@ -44,7 +44,7 @@ import de.sub.goobi.forms.LoginForm;
  * @author Eric Broyles
  */
 @SuppressWarnings("unchecked")
-public class Page implements Serializable { //implements Iterator
+public class Page implements Serializable {
 	private static final long serialVersionUID = -290320409344472392L;
 	//TODO: Use generics
 	private List results;
@@ -53,43 +53,6 @@ public class Page implements Serializable { //implements Iterator
 	private int totalResults = 0;
 	private Criteria criteria;
 	private static final Logger logger = Logger.getLogger(Page.class);
-
-	/**
-	 * Construct a new Page. Page numbers are zero-based, so the first page is
-	 * page 0.
-	 * 
-	 * @param query
-	 *            the Hibernate Query
-	 * @param page
-	 *            the page number (zero-based)
-	 */
-	//TODO: REmove this unused constructor
-	/*
-	public Page(Query query, int page) {
-	   this.page = page;
-	   LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-	   if (login.getMyBenutzer() == null)
-	      this.pageSize = 10;
-	   else
-	      this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();
-
-	   try {
-	      scrollableResults = query.scroll();
-	      /*
-	       * We set the max results to one more than the specfied pageSize to
-	       * determine if any more results exist (i.e. if there is a next page
-	       * to display). The result set is trimmed down to just the pageSize
-	       * before being displayed later (in getList()).
-	       */
-	/*    
-	results = query.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
-	   } catch (HibernateException e) {
-	 	  //TODO use a logger.
-	      System.err.println("Failed to get paginated results: " + e.getMessage());
-	   }
-	}
-
-	
 
 	/**
 	 * Construct a new Page with a Criteria. Page numbers are zero-based, so the
@@ -119,17 +82,6 @@ public class Page implements Serializable { //implements Iterator
 				logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by PaginatingCriteria, if performance or memory is going down");
 				totalResults = criteria.list().size();
 			}
-			//    	     ScrollableResults scrollableResults = criteria.scroll();
-			//         scrollableResults.last();
-			//         totalResults = scrollableResults.getRowNumber() + 1;
-
-			/*
-			 * We set the max results to one more than the specfied pageSize to
-			 * determine if any more results exist (i.e. if there is a next page
-			 * to display). The result set is trimmed down to just the pageSize
-			 * before being displayed later (in getList()).
-			 */
-			//			results = criteria.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
 		} catch (HibernateException e) {
 			logger.error("Failed to get paginated results: " + e);
 		}
@@ -142,7 +94,6 @@ public class Page implements Serializable { //implements Iterator
 		 * We use the Math.floor() method because page numbers are zero-based
 		 * (i.e. the first page is page 0).
 		 */
-		//      double totalResults = new Integer(getTotalResults()).doubleValue();
 		int rueckgabe = new Double(Math.floor(totalResults / pageSize)).intValue();
 		if (totalResults % pageSize == 0)
 			rueckgabe--;
@@ -171,14 +122,6 @@ public class Page implements Serializable { //implements Iterator
 	
 
 	public int getTotalResults() {
-		//		try {
-		//			getScrollableResults().last();
-		//			totalResults = getScrollableResults().getRowNumber();
-		//		} catch (HibernateException e) {
-		//			System.err.println(
-		//									"Failed to get last row number from scollable results: "
-		//											+ e.getMessage());
-		//		}
 		return totalResults;
 	}
 
@@ -194,20 +137,6 @@ public class Page implements Serializable { //implements Iterator
 		int fullPage = getFirstResultNumber() + pageSize - 1;
 		return getTotalResults() < fullPage ? getTotalResults() : fullPage;
 	}
-
-	//   
-	//
-	//   public int getNextPageNumber() {
-	//      return page + 1;
-	//   }
-	//
-	//   
-	//
-	//   public int getPreviousPageNumber() {
-	//      return page - 1;
-	//   }
-
-	
 
 	//TODO: Use generics
 	public List getListReload() {
@@ -310,22 +239,5 @@ public class Page implements Serializable { //implements Iterator
 	public int getTxtMoveTo() {
 		return page + 1;
 	}
-
-	/*
-	
-	public boolean hasNext() {
-	   return hasNextPage();
-	}
-
-	public Object next() {
-	   this.page++;
-	   return this;
-	}
-
-	public void remove() {
-	throw new UnsupportedOperationException("Not implemented");
-	
-	}
-	*/
 
 }

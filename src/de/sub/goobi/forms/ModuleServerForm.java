@@ -88,7 +88,6 @@ public class ModuleServerForm {
 			} catch (XmlRpcException e) {
 				Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage() + "\n"
 						+ Helper.getStacktraceAsString(e));
-				// logger.error(e);
 			}
 		}
 		running = true;
@@ -163,21 +162,8 @@ public class ModuleServerForm {
 			Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
 			logger.error(e);
 		} catch (XmlRpcException e) {
-			// Helper.setFehlerMeldung("XmlRpcException: " + e.code + " ", e.getMessage());
-			// logger.error(e);
 		}
 	}
-
-	// /**
-	// * den Modulemanager durchlaufen und ein Module mit dem übergebenem Namen zurückgeben
-	// * ================================================================
-	// */
-	// public ModuleDesc getModuleByName(String inName) {
-	// for (ModuleDesc md : modulmanager)
-	// if (md.getName().equals(inName))
-	// return md;
-	// return null;
-	// }
 
 	/**
 	 * Module-Konfigurationen aus externer xml-Datei modules.xml einlesen ================================================================
@@ -268,7 +254,6 @@ public class ModuleServerForm {
 		GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, typeParameters);
 		HttpSession insession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-		// String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
 		String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
 		gmp1.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/AktuelleSchritteBearbeiten.jsf?jsessionId=" + insession.getId());
 		myModule.getGmps().add(gmp1); // add session in den Manager
@@ -289,10 +274,9 @@ public class ModuleServerForm {
 		String tempID = UniqueID.generate_session();
 		myRunningShortSessions.put(tempID, processId);
 		GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, null);
-		// gmp.put("return_url", "http://localhost:8081/Goobi/newpages/aktiveModule.jsf?sessionId="
-		// + tempID);
+
 		String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
-		// String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
+
 		gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
 		gmp.put("type", "PRODUCE");
 
@@ -300,12 +284,6 @@ public class ModuleServerForm {
 		Helper.setMeldung(myModule.getModuleClient().start(gmp));
 		Helper.setMeldung(gmp.toString());
 
-		/* und Shortsession wieder stoppen */
-		// modules.get(0).getModuleClient().stop(gmp1);
-		// shutdown
-		// try{
-		// modules.get(0).moduleClient.shutdown();
-		// }catch (XmlRpcException e){ }
 	}
 
 	/*

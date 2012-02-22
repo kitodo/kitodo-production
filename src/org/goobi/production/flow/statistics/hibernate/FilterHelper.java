@@ -402,7 +402,6 @@ class FilterHelper {
 	 ****************************************************************************/
 	protected static void filterScanTemplate(Conjunction con, String tok) {
 		/* Filtering by signature */
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 		con
 				.add(Restrictions.like("vorleig.wert", "%" + tok.substring(5)
 						+ "%"));
@@ -418,10 +417,9 @@ class FilterHelper {
 	 ****************************************************************************/
 	protected static void filterIds(Conjunction con, String tok) {
 		/* filtering by ids */
-		// Disjunction dis = Restrictions.disjunction();
+
 		List<Integer> listIds = new ArrayList<Integer>();
 		if (tok.substring(5).length() > 0) {
-			// tok.substring(5).split(" ")
 			String[] tempids = tok.substring(5).split(" ");
 			for (int i = 0; i < tempids.length; i++) {
 				int tempid = Integer.parseInt(tempids[i]);
@@ -664,9 +662,9 @@ class FilterHelper {
 		if (conjProcesses != null || flagSteps) {
 			if (!flagProcesses) {
 				critProcess = crit.createCriteria("prozess", "proc");
-				// crit.createAlias("proc.ProjekteID", "projID");
+
 				if (conjProcesses != null) {
-					// inCrit.add(conjProcesses);
+
 					critProcess.add(conjProcesses);
 				}
 			} else {
@@ -693,7 +691,7 @@ class FilterHelper {
 				crit.createCriteria("schritte", "steps");
 				crit.add(conjSteps);
 			} else {
-				//inCrit.createAlias("schritte", "steps");
+
 				inCrit.add(conjSteps);
 			}
 		}
@@ -836,8 +834,6 @@ class FilterHelper {
 
 		case name:
 			/* filter for a specific done step by it's name (Titel) */
-			// myObservable.setMessage("Filter 'stepDone:" + parameters
-			// + "' is not yet implemented and will be ignored!");
 			try {
 				FilterHelper.filterStepName(con, parameters, inStatus);
 			} catch (NullPointerException e) {

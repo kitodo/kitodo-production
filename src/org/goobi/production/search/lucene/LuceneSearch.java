@@ -63,13 +63,8 @@ public class LuceneSearch implements ISearch {
 	 */
 
 	private LuceneSearch() {
-		// analyser_path = ConfigMain.getParameter("analyser", "GermanAnalyser");
-		 index_path = ConfigMain.getParameter("index_path");
-		// if (analyser_path == "GermanAnalyser") {
-		// analyser = new GermanAnalyzer(luceneVersion);
-		// } else {
+		index_path = ConfigMain.getParameter("index_path");
 		analyser = new StandardAnalyzer(luceneVersion);
-		// }
 	}
 
 	/**
@@ -101,12 +96,8 @@ public class LuceneSearch implements ISearch {
 	 */
 
 	private ArrayList<Integer> search(String inQuery, ParametersData param) {
-		// inQuery = inQuery.toLowerCase();
+
 		String luceneQuery = "";
-		// Never forget: Strings are immutable
-		// inQuery = inQuery.trim();
-		// Don't use "isEmpty()", it's a feature of Java 1.6
-		// See http://java.sun.com/javase/6/docs/api/java/lang/String.html#isEmpty()
 
 		// Don't use Java 1.5, even sun says you shouldn't use 1.5 longer
 		if (inQuery.length() == 0) {
@@ -290,10 +281,6 @@ public class LuceneSearch implements ISearch {
 			if (hits != null && hits.totalHits > 0) {
 				for (int i = 0; i < hits.totalHits; i++) {
 					Document hitDoc = isearcher.doc(hits.scoreDocs[i].doc);
-//					Field[] fields = hitDoc.getFields("signatur");
-//					for (Field f : fields) {
-//						System.out.println("signatur: " + f.stringValue());
-//					}
 					myhits.add(Integer.parseInt(hitDoc.get("id")));
 				}
 			}

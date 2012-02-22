@@ -74,7 +74,7 @@ public class LuceneIndexJobIDVersion extends AbstractGoobiJob {
 		crit = crit.setProjection(proj);
 
 		List<Object> list = crit.list();
-		// session.
+
 		LuceneIndex li = LuceneIndex.initialize();
 
 		try {

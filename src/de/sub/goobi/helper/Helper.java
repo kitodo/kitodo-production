@@ -184,7 +184,7 @@ public class Helper implements Serializable, Observer {
 			}
 			return;
 		}
-//		ResourceBundle bundle = ResourceBundle.getBundle("messages.messages", context.getViewRoot().getLocale());
+
 		String msg = "";
 		String beschr = "";
 		try {
@@ -213,11 +213,6 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	// public static Object getManagedBean(String name) {
-	// FacesContext context = FacesContext.getCurrentInstance();
-	// Object obj = context.getApplication().getVariableResolver().resolveVariable(context, name);
-	// return obj;
-	// }
 	public static Object getManagedBeanValue(String expr) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context == null) {
@@ -228,17 +223,6 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static Session getHibernateSession() {
-		// TODO: Fix for Hibernate-Session-Management, replaced with older version here
-		// Session s;
-		// try {
-		// s = HibernateUtil.getSessionFactory().getCurrentSession();
-		// } catch (HibernateException e) {
-		// myLogger.info("cannot get session from context, generate a new session");
-		// // s = HibernateUtil.getSessionFactory().openSession();
-		// s=HibernateUtilOld.getSession();
-		// }
-		// return s;
-
 		// Fix for Hibernate-Session-Management, old version - START
 		Session sess;
 		try {
@@ -301,25 +285,6 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	/**
-	 * NOCH FEHLERHAFT enhanced call of script with error messages and return value of script, call it with special encoding
-	 * ================================================================
-	 */
-	// TODO: Remove this method
-	/*
-	 * public int callShell3(String command) throws IOException, InterruptedException { myLogger.debug("execute Shellcommand callShell3: " + command);
-	 * if (command == null || command.length() == 0) return 1;
-	 * 
-	 * StringTokenizer strtok = new StringTokenizer(command, " "); Process process = Runtime.getRuntime().exec(strtok.nextToken());
-	 * 
-	 * // set encoding BufferedWriter outCommand = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
-	 * outCommand.write(strtok.hasMoreTokens() ? strtok.nextToken() : ""); outCommand.flush();
-	 * 
-	 * Scanner scanner = new Scanner(process.getInputStream()); while (scanner.hasNextLine()) { String myLine = scanner.nextLine();
-	 * setMeldung(myLine); } scanner.close(); scanner = new Scanner(process.getErrorStream()); while (scanner.hasNextLine()) {
-	 * setFehlerMeldung(scanner.nextLine()); } scanner.close(); int rueckgabe = process.waitFor(); return rueckgabe; }
-	 */
-
 	// TODO: Move the Stuff below in a class for interaction with a local file system
 
 	public void createUserDirectory(String inDirPath, String inUser) throws IOException, InterruptedException {
@@ -371,7 +336,6 @@ public class Helper implements Serializable, Observer {
 
 	public static String getTranslation(String dbTitel) {
 		// running instance of ResourceBundle doesn't respond on user language changes, workaround by instanciating it every time
-		// SprachbundleLaden();
 
 		try {
 			if (localBundle != null) {
@@ -514,8 +478,7 @@ public class Helper implements Serializable, Observer {
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
-			// String suffix = ConfigMin.getParameter("ImageSuffix", "\\.[Tt][Ii][Ff][Ff]?");
-			// return name.matches(prefix + suffix);
+
 			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {

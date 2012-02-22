@@ -66,9 +66,6 @@ public class PdfGeneratorSample {
 		Result res = new SAXResult(fop.getDefaultHandler());
 		xslfoTransformer.transform(source, res);
 
-		// if you want to get the PDF bytes, use the following code
-		//return outStream.toByteArray();
-
 		// if you want to save PDF file use the following code
 		File pdffile = new File(rootpath +"target.pdf");
 		OutputStream out = new java.io.FileOutputStream(pdffile);
@@ -77,14 +74,6 @@ public class PdfGeneratorSample {
 		str.write(outStream.toByteArray());
 		str.close();
 		out.close();
-
-		// to write the content to out put stream
-		//					byte[] pdfBytes = outStream.toByteArray();
-		//					respon	se.setContentLength(pdfBytes.length);
-		//					response.setContentType("application/pdf");
-		//					response.addHeader("Content-Disposition", "attachment;filename=pdffile.pdf");
-		//					response.getOutputStream().write(pdfBytes);
-		//					response.getOutputStream().flush();
 
 	}
 

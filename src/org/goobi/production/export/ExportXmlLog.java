@@ -156,15 +156,12 @@ public class ExportXmlLog implements IProcessDataExport {
 			} else {
 				property.setAttribute("value", "");
 			}
-			// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
-			// Set<Locale> lang = labelMap.keySet();
-			// for (Locale l : lang) {
+
 			Element label = new Element("label", xmlns);
-			// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
-			// label.setText(labelMap.get(l));
+
 			label.setText(prop.getTitel());
 			property.addContent(label);
-			// }
+
 			processProperties.add(property);
 		}
 		if (processProperties.size() != 0) {
@@ -216,15 +213,11 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
+
 				stepProperties.add(property);
 			}
 			if (stepProperties.size() != 0) {
@@ -256,15 +249,11 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
+
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
 
 				templateProperties.add(property);
 				if (prop.getTitel().equals("Signatur")) {
@@ -307,15 +296,12 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>) prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang", l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
+
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
+
 				docProperties.add(property);
 			}
 			if (docProperties.size() != 0) {

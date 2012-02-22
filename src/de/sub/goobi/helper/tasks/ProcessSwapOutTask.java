@@ -160,7 +160,6 @@ public class ProcessSwapOutTask extends LongRunningTask {
       }
       setStatusMessage("done");
       setStatusProgress(100);
-      //Helper.getHibernateSession().close();
    }
 
 }

@@ -68,7 +68,7 @@ import de.sub.goobi.helper.enums.StepStatus;
  */
 public class LuceneIndex implements IIndexer {
 	private static final Logger logger = Logger.getLogger(LuceneIndex.class);
-	// Helper help = new Helper();
+
 	static RAMDirectory ramDir = null;
 	private static String index_path = "";
 	private static String analyser_path = "";
@@ -79,20 +79,14 @@ public class LuceneIndex implements IIndexer {
 	private static IndexWriter iwriter;
 	private Version luceneVersion = Version.LUCENE_29;
 	
-//	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-
 	/**
 	 * Constructor, reads configuration from main configuration file
 	 */
 
 	private LuceneIndex() {
-//		analyser_path = ConfigMain.getParameter("analyser", "GermanAnalyser");
+
 		index_path = ConfigMain.getParameter("index_path", new Helper().getGoobiDataDirectory());
-//		if (analyser_path == "GermanAnalyser") {
-//			analyser = new GermanAnalyzer(luceneVersion);
-//		} else {
-			analyser = new StandardAnalyzer(luceneVersion);
-//		}
+		analyser = new StandardAnalyzer(luceneVersion);
 	}
 
 	/**
@@ -137,7 +131,7 @@ public class LuceneIndex implements IIndexer {
 	private static Document getNewDocument(Prozess process) {
 
 		Document doc = new Document();
-		// if (!process.getProjekt().getTitel().contains("Altdaten")) {
+
 		// nessesary to remove filter
 		doc.add(new Field("all", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		// name information
@@ -233,28 +227,7 @@ public class LuceneIndex implements IIndexer {
 					}
 				}
 			}
-			// Metadata
-/*
-			try {
-				Fileformat ff = process.readMetadataFile();
-				if (ff != null) {
-					DigitalDocument dd = ff.getDigitalDocument();
-					if (dd != null) {
-						DocStruct topstruct = dd.getLogicalDocStruct();
-						if (topstruct != null) {
-							List<Field> meta = getMetaData(topstruct);
-							if (meta != null) {
-								for (Field e : meta) {
-									doc.add(e);
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				logger.error("no metadata found: " + e);
-			}
-	*/
+
 			try {
 				File f = new File(process.getImagesTifDirectory());
 				File[] filelist = f.listFiles();
@@ -328,7 +301,7 @@ public class LuceneIndex implements IIndexer {
 			doc.add(new Field(SearchEnums.ruleset.getLuceneTitle(), process.getRegelsatz().getTitel().toLowerCase(), Field.Store.YES,
 					Field.Index.NOT_ANALYZED));
 		}
-		// }
+
 		return doc;
 	}
 
@@ -372,13 +345,9 @@ public class LuceneIndex implements IIndexer {
 	public void addObject(Prozess process) {
 		if (ConfigMain.getBooleanParameter("useLucene")) {
 			try {
-				// IndexWriter iwriter = new IndexWriter(index_path, analyser,
-				// false, mfl);
 				iwriter.addDocument(getNewDocument(process));
-				// iwriter.close();
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("could not add process to index", e);
-				// logger.error(e);
 			}
 		}
 	}
@@ -391,10 +360,7 @@ public class LuceneIndex implements IIndexer {
 	public void removeObject(Prozess process) {
 		if (ConfigMain.getBooleanParameter("useLucene")) {
 			try {
-				// IndexWriter iwriter = new IndexWriter(index_path, analyser,
-				// false, mfl);
 				iwriter.deleteDocuments(new Term(SearchEnums.processId.getLuceneTitle(), String.valueOf(process.getId().intValue())));
-				// iwriter.close();
 			} catch (Exception e) {
 				// do nothing, process is not in index
 			}

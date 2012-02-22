@@ -18,14 +18,6 @@ public class ImportOpacTest {
          Prefs myPrefs = new Prefs();
          myPrefs.loadPrefs(args[0]);
          Fileformat myRdf = myImportOpac.OpacToDocStruct("7", "9783518456934", "SBB", myPrefs);
-//         if (myImportOpac.isMonograph())
-//            docType = "monograph";
-//         if (myImportOpac.isContainedWork())
-//            docType = "containedwork";
-//         if (myImportOpac.isPeriodical())
-//            docType = "periodical";
-//         if (myImportOpac.isMultivolume())
-//            docType = "multivolume";
 
          atstsl = myImportOpac.getAtstsl();
          System.out.println(atstsl);

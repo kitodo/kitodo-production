@@ -35,7 +35,6 @@ import org.hibernate.cfg.Configuration;
 public class HibernateSessionLong {
    private static final Logger mylogger = Logger.getLogger(HibernateSessionLong.class);
 
-   //	protected static ThreadLocal hibernateHolder = new ThreadLocal();
    protected static SessionFactory factory;
    private Session sess;
 

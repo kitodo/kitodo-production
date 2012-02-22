@@ -81,8 +81,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType) throws DocStructHasNoTypeException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
-		// inOldDocstruct.getType().getName()
-		// + " soll werden zu " + inNewType);
+
 		DocStructType dst = myPrefs.getDocStrctTypeByName(inNewType);
 		DocStruct newDocstruct = mydocument.createDocStruct(dst);
 
@@ -203,7 +202,6 @@ public class MetadatenHelper implements Comparator<Object> {
 		}
 
 		/* anschliessend die Childliste korrigieren */
-		// parent.addChild(myStrukturelement);
 		for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
 			parent.addChild(iter.next());
 		}
@@ -398,7 +396,7 @@ public class MetadatenHelper implements Comparator<Object> {
 					try {
 						if (mdt.getIsPerson()) {
 							Person p = new Person(mdt);
-							// p.setType(mdt);
+
 							p.setRole(mdt.getName());
 							inStruct.addPerson(p);
 						} else {
@@ -600,14 +598,6 @@ public class MetadatenHelper implements Comparator<Object> {
 			myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));
 		return myList;
 	}
-
-	// FilenameFilter filter = new FilenameFilter() {
-	// public boolean accept(File dir, String name) {
-	// String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
-	// String suffix = ConfigMain.getParameter("ImageSuffix", "\\.[Tt][Ii][Ff][Ff]?");
-	// return name.matches(prefix + suffix);
-	// }
-	// };
 
 	public int compare(Object o1, Object o2) {
 		String imageSorting = ConfigMain.getParameter("ImageSorting", "number");

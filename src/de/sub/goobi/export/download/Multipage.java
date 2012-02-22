@@ -62,23 +62,11 @@ public class Multipage {
    private static final Logger myLogger = Logger.getLogger(Multipage.class);
    Helper help = new Helper();
 
-   
-
-//   private static PlanarImage readAsPlanarImage(String filename) {
-//      return JAI.create("fileload", filename);
-//   }
-
-   
-
    private void create(Prozess inProzess) throws IOException, InterruptedException, SwapException, DAOException {
       /* alle tifs durchlaufen */
       String pfad = inProzess.getImagesDirectory();
       File dir = new File(pfad);
-//      FilenameFilter filter = new FilenameFilter() {
-//         public boolean accept(File dir, String name) {
-//            return name.endsWith(".tif");
-//         }
-//      };
+
       String[] dateien = dir.list(MetadatenImagesHelper.filter);
 
       /* keine Tifs vorhanden, also raus */
@@ -89,10 +77,8 @@ public class Multipage {
 
       /* alle Bilder in ein Array übernehmen */
       RenderedImage image[] = new PlanarImage[dateien.length];
-      //Vector<PlanarImage> vector = new Vector<PlanarImage>();
       for (int i = 0; i < dateien.length; i++) {
          myLogger.debug(pfad + dateien[i]);
-         //vector.add(JAI.create("fileload", pfad + dateien[i]));
          image[i] = JAI.create("fileload", pfad + dateien[i]);
       }
       myLogger.debug("Bilder durchlaufen");

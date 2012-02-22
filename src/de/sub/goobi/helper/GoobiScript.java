@@ -158,25 +158,6 @@ public class GoobiScript {
 			return;
 		}
 
-		// /* --------------------------------
-		// * Aufruf der richtigen Action-Methode über Reflektion
-		// * --------------------------------*/
-		// try {
-		// String trallala = (String) myParameters.get("action");
-		// Method method = this.getClass().getMethod(trallala, new Class[] { List.class });
-		// method.invoke(this, new Object[] { inProzesse });
-		// } catch (SecurityException e) {
-		// e.printStackTrace();
-		// } catch (NoSuchMethodException e) {
-		// e.printStackTrace();
-		// } catch (IllegalArgumentException e) {
-		// e.printStackTrace();
-		// } catch (IllegalAccessException e) {
-		// e.printStackTrace();
-		// } catch (InvocationTargetException e) {
-		// e.printStackTrace();
-		// }
-
 		Helper.setMeldung("goobiScriptfield", "", "GoobiScript beendet");
 	}
 
@@ -190,13 +171,6 @@ public class GoobiScript {
 			task.initialize(p);
 			LongRunningTaskManager.getInstance().addTask(task);
 
-			// try {
-			// ProcessSwapper ps = ProcessSwapper.getInstance();
-			// ps.swapOut(p);
-			// } catch (Exception e) {
-			// Helper.setFehlerMeldung("Fehler bei Auslagerung", e);
-			// break;
-			// }
 		}
 	}
 
@@ -210,13 +184,6 @@ public class GoobiScript {
 			task.initialize(p);
 			LongRunningTaskManager.getInstance().addTask(task);
 
-			// try {
-			// ProcessSwapper ps = ProcessSwapper.getInstance();
-			// ps.swapIn(p);
-			// } catch (Exception e) {
-			// Helper.setFehlerMeldung("Fehler bei Einlagerung", e);
-			// break;
-			// }
 		}
 	}
 

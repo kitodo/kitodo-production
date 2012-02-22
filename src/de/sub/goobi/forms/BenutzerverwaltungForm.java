@@ -79,10 +79,8 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String FilterKein() {
 		filter = null;
 		try {
-			//	HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (hideInactiveUsers)
@@ -107,10 +105,8 @@ public class BenutzerverwaltungForm extends BasisForm {
 	 */
 	public String FilterAlleStart() {
 		try {
-			//	HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (hideInactiveUsers)
@@ -125,7 +121,6 @@ public class BenutzerverwaltungForm extends BasisForm {
 			crit.addOrder(Order.asc("nachname"));
 			crit.addOrder(Order.asc("vorname"));
 			page = new Page(crit, 0);
-			//calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";

@@ -183,7 +183,6 @@ public class LoginForm {
 			if (!passwortAendernNeu1.equals(passwortAendernNeu2)) {
 				Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
 			} else {
-				// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
 				try {
 					/* wenn alles korrekt, dann jetzt speichern */
 					Ldap myLdap = new Ldap();

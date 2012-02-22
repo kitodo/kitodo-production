@@ -57,7 +57,6 @@ public class TreeNode {
 
    public List<TreeNode> getChildrenAsList() {
       List<TreeNode> myList = new ArrayList<TreeNode>();
-//            getChildrenAsList(myList, 0,new ArrayList(),false);
       getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<TreeNode>());
       return myList;
    }

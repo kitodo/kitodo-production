@@ -245,20 +245,12 @@ public class HistoryJob implements Job {
 
 			case OPEN:
 
-				// fix set start date - decision is that reopened (and therfore with timestamp for begin) shouldn't be reset
-				/*				if (step.getBearbeitungsbeginn() != null) {
-									step.setBearbeitungsbeginn(null);
-									isDirty = true;
-								}
-				*/
-
 				// fix missing editing date 
 				if (step.getBearbeitungszeitpunkt() == null) {
 					isDirty = true;
 					if (step.getBearbeitungsende() != null) {
 						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
 					} else {
-						//step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
 						step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
 					}
 				}
@@ -434,20 +426,9 @@ public class HistoryJob implements Job {
 							session.connection().commit();
 							session.clear();
 						}
-						// } catch (IOException e) {
-						// logger.error("IOException occured while scheduled storage calculation",
-						// e);
-						// } catch (InterruptedException e) {
-						// logger.error("InterruptedException occured while scheduled storage calculation",
-						// e);
-						// } catch (SwapException e) {
-						// logger.error("SwapException occured while scheduled storage calculation",
-						// e);
+
 					} catch (HibernateException e) {
 						logger.error("HibernateException occured while scheduled storage calculation", e);
-						// } catch (SQLException e) {
-						// logger.error("SQLException occured while scheduled storage calculation",
-						// e);
 					} catch (Exception e) {
 						new Helper().setFehlerMeldung("An error occured while scheduled storage calculation", e);
 						logger.error("ServletException occured while scheduled storage calculation", e);
@@ -458,7 +439,7 @@ public class HistoryJob implements Job {
 				logger.error("Another Exception occured while scheduled storage calculation", e);
 			}
 			historyJob.setIsRunning(false);
-			// session.close();
+
 			logger.info("end history updating for all processes");
 		}
 	}

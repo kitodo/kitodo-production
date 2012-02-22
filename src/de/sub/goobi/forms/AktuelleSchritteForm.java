@@ -146,18 +146,10 @@ public class AktuelleSchritteForm extends BasisForm {
 				myFilteredDataSource.setFilter(filter);
 			}
 
-			// // HibernateUtil.clearSession();
-			// myFilteredDataSource = new UserDefinedStepFilter();
-			// myFilteredDataSource.getObservable().addObserver(Helper.createObserver());
-			//
-			// ((UserDefinedStepFilter) myFilteredDataSource).setFilterModes(nurOffeneSchritte, nurEigeneSchritte);
-			// myFilteredDataSource.setFilter(filter);
-
 			Criteria crit = myFilteredDataSource.getCriteria();
 
 			sortList(crit);
 			page = new Page(crit, 0);
-			// calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("error on reading database", he.getMessage());
 			return "";
@@ -246,7 +238,6 @@ public class AktuelleSchritteForm extends BasisForm {
 					if (mySchritt.isTypImagesLesen() || mySchritt.isTypImagesSchreiben())
 						DownloadToHome();
 				}
-				// calcHomeImages();
 			} else {
 				Helper.setFehlerMeldung("stepInWorkError");
 				return "";
@@ -288,7 +279,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			new ProzessDAO().save(mySchritt.getProzess());
 		} catch (DAOException e) {
 		}
-		// calcHomeImages();
 		return "AktuelleSchritteAlle";
 	}
 
@@ -404,9 +394,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			SchrittDAO dao = new SchrittDAO();
 			Schritt temp = dao.get(myProblemID);
 			temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-			// if (temp.getPrioritaet().intValue() == 0)
 			temp.setCorrectionStep();
 			temp.setBearbeitungsende(null);
+
 			Schritteigenschaft se = new Schritteigenschaft();
 			se.setTitel("Korrektur notwendig");
 			se.setWert(problemMessage);
@@ -425,9 +415,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 				Schritt step = (Schritt) iter.next();
 				step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-				// if (step.getPrioritaet().intValue() == 0)
 				step.setCorrectionStep();
 				step.setBearbeitungsende(null);
+
 				Schritteigenschaft seg = new Schritteigenschaft();
 				seg.setTitel("Korrektur notwendig");
 				seg.setWert(Messages.getString("KorrekturFuer") + temp.getTitel() + ": " + problemMessage);
@@ -487,7 +477,6 @@ public class AktuelleSchritteForm extends BasisForm {
 					step.setBearbeitungsstatusEnum(StepStatus.OPEN);
 					step.setCorrectionStep();
 					step.setBearbeitungsende(null);
-					// step.setBearbeitungsbeginn(null);
 					step.setBearbeitungszeitpunkt(now);
 				}
 				Schritteigenschaft seg = new Schritteigenschaft();
@@ -587,7 +576,6 @@ public class AktuelleSchritteForm extends BasisForm {
 				myDav.DownloadToHome(proz, step.getId().intValue(), false);
 			}
 		}
-		// calcHomeImages();
 		Helper.setMeldung(null, "Created directies in user home", "");
 		return "";
 	}
@@ -611,7 +599,6 @@ public class AktuelleSchritteForm extends BasisForm {
 				myDav.DownloadToHome(proz, step.getId().intValue(), false);
 			}
 		}
-		// calcHomeImages();
 		Helper.setMeldung(null, "Created directories in user home", "");
 		return "";
 	}
@@ -670,7 +657,6 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public int getHomeBaende() {
-		// return myDav.getAnzahlBaende("");
 		return 0;
 	}
 
@@ -693,7 +679,6 @@ public class AktuelleSchritteForm extends BasisForm {
 				Schritt step = (Schritt) iter.next();
 				try {
 					if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
-						// gesamtAnzahlImages += myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
 						// TODO: Remove hard coded extension
 						gesamtAnzahlImages += FileUtils.getNumberOfFiles(step.getProzess().getImagesOrigDirectory());
 					}
@@ -701,19 +686,6 @@ public class AktuelleSchritteForm extends BasisForm {
 					myLogger.error(e);
 				}
 			}
-
-			// for (Iterator iter = page.getList().iterator(); iter.hasNext();) {
-			// Schritt step = (Schritt) iter.next();
-			// try {
-			// if (step.getBearbeitungsstatus().intValue() == 1)
-			// pageAnzahlImages += myDav.getAnzahlImages(step.getProzess().getOrigPfad());
-			// } catch (IOException e) {
-			// myLogger.error(e);
-			// } catch (InterruptedException e) {
-			// myLogger.error(e);
-
-			// }
-			// }
 		}
 	}
 
@@ -857,11 +829,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		tiff.ExportStart();
 	}
 
-	/*
-	 * public void DownloadRusExport() throws IOException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException,
-	 * WriteException { RusslandExport rus = new RusslandExport(mySchritt.getProzess()); rus.ExportStart(); }
-	 */
-
 	public void ExportDMS() {
 		ExportDms export = new ExportDms();
 		try {
@@ -911,10 +878,5 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	public void setWikiField(String inString) {
 		mySchritt.getProzess().setWikifield(inString);
-		// try {
-		// new ProzessDAO().save(mySchritt.getProzess());
-		// } catch (DAOException e) {
-		// myLogger.error(e);
-		// }
 	}
 }

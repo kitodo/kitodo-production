@@ -42,7 +42,7 @@ import de.sub.goobi.beans.Benutzer;
  * @version 1.00 - 16.01.2005
  */
 public class SessionForm {
-   //   private static final Logger logger = Logger.getLogger(SessionForm.class);
+
    private int sessionZeit = 3600 * 2; // 2 Stunden
    @SuppressWarnings("unchecked")
 private List alleSessions = new ArrayList();
@@ -80,7 +80,7 @@ private List alleSessions = new ArrayList();
 
    @SuppressWarnings("unchecked")
 private void sessionAdd(HttpSession insession) {
-      //      logger.debug("sessionAdd-start");
+
       insession.setMaxInactiveInterval(sessionZeit);
       
       //TODO: Remove this, it's ugly and evil.
@@ -117,7 +117,7 @@ private void sessionAdd(HttpSession insession) {
             map.put("browserIcon", "netscape.gif");
       }
       alleSessions.add(map);
-      //      logger.debug("sessionAdd-ende");
+
    }
 
    
@@ -128,7 +128,7 @@ private void sessionsAufraeumen() {
       for (Iterator iter = temp.iterator(); iter.hasNext();) {
          HashMap map = (HashMap) iter.next();
          long differenz = System.currentTimeMillis() - ((Long) map.get("last2")).longValue();
-         //         logger.debug(element.get("last2") + ": " + String.valueOf(differenz / 1000));
+
          if (differenz / 1000 > sessionZeit || map.get("address") == null || (map.get("user").equals("- ausgeloggt - ")) ){
             alleSessions.remove(map);
          }
@@ -139,7 +139,7 @@ private void sessionsAufraeumen() {
 
    @SuppressWarnings("unchecked")
 public void sessionAktualisieren(HttpSession insession) {
-      //      logger.debug("sessionAktualisieren-start");
+
       boolean gefunden = false;
       aktuelleZeit = formatter.format(new Date());
       for (Iterator iter = alleSessions.iterator(); iter.hasNext();) {
@@ -154,14 +154,14 @@ public void sessionAktualisieren(HttpSession insession) {
       if (!gefunden)
          sessionAdd(insession);
       sessionsAufraeumen();
-      //      logger.debug("sessionAktualisieren-ende");
+
    }
 
    
 
    @SuppressWarnings("unchecked")
 public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
-      //      logger.debug("sessionBenutzerAktualisieren-start");
+
       for (Iterator iter = alleSessions.iterator(); iter.hasNext();) {
          HashMap map = (HashMap) iter.next();
          if (map.get("id").equals(insession.getId())) {
@@ -177,7 +177,7 @@ public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenut
             break;
          }
       }
-      //      logger.debug("sessionBenutzerAktualisieren-ende");
+
    }
 
    

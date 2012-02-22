@@ -76,7 +76,6 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 		proList.add(Projections.property("bearbeitungsstatus"));
 		proList.add(Projections.sum("proc.sortHelperImages"));
 		proList.add(Projections.count("id"));
-//		proList.add(Projections.groupProperty(("reihenfolge")));
 		
 		proList.add(Projections.groupProperty(("titel")));
 		proList.add(Projections.groupProperty(("bearbeitungsstatus")));

@@ -51,9 +51,6 @@ public class UserTemplatesFilter implements IEvaluableFilter {
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 		FilterHelper.criteriaBuilder(null, crit, true, null, null, null);
 
-		// FilterHelper.limitToUserAccessRights(crit);
-		// crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
-
 		return crit;
 	}
 

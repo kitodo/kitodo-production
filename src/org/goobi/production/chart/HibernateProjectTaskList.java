@@ -60,7 +60,6 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 			count++;
 			Schritt step = (Schritt) list.get(0);
 			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
-			//			shorttitle += " (" + step.getReihenfolge() + ")";
 
 			IProjectTask pt = null;
 			for (IProjectTask task : myTaskList) {
@@ -88,12 +87,6 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 				pt.setStepsMax(pt.getStepsMax() + 1);
 			}
 			
-			/*if (count % 20 == 0) {
-				//flush a batch of updates and release memory:
-				session.flush();
-				session.clear();
-			}*/
-
 		}
 	}
 

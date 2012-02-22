@@ -62,10 +62,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 	 * @throws JDOMException
 	 ***************************************************************************/
 	public static XMLBasedPropertyTemplateProvider getInstance(IGoobiEntity inEntity) throws JDOMException, IOException {
-//		if (instance == null) {
-		
-			instance = new XMLBasedPropertyTemplateProvider(inEntity);
-//		}
+		instance = new XMLBasedPropertyTemplateProvider(inEntity);
 
 		return instance;
 	}
@@ -94,7 +91,7 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 		List<PropertyTemplate> tempList = filterPropertyList(status);
 		List<PropertyTemplate> returnList = new ArrayList<PropertyTemplate>();
 		for (PropertyTemplate pt : tempList) {
-//			pt.setOwningEntity(inEntity);
+
 			PropertyTemplate bla = new PropertyTemplate(inEntity, pt.getName());
 			bla.setAuswahl(pt.getAuswahl());
 			bla.setCreationDate(pt.getCreationDate());
@@ -113,9 +110,6 @@ public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvi
 		
 		sortPropertyList();
 
-		// ArrayList<IPropertyTemplate> returnList = new ArrayList<IPropertyTemplate>();
-		//
-		// returnList.addAll(tempList);
 		return returnList;
 
 	}

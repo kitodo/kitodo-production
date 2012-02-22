@@ -323,17 +323,6 @@ public class DisplayPropertyList {
 		return containers;
 	}
 
-	// public List<PropertyTemplate> getPropertiesForContainer() {
-	// List<PropertyTemplate> pl = getPropertyTemplatesAsList();
-	// List<PropertyTemplate> answer = new ArrayList<PropertyTemplate>();
-	// for (PropertyTemplate pt : pl) {
-	// if (pt.getContainer() == currentContainer) {
-	// answer.add(pt);
-	// }
-	// }
-	// return answer;
-	// }
-
 	public List<PropertyTemplate> getSortedProperties() {
 		List<PropertyTemplate> answer = getPropertyTemplatesAsList();
 		Comparator<PropertyTemplate> comp = new CompareProps();

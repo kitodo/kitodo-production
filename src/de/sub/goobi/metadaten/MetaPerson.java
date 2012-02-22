@@ -53,7 +53,7 @@ public class MetaPerson {
     * Allgemeiner Konstruktor ()
     */
    public MetaPerson(Person p, int inID, Prefs inPrefs, DocStruct inStruct) {
-      //      myLogger.debug("MetaPerson p() - Konstruktor: Start -" + inID);
+
       myPrefs = inPrefs;
       this.p = p;
       identifier = inID;

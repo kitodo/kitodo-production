@@ -102,7 +102,6 @@ public class ImportZentralblatt {
 		 * -------------------------------- alle Zeilen durchlaufen --------------------------------
 		 */
 		while ((line = reader.readLine()) != null) {
-			// myLogger.debug(line);
 
 			/*
 			 * -------------------------------- wenn die Zeile leer ist, ist es das Ende eines Absatzes --------------------------------
@@ -122,7 +121,7 @@ public class ImportZentralblatt {
 					DocStructType dstLocal = myPrefs.getDocStrctTypeByName("Article");
 					DocStruct ds = dd.createDocStruct(dstLocal);
 					listArtikel.add(ds);
-					// myLogger.debug("---------------          neuer Artikel          ----------------");
+
 					istAbsatz = true;
 					istErsterTitel = true;
 				}
@@ -175,7 +174,6 @@ public class ImportZentralblatt {
 		/*
 		 * -------------------------------- jetzt die Gesamtstruktur bauen und in xml schreiben --------------------------------
 		 */
-		// DigitalDocument dd = new DigitalDocument();
 		dd.setLogicalDocStruct(dsPeriodical);
 		dd.setPhysicalDocStruct(dsBoundBook);
 		try {
@@ -244,9 +242,9 @@ public class ImportZentralblatt {
 		List<DocStruct> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
 		if (myList != null && myList.size() != 0) {
 			for (DocStruct dsIntern : myList) {
-				// myLogger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
+
 				Metadata myMD1 = dsIntern.getAllMetadataByType(mdt).get(0);
-				// myLogger.debug("und der Wert ist: " + myMD1.getValue());
+
 				if (myMD1.getValue().equals(myRight))
 					dsPeriodicalIssue = dsIntern;
 			}
@@ -256,7 +254,7 @@ public class ImportZentralblatt {
 			dst = myPrefs.getDocStrctTypeByName("PeriodicalIssue");
 			dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
 			Metadata myMD = new Metadata(mdt);
-			// myMD.setType(mdt);
+
 			myMD.setValue(myRight);
 			dsPeriodicalIssue.addMetadata(myMD);
 			dsPeriodicalVolume.addChild(dsPeriodicalIssue);
@@ -275,16 +273,8 @@ public class ImportZentralblatt {
 	private void ParsenAllgemein(DocStruct inStruct, String myLeft, String myRight) throws WrongImportFileException,
 			TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
 
-		// myLogger.debug(myLeft);
-		// myLogger.debug(myRight);
-		// myLogger.debug("---");
 		Metadata md;
 		MetadataType mdt;
-
-		// J: Zeitschrift
-		// V: Band
-		// I: Heft
-		// Y: Jahrgang
 
 		/*
 		 * -------------------------------- Zeitschriftenname --------------------------------
@@ -295,7 +285,7 @@ public class ImportZentralblatt {
 			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
 			if (myList.size() == 0) {
 				md = new Metadata(mdt);
-				// md.setType(mdt);
+
 				md.setValue(myRight);
 				inStruct.addMetadata(md);
 			} else {
@@ -318,7 +308,7 @@ public class ImportZentralblatt {
 			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
 			if (myList.size() == 0) {
 				md = new Metadata(mdt);
-				// md.setType(mdt);
+
 				md.setValue(myRight);
 				inStruct.addMetadata(md);
 			} else {
@@ -326,13 +316,6 @@ public class ImportZentralblatt {
 				/* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
 				md = myList.get(0);
 
-				/*
-				 * -------------------------------- da Frau Jansch ständig Importprobleme mit jahrübergreifenden Bänden hat, jetzt mal auskommentiert
-				 * --------------------------------
-				 */
-				// if (!myRight.equals(md.getValue()))
-				// throw new WrongImportFileException("Parsingfehler: verschiedene Jahresangaben in der Datei ('"
-				// + md.getValue() + "' & '" + myRight + "')");
 			}
 			return;
 		}
@@ -370,23 +353,9 @@ public class ImportZentralblatt {
 	 */
 	private void ParsenArtikel(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel) throws MetadataTypeNotAllowedException,
 			WrongImportFileException {
-		// myLogger.debug(myLeft);
-		// myLogger.debug(myRight);
-		// myLogger.debug("---");
+
 		Metadata md;
 		MetadataType mdt;
-
-		// J: Zeitschrift
-		// V: Band
-		// I: Heft
-		// Y: Jahrgang
-		// SO: Quelle (fuer uns intern)
-		// AR: Author (Referenz)
-		// BR: Biographische Referenz
-		// AB: Abstract-Review
-		// DE: Vorlaeufige AN-Nummer (eher fuer uns intern)
-		// SI: Quellenangabe für Rezension im Zentralblatt
-		//		
 
 		/*
 		 * -------------------------------- erledigt

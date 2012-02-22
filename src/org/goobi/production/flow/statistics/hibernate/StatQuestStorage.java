@@ -121,7 +121,6 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 				//setting row name with date/time extraction based on the group
 
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
-				//dataRow.setName(new converter(objArr[2]).getString());
 
 				dataRow.addValue(Helper.getTranslation("storageDifference"),
 						(new Converter(objArr[0]).getGB()));
@@ -163,7 +162,6 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	public Boolean isRendererInverted(IRenderer inRenderer) {
-		//		return false;
 		return inRenderer instanceof ChartRenderer;
 	}
 

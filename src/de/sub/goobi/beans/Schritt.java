@@ -52,7 +52,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private Date bearbeitungsende;
 	private Integer editType;
 	private Benutzer bearbeitungsbenutzer;
-	//   private Integer typ;
 	private short homeverzeichnisNutzen;
 
 	private boolean typMetadaten = false;
@@ -313,14 +312,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 	public void setTitel(String titel) {
 		this.titel = titel;
 	}
-
-	//   public Integer getTyp() {
-	//      return typ;
-	//   }
-	//
-	//   public void setTyp(Integer typ) {
-	//      this.typ = typ;
-	//   }
 
 	public boolean isPanelAusgeklappt() {
 		return panelAusgeklappt;

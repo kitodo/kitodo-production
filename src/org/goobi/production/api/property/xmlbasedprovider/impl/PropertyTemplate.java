@@ -65,8 +65,6 @@ public class PropertyTemplate {
 	private IGoobiEntity owningEntity;
 	private boolean isUsed = false;
 
-	// private Integer container;
-
 	public PropertyTemplate(IGoobiEntity inEntity) {
 		this.owningEntity = inEntity;
 	}
@@ -105,12 +103,8 @@ public class PropertyTemplate {
 	 */
 	private void initPropery() {
 		if (this.maskedProp == null) {
-//			if (owningEntity != null) {
-				this.maskedProp = generateProperty(owningEntity, name);
-				maskedProp.setWert(selectedValue);
-				// } else {
-				// logger.error("scheiße");
-//			}
+			this.maskedProp = generateProperty(owningEntity, name);
+			maskedProp.setWert(selectedValue);
 		}
 	}
 
@@ -306,14 +300,8 @@ public class PropertyTemplate {
 	 */
 	private void addProperty(IGoobiProperty inProp) {
 		this.maskedProp = inProp;
-		// this.value = inProp.getWert();
-		this.selectedValue = inProp.getWert();
-		// this.setType(inProp.getType());
-		// this.required = inProp.isIstObligatorisch();
-		// if (this.getType() == null) {
-		// this.setType(PropertyType.SpecialView);
-		// }
 
+		this.selectedValue = inProp.getWert();
 	}
 
 	/*
@@ -333,7 +321,7 @@ public class PropertyTemplate {
 				// setting the value should be done before setting myProp
 				// because setter triggers a synchronization
 				addProperty(hgp);
-				// logger.debug("name: " + hgp.getName() + " value: " + hgp.getValue() + " type: " + hgp.getType());
+
 				return true;
 			}
 			return false;
@@ -585,7 +573,7 @@ public class PropertyTemplate {
 	 */
 	public void setContainer(int container) {
 		initPropery();
-		// this.container = container;
+
 		maskedProp.setContainer(container);
 	}
 
@@ -594,9 +582,6 @@ public class PropertyTemplate {
 	 */
 	public int getContainer() {
 		initPropery();
-		// if (container == null) {
-		// return 0;
-		// }
 		return maskedProp.getContainer();
 	}
 

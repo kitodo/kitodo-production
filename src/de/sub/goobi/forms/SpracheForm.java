@@ -42,7 +42,7 @@ public class SpracheForm {
 		   locale = (Locale) FacesContext.getCurrentInstance().getApplication().getSupportedLocales().next();
 		   break;
 	   }
-//      locale = Locale.GERMANY;
+
       FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
       Helper.loadLanguageBundle();
    }
@@ -55,7 +55,7 @@ public class SpracheForm {
     * @return Navigationsanweisung "null" als String - daher ein Reload der gleichen Seite mit neuer Sprache
     */
    public String SpracheUmschalten() {
-//      Helper help = new Helper();
+
       String aktuelleSprache = Helper.getRequestParameter("locale");
 
       if ("en".equals(aktuelleSprache))

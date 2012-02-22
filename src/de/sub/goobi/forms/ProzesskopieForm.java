@@ -240,7 +240,7 @@ public class ProzesskopieForm {
 
 	public List<SelectItem> getProzessTemplates() throws DAOException {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
-		// HibernateUtil.clearSession();
+
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -297,7 +297,6 @@ public class ProzesskopieForm {
 				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
-			// myLogger.error(e);
 		}
 		return "";
 	}
@@ -311,7 +310,6 @@ public class ProzesskopieForm {
 	 */
 	private void fillFieldsFromMetadataFile() throws PreferencesException {
 		if (myRdf != null) {
-			// UghHelper ughHelp = new UghHelper();
 
 			for (AdditionalField field : additionalFields) {
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
@@ -451,7 +449,6 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " Process title is empty");
 		}
 
-		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
@@ -954,7 +951,6 @@ public class ProzesskopieForm {
 				List<Element> projektnamen = projekt.getChildren("name");
 				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 					Element projektname = (Element) iterator.next();
-					// " - soll sein: " + prozessKopie.getProjekt().getTitel());
 
 					/*
 					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
@@ -1214,16 +1210,7 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		// if (docType.equals("monograph"))
-		// tif_definition = cp.getParamString("tifheader.monograph");
-		// if (docType.equals("containedwork"))
-		// tif_definition = cp.getParamString("tifheader.containedwork");
-		// if (docType.equals("multivolume"))
-		// tif_definition = cp.getParamString("tifheader.multivolume");
-		// if (docType.equals("periodical"))
-		// tif_definition = cp.getParamString("tifheader.periodical");
-		// if (docType.equals("volume"))
-		// tif_definition = cp.getParamString("tifheader.volume");
+
 		tif_definition = cp.getParamString("tifheader." + docType, "intranda");
 
 		/*
@@ -1235,35 +1222,23 @@ public class ProzesskopieForm {
 		/*
 		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
 		 */
-		// if (tifHeader_documentname.equals(""))
 		tifHeader_documentname = prozessKopie.getTitel();
 		tifHeader_imagedescription = "";
 		/*
 		 * -------------------------------- Imagedescription --------------------------------
 		 */
-		// if (tifHeader_imagedescription.equals("")) {
+
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
 		String title = "";
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
 			/*
-			 * wenn der String mit ' anf�ngt und mit ' endet, dann den Inhalt so übernehmen
+			 * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2)
 				tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			else if (myString.equals("$Doctype")) {
-				/* wenn der Doctype angegeben werden soll */
-				// if (docType.equals("monograph"))
-				// tifHeader_imagedescription += "Monographie";
-				// if (docType.equals("volume"))
-				// tifHeader_imagedescription += "Volume";
-				// if (docType.equals("containedwork"))
-				// tifHeader_imagedescription += "ContainedWork";
-				// if (docType.equals("multivolume"))
-				// tifHeader_imagedescription += "Band_MultivolumeWork";
-				// if (docType.equals("periodical"))
-				// tifHeader_imagedescription += "Band_Zeitschrift";
 				tifHeader_imagedescription += co.getDoctypeByName(docType).getTifHeaderType();
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
@@ -1302,31 +1277,6 @@ public class ProzesskopieForm {
 
 	public String downloadDocket() {
 		return	prozessKopie.downloadDocket();
-//		myLogger.debug("generate run note for process " + prozessKopie.getId());
-//		String rootpath = ConfigMain.getParameter("xsltFolder");
-//		File xsltfile = new File(rootpath, "docket.xsl");
-//		FacesContext facesContext = FacesContext.getCurrentInstance();
-//		if (!facesContext.getResponseComplete()) {
-//			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-//			String fileName = "docket.pdf";
-//			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-//			String contentType = servletContext.getMimeType(fileName);
-//			response.setContentType(contentType);
-//			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-//
-//			// write run note to servlet output stream
-//			try {
-//				ServletOutputStream out = response.getOutputStream();
-//				ExportDocket ern = new ExportDocket();
-//				ern.startExport(prozessKopie, out, xsltfile.getAbsolutePath());
-//				out.flush();
-//			} catch (IOException e) {
-//				myLogger.error("IOException while exporting run note", e);
-//			}
-//
-//			facesContext.responseComplete();
-//		}
-//		return "";
 	}
 
 	/**

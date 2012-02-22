@@ -306,7 +306,6 @@ public class ProzessverwaltungForm extends BasisForm {
 				myFilteredDataSource = new LuceneFilter(filter.substring("lucene".length()));
 			} else {
 				myFilteredDataSource = new UserDefinedFilter(filter);
-				// myFilteredDataSource = new UserProjectFilter(14);
 			}
 
 			// set observable to replace helper.setMessage
@@ -314,13 +313,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
 			// // calling the criteria as the result of the filter
 			Criteria crit = myFilteredDataSource.getCriteria();
-			// myFilteredDataSource = new UserDefinedFilter(getFilter());
-			// // set observable to replace helper.setMessage
-			// myFilteredDataSource.getObservable().addObserver(
-			// new Helper().createObserver());
-			//
-			// // calling the criteria as the result of the filter
-			// Criteria crit = myFilteredDataSource.getCriteria();
 
 			// first manipulation of the created criteria
 
@@ -334,10 +326,6 @@ public class ProzessverwaltungForm extends BasisForm {
 			/* noch sortieren */
 			sortList(crit);
 
-			/* Debugging */
-			// for (Iterator it = crit.list().iterator(); it.hasNext();) {
-			// Prozess p = (Prozess) it.next();
-			// }
 			page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
@@ -591,9 +579,6 @@ public class ProzessverwaltungForm extends BasisForm {
 			export.startExport(myProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("An error occured while trying to export METS file for: " + myProzess.getTitel(), e);
-			// Helper.setFehlerMeldung(
-			// "An error occured while trying to export METS file for: "
-			// + myProzess.getTitel(), e);
 			logger.error("ExportMETS error", e);
 		}
 	}
@@ -802,7 +787,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void stepStatusDown(Prozess proz) throws DAOException {
-		// debug("proz.getSchritteList: ", proz.getSchritteList());
 
 		List<Schritt> tempList = new ArrayList<Schritt>(proz.getSchritteList());
 		debug("templist: ", tempList);
@@ -811,9 +795,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		debug("reverse: ", tempList);
 
 		for (Schritt step : tempList) {
-			// logger.warn(step.getTitel());
 			if (proz.getSchritteList().get(0) != step && step.getBearbeitungsstatusEnum() != StepStatus.LOCKED) {
-				// logger.error("passt: " + step.getTitel() + "   " + step.getReihenfolge());
 				step.setEditTypeEnum(StepEditType.ADMIN);
 				HelperSchritte.updateEditing(step);
 				step.setBearbeitungsstatusDown();
@@ -921,7 +903,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMySchrittReload(Schritt mySchritt) {
-		// Helper.getHibernateSession();
 		this.mySchritt = mySchritt;
 	}
 
@@ -930,7 +911,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		// Helper.getHibernateSession();
 		this.mySchrittEigenschaft = mySchrittEigenschaft;
 	}
 
@@ -943,7 +923,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyVorlageReload(Vorlage myVorlage) {
-		// Helper.getHibernateSession();
 		this.myVorlage = myVorlage;
 	}
 
@@ -952,7 +931,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyVorlageEigenschaft(Vorlageeigenschaft myVorlageEigenschaft) {
-		// Helper.getHibernateSession();
 		this.myVorlageEigenschaft = myVorlageEigenschaft;
 	}
 
@@ -965,7 +943,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyWerkstueckReload(Werkstueck myWerkstueck) {
-		// Helper.getHibernateSession();
 		this.myWerkstueck = myWerkstueck;
 	}
 
@@ -974,7 +951,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyWerkstueckEigenschaft(Werkstueckeigenschaft myWerkstueckEigenschaft) {
-		// Helper.getHibernateSession();
 		this.myWerkstueckEigenschaft = myWerkstueckEigenschaft;
 	}
 
@@ -1265,9 +1241,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * @author Wulf
 	 */
 	public String getResetStatistic() {
-		// if (!showStatistics) {
-		// statisticsManager = null;
-		// }
 		showStatistics = false;
 		return "";
 	}

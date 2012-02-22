@@ -36,9 +36,6 @@ public class ProjektDAO extends BaseDAO {
 
 	public Projekt save(Projekt t) throws DAOException {
 		storeObj(t);
-//		for (Prozess p : t.getProzesse()) {
-//			LuceneIndex.updateProcess(p);
-//		}
 		return (Projekt) retrieveObj(Projekt.class, t.getId());
 	}
 
@@ -51,19 +48,12 @@ public class ProjektDAO extends BaseDAO {
 
 	public void remove(Projekt t) throws DAOException {
 		if (t.getId() != null) {
-//			for (Prozess p : t.getProzesse()) {
-//				LuceneIndex.deleteProcess(p);
-//			}
 			removeObj(t);
 		}
 	}
 
 	public void remove(Integer id) throws DAOException {
 		if (id != null) {
-//			Projekt t = (Projekt) retrieveObj(Projekt.class, id);
-//			for (Prozess p : t.getProzesse()) {
-//				LuceneIndex.deleteProcess(p);
-//			}
 			removeObj(Projekt.class, id);
 		}
 	}

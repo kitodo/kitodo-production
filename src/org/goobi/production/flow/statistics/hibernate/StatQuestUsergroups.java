@@ -63,8 +63,6 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
-		//		Criteria crit = originalFilter.getCriteria();
-
 		Criteria crit = Helper.getHibernateSession().createCriteria(Schritt.class);
 		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 
@@ -88,7 +86,6 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 		dtbl.addDataRow(dRow);
 		List<DataTable> allTables = new ArrayList<DataTable>();
 
-		//dtbl = dtbl.getDataTableInverted();
 		dtbl.setUnitLabel(Helper.getTranslation("benutzergruppe"));
 		allTables.add(dtbl);
 		return allTables;

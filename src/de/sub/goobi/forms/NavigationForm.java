@@ -41,14 +41,6 @@ public class NavigationForm {
 	}
 	
 	public String JeniaPopupCloseAction(){       
-//       Helper help = new Helper();
-//       BenutzerverwaltungForm bvf = (BenutzerverwaltungForm) Helper.getManagedBeanValue("#{BenutzerverwaltungForm}");
-//		bvf.getMyClass().setStandort("die ID lautet: " + help.getRequestParameter("ID"));
-//        try {
-//         bvf.setMyClass(new BenutzerDAO().get(bvf.getMyClass().getId()));
-//      } catch (DAOException e) {
-//         e.printStackTrace();
-//      }
        return "jeniaClosePopupFrameWithAction";
 	}    
     
@@ -71,7 +63,5 @@ public class NavigationForm {
     public Boolean getShowTaskManager(){
     	return ConfigMain.getBooleanParameter("show_taskmanager");	
     }
-    
-    
     
 }

@@ -160,7 +160,7 @@ public class UghHelper {
 		/* wenn kein Wert vorhanden oder das DocStruct null, dann gleich raus */
 		if (inValue.equals("") || inStruct == null || inStruct.getType() == null)
 			return;
-		// myLogger.debug(inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue);
+
 		/* andernfalls dem DocStruct das passende Metadatum zuweisen */
 		MetadataType mdt = inPrefs.getMetadataTypeByName(inMetadataType);
 		try {

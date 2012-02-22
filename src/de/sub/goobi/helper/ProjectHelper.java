@@ -121,10 +121,6 @@ public class ProjectHelper {
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
 
-		// proList.add(Projections.sum("proc.sortHelperImages")); // is not really needed here but will be in the next step
-
-		// proList.add(Projections.groupProperty(("bearbeitungsstatus")));
-
 		critSteps.setProjection(proList);
 
 		// now we have to discriminate the hits where the max number of hits doesn't reach numberOfProcs
@@ -289,10 +285,6 @@ public class ProjectHelper {
 		proList.add(Projections.groupProperty(("titel")));
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
-
-		// proList.add(Projections.sum("proc.sortHelperImages")); // is not really needed here but will be in the next step
-
-		// proList.add(Projections.groupProperty(("bearbeitungsstatus")));
 
 		critSteps.setProjection(proList);
 

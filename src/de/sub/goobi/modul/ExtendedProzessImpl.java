@@ -44,7 +44,6 @@ import de.unigoettingen.goobi.module.api.exception.GoobiException;
  * @author Igor Toker
  */
 public class ExtendedProzessImpl extends ProcessImpl {
-//   Helper help = new Helper();
    
    /**
     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten. 

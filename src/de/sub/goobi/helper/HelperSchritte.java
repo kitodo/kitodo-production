@@ -52,7 +52,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
 //TODO: Check if some methods can declared static
 public class HelperSchritte {
 	SchrittDAO dao = new SchrittDAO();
-	// Helper help = new Helper();
+
 	private static final Logger logger = Logger.getLogger(HelperSchritte.class);
 
 	public final static String DIRECTORY_PREFIX = "orig_";
@@ -76,16 +76,6 @@ public class HelperSchritte {
 		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
 				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess").add(
 						Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
-
-		// if (offeneSchritteGleicherReihenfolge != 0) {
-		// List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
-		// Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(
-		// Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId()))
-		// .createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
-		// for (Iterator it = bla.iterator(); it.hasNext();) {
-		// Schritt s = (Schritt) it.next();
-		// }
-		// }
 
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
@@ -245,7 +235,7 @@ public class HelperSchritte {
 	private void copyOrig(Schritt mySchritt, boolean fullautomatic) throws SwapException, DAOException {
 		/* Aktion ausführen, bei Fehlern auf offen setzen */
 		try {
-			// File ausgang = new File(mySchritt.getProzess().getTifPfad());
+
 			File ausgang = new File(mySchritt.getProzess().getImagesDirectory());
 			File ziel = new File(ausgang.getParent() + File.separator + DIRECTORY_PREFIX + ausgang.getName());
 			CopyFile.copyDirectory(ausgang, ziel);
@@ -270,15 +260,7 @@ public class HelperSchritte {
 	 * ================================================================
 	 */
 	private void abortStep(Schritt mySchritt, boolean automatic) {
-		// try {
-		// /* bei einem Fehler den Schritt zurücksetzen */
-		// Schritt temp = dao.get(mySchritt.getId());
-		// temp.setEditTypeEnum(StepEditType.AUTOMATIC);
-		// temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-		// dao.save(temp);
-		// } catch (DAOException d) {
-		// d.printStackTrace();
-		// }
+
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
 		mySchritt.setBearbeitungsstatusEnum(StepStatus.OPEN);
 		try {
@@ -302,7 +284,7 @@ public class HelperSchritte {
 			logger.error(e);
 		}
 		mySchritt.setEditTypeEnum(StepEditType.AUTOMATIC);
-		// mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
+
 		SchrittAbschliessen(mySchritt, automatic);
 	}
 

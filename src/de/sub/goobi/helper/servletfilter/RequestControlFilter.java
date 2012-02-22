@@ -71,10 +71,6 @@ import org.hibernate.LazyInitializationException;
  */
 public class RequestControlFilter implements Filter {
 
-	// initialize logging
-	// private static final Logger log =
-	// Logger.getLogger(RequestControlFilter.class);
-
 	/**
 	 * Initialize this filter by reading its configuration parameters
 	 * 
@@ -170,11 +166,6 @@ public class RequestControlFilter implements Filter {
 			Helper.setFehlerMeldung(de.sub.goobi.helper.Helper.getTranslation("aLazyInitializationErrorOcurred"));
 		}
 
-		/*
-		 * } catch (Exception e) { new Helper() .setFehlerMeldung(de.sub.goobi.helper.Helper .getTranslation("anUnknownErrorOcurred"));
-		 * 
-		 * }
-		 */
 		finally {
 			releaseQueuedRequest(httpRequest);
 		}

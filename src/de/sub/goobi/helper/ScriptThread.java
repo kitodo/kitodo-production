@@ -30,7 +30,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
 
 //TODO: Replace this with a generic container for external tasks.
 public class ScriptThread extends Thread {
-	// private static final Logger myLogger = Logger.getLogger(AgoraImportThread.class);
+
 	HelperSchritte hs = new HelperSchritte();
 	private Schritt mySchritt;
 	public String rueckgabe = "";

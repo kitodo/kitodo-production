@@ -240,46 +240,6 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
-	// public List<SelectItem> getProzessTemplates() throws DAOException {
-	// List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
-	// // HibernateUtil.clearSession();
-	// Session session = Helper.getHibernateSession();
-	// Criteria crit = session.createCriteria(Prozess.class);
-	// crit.add(Expression.eq("istTemplate", Boolean.valueOf(false)));
-	// crit.add(Expression.eq("inAuswahllisteAnzeigen", Boolean.valueOf(true)));
-	// crit.addOrder(Order.asc("titel"));
-	//
-	// /* Einschränkung auf bestimmte Projekte, wenn kein Admin */
-	// LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-	// Benutzer aktuellerNutzer = loginForm.getMyBenutzer();
-	// try {
-	// aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
-	// } catch (DAOException e) {
-	// e.printStackTrace();
-	// }
-	// if (aktuellerNutzer != null) {
-	// /*
-	// * wenn die maximale Berechtigung nicht Admin ist, dann nur
-	// * bestimmte
-	// */
-	// if (loginForm.getMaximaleBerechtigung() > 1) {
-	// Hibernate.initialize(aktuellerNutzer);
-	// Disjunction dis = Expression.disjunction();
-	// for (Projekt proj : aktuellerNutzer.getProjekteList()) {
-	// dis.add(Expression.eq("projekt", proj));
-	// }
-	// crit.add(dis);
-	// }
-	// }
-	//
-	// for (Object proz : crit.list()) {
-	// myProzessTemplates.add(new SelectItem(((Prozess) proz).getId(), ((Prozess) proz).getTitel(), null));
-	// }
-	// return myProzessTemplates;
-	// }
-
-	/* =============================================================== */
-
 	/**
 	 * OpacAnfrage
 	 */
@@ -291,30 +251,9 @@ public class CopyProcess extends ProzesskopieForm {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			myRdf = new MetsMods(myPrefs);
 			myRdf.read(metadataFile);
-			// System.out.println(metadataFile);
-			// System.out.println(myRdf.read(metadataFile));
-			// System.out.println(myRdf.getDigitalDocument());
-			//				
-			// if (myImportOpac.getOpacDocType() != null)
-			// docType = myImportOpac.getOpacDocType().getTitle();
 
-			// if (myImportOpac.isMonograph())
-			// docType = "monograph";
-			// if (myImportOpac.isContainedWork())
-			// docType = "containedwork";
-			// if (myImportOpac.isPeriodical())
-			// docType = "periodical";
-			// if (myImportOpac.isMultivolume())
-			// docType = "multivolume";
-
-			// atstsl = myImportOpac.getAtstsl();
 			fillFieldsFromMetadataFile(myRdf);
 
-			/* über die Treffer informieren */
-			// if (myImportOpac.getHitcount() == 0)
-			// help.setFehlerMeldung("keine Treffer gefunden", "");
-			// if (myImportOpac.getHitcount() > 1)
-			// help.setMeldung(null, "mehrere Treffer gefunden", " - Daten des ersten Treffers übernommen");
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
 			e.printStackTrace();
@@ -470,7 +409,6 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten: ", "kein Vorgangstitel angegeben");
 		}
 
-		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
@@ -548,18 +486,6 @@ public class CopyProcess extends ProzesskopieForm {
 		 * -------------------------------- jetzt in der Prozesskopie für alle bereits abgeschlossenen Schritte ein Bearbeitungsdatum und einen
 		 * Benutzer eintragen --------------------------------
 		 */
-		// for (Iterator iter = prozessKopie.getSchritteList().iterator();
-		// iter.hasNext();) {
-		// Schritt step = (Schritt) iter.next();
-		// if (step.getBearbeitungsstatus().intValue() == 3) {
-		// step.setBearbeitungsbeginn(new Date());
-		// step.setBearbeitungszeitpunkt(new Date());
-		// step.setBearbeitungsende(new Date());
-		// LoginForm loginForm = (LoginForm)
-		// Helper.getManagedBeanValue("#{LoginForm}");
-		// step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
-		// }
-		// }
 		for (Schritt step : prozessKopie.getSchritteList()) {
 			/*
 			 * -------------------------------- always save date and user for each step --------------------------------
@@ -598,7 +524,6 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
 		 */
-		// if (myRdf == null)
 		createNewFileformat();
 
 		// /*--------------------------------
@@ -653,11 +578,6 @@ public class CopyProcess extends ProzesskopieForm {
 							 */
 							if (myTempChild != null) {
 								md = ughHelp.getMetadata(myTempChild, mdt);
-								// if (md.getType() == null) {
-								// md = new Metadata(mdt);
-								// md.setDocStruct(myTempChild);
-								// myTempChild.addMetadata(md);
-								// }
 								md.setValue(field.getWert());
 							}
 						}
@@ -945,8 +865,6 @@ public class CopyProcess extends ProzesskopieForm {
 				List projektnamen = projekt.getChildren("name");
 				for (Iterator iterator = projektnamen.iterator(); iterator.hasNext();) {
 					Element projektname = (Element) iterator.next();
-					// System.out.println(projektname.getText() +
-					// " - soll sein: " + prozessKopie.getProjekt().getTitel());
 
 					/*
 					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
@@ -955,7 +873,6 @@ public class CopyProcess extends ProzesskopieForm {
 						List myCols = projekt.getChildren("DigitalCollection");
 						for (Iterator it2 = myCols.iterator(); it2.hasNext();) {
 							Element col = (Element) it2.next();
-							// System.out.println(col.getText());
 							possibleDigitalCollection.add(col.getText());
 						}
 					}
@@ -1128,7 +1045,7 @@ public class CopyProcess extends ProzesskopieForm {
 		/* jetzt den Bandtitel parsen */
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
-			// System.out.println(myString);
+
 			/*
 			 * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
 			 */
@@ -1195,16 +1112,7 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		// if (docType.equals("monograph"))
-		// tif_definition = cp.getParamString("tifheader.monograph");
-		// if (docType.equals("containedwork"))
-		// tif_definition = cp.getParamString("tifheader.containedwork");
-		// if (docType.equals("multivolume"))
-		// tif_definition = cp.getParamString("tifheader.multivolume");
-		// if (docType.equals("periodical"))
-		// tif_definition = cp.getParamString("tifheader.periodical");
-		// if (docType.equals("volume"))
-		// tif_definition = cp.getParamString("tifheader.volume");
+
 		tif_definition = cp.getParamString("tifheader." + docType, "blabla");
 
 		/*
@@ -1216,35 +1124,25 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
 		 */
-		// if (tifHeader_documentname.equals(""))
+
 		tifHeader_documentname = prozessKopie.getTitel();
 		tifHeader_imagedescription = "";
+
 		/*
 		 * -------------------------------- Imagedescription --------------------------------
 		 */
-		// if (tifHeader_imagedescription.equals("")) {
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
+
 		/* jetzt den Tiffheader parsen */
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
-			// System.out.println(myString);
+
 			/*
 			 * wenn der String mit ' anf�ngt und mit ' endet, dann den Inhalt so übernehmen
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2)
 				tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			else if (myString.equals("$Doctype")) {
-				/* wenn der Doctype angegeben werden soll */
-				// if (docType.equals("monograph"))
-				// tifHeader_imagedescription += "Monographie";
-				// if (docType.equals("volume"))
-				// tifHeader_imagedescription += "Volume";
-				// if (docType.equals("containedwork"))
-				// tifHeader_imagedescription += "ContainedWork";
-				// if (docType.equals("multivolume"))
-				// tifHeader_imagedescription += "Band_MultivolumeWork";
-				// if (docType.equals("periodical"))
-				// tifHeader_imagedescription += "Band_Zeitschrift";
 				tifHeader_imagedescription += co.getDoctypeByName(docType).getTifHeaderType();
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
@@ -1264,7 +1162,6 @@ public class CopyProcess extends ProzesskopieForm {
 						tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitel(), myField.getWert());
 				}
 			}
-			// }
 		}
 	}
 }

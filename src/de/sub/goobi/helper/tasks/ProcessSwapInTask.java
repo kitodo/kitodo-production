@@ -51,7 +51,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 	@SuppressWarnings("unchecked")
 	public void run() {
 		setStatusProgress(5);
-		// Helper help = new Helper();
+
 		String swapPath = null;
 		ProzessDAO dao = new ProzessDAO();
 		String processDirectory = "";
@@ -192,7 +192,6 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusMessage("done");
 
 		setStatusProgress(100);
-		// Helper.getHibernateSession().close();
 	}
 
 }

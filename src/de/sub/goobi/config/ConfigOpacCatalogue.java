@@ -110,8 +110,6 @@ public class ConfigOpacCatalogue {
        * aus dem Dom-Node ein JDom-Object machen
        * -------------------*/
       Document doc = new DOMBuilder().build(myHitlist.getOwnerDocument());
-//      myLogger.debug("executeBeautifier(Node)" + doc.getRootElement().getName()
-//            + doc.getRootElement().getChildren().size());
 
       /* ---------------------
        * Im JDom-Object alle Felder durchlaufen und die notwendigen Ersetzungen vornehmen
@@ -136,7 +134,6 @@ public class ConfigOpacCatalogue {
       }
 
       /* Ausgabe des überarbeiteten Opac-Ergebnisses */
-       //debugMyNode(myHitlist, "D:/temp_opac2.xml");
       if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite())
          debugMyNode(myHitlist, ConfigMain.getParameter("debugFolder") + "/opacBeautifyAfter.xml");
       return myHitlist;
@@ -146,7 +143,7 @@ public class ConfigOpacCatalogue {
     * Beautifier für ein JDom-Object durchführen
     * ================================================================*/
    private void executeBeautifierForElement(Element el) {
-//      myLogger.debug("executeBeautifier(Node) - ----------------- " + el.getName());
+
       for (ConfigOpacCatalogueBeautifier beautifier : beautifySetList) {
          Element elementToChange = null;
          /* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */

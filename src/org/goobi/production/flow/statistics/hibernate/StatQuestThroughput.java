@@ -173,14 +173,10 @@ public class StatQuestThroughput implements
 
 			DataTable tableStepOpen;
 			tableStepOpen = getSpecificSteps(i, HistoryEventType.stepOpen);
-			//dtbl = dtbl.getDataTableInverted();
-			//dtbl1.setName(Helper.getTranslation("openSteps") + " " + i.toString());
 			tableStepOpen.setShowableInTable(true);
 
 			DataTable tableStepDone;
 			tableStepDone = getSpecificSteps(i, HistoryEventType.stepDone);
-			//dtbl = dtbl.getDataTableInverted();
-			//dtbl2.setName(Helper.getTranslation("doneSteps") + " " + i.toString());
 			tableStepDone.setShowableInTable(true);
 
 			// to merge we just take each table and dump the entire content in a 
@@ -424,9 +420,6 @@ public class StatQuestThroughput implements
 		// now removing headerRow 
 		if (headerRow != null) {
 			dtbl.removeDataRow(headerRow);
-			// if a row showing the total count over all intervalls should be added to the grid
-			//the folloing line can be commented in (adding the header to the bottom)
-			//dtbl.addDataRow(headerRow);
 		}
 
 		return dtbl;

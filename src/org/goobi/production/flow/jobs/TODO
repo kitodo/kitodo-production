@@ -1,2 +1,0 @@
-TODO:
-- The Job manager should be able to operate in a cron like way. This should be configurablke via the gui ans stored in a configuration backend (XML Based)
