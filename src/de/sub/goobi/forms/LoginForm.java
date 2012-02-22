@@ -103,10 +103,8 @@ public class LoginForm {
 					} else {
 						schonEingeloggt = true;
 						tempBenutzer = b;
-						// Helper.setMeldung("formLogin:login", "", "Benutzer in anderer Session aktiv", false);
 					}
 				} else
-					// schonEingeloggt = false;
 					Helper.setFehlerMeldung("passwort", "", "wrong password");
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
@@ -178,7 +176,6 @@ public class LoginForm {
 	 */
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
-		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
 		if (!myBenutzer.istPasswortKorrekt(passwortAendernAlt)) {
 			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
 		} else {
@@ -240,12 +237,12 @@ public class LoginForm {
 
 		/* alle Dateien durchlaufen und die alten löschen */
 		if (dateien != null) {
-            for (String aDateien : dateien) {
-                File file = new File(myPfad + aDateien);
-                if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
-                    file.delete();
-                }
-            }
+			for (String aDateien : dateien) {
+				File file = new File(myPfad + aDateien);
+				if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
+					file.delete();
+				}
+			}
 		}
 	}
 
@@ -283,11 +280,10 @@ public class LoginForm {
 	public int getMaximaleBerechtigung() {
 		int rueckgabe = 0;
 		if (myBenutzer != null) {
-			// TODO: Don't use Iterators
-            for (Benutzergruppe element : myBenutzer.getBenutzergruppen()) {
-                if ((rueckgabe == 0) || (element.getBerechtigung() < rueckgabe))
-                    rueckgabe = element.getBerechtigung();
-            }
+			for (Benutzergruppe element : myBenutzer.getBenutzergruppen()) {
+				if ((rueckgabe == 0) || (element.getBerechtigung() < rueckgabe))
+					rueckgabe = element.getBerechtigung();
+			}
 		}
 		return rueckgabe;
 	}
