@@ -91,7 +91,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	
 	public Boolean isDataComplete(){
-//		this.resetErrorList();
+
 		Boolean error = false;
 		if (timeFilterFrom==null ){
 			logger.debug("time from is not set");
@@ -114,7 +114,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 			error = true;
 		}
 		return !error;
-//		return !this.getHasErrors();
+
 	}
 	
 	public void setReferenceCurve(Boolean flagIn){
@@ -171,11 +171,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		Double remainingOutput = this.requiredDailyOutput * this.timeGrouping.getDayFactor() * count;
 		Double remainingAverageOutput = remainingOutput / count;
 
-//		DateTime from = new DateTime(this.timeFilterFrom);
-//		DateTime today = new DateTime(new Date());
-//		
-//		Days.daysBetween(from, today);
-		
 		// the way this is calculated is by subtracting each value from the total remaining output
 		// and calculating the averageOutput based on the remaining output and the remaining periods
 		for(int i=0; i< orientationRow.getNumberValues(); i++){

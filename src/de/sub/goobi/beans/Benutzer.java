@@ -58,8 +58,6 @@ public class Benutzer implements Serializable {
 	private String css;
 	private Set<Benutzereigenschaft> eigenschaften;
 
-	// private String lastFilter = null;
-
 	public Benutzer() {
 		benutzergruppen = new HashSet<Benutzergruppe>();
 		projekte = new HashSet<Projekt>();
@@ -322,7 +320,6 @@ public class Benutzer implements Serializable {
 				Ldap myldap = new Ldap();
 				return myldap.isUserPasswordCorrect(this, inPasswort);
 			} else {
-				// return passwort.equals(inPasswort);
 				DesEncrypter encrypter = new DesEncrypter();
 				String encoded = encrypter.encrypt(inPasswort);
 				return passwort.equals(encoded);

@@ -186,14 +186,6 @@ public class MetadatenVerifizierung {
 			if (alleMetadaten != null && alleMetadaten.size() > 0) {
 				@SuppressWarnings("unused")
 				Metadata mmm = (Metadata) alleMetadaten.get(0);
-				// TODO add a real check here, not this stupid shit...
-				// wenn der Imagepfad noch auf C:\ steht, validierung false
-				/*
-				 * if (!mmm.getValue().equals("C:\\")) return true; else {
-				 * help.setFehlerMeldung("[" + myProzess.getTitel() + "] " +
-				 * "Verifizierung nicht erfolgreich, Imagepfad steht auf C:\\",
-				 * ""); return false; }
-				 */
 				return true;
 			} else {
 				Helper.setFehlerMeldung("[" + myProzess.getTitel() + "] " + "Can not verify, image path is not set", "");
@@ -335,14 +327,6 @@ public class MetadatenVerifizierung {
 							MetadataType emdete = ughhelp.getMetadataType(inPrefs, tok);
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
-							/*
-							 * wenn die zusammenzustellenden Personen für
-							 * CreatorsAllOrigin als Metadatatyp nicht
-							 * existieren, Exception abfangen und nicht weiter
-							 * drauf eingehen
-							 */
-							// inFehlerList.add("Metadatatype does not exist: "
-							// + tok);
 						}
 					}
 					if (listOfFromMdts.size() > 0)
@@ -373,20 +357,14 @@ public class MetadatenVerifizierung {
 		if (createMetadaten == null || createMetadaten.size() == 0) {
 			try {
 				Metadata createdElement = new Metadata(mdt);
-				// createdElement.setType(mdt);
+
 				StringBuffer myValue = new StringBuffer();
 				/*
 				 * alle anzufügenden Metadaten durchlaufen und an das Element
-				 * anh�ngen
+				 * anhängen
 				 */
 				for (MetadataType mdttemp : inListOfFromMdts) {
 
-					// TODO and done: Cast without exceptionhandling - rather
-					// implement typesafe code
-					// MetadataType mdttemp = (MetadataType) iter.next();
-
-					// List fromElemente =
-					// myStruct.getAllMetadataByType(mdttemp);
 					List<Person> fromElemente = myStruct.getAllPersons();
 					if (fromElemente != null && fromElemente.size() > 0) {
 						/*
@@ -394,10 +372,6 @@ public class MetadatenVerifizierung {
 						 * diese durchlaufen
 						 */
 						for (Person p : fromElemente) {
-
-							// TODO: Cast without exceptionhandling - rather
-							// implement typesafe code
-							// Person p = (Person) iter2.next();
 
 							if (p.getRole() == null) {
 								Helper.setFehlerMeldung("[" + myProzess.getTitel() + " " + myStruct.getType() + "] Person without role");
@@ -421,9 +395,9 @@ public class MetadatenVerifizierung {
 					myStruct.addMetadata(createdElement);
 				}
 			} catch (DocStructHasNoTypeException e) {
-				// e.printStackTrace();
+
 			} catch (MetadataTypeNotAllowedException e) {
-				// e.printStackTrace();
+
 			}
 
 		}

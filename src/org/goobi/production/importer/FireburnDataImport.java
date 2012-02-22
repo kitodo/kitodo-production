@@ -133,11 +133,6 @@ public class FireburnDataImport {
 						fdi.pFoundList.add(p);
 						// write to Goobi
 						fdi.writeToGoobiDB(p, processId);
-						// logger.debug("StoreIdentifier, found in process Table: "
-						// + storeIdentifier
-						// + "  Title: "
-						// + p.titel);
-
 					}
 					// processId is not found.
 					else {
@@ -444,7 +439,7 @@ public class FireburnDataImport {
 		+ "('" + processId + "','" + size + "','" + p.size + "',false,'5',false,'" + p.date + "')" + ";";
 		// Execute the insert statement
 		stmt.executeUpdate(sql);
-		// logger.debug(sql);
+
 		logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
 
 	}

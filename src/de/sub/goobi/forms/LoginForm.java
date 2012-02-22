@@ -90,7 +90,6 @@ public class LoginForm {
 					} catch (DAOException e) {
 
 					}
-					// b.setBenutzergruppen(benutzergruppen)
 				} else {
 					Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
 				}
@@ -126,10 +125,8 @@ public class LoginForm {
 					} else {
 						schonEingeloggt = true;
 						tempBenutzer = b;
-						// Helper.setMeldung("formLogin:login", "", "Benutzer in anderer Session aktiv", false);
 					}
 				} else
-					// schonEingeloggt = false;
 					Helper.setFehlerMeldung("passwort", "", "wrong password");
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
@@ -201,7 +198,6 @@ public class LoginForm {
 	 */
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
-		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
 		if (!myBenutzer.istPasswortKorrekt(passwortAendernAlt)) {
 			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
 		} else {
@@ -209,7 +205,6 @@ public class LoginForm {
 			if (!passwortAendernNeu1.equals(passwortAendernNeu2)) {
 				Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
 			} else {
-				// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
 				try {
 					/* wenn alles korrekt, dann jetzt speichern */
 					Ldap myLdap = new Ldap();

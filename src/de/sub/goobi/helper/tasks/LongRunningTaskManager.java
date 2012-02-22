@@ -29,7 +29,7 @@ import java.util.TimerTask;
 public class LongRunningTaskManager {
    static LinkedList<LongRunningTask> tasks = new LinkedList<LongRunningTask>();
    private static LongRunningTaskManager lrtm;
-//   Helper help = new Helper();
+
    static boolean running = false;
    Timer autoRunTimer;
 

@@ -77,17 +77,6 @@ public class HibernateUtilOld {
 	 * @return SessionFactory
 	 */
 	public static SessionFactory getSessionFactory() {
-		/* Instead of a static variable, use JNDI:
-		SessionFactory sessions = null;
-		try {
-			Context ctx = new InitialContext();
-			String jndiName = "java:hibernate/HibernateFactory";
-			sessions = (SessionFactory)ctx.lookup(jndiName);
-		} catch (NamingException ex) {
-			throw new InfrastructureException(ex);
-		}
-		return sessions;
-		*/
 		return sessionFactory;
 	}
 
@@ -144,7 +133,7 @@ public class HibernateUtilOld {
 		Session s = (Session) threadSession.get();
 		try {
 			if (s == null) {
-//				log.debug("Opening new Session for this thread.");
+
 				if (getInterceptor() != null) {
 					log.debug("Using interceptor: " + getInterceptor().getClass());
 					s = getSessionFactory().openSession(getInterceptor());
@@ -168,7 +157,7 @@ public class HibernateUtilOld {
 			Session s = (Session) threadSession.get();
 			threadSession.set(null);
 			if (s != null && s.isOpen()) {
-//				log.debug("Closing Session of this thread.");
+
 				s.close();
 			}
 		} catch (HibernateException ex) {

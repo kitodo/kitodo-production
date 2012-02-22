@@ -37,10 +37,6 @@ public class StatQuestProductionTest {
 
 	@BeforeClass
 	public static void setUp() {
-	//TODO: HIBERNATE fix
-//		Configuration cfg = HibernateUtil.getConfiguration();
-//		cfg.setProperty("hibernate.connection.url", "jdbc:mysql://localhost/testgoobi");
-//		HibernateUtil.rebuildSessionFactory();
 		test = new StatQuestProduction();
 	}
 

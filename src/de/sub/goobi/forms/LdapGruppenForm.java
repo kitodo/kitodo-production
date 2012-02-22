@@ -65,10 +65,8 @@ public class LdapGruppenForm extends BasisForm {
 
 	public String FilterKein() {
 		try {
-			//	  HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			session.clear();
 			Criteria crit = session.createCriteria(LdapGruppe.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);

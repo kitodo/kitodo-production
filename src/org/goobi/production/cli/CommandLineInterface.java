@@ -271,7 +271,6 @@ public class CommandLineInterface {
 								File image = new File(images,file);
 								File dest = new File(p.getImagesOrigDirectory() + image.getName());
 								Helper.copyFile(image, dest);
-//								image.renameTo(dest);
 							}
 						}
 					}

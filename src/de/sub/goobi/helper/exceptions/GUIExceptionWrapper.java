@@ -95,7 +95,6 @@ public class GUIExceptionWrapper extends Exception {
 
 	// see comment above
 	private String err_linkText = "";
-	// err_emailEnabled=true;
 
 	private String err_emailBody = "";
 	private String err_emailMessage = "";

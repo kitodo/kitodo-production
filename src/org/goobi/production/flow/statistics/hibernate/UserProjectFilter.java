@@ -45,7 +45,7 @@ public class UserProjectFilter implements IEvaluableFilter{
 	private static final long serialVersionUID = 441692997066826360L;
 	
 	private Integer projectID;
-//	private Criteria myCriteria = null;
+
 	private WeakReference<Criteria> myCriteria = null;
 	private List<Integer> myIds = null;
 	private Dispatcher myObservable;
@@ -56,23 +56,7 @@ public class UserProjectFilter implements IEvaluableFilter{
 	}
 
 	public Criteria getCriteria() {
-		// myCriteria is a WeakReference ... both cases needs to be evaluated,
-		// after gc the WeakReference
-		// object is still referenced but not the object referenced by it
-//		if (myCriteria == null) {
-//			if (this.myIds == null) {
-//				if (this.projectID != null) {
-//					myCriteria =
-//							createCriteriaFromProjectID();
-//				}
-//			} else {
-//				myCriteria = 
-//						createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-		
+
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (this.myIds == null) {
 				if (this.projectID != null) {

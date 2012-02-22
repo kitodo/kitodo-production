@@ -60,14 +60,12 @@ public class WebDav {
 
 		try {
 			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-			// Helper.setTomcatBenutzerrechte(VerzeichnisAlle);
 		} catch (Exception ioe) {
 			myLogger.error("Exception UploadFromHomeAlle()", ioe);
 			Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
 			return rueckgabe;
 		}
 
-		// myLogger.debug("Upload-Verzeichnis: " + VerzeichnisAlle);
 		File benutzerHome = new File(VerzeichnisAlle);
 
 		FilenameFilter filter = new FilenameFilter() {
@@ -111,7 +109,6 @@ public class WebDav {
 			String myname = (String) it.next();
 			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
 			command += VerzeichnisAlle + myname;
-			// myLogger.debug(command);
 			try {
 				Runtime.getRuntime().exec(command);
 			} catch (java.io.IOException ioe) {
@@ -149,7 +146,6 @@ public class WebDav {
 
 		String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
 		command += benutzerHome;
-		// myLogger.debug(command);
 
 		try {
 			// TODO: Use ProcessBuilder
@@ -264,18 +260,4 @@ public class WebDav {
 		}
 	}
 
-	// TODO: Remove this Methods - Use FileUtils, as log as it's still there ;-)
-	/*
-	 * public int getAnzahlImages(String inVerzeichnis) { try { return getAnzahlImages2(new File(inVerzeichnis)); } catch (Exception e) {
-	 * myLogger.error(e); return 0; } }
-	 * 
-	 * // Process all files and directories under dir private int getAnzahlImages2(File inDir) { int anzahl = 0; if (inDir.isDirectory()) { // die
-	 * Images zählen
-	 * 
-	 * FilenameFilter filter = new FilenameFilter() { public boolean accept(File dir, String name) { return name.endsWith(".tif"); } }; anzahl =
-	 * inDir.list(filter).length;
-	 * 
-	 * //die Unterverzeichnisse durchlaufen String[] children = inDir.list(); for (int i = 0; i < children.length; i++) { anzahl +=
-	 * getAnzahlImages2(new File(inDir, children[i])); } } return anzahl; }
-	 */
 }

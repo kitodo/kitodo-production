@@ -103,16 +103,5 @@ public class TiffWriterTask extends LongRunningTask {
       inFiles.addAll(Arrays.asList(tiffiles));
 
    }
-   //Draft
-   /*
-   public static List<File> listAllFiles (File dir, String extension) {
-	   if (!dir.isDirectory()) {
-		   throw new IllegalStateException("Expected a directory, got: " dir.getAbsolutePath());
-	   }
-	   List<File> files = new ArrayList<File>();
-	   
-	   
-	   return files;
-   }
-   */
+
 }

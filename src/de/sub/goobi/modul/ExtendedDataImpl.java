@@ -64,7 +64,7 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  */
 public class ExtendedDataImpl extends DataImpl {
    BeanHelper beanhelp = new BeanHelper();
-//   Helper help = new Helper();
+
    private String isProcess = "PROCESS";
    private String isWorkpiece = "WORKPIECE";
    private String isTemplate = "TEMPLATE";

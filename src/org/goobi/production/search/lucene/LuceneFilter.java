@@ -50,7 +50,7 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 8756951004361151313L;
 	private String myName;
 	private String myFilterExpression = null;
-//	private Criteria myCriteria = null;
+
 	private WeakReference<Criteria> myCriteria = null;
 	private List<Integer> myIds;
 	private Dispatcher myObservable;
@@ -82,18 +82,6 @@ public class LuceneFilter implements IEvaluableFilter, Cloneable {
 	 * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria ()
 	 */
 	public Criteria getCriteria() {
-//		if (myCriteria == null) {
-//			if (this.myIds == null) {
-//				if (this.getFilter() != null) {
-//					myCriteria =createCriteriaFromLucene(this.getFilter());
-//				}
-//			} else {
-//				myCriteria = createCriteriaFromIDList();
-//			}
-//		}
-//
-//		return myCriteria;
-		
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (this.myIds == null) {
 				if (this.getFilter() != null) {

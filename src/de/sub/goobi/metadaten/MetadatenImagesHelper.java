@@ -109,7 +109,7 @@ public class MetadatenImagesHelper {
 			MetadataType MDTypeForPath = myPrefs.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
-				// mdForPath.setType(MDTypeForPath);
+
 				// TODO: add the possibilty for using other image formats
 				if (SystemUtils.IS_OS_WINDOWS) {
 					mdForPath.setValue("file:/" + inProzess.getImagesDirectory() + inProzess.getTitel().trim() + "_tif");
@@ -149,7 +149,7 @@ public class MetadatenImagesHelper {
 					physicaldocstruct.addChild(dsPage);
 					MetadataType mdt = myPrefs.getMetadataTypeByName("physPageNumber");
 					Metadata mdTemp = new Metadata(mdt);
-					// mdTemp.setType(mdt);
+
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
 
@@ -159,12 +159,10 @@ public class MetadatenImagesHelper {
 					 */
 					mdt = myPrefs.getMetadataTypeByName("logicalPageNumber");
 					mdTemp = new Metadata(mdt);
-					// mdTemp.setType(mdt);
+
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
 
-					// myLogger.debug("fertig mit Paginierung für Nr. " + i +
-					// " von " + myBildLetztes);
 				} catch (TypeNotAllowedAsChildException e) {
 					logger.error(e);
 				} catch (MetadataTypeNotAllowedException e) {
@@ -179,7 +177,7 @@ public class MetadatenImagesHelper {
 				List<? extends Metadata> mdts = page.getAllMetadataByType(mdt);
 				if (mdts.size() != 1) {
 					throw new SwapException("found page DocStruct with more or less than 1 pysical pagination");
-					// return myLastImage;
+
 				}
 				/*
 				 * delete page DocStruct, if physical pagenumber higher than last imagenumber
@@ -272,7 +270,6 @@ public class MetadatenImagesHelper {
 				return false;
 			}
 
-			// ArrayList<String> images = getImageFiles(inProzess);
 			myLastImage = dateien.length;
 			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 				List<String> filesDirs = Arrays.asList(dateien);
@@ -341,7 +338,6 @@ public class MetadatenImagesHelper {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesTifDirectory());
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}
@@ -377,7 +373,6 @@ public class MetadatenImagesHelper {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesDirectory() + directory);
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}

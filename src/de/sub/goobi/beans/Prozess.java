@@ -668,7 +668,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		checkForMetadataFile();
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
-		// createBackupFile(getNumberOfBackups());
 		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
@@ -734,14 +733,12 @@ public class Prozess implements Serializable, IGoobiEntity {
 		if (!f.exists()) {
 
 			// TODO: diese Meldung als Fehlermeldung direkt nach dem Neuanlegen???
-			// Helper.setFehlerMeldung(Helper.getTranslation("metadataFileNotFound"), f.getAbsolutePath());
 			myLogger.warn(Helper.getTranslation("metadataFileNotFound") + f.getAbsolutePath());
 			storeDefaultMetaFile(f);
 		}
 	}
 
 	private void storeDefaultMetaFile(File f) throws IOException {
-		// boolean ok = false;
 		/* wenn Verzeichnis angelegt wurde, jetzt die xml-Datei anlegen */
 		File fstandard = new java.io.File(help.getGoobiDataDirectory() + "standard.xml");
 

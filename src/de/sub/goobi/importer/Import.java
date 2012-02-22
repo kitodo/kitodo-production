@@ -50,9 +50,6 @@ public class Import {
 	private static final Logger myLogger = Logger.getLogger(Import.class);
 	private String importFehler = "";
 	private String importMeldung = "";
-	// private Integer importArt;
-	// private Integer prozessID;
-	// private Prozess prozess;
 	private Schritt mySchritt;
 	private UploadedFile upDatei;
 
@@ -67,7 +64,6 @@ public class Import {
 		importFehler = "";
 		importMeldung = "";
 		try {
-			// Einlesen(prozessID.toString());
 			Einlesen();
 		} catch (Exception e) {
 			importFehler = "An error occured: " + e.getMessage();
@@ -148,27 +144,4 @@ public class Import {
 		this.mySchritt = mySchritt;
 	}
 
-	// public Integer getImportArt() {
-	// return importArt;
-	// }
-	//
-	// public void setImportArt(Integer inimportArt) {
-	// importArt = inimportArt;
-	// }
-
-	// public Prozess getProzess() {
-	// return prozess;
-	// }
-	//
-	// public void setProzess(Prozess prozess) {
-	// this.prozess = prozess;
-	// }
-
-	// public Integer getProzessID() {
-	// return prozessID;
-	// }
-	//   
-	// public void setProzessID(Integer prozessID) {
-	// this.prozessID = prozessID;
-	// }
 }

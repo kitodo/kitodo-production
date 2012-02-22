@@ -121,9 +121,6 @@ public class ProductionDataImport {
 		logger.debug("Load Production Data from xml.");
 		ArrayList<ProductionData> dataList = load(filename);
 		logger.debug("Got " + dataList.size() + " items");
-		// Session session = HibernateUtilOld.getSessionFactory().openSession();
-
-		// Session session = Helper.getHibernateSession();
 
 		Prozess template = new Prozess();
 		template.setProjekt(altdaten);
@@ -135,7 +132,6 @@ public class ProductionDataImport {
 
 		template.setRegelsatz(ruleset);
 
-		// session.save(altdaten);
 		session.save(template);
 		Set<Schritt> step = getSteps(template);
 		template.setSchritte(step);
@@ -193,7 +189,6 @@ public class ProductionDataImport {
 				}
 			}
 			if (++i % 40 == 0) {
-				// logger.debug("clear cache");
 				session.flush();
 				session.clear();
 			}
@@ -211,7 +206,6 @@ public class ProductionDataImport {
 
 	private void generateNewPropertiesForNewProzess(Session session, Regelsatz ruleset, Projekt project, ProductionData pd)
 			throws HibernateException, SQLException {
-		// Session session = HibernateUtilOld.getSessionFactory().openSession();
 
 		// generate new Process
 
@@ -221,9 +215,7 @@ public class ProductionDataImport {
 		String title = pd.getWERKATS() + "_" + pd.getWERKPPNDIGITAL();
 		title = title.replaceAll("\\W", "");
 		prozess.setTitel(title);
-//		if (prozess.getTitel().contains(" ")) {
-//			prozess.setTitel(prozess.getTitel().replaceAll(" ", ""));
-//		}
+
 		prozess.setIstTemplate(false);
 		prozess.setRegelsatz(ruleset);
 		Werkstueck werk = new Werkstueck();
@@ -272,7 +264,6 @@ public class ProductionDataImport {
 		for (Schritt s : step) {
 			session.save(s);
 		}
-		// prozess.setSchritte(getSteps(prozess));
 
 		session.save(prozess);
 		try {
@@ -346,8 +337,6 @@ public class ProductionDataImport {
 	private void getNewPropertiesForNewProcesses(Session session, Prozess prozess, ProductionData pd) throws HibernateException, SQLException,
 			ConfigurationException {
 
-		// ArrayList<HibernateGoobiProperty> newPropertiesList = new ArrayList<HibernateGoobiProperty>();
-
 		// Generate Properties
 		prozess.setErstellungsdatum(pd.getDATUMAUFNAHMEWERK());
 		generateProzessProperty(session, prozess, "ImportMarker", "created", PropertyType.String, 0, false);
@@ -398,17 +387,13 @@ public class ProductionDataImport {
 		}
 
 		Werkstueck werkstueck = prozess.getWerkstueckeList().get(0);
-		// w.setProzess(p);
+
 		String ppn = pd.getWERKPPNDIGITAL();
 		if (ppn != null) {
 			if (ppn.startsWith("ppn") || ppn.startsWith("PPN")) {
 				ppn = ppn.substring(3);
 			}
 
-			// session.save(w);
-			// PPN digital f-Satz
-			// List<IGoobiProperty> prps = new
-			// ArrayList<IGoobiProperty>();
 			generateWerkProperty(session, werkstueck, "PPN digital f-Satz", ppn, PropertyType.String, 0, false);
 		}
 
@@ -418,14 +403,13 @@ public class ProductionDataImport {
 			if (ppn.startsWith("ppn") || ppn.startsWith("PPN")) {
 				ppn = ppn.substring(3);
 			}
-			// List<IGoobiProperty> proplist = new
-			// ArrayList<IGoobiProperty>();
+
 			generateVorlageProperty(session, v, "PPN analog f-Satz", ppn, PropertyType.String, 0, false);
-			// proplist.add(propPPNA);
+
 			generateVorlageProperty(session, v, "Signatur", pd.getWERKSIGNATUR(), PropertyType.String, 0, false);
 
 		}
-		// p.setProperties(newProcessProperties);
+
 		for (Schritt s : prozess.getSchritte()) {
 			if (s.getTitel().contains("Bibliographisch") || (s.getTitel().contains("bibliographische "))) {
 				s.setBearbeitungsende(pd.getDATUMAUFNAHMEWERK());
@@ -440,8 +424,6 @@ public class ProductionDataImport {
 				s.setBearbeitungsende(pd.getWERKSCANDATUM());
 				s.setEditTypeEnum(StepEditType.ADMIN);
 				s.setBearbeitungsstatusEnum(StepStatus.DONE);
-				// List<IGoobiProperty> proplist = new
-				// ArrayList<IGoobiProperty>();
 
 				// WERKSCANSEITEN
 				generateStepProperty(session, s, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
@@ -471,8 +453,6 @@ public class ProductionDataImport {
 				s.setBearbeitungsstatusEnum(StepStatus.DONE);
 				s.setEditTypeEnum(StepEditType.ADMIN);
 
-				// List<IGoobiProperty> proplist = new
-				// ArrayList<IGoobiProperty>();
 				// BITONALIMAGENACHBEARBEITUNG
 				generateStepProperty(session, s, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
@@ -490,24 +470,13 @@ public class ProductionDataImport {
 				generateStepProperty(session, s, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()),
 						PropertyType.Date, 0, false);
 
-				// ImageNachbearbBitonalPerson
-				// generateStepProperty(session, s, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0,
-				// false);
-
 				// ImageNachbearbGrauDatum
 				generateStepProperty(session, s, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
 						0, false);
 
-				// ImageNachbearbGrauPerson
-				// generateStepProperty(session, s, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0,
-				// false);
-
 				// ImageNachbearbFarbeDatum
 				generateStepProperty(session, s, "DatumFarbImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()),
 						PropertyType.Date, 0, false);
-
-				// ImageNachbearbFarbePerson
-				// generateStepProperty(session, s, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *
@@ -535,9 +504,6 @@ public class ProductionDataImport {
 	private void addNewPropertiesForExistingProcesses(Session session, int pId, ProductionData pd) throws HibernateException, SQLException,
 			ConfigurationException {
 
-		// Session session = Helper.getHibernateSession();
-		// Session session = HibernateUtilOld.getSessionFactory().openSession();
-		// Prozess holen
 		Prozess p = null;
 		Criteria crit = session.createCriteria(Prozess.class).add(Restrictions.eq("id", pId));
 		if (crit.list().size() > 0) {
@@ -784,22 +750,13 @@ public class ProductionDataImport {
 				generateStepProperty(session, s, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date,
 						0, false);
 
-				// ImageNachbearbBitonalPerson
-//				generateStepProperty(session, s, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0, false);
-
 				// ImageNachbearbGrauDatum
 				generateStepProperty(session, s, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
 						0, false);
 
-				// ImageNachbearbGrauPerson
-//				generateStepProperty(session, s, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0, false);
-
 				// ImageNachbearbFarbeDatum
 				generateStepProperty(session, s, "DatumFarbeImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0,
 						false);
-
-				// ImageNachbearbFarbePerson
-//				generateStepProperty(session, s, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *

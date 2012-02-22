@@ -109,7 +109,7 @@ public class ImportOpac {
 		 * Multivolume-Bandes ist, dann das Sammelwerk überordnen
 		 * --------------------------------
 		 */
-		// if (isMultivolume()) {
+
 		if (getOpacDocType().isMultiVolume()) {
 			/* Sammelband-PPN ermitteln */
 			String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
@@ -125,20 +125,9 @@ public class ImportOpac {
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
-					/* dem Rootelement den Volume-Treffer hinzufügen */
 					myFirstHit.getParent().removeContent(myFirstHit);
 					myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
-					/* Testausgabe */
-					// output = new FileOutputStream("D:/fileFull.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
 					myJdomDoc = myJdomDocMultivolumeband;
 					myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
@@ -173,16 +162,7 @@ public class ImportOpac {
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 					Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocParent.getRootElement(),
-					// output);
-					/*
-					 * alle Elemente des Parents übernehmen, die noch nicht
-					 * selbst vorhanden sind
-					 */
+
 					if (myFirstHitParent.getChildren() != null) {
 						
 						for (Iterator iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
@@ -199,12 +179,6 @@ public class ImportOpac {
 		 * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen
 		 * --------------------------------
 		 */
-		/* XML in Datei schreiben */
-//		XMLOutputter outputter = new XMLOutputter();
-//		FileOutputStream output = new FileOutputStream("c:/Temp/temp_opac.xml");
-//		outputter.output(myJdomDoc.getRootElement(), output);
-		/* myRdf temporär in Datei schreiben */
-		// myRdf.write("D:/temp.rdf.xml");
 
 		/* zugriff auf ugh-Klassen */
 		PicaPlus pp = new PicaPlus(inPrefs);
@@ -218,7 +192,7 @@ public class ImportOpac {
 		dd.setPhysicalDocStruct(dsBoundBook);
 		/* Inhalt des RDF-Files überprüfen und ergänzen */
 		checkMyOpacResult(ff.getDigitalDocument(), inPrefs, myFirstHit);
-		// rdftemp.write("D:/PicaRdf.xml");
+
 		return ff;
 	}
 
@@ -234,7 +208,7 @@ public class ImportOpac {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = (Element) iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
+
 			if (feldname.equals("002@"))
 				return getSubelementValue(tempElement, "0");
 		}
@@ -265,7 +239,7 @@ public class ImportOpac {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = (Element) iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
+
 			if (feldname.equals(inFeldName))
 				return getSubelementValue(tempElement, inSubElement);
 		}
@@ -295,7 +269,6 @@ public class ImportOpac {
 		 * -------------------------------- bei Multivolumes noch das Child in
 		 * xml und docstruct ermitteln --------------------------------
 		 */
-		// if (isMultivolume()) {
 		if (getOpacDocType().isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
@@ -367,7 +340,6 @@ public class ImportOpac {
 			if (sortingTitleMulti.indexOf("@") != -1)
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
 			ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
-			// sortingTitle = sortingTitleMulti;
 		}
 
 		/*
@@ -464,7 +436,6 @@ public class ImportOpac {
 		 * -------------------------------- bei Zeitschriften noch ein
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
-		// if (isPeriodical()) {
 		if (getOpacDocType().isPeriodical()) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
@@ -503,7 +474,6 @@ public class ImportOpac {
 		 * -------------------------------- bei Zeitschriften Tsl berechnen
 		 * --------------------------------
 		 */
-		// if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
 		if (autor == null || autor.equals("")) {
 			myAtsTsl = "";
 			StringTokenizer tokenizer = new StringTokenizer(myTitle);
@@ -542,7 +512,7 @@ public class ImportOpac {
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = (Element) iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			// System.out.println(feldname);
+
 			/*
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
 			 * Attribut zurückgeben
@@ -620,38 +590,6 @@ public class ImportOpac {
 	 * #####################################################
 	 * ####################################################
 	 */
-
-	// public boolean isMonograph() {
-	// if (gattung != null && config.getParameter("docTypeMonograph",
-	// "").contains(gattung.substring(0, 2)))
-	// return true;
-	// else
-	// return false;
-	// }
-	// public boolean isPeriodical() {
-	// if (gattung != null && config.getParameter("docTypePeriodical",
-	// "").contains(gattung.substring(0, 2)))
-	// return true;
-	// else
-	// return false;
-	// }
-	//
-	// public boolean isMultivolume() {
-	// if (gattung != null && config.getParameter("docTypeMultivolume",
-	// "").contains(gattung.substring(0, 2)))
-	// return true;
-	// else
-	// return false;
-	// }
-	//
-	// public boolean isContainedWork() {
-	// if (gattung != null
-	// && config.getParameter("docTypeContainedWork",
-	// "").contains(gattung.substring(0, 2)))
-	// return true;
-	// else
-	// return false;
-	// }
 	public ConfigOpacDoctype getOpacDocType() {
 		try {
 			ConfigOpac co = new ConfigOpac();

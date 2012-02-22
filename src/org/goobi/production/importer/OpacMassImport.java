@@ -61,8 +61,6 @@ public class OpacMassImport {
 		this.template = template;
 		this.ruleset = template.getRegelsatz().getPreferences();
 		this.format = format;
-		// this.form = form;
-		// this.template = form.getProzessVorlage();
 	}
 
 	/**
@@ -75,8 +73,6 @@ public class OpacMassImport {
 		this.template = template;
 		setRuleset(template.getRegelsatz().getPreferences());
 		this.format = format;
-		// this.form = form;
-
 	}
 
 	/**

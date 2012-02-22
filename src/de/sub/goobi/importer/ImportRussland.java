@@ -99,7 +99,7 @@ public class ImportRussland {
       String line = reader.readLine();
       line = reader.readLine();
       line = reader.readLine();
-      //      myLogger.info(line + " : " + myProzesseID);
+
       if (line == null)
          throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");
 
@@ -115,10 +115,6 @@ public class ImportRussland {
       mydocument = gdzfile.getDigitalDocument();
       logicalTopstruct = mydocument.getLogicalDocStruct();
       RussischeDatenLoeschen(logicalTopstruct);
-      //      if (1 == 1) {
-      //         gdzfile.Write(help.metadatenverzeichnis() + myProzesseID + "/meta.xml");
-      //         return;
-      //      }
 
       /* --------------------------------
        * alle Zeilen durchlaufen
@@ -201,7 +197,7 @@ public class ImportRussland {
 
    private void BandDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       DocStruct ds = logicalTopstruct.getAllChildren().get(0);
-      //      myLogger.info(ds.getType().getName());
+
       /* zunächst alle Details durchlaufen und dem Band hinzufügenl  */
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
@@ -231,15 +227,11 @@ public class ImportRussland {
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
          if (meinDetail.substring(0, 3).equals("090")) {
-//            myLogger.info("ZBL-Identifier ist " + meinDetail.substring(4).trim());
+
             zblID = meinDetail.substring(4).trim();
             break;
          }
       }
-
-      /* für das Debugging bei Problemen */
-//      if (zblID.equals("0843.11050"))
-//         myLogger.warn("gesuchte ID");
 
       /* --------------------------------
        * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben ZBL-ID finden
@@ -247,7 +239,7 @@ public class ImportRussland {
       MetadataType mdt_id = prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLIdentifier");
       MetadataType mdt_tempId = prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLTempID");
            DocStruct band = logicalTopstruct.getAllChildren().get(0);
-      //		myLogger.info(band.getType().getName());
+
       List<DocStruct> listHefte = band.getAllChildren();
       if (listHefte != null) {
          for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
@@ -258,14 +250,14 @@ public class ImportRussland {
                /* jetzt alle Artikel durchlaufen, bis der richtige Artikel gefunden wurde */
                for (Iterator<DocStruct> iter1 = listArtikel.iterator(); iter1.hasNext();) {
                   DocStruct artikel = (DocStruct) iter1.next();
-//                  myLogger.info(artikel.getType().getName());
+
                   if (artikel.getAllMetadataByType(mdt_id).size() > 0 || artikel.getAllMetadataByType(mdt_tempId).size() > 0) {
                      Metadata md;
                      if (artikel.getAllMetadataByType(mdt_id).size() > 0)
                         md = artikel.getAllMetadataByType(mdt_id).get(0);
                      else
                         md = artikel.getAllMetadataByType(mdt_tempId).get(0);
-                     //                  myLogger.debug(md.getValue());
+
                      if (md.getValue().equals(zblID)) {
                         //                     myLogger.info("------------ Artikel gefunden -------------");
                         artikelGefunden = true;
@@ -374,21 +366,6 @@ public class ImportRussland {
       try {
          md.setValue(inDetail.substring(4).trim());
 
-         /* --------------------------------
-          * prüfen, ob das Metadatum schon existiert, wenn nein, neu anlegen
-          * --------------------------------*/
-
-         //         LinkedList list = inStruct.getAllChildren();
-         //         if (list != null) {
-         //
-         //            /* jetzt alle Artikel durchlaufen, bis der richtige Artikel gefunden wurde */
-         //            for (Iterator iter1 = listArtikel.iterator(); iter1.hasNext();) {
-         //               DocStruct artikel = (DocStruct) iter1.next();
-         //               Metadata md = (Metadata) artikel.getAllMetadataByType(mdt).getFirst();
-         //               myLogger.debug(md.getValue());
-         //               if (md.getValue().equals(zblID)) {
-         //                  myLogger.info("------------ Artikel gefunden -------------");
-         //         
          inStruct.addMetadata(md);
       } catch (Exception e) {
          myLogger.error("Import fehlgeschlagen: " + inDetail, e);
@@ -407,8 +384,7 @@ public class ImportRussland {
       p.setLastname(pName.substring(0, pName.indexOf(",")).trim());
       p.setFirstname(pName.substring(pName.indexOf(",") + 1, pName.length()).trim());
       p.setRole(inRole);
-//      MetadataType mdt = prozess.getRegelsatz().getPreferences().getMetadataTypeByName(inRole);
-//      p.setType(mdt);
+
       inStruct.addPerson(p);
    }
 }

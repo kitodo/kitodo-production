@@ -96,7 +96,6 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();
 
-		//dtbl = dtbl.getDataTableInverted();
 		dtbl.setUnitLabel(Helper.getTranslation("project"));
 		allTables.add(dtbl);
 		return allTables;

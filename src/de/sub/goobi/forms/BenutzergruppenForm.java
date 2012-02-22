@@ -65,10 +65,8 @@ public class BenutzergruppenForm extends BasisForm {
 
 	public String FilterKein() {
 		try {
-			//	HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzergruppe.class);
 			crit.addOrder(Order.asc("titel"));
 			page = new Page(crit, 0);

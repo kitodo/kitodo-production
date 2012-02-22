@@ -24,7 +24,7 @@ public class BenutzerTest {
    public void testLogin2() {
       Benutzer b = new Benutzer();
       b.setLogin("ein Name");
-//      b.setMitMassendownload(true);
+
       assertTrue("wert falsch" ,b.isMitMassendownload());
       assertEquals("ein Name", b.getLogin());
    }

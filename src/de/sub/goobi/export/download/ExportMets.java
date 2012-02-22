@@ -267,7 +267,6 @@ public class ExportMets {
 			pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
 
-			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 			try {
 				MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
 				ArrayList<String> images = mih.getImageFiles(myProzess);
@@ -277,7 +276,6 @@ public class ExportMets {
 			} catch (InvalidImagesException e) {
 				myLogger.error(e);
 			}
-			// }
 			mm.write(targetFileName);
 		}
 	}
