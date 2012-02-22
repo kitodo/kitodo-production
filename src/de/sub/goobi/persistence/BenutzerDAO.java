@@ -55,7 +55,7 @@ public class BenutzerDAO extends BaseDAO {
 		removeObj(Benutzer.class, id);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(value = "unchecked")
 	public List<Benutzer> search(String query) throws DAOException {
 		return retrieveObjs(query);
 	}
@@ -63,4 +63,10 @@ public class BenutzerDAO extends BaseDAO {
 	public Long count(String query) throws DAOException {
 		return retrieveAnzahl(query);
 	}
+
+	@SuppressWarnings(value = "unchecked")
+	public List<Benutzer> search(String query, String parameter) throws DAOException {
+   		return retrieveObjs(query, parameter);
+	}
+
 }
