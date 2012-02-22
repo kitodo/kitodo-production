@@ -23,27 +23,23 @@
 package de.sub.goobi.forms;
 
 //TODO: Move Parts of this into a authentification API
-import java.io.File;
-import java.io.FilenameFilter;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.List;
 
 public class LoginForm {
 	private String login;
