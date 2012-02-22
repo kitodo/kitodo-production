@@ -85,7 +85,7 @@ public class LoginForm {
 			}
 			if (treffer != null && treffer.size() > 0) {
 				/* Login vorhanden, nun passwort prüfen */
-				Benutzer b = (Benutzer) treffer.get(0);
+				Benutzer b = treffer.get(0);
 				/* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde, jetzt Meldung anzeigen */
 				if (!b.isIstAktiv()) {
 					Helper.setFehlerMeldung("login", "", "login inactiv");
@@ -240,11 +240,12 @@ public class LoginForm {
 
 		/* alle Dateien durchlaufen und die alten löschen */
 		if (dateien != null) {
-			for (int i = 0; i < dateien.length; i++) {
-				File file = new File(myPfad + dateien[i]);
-				if ((System.currentTimeMillis() - file.lastModified()) > 7200000)
-					file.delete();
-			}
+            for (String aDateien : dateien) {
+                File file = new File(myPfad + aDateien);
+                if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
+                    file.delete();
+                }
+            }
 		}
 	}
 
@@ -283,11 +284,10 @@ public class LoginForm {
 		int rueckgabe = 0;
 		if (myBenutzer != null) {
 			// TODO: Don't use Iterators
-			for (Iterator<Benutzergruppe> iter = myBenutzer.getBenutzergruppen().iterator(); iter.hasNext();) {
-				Benutzergruppe element = (Benutzergruppe) iter.next();
-				if (element.getBerechtigung().intValue() < rueckgabe || rueckgabe == 0)
-					rueckgabe = element.getBerechtigung().intValue();
-			}
+            for (Benutzergruppe element : myBenutzer.getBenutzergruppen()) {
+                if ((rueckgabe == 0) || (element.getBerechtigung() < rueckgabe))
+                    rueckgabe = element.getBerechtigung();
+            }
 		}
 		return rueckgabe;
 	}
