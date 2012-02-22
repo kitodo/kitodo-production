@@ -679,7 +679,6 @@ public class AktuelleSchritteForm extends BasisForm {
 				Schritt step = (Schritt) iter.next();
 				try {
 					if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
-						// gesamtAnzahlImages += myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
 						// TODO: Remove hard coded extension
 						gesamtAnzahlImages += FileUtils.getNumberOfFiles(step.getProzess().getImagesOrigDirectory());
 					}
@@ -829,11 +828,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		TiffHeader tiff = new TiffHeader(mySchritt.getProzess());
 		tiff.ExportStart();
 	}
-
-	/*
-	 * public void DownloadRusExport() throws IOException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException,
-	 * WriteException { RusslandExport rus = new RusslandExport(mySchritt.getProzess()); rus.ExportStart(); }
-	 */
 
 	public void ExportDMS() {
 		ExportDms export = new ExportDms();

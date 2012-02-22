@@ -161,7 +161,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * generate referenceCurve
 	 */
 	private DataRow referenceCurve(DataRow referenceRow) {
-		DataRow orientationRow = requiredOutput(); //new DataRow(Helper.getTranslation("ReferenceCurve"));
+		DataRow orientationRow = requiredOutput();
 		DataRow dataRow = new DataRow(Helper.getTranslation("ReferenceCurve"));
 		dataRow.setShowPoint(false);
 		// may have to be calculated differently

@@ -251,7 +251,6 @@ public class HistoryJob implements Job {
 					if (step.getBearbeitungsende() != null) {
 						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
 					} else {
-						//step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
 						step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
 					}
 				}

@@ -951,7 +951,6 @@ public class ProzesskopieForm {
 				List<Element> projektnamen = projekt.getChildren("name");
 				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 					Element projektname = (Element) iterator.next();
-					// " - soll sein: " + prozessKopie.getProjekt().getTitel());
 
 					/*
 					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste

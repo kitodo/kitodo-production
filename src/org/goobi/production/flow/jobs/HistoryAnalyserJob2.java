@@ -240,7 +240,6 @@ public class HistoryAnalyserJob2 extends AbstractGoobiJob {
 					if (step.getBearbeitungsende() != null) {
 						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
 					} else {
-						//step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
 						step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
 					}
 				}

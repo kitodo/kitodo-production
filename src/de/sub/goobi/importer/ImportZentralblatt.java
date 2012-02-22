@@ -102,7 +102,6 @@ public class ImportZentralblatt {
 		 * -------------------------------- alle Zeilen durchlaufen --------------------------------
 		 */
 		while ((line = reader.readLine()) != null) {
-			// myLogger.debug(line);
 
 			/*
 			 * -------------------------------- wenn die Zeile leer ist, ist es das Ende eines Absatzes --------------------------------
@@ -122,7 +121,7 @@ public class ImportZentralblatt {
 					DocStructType dstLocal = myPrefs.getDocStrctTypeByName("Article");
 					DocStruct ds = dd.createDocStruct(dstLocal);
 					listArtikel.add(ds);
-					// myLogger.debug("---------------          neuer Artikel          ----------------");
+
 					istAbsatz = true;
 					istErsterTitel = true;
 				}
@@ -175,7 +174,6 @@ public class ImportZentralblatt {
 		/*
 		 * -------------------------------- jetzt die Gesamtstruktur bauen und in xml schreiben --------------------------------
 		 */
-		// DigitalDocument dd = new DigitalDocument();
 		dd.setLogicalDocStruct(dsPeriodical);
 		dd.setPhysicalDocStruct(dsBoundBook);
 		try {

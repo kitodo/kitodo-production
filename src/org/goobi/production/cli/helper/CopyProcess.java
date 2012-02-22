@@ -409,7 +409,6 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten: ", "kein Vorgangstitel angegeben");
 		}
 
-		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
@@ -1137,7 +1136,7 @@ public class CopyProcess extends ProzesskopieForm {
 		/* jetzt den Tiffheader parsen */
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
-			// System.out.println(myString);
+
 			/*
 			 * wenn der String mit ' anf�ngt und mit ' endet, dann den Inhalt so übernehmen
 			 */

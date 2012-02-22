@@ -541,7 +541,7 @@ public class ProjekteForm extends BasisForm {
 					this.projectProgressImage = "";
 				}
 			} catch (Exception e) {
-				// this.projectProgressData = null;
+
 			}
 		}
 		return this.projectProgressData;

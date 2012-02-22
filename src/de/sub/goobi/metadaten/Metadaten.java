@@ -616,7 +616,6 @@ public class Metadaten {
 
 		BildErmitteln(0);
 		retrieveAllImages();
-		// MetadatenImLogAusgeben(logicalTopstruct);
 		MetadatenalsBeanSpeichern(logicalTopstruct);
 		MetadatenalsTree3Einlesen1();
 
@@ -798,7 +797,6 @@ public class Metadaten {
 				TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
 				zaehler++;
 				OberKnoten.addChild(tns);
-				// MetadatenDebuggen(kind);
 				MetadatenalsTree3Einlesen2(kind, tns);
 			}
 		}
@@ -1165,7 +1163,6 @@ public class Metadaten {
 		/*
 		 * Wenn eine Verknüpfung zwischen Strukturelement und Bildern sein soll, das richtige Bild anzeigen
 		 */
-		// myLogger.info("erste Seite ist Image " + imageNr);
 		if (bildZuStrukturelement)
 			BildErmitteln(imageNr - myBildNummer);
 	}
@@ -1439,7 +1436,6 @@ public class Metadaten {
 					FacesContext context = FacesContext.getCurrentInstance();
 					HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 					String mySession = session.getId() + "_" + myBildCounter + ".png";
-					// String mySession = myBildCounter + ".png";
 
 					/* das neue Bild zuweisen */
 					try {

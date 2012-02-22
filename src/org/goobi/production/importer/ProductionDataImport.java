@@ -762,7 +762,7 @@ public class ProductionDataImport {
 				 * step 'Archiv' *
 				 *******************************************/
 			} else if (s.getTitel().contains("Archivierung")) {
-				// List<IGoobiProperty> proplist = s.getProperties();
+
 				generateStepProperty(session, s, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
 
 				// MAARCHIV

@@ -87,7 +87,7 @@ public class UserProjectFilter implements IEvaluableFilter{
 	private PaginatingCriteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
-		// crit = session.createCriteria(Prozess.class);
+
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}

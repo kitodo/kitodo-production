@@ -45,7 +45,7 @@ import de.sub.goobi.forms.SessionForm;
 
 
 public class SessionCounterFilter implements Filter {
-   //   private static final Logger mylogger = Logger.getLogger(SessionCounterFilter.class);
+
    ServletContext servletContext;
 
    public void init(FilterConfig filterConfig) throws ServletException {

@@ -172,7 +172,6 @@ public class ImportRussland {
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = (String) iter.next();
          String meineDetailNr = meinDetail.substring(0, 3);
-         //			myLogger.debug("---- " + meinDetail);
 
          /* Zeitschrift Titel russisch */
          if (meineDetailNr.equals("020"))
@@ -259,7 +258,7 @@ public class ImportRussland {
                         md = artikel.getAllMetadataByType(mdt_tempId).get(0);
 
                      if (md.getValue().equals(zblID)) {
-                        //                     myLogger.info("------------ Artikel gefunden -------------");
+
                         artikelGefunden = true;
                         /* jetzt alle Details durchlaufen und dem Artikel hinzufügenl  */
                         for (Iterator<String> iter2 = inListe.iterator(); iter2.hasNext();) {

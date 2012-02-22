@@ -216,7 +216,6 @@ public class WebDav {
 			// Runtime.getRuntime().exec(command);
 
 			Helper.callShell2(command);
-			// Helper.setMeldung("Verzeichnis in Benutzerhome angelegt: ", processLinkName);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());

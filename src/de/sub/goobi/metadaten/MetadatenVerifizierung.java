@@ -49,7 +49,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 //TODO: Use generics
 //TODO: Don't use Iterators
 public class MetadatenVerifizierung {
-//	Helper help = new Helper();
+
 	UghHelper ughhelp = new UghHelper();
 	List<DocStruct> docStructsOhneSeiten;
 	Prozess myProzess;
