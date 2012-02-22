@@ -130,6 +130,19 @@ public abstract class BaseDAO implements Serializable{
 		}
 	}
 
+	protected List retrieveObjs(String queryString, String parameter) throws DAOException {
+		try {
+			Session session = Helper.getHibernateSession();
+
+			Query q = session.createQuery(queryString);
+			q.setParameter(0, parameter);
+
+			return q.list();
+		} catch (HibernateException he) {
+			throw new DAOException(he);
+		}
+	}
+
 	/**
 	 * Mein eigener Entwurf für maximale Anzahl bei Rückgabe der Objekte
 	 */

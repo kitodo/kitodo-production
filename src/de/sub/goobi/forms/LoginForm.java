@@ -101,7 +101,7 @@ public class LoginForm {
 			List<Benutzer> treffer;
 			try {
 				// TODO: Try to avoid SQL
-				treffer = new BenutzerDAO().search("from Benutzer where login='" + login + "'");
+				treffer = new BenutzerDAO().search("from Benutzer where login=?", login);
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("could not read database", e.getMessage());
 				return "";
