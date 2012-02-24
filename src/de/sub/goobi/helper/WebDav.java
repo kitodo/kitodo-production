@@ -97,7 +97,7 @@ public class WebDav {
 			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
 		} catch (Exception ioe) {
 			myLogger.error("Exception RemoveFromHomeAlle()", ioe);
-			Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
+			Helper.setFehlerMeldung("Upload stopped, error", ioe.getMessage());
 			return;
 		}
 
@@ -110,10 +110,9 @@ public class WebDav {
 			} catch (java.io.IOException ioe) {
 				myLogger.error("IOException removeFromHomeAlle()", ioe);
 				Helper.setFehlerMeldung("Aborted removeFromHomeAlle(), error", ioe.getMessage());
-				return;
 			} catch (InterruptedException ie) {
 				myLogger.error("InterruptedException in removeFromHomeAlle()", ie);
-				Helper.setFehlerMeldung("Command '" + command + "' are interrupted in removeFromHomeAlle()!");
+				Helper.setFehlerMeldung("Command '" + command + "' is interrupted in removeFromHomeAlle()!");
 			}
 		}
 	}
@@ -153,7 +152,7 @@ public class WebDav {
 			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
 		} catch (InterruptedException ie) {
 			myLogger.error("InterruptedException UploadFromHome", ie);
-			Helper.setFehlerMeldung("Command '" + command + "' are interrupted in UploadFromHome()!");
+			Helper.setFehlerMeldung("Command '" + command + "' is interrupted in UploadFromHome()!");
 		}
 	}
 
