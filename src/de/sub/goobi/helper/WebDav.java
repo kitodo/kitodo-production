@@ -109,10 +109,11 @@ public class WebDav {
 				Helper.callShell(command);
 			} catch (java.io.IOException ioe) {
 				myLogger.error("IOException removeFromHomeAlle()", ioe);
-				Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+				Helper.setFehlerMeldung("Aborted removeFromHomeAlle(), error", ioe.getMessage());
+				return;
 			} catch (InterruptedException ie) {
 				myLogger.error("InterruptedException in removeFromHomeAlle()", ie);
-				Helper.setFehlerMeldung("Command '" + command + "' are interrupted in removeFromHomeAlle() while processing!");
+				Helper.setFehlerMeldung("Command '" + command + "' are interrupted in removeFromHomeAlle()!");
 			}
 		}
 	}
@@ -152,7 +153,7 @@ public class WebDav {
 			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
 		} catch (InterruptedException ie) {
 			myLogger.error("InterruptedException UploadFromHome", ie);
-			Helper.setFehlerMeldung("Command '" + command + "' are interrupted in UploadFromHome() while processing!");
+			Helper.setFehlerMeldung("Command '" + command + "' are interrupted in UploadFromHome()!");
 		}
 	}
 
