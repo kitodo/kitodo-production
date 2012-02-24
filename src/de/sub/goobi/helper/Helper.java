@@ -26,12 +26,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -243,7 +238,8 @@ public class Helper implements Serializable, Observer {
 
 		Process process = null;
 		try {
-			process = new ProcessBuilder(command).start();
+			String[] commandToken = command.split("\\s");
+			process = new ProcessBuilder(commandToken).start();
 			process.waitFor();
 		} finally {
 			closeProcessStreams(process);
@@ -265,7 +261,8 @@ public class Helper implements Serializable, Observer {
 		Scanner scanner = null;
 
 		try {
-			process = new ProcessBuilder(command).start();
+			String[] commandToken = command.split("\\s");
+			process = new ProcessBuilder(commandToken).start();
 
 			scanner = new Scanner(process.getInputStream());
 			while (scanner.hasNextLine()) {
