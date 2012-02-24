@@ -22,17 +22,7 @@
 
 package de.sub.goobi.helper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.DateFormat;
@@ -246,10 +236,18 @@ public class Helper implements Serializable, Observer {
 	// TODO: Don't use this to create /pages/imagesTemp/
 	public static void callShell(String command) throws IOException, InterruptedException {
 		myLogger.debug("execute Shellcommand callShell: " + command);
-		// TODO: Use a ProcessBuilder
-		Process p = Runtime.getRuntime().exec(command);
-		p.waitFor();
 
+		if (isEmptyCommand(command)) {
+			return;
+		}
+
+		Process process = null;
+		try {
+			process = new ProcessBuilder(command).start();
+			process.waitFor();
+		} finally {
+			closeProcessStreams(process);
+		}
 	}
 
 	/**
@@ -259,29 +257,68 @@ public class Helper implements Serializable, Observer {
 	public static Integer callShell2(String command) throws IOException, InterruptedException {
 		myLogger.debug("execute Shellcommand callShell2: " + command);
 		boolean errorsExist = false;
-		if (command == null || command.length() == 0) {
+		if (isEmptyCommand(command)) {
 			return 1;
-		}
-		// TODO: Use a process builder
-		Process process = Runtime.getRuntime().exec(command);
-		Scanner scanner = new Scanner(process.getInputStream());
-		while (scanner.hasNextLine()) {
-			String myLine = scanner.nextLine();
-			setMeldung(myLine);
 		}
 
-		scanner.close();
-		scanner = new Scanner(process.getErrorStream());
-		while (scanner.hasNextLine()) {
-			errorsExist = true;
-			setFehlerMeldung(scanner.nextLine());
+		Process process = null;
+		Scanner scanner = null;
+
+		try {
+			process = new ProcessBuilder(command).start();
+
+			scanner = new Scanner(process.getInputStream());
+			while (scanner.hasNextLine()) {
+				String myLine = scanner.nextLine();
+				setMeldung(myLine);
+			}
+			scanner.close();
+
+			scanner = new Scanner(process.getErrorStream());
+			while (scanner.hasNextLine()) {
+				errorsExist = true;
+				setFehlerMeldung(scanner.nextLine());
+			}
+			scanner.close();
+
+			int rueckgabe = process.waitFor();
+
+			if (errorsExist) {
+				return 1;
+			} else {
+				return rueckgabe;
+			}
+
+		} finally {
+			closeProcessStreams(process);
+			closeFile(scanner);
 		}
-		scanner.close();
-		int rueckgabe = process.waitFor();
-		if (errorsExist) {
-			return 1;
-		} else {
-			return rueckgabe;
+	}
+
+	private static boolean isEmptyCommand(String command) {
+		return (command == null) || (command.length() == 0);
+	}
+	
+	public static void closeProcessStreams(Process process) {
+		if (process == null) {
+			return;
+		}
+
+		closeFile(process.getInputStream());
+		closeFile(process.getOutputStream());
+		closeFile(process.getErrorStream());
+	}
+
+	public static void closeFile (Closeable openFile) {
+		if (openFile == null) {
+			return;
+		}
+
+		try {
+			openFile.close();
+		} catch (IOException e) {
+			myLogger.warn("Could not close file.", e);
+			Helper.setFehlerMeldung("Could not close open file.");
 		}
 	}
 
