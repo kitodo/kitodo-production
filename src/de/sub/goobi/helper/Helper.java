@@ -291,7 +291,11 @@ public class Helper implements Serializable, Observer {
 
 		} finally {
 			closeProcessStreams(process);
-			closeFile(scanner);
+
+			// HINT: Scanner implements Closeable on Java 1.7
+			if (scanner != null) {
+				scanner.close();
+			}
 		}
 	}
 
