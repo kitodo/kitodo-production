@@ -175,11 +175,11 @@ public abstract class BaseDAO implements Serializable {
 		try {
 
 			Session session = Helper.getHibernateSession();
-//			session.evict(obj);
+			// session.evict(obj);
 			session.saveOrUpdate(obj);
 			session.flush();
 			session.connection().commit();
-//			session.update(obj);
+			// session.update(obj);
 		} catch (HibernateException he) {
 			rollback();
 			throw new DAOException(he);
@@ -246,7 +246,7 @@ public abstract class BaseDAO implements Serializable {
 		}
 		session.refresh(o);
 	}
-	
+
 	protected void updateObj(Object o) {
 		Session session = Helper.getHibernateSession();
 		if (session == null) {
@@ -255,6 +255,17 @@ public abstract class BaseDAO implements Serializable {
 			session.close();
 		}
 		session.update(o);
+	}
+
+	protected List retrieveObjs(String queryString, String parameter) throws DAOException {
+		try {
+			Session session = Helper.getHibernateSession();
+			Query q = session.createQuery(queryString);
+			q.setParameter(0, parameter);
+			return q.list();
+		} catch (HibernateException he) {
+			throw new DAOException(he);
+		}
 	}
 
 }

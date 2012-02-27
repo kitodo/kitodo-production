@@ -73,7 +73,7 @@ public class WebDav implements Serializable {
 
 	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
 		List<String> rueckgabe = new ArrayList<String>();
-		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		String VerzeichnisAlle;
 
 		try {
@@ -118,7 +118,7 @@ public class WebDav implements Serializable {
 	// TODO: Use generic types
 	public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
 		String VerzeichnisAlle;
-		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		try {
 			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
 		} catch (Exception ioe) {
@@ -148,7 +148,7 @@ public class WebDav implements Serializable {
 	}
 
 	public void UploadFromHome(Prozess myProzess) {
-		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		UploadFromHome(aktuellerBenutzer, myProzess);
 	}
 
@@ -193,7 +193,7 @@ public class WebDav implements Serializable {
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
 		Helper help = new Helper();
 		saveTiffHeader(myProzess);
-		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		String von = "";
 		String userHome = "";
 
@@ -291,7 +291,7 @@ public class WebDav implements Serializable {
 
 	public int getAnzahlBaende(String inVerzeichnis) {
 		try {
-			Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 			String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
 			File benutzerHome = new File(VerzeichnisAlle);
 			FilenameFilter filter = new FilenameFilter() {

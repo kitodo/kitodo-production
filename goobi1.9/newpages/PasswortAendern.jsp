@@ -63,7 +63,7 @@
 											<htm:td styleClass="eingabeBoxen_row2">
 
 												<h:panelGrid id="grid1" columns="2">
-
+<%--
 													<h:outputText id="id7" value="#{msgs.altesPasswort}" />
 													<h:panelGroup id="id8">
 														<h:inputSecret id="passwortAendernAlt"
@@ -73,17 +73,9 @@
 														<h:message id="mess1" for="passwortAendernAlt"
 															errorClass="text_red" infoClass="text_blue" />
 													</h:panelGroup>
-
-													<%--
-												<h:outputText id="id9" value="#{msgs.neuesPasswort}" />
-												<h:panelGroup id="id10">
-													<h:inputSecret id="passwortAendernNeu1"
-														style="width: 200px;margin-right:15px"
-														value="#{LoginForm.passwortAendernNeu1}"
-														onkeypress="return submitEnter('absenden',event)" />
-													<h:message id="mess2" for="passwortAendernNeu1"
-														errorClass="text_red" infoClass="text_blue" />
-												</h:panelGroup>--%>
+--%>
+													
+											
 
 
 													<%-- neues passwort --%>

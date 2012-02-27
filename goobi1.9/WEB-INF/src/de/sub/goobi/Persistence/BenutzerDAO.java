@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -69,9 +70,14 @@ public class BenutzerDAO extends BaseDAO {
 	public Long count(String query) throws DAOException {
 		return retrieveAnzahl(query);
 	}
-	
+
 	public void refresh(Benutzer t) {
 		Object o = t;
 		refresh(o);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Benutzer> search(String query, String parameter) throws DAOException {
+		return retrieveObjs(query, parameter);
 	}
 }

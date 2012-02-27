@@ -311,12 +311,11 @@ public class Ldap {
 	 * change password of given user, needs old password for authentification
 	 * 
 	 * @param inUser
-	 * @param inOldPassword
 	 * @param inNewPassword
 	 * @return boolean about result of change
 	 * @throws NoSuchAlgorithmException
 	 */
-	public boolean changeUserPassword(Benutzer inBenutzer, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
+	public boolean changeUserPassword(Benutzer inBenutzer, String inNewPassword) throws NoSuchAlgorithmException {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
