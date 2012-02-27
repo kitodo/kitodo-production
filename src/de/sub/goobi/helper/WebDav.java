@@ -23,11 +23,7 @@
 package de.sub.goobi.helper;
 
 //TODO: Replace with a VFS
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -101,20 +97,22 @@ public class WebDav {
 			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
 		} catch (Exception ioe) {
 			myLogger.error("Exception RemoveFromHomeAlle()", ioe);
-			Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
+			Helper.setFehlerMeldung("Upload stopped, error", ioe.getMessage());
 			return;
 		}
 
-		for (Iterator<String> it = inList.iterator(); it.hasNext();) {
-			String myname = (String) it.next();
+		for (String myname : inList) {
 			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
 			command += VerzeichnisAlle + myname;
+
 			try {
-				Runtime.getRuntime().exec(command);
+				Helper.callShell(command);
 			} catch (java.io.IOException ioe) {
-				myLogger.error("IOException UploadFromHomeAlle()", ioe);
-				Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
-				return;
+				myLogger.error("IOException removeFromHomeAlle()", ioe);
+				Helper.setFehlerMeldung("Aborted removeFromHomeAlle(), error", ioe.getMessage());
+			} catch (InterruptedException ie) {
+				myLogger.error("InterruptedException in removeFromHomeAlle()", ie);
+				Helper.setFehlerMeldung("Command '" + command + "' is interrupted in removeFromHomeAlle()!");
 			}
 		}
 	}
@@ -148,11 +146,13 @@ public class WebDav {
 		command += benutzerHome;
 
 		try {
-			// TODO: Use ProcessBuilder
-			Runtime.getRuntime().exec(command);
+			Helper.callShell(command);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException UploadFromHome", ioe);
 			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+		} catch (InterruptedException ie) {
+			myLogger.error("InterruptedException UploadFromHome", ie);
+			Helper.setFehlerMeldung("Command '" + command + "' is interrupted in UploadFromHome()!");
 		}
 	}
 
@@ -213,8 +213,6 @@ public class WebDav {
 		else
 			command += aktuellerBenutzer.getLogin();
 		try {
-			// Runtime.getRuntime().exec(command);
-
 			Helper.callShell2(command);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
