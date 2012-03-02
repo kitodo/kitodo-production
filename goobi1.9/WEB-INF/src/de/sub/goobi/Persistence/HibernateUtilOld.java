@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -37,17 +38,15 @@ import org.hibernate.cfg.Configuration;
 
 import de.sub.goobi.helper.exceptions.InfrastructureException;
 
-
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
 // the newer version follows on bottom  of this class
 
 /**
  * Basic Hibernate helper class, handles SessionFactory, Session and Transaction.
  * <p>
- * Uses a static initializer for the initial SessionFactory creation
- * and holds Session and Transactions in thread local variables. All
- * exceptions are wrapped in an unchecked InfrastructureException.
- *
+ * Uses a static initializer for the initial SessionFactory creation and holds Session and Transactions in thread local variables. All exceptions are
+ * wrapped in an unchecked InfrastructureException.
+ * 
  * @author christian@hibernate.org
  */
 public class HibernateUtilOld {
@@ -77,27 +76,21 @@ public class HibernateUtilOld {
 
 	/**
 	 * Returns the SessionFactory used for this static class.
-	 *
+	 * 
 	 * @return SessionFactory
 	 */
 	public static SessionFactory getSessionFactory() {
-		/* Instead of a static variable, use JNDI:
-		SessionFactory sessions = null;
-		try {
-			Context ctx = new InitialContext();
-			String jndiName = "java:hibernate/HibernateFactory";
-			sessions = (SessionFactory)ctx.lookup(jndiName);
-		} catch (NamingException ex) {
-			throw new InfrastructureException(ex);
-		}
-		return sessions;
-		*/
+		/*
+		 * Instead of a static variable, use JNDI: SessionFactory sessions = null; try { Context ctx = new InitialContext(); String jndiName =
+		 * "java:hibernate/HibernateFactory"; sessions = (SessionFactory)ctx.lookup(jndiName); } catch (NamingException ex) { throw new
+		 * InfrastructureException(ex); } return sessions;
+		 */
 		return sessionFactory;
 	}
 
 	/**
 	 * Returns the original Hibernate configuration.
-	 *
+	 * 
 	 * @return Configuration
 	 */
 	public static Configuration getConfiguration() {
@@ -106,27 +99,25 @@ public class HibernateUtilOld {
 
 	/**
 	 * Rebuild the SessionFactory with the static Configuration.
-	 *
+	 * 
 	 */
-	 public static void rebuildSessionFactory()
-		throws InfrastructureException {
-		synchronized(sessionFactory) {
+	public static void rebuildSessionFactory() throws InfrastructureException {
+		synchronized (sessionFactory) {
 			try {
 				sessionFactory = getConfiguration().buildSessionFactory();
 			} catch (Exception ex) {
 				throw new InfrastructureException(ex);
 			}
 		}
-	 }
+	}
 
 	/**
 	 * Rebuild the SessionFactory with the given Hibernate Configuration.
-	 *
+	 * 
 	 * @param cfg
 	 */
-	 public static void rebuildSessionFactory(Configuration cfg)
-		throws InfrastructureException {
-		synchronized(sessionFactory) {
+	public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
+		synchronized (sessionFactory) {
 			try {
 				sessionFactory = cfg.buildSessionFactory();
 				configuration = cfg;
@@ -134,21 +125,20 @@ public class HibernateUtilOld {
 				throw new InfrastructureException(ex);
 			}
 		}
-	 }
+	}
 
 	/**
 	 * Retrieves the current Session local to the thread.
 	 * <p/>
 	 * If no Session is open, opens a new Session for the running thread.
-	 *
+	 * 
 	 * @return Session
 	 */
-	public static Session getSession()
-		throws InfrastructureException {
+	public static Session getSession() throws InfrastructureException {
 		Session s = threadSession.get();
 		try {
 			if (s == null) {
-//				log.debug("Opening new Session for this thread.");
+				// log.debug("Opening new Session for this thread.");
 				if (getInterceptor() != null) {
 					log.debug("Using interceptor: " + getInterceptor().getClass());
 					s = getSessionFactory().openSession(getInterceptor());
@@ -166,13 +156,12 @@ public class HibernateUtilOld {
 	/**
 	 * Closes the Session local to the thread.
 	 */
-	public static void closeSession()
-		throws InfrastructureException {
+	public static void closeSession() throws InfrastructureException {
 		try {
 			Session s = threadSession.get();
 			threadSession.set(null);
 			if (s != null && s.isOpen()) {
-//				log.debug("Closing Session of this thread.");
+				// log.debug("Closing Session of this thread.");
 				s.close();
 			}
 		} catch (HibernateException ex) {
@@ -183,8 +172,7 @@ public class HibernateUtilOld {
 	/**
 	 * Start a new database transaction.
 	 */
-	public static void beginTransaction()
-		throws InfrastructureException {
+	public static void beginTransaction() throws InfrastructureException {
 		Transaction tx = threadTransaction.get();
 		try {
 			if (tx == null) {
@@ -200,12 +188,10 @@ public class HibernateUtilOld {
 	/**
 	 * Commit the database transaction.
 	 */
-	public static void commitTransaction()
-		throws InfrastructureException {
+	public static void commitTransaction() throws InfrastructureException {
 		Transaction tx = threadTransaction.get();
 		try {
-			if ( tx != null && !tx.wasCommitted()
-							&& !tx.wasRolledBack() ) {
+			if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
 				log.debug("Committing database transaction of this thread.");
 				tx.commit();
 			}
@@ -219,12 +205,11 @@ public class HibernateUtilOld {
 	/**
 	 * Commit the database transaction.
 	 */
-	public static void rollbackTransaction()
-		throws InfrastructureException {
+	public static void rollbackTransaction() throws InfrastructureException {
 		Transaction tx = threadTransaction.get();
 		try {
 			threadTransaction.set(null);
-			if ( tx != null && !tx.wasCommitted() && !tx.wasRolledBack() ) {
+			if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
 				log.debug("Tyring to rollback database transaction of this thread.");
 				tx.rollback();
 			}
@@ -237,12 +222,12 @@ public class HibernateUtilOld {
 
 	/**
 	 * Reconnects a Hibernate Session to the current Thread.
-	 *
-	 * @param session The Hibernate Session to be reconnected.
+	 * 
+	 * @param session
+	 *            The Hibernate Session to be reconnected.
 	 */
 	@SuppressWarnings("deprecation")
-	public static void reconnect(Session session)
-		throws InfrastructureException {
+	public static void reconnect(Session session) throws InfrastructureException {
 		try {
 			session.reconnect();
 			threadSession.set(session);
@@ -253,11 +238,10 @@ public class HibernateUtilOld {
 
 	/**
 	 * Disconnect and return Session from current Thread.
-	 *
+	 * 
 	 * @return Session the disconnected Session
 	 */
-	public static Session disconnectSession()
-		throws InfrastructureException {
+	public static Session disconnectSession() throws InfrastructureException {
 
 		Session session = getSession();
 		try {
@@ -274,18 +258,24 @@ public class HibernateUtilOld {
 	/**
 	 * Register a Hibernate interceptor with the current thread.
 	 * <p>
-	 * Every Session opened is opened with this interceptor after
-	 * registration. Has no effect if the current Session of the
-	 * thread is already open, effective on next close()/getSession().
+	 * Every Session opened is opened with this interceptor after registration. Has no effect if the current Session of the thread is already open,
+	 * effective on next close()/getSession().
 	 */
 	public static void registerInterceptor(Interceptor interceptor) {
 		threadInterceptor.set(interceptor);
 	}
 
 	private static Interceptor getInterceptor() {
-		Interceptor interceptor =
-			threadInterceptor.get();
+		Interceptor interceptor = threadInterceptor.get();
 		return interceptor;
 	}
 
+	// nicht sicher ob so korrekt implementiert
+	public static boolean hasOpenSession() {
+		Session s = threadSession.get();
+		if (s == null) {
+			return false;
+		}
+		return true;
+	}
 }

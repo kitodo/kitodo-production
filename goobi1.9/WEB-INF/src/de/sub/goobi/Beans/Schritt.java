@@ -41,11 +41,13 @@ import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.Beans.Property.DisplayPropertyList;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
+import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -866,6 +868,28 @@ public class Schritt implements Serializable, IGoobiEntity {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Get the current object for this row.
+	 * 
+	 * @return Employee The current object representing a row.
+	 */
+	public Schritt getCurrent() {
+		boolean hasOpen = HibernateUtilOld.hasOpenSession();
+		Session sess = Helper.getHibernateSession();
+
+		Schritt current = (Schritt) sess.get(Schritt.class, this.getId());
+		if (current == null) {
+			current = (Schritt) sess.load(Schritt.class, this.getId());
+		}
+		if (!hasOpen) {
+			current.eigenschaften.size();
+			current.benutzer.size();
+			current.benutzergruppen.size();
+			sess.close();
+		}
+		return current;
 	}
 
 }
