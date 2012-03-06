@@ -39,7 +39,7 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myWerkstueck.eigenschaftenList}"
+	var="item" value="#{ProzessverwaltungForm.myWerkstueck.displayProperties.sortedProperties}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
 
 	<h:column>
@@ -65,7 +65,7 @@
 			title="#{msgs.bearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 			<x:updateActionListener
-				property="#{ProzessverwaltungForm.myWerkstueckEigenschaft}"
+				property="#{ProzessverwaltungForm.myWerkstueck.displayProperties.currentProperty}"
 				value="#{item}" />
 			<x:updateActionListener
 				property="#{ProzessverwaltungForm.modusBearbeiten}"
@@ -75,7 +75,7 @@
 </x:dataTable>
 
 <%-- Neu-Schaltknopf --%>
-<h:commandLink action="#{ProzessverwaltungForm.WerkstueckEigenschaftNeu}"
+<h:commandLink action="#{ProzessverwaltungForm.myWerkstueck.displayProperties.createNewProperty}"
 	value="#{msgs.eigenschaftHinzufuegen}"
 	title="#{msgs.eigenschaftHinzufuegen}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='werkstueckeigenschaft'}">
@@ -114,7 +114,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschafttitel"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.titel}"
+							value="#{ProzessverwaltungForm.myWerkstueck.displayProperties.currentProperty.titel}"
 							required="true" />
 						<x:message for="eigenschafttitel" style="color: red"
 							detailFormat="#{msgs.keinTitelAngegeben}" />
@@ -124,7 +124,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschaftwert"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.wert}" />
+							value="#{ProzessverwaltungForm.myWerkstueck.displayProperties.currentProperty.wert}" />
 					</h:panelGroup>
 				</h:panelGrid>
 
@@ -141,9 +141,9 @@
 			</htm:td>
 			<htm:td styleClass="eingabeBoxen_row3" align="right">
 				<h:commandButton value="#{msgs.loeschen}"
-					action="#{ProzessverwaltungForm.WerkstueckEigenschaftLoeschen}"
+					action="#{ProzessverwaltungForm.myWerkstueck.displayProperties.deleteProperty}"
 					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-					rendered="#{ProzessverwaltungForm.myWerkstueckEigenschaft.id != null}">
+					rendered="#{ProzessverwaltungForm.myWerkstueck.displayProperties.currentProperty.id != null}">
 					<x:updateActionListener
 						property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 				</h:commandButton>
