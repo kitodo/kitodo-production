@@ -743,7 +743,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		File fstandard = new java.io.File(help.getGoobiDataDirectory() + "standard.xml");
 
 		if (!fstandard.exists()) {
-			URL standardURL = Helper.class.getResource("standard.xml");
+			URL standardURL = Helper.class.getClassLoader().getResource("standard.xml");
 			if (standardURL != null) {
 				try {
 					Helper.copyFile(new File(standardURL.toURI()), fstandard);
