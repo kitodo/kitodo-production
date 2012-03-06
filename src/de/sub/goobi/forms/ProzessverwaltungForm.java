@@ -375,17 +375,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Eigenschaften
 	 */
 
-	public String ProzessEigenschaftLoeschen() {
-		try {
-			myProzess.getEigenschaften().remove(myProzessEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		myProzess.refreshProperties();
-		return "";
-	}
-
 	public String SchrittEigenschaftLoeschen() {
 		try {
 			mySchritt.getEigenschaften().remove(mySchrittEigenschaft);
