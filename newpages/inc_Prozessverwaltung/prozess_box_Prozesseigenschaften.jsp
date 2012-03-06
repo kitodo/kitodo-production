@@ -39,7 +39,7 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myProzess.eigenschaftenList}"
+	var="item" value="#{ProzessverwaltungForm.myProzess.displayProperties.sortedProperties}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
 
 	<h:column>
@@ -66,7 +66,7 @@
 			title="#{msgs.eigenschaftBearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 			<x:updateActionListener
-				property="#{ProzessverwaltungForm.myProzessEigenschaft}"
+				property="#{ProzessverwaltungForm.myProzess.displayProperties.currentProperty}"
 				value="#{item}" />
 			<x:updateActionListener
 				property="#{ProzessverwaltungForm.modusBearbeiten}"
@@ -76,7 +76,7 @@
 </x:dataTable>
 
 <%-- Neu-Schaltknopf --%>
-<h:commandLink action="#{ProzessverwaltungForm.ProzessEigenschaftNeu}"
+<h:commandLink action="#{ProzessverwaltungForm.myProzess.displayProperties.createNewProperty}"
 	value="#{msgs.eigenschaftHinzufuegen}"
 	title="#{msgs.eigenschaftHinzufuegen}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft' && ((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2))}">
@@ -116,7 +116,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschafttitel"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myProzessEigenschaft.titel}"
+							value="#{ProzessverwaltungForm.myProzess.displayProperties.currentProperty.titel}"
 							required="true" />
 						<x:message for="eigenschafttitel" style="color: red"
 							detailFormat="#{msgs.keinTitelAngegeben}" />
@@ -126,7 +126,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschaftwert"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myProzessEigenschaft.wert}" />
+							value="#{ProzessverwaltungForm.myProzess.displayProperties.currentProperty.wert}" />
 					</h:panelGroup>
 				</h:panelGrid>
 
@@ -143,9 +143,9 @@
 			</htm:td>
 			<htm:td styleClass="eingabeBoxen_row3" align="right">
 				<h:commandButton value="#{msgs.loeschen}"
-					action="#{ProzessverwaltungForm.ProzessEigenschaftLoeschen}"
+					action="#{ProzessverwaltungForm.myProzess.displayProperties.deleteProperty}"
 					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-					rendered="#{ProzessverwaltungForm.myProzessEigenschaft.id != null}">
+					rendered="#{ProzessverwaltungForm.myProzess.displayProperties.currentProperty.id != null}">
 					<x:updateActionListener
 						property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 				</h:commandButton>

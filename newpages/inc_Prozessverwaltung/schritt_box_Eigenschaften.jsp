@@ -39,7 +39,7 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.mySchritt.eigenschaftenList}"
+	var="item" value="#{ProzessverwaltungForm.mySchritt.displayProperties.sortedProperties}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='schritteeigenschaft'}">
 
 	<h:column>
@@ -65,7 +65,7 @@
 			title="#{msgs.bearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 			<x:updateActionListener
-				property="#{ProzessverwaltungForm.mySchrittEigenschaft}"
+				property="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty}"
 				value="#{item}" />
 			<x:updateActionListener
 				property="#{ProzessverwaltungForm.modusBearbeiten}"
@@ -75,7 +75,7 @@
 </x:dataTable>
 
 <%-- Neu-Schaltknopf --%>
-<h:commandLink action="#{ProzessverwaltungForm.SchrittEigenschaftNeu}"
+<h:commandLink action="#{ProzessverwaltungForm.mySchritt.displayProperties.createNewProperty}"
 	value="#{msgs.eigenschaftHinzufuegen}"
 	title="#{msgs.eigenschaftHinzufuegen}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='schritteeigenschaft'}">
@@ -114,7 +114,7 @@
 				<h:panelGroup>
 					<h:inputText id="eigenschafttitel"
 						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.mySchrittEigenschaft.titel}"
+						value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.titel}"
 						required="true" />
 					<x:message for="eigenschafttitel" style="color: red"
 						detailFormat="#{msgs.keinTitelAngegeben}" />
@@ -124,7 +124,7 @@
 				<h:panelGroup>
 					<h:inputText id="eigenschaftwert"
 						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.mySchrittEigenschaft.wert}" />
+						value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.wert}" />
 				</h:panelGroup>
 			</h:panelGrid>
 
@@ -141,9 +141,9 @@
 		</htm:td>
 		<htm:td styleClass="eingabeBoxen_row3" align="right">
 			<h:commandButton value="#{msgs.loeschen}"
-				action="#{ProzessverwaltungForm.SchrittEigenschaftLoeschen}"
+				action="#{ProzessverwaltungForm.mySchritt.displayProperties.deleteProperty}"
 				onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
-				rendered="#{ProzessverwaltungForm.mySchrittEigenschaft.id != null}">
+				rendered="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.id != null}">
 				<x:updateActionListener
 					property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandButton>

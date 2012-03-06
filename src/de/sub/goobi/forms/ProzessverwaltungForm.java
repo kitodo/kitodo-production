@@ -375,50 +375,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Eigenschaften
 	 */
 
-	public String ProzessEigenschaftLoeschen() {
-		try {
-			myProzess.getEigenschaften().remove(myProzessEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		myProzess.refreshProperties();
-		return "";
-	}
-
-	public String SchrittEigenschaftLoeschen() {
-		try {
-			mySchritt.getEigenschaften().remove(mySchrittEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		mySchritt.refreshProperties();
-		return "";
-	}
-
-	public String VorlageEigenschaftLoeschen() {
-		try {
-			myVorlage.getEigenschaften().remove(myVorlageEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		myVorlage.refreshProperties();
-		return "";
-	}
-
-	public String WerkstueckEigenschaftLoeschen() {
-		try {
-			myWerkstueck.getEigenschaften().remove(myWerkstueckEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		myWerkstueck.refreshProperties();
-		return "";
-	}
-
 	public String ProzessEigenschaftUebernehmen() {
 		myProzess.getEigenschaften().add((Prozesseigenschaft) myProzess.getDisplayProperties().getCurrentProperty().getProperty());
 		((Prozesseigenschaft) myProzess.getDisplayProperties().getCurrentProperty().getProperty()).setProzess(myProzess);
