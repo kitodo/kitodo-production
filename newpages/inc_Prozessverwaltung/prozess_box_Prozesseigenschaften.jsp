@@ -39,7 +39,7 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myProzess.eigenschaftenList}"
+	var="item" value="#{ProzessverwaltungForm.myProzess.displayProperties.sortedProperties}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
 
 	<h:column>
@@ -66,7 +66,7 @@
 			title="#{msgs.eigenschaftBearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 			<x:updateActionListener
-				property="#{ProzessverwaltungForm.myProzessEigenschaft}"
+				property="#{ProzessverwaltungForm.myProzess.displayProperties.currentProperty}"
 				value="#{item}" />
 			<x:updateActionListener
 				property="#{ProzessverwaltungForm.modusBearbeiten}"
