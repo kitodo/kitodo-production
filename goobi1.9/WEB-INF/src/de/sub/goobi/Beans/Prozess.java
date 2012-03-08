@@ -186,6 +186,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public void setHistory(Set<HistoryEvent> history) {
+		
 		this.history = history;
 	}
 
