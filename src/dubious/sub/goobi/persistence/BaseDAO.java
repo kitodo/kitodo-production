@@ -30,12 +30,13 @@
  * @author Douglas Harris <doug@mscs.mu.edu>
  * @author Nick Heudecker <nick@systemmobile.com>
  */
-package de.sub.goobi.persistence;
+package dubious.sub.goobi.persistence;
 
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
+import de.sub.goobi.persistence.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
