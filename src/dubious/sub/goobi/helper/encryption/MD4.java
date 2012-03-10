@@ -1,27 +1,27 @@
-/*
- * This file is part of the Goobi Application - a Workflow tool for the support of
- * mass digitization.
+/**
+ * This file is propably based on source code from www.koders.com:
+ * http://www.koders.com/java/fidCB64C00823737175F66E292309DC88FE743893EA.aspx?s=md5
  *
- * Visit the websites for more information.
- *     - http://gdz.sub.uni-goettingen.de
- *     - http://www.goobi.org
- *     - http://launchpad.net/goobi-production
+ * www.koders.com is operated by Black Duck Software, Inc.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * Black Duck Software, Inc.
+ * 8 New England Executive Park
+ * Burlington, MA 01803
+ * Tel: +1 781.891.5100
+ * Fax: +1 781.891.5145
+ * Email: info@blackducksoftware.com
+ * http://www.blackducksoftware.com
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
- * should have received a copy of the GNU General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA
+ * Black Duck Software Digital Millennium Copyright Act Notice
+ * http://corp.koders.com/dmca
+ *
+ * Black Duck Software respects the intellectual property of others. Black Duck Software may, in appropriate
+ * circumstances and at its sole discretion, terminate the access of users who infringe the copyright or intellectual
+ * property rights of others.
+ *
  */
+package dubious.sub.goobi.helper.encryption;
 
-package de.sub.goobi.helper.encryption;
-//TODO: What's the licence of this file?
 public class MD4 {
 
    private static int A, B, C, D;
