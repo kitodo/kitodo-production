@@ -33,6 +33,7 @@
     <!-- Default build properties (applied if not overridden by build.properties file) -->
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
+    <property name="build.classes.test" value="${build.dir}/test-classes"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
 
@@ -68,6 +69,7 @@
     <path id="test.classpath">
         <path refid="compile.classpath"/>
         <pathelement location="${build.classes}"/>
+        <pathelement location="${build.classes.test}"/>
     </path>
 
     <!--==================================================
@@ -152,6 +154,7 @@
     <target name="createDirs">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.classes}"/>
+        <mkdir dir="${build.classes.test}"/>
         <delete dir="${doc.javadocs.dir}"/>
         <mkdir dir="${doc.javadocs.dir}"/>
         <delete dir="${test.report.dir}"/>
@@ -212,12 +215,12 @@
 
     <!-- Compile unit tests -->
     <target name="compile-tests" depends="compile">
-        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes}"
+        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes.test}"
                source="${build.javac.source}"
                target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
-               classpathref="compile.classpath">
+               classpathref="test.classpath">
         </javac>
     </target>
 
@@ -231,7 +234,7 @@
 
         <war destfile="${build.dist.war}" webxml="WEB-INF/web.xml">
 
-            <classes dir="${build.classes}" excludes="**/*Test*.class"/>
+            <classes dir="${build.classes}"/>
 
             <lib dir="${lib.dir}"/>
 
@@ -298,7 +301,7 @@
             <classpath refid="test.classpath"/>
             <formatter type="xml" usefile="true"/>
             <batchtest todir="${test.report.dir}">
-                <fileset dir="${build.classes}" includes="**/*Test.class"/>
+                <fileset dir="${build.classes.test}" includes="**/*Test.class"/>
             </batchtest>
         </junit>
     </target>
