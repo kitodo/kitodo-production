@@ -32,7 +32,7 @@ import java.util.Set;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.encryption.DesEncrypter;
+import dubious.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.ldap.Ldap;
 
 public class Benutzer implements Serializable {
