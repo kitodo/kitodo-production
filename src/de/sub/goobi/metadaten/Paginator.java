@@ -112,27 +112,27 @@ public class Paginator {
 		List sequence =
 				determineSequenceFromPaginationType(increment, start, end);
 
-        if (fictitiousPagination) {
-            sequence = addSquareBracketsToEachInSequence(sequence);
-        }
+		if (fictitiousPagination) {
+			sequence = addSquareBracketsToEachInSequence(sequence);
+		}
 
-        if (paginationMode == Paginator.Mode.FOLIATION) {
+		if (paginationMode == Paginator.Mode.FOLIATION) {
 
-            sequence = cloneEachInSequence(sequence);
+			sequence = cloneEachInSequence(sequence);
 
-        } else if (paginationType != Paginator.Type.UNCOUNTED) {
-            if (paginationMode == Paginator.Mode.RECTOVERSO) {
+		} else if (paginationType != Paginator.Type.UNCOUNTED) {
+			if (paginationMode == Paginator.Mode.RECTOVERSO) {
 
-                sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
+				sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
 
-            } else if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
+			} else if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
 
-                sequence = addRectoVersoSuffixToEachInSequence(sequence);
+				sequence = addRectoVersoSuffixToEachInSequence(sequence);
 
-            }
-        }
+			}
+		}
 
-        return sequence;
+		return sequence;
 	}
 
     private List addSquareBracketsToEachInSequence(List sequence) {
@@ -326,15 +326,15 @@ public class Paginator {
 		return this;
 	}
 
-    /**
-     * Enable or disable fictitious pagination using square bracktes around numbers.
-     *
-     * @param b True, fictitious pagination. False, regular pagination.
-     * @return  This object for fluent interfacing.
-     */
-    public Paginator setFictitious(boolean b) {
-        this.fictitiousPagination = b;
-        return this;
-    }
+	/**
+	 * Enable or disable fictitious pagination using square bracktes around numbers.
+	 *
+	 * @param b True, fictitious pagination. False, regular pagination.
+	 * @return	This object for fluent interfacing.
+	 */
+	public Paginator setFictitious(boolean b) {
+		this.fictitiousPagination = b;
+		return this;
+	}
 
 }
