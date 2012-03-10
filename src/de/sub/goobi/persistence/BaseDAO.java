@@ -20,10 +20,18 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
+/**
+ * This file is very likely based on work of Douglas Harris and Nick Heudecker.
+ * A collections of lectures can be found at http://spectral.mscs.mu.edu/SoftDev2005/lectures/.
+ *
+ * The original file source code is to be found at
+ * http://spectral.mscs.mu.edu/SoftDev2005/examples/team/#src/example/persistence/BaseDAO.java
+ *
+ * @author Douglas Harris <doug@mscs.mu.edu>
+ * @author Nick Heudecker <nick@systemmobile.com>
+ */
 package de.sub.goobi.persistence;
 
-//TODO: What's the licence of this file?
-//TODO: Use Generics
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
