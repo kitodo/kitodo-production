@@ -22,6 +22,7 @@
 
 package de.sub.goobi.forms;
 
+import dubious.sub.goobi.helper.Page;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -31,7 +32,6 @@ import org.hibernate.criterion.Order;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class RegelsaetzeForm extends BasisForm {

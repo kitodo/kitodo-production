@@ -23,12 +23,14 @@
 /*
  * Created on Oct 27, 2004
  */
-package de.sub.goobi.helper;
+package dubious.sub.goobi.helper;
 
 //TODO: What's the licence of this file?
 import java.io.Serializable;
 import java.util.List;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;

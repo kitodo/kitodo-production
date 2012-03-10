@@ -35,6 +35,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import dubious.sub.goobi.helper.Page;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
@@ -66,7 +67,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;

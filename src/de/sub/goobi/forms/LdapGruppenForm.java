@@ -22,6 +22,7 @@
 
 package de.sub.goobi.forms;
 
+import dubious.sub.goobi.helper.Page;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,7 +31,6 @@ import org.hibernate.criterion.Order;
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.persistence.LdapGruppenDAO;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class LdapGruppenForm extends BasisForm {
