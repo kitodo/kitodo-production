@@ -116,20 +116,22 @@ public class Paginator {
 			sequence = addSquareBracketsToEachInSequence(sequence);
 		}
 
-		if (paginationMode == Paginator.Mode.FOLIATION) {
+		if ((paginationMode == Paginator.Mode.PAGES) || (paginationMode == Paginator.Mode.COLUMNS)) {
+			return sequence;
+		}
 
-			sequence = cloneEachInSequence(sequence);
+		sequence = cloneEachInSequence(sequence);
 
-		} else if (paginationType != Paginator.Type.UNCOUNTED) {
-			if (paginationMode == Paginator.Mode.RECTOVERSO) {
-
-				sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
-
-			} else if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
-
-				sequence = addRectoVersoSuffixToEachInSequence(sequence);
-
-			}
+		if (paginationType == Paginator.Type.UNCOUNTED) {
+			return sequence;
+		}
+		
+		if ((paginationMode == Paginator.Mode.RECTOVERSO) || (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION)) {
+			sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
+		}
+		
+		if (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION) {
+				sequence = scrunchSequence(sequence);
 		}
 
 		return sequence;
@@ -145,26 +147,42 @@ public class Paginator {
     }
 
     private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
-		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
+		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size());
+		Boolean toggle = false;
 		for (Object o : sequence) {
-			String newLabel = o.toString();
-			rectoversoSequence.add(newLabel + "r");
-			rectoversoSequence.add(newLabel + "v");
+			String label = o.toString();
+			toggle = !toggle;
+			rectoversoSequence.add(label + (toggle ? "r" : "v"));
 		}
 
 		sequence = rectoversoSequence;
 		return sequence;
 	}
 
-    private List addRectoVersoSuffixToEachInSequence(List sequence) {
-		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
+    private List scrunchSequence(List sequence) {
+		List<Object> scrunchedSequence = new ArrayList((sequence.size() / 2) + 2);
+		String prev = "";
+		int scrunch = 0;
 		for (Object o : sequence) {
-			String newLabel = o.toString();
-			rectoversoSequence.add(newLabel + "r " + newLabel + "v");
+			switch (scrunch) {
+				case 0:
+					scrunchedSequence.add(o.toString());
+					scrunch = 1;
+					break;
+				case 1:
+					prev = o.toString();
+					scrunch = 2;
+					break;
+				case 2:
+					scrunchedSequence.add(prev + " " + o.toString());
+					scrunch=1;
+					break;
+			}
 		}
-
-		sequence = rectoversoSequence;
-		return sequence;
+		if (scrunch == 1) {
+			scrunchedSequence.add(prev);
+		}
+		return scrunchedSequence;
 	}
 
 	private List cloneEachInSequence(List sequence) {

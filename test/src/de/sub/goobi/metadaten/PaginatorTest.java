@@ -301,7 +301,7 @@ public class PaginatorTest {
                         new MockMetadatum()
                 });
         paginator.run();
-        assertPagenumberSequence(paginator, new String[]{"1r 1v", "2r 2v", "3r 3v"});
+        assertPagenumberSequence(paginator, new String[]{"1r", "1v 2r", "2v"});
     }
 
     @Test
