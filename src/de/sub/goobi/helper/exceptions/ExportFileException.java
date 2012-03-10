@@ -22,7 +22,9 @@
 
 package de.sub.goobi.helper.exceptions;
 
-public class ExportFileException extends AbstractGoobiException  {
+import dubious.sub.goobi.helper.exceptions.AbstractGoobiException;
+
+public class ExportFileException extends AbstractGoobiException {
 	private static final long serialVersionUID = 8440137060804389036L;
 
 	public ExportFileException()
