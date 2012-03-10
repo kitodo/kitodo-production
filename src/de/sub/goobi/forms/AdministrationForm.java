@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import dubious.sub.goobi.helper.encryption.DesEncrypter;
+import dubious.sub.goobi.helper.encryption.MD5;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -71,7 +72,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
