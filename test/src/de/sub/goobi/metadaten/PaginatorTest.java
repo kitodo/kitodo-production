@@ -178,6 +178,21 @@ public class PaginatorTest {
         assertPagenumberSequence(paginator, new String[]{"1r", "1v", "2r", "2v"});
     }
 
+	@Test
+	public void paginateRectoVersoFoliationOnSinglePage() {
+		Paginator paginator = new Paginator()
+				.setPageSelection(new int[]{0})
+				.setPaginationType(Paginator.Type.ARABIC)
+				.setPaginationStartValue("1")
+				.setPaginationScope(Paginator.Scope.FROMFIRST)
+				.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION)
+				.setPagesToPaginate(new Metadatum[]{
+						new MockMetadatum()
+				});
+		paginator.run();
+		assertPagenumberSequence(paginator, new String[]{"1r"});
+	}
+
     @Test
     public void setsAllToUncountedWhenRectoVersoFoliationModeAndTypeUncounted() {
         Paginator paginator = new Paginator()
