@@ -228,7 +228,7 @@ public class Paginator {
 			int first = selectedPages[0];
 			numSelectedPages = pagesToPaginate.length - first;
 		}
-		return start + numSelectedPages + increment;
+		return (start - 1) + (numSelectedPages * increment);
 	}
 
 	private void applyFromFirstSelected(List sequence) {
