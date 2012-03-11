@@ -160,7 +160,7 @@ public class Paginator {
 	}
 
     private List scrunchSequence(List sequence) {
-		List<Object> scrunchedSequence = new ArrayList((sequence.size() / 2) + 2);
+		List<Object> scrunchedSequence = new ArrayList<Object>((sequence.size() / 2) + 2);
 		String prev = "";
 		int scrunch = 0;
 		for (Object o : sequence) {
