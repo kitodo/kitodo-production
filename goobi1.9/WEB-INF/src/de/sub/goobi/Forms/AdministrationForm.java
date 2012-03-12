@@ -45,7 +45,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.jobs.JobManager;
-import org.goobi.production.flow.jobs.LuceneIndexJob;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -81,7 +80,6 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
-@SuppressWarnings("deprecation")
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
 	private static final Logger myLogger = Logger.getLogger(AdministrationForm.class);
@@ -148,13 +146,13 @@ public class AdministrationForm implements Serializable {
 	}
 	
 	public void createIndex () {
-		LuceneIndexJob job = new LuceneIndexJob();
-		if (job.getIsRunning() == false) {
-			job.execute();
-			Helper.setMeldung("lucene indexer executed");
-		} else {
-			Helper.setMeldung("lucene indexer is already running, try again in a few minutes");
-		}
+//		LuceneIndexJob job = new LuceneIndexJob();
+//		if (job.getIsRunning() == false) {
+//			job.execute();
+//			Helper.setMeldung("lucene indexer executed");
+//		} else {
+//			Helper.setMeldung("lucene indexer is already running, try again in a few minutes");
+//		}
 	}
 
 	/*
