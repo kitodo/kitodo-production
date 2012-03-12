@@ -112,27 +112,29 @@ public class Paginator {
 		List sequence =
 				determineSequenceFromPaginationType(increment, start, end);
 
-        if (fictitiousPagination) {
-            sequence = addSquareBracketsToEachInSequence(sequence);
-        }
+		if (fictitiousPagination) {
+			sequence = addSquareBracketsToEachInSequence(sequence);
+		}
 
-        if (paginationMode == Paginator.Mode.FOLIATION) {
+		if ((paginationMode == Paginator.Mode.PAGES) || (paginationMode == Paginator.Mode.COLUMNS)) {
+			return sequence;
+		}
 
-            sequence = cloneEachInSequence(sequence);
+		sequence = cloneEachInSequence(sequence);
 
-        } else if (paginationType != Paginator.Type.UNCOUNTED) {
-            if (paginationMode == Paginator.Mode.RECTOVERSO) {
+		if (paginationType == Paginator.Type.UNCOUNTED) {
+			return sequence;
+		}
+		
+		if ((paginationMode == Paginator.Mode.RECTOVERSO) || (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION)) {
+			sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
+		}
+		
+		if (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION) {
+				sequence = scrunchSequence(sequence);
+		}
 
-                sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
-
-            } else if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
-
-                sequence = addRectoVersoSuffixToEachInSequence(sequence);
-
-            }
-        }
-
-        return sequence;
+		return sequence;
 	}
 
     private List addSquareBracketsToEachInSequence(List sequence) {
@@ -145,26 +147,42 @@ public class Paginator {
     }
 
     private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
-		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
+		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size());
+		Boolean toggle = false;
 		for (Object o : sequence) {
-			String newLabel = o.toString();
-			rectoversoSequence.add(newLabel + "r");
-			rectoversoSequence.add(newLabel + "v");
+			String label = o.toString();
+			toggle = !toggle;
+			rectoversoSequence.add(label + (toggle ? "r" : "v"));
 		}
 
 		sequence = rectoversoSequence;
 		return sequence;
 	}
 
-    private List addRectoVersoSuffixToEachInSequence(List sequence) {
-		List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size() * 2);
+    private List scrunchSequence(List sequence) {
+		List<Object> scrunchedSequence = new ArrayList<Object>((sequence.size() / 2) + 2);
+		String prev = "";
+		int scrunch = 0;
 		for (Object o : sequence) {
-			String newLabel = o.toString();
-			rectoversoSequence.add(newLabel + "r " + newLabel + "v");
+			switch (scrunch) {
+				case 0:
+					scrunchedSequence.add(o.toString());
+					scrunch = 1;
+					break;
+				case 1:
+					prev = o.toString();
+					scrunch = 2;
+					break;
+				case 2:
+					scrunchedSequence.add(prev + " " + o.toString());
+					scrunch=1;
+					break;
+			}
 		}
-
-		sequence = rectoversoSequence;
-		return sequence;
+		if (scrunch == 1) {
+			scrunchedSequence.add(prev);
+		}
+		return scrunchedSequence;
 	}
 
 	private List cloneEachInSequence(List sequence) {
@@ -210,7 +228,7 @@ public class Paginator {
 			int first = selectedPages[0];
 			numSelectedPages = pagesToPaginate.length - first;
 		}
-		return start + numSelectedPages + increment;
+		return (start - 1) + (numSelectedPages * increment);
 	}
 
 	private void applyFromFirstSelected(List sequence) {
@@ -326,15 +344,15 @@ public class Paginator {
 		return this;
 	}
 
-    /**
-     * Enable or disable fictitious pagination using square bracktes around numbers.
-     *
-     * @param b True, fictitious pagination. False, regular pagination.
-     * @return  This object for fluent interfacing.
-     */
-    public Paginator setFictitious(boolean b) {
-        this.fictitiousPagination = b;
-        return this;
-    }
+	/**
+	 * Enable or disable fictitious pagination using square bracktes around numbers.
+	 *
+	 * @param b True, fictitious pagination. False, regular pagination.
+	 * @return	This object for fluent interfacing.
+	 */
+	public Paginator setFictitious(boolean b) {
+		this.fictitiousPagination = b;
+		return this;
+	}
 
 }
