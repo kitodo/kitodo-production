@@ -37,6 +37,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import dubious.sub.goobi.helper.Page;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.goobi.production.chart.IProjectTask;
@@ -70,7 +71,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.persistence.ProjektDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ProjekteForm extends BasisForm {

@@ -22,6 +22,8 @@
 
 package de.sub.goobi.helper.exceptions;
 
+import dubious.sub.goobi.helper.exceptions.AbstractGoobiException;
+
 public class DAOException extends AbstractGoobiException {
 	private static final long serialVersionUID = 3174737519370361577L;
 

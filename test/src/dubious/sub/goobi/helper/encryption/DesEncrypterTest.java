@@ -1,13 +1,12 @@
-package de.sub.goobi.helper.encryption;
+package dubious.sub.goobi.helper.encryption;
 
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import dubious.sub.goobi.helper.encryption.DesEncrypter;
 import org.junit.Test;
-
-import de.sub.goobi.helper.encryption.DesEncrypter;
 
 public class DesEncrypterTest {
 	static Map<String, String> testData;  

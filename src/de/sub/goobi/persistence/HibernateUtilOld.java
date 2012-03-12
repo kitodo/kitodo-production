@@ -22,6 +22,7 @@
 
 package de.sub.goobi.persistence;
 
+import dubious.sub.goobi.helper.exceptions.InfrastructureException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -30,8 +31,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import de.sub.goobi.helper.exceptions.InfrastructureException;
 
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 

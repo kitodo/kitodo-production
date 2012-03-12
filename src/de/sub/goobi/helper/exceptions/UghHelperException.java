@@ -22,6 +22,8 @@
 
 package de.sub.goobi.helper.exceptions;
 
+import dubious.sub.goobi.helper.exceptions.AbstractGoobiException;
+
 public class UghHelperException extends AbstractGoobiException {
    private static final long serialVersionUID = -7355142413216742677L;
 

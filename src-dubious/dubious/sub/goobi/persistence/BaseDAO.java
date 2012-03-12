@@ -1,33 +1,20 @@
-/*
- * This file is part of the Goobi Application - a Workflow tool for the support of
- * mass digitization.
+/**
+ * This file is very likely based on work of Douglas Harris and Nick Heudecker.
+ * A collections of lectures can be found at http://spectral.mscs.mu.edu/SoftDev2005/lectures/.
  *
- * Visit the websites for more information.
- *     - http://gdz.sub.uni-goettingen.de
- *     - http://www.goobi.org
- *     - http://launchpad.net/goobi-production
+ * The original file source code is to be found at
+ * http://spectral.mscs.mu.edu/SoftDev2005/examples/team/#src/example/persistence/BaseDAO.java
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
- * should have received a copy of the GNU General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA
+ * @author Douglas Harris <doug@mscs.mu.edu>
+ * @author Nick Heudecker <nick@systemmobile.com>
  */
+package dubious.sub.goobi.persistence;
 
-package de.sub.goobi.persistence;
-
-//TODO: What's the licence of this file?
-//TODO: Use Generics
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
+import de.sub.goobi.persistence.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;

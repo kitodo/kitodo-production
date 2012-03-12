@@ -52,6 +52,7 @@
     <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
     <property name="test.report.dir" value="${build.dir}/test-reports/"/>
     <property name="java.src.dir" value="${basedir}/src"/>
+    <property name="java.src.dubious.dir" value="${basedir}/src-dubious"/>
 
 
     <!--==================================================
@@ -204,7 +205,7 @@
 
     <!-- Compile application -->
     <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}" destdir="${build.classes}"
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}" destdir="${build.classes}"
                source="${build.javac.source}"
                target="${build.javac.target}"
                encoding="UTF8"
@@ -223,7 +224,6 @@
                classpathref="test.classpath">
         </javac>
     </target>
-
 
     <!--==================================================
         Distribution

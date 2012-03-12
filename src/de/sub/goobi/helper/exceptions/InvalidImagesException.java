@@ -22,6 +22,8 @@
 
 package de.sub.goobi.helper.exceptions;
 
+import dubious.sub.goobi.helper.exceptions.AbstractGoobiException;
+
 public class InvalidImagesException extends AbstractGoobiException {
 	private static final long serialVersionUID = -2677207359216957351L;
 	
