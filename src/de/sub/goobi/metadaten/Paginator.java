@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Paginator {
 
-    public enum Mode {
+	public enum Mode {
 		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO
 	}
 
@@ -57,7 +57,7 @@ public class Paginator {
 
 	private Type paginationType = Paginator.Type.UNCOUNTED;
 
-    private boolean fictitiousPagination = false;
+	private boolean fictitiousPagination = false;
 
 	/**
 	 * Perform pagination.
@@ -138,11 +138,11 @@ public class Paginator {
 	}
 
     private List addSquareBracketsToEachInSequence(List sequence) {
-        List<Object> fictitiousSequence = new ArrayList<Object>(sequence.size());
-        for (Object o : sequence) {
+	List<Object> fictitiousSequence = new ArrayList<Object>(sequence.size());
+	for (Object o : sequence) {
 			String newLabel = o.toString();
 			fictitiousSequence.add("[" + newLabel + "]");
-        }
+	}
 		return fictitiousSequence;
     }
 
