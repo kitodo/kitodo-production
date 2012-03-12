@@ -190,7 +190,7 @@ public class PaginatorTest {
 						new MockMetadatum()
 				});
 		paginator.run();
-		assertPagenumberSequence(paginator, new String[]{"1r"});
+		assertPagenumberSequence(paginator, new String[]{"1v 2r"});
 	}
 
 	@Test
@@ -316,7 +316,7 @@ public class PaginatorTest {
 						new MockMetadatum()
 				});
 		paginator.run();
-		assertPagenumberSequence(paginator, new String[]{"1r", "1v 2r", "2v 3r"});
+		assertPagenumberSequence(paginator, new String[]{"1v 2r", "2v 3r", "3v 4r"});
 	}
 
 	@Test
@@ -334,7 +334,7 @@ public class PaginatorTest {
 						new MockMetadatum()
 				});
 		paginator.run();
-		assertPagenumberSequence(paginator, new String[]{"[1]r", "[1]v [2]r", "[2]v [3]r"});
+		assertPagenumberSequence(paginator, new String[]{"[1]v [2]r", "[2]v [3]r", "[3]v [4]r"});
 	}
 
 	@Test
@@ -352,7 +352,7 @@ public class PaginatorTest {
 						new MockMetadatum()
 				});
 		paginator.run();
-		assertPagenumberSequence(paginator, new String[]{"[XX]r", "[XX]v [XXI]r", "[XXI]v [XXII]r"});
+		assertPagenumberSequence(paginator, new String[]{"[XX]v [XXI]r", "[XXI]v [XXII]r", "[XXII]v [XXIII]r"});
 	}
 
 	private void assertPagenumberSequence(Paginator paginator,
