@@ -81,7 +81,6 @@
 				
 					<a4j:commandLink action="#{Metadaten.CurrentStartpage}" reRender="pagestart1">
 						<h:graphicImage value="/newpages/images/buttons/cancel1.gif" style="border: 0px;vertical-align:middle;" />
-						<x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
 					</a4j:commandLink>
 					
 					<h:outputText value="#{msgs.letzteSeite} :" />
@@ -96,7 +95,6 @@
 					</h:panelGroup>
 					<a4j:commandLink action="#{Metadaten.CurrentEndpage}" reRender="pageend1">
 						<h:graphicImage value="/newpages/images/buttons/cancel1.gif" style="border: 0px;vertical-align:middle;" />
-						<x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
 					</a4j:commandLink>
 				</h:panelGrid>
 			</htm:td>
