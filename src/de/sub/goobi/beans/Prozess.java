@@ -667,7 +667,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			WriteException {
 
 		if (! checkForMetadataFile()) {
-		    throw new IOException("Can't open metadata file: " + getMetadataFilePath() + "!");
+		    throw new IOException("Metadata file: " + getMetadataFilePath() + " not found!");
 		}
 
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
