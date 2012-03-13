@@ -24,6 +24,7 @@ import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Export.dms.AutomaticDmsExport;
+import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.enums.HistoryEventType;
@@ -95,49 +96,48 @@ public class HelperSchritte {
 				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess")
 				.add(Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
 
+		// if (offeneSchritteGleicherReihenfolge != 0) {
+		// List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
+		// Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(
+		// Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId()))
+		// .createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
+		// for (Iterator it = bla.iterator(); it.hasNext();) {
+		// Schritt s = (Schritt) it.next();
+		// }
+		// }	
+
+		
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-
-//			this.pdao.refresh(inSchritt.getProzess());
+			
 			List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class)
 					.add(Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
 					.add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
 			int reihenfolge = 0;
-			
-			logger.trace("found " + allehoeherenSchritte.size() + " steps");
-			for (Schritt myStep : allehoeherenSchritte) {
-
-				logger.trace("working with step " + myStep.getTitel() + ", id: " + myStep.getId() + ", order: " + myStep.getReihenfolge() + ", status: " + myStep.getBearbeitungsstatusEnum().getTitle());
+			// TODO: Don't use iterators, use for loops instead
+			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
+				Schritt myStep = iter.next();
 				if (reihenfolge == 0) {
-					logger.trace("found first step");
 					reihenfolge = myStep.getReihenfolge().intValue();
-					logger.trace("new order is: " + reihenfolge);					
 				}
-				// TODO die getCurrent() Lösung funktioniert nicht
-//				myStep = myStep.getCurrent();
-				// TODO refresh hilft nicht
-//				session.refresh(myStep);
-				if (reihenfolge == myStep.getReihenfolge().intValue() && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.DONE) && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
-					logger.trace("activate step");
+
+				logger.info(myStep.getBearbeitungsstatusAsString());
+				if (reihenfolge == myStep.getReihenfolge().intValue() && myStep.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
 
 					myStep.setBearbeitungsstatusEnum(StepStatus.OPEN);
-					logger.trace("setting step status to open");
 					myStep.setBearbeitungszeitpunkt(myDate);
-//					logger.debug("setting start date to " + myDate.toGMTString());
 					myStep.setEditTypeEnum(StepEditType.AUTOMATIC);
-					logger.trace("setting step edit type to automatic");
+
 					myStep.getProzess()
 							.getHistory()
 							.add(new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
 									.getProzess()));
-					logger.trace("setting history event");
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty() || myStep.isTypExportDMS())) {
 						automatischeSchritte.add(myStep);
-						logger.trace("step is automatic");
 					}
 					System.out.println("opened: " + myStep.getTitel());
 				} else {
@@ -149,11 +149,8 @@ public class HelperSchritte {
 		try {
 			/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
 			this.pdao.save(inSchritt.getProzess());
-			logger.trace("saving process");
 //			session.evict(inSchritt.getProzess());
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung(e.getMessage());
-			logger.error(e);
 		}
 
 		// if (automatic) {
@@ -169,7 +166,6 @@ public class HelperSchritte {
 		// TODO: Don't use iterators, use for loops instead
 		for (Iterator<Schritt> iter = automatischeSchritte.iterator(); iter.hasNext();) {
 			Schritt myStep = iter.next();
-			myStep.setBearbeitungsbeginn(new Date());
 			ScriptThread myThread = new ScriptThread(myStep);
 			myThread.start();
 		}

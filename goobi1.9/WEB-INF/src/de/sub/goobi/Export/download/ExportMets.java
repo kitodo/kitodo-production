@@ -91,7 +91,10 @@ public class ExportMets {
 			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		String benutzerHome = login.getMyBenutzer().getHomeDir();
+		String benutzerHome = "";
+		if (login!=null){
+			benutzerHome = login.getMyBenutzer().getHomeDir();
+		}
 		startExport(myProzess, benutzerHome);
 	}
 
