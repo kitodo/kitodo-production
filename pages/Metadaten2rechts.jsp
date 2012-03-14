@@ -49,7 +49,7 @@
     counter();
 </script> --%>
 	<h:form id="formular1" style="margin:0px">
-		<htm:table id="navigation" cellpadding="2" cellspacing="0" style="position: fixed; margin-right: 4px; width:99,75%" styleClass="main_statistikboxen">
+		<htm:table id="navigation" cellpadding="2" cellspacing="0" style="margin-right: 4px; width:99,75%" styleClass="main_statistikboxen">
 			<htm:tr>
 				<htm:td styleClass="main_statistikboxen_row1" height="1px" colspan="2">
 
@@ -114,7 +114,7 @@
 			</htm:tr>
 		</htm:table>
 	</h:form>
-	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%; margin-top: 15px" styleClass="main_statistikboxen">
+	<htm:table id="metadatenRechts" cellpadding="2" cellspacing="0" style="width:100%;height:100%;" styleClass="main_statistikboxen">
 
 		<htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
 			<htm:td>
