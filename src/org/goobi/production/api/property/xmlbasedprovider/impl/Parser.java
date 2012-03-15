@@ -75,7 +75,7 @@ public class Parser {
 		ArrayList<PropertyTemplate> propList = new ArrayList<PropertyTemplate>();
 
 		if ((filename == null) || !(new java.io.File(filename).exists())) {
-			logger.warn("File name empty or file does not exists: '" + filename + "'!");
+			logger.info("File name empty or file does not exists: '" + filename + "'. Continue with empty property list!");
 			return propList;
 		}
 
