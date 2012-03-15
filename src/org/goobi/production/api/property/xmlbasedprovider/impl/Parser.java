@@ -77,7 +77,7 @@ public class Parser {
 
 		File propertyFile = getPropertyFile(filename);
 
-		if (propertyFile.exists()) {
+		if ((propertyFile != null) && propertyFile.exists()) {
 			SAXBuilder builder = new SAXBuilder(validate);
 			Document doc;
 			doc = builder.build(propertyFile);
