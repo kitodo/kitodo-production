@@ -22,9 +22,11 @@
 
 package org.goobi.production.api.property.xmlbasedprovider.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -42,6 +44,9 @@ import de.sub.goobi.helper.enums.PropertyType;
  * 
  *******************************************************************************/
 public class Parser {
+
+	private static final Logger logger = Logger.getLogger(Parser.class);
+
 	// Strings used in xml
 	private static final String PROPERTY = "property";
 	private static final String NAME = "name";
@@ -68,24 +73,38 @@ public class Parser {
 	@SuppressWarnings("unchecked")
 	public ArrayList<PropertyTemplate> createModelFromXML(String filename, boolean validate, IGoobiEntity inEntity) throws JDOMException, IOException {
 
-		validate = false;
-		SAXBuilder builder = new SAXBuilder(validate);
-		Document doc;
-		doc = builder.build(filename);
-		Element rootElement = doc.getRootElement();
-
-		ArrayList<Element> ePropertyList = new ArrayList<Element>();
-		ePropertyList.addAll(rootElement.getChildren(PROPERTY, ns));
-
 		ArrayList<PropertyTemplate> propList = new ArrayList<PropertyTemplate>();
-		for (Element eProperty : ePropertyList) {
-			PropertyTemplate property = generateProperty(eProperty, inEntity);
-			if (property != null) {
-				propList.add(property);
+
+		File propertyFile = getPropertyFile(filename);
+
+		if (propertyFile.exists()) {
+			SAXBuilder builder = new SAXBuilder(validate);
+			Document doc;
+			doc = builder.build(propertyFile);
+			Element rootElement = doc.getRootElement();
+
+			ArrayList<Element> ePropertyList = new ArrayList<Element>();
+			ePropertyList.addAll(rootElement.getChildren(PROPERTY, ns));
+
+			for (Element eProperty : ePropertyList) {
+				PropertyTemplate property = generateProperty(eProperty, inEntity);
+				if (property != null) {
+					propList.add(property);
+				}
 			}
+		} else {
+			logger.info("Property file does not exists: '" + filename + "'. Continue with empty property list!");
 		}
 
 		return propList;
+	}
+
+	private File getPropertyFile(String filename) {
+		File propertyFile = null;
+		if (filename != null) {
+			propertyFile = new File(filename);
+		}
+		return propertyFile;
 	}
 
 	/***********************************************************************
