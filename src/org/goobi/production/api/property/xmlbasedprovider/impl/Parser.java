@@ -68,6 +68,13 @@ public class Parser {
 	@SuppressWarnings("unchecked")
 	public ArrayList<PropertyTemplate> createModelFromXML(String filename, boolean validate, IGoobiEntity inEntity) throws JDOMException, IOException {
 
+		ArrayList<PropertyTemplate> propList = new ArrayList<PropertyTemplate>();
+
+		boolean fileExists = new java.io.File(filename).exists();
+		if ((filename == null) || !fileExists) {
+			return propList;
+		}
+
 		SAXBuilder builder = new SAXBuilder(validate);
 		Document doc;
 		doc = builder.build(filename);
@@ -76,7 +83,6 @@ public class Parser {
 		ArrayList<Element> ePropertyList = new ArrayList<Element>();
 		ePropertyList.addAll(rootElement.getChildren(PROPERTY, ns));
 
-		ArrayList<PropertyTemplate> propList = new ArrayList<PropertyTemplate>();
 		for (Element eProperty : ePropertyList) {
 			PropertyTemplate property = generateProperty(eProperty, inEntity);
 			if (property != null) {
