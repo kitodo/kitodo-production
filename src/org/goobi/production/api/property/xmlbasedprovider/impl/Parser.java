@@ -25,6 +25,7 @@ package org.goobi.production.api.property.xmlbasedprovider.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -42,6 +43,9 @@ import de.sub.goobi.helper.enums.PropertyType;
  * 
  *******************************************************************************/
 public class Parser {
+
+	private static final Logger logger = Logger.getLogger(Parser.class);
+
 	// Strings used in xml
 	private static final String PROPERTY = "property";
 	private static final String NAME = "name";
@@ -72,6 +76,7 @@ public class Parser {
 
 		boolean fileExists = new java.io.File(filename).exists();
 		if ((filename == null) || !fileExists) {
+			logger.warn("File name empty or file does not exists: '" + filename + "'!");
 			return propList;
 		}
 
