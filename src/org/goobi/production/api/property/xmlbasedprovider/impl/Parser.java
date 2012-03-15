@@ -68,7 +68,6 @@ public class Parser {
 	@SuppressWarnings("unchecked")
 	public ArrayList<PropertyTemplate> createModelFromXML(String filename, boolean validate, IGoobiEntity inEntity) throws JDOMException, IOException {
 
-		validate = false;
 		SAXBuilder builder = new SAXBuilder(validate);
 		Document doc;
 		doc = builder.build(filename);
