@@ -1,4 +1,5 @@
 package de.sub.goobi.helper.ldap;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -49,6 +50,10 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchResult;
+import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.StartTlsRequest;
+import javax.naming.ldap.StartTlsResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -69,7 +74,7 @@ public class Ldap {
 		String userDN = inBenutzer.getLdapGruppe().getUserDN();
 		userDN = userDN.replaceAll("\\{login\\}", inBenutzer.getLogin());
 		userDN = userDN.replaceAll("\\{firstname\\}", inBenutzer.getVorname());
-		userDN = userDN.replaceAll("\\{lastname\\}", inBenutzer.getNachname());		
+		userDN = userDN.replaceAll("\\{lastname\\}", inBenutzer.getNachname());
 		return userDN;
 	}
 
@@ -122,34 +127,86 @@ public class Ldap {
 	 */
 	public boolean isUserPasswordCorrect(Benutzer inBenutzer, String inPasswort) {
 		Hashtable<String, String> env = LdapConnectionSettings();
-		if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
-			env.put(Context.SECURITY_AUTHENTICATION, "none");
-			// TODO auf passwort testen
-		} else {
-			env.put(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
-			env.put(Context.SECURITY_CREDENTIALS, inPasswort);
-		}
+		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
+			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
+			// System.setProperty("javax.net.ssl.trustStore", keystore);
+			env = new Hashtable<String, String>();
+			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
+			env.put("java.naming.ldap.version", "3");
+			LdapContext ctx = null;
+			StartTlsResponse tls = null;
+			try {
+				ctx = new InitialLdapContext(env, null);
 
-		try {
-			if (ConfigMain.getParameter("ldap_AttributeToTest")== null) {
-				new InitialDirContext(env);
+				// Authentication must be performed over a secure channel
+				tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
+				tls.negotiate();
+
+				// Authenticate via SASL EXTERNAL mechanism using client X.509
+				// certificate contained in JVM keystore
+				ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+				ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
+				ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, inPasswort);
+				ctx.reconnect(null);
 				return true;
-			} else {
-				DirContext ctx = new InitialDirContext(env);
-				Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
-				Attribute la = attrs.get(ConfigMain.getParameter("ldap_AttributeToTest"));
-				String test = (String) la.get(0);
-				if (test.equals(ConfigMain.getParameter("ldap_ValueOfAttribute"))) {
-					ctx.close();
-					return true;
-				} else {
-					ctx.close();
-					return false;
+				// Perform search for privileged attributes under authenticated context
+
+			} catch (IOException e) {
+				myLogger.error("TLS negotiation error:", e);
+
+				return false;
+			} catch (NamingException e) {
+
+				myLogger.error("JNDI error:", e);
+
+				return false;
+			} finally {
+				if (tls != null) {
+					try {
+						// Tear down TLS connection
+						tls.close();
+					} catch (IOException e) {
+					}
+				}
+				if (ctx != null) {
+					try {
+						// Close LDAP connection
+						ctx.close();
+					} catch (NamingException e) {
+					}
 				}
 			}
-		} catch (NamingException e) {
-			myLogger.debug("Benutzeranmeldung nicht korrekt für Benutzer: " + inBenutzer.getLogin());
-			return false;
+		} else {
+			if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
+				env.put(Context.SECURITY_AUTHENTICATION, "none");
+				// TODO auf passwort testen
+			} else {
+				env.put(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
+				env.put(Context.SECURITY_CREDENTIALS, inPasswort);
+			}
+
+			try {
+				if (ConfigMain.getParameter("ldap_AttributeToTest") == null) {
+					new InitialDirContext(env);
+					return true;
+				} else {
+					DirContext ctx = new InitialDirContext(env);
+					Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
+					Attribute la = attrs.get(ConfigMain.getParameter("ldap_AttributeToTest"));
+					String test = (String) la.get(0);
+					if (test.equals(ConfigMain.getParameter("ldap_ValueOfAttribute"))) {
+						ctx.close();
+						return true;
+					} else {
+						ctx.close();
+						return false;
+					}
+				}
+			} catch (NamingException e) {
+				myLogger.debug("Benutzeranmeldung nicht korrekt für Benutzer: " + inBenutzer.getLogin());
+				return false;
+			}
 		}
 	}
 
@@ -164,6 +221,66 @@ public class Ldap {
 			return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
 		}
 		Hashtable<String, String> env = LdapConnectionSettings();
+		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
+
+			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
+			// System.setProperty("javax.net.ssl.trustStore", keystore);
+			env = new Hashtable<String, String>();
+			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
+			env.put("java.naming.ldap.version", "3");
+			LdapContext ctx = null;
+			StartTlsResponse tls = null;
+			try {
+				ctx = new InitialLdapContext(env, null);
+
+				// Authentication must be performed over a secure channel
+				tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
+				tls.negotiate();
+
+				// Authenticate via SASL EXTERNAL mechanism using client X.509
+				// certificate contained in JVM keystore
+				ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+				ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
+				ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, ConfigMain.getParameter("ldap_adminPassword"));
+
+				ctx.reconnect(null);
+
+				Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
+				Attribute la = attrs.get("homeDirectory");
+				return (String) la.get(0);
+
+				// Perform search for privileged attributes under authenticated context
+
+			} catch (IOException e) {
+				myLogger.error("TLS negotiation error:", e);
+
+				return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
+			} catch (NamingException e) {
+
+				myLogger.error("JNDI error:", e);
+
+				return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
+			} finally {
+				if (tls != null) {
+					try {
+						// Tear down TLS connection
+						tls.close();
+					} catch (IOException e) {
+					}
+				}
+				if (ctx != null) {
+					try {
+						// Close LDAP connection
+						ctx.close();
+					} catch (NamingException e) {
+					}
+				}
+			}
+		} else if (ConfigMain.getBooleanParameter("useLocalDirectory", false)) {
+			return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
+		}
+		
 		if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
 			env.put(Context.SECURITY_AUTHENTICATION, "none");
 		} else {
