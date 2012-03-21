@@ -28,7 +28,7 @@
 							<h:commandLink id="action3" action="#{AktuelleSchritteForm.batchHelper.executeScript}" title="#{script}">
 								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.script}" value="#{script}" />
 								<h:graphicImage value="/newpages/images/buttons/admin4b.gif" style="margin-right:3px;vertical-align:middle" />
-								<h:outputText value="#{msgs.scriptAusfuehren} : #{script}" />
+								<h:outputText value="#{msgs.scriptAusfuehren}: #{script}" />
 							</h:commandLink>
 						</x:dataList>
 

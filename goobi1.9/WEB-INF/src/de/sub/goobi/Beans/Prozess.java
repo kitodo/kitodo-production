@@ -32,8 +32,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -186,7 +184,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public void setHistory(Set<HistoryEvent> history) {
-		
+
 		this.history = history;
 	}
 
@@ -770,6 +768,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
+		if (!checkForMetadataFile()) {
+			throw new IOException("Can't open metadata file: " + getMetadataFilePath() + "!");
+		}
 		checkForMetadataFile();
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
@@ -840,41 +841,21 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 	}
 
-	private void checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
-		/* prüfen ob die xml-Datei überhaupt existiert, wenn nicht, neu anlegen */
-		File f = new java.io.File(getMetadataFilePath());
+	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+			PreferencesException {
+		boolean result = true;
+		File f = new File(getMetadataFilePath());
 		if (!f.exists()) {
-			myLogger.warn(Helper.getTranslation("metadataFileNotFound") + f.getAbsolutePath());
-			storeDefaultMetaFile(f);
+			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
+			myLogger.warn(errorMessage);
+			Helper.setFehlerMeldung(errorMessage);
+			result = false;
 		}
+
+		return result;
 	}
 
-	private void storeDefaultMetaFile(File f) throws IOException {
-		// boolean ok = false;
-		/* wenn Verzeichnis angelegt wurde, jetzt die xml-Datei anlegen */
-		File fstandard = new java.io.File(this.help.getGoobiDataDirectory() + "standard.xml");
 
-		if (!fstandard.exists()) {
-			URL standardURL = Helper.class.getResource("standard.xml");
-			if (standardURL != null) {
-				try {
-					Helper.copyFile(new File(standardURL.toURI()), fstandard);
-				} catch (URISyntaxException e) {
-					throw new IOException("Fehler beim Anlegen der Metdaten-Datei meta.xml (IOException): " + e.getMessage());
-				}
-			}
-		}
-
-		if (fstandard.exists()) {
-			try {
-				Helper.copyFile(fstandard, f);
-			} catch (IOException e) {
-				throw new IOException("Fehler beim Anlegen der Metdaten-Datei meta.xml (IOException): " + e.getMessage());
-			}
-		} else {
-			throw new IOException("Fehler beim Anlegen der Metadaten-Datei, standard.xml nicht vorhanden (" + fstandard.getAbsolutePath() + ")");
-		}
-	}
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {

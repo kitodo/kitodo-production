@@ -24,7 +24,6 @@ import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Export.dms.AutomaticDmsExport;
-import de.sub.goobi.Persistence.HibernateUtil;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.enums.HistoryEventType;
@@ -122,7 +121,7 @@ public class HelperSchritte {
 				}
 
 				logger.info(myStep.getBearbeitungsstatusAsString());
-				if (reihenfolge == myStep.getReihenfolge().intValue() && myStep.getBearbeitungsstatusEnum() == StepStatus.LOCKED) {
+				if (reihenfolge == myStep.getReihenfolge().intValue() && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.DONE) && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */

@@ -240,17 +240,17 @@ public class Helper implements Serializable, Observer {
 
 	public static Session getHibernateSession() {
 		Session sess;
-//		try {
-//			sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
-//			if (sess == null) {
-//				sess = HibernateUtilOld.getSession();
-//			}
-//		} catch (Exception e) {
-//			sess = HibernateUtilOld.getSession();
-//		}
-//		if (!sess.isOpen()) {
+		try {
+			sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
+			if (sess == null) {
+				sess = HibernateUtilOld.getSession();
+			}
+		} catch (Exception e) {
 			sess = HibernateUtilOld.getSession();
-//		}
+		}
+		if (!sess.isOpen()) {
+			sess = HibernateUtilOld.getSession();
+		}
 		return sess;
 	}
 

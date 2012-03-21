@@ -135,7 +135,7 @@
 								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren} : #{AktuelleSchritteForm.mySchritt.scriptname1}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname1}" />
 						</h:commandLink>
 
 						<h:commandLink id="action4"
@@ -147,7 +147,7 @@
 								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}  : #{AktuelleSchritteForm.mySchritt.scriptname2}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname2}" />
 						</h:commandLink>
 				
 						<h:commandLink id="action5"
@@ -159,7 +159,7 @@
 								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad3}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren} : #{AktuelleSchritteForm.mySchritt.scriptname3}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname3}" />
 						</h:commandLink>
 						
 						<h:commandLink id="action6"
@@ -171,7 +171,7 @@
 								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad4}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren} : #{AktuelleSchritteForm.mySchritt.scriptname4}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname4}" />
 						</h:commandLink>
 						
 						<h:commandLink id="action7"
@@ -184,7 +184,7 @@
 								
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren} : #{AktuelleSchritteForm.mySchritt.scriptname5}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname5}" />
 						</h:commandLink>
 						<%-- tiffHeaderDownload-Schaltknopf --%>
 						<h:commandLink id="action8"

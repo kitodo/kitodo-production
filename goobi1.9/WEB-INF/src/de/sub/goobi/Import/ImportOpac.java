@@ -201,11 +201,12 @@ public class ImportOpac {
 		 * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
 		 */
 		/* XML in Datei schreiben */
-		// XMLOutputter outputter = new XMLOutputter();
-		// FileOutputStream output = new
-		// FileOutputStream("c:/Temp/temp_opac.xml");
-		// outputter.output(myJdomDoc.getRootElement(), output);
-		/* myRdf temporär in Datei schreiben */
+//		 XMLOutputter outputter = new XMLOutputter();
+//		 FileOutputStream output = new
+//		 FileOutputStream("/home/robert/temp_opac.xml");
+//		 outputter.output(myJdomDoc.getRootElement(), output);
+	
+		 /* myRdf temporär in Datei schreiben */
 		// myRdf.write("D:/temp.rdf.xml");
 
 		/* zugriff auf ugh-Klassen */
