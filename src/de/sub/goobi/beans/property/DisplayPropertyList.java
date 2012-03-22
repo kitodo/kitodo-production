@@ -55,6 +55,7 @@ public class DisplayPropertyList {
 
 	public DisplayPropertyList(IGoobiEntity inEntity) {
 		owningEntity = inEntity;
+		myPropTemplateCollection = new ArrayList<PropertyTemplate>();
 	}
 
 	/**
