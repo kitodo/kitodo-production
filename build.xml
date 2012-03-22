@@ -256,6 +256,7 @@
                 </patternset>
             </zipfileset>
             <zipfileset dir="css" prefix="css"/>
+        	<zipfileset dir="js" prefix="js" />
 
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
