@@ -49,6 +49,15 @@
 	
 
 <%-- +++++++++++++++++  Anzeigefilter ++++++++++++++++++++++++ --%>
+
+<x:aliasBeansScope>
+	<x:aliasBean alias="#{Form}" value="#{ProzessverwaltungForm}" />
+	<x:aliasBean alias="#{showHits}" value="#{true}" />
+	<f:subview id="sub1">
+		<jsp:include page="/newpages/inc/Process_Filter.jsp" />
+	</f:subview>
+</x:aliasBeansScope>
+<%--
 <h:panelGrid width="100%"
 	columnClasses="standardTable_Column,standardTable_ColumnRight"
 	rowClasses="standardTable_Row_bottom" columns="2">
@@ -76,7 +85,7 @@
 
 	</h:panelGroup>
 </h:panelGrid>
-
+--%>
 <%-- +++++++++++++++++  // Anzeigefilter ++++++++++++++++++++++++ --%>
 
 <%-- Datentabelle --%>
