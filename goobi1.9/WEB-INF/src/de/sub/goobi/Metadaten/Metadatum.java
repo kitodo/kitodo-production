@@ -1,4 +1,5 @@
 package de.sub.goobi.Metadaten;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -45,225 +46,216 @@ import de.sub.goobi.helper.Helper;
 
 //TODO: Use a correct comment here
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
- * mit dessen Eigenschaften und erlaubt die Bearbeitung 
- * der Schrittdetails
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
  * 
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
 
-
 public class Metadatum {
-   private Metadata md;
-   private int identifier;
-   private Prefs myPrefs;
-   private Prozess myProcess;
-   private HashMap<String, DisplayCase> myValues = new HashMap<String, DisplayCase>();
-   private List<SelectItem> items;
-   private List<String> selectedItems;
+	private Metadata md;
+	private int identifier;
+	private Prefs myPrefs;
+	private Prozess myProcess;
+	private HashMap<String, DisplayCase> myValues = new HashMap<String, DisplayCase>();
+	private List<SelectItem> items;
+	private List<String> selectedItems;
 
+	/**
+	 * Allgemeiner Konstruktor ()
+	 */
+	public Metadatum(Metadata m, int inID, Prefs inPrefs, Prozess inProcess) {
+		this.md = m;
+		this.identifier = inID;
+		this.myPrefs = inPrefs;
+		this.myProcess = inProcess;
+		for (BindState state : BindState.values()) {
+			this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));
+		}
+	}
 
-   /**
-    * Allgemeiner Konstruktor ()
-    */
-   public Metadatum(Metadata m, int inID, Prefs inPrefs, Prozess inProcess) {
-      this.md = m;
-      this.identifier = inID;
-      this.myPrefs = inPrefs;
-      this.myProcess = inProcess;
-      for (BindState state : BindState.values()) {
-    	  this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));    	  
-      }
-   }
+	public ArrayList<Item> getWert() {
+		String value = this.md.getValue();
+		if (value != null) {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getValue().equals(value)) {
+					i.setIsSelected(true);
+				} else {
+					i.setIsSelected(false);
+				}
+			}
+		}
+		return this.myValues.get(Modes.getBindState().getTitle()).getItemList();
+	}
 
-   public ArrayList<Item> getWert() {
-	   String value = this.md.getValue();
-	   if (value != null) {
-		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
-			   if (i.getValue().equals(value)) {
-				  i.setIsSelected(true);
-			   } else {
-				   i.setIsSelected(false);
-			   }	   
-		   }
-	   }
-      return  this.myValues.get(Modes.getBindState().getTitle()).getItemList();
-   }
+	public void setWert(String inWert) {
+		this.md.setValue(inWert.trim());
+	}
 
-   public void setWert(String inWert) {
-      this.md.setValue(inWert.trim());
-   }
+	public String getTyp() {
+		String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		if (label == null) {
+			label = this.md.getType().getName();
+		}
+		return label;
+	}
 
-   
+	public void setTyp(String inTyp) {
+		MetadataType mdt = this.myPrefs.getMetadataTypeByName(inTyp);
+		this.md.setType(mdt);
+	}
 
-   public String getTyp() {
-	   String label = this.md.getType().getLanguage((String) Helper
-               .getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
-       if (label == null) {
-    	   label = this.md.getType().getName();
-       }
-       return label;
-   }
+	/*
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
+	 */
 
-   public void setTyp(String inTyp) {
-      MetadataType mdt = this.myPrefs.getMetadataTypeByName(inTyp);
-      this.md.setType(mdt);
-   }
+	public int getIdentifier() {
+		return this.identifier;
+	}
 
-   /*#####################################################
-    #####################################################
-    ##																															 
-    ##																Getter und Setter									
-    ##                                                   															    
-    #####################################################
-    ####################################################*/
+	public void setIdentifier(int identifier) {
+		this.identifier = identifier;
+	}
 
-   public int getIdentifier() {
-      return this.identifier;
-   }
+	public Metadata getMd() {
+		return this.md;
+	}
 
-   public void setIdentifier(int identifier) {
-      this.identifier = identifier;
-   }
+	public void setMd(Metadata md) {
+		this.md = md;
+	}
 
-   public Metadata getMd() {
-      return this.md;
-   }
+	/******************************************************
+	 * 
+	 * new functions for use of display configuration whithin xml files
+	 * 
+	 *****************************************************/
 
-   public void setMd(Metadata md) {
-      this.md = md;
-   }
+	public String getOutputType() {
+		return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
+	}
 
-   /******************************************************
-    * 
-    * new functions for use of display configuration 
-    * whithin xml files
-    * 
-    *****************************************************/
+	public List<SelectItem> getItems() {
+		this.items = new ArrayList<SelectItem>();
+		this.selectedItems = new ArrayList<String>();
+		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+			this.items.add(new SelectItem(i.getLabel()));
+			if (i.getIsSelected()) {
+				this.selectedItems.add(i.getLabel());
+			}
+		}
+		return this.items;
+	}
 
-	
-	
-   public String getOutputType() {
-	   return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
-   }
-	
-   
-   
-   public List<SelectItem> getItems() {
-	   this.items = new ArrayList<SelectItem>();
-	   this.selectedItems = new ArrayList<String>();
-	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		   this.items.add(new SelectItem(i.getLabel()));
-		   if (i.getIsSelected()) {
-			   this.selectedItems.add(i.getLabel());
-		   }
-	   }
-	   return this.items;
-   }
+	public void setItems(List<SelectItem> items) {
+		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+			i.setIsSelected(false);
+		}
+		String val = "";
+		for (SelectItem sel : items) {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getLabel().equals(sel.getValue())) {
+					i.setIsSelected(true);
+					val += i.getValue();
+				}
+			}
+		}
+		setWert(val);
+	}
 
-   public void setItems(List<SelectItem> items) {
-	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		   i.setIsSelected(false);
-	   }
-	   String val = "";
-	   for (SelectItem sel : items) {
-		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-			   if (i.getLabel().equals(sel.getValue())) {
-				   i.setIsSelected(true);
-				   val += i.getValue();
-			   }
-		   }
-	   }
-	   setWert(val);
-   }
+	public List<String> getSelectedItems() {
+		this.selectedItems = new ArrayList<String>();
+		String values = this.md.getValue();
+		if (values != null && values.length() != 0) {
+			while (values != null && values.length() != 0) {
+				int semicolon = values.indexOf(";");
+				if (semicolon != -1) {
+					String value = values.substring(0, semicolon);
+					for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+						if (i.getValue().equals(value)) {
+							this.selectedItems.add(i.getLabel());
+//							i.setIsSelected(true);
+						}
+					}
+					int length = values.length();
+					values = values.substring(semicolon + 1, length);
+				} else {
+					for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+						if (i.getValue().equals(values)) {
+							this.selectedItems.add(i.getLabel());
+//							i.setIsSelected(true);
+						}
+					}
+					values = "";
+				}
+			}
+		} else {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getIsSelected()) {
+					this.selectedItems.add(i.getLabel());
+				}
+			}
+		}
+		return this.selectedItems;
+	}
 
-   
-   
-   
-   public List<String> getSelectedItems() {
-	   this.selectedItems = new ArrayList<String>();
-	   String values = this.md.getValue();
-	   while (values != null && values != "" && values.length() != 0) {
-		   int semicolon = values.indexOf(";");
-		   if (semicolon != -1) {
-			   String value = values.substring(0, semicolon);
-			   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
-				   if (i.getValue().equals(value)){
-					   this.selectedItems.add(i.getLabel());
-					   i.setIsSelected(true);
-				   }
-			   }
-			   int length = values.length(); 
-			   values = values.substring(semicolon+1, length);
-		   } else {
-			   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
-				   if (i.getValue().equals(values)){
-					   this.selectedItems.add(i.getLabel());
-					   i.setIsSelected(true);
-				   }
-			   }
-			   values = "";
-		   }
-	   }
-       return this.selectedItems;
-   }
+	public void setSelectedItems(List<String> selectedItems) {
+//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+//			i.setIsSelected(false);
+//		}
+		String val = "";
+		for (String sel : selectedItems) {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getLabel().equals(sel)) {
+					val += i.getValue() + ";";
+				}
+			}
+		}
+//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+//			if (i.getIsSelected()) {
+//				val += i.getValue() + ";";
+//			}
+//		}
+		setWert(val);
+	}
 
-   
-   public void setSelectedItems(List<String> selectedItems) {
-	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		   i.setIsSelected(false);
-	   }
-	   for (String sel : selectedItems) {
-		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-			   if (i.getLabel().equals(sel)) {
-				   i.setIsSelected(true);
-			   }
-		   }
-	   }	   
-	  String val = "";
-	  for (Item i :this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		  if (i.getIsSelected()) {
-			  val += i.getValue() + ";";
-		  }
-	   }
-	  setWert(val);
-   }
-	   
-   
-   public String getSelectedItem() {
-	   String value = this.md.getValue();
-	   if (value != "") {
-		   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
-			   if (i.getValue().equals(value)){
-				   i.setIsSelected(true);
-				   return i.getLabel();
-			   }
-		   }
-	   }
-       return "";
-   }
+	public String getSelectedItem() {
+		String value = this.md.getValue();
+		if (value!=null && value.length() != 0) {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getValue().equals(value)) {
+//					i.setIsSelected(true);
+					return i.getLabel();
+				}
+			}
+		} else {
+			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+				if (i.getIsSelected()) {
+					return i.getLabel();
+				}
+			}
+		}
+		return "";
+	}
 
-   
-   public void setSelectedItem(String selectedItem) {
-	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()){
-		   i.setIsSelected(false);
-	   }
-	   for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-		   if (i.getLabel().equals(selectedItem)) {
-			   setWert(i.getValue());
-		   }
-	   }
-   }
-   
-   public void setValue(String value) {
-	   setWert(value);   
-   }
-   
-   
-   
-   public String getValue(){
-	   return this.md.getValue();
-   }
-   
+	public void setSelectedItem(String selectedItem) {
+//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+//			i.setIsSelected(false);
+//		}
+		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+			if (i.getLabel().equals(selectedItem)) {
+				setWert(i.getValue());
+			}
+		}
+	}
+
+	public void setValue(String value) {
+		setWert(value);
+	}
+
+	public String getValue() {
+		return this.md.getValue();
+	}
+
 }
