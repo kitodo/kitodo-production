@@ -123,13 +123,6 @@
 				</x:div>
 			</htm:td>
 		</htm:tr>
-
-		<htm:tr>
-			<htm:td styleClass="main_statistikboxen_row1" height="1px" colspan="2">
-												
-						
-			</htm:td>
-		</htm:tr>
 		<htm:tr valign="top" style="width:100%;height:100%">
 			<htm:td styleClass="metadatenGrauBackground">
 
