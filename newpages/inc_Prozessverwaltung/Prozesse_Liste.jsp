@@ -57,35 +57,7 @@
 		<jsp:include page="/newpages/inc/Process_Filter.jsp" />
 	</f:subview>
 </x:aliasBeansScope>
-<%--
-<h:panelGrid width="100%"
-	columnClasses="standardTable_Column,standardTable_ColumnRight"
-	rowClasses="standardTable_Row_bottom" columns="2">
-	<h:outputText
-		value="#{msgs.treffer}: #{ProzessverwaltungForm.page.totalResults}" />
-	<h:panelGroup>
-		<h:outputText value="#{msgs.filter}: " />
 
-		<h:inputText value="#{ProzessverwaltungForm.filter}" id="filter"
-			onkeypress="return submitEnter('FilterAlle',event)" />
-		<x:commandButton type="submit" id="FilterAlle" forceId="true"
-			style="display:none"
-			action="#{ProzessverwaltungForm.FilterAlleStart}" />
-
-		<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="reload"
-			title="#{msgs.filterAnwenden}" style="margin-left:5px">
-			<h:graphicImage value="/newpages/images/buttons/reload.gif" />
-		</h:commandLink>
-
-		<h:outputLink target="_blank" id="help"
-			value="http://wiki.goobi.org/index.php/Filter_f%C3%BCr_Vorg%C3%A4nge">
-			<h:graphicImage title="#{msgs.hilfeZumFilter}"
-				value="/newpages/images/buttons/help.png" style="margin-left:5px" />
-		</h:outputLink>
-
-	</h:panelGroup>
-</h:panelGrid>
---%>
 <%-- +++++++++++++++++  // Anzeigefilter ++++++++++++++++++++++++ --%>
 
 <%-- Datentabelle --%>
