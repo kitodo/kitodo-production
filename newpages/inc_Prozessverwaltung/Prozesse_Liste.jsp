@@ -490,6 +490,18 @@
 					property="#{ProzessverwaltungForm.myProzess}" value="#{item}" />
 			</h:commandLink>
 
+			<%-- Docket Export --%>
+			<h:commandLink id="ubid1119"
+				action="#{ProzessverwaltungForm.downloadDocket}"
+				title="#{msgs.laufzettelDrucken}"
+				rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+				<h:graphicImage id="ubid1120" alt="sorta"
+					value="/newpages/images/buttons/laufzettel.png"
+					style="margin-right:2px" />
+				<x:updateActionListener
+					property="#{ProzessverwaltungForm.myProzess}" value="#{item}" />
+			</h:commandLink>
+
 			<%-- Mets-Export-Schaltknopf --%>
 			<h:commandLink action="#{ProzessverwaltungForm.ExportMets}" id="action19"
 				title="#{msgs.exportMets}"
