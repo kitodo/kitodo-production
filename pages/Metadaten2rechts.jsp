@@ -39,15 +39,6 @@
 		</f:facet>
 	</a4j:status>
 
-	<%-- <div id="cnt" style="border: 1px solid black; padding:7px; background-color: white;position: fixed;top: 20px;left: 20px;color:red">0</div>
-<script>
-    var sec=0;
-    function counter(){
-        setTimeout("counter();",1000);
-        document.getElementById("cnt").innerHTML = sec++ + " seconds since last page refresh";
-    }
-    counter();
-</script> --%>
 	<h:form id="formular1" style="margin:0px">
 		<htm:table id="navigation" cellpadding="2" cellspacing="0" style="margin-right: 4px; width:99,75%" styleClass="main_statistikboxen">
 			<htm:tr>
