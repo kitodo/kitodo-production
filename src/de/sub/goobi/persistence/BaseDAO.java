@@ -1,12 +1,17 @@
 /**
- * This file is very likely based on work of Douglas Harris and Nick Heudecker.
- * A collections of lectures can be found at http://spectral.mscs.mu.edu/SoftDev2005/lectures/.
+ * Copyright 2005 Nick Heudecker
  *
- * The original file source code is to be found at
- * http://spectral.mscs.mu.edu/SoftDev2005/examples/team/#src/example/persistence/BaseDAO.java
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @author Douglas Harris <doug@mscs.mu.edu>
- * @author Nick Heudecker <nick@systemmobile.com>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.sub.goobi.persistence;
 
@@ -25,8 +30,11 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 /**
  * Base class for DAOs. This class defines common CRUD methods.
+ * Changes have been made by Steffen Hankiewicz.
+ *
+ * @author Nick Heudecker <nick@systemmobile.com>
+ * @author Steffen Hankiewicz <steffen.hankiewicz@intranda.com>
  */
-
 public abstract class BaseDAO implements Serializable{
 	private static final long serialVersionUID = 4676125965631365912L;
 
