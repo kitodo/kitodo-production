@@ -197,16 +197,6 @@ public abstract class BaseDAO implements Serializable{
 		}
 	}
 
-	/**
-	 * Retrieves the HQL query from the resource bundle.
-	 * 
-	 * @param key
-	 *            the HQL query to lookup
-	 */
-	protected String getQuery(String key) {
-		return Util.getQuery(key);
-	}
-	
 	protected void refresh(Object o) {
 		Session session = Helper.getHibernateSession();
 		session.refresh(o);
