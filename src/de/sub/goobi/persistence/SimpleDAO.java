@@ -23,7 +23,6 @@
 package de.sub.goobi.persistence;
 
 import de.sub.goobi.helper.exceptions.DAOException;
-import dubious.sub.goobi.persistence.BaseDAO;
 
 public class SimpleDAO extends BaseDAO {
 

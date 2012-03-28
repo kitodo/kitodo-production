@@ -26,7 +26,6 @@ import java.util.List;
 
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.exceptions.DAOException;
-import dubious.sub.goobi.persistence.BaseDAO;
 
 public class RegelsatzDAO extends BaseDAO {
 

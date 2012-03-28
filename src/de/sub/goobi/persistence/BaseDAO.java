@@ -8,7 +8,7 @@
  * @author Douglas Harris <doug@mscs.mu.edu>
  * @author Nick Heudecker <nick@systemmobile.com>
  */
-package dubious.sub.goobi.persistence;
+package de.sub.goobi.persistence;
 
 import java.io.Serializable;
 import java.sql.SQLException;
