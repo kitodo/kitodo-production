@@ -24,7 +24,6 @@ package de.sub.goobi.persistence;
 
 import java.util.List;
 
-import dubious.sub.goobi.persistence.BaseDAO;
 import org.goobi.production.search.lucene.LuceneIndex;
 
 import de.sub.goobi.beans.Schritt;

@@ -26,7 +26,6 @@ import java.util.List;
 
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
-import dubious.sub.goobi.persistence.BaseDAO;
 
 @SuppressWarnings("serial")
 public class LdapGruppenDAO extends BaseDAO {
