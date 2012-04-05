@@ -764,7 +764,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		Fileformat ff;
 		String metadataFileName;
 		String metadataFileNameNew;
-		Boolean writeResult;
+		boolean writeResult;
 
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
 		case METS:
