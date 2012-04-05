@@ -98,7 +98,7 @@ public class MetadatenImagesHelper {
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public void createPagination(Prozess inProzess) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
+	public void createPagination(Prozess inProzess, String directory) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
 			DAOException {
 		DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
@@ -137,7 +137,12 @@ public class MetadatenImagesHelper {
 			this.mydocument.setPhysicalDocStruct(physicaldocstruct);
 		}
 
-		checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());
+		if (directory==null){
+			checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());			
+		}else{
+			checkIfImagesValid(inProzess, inProzess.getImagesDirectory() + directory);
+		}
+		
 
 		/*------------------------------- 
 		 * retrieve existing pages/images

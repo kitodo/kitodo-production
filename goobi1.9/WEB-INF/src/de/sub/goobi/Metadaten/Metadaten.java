@@ -1185,7 +1185,7 @@ public class Metadaten {
 	 * @throws SwapException
 	 */
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
-		this.imagehelper.createPagination(this.myProzess);
+		this.imagehelper.createPagination(this.myProzess, currentTifFolder);
 		retrieveAllImages();
 
 		// added new
@@ -1473,8 +1473,8 @@ public class Metadaten {
 		}
 
 //		if (this.currentTifFolder == null || this.currentTifFolder.length() == 0) {
-			if (ConfigMain.getParameter("folderSuffix", null) != null) {
-				String suffix = ConfigMain.getParameter("folderSuffix");
+			if (ConfigMain.getParameter("MetsEditorDefaultSuffix", null) != null) {
+				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix");
 				for (String directory : this.allTifFolders) {
 					if (directory.endsWith(suffix)) {
 						this.currentTifFolder = directory;
@@ -1504,7 +1504,7 @@ public class Metadaten {
 		ArrayList<String> dataList = new ArrayList<String>();
 		myLogger.trace("dataList");
 		try {
-			dataList = this.imagehelper.getImageFiles(this.myProzess);
+			dataList = this.imagehelper.getImageFiles(this.myProzess, currentTifFolder);
 			myLogger.trace("dataList 2");
 		} catch (InvalidImagesException e) {
 			myLogger.trace("dataList error");
