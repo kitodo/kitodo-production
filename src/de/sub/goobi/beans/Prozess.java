@@ -745,9 +745,27 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return result;
 	}
 
+	private void renameMetadataFile(String oldFileName, String newFileName) {
+		File oldFile;
+		File newFile;
+		Long lastModified;
+		
+		if (oldFileName != null && newFileName != null) {
+			oldFile = new File(oldFileName);
+			lastModified = oldFile.lastModified();
+			newFile = new File(newFileName);
+			oldFile.renameTo(newFile);
+			newFile.setLastModified(lastModified);
+		}
+	}
+	
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
+		String metadataFileName;
+		String metadataFileNameNew;
+		boolean writeResult;
+
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
 		case METS:
 			ff = new MetsMods(regelsatz.getPreferences());
@@ -761,9 +779,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 			ff = new XStream(regelsatz.getPreferences());
 			break;
 		}
-		createBackupFile();
+
+		metadataFileName = getMetadataFilePath();
+		metadataFileNameNew = metadataFileName + ".new";
+
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		ff.write(getMetadataFilePath());
+		writeResult = ff.write(metadataFileNameNew);
+		if (writeResult) {
+			createBackupFile();
+			renameMetadataFile(metadataFileNameNew, metadataFileName);
+		}
 	}
 
 	public void writeMetadataAsTemplateFile(Fileformat inFile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
