@@ -22,5 +22,58 @@
 
 package org.goobi.io;
 
+import de.sub.goobi.helper.FileUtils;
+
+import java.io.File;
+import java.io.FilenameFilter;
+
 public class BackupFileRotation {
+
+	private int numberOfBackups;
+	private String format;
+	private String processDataDirectory;
+
+	public void performBackup() {
+		FilenameFilter filter = new FileUtils.FileListFilter(format);
+		File metaFilePath = new File(processDataDirectory);
+		File[] meta = metaFilePath.listFiles(filter);
+		int count;
+		if (meta != null) {
+			if (meta.length > numberOfBackups) {
+				count = numberOfBackups;
+			} else {
+				count = meta.length;
+			}
+			while (count >= 0) {
+				for (File data : meta) {
+					int length = data.toString().length();
+					if (data.toString().contains("xml." + (count - 1))) {
+						Long lastModified = data.lastModified();
+						File newFile = new File(data.toString().substring(0, length - 2) + "." + (count));
+						data.renameTo(newFile);
+						newFile.setLastModified(lastModified);
+					}
+					if (data.toString().endsWith(".xml")) {
+						Long lastModified = data.lastModified();
+						File newFile = new File(data.toString() + ".1");
+						data.renameTo(newFile);
+						newFile.setLastModified(lastModified);
+					}
+				}
+				count--;
+			}
+		}
+	}
+
+	public void setNumberOfBackups(int numberOfBackups) {
+		this.numberOfBackups = numberOfBackups;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public void setProcessDataDirectory(String processDataDirectory) {
+		this.processDataDirectory = processDataDirectory;
+	}
 }
