@@ -28,29 +28,51 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 import static junit.framework.Assert.fail;
 
 public class BackupFileRotationTest {
 
-	private static File testFile;
-	public static final String FILE_BACKUP_FILE_ROTATION_TEST_XML = "./File-BackupFileRotationTest.xml";
-
-	@Test
-	public void testFoo() throws Exception {
-		fail();
-	}
+	public static final String BACKUP_FILE_NAME = "File-BackupFileRotationTest.xml";
+	public static final String BACKUP_FILE_PATH = "./";
 
 	@Before
 	public void setUp() throws Exception {
-		testFile = new File(FILE_BACKUP_FILE_ROTATION_TEST_XML);
-		FileWriter writer = new FileWriter(testFile);
-		writer.write("TEST");
-		writer.close();
+		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		deleteFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		deleteFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
+
+	@Test
+	public void shouldCreateSingleBackupFile() throws Exception {
+		BackupFileRotation bfr = new BackupFileRotation();
+		bfr.setNumberOfBackups(1);
+		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
+		bfr.setFormat(BACKUP_FILE_NAME);
+		bfr.performBackup();
+		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
+
+	private void assertFileExists(String fileName) {
+		File newFile = new File(fileName);
+		if (!newFile.exists()) {
+			fail("File " + fileName + " does not exist.");
+		}
+	}
+
+	private void createFile(String fileName) throws IOException {
+		File testFile = new File(fileName);
+		FileWriter writer = new FileWriter(testFile);
+		writer.close();
+	}
+
+	private void deleteFile(String fileName) {
+		File testFile = new File(fileName);
 		testFile.delete();
 	}
 }
