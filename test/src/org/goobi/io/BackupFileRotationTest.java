@@ -22,5 +22,35 @@
 
 package org.goobi.io;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.FileWriter;
+
+import static junit.framework.Assert.fail;
+
 public class BackupFileRotationTest {
+
+	private static File testFile;
+	public static final String FILE_BACKUP_FILE_ROTATION_TEST_XML = "./File-BackupFileRotationTest.xml";
+
+	@Test
+	public void testFoo() throws Exception {
+		fail();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		testFile = new File(FILE_BACKUP_FILE_ROTATION_TEST_XML);
+		FileWriter writer = new FileWriter(testFile);
+		writer.write("TEST");
+		writer.close();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		testFile.delete();
+	}
 }
