@@ -26,10 +26,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 public class BackupFileRotationTest {
@@ -58,6 +57,26 @@ public class BackupFileRotationTest {
 		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 	}
 
+	@Test
+	public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
+		String content = "Test One.";
+		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content);
+		BackupFileRotation bfr = new BackupFileRotation();
+		bfr.setNumberOfBackups(1);
+		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
+		bfr.setFormat(BACKUP_FILE_NAME);
+		bfr.performBackup();
+		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content);
+	}
+
+	private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
+		File testFile = new File(fileName);
+		FileReader reader = new FileReader(testFile);
+		BufferedReader br = new BufferedReader(reader);
+		String content = br.readLine();
+		assertEquals("File " + fileName + " does not contain expected content.", expectedContent, content);
+	}
+
 	private void assertFileExists(String fileName) {
 		File newFile = new File(fileName);
 		if (!newFile.exists()) {
@@ -75,4 +94,12 @@ public class BackupFileRotationTest {
 		File testFile = new File(fileName);
 		testFile.delete();
 	}
+
+	private void writeFile(String fileName, String content) throws IOException {
+		File testFile = new File(fileName);
+		FileWriter writer = new FileWriter(testFile);
+		writer.write(content);
+		writer.close();
+	}
+
 }
