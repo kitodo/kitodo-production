@@ -85,6 +85,26 @@ public class BackupFileRotationTest {
 		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2");
 	}
 
+	@Test
+	public void doubleBackupAndFilesKeepsCorrectContent() throws IOException {
+		String content1 = "Test One.";
+		String content2 = "Test Two.";
+		int numberOfBackups = 2;
+
+		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content1);
+		runBackup(numberOfBackups);
+
+		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content1);
+
+		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content2);
+
+		runBackup(numberOfBackups);
+
+		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content2);
+		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", content1);
+	}
+
 	private void assertLastModifiedDateNotChanged(String fileName, long expectedLastModifiedDate) {
 		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
 		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
