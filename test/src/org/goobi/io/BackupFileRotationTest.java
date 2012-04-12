@@ -91,6 +91,8 @@ public class BackupFileRotationTest {
 		FileReader reader = new FileReader(testFile);
 		BufferedReader br = new BufferedReader(reader);
 		String content = br.readLine();
+		br.close();
+		reader.close();
 		assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
 	}
 
