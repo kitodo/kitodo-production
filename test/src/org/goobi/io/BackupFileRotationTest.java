@@ -45,27 +45,44 @@ public class BackupFileRotationTest {
 	public void tearDown() throws Exception {
 		deleteFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		deleteFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+		deleteFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2");
 	}
 
 	@Test
 	public void shouldCreateSingleBackupFile() throws Exception {
-		runBackup();
+		int numberOfBackups = 1;
+		runBackup(numberOfBackups);
 		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 	}
 
 	@Test
 	public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
+		int numberOfBackups = 1;
 		String content = "Test One.";
 		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content);
-		runBackup();
+		runBackup(numberOfBackups);
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content);
 	}
 
 	@Test
 	public void modifiedDateShouldNotChangedOnBackup() {
+		int numberOfBackups = 1;
 		long originalModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
-		runBackup();
+		runBackup(numberOfBackups);
 		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalModifiedDate);
+	}
+
+	@Test
+	public void runBackupTwice() throws IOException {
+		int numberOfBackups = 2;
+
+		runBackup(numberOfBackups);
+		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+
+		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		runBackup(numberOfBackups);
+
+		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2");
 	}
 
 	private void assertLastModifiedDateNotChanged(String fileName, long expectedLastModifiedDate) {
@@ -78,11 +95,11 @@ public class BackupFileRotationTest {
 		return testFile.lastModified();
 	}
 
-	private void runBackup() {
+	private void runBackup(int numberOfBackups) {
 		BackupFileRotation bfr = new BackupFileRotation();
-		bfr.setNumberOfBackups(1);
+		bfr.setNumberOfBackups(numberOfBackups);
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
-		bfr.setFormat(BACKUP_FILE_NAME);
+		bfr.setFormat(BACKUP_FILE_NAME + ".*+");
 		bfr.performBackup();
 	}
 
