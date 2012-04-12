@@ -61,6 +61,23 @@ public class BackupFileRotationTest {
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content);
 	}
 
+	@Test
+	public void modifiedDateShouldNotChangedOnBackup() {
+		long originalModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		runBackup();
+		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalModifiedDate);
+	}
+
+	private void assertLastModifiedDateNotChanged(String fileName, long expectedLastModifiedDate) {
+		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
+		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
+	}
+
+	private long getLastModifiedFileDate(String fileName) {
+		File testFile = new File(fileName);
+		return testFile.lastModified();
+	}
+
 	private void runBackup() {
 		BackupFileRotation bfr = new BackupFileRotation();
 		bfr.setNumberOfBackups(1);
@@ -74,7 +91,7 @@ public class BackupFileRotationTest {
 		FileReader reader = new FileReader(testFile);
 		BufferedReader br = new BufferedReader(reader);
 		String content = br.readLine();
-		assertEquals("File " + fileName + " does not contain expected content.", expectedContent, content);
+		assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
 	}
 
 	private void assertFileExists(String fileName) {

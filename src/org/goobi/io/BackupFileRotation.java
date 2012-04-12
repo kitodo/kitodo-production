@@ -48,16 +48,12 @@ public class BackupFileRotation {
 				for (File data : meta) {
 					int length = data.toString().length();
 					if (data.toString().contains("xml." + (count - 1))) {
-						Long lastModified = data.lastModified();
 						File newFile = new File(data.toString().substring(0, length - 2) + "." + (count));
 						data.renameTo(newFile);
-						newFile.setLastModified(lastModified);
 					}
 					if (data.toString().endsWith(".xml")) {
-						Long lastModified = data.lastModified();
 						File newFile = new File(data.toString() + ".1");
 						data.renameTo(newFile);
-						newFile.setLastModified(lastModified);
 					}
 				}
 				count--;
