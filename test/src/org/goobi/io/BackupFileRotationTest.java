@@ -82,6 +82,7 @@ public class BackupFileRotationTest {
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
 
+		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2");
 	}
 
