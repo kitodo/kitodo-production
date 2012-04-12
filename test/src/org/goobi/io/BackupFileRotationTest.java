@@ -49,11 +49,7 @@ public class BackupFileRotationTest {
 
 	@Test
 	public void shouldCreateSingleBackupFile() throws Exception {
-		BackupFileRotation bfr = new BackupFileRotation();
-		bfr.setNumberOfBackups(1);
-		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
-		bfr.setFormat(BACKUP_FILE_NAME);
-		bfr.performBackup();
+		runBackup();
 		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 	}
 
@@ -61,12 +57,16 @@ public class BackupFileRotationTest {
 	public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
 		String content = "Test One.";
 		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content);
+		runBackup();
+		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content);
+	}
+
+	private void runBackup() {
 		BackupFileRotation bfr = new BackupFileRotation();
 		bfr.setNumberOfBackups(1);
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
 		bfr.setFormat(BACKUP_FILE_NAME);
 		bfr.performBackup();
-		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content);
 	}
 
 	private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
