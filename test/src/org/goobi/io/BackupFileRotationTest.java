@@ -87,7 +87,7 @@ public class BackupFileRotationTest {
 	}
 
 	@Test
-	public void doubleBackupAndFilesKeepsCorrectContent() throws IOException {
+	public void doubleBackupKeepsFileCorrectContent() throws IOException {
 		String content1 = "Test One.";
 		String content2 = "Test Two.";
 		int numberOfBackups = 2;
@@ -104,6 +104,27 @@ public class BackupFileRotationTest {
 
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content2);
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", content1);
+	}
+
+	@Test
+	public void doubleBackupKeepsLastModifiedDateIntact() throws IOException {
+		long originalLastModifiedDate;
+		long firstBackupLastModifiedDate;
+		int numberOfBackups = 2;
+
+		originalLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		runBackup(numberOfBackups);
+
+		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalLastModifiedDate);
+
+		firstBackupLastModifiedDate = originalLastModifiedDate;
+
+		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		originalLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
+		runBackup(numberOfBackups);
+
+		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalLastModifiedDate);
+		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", firstBackupLastModifiedDate);
 	}
 
 	private void assertLastModifiedDateNotChanged(String fileName, long expectedLastModifiedDate) {
