@@ -722,14 +722,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private void renameMetadataFile(String oldFileName, String newFileName) {
 		File oldFile;
 		File newFile;
-		Long lastModified;
-		
+
 		if (oldFileName != null && newFileName != null) {
 			oldFile = new File(oldFileName);
-			lastModified = oldFile.lastModified();
 			newFile = new File(newFileName);
 			oldFile.renameTo(newFile);
-			newFile.setLastModified(lastModified);
 		}
 	}
 	
