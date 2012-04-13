@@ -23,41 +23,37 @@
 package org.goobi.io;
 
 import de.sub.goobi.helper.FileUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 public class BackupFileRotation {
 
+	private static final Logger myLogger = Logger.getLogger(BackupFileRotation.class);
+
 	private int numberOfBackups;
 	private String format;
 	private String processDataDirectory;
 
 	public void performBackup() {
-		FilenameFilter filter = new FileUtils.FileListFilter(format);
-		File metaFilePath = new File(processDataDirectory);
-		File[] meta = metaFilePath.listFiles(filter);
-		int count;
-		if (meta != null) {
-			if (meta.length > numberOfBackups) {
-				count = numberOfBackups;
-			} else {
-				count = meta.length;
-			}
-			while (count >= 0) {
-				for (File data : meta) {
-					int length = data.toString().length();
-					if (data.toString().contains("xml." + (count - 1))) {
-						File newFile = new File(data.toString().substring(0, length - 2) + "." + (count));
-						data.renameTo(newFile);
-					}
-					if (data.toString().endsWith(".xml")) {
-						File newFile = new File(data.toString() + ".1");
-						data.renameTo(newFile);
-					}
-				}
-				count--;
-			}
+		File[] metaFiles;
+
+		if (numberOfBackups < 1) {
+			myLogger.info("Backup configured for no backup.");
+			return;
+		}
+
+		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
+
+		if (metaFiles.length < 1) {
+			myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			return;
+		}
+
+		for (File metaFile : metaFiles) {
+			String baseFileName = metaFile.toString();
+			createBackupOfFile(baseFileName);
 		}
 	}
 
@@ -72,4 +68,42 @@ public class BackupFileRotation {
 	public void setProcessDataDirectory(String processDataDirectory) {
 		this.processDataDirectory = processDataDirectory;
 	}
+
+	private void renamingFile(String oldFileName, String newFileName) {
+		File oldFile = new File(oldFileName);
+		File newFile = new File(newFileName);
+		boolean renameResult;
+
+		if (oldFile.exists()) {
+			renameResult = oldFile.renameTo(newFile);
+
+			if (!renameResult) {
+				myLogger.warn("Renaming file from " + oldFileName + " to " +  newFileName + " failed.");
+			}
+		}
+	}
+
+	private void createBackupOfFile(String baseFileName) {
+		String oldName;
+		String newName;
+
+		for (int count = numberOfBackups; count >= 1; count--) {
+			oldName = baseFileName + "." + (count - 1);
+			newName = baseFileName + "." + count;
+			renamingFile(oldName, newName);
+		}
+
+		oldName = baseFileName;
+		newName = baseFileName + ".1";
+		renamingFile(oldName, newName);
+	}
+
+	private File[] generateBackupBaseNameFileList(String filterFormat, String directoryOfBackupFiles) {
+		FilenameFilter filter = new FileUtils.FileListFilter(filterFormat);
+		File metaFilePath = new File(directoryOfBackupFiles);
+		File[] metaFiles = metaFilePath.listFiles(filter);
+
+		return metaFiles;
+	}
+
 }
