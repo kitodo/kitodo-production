@@ -40,7 +40,6 @@ public class BackupFileRotation {
 		File[] metaFiles;
 
 		if (numberOfBackups < 1) {
-			myLogger.info("Backup configured for no backup.");
 			return;
 		}
 
@@ -52,8 +51,7 @@ public class BackupFileRotation {
 		}
 
 		for (File metaFile : metaFiles) {
-			String baseFileName = metaFile.toString();
-			createBackupOfFile(baseFileName);
+			createBackupForFile(metaFile.getPath());
 		}
 	}
 
@@ -69,41 +67,39 @@ public class BackupFileRotation {
 		this.processDataDirectory = processDataDirectory;
 	}
 
-	private void renamingFile(String oldFileName, String newFileName) {
+	private void rename(String oldFileName, String newFileName) {
 		File oldFile = new File(oldFileName);
 		File newFile = new File(newFileName);
-		boolean renameResult;
 
 		if (oldFile.exists()) {
-			renameResult = oldFile.renameTo(newFile);
+			boolean renameSuccessful = oldFile.renameTo(newFile);
 
-			if (!renameResult) {
+			if (!renameSuccessful) {
 				myLogger.warn("Renaming file from " + oldFileName + " to " +  newFileName + " failed.");
 			}
 		}
 	}
 
-	private void createBackupOfFile(String baseFileName) {
-		String oldName;
-		String newName;
+	private void createBackupForFile(String fileName) {
+		rotateBackupFilesFor(fileName);
 
-		for (int count = numberOfBackups; count >= 1; count--) {
-			oldName = baseFileName + "." + (count - 1);
-			newName = baseFileName + "." + count;
-			renamingFile(oldName, newName);
+		String newName = fileName + ".1";
+		rename(fileName, newName);
+	}
+
+	private void rotateBackupFilesFor(String fileName) {
+		for (int count = numberOfBackups; count > 1; count--) {
+			String oldName = fileName + "." + (count - 1);
+			String newName = fileName + "." + count;
+			rename(oldName, newName);
 		}
-
-		oldName = baseFileName;
-		newName = baseFileName + ".1";
-		renamingFile(oldName, newName);
 	}
 
 	private File[] generateBackupBaseNameFileList(String filterFormat, String directoryOfBackupFiles) {
 		FilenameFilter filter = new FileUtils.FileListFilter(filterFormat);
 		File metaFilePath = new File(directoryOfBackupFiles);
-		File[] metaFiles = metaFilePath.listFiles(filter);
 
-		return metaFiles;
+		return metaFilePath.listFiles(filter);
 	}
 
 }

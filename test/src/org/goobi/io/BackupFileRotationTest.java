@@ -70,15 +70,14 @@ public class BackupFileRotationTest {
 		int numberOfBackups = 1;
 		long originalModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
-		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalModifiedDate);
+		assertLastModifiedDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalModifiedDate);
 	}
 
 	@Test
-	public void runBackupTwice() throws IOException {
+	public void shouldWriteTwoBackupFiles() throws IOException {
 		int numberOfBackups = 2;
 
 		runBackup(numberOfBackups);
-		assertFileExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
@@ -88,7 +87,7 @@ public class BackupFileRotationTest {
 	}
 
 	@Test
-	public void doubleBackupKeepsFileCorrectContent() throws IOException {
+	public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
 		String content1 = "Test One.";
 		String content2 = "Test Two.";
 		int numberOfBackups = 2;
@@ -96,47 +95,32 @@ public class BackupFileRotationTest {
 		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content1);
 		runBackup(numberOfBackups);
 
-		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content1);
-
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
-		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content2);
-
 		runBackup(numberOfBackups);
 
-		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content2);
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", content1);
 	}
 
 	@Test
-	public void doubleBackupKeepsLastModifiedDateIntact() throws IOException {
-		long originalLastModifiedDate;
-		long firstBackupLastModifiedDate;
+	public void secondBackupFileCorrectModifiedDate() throws IOException {
+		long expectedLastModifiedDate;
 		int numberOfBackups = 2;
+		expectedLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 
-		originalLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
-
-		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalLastModifiedDate);
-
-		firstBackupLastModifiedDate = originalLastModifiedDate;
-
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
-		originalLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
 
-		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", originalLastModifiedDate);
-		assertLastModifiedDateNotChanged(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", firstBackupLastModifiedDate);
+		assertLastModifiedDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", expectedLastModifiedDate);
 	}
 
 	@Test
-	public void runBackupThreeTimes() throws IOException {
+	public void threeBackupRunsCreateThreeBackupFiles() throws IOException {
 		int numberOfBackups = 3;
 
 		runBackup(numberOfBackups);
-
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
-
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
 
@@ -146,29 +130,21 @@ public class BackupFileRotationTest {
 	}
 
 	@Test
-	public void runBackupThreeTimesKeepsCorrectFileContent() throws IOException {
+	public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns() throws IOException {
 		int numberOfBackups = 3;
 		String content1 = "Test One.";
-		String content2 = "Test Two.";
-		String content3 = "Test Three.";
 
 		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content1);
 		runBackup(numberOfBackups);
-
 		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
-		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content2);
+		runBackup(numberOfBackups);
+		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
 
-		createFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
-		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content3);
-		runBackup(numberOfBackups);
-
-		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1", content3);
-		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".2", content2);
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".3", content1);
 	}
 
-	private void assertLastModifiedDateNotChanged(String fileName, long expectedLastModifiedDate) {
+	private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
 		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
 		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
 	}

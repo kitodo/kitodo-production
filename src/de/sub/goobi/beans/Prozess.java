@@ -696,12 +696,19 @@ public class Prozess implements Serializable, IGoobiEntity {
 			numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
 			FORMAT = ConfigMain.getParameter("formatOfMetaBackups");
 		}
-		if (numberOfBackups != 0 && FORMAT != null) {
+
+		if (FORMAT != null) {
+			myLogger.info("Option 'formatOfMetaBackups' is deprecated and will be ignored.");
+		}
+
+		if (numberOfBackups != 0) {
 			BackupFileRotation bfr = new BackupFileRotation();
 			bfr.setNumberOfBackups(numberOfBackups);
-			bfr.setFormat(FORMAT);
+			bfr.setFormat("meta.*\\.xml");
 			bfr.setProcessDataDirectory(getProcessDataDirectory());
 			bfr.performBackup();
+		} else {
+			myLogger.warn("No backup configured for meta data files.");
 		}
 	}
 
