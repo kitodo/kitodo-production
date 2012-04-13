@@ -150,6 +150,13 @@ public class BackupFileRotationTest {
 		runBackup(numberOfBackups);
 		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 	}
+	
+	@Test
+	public void nothingHappensIfFilePatternDontMatch() throws Exception {
+		int numberOfBackups = 1;
+		runBackup(numberOfBackups, "");
+		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
 
 	private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
 		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
@@ -162,10 +169,14 @@ public class BackupFileRotationTest {
 	}
 
 	private void runBackup(int numberOfBackups) {
+		runBackup(numberOfBackups, BACKUP_FILE_NAME);
+	}
+
+	private void runBackup(int numberOfBackups, String format) {
 		BackupFileRotation bfr = new BackupFileRotation();
 		bfr.setNumberOfBackups(numberOfBackups);
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
-		bfr.setFormat(BACKUP_FILE_NAME);
+		bfr.setFormat(format);
 		bfr.performBackup();
 	}
 
