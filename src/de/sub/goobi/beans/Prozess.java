@@ -96,9 +96,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public static String DIRECTORY_PREFIX = "orig";
 	public static String DIRECTORY_SUFFIX = "tif";
 
-	private static int numberOfBackups = 0;
-	private static String FORMAT = "";
-
 	private DisplayPropertyList displayProperties;
 	private String wikifield;
 
@@ -690,14 +687,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	// backup of meta.xml
-
 	private void createBackupFile() throws IOException, InterruptedException, SwapException, DAOException {
+		int numberOfBackups = 0;
+		String format = "";
+
 		if (ConfigMain.getIntParameter("numberOfMetaBackups") != 0) {
 			numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
-			FORMAT = ConfigMain.getParameter("formatOfMetaBackups");
+			format = ConfigMain.getParameter("formatOfMetaBackups");
 		}
 
-		if (FORMAT != null) {
+		if (format != null) {
 			myLogger.info("Option 'formatOfMetaBackups' is deprecated and will be ignored.");
 		}
 
