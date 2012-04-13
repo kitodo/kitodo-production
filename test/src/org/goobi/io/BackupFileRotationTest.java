@@ -144,6 +144,13 @@ public class BackupFileRotationTest {
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".3", content1);
 	}
 
+	@Test
+	public void noBackupIsPerformedWithNumberOfBackupsSetToZero() throws Exception {
+		int numberOfBackups = 0;
+		runBackup(numberOfBackups);
+		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
+
 	private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
 		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
 		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
@@ -176,6 +183,13 @@ public class BackupFileRotationTest {
 		File newFile = new File(fileName);
 		if (!newFile.exists()) {
 			fail("File " + fileName + " does not exist.");
+		}
+	}
+
+	private void assertFileNotExists(String fileName) {
+		File newFile = new File(fileName);
+		if (newFile.exists()) {
+			fail("File " + fileName + " should not exist.");
 		}
 	}
 
