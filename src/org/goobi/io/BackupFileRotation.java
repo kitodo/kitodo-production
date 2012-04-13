@@ -22,7 +22,6 @@
 
 package org.goobi.io;
 
-import de.sub.goobi.helper.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -96,7 +95,7 @@ public class BackupFileRotation {
 	}
 
 	private File[] generateBackupBaseNameFileList(String filterFormat, String directoryOfBackupFiles) {
-		FilenameFilter filter = new FileUtils.FileListFilter(filterFormat);
+		FilenameFilter filter = new FileListFilter(filterFormat);
 		File metaFilePath = new File(directoryOfBackupFiles);
 
 		return metaFilePath.listFiles(filter);
