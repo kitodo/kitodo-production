@@ -43,6 +43,7 @@
     <property name="build.dist.vendor" value="SLUB Dresden"/>
     <property name="build.dist.url" value="http://launchpad.net/goobi-production"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
+    <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
 
     <property name="lib.dir" value="${basedir}/lib"/>
 
@@ -269,6 +270,19 @@
 
     </target>
 
+	<!-- Build standalone CLI jar -->
+	<target name="jar" depends="compile, copy-config">
+		<jar destfile="${build.dist.jar}">
+			<manifest>
+				<attribute name="Implementation-Title" value="${ant.project.name}"/>
+				<attribute name="Implementation-Version" value="${build.dist.version}"/>
+				<attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
+				<attribute name="Implementation-URL" value="${build.dist.url}"/>
+				<attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
+				<attribute name="Main-Class" value="org.goobi.production.cli.CommandLineInterface"/>
+			</manifest>
+		</jar>
+	</target>
 
     <!-- Copy configuration files to build directory -->
     <target name="copy-config">
