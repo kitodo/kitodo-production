@@ -94,7 +94,7 @@
         <echoproperties/>
     </target>
 
-    <target name="dist" depends="war" description="Produce the distributable."/>
+    <target name="dist" depends="war, jar" description="Produce the distributables."/>
 
     <target name="distclean" description="Clean up the distribution files only.">
         <delete dir="${build.dist.dir}"/>
