@@ -272,7 +272,8 @@
 
 	<!-- Build standalone CLI jar -->
 	<target name="jar" depends="compile, copy-config">
-		<jar destfile="${build.dist.jar}">
+		<jar destfile="${build.dist.jar}"
+			basedir="${build.classes}">
 			<manifest>
 				<attribute name="Implementation-Title" value="${ant.project.name}"/>
 				<attribute name="Implementation-Version" value="${build.dist.version}"/>
