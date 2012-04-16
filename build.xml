@@ -281,7 +281,7 @@
 		</manifestclasspath>
 
 		<jar destfile="${build.dist.jar}">
-			<fileset dir="${build.classes}" includes="**/*.class"/>
+			<fileset dir="${build.classes}" includes="**/*.class, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
 			<zipfileset dir="${lib.dir}" prefix="lib"/>
 			
 			<manifest>
