@@ -214,23 +214,23 @@
 								<htm:tr>
 									<htm:td colspan="3">
 										<h:outputText styleClass="goobiScriptLink" value="addUser"
-											onclick="document.getElementById('goobiScriptfield').value='action:addUser \"steptitle:SCHRITTTITEL\" username:BENUTZERNAME'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:addUser \"steptitle:TITLE_STEP\" username:USER_NAME'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="addUserGroup"
-											onclick="document.getElementById('goobiScriptfield').value='action:addUserGroup \"steptitle:SCHRITTTITEL\" group:GRUPPENNAME'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:addUserGroup \"steptitle:TITLE_STEP\" group:GROUP_NAME'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="deleteTiffHeaderFile"
 											onclick="document.getElementById('goobiScriptfield').value='action:deleteTiffHeaderFile'" />
 										<h:outputText styleClass="goobiScriptLink" value="swapSteps"
-											onclick="document.getElementById('goobiScriptfield').value='action:swapSteps swap1nr:REIHENFOLGENNUMMER_ERSTER_SCHRITT \"swap1title:TITEL_ERSTER_SCHRITT\"swap2nr:REIHENFOLGENNUMMER_ZWEITER_SCHRITT \"swap2title:TITEL_ZWEITER_SCHRITT\"'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP \"swap1title:TITLE_FIRST_STEP\"swap2nr:ORDER_NUMBER_SECOND_STEP \"swap2title:TITLE_SECOND_STEP\"'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="importFromFileSystem"
-											onclick="document.getElementById('goobiScriptfield').value='action:importFromFileSystem sourcefolder:AUSGANGSORDNER'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="swapProzessesOut"
 											onclick="document.getElementById('goobiScriptfield').value='action:swapProzessesOut'" />
 										<h:outputText styleClass="goobiScriptLink" value="setRuleset"
-											onclick="document.getElementById('goobiScriptfield').value='action:setRuleset \"ruleset:TITEL_REGELSATZ\"'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:setRuleset \"ruleset:TITLE_RULESET\"'" />
 									</htm:td>
 								</htm:tr>
 								<htm:tr>
@@ -239,24 +239,24 @@
 											value="swapProzessesIn"
 											onclick="document.getElementById('goobiScriptfield').value='action:swapProzessesIn'" />
 										<h:outputText styleClass="goobiScriptLink" value="deleteStep"
-											onclick="document.getElementById('goobiScriptfield').value='action:deleteStep \"steptitle:TITEL_SCHRITT\"'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:deleteStep \"steptitle:TITLE_STEP\"'" />
 										<h:outputText styleClass="goobiScriptLink" value="addStep"
-											onclick="document.getElementById('goobiScriptfield').value='action:addStep \"steptitle:TITEL_SCHRITT\" number:NUMBER_1_TO_?'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:addStep \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="setStepStatus"
-											onclick="document.getElementById('goobiScriptfield').value='action:setStepStatus \"steptitle:TITEL_SCHRITT\" status:NUMBER_0_TO_3'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:setStepStatus \"steptitle:TITLE_STEP\" status:NUMBER_0_TO_3'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="setStepNumber"
-											onclick="document.getElementById('goobiScriptfield').value='action:setStepNumber \"steptitle:TITEL_SCHRITT\" number:NUMBER_1_TO_?'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:setStepNumber \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="addModuleToStep"
-											onclick="document.getElementById('goobiScriptfield').value='action:addModuleToStep \"steptitle:TITEL_SCHRITT\" \"module:MODULE_NAME\"'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:addModuleToStep \"steptitle:TITLE_STEP\" \"module:MODULE_NAME\"'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="addShellScriptToStep"
-											onclick="document.getElementById('goobiScriptfield').value='action:addShellScriptToStep \"steptitle:TITEL_SCHRITT\" \"script:PATH_TO_SCRIPT\"'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:addShellScriptToStep \"steptitle:TITLE_STEP\" \"label:LABEL_FOR_SCRIPT\" \"script:PATH_TO_SCRIPT\"'" />
 										<h:outputText styleClass="goobiScriptLink"
 											value="setTaskProperty"
-											onclick="document.getElementById('goobiScriptfield').value='action:setTaskProperty \"steptitle:TITEL_SCHRITT\" property:metadata_readimages_writeimages_validate_exportdms value:true_OR_false'" />
+											onclick="document.getElementById('goobiScriptfield').value='action:setTaskProperty \"steptitle:TITLE_STEP\" property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'" />
 										<h:outputText styleClass="goobiScriptLink" value="tiffWriter"
 											onclick="document.getElementById('goobiScriptfield').value='action:tiffWriter'" />
 

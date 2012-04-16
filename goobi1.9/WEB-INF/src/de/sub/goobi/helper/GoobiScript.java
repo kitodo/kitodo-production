@@ -535,6 +535,11 @@ public class GoobiScript {
 			return;
 		}
 
+		if (this.myParameters.get("label") == null || this.myParameters.get("label").equals("")) {
+			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "label");
+			return;
+		}
+		
 		if (this.myParameters.get("script") == null || this.myParameters.get("script").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
 			return;
@@ -551,6 +556,8 @@ public class GoobiScript {
 					Schritt s = iterator.next();
 					if (s.getTitel().equals(this.myParameters.get("steptitle"))) {
 						s.setTypAutomatischScriptpfad(this.myParameters.get("script"));
+						s.setScriptname1(this.myParameters.get("label"));
+						s.setTypScriptStep(true);
 						try {
 							sdao.save(proz);
 						} catch (DAOException e) {
@@ -639,7 +646,7 @@ public class GoobiScript {
 		String value = this.myParameters.get("value");
 
 		if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
-				&& !property.equals("exportdms")) {
+				&& !property.equals("exportdms") && !property.equals("batch") && !property.equals("automatic")) {
 			Helper.setFehlerMeldung("goobiScriptfield",
 					"wrong parameter 'property'; possible values: metadata, readimages, writeimages, validate, exportdms");
 			return;
@@ -663,6 +670,12 @@ public class GoobiScript {
 
 						if (property.equals("metadata")) {
 							s.setTypMetadaten(Boolean.parseBoolean(value));
+						}
+						if (property.equals("automatic")) {
+							s.setTypAutomatisch(Boolean.parseBoolean(value));
+						}
+						if (property.equals("batch")) {
+							s.setBatchStep(Boolean.parseBoolean(value));
 						}
 						if (property.equals("readimages")) {
 							s.setTypImagesLesen(Boolean.parseBoolean(value));
