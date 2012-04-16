@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -40,6 +38,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.goobi.io.BackupFileRotation;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
 
@@ -59,7 +58,6 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -97,9 +95,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public static String DIRECTORY_PREFIX = "orig";
 	public static String DIRECTORY_SUFFIX = "tif";
-
-	private static int numberOfBackups = 0;
-	private static String FORMAT = "";
 
 	private DisplayPropertyList displayProperties;
 	private String wikifield;
@@ -692,42 +687,27 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	// backup of meta.xml
-
 	private void createBackupFile() throws IOException, InterruptedException, SwapException, DAOException {
+		int numberOfBackups = 0;
+		String format = "";
+
 		if (ConfigMain.getIntParameter("numberOfMetaBackups") != 0) {
 			numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
-			FORMAT = ConfigMain.getParameter("formatOfMetaBackups");
+			format = ConfigMain.getParameter("formatOfMetaBackups");
 		}
-		if (numberOfBackups != 0 && FORMAT != null) {
-			FilenameFilter filter = new FileUtils.FileListFilter(FORMAT);
-			File metaFilePath = new File(getProcessDataDirectory());
-			File[] meta = metaFilePath.listFiles(filter);
-			int count;
-			if (meta != null) {
-				if (meta.length > numberOfBackups) {
-					count = numberOfBackups;
-				} else {
-					count = meta.length;
-				}
-				while (count >= 0) {
-					for (File data : meta) {
-						int length = data.toString().length();
-						if (data.toString().contains("xml." + (count - 1))) {
-							Long lastModified = data.lastModified();
-							File newFile = new File(data.toString().substring(0, length - 2) + "." + (count));
-							data.renameTo(newFile);
-							newFile.setLastModified(lastModified);
-						}
-						if (data.toString().endsWith(".xml")) {
-							Long lastModified = data.lastModified();
-							File newFile = new File(data.toString() + ".1");
-							data.renameTo(newFile);
-							newFile.setLastModified(lastModified);
-						}
-					}
-					count--;
-				}
-			}
+
+		if (format != null) {
+			myLogger.info("Option 'formatOfMetaBackups' is deprecated and will be ignored.");
+		}
+
+		if (numberOfBackups != 0) {
+			BackupFileRotation bfr = new BackupFileRotation();
+			bfr.setNumberOfBackups(numberOfBackups);
+			bfr.setFormat("meta.*\\.xml");
+			bfr.setProcessDataDirectory(getProcessDataDirectory());
+			bfr.performBackup();
+		} else {
+			myLogger.warn("No backup configured for meta data files.");
 		}
 	}
 
@@ -748,14 +728,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private void renameMetadataFile(String oldFileName, String newFileName) {
 		File oldFile;
 		File newFile;
-		Long lastModified;
-		
+
 		if (oldFileName != null && newFileName != null) {
 			oldFile = new File(oldFileName);
-			lastModified = oldFile.lastModified();
 			newFile = new File(newFileName);
 			oldFile.renameTo(newFile);
-			newFile.setLastModified(lastModified);
 		}
 	}
 	

@@ -23,7 +23,6 @@
 package de.sub.goobi.helper;
 //TODO Replace with SUB Commons
 import java.io.File;
-import java.io.FilenameFilter;
 
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
@@ -66,24 +65,4 @@ public class FileUtils {
 	public static Integer getNumberOfFiles(String inDir) {
 		return getNumberOfFiles(new File(inDir));
 	}
-	
-
-	
-	
-	
-	
-	public static class FileListFilter implements FilenameFilter {
-		  private String name; 
-		  public FileListFilter(String name) {
-		    this.name = name;
-		  }
-		  public boolean accept(File directory, String filename) {
-		    boolean fileOK = true;
-		    if (name != null) {
-		      fileOK &= filename.matches(name);
-		    }
-		    return fileOK;
-		  }
-		}
-
 }
