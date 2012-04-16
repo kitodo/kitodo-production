@@ -183,11 +183,23 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return valide;
 	}
 
+	/**
+	 * The function Loeschen() deletes a user account.
+	 * 
+	 * Please note that deleting a user in goobi.production will not delete the
+	 * user from a connected LDAP service.
+	 * 
+	 * @return a string indicating the screen showing up after the command has
+	 *         been performed.
+	 */
 	public String Loeschen() {
-		myClass.setBenutzergruppen(new HashSet<Benutzergruppe>());
-		myClass.setProjekte(new HashSet<Projekt>());
-		myClass.setIstAktiv(false);
-		myClass.setIsVisible("deleted");
+		try {
+			dao.remove(myClass);
+		} catch (DAOException e) {
+			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+			logger.error(e);
+			return "";
+		}
 		return "BenutzerAlle";
 	}
 
