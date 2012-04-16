@@ -27,6 +27,20 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FilenameFilter;
 
+/**
+ * Creates backup for files in a given directory that match a regular expression.
+ *
+ * All backup files are named by the original file with a number appended. The bigger the
+ * number, the older the backup. A specified maximum number of backup files are generated:
+ *
+ * <pre>
+ * file.xml	// would be the original
+ * file.xml.1	// the latest backup
+ * file.xml.2	// an older backup
+ * ...
+ * file.xml.6	// the oldest backup, if maximum number was 6
+ * </pre>
+ */
 public class BackupFileRotation {
 
 	private static final Logger myLogger = Logger.getLogger(BackupFileRotation.class);
@@ -35,6 +49,11 @@ public class BackupFileRotation {
 	private String format;
 	private String processDataDirectory;
 
+	/**
+	 * Start the configured backup.
+	 *
+	 * If the maximum backup count is less then 1, nothing happens.
+	 */
 	public void performBackup() {
 		File[] metaFiles;
 
@@ -54,14 +73,29 @@ public class BackupFileRotation {
 		}
 	}
 
+	/**
+	 * Set the number of backup files to create for each individual original file.
+	 *
+	 * @param numberOfBackups   Maximum number of backup files
+	 */
 	public void setNumberOfBackups(int numberOfBackups) {
 		this.numberOfBackups = numberOfBackups;
 	}
 
+	/**
+	 * Set file name matching pattern for original files to create backup files for.
+	 *
+	 * @param format    Java regular expression string.
+	 */ 
 	public void setFormat(String format) {
 		this.format = format;
 	}
 
+	/**
+	 * Set the directory to find the original files and to place the backup files.
+	 *
+	 * @param processDataDirectory	A platform specfic filesystem path
+	 */
 	public void setProcessDataDirectory(String processDataDirectory) {
 		this.processDataDirectory = processDataDirectory;
 	}

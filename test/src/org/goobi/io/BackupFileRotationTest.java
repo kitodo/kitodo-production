@@ -24,6 +24,7 @@ package org.goobi.io;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
@@ -31,10 +32,17 @@ import java.io.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
+import org.apache.log4j.BasicConfigurator;
+
 public class BackupFileRotationTest {
 
 	public static final String BACKUP_FILE_NAME = "File-BackupFileRotationTest.xml";
 	public static final String BACKUP_FILE_PATH = "./";
+
+	@BeforeClass
+	public static void oneTimeSetUp() {
+		BasicConfigurator.configure();
+	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -144,6 +152,20 @@ public class BackupFileRotationTest {
 		assertFileHasContent(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".3", content1);
 	}
 
+	@Test
+	public void noBackupIsPerformedWithNumberOfBackupsSetToZero() throws Exception {
+		int numberOfBackups = 0;
+		runBackup(numberOfBackups);
+		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
+	
+	@Test
+	public void nothingHappensIfFilePatternDontMatch() throws Exception {
+		int numberOfBackups = 1;
+		runBackup(numberOfBackups, "");
+		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
+	}
+
 	private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
 		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
 		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
@@ -155,10 +177,14 @@ public class BackupFileRotationTest {
 	}
 
 	private void runBackup(int numberOfBackups) {
+		runBackup(numberOfBackups, BACKUP_FILE_NAME);
+	}
+
+	private void runBackup(int numberOfBackups, String format) {
 		BackupFileRotation bfr = new BackupFileRotation();
 		bfr.setNumberOfBackups(numberOfBackups);
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
-		bfr.setFormat(BACKUP_FILE_NAME);
+		bfr.setFormat(format);
 		bfr.performBackup();
 	}
 
@@ -176,6 +202,13 @@ public class BackupFileRotationTest {
 		File newFile = new File(fileName);
 		if (!newFile.exists()) {
 			fail("File " + fileName + " does not exist.");
+		}
+	}
+
+	private void assertFileNotExists(String fileName) {
+		File newFile = new File(fileName);
+		if (newFile.exists()) {
+			fail("File " + fileName + " should not exist.");
 		}
 	}
 
