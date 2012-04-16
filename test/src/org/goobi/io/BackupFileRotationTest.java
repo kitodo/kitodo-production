@@ -24,6 +24,7 @@ package org.goobi.io;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
@@ -31,10 +32,17 @@ import java.io.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
+import org.apache.log4j.BasicConfigurator;
+
 public class BackupFileRotationTest {
 
 	public static final String BACKUP_FILE_NAME = "File-BackupFileRotationTest.xml";
 	public static final String BACKUP_FILE_PATH = "./";
+
+	@BeforeClass
+	public static void oneTimeSetUp() {
+		BasicConfigurator.configure();
+	}
 
 	@Before
 	public void setUp() throws Exception {

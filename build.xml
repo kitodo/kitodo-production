@@ -313,7 +313,7 @@
             <formatter type="plain" usefile="false"/>
             <test name="${junit.test.name}"	haltonfailure="yes" unless="junit.test.methods"/>
             <test name="${junit.test.name}"	haltonfailure="yes" methods="${junit.test.methods}" if="junit.test.methods"/>
-	    <sysproperty key="log4j.configuration" value="test/log4j.properties"/>
+	    <sysproperty key="log4j.configuration" value=""/>
         </junit>
     </target>
 
