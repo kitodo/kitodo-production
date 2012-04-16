@@ -281,7 +281,7 @@
 		</manifestclasspath>
 
 		<jar destfile="${build.dist.jar}">
-			<fileset dir="${build.classes}"/>
+			<fileset dir="${build.classes}" includes="**/*.class"/>
 			<zipfileset dir="${lib.dir}" prefix="lib"/>
 			
 			<manifest>
