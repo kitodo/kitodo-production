@@ -76,6 +76,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		this.myClass.setVorname("");
 		this.myClass.setNachname("");
 		this.myClass.setLogin("");
+		this.myClass.setLdaplogin("");
 		this.myClass.setPasswortCrypt("Passwort");
 		return "BenutzerBearbeiten";
 	}

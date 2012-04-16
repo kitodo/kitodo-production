@@ -27,6 +27,7 @@ package de.sub.goobi.helper.ldap;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -73,6 +74,7 @@ public class Ldap {
 	private String getUserDN(Benutzer inBenutzer) {
 		String userDN = inBenutzer.getLdapGruppe().getUserDN();
 		userDN = userDN.replaceAll("\\{login\\}", inBenutzer.getLogin());
+		userDN = userDN.replaceAll("\\{ldaplogin\\}", inBenutzer.getLdaplogin());
 		userDN = userDN.replaceAll("\\{firstname\\}", inBenutzer.getVorname());
 		userDN = userDN.replaceAll("\\{lastname\\}", inBenutzer.getNachname());
 		return userDN;
@@ -126,10 +128,13 @@ public class Ldap {
 	 * @return Login correct or not
 	 */
 	public boolean isUserPasswordCorrect(Benutzer inBenutzer, String inPasswort) {
+		myLogger.debug("start login session with ldap");
 		Hashtable<String, String> env = LdapConnectionSettings();
+
+		// Start TLS
 		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
-			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
-			// System.setProperty("javax.net.ssl.trustStore", keystore);
+//			String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
+//			System.setProperty("javax.net.ssl.trustStore", keystore);
 			env = new Hashtable<String, String>();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
@@ -178,6 +183,7 @@ public class Ldap {
 				}
 			}
 		} else {
+
 			if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
 				env.put(Context.SECURITY_AUTHENTICATION, "none");
 				// TODO auf passwort testen
@@ -185,26 +191,32 @@ public class Ldap {
 				env.put(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
 				env.put(Context.SECURITY_CREDENTIALS, inPasswort);
 			}
+			myLogger.debug("ldap environment set");
 
 			try {
 				if (ConfigMain.getParameter("ldap_AttributeToTest") == null) {
 					new InitialDirContext(env);
+					myLogger.debug("ldap attribute to test is null");
 					return true;
 				} else {
+					myLogger.debug("ldap attribute to test is not null");
 					DirContext ctx = new InitialDirContext(env);
 					Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
 					Attribute la = attrs.get(ConfigMain.getParameter("ldap_AttributeToTest"));
+					myLogger.debug("ldap attributes set");
 					String test = (String) la.get(0);
 					if (test.equals(ConfigMain.getParameter("ldap_ValueOfAttribute"))) {
+						myLogger.debug("ldap ok");
 						ctx.close();
 						return true;
 					} else {
+						myLogger.debug("ldap not ok");
 						ctx.close();
 						return false;
 					}
 				}
 			} catch (NamingException e) {
-				myLogger.debug("Benutzeranmeldung nicht korrekt für Benutzer: " + inBenutzer.getLogin());
+				myLogger.debug("login not allowed for " + inBenutzer.getLogin(), e);
 				return false;
 			}
 		}
@@ -222,66 +234,64 @@ public class Ldap {
 		}
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
-
-			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
-			// System.setProperty("javax.net.ssl.trustStore", keystore);
-			env = new Hashtable<String, String>();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
-			env.put("java.naming.ldap.version", "3");
-			LdapContext ctx = null;
-			StartTlsResponse tls = null;
-			try {
-				ctx = new InitialLdapContext(env, null);
-
-				// Authentication must be performed over a secure channel
-				tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
-				tls.negotiate();
-
-				// Authenticate via SASL EXTERNAL mechanism using client X.509
-				// certificate contained in JVM keystore
-				ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-				ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
-				ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, ConfigMain.getParameter("ldap_adminPassword"));
-
-				ctx.reconnect(null);
-
-				Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
-				Attribute la = attrs.get("homeDirectory");
-				return (String) la.get(0);
-
-				// Perform search for privileged attributes under authenticated context
-
-			} catch (IOException e) {
-				myLogger.error("TLS negotiation error:", e);
-
-				return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
-			} catch (NamingException e) {
-
-				myLogger.error("JNDI error:", e);
-
-				return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
-			} finally {
-				if (tls != null) {
-					try {
-						// Tear down TLS connection
-						tls.close();
-					} catch (IOException e) {
-					}
-				}
-				if (ctx != null) {
-					try {
-						// Close LDAP connection
-						ctx.close();
-					} catch (NamingException e) {
-					}
-				}
-			}
-		} else if (ConfigMain.getBooleanParameter("useLocalDirectory", false)) {
-			return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
-		}
 		
-		if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
+//				String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
+//				System.setProperty("javax.net.ssl.trustStore", keystore);
+				env = new Hashtable<String, String>();
+				env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+				env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
+				env.put("java.naming.ldap.version", "3");
+				LdapContext ctx = null;
+				StartTlsResponse tls = null;
+				try {
+					ctx = new InitialLdapContext(env, null);
+
+					// Authentication must be performed over a secure channel
+					tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
+					tls.negotiate();
+
+					// Authenticate via SASL EXTERNAL mechanism using client X.509
+					// certificate contained in JVM keystore
+					ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+					ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
+					ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, ConfigMain.getParameter("ldap_adminPassword"));
+					
+					ctx.reconnect(null);
+					
+					Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
+					Attribute la = attrs.get("homeDirectory");
+					return (String) la.get(0);
+					
+					
+					// Perform search for privileged attributes under authenticated context
+
+				} catch (IOException e) {
+					myLogger.error("TLS negotiation error:", e);
+
+					return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
+				} catch (NamingException e) {
+
+					myLogger.error("JNDI error:", e);
+
+					return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
+				} finally {
+					if (tls != null) {
+						try {
+							// Tear down TLS connection
+							tls.close();
+						} catch (IOException e) {
+						}
+					}
+					if (ctx != null) {
+						try {
+							// Close LDAP connection
+							ctx.close();
+						} catch (NamingException e) {
+						}
+					}
+				}
+		}
+			else if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
 			env.put(Context.SECURITY_AUTHENTICATION, "none");
 		} else {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
@@ -428,11 +438,12 @@ public class Ldap {
 	 * change password of given user, needs old password for authentification
 	 * 
 	 * @param inUser
+	 * @param inOldPassword
 	 * @param inNewPassword
 	 * @return boolean about result of change
 	 * @throws NoSuchAlgorithmException
 	 */
-	public boolean changeUserPassword(Benutzer inBenutzer, String inNewPassword) throws NoSuchAlgorithmException {
+	public boolean changeUserPassword(Benutzer inBenutzer, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
@@ -507,7 +518,6 @@ public class Ldap {
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-
 		/* wenn die Verbindung über ssl laufen soll */
 		if (ConfigMain.getBooleanParameter("ldap_sslconnection")) {
 			String keystorepath = ConfigMain.getParameter("ldap_keystore");

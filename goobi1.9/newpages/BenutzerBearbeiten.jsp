@@ -129,6 +129,17 @@
 														<x:message id="id24" for="login" style="color: red"
 															replaceIdWithLabel="true" />
 													</h:panelGroup>
+													
+													<%-- login --%>
+													<h:outputLabel id="id22a" for="ldaplogin" value="#{msgs.ldaplogin}" />
+													<h:panelGroup id="id23a">
+														<h:inputText id="ldaplogin"
+															style="width: 300px;margin-right:15px"
+															value="#{BenutzerverwaltungForm.myClass.ldaplogin}"
+															required="true" />
+														<x:message id="id24a" for="ldaplogin" style="color: red"
+															replaceIdWithLabel="true" />
+													</h:panelGroup>
 
 													<%-- passwort --%>
 													<h:outputLabel id="id25" for="passwort"

@@ -13,6 +13,7 @@
 		<property name="vorname" column="Vorname" type="string"/>
 		<property name="nachname" column="Nachname" type="string"/>
 		<property name="login" column="login" type="string"/>
+		<property name="ldaplogin" column="ldaplogin" type="string"/>
 		<property name="passwort" column="passwort" type="string"/>
 		<property name="istAktiv" column="IstAktiv"/>
 		<property name="isVisible" column="isVisible" type="string"/>

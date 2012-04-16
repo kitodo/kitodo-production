@@ -49,6 +49,7 @@ public class Benutzer implements Serializable {
 	private String vorname;
 	private String nachname;
 	private String login;
+	private String ldaplogin;
 	private String passwort;
 	private boolean istAktiv = true;
 	private String isVisible;
@@ -350,6 +351,14 @@ public class Benutzer implements Serializable {
 		this.metadatenSprache = metadatenSprache;
 	}
 
+	public String getLdaplogin() {
+		return ldaplogin;
+	}
+	
+	public void setLdaplogin(String ldaplogin) {
+		this.ldaplogin = ldaplogin;
+	}
+	
 	/*
 	 * ## Helper ##
 	 */

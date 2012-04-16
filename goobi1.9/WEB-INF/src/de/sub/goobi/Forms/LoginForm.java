@@ -183,33 +183,31 @@ public class LoginForm {
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
 		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
-		
-		// if (!this.myBenutzer.istPasswortKorrekt(this.passwortAendernAlt)) {
-		// Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
-		// } else {
-		
-		/* ist das neue Passwort beide Male gleich angegeben? */
-		if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-			Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
-		} else {
-			// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
-			try {
-				/* wenn alles korrekt, dann jetzt speichern */
-				Ldap myLdap = new Ldap();
-				myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernNeu1);
-				Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
-				temp.setPasswortCrypt(this.passwortAendernNeu1);
-				new BenutzerDAO().save(temp);
-				this.myBenutzer = temp;
+//		if (!this.myBenutzer.istPasswortKorrekt(this.passwortAendernAlt)) {
+//			Helper.setFehlerMeldung(Helper.getTranslation("aktuellesPasswortFalsch"));
+//		} else {
+			/* ist das neue Passwort beide Male gleich angegeben? */
+			if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
+				Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
+			} else {
+				// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
+				try {
+					/* wenn alles korrekt, dann jetzt speichern */
+					Ldap myLdap = new Ldap();
+					myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
+					Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
+					temp.setPasswortCrypt(this.passwortAendernNeu1);
+					new BenutzerDAO().save(temp);
+					this.myBenutzer = temp;
 
-				Helper.setMeldung(null, "", Helper.getTranslation("passwortGeaendert"));
-			} catch (DAOException e) {
-				Helper.setFehlerMeldung("could not save", e.getMessage());
-			} catch (NoSuchAlgorithmException e) {
-				Helper.setFehlerMeldung("ldap errror", e.getMessage());
+					Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
+				} catch (DAOException e) {
+					Helper.setFehlerMeldung("could not save", e.getMessage());
+				} catch (NoSuchAlgorithmException e) {
+					Helper.setFehlerMeldung("ldap errror", e.getMessage());
+				}
 			}
-		}
-		// }
+//		}
 		return "";
 	}
 
