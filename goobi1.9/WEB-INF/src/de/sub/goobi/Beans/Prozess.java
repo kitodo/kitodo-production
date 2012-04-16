@@ -769,9 +769,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
 		if (!checkForMetadataFile()) {
-			throw new IOException("Can't open metadata file: " + getMetadataFilePath() + "!");
+			throw new IOException(" Can't open metadata file: " + getMetadataFilePath() + "!");
 		}
-		checkForMetadataFile();
+//		checkForMetadataFile();
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());

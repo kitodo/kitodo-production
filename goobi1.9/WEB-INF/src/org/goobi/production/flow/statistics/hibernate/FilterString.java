@@ -18,6 +18,7 @@ public class FilterString {
 	public static final String PROCESS = "process:";
 	public static final String WORKPIECE = "workpiece:";
 	public static final String BATCH = "batch:";
+	public static final String STEPAUTOMATIC = "stepautomatic:";
 	
 	// german
 	public static final String PROZESSEIGENSCHAFT = "prozesseigenschaft:";
@@ -34,6 +35,8 @@ public class FilterString {
 	public static final String PROZESS = "prozess:";
 	public static final String WERKSTUECK = "werkstueck:";
 	public static final String GRUPPE = "gruppe:";
+	public static final String SCHRITTAUTOMATISCH = "schrittautomatisch:";
+
 	
 	
 }
