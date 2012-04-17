@@ -55,6 +55,7 @@
     <property name="java.src.dir" value="${basedir}/src"/>
     <property name="java.src.dubious.dir" value="${basedir}/src-dubious"/>
 
+	<available classname="org.apache.jasper.JspC" property="jsp-compiler-available"/>
 
     <!--==================================================
         Datatype declarations
@@ -226,6 +227,10 @@
                classpathref="test.classpath">
         </javac>
     </target>
+
+	<target name="compile-jsp" if="jsp-compiler-available">
+		<taskdef name="jasper2" classname="org.apache.jasper.JspC"/>
+	</target>
 
     <!--==================================================
         Distribution
