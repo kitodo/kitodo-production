@@ -64,6 +64,7 @@
         <fileset dir="${lib.dir}"/>
         <pathelement location="${build.servlet.jar}"/>
         <pathelement location="${build.jasper.jar}"/>
+        <pathelement location="${build.jsp-api.jar}"/>
         <pathelement path="${java.class.path}"/>
     </path>
 
@@ -148,7 +149,13 @@
         </fail>
     </target>
 
-	<available classname="org.apache.jasper.JspC" classpathref="compile.classpath" property="jsp-compiler-available"/>
+	<condition property="jsp-libraries-available">
+		<and>
+			<available classname="org.apache.jasper.JspC" classpathref="compile.classpath" property="jsp-compiler-available"/>
+			<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath" property="jsp-api-available"/>
+		</and>
+	</condition>
+
 
     <!--==================================================
         Initialization
@@ -229,8 +236,13 @@
         </javac>
     </target>
 
-	<target name="compile-jsp" if="jsp-compiler-available">
-		<taskdef name="jasper2" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+	<target name="compile-jsp" if="jsp-libraries-available">
+		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+		<jasper 
+			 validateXml="false" 
+			 uriroot="${build.path}" 
+			 webXmlFragment="${build.path}/WEB-INF/generated_web.xml" 
+			 outputDir="${build.path}/WEB-INF/src" />
 	</target>
 
     <!--==================================================
