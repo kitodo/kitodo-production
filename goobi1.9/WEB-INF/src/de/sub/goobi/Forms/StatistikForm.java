@@ -70,7 +70,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlBenutzer() {
 		try {
-			return new BenutzerDAO().count("from Benutzer");
+			return new BenutzerDAO().count("from Benutzer where isVisible is null");
 		} catch (DAOException e) {
 
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
