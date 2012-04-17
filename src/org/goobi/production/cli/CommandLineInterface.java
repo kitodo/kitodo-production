@@ -24,10 +24,12 @@ package org.goobi.production.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -91,9 +93,18 @@ public class CommandLineInterface {
 
 		// Version.
 		if (commandLine.hasOption('V')) {
-			System.out.println("Goobi version: " + GoobiVersion.getVersion());
-			System.out.println("Goobi build date: " + GoobiVersion.getBuilddate());
-			System.out.println("Goobi build version: " + GoobiVersion.getBuildversion());
+			try {
+				// Use Manifest to setup version information
+				Manifest m = getManifestForClass(CommandLineInterface.class);
+				GoobiVersion.setupFromManifest(m);
+
+				System.out.println("Goobi version: " + GoobiVersion.getVersion());
+				System.out.println("Goobi build date: " + GoobiVersion.getBuilddate());
+				System.out.println("Goobi build version: " + GoobiVersion.getBuildversion());
+			} catch (Exception e) {
+				System.err.println("Cannot obtain version information from MANIFEST file: " + e.getMessage());
+				return 1;
+			}
 			return 0;
 		}
 		// testing command
@@ -228,7 +239,18 @@ public class CommandLineInterface {
 		return 0;
 	}
 
-	
+	private static Manifest getManifestForClass(Class c) throws IOException {
+		String className = c.getSimpleName() + ".class";
+		String classPath = c.getResource(className).toString();
+
+		if (!classPath.startsWith("jar")) {
+			 throw new IOException("Cannot read Manifest file.");
+		}
+
+		String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+		return new Manifest(new URL(manifestPath).openStream());
+	}
+
 	public static int generateNewProcess(Integer vorlageId, String importFolder) throws ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException {	
 			Prozess vorlage = new ProzessDAO().get(vorlageId);
 			File dir = new File(importFolder);
