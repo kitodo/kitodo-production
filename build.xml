@@ -34,6 +34,7 @@
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
     <property name="build.classes.test" value="${build.dir}/test-classes"/>
+    <property name="build.jsp" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
 
@@ -64,7 +65,9 @@
         <fileset dir="${lib.dir}"/>
         <pathelement location="${build.servlet.jar}"/>
         <pathelement location="${build.jasper.jar}"/>
+        <pathelement location="${build.jasper-el.jar}"/>
         <pathelement location="${build.jsp-api.jar}"/>
+        <pathelement location="${build.el-api.jar}"/>
         <pathelement path="${java.class.path}"/>
     </path>
 
@@ -214,12 +217,13 @@
 
     <!-- Compile application -->
     <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources, compile-jsp">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}" destdir="${build.classes}"
-               source="${build.javac.source}"
-               target="${build.javac.target}"
-               encoding="UTF8"
-               debug="${build.javac.debug}"
-               classpathref="compile.classpath">
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp}"
+			destdir="${build.classes}"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="${build.javac.debug}"
+			classpathref="compile.classpath">
         </javac>
     </target>
 
@@ -236,11 +240,11 @@
 
 	<target name="compile-jsp" if="jsp-libraries-available">
 		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
-		<jasper 
-			 validateXml="false" 
-			 uriroot="${build.path}" 
-			 webXmlFragment="${build.path}/WEB-INF/generated_web.xml" 
-			 outputDir="${build.path}/WEB-INF/src" />
+		<jasper
+			validateXml="false" 
+			uriroot="${basedir}" 
+			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
+			outputDir="${build.jsp}" />
 	</target>
 
     <!--==================================================

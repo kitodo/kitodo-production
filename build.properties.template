@@ -22,7 +22,9 @@
 
 #servlet.jar=/opt/apache-tomcat-5.5.32/common/lib/servlet-api.jar
 #jasper.jar=/opt/apache-tomcat-5.5.32/common/lib/jasper.jar
+#jasper-el.jar=/opt/apache-tomcat-5.5.32/common/lib/jasper-el.jar
 #jsp-api.jar=/opt/apache-tomcat-5.5.32/common/lib/jsp-api.jar
+#el-api.jar=/opt/apache-tomcat-5.5.32/common/lib/el-api.jar
 #javac.debug=true
 #javac.args=
 #dist.version=1.6.5-rc1
