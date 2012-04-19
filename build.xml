@@ -34,7 +34,7 @@
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
     <property name="build.classes.test" value="${build.dir}/test-classes"/>
-    <property name="build.jsp" value="${build.dir}/WEB-INF/src"/>
+    <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
 
@@ -63,11 +63,8 @@
     <!-- Compilation classpath -->
     <path id="compile.classpath">
         <fileset dir="${lib.dir}"/>
+        <fileset dir="${build.tomcat.dir.lib}"/>
         <pathelement location="${build.servlet.jar}"/>
-        <pathelement location="${build.jasper.jar}"/>
-        <pathelement location="${build.jasper-el.jar}"/>
-        <pathelement location="${build.jsp-api.jar}"/>
-        <pathelement location="${build.el-api.jar}"/>
         <pathelement path="${java.class.path}"/>
     </path>
 
@@ -154,8 +151,9 @@
 
 	<condition property="jsp-libraries-available">
 		<and>
-			<available classname="org.apache.jasper.JspC" classpathref="compile.classpath" property="jsp-compiler-available"/>
-			<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath" property="jsp-api-available"/>
+			<available classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+			<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath"/>
+			<available classname="javax.el.ExpressionFactory" classpathref="compile.classpath"/>
 		</and>
 	</condition>
 
@@ -169,6 +167,7 @@
         <mkdir dir="${build.dist.dir}"/>
         <mkdir dir="${build.classes}"/>
         <mkdir dir="${build.classes.test}"/>
+        <mkdir dir="${build.jsp.src}"/>
         <delete dir="${doc.javadocs.dir}"/>
         <mkdir dir="${doc.javadocs.dir}"/>
         <delete dir="${test.report.dir}"/>
@@ -217,7 +216,7 @@
 
     <!-- Compile application -->
     <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources, compile-jsp">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp}"
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
 			destdir="${build.classes}"
 			source="${build.javac.source}"
 			target="${build.javac.target}"
@@ -244,7 +243,7 @@
 			validateXml="false" 
 			uriroot="${basedir}" 
 			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
-			outputDir="${build.jsp}" />
+			outputDir="${build.jsp.src}" />
 	</target>
 
     <!--==================================================
