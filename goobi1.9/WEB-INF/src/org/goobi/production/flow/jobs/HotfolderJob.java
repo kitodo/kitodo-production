@@ -257,7 +257,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 				try {
 					Prozess p = form.NeuenProzessAnlegen2();
 					if (p.getId() != null) {
-						
+
 						// copy image files to new directory
 						File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
 								+ File.separator);
@@ -354,30 +354,33 @@ public class HotfolderJob extends AbstractGoobiJob {
 				return false;
 			}
 			if (anzahl > 0) {
+				Helper.setFehlerMeldung("processTitleAllreadyInUse");
 				return false;
 			}
-		}else{
+		} else {
 			return false;
 		}
 		return true;
 	}
 
-
-	
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
+		logger.trace("processtitle is " + processTitle);
 		String metsfilename = io.getMetsFilename();
-		String basepath = metsfilename.substring(0, metsfilename.length()-4);
+		logger.trace("mets filename is " + metsfilename);
+		String basepath = metsfilename.substring(0, metsfilename.length() - 4);
+		logger.trace("basepath is " + basepath);
 		File metsfile = new File(metsfilename);
 		Prozess p = null;
 		if (!testTitle(processTitle)) {
+			logger.trace("wrong title");
 			// removing all data
 			File imagesFolder = new File(basepath);
 			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
 				deleteDirectory(imagesFolder);
 			} else {
-				imagesFolder = new File(basepath +"_" + vorlage.DIRECTORY_SUFFIX);
+				imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
 				if (imagesFolder.exists() && imagesFolder.isDirectory()) {
 					deleteDirectory(imagesFolder);
 				}
@@ -400,8 +403,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 		cp.metadataFile = metsfilename;
 		cp.Prepare(io);
 		cp.getProzessKopie().setTitel(processTitle);
+		logger.trace("testing title");
 		if (cp.testTitle()) {
-
+			logger.trace("title is valid");
 			cp.OpacAuswerten();
 			try {
 				p = cp.createProcess(io);
@@ -429,9 +433,11 @@ public class HotfolderJob extends AbstractGoobiJob {
 				Helper.setFehlerMeldung(e);
 				logger.error(e);
 			}
+		} else {
+			logger.trace("title is invalid");
 		}
 		return p;
-		
+
 	}
 
 	private static void deleteDirectory(File directory) {
