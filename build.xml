@@ -34,6 +34,7 @@
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
     <property name="build.classes.test" value="${build.dir}/test-classes"/>
+    <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
 
@@ -45,6 +46,9 @@
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
     <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
 
+    <property name="build.tomcat.compile.jsp" value="false"/>
+    <property name="build.tomcat.dir.lib" value="${basedir}"/>
+
     <property name="lib.dir" value="${basedir}/lib"/>
 
     <property name="config.dir" value="${basedir}/config"/>
@@ -55,7 +59,6 @@
     <property name="java.src.dir" value="${basedir}/src"/>
     <property name="java.src.dubious.dir" value="${basedir}/src-dubious"/>
 
-
     <!--==================================================
         Datatype declarations
         ==================================================-->
@@ -63,6 +66,7 @@
     <!-- Compilation classpath -->
     <path id="compile.classpath">
         <fileset dir="${lib.dir}"/>
+        <fileset dir="${build.tomcat.dir.lib}"/>
         <pathelement location="${build.servlet.jar}"/>
         <pathelement path="${java.class.path}"/>
     </path>
@@ -117,19 +121,30 @@
         ==================================================-->
 
     <!-- Check all build preconditions -->
-    <target name="check-preconditions" depends="check-java-version, check-servlet-api"/>
+    <target name="check-preconditions" depends="check-java-version, check-servlet-api, check-jsp-compilation"/>
 
     <!-- Check if needed libraries are on the classpath and set apropriate properties -->
     <target name="check-classpath">
         <condition property="servletapi.present">
             <available classname="javax.servlet.http.HttpServlet" classpathref="compile.classpath"/>
         </condition>
+		<condition property="jsp.compilation.requested">
+			<equals arg1="${build.tomcat.compile.jsp}" arg2="true"/>
+		</condition>
+		<condition property="jspapi.present">
+			<and>
+				<available classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+				<available classname="org.apache.el.ExpressionFactoryImpl" classpathref="compile.classpath"/>
+				<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath"/>
+				<available classname="javax.el.ExpressionFactory" classpathref="compile.classpath"/>
+			</and>
+		</condition>
     </target>
 
     <!-- Fail if Servlet API isn't found and print out a useful help text -->
     <target name="check-servlet-api" depends="check-classpath" unless="servletapi.present">
         <echo>Servlet API not found on classpath!</echo>
-        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set property tomcat.dir.lib "</echo>
+        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set build.tomcat.dir.lib property"</echo>
         <fail message="Servlet API is missing."/>
     </target>
 
@@ -148,6 +163,11 @@
         </fail>
     </target>
 
+	<!-- Fail if JSP compiler is requested but not configured on the classpath-->
+	<target name="check-jsp-compilation" if="jsp.compilation.requested">
+		<fail message="JSP compile libraries missing. Add tomcat libraries to the classpath or set the build.tomcat.dir.lib property." unless="jspapi.present"/>
+	</target>
+
     <!--==================================================
         Initialization
         ==================================================-->
@@ -158,6 +178,7 @@
         <mkdir dir="${build.dist.dir}"/>
         <mkdir dir="${build.classes}"/>
         <mkdir dir="${build.classes.test}"/>
+        <mkdir dir="${build.jsp.src}"/>
         <delete dir="${doc.javadocs.dir}"/>
         <mkdir dir="${doc.javadocs.dir}"/>
         <delete dir="${test.report.dir}"/>
@@ -182,7 +203,6 @@
         </javadoc>
     </target>
 
-
     <!--==================================================
         Build
         ==================================================-->
@@ -206,13 +226,14 @@
     </target>
 
     <!-- Compile application -->
-    <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}" destdir="${build.classes}"
-               source="${build.javac.source}"
-               target="${build.javac.target}"
-               encoding="UTF8"
-               debug="${build.javac.debug}"
-               classpathref="compile.classpath">
+    <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources, compile-jsp">
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
+			destdir="${build.classes}"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="${build.javac.debug}"
+			classpathref="compile.classpath">
         </javac>
     </target>
 
@@ -226,6 +247,15 @@
                classpathref="test.classpath">
         </javac>
     </target>
+
+	<target name="compile-jsp" if="jsp.compilation.requested">
+		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+		<jasper
+			validateXml="false" 
+			uriroot="${basedir}" 
+			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
+			outputDir="${build.jsp.src}" />
+	</target>
 
     <!--==================================================
         Distribution

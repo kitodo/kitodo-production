@@ -21,6 +21,8 @@
 #
 
 #servlet.jar=/opt/apache-tomcat-5.5.32/common/lib/servlet-api.jar
+#tomcat.dir.lib=/opt/apache-tomcat-5.5.32/common/lib
+#tomcat.compile.jsp=false
 #javac.debug=true
 #javac.args=
 #dist.version=1.6.5-rc1
