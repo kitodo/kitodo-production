@@ -210,6 +210,11 @@
 		<url-pattern>*.jsf</url-pattern>
 	</filter-mapping>
 
+    <!-- Listener for ImageIO initialization (Tomcat workaround) -->
+    <listener>
+        <listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
+    </listener>
+
 	<!--
 		xml-Rpc-Server starten <listener> <listener-class>
 		de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
@@ -222,9 +227,10 @@
 
 	<!-- Listener for JobManager -->
 	<listener>
-		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
 	</listener>
-	<!--  
+
+	<!--
 	<listener>
 		<listener-class>
 			org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
