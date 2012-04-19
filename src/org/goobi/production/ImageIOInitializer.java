@@ -36,7 +36,9 @@ import javax.servlet.http.HttpSessionListener;
  * This listener works as a workaround for problems occurring when bootstrapping web applications
  * using ImageIO library within Tomcat when using JreMemoryLeakPreventionListener.
  *
- * @see https://bugs.launchpad.net/goobi-production/+bug/788160
+ * Bug and solution described here:
+ * https://bugs.launchpad.net/goobi-production/+bug/788160
+ *
  */
 public class ImageIOInitializer implements ServletContextListener,
 		HttpSessionListener, HttpSessionAttributeListener {
