@@ -286,7 +286,7 @@ CREATE TABLE `schritteberechtigtegruppen` (
 CREATE TABLE `schritteeigenschaften` (
   `schritteeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
-  `Wert` varchar(255) DEFAULT NULL,
+  `Wert` longtext,
   `IstObligatorisch` bit(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
@@ -312,7 +312,7 @@ CREATE TABLE `vorlagen` (
 CREATE TABLE `vorlageneigenschaften` (
   `vorlageneigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
-  `Wert` varchar(255) DEFAULT NULL,
+  `Wert` longtext,
   `IstObligatorisch` bit(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
@@ -337,7 +337,7 @@ CREATE TABLE `werkstuecke` (
 CREATE TABLE `werkstueckeeigenschaften` (
   `werkstueckeeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
-  `Wert` varchar(255) DEFAULT NULL,
+  `Wert` longtext,
   `IstObligatorisch` bit(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
