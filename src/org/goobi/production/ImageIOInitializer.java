@@ -25,10 +25,6 @@ package org.goobi.production;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 
 /**
  * Listener to set up static ImageIO library with web application class loader.
@@ -40,8 +36,7 @@ import javax.servlet.http.HttpSessionListener;
  * https://bugs.launchpad.net/goobi-production/+bug/788160
  *
  */
-public class ImageIOInitializer implements ServletContextListener,
-		HttpSessionListener, HttpSessionAttributeListener {
+public class ImageIOInitializer implements ServletContextListener {
 
 	static {
 		// makes sure, plugins get loaded via web application class loader
@@ -53,21 +48,6 @@ public class ImageIOInitializer implements ServletContextListener,
 	}
 
 	public void contextDestroyed(ServletContextEvent sce) {
-	}
-
-	public void sessionCreated(HttpSessionEvent se) {
-	}
-
-	public void sessionDestroyed(HttpSessionEvent se) {
-	}
-
-	public void attributeAdded(HttpSessionBindingEvent sbe) {
-	}
-
-	public void attributeRemoved(HttpSessionBindingEvent sbe) {
-	}
-
-	public void attributeReplaced(HttpSessionBindingEvent sbe) {
 	}
 
 }
