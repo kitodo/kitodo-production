@@ -212,7 +212,7 @@
 
     <!-- Listener for ImageIO initialization (Tomcat workaround) -->
     <listener>
-        <listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
     </listener>
 
 	<!--
@@ -227,7 +227,7 @@
 
 	<!-- Listener for JobManager -->
 	<listener>
-		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
 	</listener>
 
 	<!--
@@ -238,7 +238,7 @@
 -->
 
 	<listener>
-        	<listener-class>org.goobi.production.GoobiVersionListener</listener-class>
+		<listener-class>org.goobi.production.GoobiVersionListener</listener-class>
 	</listener>
 
 	<!-- Faces Servlet -->
