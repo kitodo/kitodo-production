@@ -163,7 +163,7 @@ public class RequestControlFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} catch (LazyInitializationException e) {
-			Helper.setFehlerMeldung(de.sub.goobi.helper.Helper.getTranslation("aLazyInitializationErrorOcurred"));
+			Helper.setFehlerMeldung(de.sub.goobi.helper.Messages.getString("aLazyInitializationErrorOcurred"));
 		}
 
 		finally {

@@ -43,6 +43,7 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.HistoryEventType;
 
 /*****************************************************************************
@@ -144,7 +145,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * generate requiredOutputLine
 	 */
 	private DataRow requiredOutput() {
-		DataRow dataRow = new DataRow(Helper.getTranslation("requiredOutput"));
+		DataRow dataRow = new DataRow(Messages.getString("requiredOutput"));
 		dataRow.setShowPoint(false);
 
 		Double requiredOutputPerTimeUnit = this.requiredDailyOutput * this.timeGrouping.getDayFactor();
@@ -162,7 +163,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	private DataRow referenceCurve(DataRow referenceRow) {
 		DataRow orientationRow = requiredOutput();
-		DataRow dataRow = new DataRow(Helper.getTranslation("ReferenceCurve"));
+		DataRow dataRow = new DataRow(Messages.getString("ReferenceCurve"));
 		dataRow.setShowPoint(false);
 		// may have to be calculated differently
 
@@ -248,8 +249,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		DataTable tableStepCompleted = getAllSteps(HistoryEventType.stepDone);
 
-		tableStepCompleted.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
-		tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
+		tableStepCompleted.setUnitLabel(Messages.getString(timeGrouping.getSingularTitle()));
+		tableStepCompleted.setName(Messages.getString("doneSteps"));
 
 		// show in line graph
 		tableStepCompleted.setShowableInChart(true);
@@ -434,7 +435,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	public List<String> getSelectableSteps() {
 		List<String> selectableList = new ArrayList<String>();
-		selectableList.add(Helper.getTranslation("selectAll"));
+		selectableList.add(Messages.getString("selectAll"));
 		for (StepInformation steps : this.commonWorkFlow) {
 			selectableList.add(steps.getTitle());
 		}
@@ -443,7 +444,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	
 	public void setSelectedSteps(List<String> inSteps){
 		isDirty=true;
-		if (inSteps.contains(Helper.getTranslation("selectAll"))) {
+		if (inSteps.contains(Messages.getString("selectAll"))) {
 			this.selectedSteps = new ArrayList<String>();
 			for (StepInformation steps : this.commonWorkFlow) {
 				this.selectedSteps.add(steps.getTitle());

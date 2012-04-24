@@ -59,6 +59,7 @@ import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -211,7 +212,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
 			} catch (Exception e) {
 				// TODO Meldung in messages implementieren
-				Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
+				Helper.setFehlerMeldung(Messages.getString("userNotFound"), e);
 			}
 		}
 		return rueckgabe;
@@ -716,7 +717,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		File f = new File(getMetadataFilePath());
 
 		if (!f.exists()) {
-			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
+			String errorMessage = Messages.getString("metadataFileNotFound") + " " + f.getAbsolutePath();
 			myLogger.warn(errorMessage);
 			Helper.setFehlerMeldung(errorMessage);
 			result = false;

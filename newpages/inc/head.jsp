@@ -33,7 +33,7 @@
 	<link rel="shortcut icon" href="favicon.ico"/> 
 	<x:stylesheet media="screen" path="#{LoginForm.myBenutzer == null?'/css/default.css':LoginForm.myBenutzer.css}"/>
 	<x:stylesheet media="print" path="/css/system/print.css"/>
-	<f:loadBundle basename="messages.messages" var="msgs" />
+	<f:loadBundle basename="messages" var="msgs" />
 	<title><h:outputText value="#{HelperForm.applicationHeaderTitle} - #{HelperForm.version}"/></title>
     <!-- <h:outputText value="internal version number: #{HelperForm.buildVersion}"/> -->
 </head>

@@ -86,6 +86,7 @@ import de.sub.goobi.config.ConfigOpacDoctype;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -446,13 +447,13 @@ public class ProzesskopieForm {
 		/* kein Titel */
 		if (prozessKopie.getTitel() == null || prozessKopie.getTitel().equals("")) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " Process title is empty");
+			Helper.setFehlerMeldung(Messages.getString("UnvollstaendigeDaten") + " Process title is empty");
 		}
 
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
+			Helper.setFehlerMeldung(Messages.getString("UngueltigerTitelFuerVorgang"));
 		}
 
 		/* prüfen, ob der Prozesstitel schon verwendet wurde */
@@ -466,7 +467,7 @@ public class ProzesskopieForm {
 			}
 			if (anzahl > 0) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + " the process title is allready used");
+				Helper.setFehlerMeldung(Messages.getString("UngueltigeDaten: ") + " the process title is allready used");
 			}
 		}
 
@@ -476,7 +477,7 @@ public class ProzesskopieForm {
 		/* keine Collektion ausgewählt */
 		if (standardFields.get("collections") && getDigitalCollections().size() == 0) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " digital collection is empty");
+			Helper.setFehlerMeldung(Messages.getString("UnvollstaendigeDaten") + " digital collection is empty");
 		}
 
 		/*
@@ -485,7 +486,7 @@ public class ProzesskopieForm {
 		for (AdditionalField field : additionalFields) {
 			if ((field.getWert() == null || field.getWert().equals("")) && field.isRequired() && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getWert()))) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " is empty");
+				Helper.setFehlerMeldung(Messages.getString("UnvollstaendigeDaten") + " " + field.getTitel() + " is empty");
 			}
 		}
 		return valide;
@@ -1187,9 +1188,9 @@ public class ProzesskopieForm {
 				rueckgabe = df.format(bandint);
 			} catch (NumberFormatException e) {
 				if (inFeldName.equals("Bandnummer")) {
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+					Helper.setFehlerMeldung(Messages.getString("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
 				} else {
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+					Helper.setFehlerMeldung(Messages.getString("UngueltigeDaten: ") + "Volume number is not a valid number");
 				}
 			}
 			if (rueckgabe != null && rueckgabe.length() < 4)

@@ -73,6 +73,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.Transliteration;
 import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
@@ -611,7 +612,7 @@ public class Metadaten {
 
 		// this exception needs some serious feedback because data is corrupted
 		if (logicalTopstruct == null) {
-			throw new ReadException(Helper.getTranslation("metaDataError"));
+			throw new ReadException(Messages.getString("metaDataError"));
 		}
 
 		BildErmitteln(0);
