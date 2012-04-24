@@ -102,18 +102,7 @@ public class WebDav {
 		}
 
 		for (String myname : inList) {
-			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-			command += VerzeichnisAlle + myname;
-
-			try {
-				Helper.callShell(command);
-			} catch (java.io.IOException ioe) {
-				myLogger.error("IOException removeFromHomeAlle()", ioe);
-				Helper.setFehlerMeldung("Aborted removeFromHomeAlle(), error", ioe.getMessage());
-			} catch (InterruptedException ie) {
-				myLogger.error("InterruptedException in removeFromHomeAlle()", ie);
-				Helper.setFehlerMeldung("Command '" + command + "' is interrupted in removeFromHomeAlle()!");
-			}
+			FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
 		}
 	}
 
@@ -142,18 +131,7 @@ public class WebDav {
 		nach = nach.replaceAll(" ", "__");
 		File benutzerHome = new File(nach);
 
-		String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-		command += benutzerHome;
-
-		try {
-			Helper.callShell(command);
-		} catch (java.io.IOException ioe) {
-			myLogger.error("IOException UploadFromHome", ioe);
-			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
-		} catch (InterruptedException ie) {
-			myLogger.error("InterruptedException UploadFromHome", ie);
-			Helper.setFehlerMeldung("Command '" + command + "' is interrupted in UploadFromHome()!");
-		}
+		FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
@@ -171,11 +149,9 @@ public class WebDav {
 			/* bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren */
 			if (aktuellerBenutzer.isMitMassendownload()) {
 				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
-				if (!projekt.exists())
-					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 				projekt = new File(userHome + "fertig" + File.separator);
-				if (!projekt.exists())
-					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
 		} catch (Exception ioe) {
@@ -213,7 +189,7 @@ public class WebDav {
 		else
 			command += aktuellerBenutzer.getLogin();
 		try {
-			Helper.callShell2(command);
+			ShellScript.legacyCallShell2(command);
 		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());

@@ -44,6 +44,7 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -284,7 +285,6 @@ public class ExportDms extends ExportMets {
 		/*
 		 * -------------------------------- dann den Ausgangspfad ermitteln --------------------------------
 		 */
-		Helper help = new Helper();
 		File tifOrdner = new File(myProzess.getImagesTifDirectory());
 
 		/*
@@ -301,7 +301,7 @@ public class ExportDms extends ExportMets {
 				/* wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-					help.createUserDirectory(zielTif.getAbsolutePath(), myBenutzer.getLogin());
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);

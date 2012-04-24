@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
 public class Ldap {
@@ -101,7 +102,7 @@ public class Ldap {
 			String homePath = getUserHomeDirectory(inBenutzer);
 			if (!new File(homePath).exists()) {
 				myLogger.debug("HomeVerzeichnis existiert noch nicht");
-				new Helper().createUserDirectory(homePath, inBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(homePath, inBenutzer.getLogin());
 				myLogger.debug("HomeVerzeichnis angelegt");
 			} else
 				myLogger.debug("HomeVerzeichnis existiert schon");
