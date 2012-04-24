@@ -684,6 +684,7 @@ public class ProzesskopieForm {
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
+			return "";
 		} else {
 			try {
 				new ProzessDAO().save(prozessKopie);
