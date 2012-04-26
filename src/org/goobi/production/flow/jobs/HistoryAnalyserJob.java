@@ -514,19 +514,16 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return duplicateEventRemoved;
 	}
 
-	public static Boolean updateHistoryForProcess(Prozess inProc){
-		Boolean updated;
+	public static Boolean updateHistoryForProcess(Prozess inProc) {
+		Boolean updated = false;
 		try {
 			updated = updateHistory(inProc);
-		} catch (IOException e) {
-		} catch (InterruptedException e) {
-		} catch (SwapException e) {
-		} catch (DAOException e) {
+			updated = updateHistoryForSteps(inProc);
+		} catch (Exception ex) {
+			logger.warn("Updating history failed.", ex);
+			updated = false;
 		}
-		updated = updateHistoryForSteps(inProc);
-		
 		return updated;
-		
 	}
 
 }
