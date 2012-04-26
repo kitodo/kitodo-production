@@ -22,6 +22,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
+import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Export.dms.AutomaticDmsExport;
 import de.sub.goobi.Persistence.ProzessDAO;
@@ -78,9 +79,9 @@ public class HelperSchritte {
 		inSchritt.setBearbeitungsende(myDate);
 		List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
 		Session session = Helper.getHibernateSession();
-		
-		inSchritt
-				.getProzess()
+		Prozess p = (Prozess) session.merge(inSchritt.getProzess());
+		inSchritt = (Schritt) session.merge(inSchritt);
+		p
 				.getHistory()
 				.add(new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
 						.getProzess()));
@@ -93,13 +94,13 @@ public class HelperSchritte {
 		// TODO FIXME Exception in thread "Thread-4514" org.hibernate.SessionException: Session is closed!
 		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
 				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess")
-				.add(Restrictions.idEq(inSchritt.getProzess().getId())).list().size();
+				.add(Restrictions.idEq(p.getId())).list().size();
 
 		// if (offeneSchritteGleicherReihenfolge != 0) {
 		// List bla = Helper.getHibernateSession().createCriteria(Schritt.class).add(
 		// Restrictions.eq("reihenfolge", inSchritt.getReihenfolge())).add(
 		// Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId()))
-		// .createCriteria("prozess").add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
+		// .createCriteria("prozess").add(Restrictions.idEq(p.getId())).list();
 		// for (Iterator it = bla.iterator(); it.hasNext();) {
 		// Schritt s = (Schritt) it.next();
 		// }
@@ -111,7 +112,7 @@ public class HelperSchritte {
 			
 			List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class)
 					.add(Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
-					.add(Restrictions.idEq(inSchritt.getProzess().getId())).list();
+					.add(Restrictions.idEq(p.getId())).list();
 			int reihenfolge = 0;
 			// TODO: Don't use iterators, use for loops instead
 			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
@@ -147,8 +148,8 @@ public class HelperSchritte {
 
 		try {
 			/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
-			this.pdao.save(inSchritt.getProzess());
-//			session.evict(inSchritt.getProzess());
+			this.pdao.save(p);
+//			session.evict(p);
 		} catch (DAOException e) {
 		}
 
