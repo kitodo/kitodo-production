@@ -43,7 +43,11 @@
         Datatype declarations
         ==================================================-->
 
-    <taskdef name="catalina-deploy" classname="org.apache.catalina.ant.DeployTask"/>
+    <taskdef name="catalina-deploy" classname="org.apache.catalina.ant.DeployTask">
+		<classpath>
+			<fileset dir="${build.tomcat.dir.lib}"/>
+		</classpath>
+	</taskdef>
 
     <!--==================================================
         Public build Targets
