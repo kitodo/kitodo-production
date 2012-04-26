@@ -58,6 +58,7 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -725,17 +726,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return result;
 	}
 
-	private void renameMetadataFile(String oldFileName, String newFileName) {
-		File oldFile;
-		File newFile;
-
-		if (oldFileName != null && newFileName != null) {
-			oldFile = new File(oldFileName);
-			newFile = new File(newFileName);
-			oldFile.renameTo(newFile);
-		}
-	}
-	
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
@@ -764,7 +754,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		writeResult = ff.write(metadataFileNameNew);
 		if (writeResult) {
 			createBackupFile();
-			renameMetadataFile(metadataFileNameNew, metadataFileName);
+			FilesystemHelper.renameFile(metadataFileNameNew, metadataFileName);
 		}
 	}
 
