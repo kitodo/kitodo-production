@@ -79,8 +79,10 @@ public class HelperSchritte {
 		inSchritt.setBearbeitungsende(myDate);
 		List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
 		Session session = Helper.getHibernateSession();
-		Prozess p = (Prozess) session.merge(inSchritt.getProzess());
-		inSchritt = (Schritt) session.merge(inSchritt);
+		Prozess p = inSchritt.getProzess();
+//		p.getHistory();
+//		session.load(Prozess.class, p);
+//		
 		p
 				.getHistory()
 				.add(new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
@@ -117,6 +119,7 @@ public class HelperSchritte {
 			// TODO: Don't use iterators, use for loops instead
 			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
 				Schritt myStep = iter.next();
+				myStep = (Schritt) session.merge(myStep);
 				if (reihenfolge == 0) {
 					reihenfolge = myStep.getReihenfolge().intValue();
 				}
@@ -145,7 +148,8 @@ public class HelperSchritte {
 				}
 			}
 		}
-
+//		 p = (Prozess) session.merge(p);
+			inSchritt = (Schritt) session.merge(inSchritt);
 		try {
 			/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
 			this.pdao.save(p);
