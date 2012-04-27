@@ -207,15 +207,6 @@
         Build
         ==================================================-->
 
-    <!-- Copy message resource bundles -->
-    <target name="copy-message-resources" depends="init">
-        <copy todir="${build.classes}/messages">
-            <fileset dir="${java.src.dir}/messages">
-                <include name="*.properties"/>
-            </fileset>
-        </copy>
-    </target>
-
     <!-- Copy hibernate configuration files -->
     <target name="copy-hibernate-resources" depends="init">
         <copy todir="${build.classes}">
@@ -226,7 +217,7 @@
     </target>
 
     <!-- Compile application -->
-    <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources, compile-jsp">
+    <target name="compile" depends="init, copy-hibernate-resources, compile-jsp">
         <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
 			destdir="${build.classes}"
 			source="${build.javac.source}"
