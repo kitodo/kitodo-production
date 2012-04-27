@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -80,20 +79,15 @@ public class HelperSchritte {
 		List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
 		Session session = Helper.getHibernateSession();
 		Prozess p = inSchritt.getProzess();
-//		p.getHistory();
-//		session.load(Prozess.class, p);
-//		
-		p
-				.getHistory()
-				.add(new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
+		p.getHistory().add(
+				new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
 						.getProzess()));
 
 		session.update(inSchritt);
-		
+
 		// }
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
-		// TODO FIXME Exception in thread "Thread-4514" org.hibernate.SessionException: Session is closed!
 		int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
 				.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess")
 				.add(Restrictions.idEq(p.getId())).list().size();
@@ -106,26 +100,24 @@ public class HelperSchritte {
 		// for (Iterator it = bla.iterator(); it.hasNext();) {
 		// Schritt s = (Schritt) it.next();
 		// }
-		// }	
+		// }
 
-		
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			
+
 			List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class)
 					.add(Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
 					.add(Restrictions.idEq(p.getId())).list();
 			int reihenfolge = 0;
-			// TODO: Don't use iterators, use for loops instead
-			for (Iterator<Schritt> iter = allehoeherenSchritte.iterator(); iter.hasNext();) {
-				Schritt myStep = iter.next();
-				myStep = (Schritt) session.merge(myStep);
+			for (Schritt myStep : allehoeherenSchritte) {
+				myStep = (Schritt) session.merge(inSchritt);
 				if (reihenfolge == 0) {
 					reihenfolge = myStep.getReihenfolge().intValue();
 				}
 
 				logger.info(myStep.getBearbeitungsstatusAsString());
-				if (reihenfolge == myStep.getReihenfolge().intValue() && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.DONE) && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
+				if (reihenfolge == myStep.getReihenfolge().intValue() && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.DONE)
+						&& !myStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
@@ -134,9 +126,8 @@ public class HelperSchritte {
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditTypeEnum(StepEditType.AUTOMATIC);
 
-					myStep.getProzess()
-							.getHistory()
-							.add(new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
+					p.getHistory().add(
+							new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
 									.getProzess()));
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty() || myStep.isTypExportDMS())) {
@@ -148,28 +139,18 @@ public class HelperSchritte {
 				}
 			}
 		}
-//		 p = (Prozess) session.merge(p);
-			inSchritt = (Schritt) session.merge(inSchritt);
+		// p = (Prozess) session.merge(p);
+		inSchritt = (Schritt) session.merge(inSchritt);
 		try {
 			/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
 			this.pdao.save(p);
-//			session.evict(p);
+			// session.evict(p);
 		} catch (DAOException e) {
+			logger.warn(e);
 		}
 
-		// if (automatic) {
-		// try {
-		// session.close();
-		// } catch (Exception e) {
-		// }
-		// }
-		/*
-		 * -------------------------------- zum Schluss alle automatischen Schritte nehmen und deren Automatik ausführen
-		 * --------------------------------
-		 */
-		// TODO: Don't use iterators, use for loops instead
-		for (Iterator<Schritt> iter = automatischeSchritte.iterator(); iter.hasNext();) {
-			Schritt myStep = iter.next();
+
+		for (Schritt myStep: automatischeSchritte) {
 			ScriptThread myThread = new ScriptThread(myStep);
 			myThread.start();
 		}
