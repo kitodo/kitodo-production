@@ -110,7 +110,7 @@ public class HelperSchritte {
 					.add(Restrictions.idEq(p.getId())).list();
 			int reihenfolge = 0;
 			for (Schritt myStep : allehoeherenSchritte) {
-				myStep = (Schritt) session.merge(inSchritt);
+				myStep = (Schritt) session.merge(myStep);
 				if (reihenfolge == 0) {
 					reihenfolge = myStep.getReihenfolge().intValue();
 				}
