@@ -257,6 +257,7 @@ public abstract class BaseDAO implements Serializable {
 		session.update(o);
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected List retrieveObjs(String queryString, String parameter) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();

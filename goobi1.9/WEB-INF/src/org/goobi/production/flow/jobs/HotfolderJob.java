@@ -54,6 +54,8 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * @author Robert Sehr
  * 
  */
+
+@Deprecated
 public class HotfolderJob extends AbstractGoobiJob {
 	private static final Logger logger = Logger.getLogger(HotfolderJob.class);
 

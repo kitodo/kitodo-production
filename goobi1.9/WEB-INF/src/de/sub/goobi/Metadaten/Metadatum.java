@@ -193,9 +193,11 @@ public class Metadatum {
 		} else {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getIsSelected()) {
+					values = values+ ";" + i.getValue();
 					this.selectedItems.add(i.getLabel());
 				}
 			}
+			setWert(values);
 		}
 		return this.selectedItems;
 	}
@@ -232,6 +234,8 @@ public class Metadatum {
 		} else {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getIsSelected()) {
+					value = i.getValue();
+					setWert(value);
 					return i.getLabel();
 				}
 			}

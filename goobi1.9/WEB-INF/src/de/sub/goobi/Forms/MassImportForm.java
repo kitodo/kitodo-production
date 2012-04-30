@@ -52,7 +52,7 @@ import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.export.ExportDocket;
-import org.goobi.production.flow.jobs.HotfolderJob;
+import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
@@ -254,7 +254,7 @@ public class MassImportForm {
 					io.setBatchId(batchId);
 				}
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-					Prozess p = HotfolderJob.generateProcess(io, this.template);
+					Prozess p = JobCreation.generateProcess(io, this.template);
 					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
 					if (p == null) {
 						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed");

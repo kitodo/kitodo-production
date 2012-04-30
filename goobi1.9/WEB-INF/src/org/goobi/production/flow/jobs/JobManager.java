@@ -74,7 +74,6 @@ public class JobManager implements ServletContextListener {
 	 * 
 	 * @throws SchedulerException
 	 **************************************************************************/
-	@SuppressWarnings("deprecation")
 	private static void startTimedJobs() throws SchedulerException {
 		SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 		Scheduler sched = schedFact.getScheduler();
@@ -82,7 +81,6 @@ public class JobManager implements ServletContextListener {
 		
 		initializeJob(new HistoryAnalyserJob(), "dailyHistoryAnalyser", sched);
 //		initializeJob(new LuceneIndexJob(), "dailyLuceneIndex", sched);
-		// TODO template id konfigurierbar
 		initializeJobNonConfigured(new HotfolderJob(), 5, sched);
 	}
 

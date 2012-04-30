@@ -622,7 +622,7 @@ public class Metadaten {
 		this.myBild = null;
 		this.myBildNummer = 1;
 		this.myImageRotation = 0;
-		currentTifFolder=null;
+		this.currentTifFolder=null;
 		readAllTifFolders();
 
 		/*
@@ -757,7 +757,9 @@ public class Metadaten {
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, this.myProzess);
 		if (myTempMetadata != null) {
 			for (Metadata metadata : myTempMetadata) {
-				lsMeta.add(new Metadatum(metadata, 0, this.myPrefs, this.myProzess));
+				Metadatum meta = new Metadatum(metadata, 0, this.myPrefs, this.myProzess);
+				meta.getSelectedItem();
+				lsMeta.add(meta);
 			}
 		}
 
@@ -785,6 +787,8 @@ public class Metadaten {
 		this.myMetadaten = lsMeta;
 		this.myPersonen = lsPers;
 
+		
+		
 		/*
 		 * -------------------------------- die zugehörigen Seiten ermitteln --------------------------------
 		 */
@@ -1185,7 +1189,7 @@ public class Metadaten {
 	 * @throws SwapException
 	 */
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
-		this.imagehelper.createPagination(this.myProzess, currentTifFolder);
+		this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
 		retrieveAllImages();
 
 		// added new
@@ -1504,7 +1508,7 @@ public class Metadaten {
 		ArrayList<String> dataList = new ArrayList<String>();
 		myLogger.trace("dataList");
 		try {
-			dataList = this.imagehelper.getImageFiles(this.myProzess, currentTifFolder);
+			dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
 			myLogger.trace("dataList 2");
 		} catch (InvalidImagesException e) {
 			myLogger.trace("dataList error");
