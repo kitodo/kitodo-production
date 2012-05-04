@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import de.sub.goobi.Forms.LoginForm;
 
@@ -22,7 +23,7 @@ public class Page implements Serializable { // implements Iterator
 	// TODO: Use generics
 	@SuppressWarnings("rawtypes")
 	private List results;
-	private int pageSize =0;
+	private int pageSize = 0;
 	private int page = 0;
 	private int totalResults = 0;
 	private Criteria criteria;
@@ -110,6 +111,7 @@ public class Page implements Serializable { // implements Iterator
 		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down to the pageSize if a next page
 		 * exists.
 		 */
+
 		return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
 	}
 
@@ -159,11 +161,29 @@ public class Page implements Serializable { // implements Iterator
 		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down to the pageSize if a next page
 		 * exists.
 		 */
+
 		if (this.criteria != null) {
 			try {
 				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
 				if (this.results != null && this.results.size() > 0) {
-					return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
+					List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
+					Session session = Helper.getHibernateSession();
+					for (Object o : answer) {
+						session.refresh(o);
+					}
+//					if (answer != null && answer.size() > 0) {
+//						if (answer.get(0) instanceof Schritt) {
+//							SchrittDAO sdao = new SchrittDAO();
+//							ProzessDAO pdao = new ProzessDAO();
+//							for (Object o : answer) {
+//								Schritt step = (Schritt) o;
+//								sdao.get(step.getId());
+//								pdao.get(step.getProzess().getId());
+//							}
+//						}
+//					}
+
+					return answer;
 				} else {
 					return new ArrayList();
 				}

@@ -486,7 +486,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		 */
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		new HelperSchritte().SchrittAbschliessen(this.mySchritt, false);
+		new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
 		return FilterAlleStart();
 	}
 

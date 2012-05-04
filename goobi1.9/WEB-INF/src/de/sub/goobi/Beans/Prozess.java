@@ -50,6 +50,7 @@ import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -174,6 +175,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Set<HistoryEvent> getHistory() {
 		try {
+			Session s = Helper.getHibernateSession();
 			Hibernate.initialize(this.history);
 		} catch (HibernateException e) {
 		}

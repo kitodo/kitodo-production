@@ -903,7 +903,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				break;
 			}
 		}
-		this.dao.save(proz);
+		this.dao.save(proz);		
 	}
 
 	private void debug(String message, List<Schritt> bla) {
@@ -967,7 +967,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			} else {
 				HelperSchritte.updateEditing(this.mySchritt);
 			}
-		}
+		}		
 		Speichern();
 		deleteSymlinksFromUserHomes();
 	}

@@ -835,7 +835,7 @@ public class BatchStepHelper {
 
 			this.myDav.UploadFromHome(s.getProzess());
 			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-			new HelperSchritte().SchrittAbschliessen(s, false);
+			new HelperSchritte().SchrittAbschliessen(s, true);
 		}
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();

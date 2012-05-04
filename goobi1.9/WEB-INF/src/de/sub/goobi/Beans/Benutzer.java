@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -352,7 +353,7 @@ public class Benutzer implements Serializable {
 	}
 
 	public String getLdaplogin() {
-		return ldaplogin;
+		return this.ldaplogin;
 	}
 	
 	public void setLdaplogin(String ldaplogin) {
@@ -573,4 +574,16 @@ public class Benutzer implements Serializable {
 			}
 		}
 	}
+	
+	
+	public static void main(String[] args) {
+		Date d = new Date(System.currentTimeMillis());
+		d.setMonth(3);
+		d.setDate(30);
+		System.out.println(d.getTime());
+		System.out.println(d);
+	
+	}
 }
+
+
