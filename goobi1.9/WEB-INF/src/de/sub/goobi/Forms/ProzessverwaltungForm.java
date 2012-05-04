@@ -99,6 +99,8 @@ import de.sub.goobi.Export.download.Multipage;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.GoobiScript;
@@ -891,19 +893,41 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void stepStatusUp(Prozess proz) throws DAOException {
-		for (Schritt step : proz.getSchritteList()) {
-			if (step.getBearbeitungsstatusEnum() != StepStatus.DONE) {
-				step.setBearbeitungsstatusUp();
-				step.setEditTypeEnum(StepEditType.ADMIN);
-				if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-					new HelperSchritte().SchrittAbschliessen(step, false);
-				} else {
-					HelperSchritte.updateEditing(step);
+		List<StepObject> stepList = StepManager.getStepsForProcess(proz.getId());
+		
+		for (StepObject so : stepList) {
+			if (so.getBearbeitungsstatus() != StepStatus.DONE.getValue()) {
+				so.setBearbeitungsstatus(so.getBearbeitungsstatus()+1);
+				so.setEditType(StepEditType.ADMIN.getValue());
+				if (so.getBearbeitungsstatus() == StepStatus.DONE.getValue()) {
+					new HelperSchritte().CloseStepObjectAutomatic(so, proz);
+				}
+				else {
+					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+					if (ben != null) {
+						so.setBearbeitungsbenutzer(ben.getId());
+						StepManager.updateStep(so);
+					}
 				}
 				break;
 			}
+//			new HelperSchritte().updateProcessStatus(proz.getId());
 		}
-		this.dao.save(proz);		
+		
+//		for (Schritt step : proz.getSchritteList()) {
+//			
+//			if (step.getBearbeitungsstatusEnum() != StepStatus.DONE) {
+//				step.setBearbeitungsstatusUp();
+//				step.setEditTypeEnum(StepEditType.ADMIN);
+//				if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
+//					new HelperSchritte().SchrittAbschliessen(step, false);
+//				} else {
+//					HelperSchritte.updateEditing(step);
+//				}
+//				break;
+//			}
+//		}
+//		this.dao.save(proz);		
 	}
 
 	private void debug(String message, List<Schritt> bla) {

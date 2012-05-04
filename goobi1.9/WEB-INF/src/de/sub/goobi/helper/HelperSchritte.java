@@ -165,8 +165,116 @@ public class HelperSchritte {
 		}
 	}
 
+	public void CloseStepObjectAutomatic(StepObject currentStep, Prozess process) {
+		closeStepObject(currentStep, process);
+	}
+	
 	public void CloseStepAutomatic(Schritt inStep) {
 		StepObject currentStep = StepManager.getStepById(inStep.getId());
+		
+		closeStepObject(currentStep, inStep.getProzess());
+		
+//		currentStep.setBearbeitungsstatus(3);
+//		Date myDate = new Date();
+//		currentStep.setBearbeitungszeitpunkt(myDate);
+//		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+//		if (ben != null) {
+//			currentStep.setBearbeitungsbenutzer(ben.getId());
+//		}
+//		currentStep.setBearbeitungsende(myDate);
+//		StepManager.updateStep(currentStep);
+//		List<StepObject> automatischeSchritte = new ArrayList<StepObject>();
+//		// Session session = Helper.getHibernateSession();
+//		int processId = inStep.getProzess().getId();
+//
+//		HistoryEvent he = new HistoryEvent(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
+//				HistoryEventType.stepDone, inStep.getProzess());
+//		StepManager.addHistory(he);
+//		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
+//		List<StepObject> steps = StepManager.getStepsForProcess(processId);
+//		List<StepObject> allehoeherenSchritte = new ArrayList<StepObject>();
+//		int offeneSchritteGleicherReihenfolge = 0;
+//		for (StepObject so : steps) {
+//			if (so.getReihenfolge() == currentStep.getReihenfolge() && so.getBearbeitungsstatus() != 3 && so.getId() != currentStep.getId()) {
+//				offeneSchritteGleicherReihenfolge++;
+//			} else if (so.getReihenfolge() > currentStep.getReihenfolge()) {
+//				allehoeherenSchritte.add(so);
+//			}
+//		}
+//
+//		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
+//		if (offeneSchritteGleicherReihenfolge == 0) {
+//
+//			int reihenfolge = 0;
+//			for (StepObject myStep : allehoeherenSchritte) {
+//				if (reihenfolge == 0) {
+//					reihenfolge = myStep.getReihenfolge();
+//				}
+//
+//				if (reihenfolge == myStep.getReihenfolge() && myStep.getBearbeitungsstatus() != 3 && myStep.getBearbeitungsstatus() != 2) {
+//					/*
+//					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
+//					 */
+//
+//					myStep.setBearbeitungsstatus(1);
+//					myStep.setBearbeitungszeitpunkt(myDate);
+//					myStep.setEditType(4);
+//
+//					// p.getHistory().add(
+//					HistoryEvent newEvent = new HistoryEvent(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
+//							HistoryEventType.stepOpen, inStep.getProzess());
+//					StepManager.addHistory(newEvent);
+//					/* wenn es ein automatischer Schritt mit Script ist */
+//					if (myStep.isTypAutomatisch()) {
+//						automatischeSchritte.add(myStep);
+//					}
+//					// TODO Step speichern
+//					// System.out.println("opened: " + myStep.getTitel());
+//					StepManager.updateStep(myStep);
+//					// try {
+//					// Schritt initializedStep = this.dao.get(myStep.getId());
+//					// Prozess initializedProcess = this.pdao.get(processId);
+//					// } catch (DAOException e) {
+//					// // TODO Auto-generated catch block
+//					// e.printStackTrace();
+//					// }
+//				} else {
+//					break;
+//				}
+//			}
+//		}
+//		
+//		updateProcessStatus(processId);
+//
+//
+//		// try {
+//		// /* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
+//		// this.pdao.save(p);
+//		// // session.evict(p);
+//		// } catch (DAOException e) {
+//		// logger.warn(e);
+//		// }
+//
+//		for (StepObject automaticStep : automatischeSchritte) {
+//			try {
+//				Schritt myStep = this.dao.get(automaticStep.getId());
+//				ScriptThread myThread = new ScriptThread(myStep);
+//				myThread.start();
+//			} catch (DAOException e) {
+//				logger.error("Could not load step with id " + automaticStep.getId() , e);
+//			}
+//
+//		}
+//		
+//		
+//		
+//		// if (automatic) {
+//		// session.close();
+//		// }
+	}
+
+	
+	private void closeStepObject(StepObject currentStep, Prozess process) {
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		currentStep.setBearbeitungszeitpunkt(myDate);
@@ -178,10 +286,10 @@ public class HelperSchritte {
 		StepManager.updateStep(currentStep);
 		List<StepObject> automatischeSchritte = new ArrayList<StepObject>();
 		// Session session = Helper.getHibernateSession();
-		int processId = inStep.getProzess().getId();
+		int processId = process.getId();
 
 		HistoryEvent he = new HistoryEvent(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
-				HistoryEventType.stepDone, inStep.getProzess());
+				HistoryEventType.stepDone, process);
 		StepManager.addHistory(he);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 		List<StepObject> steps = StepManager.getStepsForProcess(processId);
@@ -215,7 +323,7 @@ public class HelperSchritte {
 
 					// p.getHistory().add(
 					HistoryEvent newEvent = new HistoryEvent(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
-							HistoryEventType.stepOpen, inStep.getProzess());
+							HistoryEventType.stepOpen, process);
 					StepManager.addHistory(newEvent);
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch()) {
@@ -265,8 +373,8 @@ public class HelperSchritte {
 		// session.close();
 		// }
 	}
-
-	private void updateProcessStatus(int processId) {
+	
+	public void updateProcessStatus(int processId) {
 	
 			int offen = 0;
 			int inBearbeitung = 0;
