@@ -769,7 +769,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			PreferencesException {
 		Fileformat ff;
 		String metadataFileName;
-		String metadataFileNameNew;
+		String temporaryMetadataFileName;
 		boolean writeResult;
 
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
@@ -787,14 +787,14 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		metadataFileName = getMetadataFilePath();
-		metadataFileNameNew = getTemporaryMetadataFileName(metadataFileName);
+		temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
 
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		writeResult = ff.write(metadataFileNameNew);
+		writeResult = ff.write(temporaryMetadataFileName);
 		if (writeResult) {
 			createBackupFile();
-			renameMetadataFile(metadataFileNameNew, metadataFileName);
-			renameMetsAnchorFileIfExist(metadataFileNameNew);
+			renameMetadataFile(temporaryMetadataFileName, metadataFileName);
+			renameMetsAnchorFileIfExist(temporaryMetadataFileName);
 		}
 	}
 
