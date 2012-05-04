@@ -745,6 +745,26 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
+	protected void renameMetsAnchorFileIfExist(String fileName) {
+		String temporaryPrefix = "temporary_";
+		File temporaryFile = new File(fileName);
+		File temporaryAnchorFile;
+
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
+
+		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
+
+		if (temporaryAnchorFile.exists()) {
+			String anchorFileName = temporaryAnchorFileName.replace(temporaryPrefix, "");
+
+			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
+			anchorFileName = directoryPath + File.separator + anchorFileName;
+
+			renameMetadataFile(temporaryAnchorFileName, anchorFileName);
+		}
+	}
+
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
@@ -774,6 +794,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		if (writeResult) {
 			createBackupFile();
 			renameMetadataFile(metadataFileNameNew, metadataFileName);
+			renameMetsAnchorFileIfExist(metadataFileNameNew);
 		}
 	}
 
