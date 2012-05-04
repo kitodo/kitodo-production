@@ -736,9 +736,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 	}
 
-	private String getTemporaryMetsFileName(String metsFileName) {
+	private String getTemporaryMetadataFileName(String fileName) {
 		String temporaryPrefix = "temporary_";
-		File temporaryFile = new File(metsFileName);
+		File temporaryFile = new File(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
 		String temporaryFileName = temporaryPrefix + temporaryFile.getName();
 
@@ -767,7 +767,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		metadataFileName = getMetadataFilePath();
-		metadataFileNameNew = getTemporaryMetsFileName(metadataFileName);
+		metadataFileNameNew = getTemporaryMetadataFileName(metadataFileName);
 
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		writeResult = ff.write(metadataFileNameNew);
