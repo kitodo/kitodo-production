@@ -2,11 +2,10 @@ package de.sub.goobi.Persistence.apache;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.Beans.HistoryEvent;
 
 public class StepManager {
 
@@ -45,19 +44,11 @@ public class StepManager {
 		
 	}
 
-	public static void addHistory(HistoryEvent he) {
+	public static void addHistory(Date myDate, double order, String value, int type, int processId) {
 		try {
-			DbHelper.getInstance().addHistory(he);
+			DbHelper.getInstance().addHistory( myDate,  order,  value,  type,  processId);
 		} catch (SQLException e) {
 			logger.error("Cannot not save history event", e);
-		}
-	}
-
-	public static void updateProcessStatus(String value, int processId) {
-		try {
-			DbHelper.getInstance().updateProcess(value, processId);
-		} catch (SQLException e) {
-			logger.error("Cannot not update status for process with id " + processId, e);
 		}
 	}
 }

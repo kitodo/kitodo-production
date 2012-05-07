@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import de.sub.goobi.Forms.LoginForm;
 
@@ -167,21 +166,11 @@ public class Page implements Serializable { // implements Iterator
 				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
 				if (this.results != null && this.results.size() > 0) {
 					List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
-					Session session = Helper.getHibernateSession();
-					for (Object o : answer) {
-						session.refresh(o);
-					}
-//					if (answer != null && answer.size() > 0) {
-//						if (answer.get(0) instanceof Schritt) {
-//							SchrittDAO sdao = new SchrittDAO();
-//							ProzessDAO pdao = new ProzessDAO();
-//							for (Object o : answer) {
-//								Schritt step = (Schritt) o;
-//								sdao.get(step.getId());
-//								pdao.get(step.getProzess().getId());
-//							}
-//						}
+//					Session session = Helper.getHibernateSession();
+//					for (Object o : answer) {
+//						session.refresh(o);
 //					}
+
 
 					return answer;
 				} else {

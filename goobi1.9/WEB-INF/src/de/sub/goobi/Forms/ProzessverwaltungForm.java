@@ -872,7 +872,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public void BearbeitungsstatusHochsetzenPage() throws DAOException {
 		for (Prozess proz : (List<Prozess>) this.page.getListReload()) {
-			stepStatusUp(proz);
+			stepStatusUp(proz.getId());
 		}
 	}
 
@@ -880,7 +880,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	public void BearbeitungsstatusHochsetzenSelection() throws DAOException {
 		for (Prozess proz : (List<Prozess>) this.page.getListReload()) {
 			if (proz.isSelected()) {
-				stepStatusUp(proz);
+				stepStatusUp(proz.getId());
 			}
 		}
 	}
@@ -888,19 +888,19 @@ public class ProzessverwaltungForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public void BearbeitungsstatusHochsetzenHits() throws DAOException {
 		for (Prozess proz : (List<Prozess>) this.page.getCompleteList()) {
-			stepStatusUp(proz);
+			stepStatusUp(proz.getId());
 		}
 	}
 
-	private void stepStatusUp(Prozess proz) throws DAOException {
-		List<StepObject> stepList = StepManager.getStepsForProcess(proz.getId());
+	private void stepStatusUp(int processId) throws DAOException {
+		List<StepObject> stepList = StepManager.getStepsForProcess(processId);
 		
 		for (StepObject so : stepList) {
 			if (so.getBearbeitungsstatus() != StepStatus.DONE.getValue()) {
 				so.setBearbeitungsstatus(so.getBearbeitungsstatus()+1);
 				so.setEditType(StepEditType.ADMIN.getValue());
 				if (so.getBearbeitungsstatus() == StepStatus.DONE.getValue()) {
-					new HelperSchritte().CloseStepObjectAutomatic(so, proz);
+					new HelperSchritte().CloseStepObjectAutomatic(so, processId);
 				}
 				else {
 					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");

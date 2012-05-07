@@ -3,12 +3,11 @@ package de.sub.goobi.Persistence.apache;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.Beans.HistoryEvent;
 
 public class DbHelper {
 
@@ -21,7 +20,7 @@ public class DbHelper {
 	private ConnectionManager cm = null;
 
 	private DbHelper() {
-		SqlConfiguration config = new SqlConfiguration();
+		SqlConfiguration config = SqlConfiguration.getInstance();
 		this.cm = new ConnectionManager(config);
 	}
 
@@ -45,8 +44,7 @@ public class DbHelper {
 		}
 
 		logger.warn("Connection failed: Trying to get a connection from a new ConnectionManager");
-
-		SqlConfiguration config = new SqlConfiguration();
+		SqlConfiguration config = SqlConfiguration.getInstance();
 		this.cm = new ConnectionManager(config);
 		connection = this.cm.getDataSource().getConnection();
 
@@ -128,17 +126,14 @@ public class DbHelper {
 		}
 	}
 
-	public void addHistory(HistoryEvent he) throws SQLException {
-		double numericValue = he.getNumericValue().doubleValue();
-		String stringvalue = he.getStringValue();
-		int type = he.getHistoryType().getValue();
-		Timestamp date = new Timestamp(he.getDate().getTime());
-		int processId = he.getProcess().getId();
+	public void addHistory(Date date, double order, String value, int type, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
+		Timestamp datetime = new Timestamp(date.getTime());
+
 		try {
 			QueryRunner run = new QueryRunner();
 			String propNames = "numericValue, stringvalue, type, date, processId";
-			String propValues = "'" + numericValue + "','" + stringvalue + "','" + type + "','" + date + "','" + processId + "'";
+			String propValues = "'" + order + "','" + value + "','" + type + "','" + datetime + "','" + processId + "'";
 			String sql = "INSERT INTO " + "history" + " (" + propNames + ") VALUES (" + propValues + ")";
 			run.update(connection, sql);
 		} finally {
@@ -146,7 +141,7 @@ public class DbHelper {
 		}
 	}
 
-	public void updateProcess(String value, int processId) throws SQLException {
+	public void updateProcessStatus(String value, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
 			QueryRunner run = new QueryRunner();
@@ -159,4 +154,17 @@ public class DbHelper {
 		}		
 	}
 
+	
+	public void updateProcessLog(String logValue, int processId) throws SQLException {
+		Connection connection = helper.getConnection();
+		try {
+			QueryRunner run = new QueryRunner();
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE prozesse SET wikifield = '" + logValue + "' WHERE ProzesseID = " + processId + ";");
+			
+			run.update(connection, sql.toString());
+		} finally {
+			closeConnection(connection);
+		}		
+	}
 }

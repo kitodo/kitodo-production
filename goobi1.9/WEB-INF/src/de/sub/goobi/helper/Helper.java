@@ -188,7 +188,7 @@ public class Helper implements Serializable, Observer {
 			if (nurInfo) {
 				myLogger.info(meldung + " " + beschreibung);
 			} else {
-				myLogger.error(meldung + " " + beschreibung);
+//				myLogger.error(meldung + " " + beschreibung);
 			}
 			return;
 		}
