@@ -624,17 +624,7 @@ public class Metadaten {
 		return "Metadaten";
 	}
 
-	/**
-	 * Metadaten Schreiben
-	 * 
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
-	 * @throws PreferencesException
-	 */
-	public String XMLschreiben() {
+	private void calculateMetadataAndImages() {
 		/*
 		 * für den Prozess nochmal die Metadaten durchlaufen und die Daten speichern
 		 */
@@ -652,19 +642,49 @@ public class Metadaten {
 			Helper.setFehlerMeldung("error while counting current images", e);
 			myLogger.error(e);
 		}
+	}
 
+	private void cleanupMetadata() {
 		/*
 		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
 		 */
 		metahelper.deleteAllUnusedElements(mydocument.getLogicalDocStruct());
+	}
+
+	private boolean storeMetadata() {
+		boolean result = true;
 
 		try {
 			myProzess.writeMetadataFile(gdzfile);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
 			myLogger.error(e);
+			result = false;
+		}
+
+		return result;
+	}
+
+	/**
+	 * Metadaten Schreiben
+	 * 
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws DAOException
+	 * @throws SwapException
+	 * @throws WriteException
+	 * @throws PreferencesException
+	 */
+	public String XMLschreiben() {
+
+		calculateMetadataAndImages();
+
+		cleanupMetadata();
+
+		if (! storeMetadata()) {
 			return "Metadaten";
 		}
+
 		SperrungAufheben();
 		return zurueck;
 	}
