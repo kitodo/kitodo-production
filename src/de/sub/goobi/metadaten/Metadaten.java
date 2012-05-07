@@ -226,12 +226,11 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
-			try {
-				myProzess.writeMetadataFile(gdzfile);
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
-				myLogger.error(e);
-			}
+			boolean successfulStore;
+			calculateMetadataAndImages();
+			cleanupMetadata();
+			// ignoring result of store operation
+			successfulStore = storeMetadata();
 			return "";
 		}
 	}
