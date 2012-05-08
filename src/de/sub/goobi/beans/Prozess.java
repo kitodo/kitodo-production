@@ -99,7 +99,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private DisplayPropertyList displayProperties;
 	private String wikifield;
 
-	private String temporaryFileNamePrefix = "temporary_";
+	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
 	public Prozess() {
 		swappedOut = false;
@@ -741,7 +741,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private String getTemporaryMetadataFileName(String fileName) {
 		File temporaryFile = new File(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
-		String temporaryFileName = temporaryFileNamePrefix + temporaryFile.getName();
+		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
 		return directoryPath + File.separator + temporaryFileName;
 	}
@@ -756,7 +756,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
 
 		if (temporaryAnchorFile.exists()) {
-			String anchorFileName = temporaryAnchorFileName.replace(temporaryFileNamePrefix, "");
+			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
 
 			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
 			anchorFileName = directoryPath + File.separator + anchorFileName;
