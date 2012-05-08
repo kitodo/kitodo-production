@@ -99,6 +99,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private DisplayPropertyList displayProperties;
 	private String wikifield;
 
+	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
+
 	public Prozess() {
 		swappedOut = false;
 		titel = "";
@@ -735,12 +737,39 @@ public class Prozess implements Serializable, IGoobiEntity {
 			oldFile.renameTo(newFile);
 		}
 	}
-	
+
+	private String getTemporaryMetadataFileName(String fileName) {
+		File temporaryFile = new File(fileName);
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
+
+		return directoryPath + File.separator + temporaryFileName;
+	}
+
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+		File temporaryFile = new File(temporaryMetadataFilename);
+		File temporaryAnchorFile;
+
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
+
+		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
+
+		if (temporaryAnchorFile.exists()) {
+			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
+
+			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
+			anchorFileName = directoryPath + File.separator + anchorFileName;
+
+			renameMetadataFile(temporaryAnchorFileName, anchorFileName);
+		}
+	}
+
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
 		String metadataFileName;
-		String metadataFileNameNew;
+		String temporaryMetadataFileName;
 		boolean writeResult;
 
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
@@ -758,13 +787,14 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		metadataFileName = getMetadataFilePath();
-		metadataFileNameNew = metadataFileName + ".new";
+		temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
 
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		writeResult = ff.write(metadataFileNameNew);
+		writeResult = ff.write(temporaryMetadataFileName);
 		if (writeResult) {
 			createBackupFile();
-			renameMetadataFile(metadataFileNameNew, metadataFileName);
+			renameMetadataFile(temporaryMetadataFileName, metadataFileName);
+			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 		}
 	}
 
