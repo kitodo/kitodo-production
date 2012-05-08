@@ -215,6 +215,11 @@
 		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
     </listener>
 
+	<!-- Listener to run ActiveMQ services -->
+	<listener>
+		<listener-class>org.goobi.webservice.ActiveMQDirector</listener-class>
+	</listener>
+
 	<!--
 		xml-Rpc-Server starten <listener> <listener-class>
 		de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
