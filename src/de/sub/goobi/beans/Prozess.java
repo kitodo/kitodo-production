@@ -746,8 +746,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	protected void renameMetsAnchorFileIfExist(String fileName) {
-		File temporaryFile = new File(fileName);
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+		File temporaryFile = new File(temporaryMetadataFilename);
 		File temporaryAnchorFile;
 
 		String directoryPath = temporaryFile.getParentFile().getPath();
@@ -794,7 +794,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		if (writeResult) {
 			createBackupFile();
 			renameMetadataFile(temporaryMetadataFileName, metadataFileName);
-			renameMetsAnchorFileIfExist(temporaryMetadataFileName);
+			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 		}
 	}
 
