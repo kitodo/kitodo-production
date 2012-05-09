@@ -49,6 +49,8 @@ public class FilesystemHelper {
 	 *            New file name / destination
 	 * @throws IOException
 	 *             is thrown if the rename fails permanently
+ 	 * @throws FileNotFoundException
+	 *             is thrown if old file (source file of renaming) does not exists
 	 */
 	public static void renameFile(String oldFileName, String newFileName)
 			throws IOException {
