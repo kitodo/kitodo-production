@@ -69,13 +69,13 @@ public class FilesystemHelper {
 			do {
 				if (SystemUtils.IS_OS_WINDOWS
 						&& millisWaited == SLEEP_INTERVAL_MILLIS) {
-					logger.warn("renameMetadataFile(): This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+					logger.warn("Renaming " + oldFileName  + " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
 					System.gc();
 				}
 				success = oldFile.renameTo(newFile);
 				if (!success) {
 					if (millisWaited == 0)
-						logger.info("renameMetadataFile(): Rename failed. File may be locked. Retrying.");
+						logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
 					try {
 						Thread.sleep(SLEEP_INTERVAL_MILLIS);
 					} catch (InterruptedException e) {
@@ -84,7 +84,7 @@ public class FilesystemHelper {
 				}
 			} while (!success && millisWaited < MAX_WAIT_MILLIS);
 			if (!success) {
-				logger.error("renameMetadataFile(): Rename failed. This is a permanent error. Giving up.");
+				logger.error("Rename " + oldFileName + " failed. This is a permanent error. Giving up.");
 				throw new IOException("Renaming of " + oldFileName + " into "
 						+ newFileName + " failed.");
 			} else if (millisWaited > 0)
