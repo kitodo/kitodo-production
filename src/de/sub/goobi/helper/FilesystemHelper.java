@@ -66,6 +66,12 @@ public class FilesystemHelper {
 		if (oldFileName != null && newFileName != null) {
 			oldFile = new File(oldFileName);
 			newFile = new File(newFileName);
+
+			if (! oldFile.exists()) {
+				logger.debug("File " + oldFileName + " does not exists for renaming.");
+				throw new FileNotFoundException(oldFileName + " does not exists for renaming.");
+			}
+
 			do {
 				if (SystemUtils.IS_OS_WINDOWS
 						&& millisWaited == SLEEP_INTERVAL_MILLIS) {
