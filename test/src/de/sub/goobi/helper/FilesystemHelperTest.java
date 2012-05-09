@@ -26,7 +26,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import org.junit.Test;
+
 import org.apache.log4j.BasicConfigurator;
+
+import java.io.IOException;
 
 public class FilesystemHelperTest {
 
@@ -41,6 +45,14 @@ public class FilesystemHelperTest {
 
 	@After
 	public void tearDown() throws Exception {
+	}
+
+	@Test(expected = java.io.FileNotFoundException.class)
+	public void RenamingOfNonExistingFileShouldThrowFileNotFoundException () throws IOException {
+		String oldFileName = "test.xml";
+		String newFileName = "test.new.xml";
+
+		FilesystemHelper.renameFile(oldFileName, newFileName);
 	}
 
 }
