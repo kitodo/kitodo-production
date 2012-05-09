@@ -33,9 +33,9 @@ import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
@@ -118,9 +118,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		SQLQuery query = session.createSQLQuery(natSQL);
 
 		// needs to be there otherwise an exception is thrown
-		query.addScalar("volumes", Hibernate.INTEGER);
-		query.addScalar("pages", Hibernate.INTEGER);
-		query.addScalar("intervall", Hibernate.STRING);
+		query.addScalar("volumes", StandardBasicTypes.INTEGER);
+		query.addScalar("pages", StandardBasicTypes.INTEGER);
+		query.addScalar("intervall", StandardBasicTypes.STRING);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();

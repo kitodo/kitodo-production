@@ -84,4 +84,8 @@ public class SchrittDAO extends BaseDAO {
 		Object o = t;
 		updateObj(o);
 	}
+	
+	public Schritt load(int id) throws DAOException {
+		return (Schritt) loadObj(Schritt.class, id);
+	}
 }

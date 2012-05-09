@@ -14,10 +14,12 @@ public class StepObject {
 	private int bearbeitungsbenutzer;
 	private Integer editType;
 	private boolean typAutomatisch = false;
+	private boolean typExport = false;
+	private int processId;
 	
 	
 	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt, Date bearbeitungsbeginn,
-			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typAutomatisch) {
+			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -28,7 +30,9 @@ public class StepObject {
 		this.bearbeitungsende = bearbeitungsende;
 		this.bearbeitungsbenutzer = bearbeitungsbenutzer;
 		this.editType = editType;
+		this.typExport = typExport;
 		this.typAutomatisch = typAutomatisch;
+		this.setProcessId(processId);
 	}
 
 	public int getId() {
@@ -109,6 +113,22 @@ public class StepObject {
 
 	public void setTypAutomatisch(boolean typAutomatisch) {
 		this.typAutomatisch = typAutomatisch;
+	}
+
+	public int getProcessId() {
+		return this.processId;
+	}
+
+	public void setProcessId(int processId) {
+		this.processId = processId;
+	}
+
+	public boolean isTypExport() {
+		return this.typExport;
+	}
+
+	public void setTypExport(boolean typExport) {
+		this.typExport = typExport;
 	}
 
 

@@ -99,6 +99,7 @@ import de.sub.goobi.Export.download.Multipage;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
@@ -106,6 +107,7 @@ import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
@@ -134,6 +136,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	private Werkstueckeigenschaft myWerkstueckEigenschaft;
 	private Benutzergruppe myBenutzergruppe;
 	private ProzessDAO dao = new ProzessDAO();
+	private SchrittDAO stepdao = new SchrittDAO();
 	private String modusAnzeige = "aktuell";
 	private String modusBearbeiten = "";
 	private String goobiScript;
@@ -894,15 +897,14 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	private void stepStatusUp(int processId) throws DAOException {
 		List<StepObject> stepList = StepManager.getStepsForProcess(processId);
-		
+
 		for (StepObject so : stepList) {
 			if (so.getBearbeitungsstatus() != StepStatus.DONE.getValue()) {
-				so.setBearbeitungsstatus(so.getBearbeitungsstatus()+1);
+				so.setBearbeitungsstatus(so.getBearbeitungsstatus() + 1);
 				so.setEditType(StepEditType.ADMIN.getValue());
 				if (so.getBearbeitungsstatus() == StepStatus.DONE.getValue()) {
-					new HelperSchritte().CloseStepObjectAutomatic(so, processId);
-				}
-				else {
+					new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
+				} else {
 					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 					if (ben != null) {
 						so.setBearbeitungsbenutzer(ben.getId());
@@ -911,23 +913,23 @@ public class ProzessverwaltungForm extends BasisForm {
 				}
 				break;
 			}
-//			new HelperSchritte().updateProcessStatus(proz.getId());
+			// new HelperSchritte().updateProcessStatus(proz.getId());
 		}
-		
-//		for (Schritt step : proz.getSchritteList()) {
-//			
-//			if (step.getBearbeitungsstatusEnum() != StepStatus.DONE) {
-//				step.setBearbeitungsstatusUp();
-//				step.setEditTypeEnum(StepEditType.ADMIN);
-//				if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-//					new HelperSchritte().SchrittAbschliessen(step, false);
-//				} else {
-//					HelperSchritte.updateEditing(step);
-//				}
-//				break;
-//			}
-//		}
-//		this.dao.save(proz);		
+
+		// for (Schritt step : proz.getSchritteList()) {
+		//
+		// if (step.getBearbeitungsstatusEnum() != StepStatus.DONE) {
+		// step.setBearbeitungsstatusUp();
+		// step.setEditTypeEnum(StepEditType.ADMIN);
+		// if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
+		// new HelperSchritte().SchrittAbschliessen(step, false);
+		// } else {
+		// HelperSchritte.updateEditing(step);
+		// }
+		// break;
+		// }
+		// }
+		// this.dao.save(proz);
 	}
 
 	private void debug(String message, List<Schritt> bla) {
@@ -986,12 +988,13 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (this.mySchritt.getBearbeitungsstatusEnum() != StepStatus.DONE) {
 			this.mySchritt.setBearbeitungsstatusUp();
 			this.mySchritt.setEditTypeEnum(StepEditType.ADMIN);
+			StepObject so = StepManager.getStepById(this.mySchritt.getId());
 			if (this.mySchritt.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-				new HelperSchritte().SchrittAbschliessen(this.mySchritt, false);
+				new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
 			} else {
 				HelperSchritte.updateEditing(this.mySchritt);
 			}
-		}		
+		}
 		Speichern();
 		deleteSymlinksFromUserHomes();
 	}
@@ -1151,10 +1154,21 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String Reload() {
 		// Helper.createNewHibernateSession();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
+			try {
+//				this.mySchritt = this.stepdao.load(this.mySchritt.getId());
 			Helper.getHibernateSession().refresh(this.mySchritt);
+			} catch (Exception e) {
+				logger.error("could not refresh step with id " + this.mySchritt.getId(), e);
+			}
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
-			Helper.getHibernateSession().refresh(this.myProzess);
+			try {
+//				this.myProzess = this.dao.load(this.myProzess.getId());
+				
+				 Helper.getHibernateSession().refresh(this.myProzess);
+			} catch (Exception e) {
+				logger.error("could not refresh process with id " + this.myProzess.getId(), e);
+			}
 		}
 		return "";
 	}
@@ -1721,7 +1735,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				document.open();
 				if (rowList.size() > 0) {
 					Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
-					
+
 					document.add(p);
 					PdfPTable table = new PdfPTable(9);
 					table.setSpacingBefore(20);
@@ -1808,7 +1822,12 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void loadProcessProperties() {
-		this.dao.refresh(this.myProzess);
+		try {
+			this.myProzess = this.dao.get(this.myProzess.getId());
+		} catch (Exception e) {
+			logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
+		}
+		// this.dao.refresh(this.myProzess);
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
 		// for (ProcessProperty pt : this.processPropertyList) {

@@ -436,7 +436,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 						// commit transaction every 50 items
 						if (!it.hasNext() || i % 50 == 0) {
 							session.flush();
-							session.connection().commit();
+							session.beginTransaction().commit();
 							session.clear();
 						}
 						// } catch (IOException e) {

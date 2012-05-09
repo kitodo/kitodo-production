@@ -9,9 +9,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
 import ugh.dl.DigitalDocument;
 import ugh.exceptions.DocStructHasNoTypeException;
@@ -21,8 +18,6 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.HistoryEvent;
-import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Export.dms.AutomaticDmsExport;
 import de.sub.goobi.Persistence.ProzessDAO;
@@ -75,97 +70,20 @@ public class HelperSchritte {
 	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
 	 */
 	public void SchrittAbschliessen(Schritt inSchritt, boolean automatic) {
-		if (true) {
-			CloseStepAutomatic(inSchritt);
-		} else {
-			inSchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
-			HelperSchritte.updateEditing(inSchritt);
-			Date myDate = new Date();
-			inSchritt.setBearbeitungsende(myDate);
-			List<Schritt> automatischeSchritte = new ArrayList<Schritt>();
-			Session session = Helper.getHibernateSession();
-			inSchritt = (Schritt) session.merge(inSchritt);
-			Prozess p = inSchritt.getProzess();
-			p.getHistory().add(
-					new HistoryEvent(myDate, inSchritt.getReihenfolge().doubleValue(), inSchritt.getTitel(), HistoryEventType.stepDone, inSchritt
-							.getProzess()));
-
-			session.update(inSchritt);
-
-			// }
-			/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
-
-			int offeneSchritteGleicherReihenfolge = session.createCriteria(Schritt.class).add(Restrictions.eq("reihenfolge", inSchritt.getReihenfolge()))
-					.add(Restrictions.ne("bearbeitungsstatus", 3)).add(Restrictions.ne("id", inSchritt.getId())).createCriteria("prozess")
-					.add(Restrictions.idEq(p.getId())).list().size();
-
-			/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
-			if (offeneSchritteGleicherReihenfolge == 0) {
-
-				List<Schritt> allehoeherenSchritte = session.createCriteria(Schritt.class)
-						.add(Restrictions.gt("reihenfolge", inSchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
-						.add(Restrictions.idEq(p.getId())).list();
-				int reihenfolge = 0;
-				for (Schritt myStep : allehoeherenSchritte) {
-					myStep = (Schritt) session.merge(myStep);
-					if (reihenfolge == 0) {
-						reihenfolge = myStep.getReihenfolge().intValue();
-					}
-
-					logger.info(myStep.getBearbeitungsstatusAsString());
-					if (reihenfolge == myStep.getReihenfolge().intValue() && !myStep.getBearbeitungsstatusEnum().equals(StepStatus.DONE)
-							&& !myStep.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
-						/*
-						 * den Schritt aktivieren, wenn es kein vollautomatischer ist
-						 */
-
-						myStep.setBearbeitungsstatusEnum(StepStatus.OPEN);
-						myStep.setBearbeitungszeitpunkt(myDate);
-						myStep.setEditTypeEnum(StepEditType.AUTOMATIC);
-
-						p.getHistory().add(
-								new HistoryEvent(myDate, myStep.getReihenfolge().doubleValue(), myStep.getTitel(), HistoryEventType.stepOpen, myStep
-										.getProzess()));
-						/* wenn es ein automatischer Schritt mit Script ist */
-						if (myStep.isTypAutomatisch() && (!myStep.getAllScriptPaths().isEmpty() || myStep.isTypExportDMS())) {
-							automatischeSchritte.add(myStep);
-						}
-//						System.out.println("opened: " + myStep.getTitel());
-					} else {
-						break;
-					}
-				}
-			}
-			// p = (Prozess) session.merge(p);
-			
-			try {
-				/* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
-				this.pdao.save(p);
-				// session.evict(p);
-			} catch (DAOException e) {
-				logger.warn(e);
-			}
-
-			
-			for (Schritt myStep: automatischeSchritte) {
-				ScriptThread myThread = new ScriptThread(myStep);
-				myThread.start();
-			}
-		}
+		CloseStepAutomatic(inSchritt);
 	}
 
-	public void CloseStepObjectAutomatic(StepObject currentStep, int processId) {
-		closeStepObject(currentStep, processId);
+	public void CloseStepObjectAutomatic(StepObject currentStep) {
+		closeStepObject(currentStep, currentStep.getProcessId());
 	}
-	
+
 	public void CloseStepAutomatic(Schritt inStep) {
 		StepObject currentStep = StepManager.getStepById(inStep.getId());
-		
+
 		closeStepObject(currentStep, inStep.getProzess().getId());
-		
+
 	}
 
-	
 	private void closeStepObject(StepObject currentStep, int processId) {
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
@@ -177,11 +95,7 @@ public class HelperSchritte {
 		currentStep.setBearbeitungsende(myDate);
 		StepManager.updateStep(currentStep);
 		List<StepObject> automatischeSchritte = new ArrayList<StepObject>();
-		// Session session = Helper.getHibernateSession();
-		
 
-//		HistoryEvent he = new HistoryEvent(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
-//				HistoryEventType.stepDone, process);
 		StepManager.addHistory(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
 				HistoryEventType.stepDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
@@ -214,33 +128,20 @@ public class HelperSchritte {
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);
 
-					// p.getHistory().add(
-//					HistoryEvent newEvent = new HistoryEvent(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
-//							HistoryEventType.stepOpen, process);
 					StepManager.addHistory(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch()) {
 						automatischeSchritte.add(myStep);
 					}
-					// TODO Step speichern
-					// System.out.println("opened: " + myStep.getTitel());
 					StepManager.updateStep(myStep);
-					// try {
-					// Schritt initializedStep = this.dao.get(myStep.getId());
-					// Prozess initializedProcess = this.pdao.get(processId);
-					// } catch (DAOException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
 				} else {
 					break;
 				}
 			}
 		}
-		
-		updateProcessStatus(processId);
 
+		updateProcessStatus(processId);
 
 		// try {
 		// /* den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird */
@@ -251,57 +152,54 @@ public class HelperSchritte {
 		// }
 
 		for (StepObject automaticStep : automatischeSchritte) {
-			try {
-				Schritt myStep = this.dao.get(automaticStep.getId());
-				// TODO hier Alternative ohne hibernate bauen
-				ScriptThread myThread = new ScriptThread(myStep);
-				myThread.start();
-			} catch (DAOException e) {
-				logger.error("Could not load step with id " + automaticStep.getId() , e);
-			}
+			// try {
+			// Schritt myStep = this.dao.get(automaticStep.getId());
+			// TODO hier Alternative ohne hibernate bauen
+			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
+			myThread.start();
+			// } catch (DAOException e) {
+			// logger.error("Could not load step with id " + automaticStep.getId() , e);
+			// }
 
 		}
-		
-		
-		
+
 		// if (automatic) {
 		// session.close();
 		// }
 	}
-	
+
 	public void updateProcessStatus(int processId) {
-	
-			int offen = 0;
-			int inBearbeitung = 0;
-			int abgeschlossen = 0;
-			List<StepObject> stepsForProcess =StepManager.getStepsForProcess(processId);
-			for (StepObject step : stepsForProcess) {
-				if (step.getBearbeitungsstatus() == 3) {
-					abgeschlossen++;
-				} else if (step.getBearbeitungsstatus() == 0) {
-					offen++;
-				} else {
-					inBearbeitung++;
-				}
-			}
-			double offen2 = 0;
-			double inBearbeitung2 = 0;
-			double abgeschlossen2 = 0;
 
-			if ((offen + inBearbeitung + abgeschlossen) == 0) {
-				offen = 1;
+		int offen = 0;
+		int inBearbeitung = 0;
+		int abgeschlossen = 0;
+		List<StepObject> stepsForProcess = StepManager.getStepsForProcess(processId);
+		for (StepObject step : stepsForProcess) {
+			if (step.getBearbeitungsstatus() == 3) {
+				abgeschlossen++;
+			} else if (step.getBearbeitungsstatus() == 0) {
+				offen++;
+			} else {
+				inBearbeitung++;
 			}
+		}
+		double offen2 = 0;
+		double inBearbeitung2 = 0;
+		double abgeschlossen2 = 0;
 
-			offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-			inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-			abgeschlossen2 = 100 - offen2 - inBearbeitung2;
-			// (abgeschlossen * 100) / (offen + inBearbeitung + abgeschlossen);
-			java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
-			String value = df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
-			
-			ProcessManager.updateProcessStatus(value, processId);
-		}		
-	
+		if ((offen + inBearbeitung + abgeschlossen) == 0) {
+			offen = 1;
+		}
+
+		offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
+		inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
+		abgeschlossen2 = 100 - offen2 - inBearbeitung2;
+		// (abgeschlossen * 100) / (offen + inBearbeitung + abgeschlossen);
+		java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
+		String value = df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
+
+		ProcessManager.updateProcessStatus(value, processId);
+	}
 
 	/**
 	 * alle Scripte ausführen
@@ -312,7 +210,7 @@ public class HelperSchritte {
 		ArrayList<String> scriptpaths = new ArrayList<String>();
 		int count = 1;
 		for (String script : paths) {
-			if (script == null || script.equals(" ") || script.length() != 0) {
+			if (script != null && !script.equals(" ") && script.length() != 0) {
 				scriptpaths.add(script);
 			}
 		}
@@ -328,6 +226,22 @@ public class HelperSchritte {
 				}
 				count++;
 			}
+		}
+	}
+
+	public void executeAllScriptsForStep(StepObject step, boolean automatic) {
+		List<String> scriptpaths = StepManager.loadScripts(step.getId());
+		int count = 1;
+		int size = scriptpaths.size();
+		for (String script : scriptpaths) {
+			if (script != null && !script.equals(" ") && script.length() != 0) {
+				if (automatic && (count == size)) {
+					executeScriptForStepObject(step, script, true);
+				} else {
+					executeScriptForStepObject(step, script, false);
+				}
+			}
+			count++;
 		}
 	}
 
@@ -438,6 +352,10 @@ public class HelperSchritte {
 		}
 
 	}
+	
+	public void executeScriptForStepObject(StepObject step, String script, boolean automatic) {
+		
+	}
 
 	// TODO: Make this more generic, prefix should be configurable, this should be a workflow step
 	/**
@@ -502,7 +420,7 @@ public class HelperSchritte {
 			Schritt temp = this.dao.get(mySchritt.getId());
 			temp.setEditTypeEnum(StepEditType.AUTOMATIC);
 			temp.setBearbeitungsstatusEnum(StepStatus.DONE);
-//			this.dao.save(temp);
+			// this.dao.save(temp);
 			SchrittAbschliessen(temp, automatic);
 		} catch (DAOException e) {
 			logger.error(e);
@@ -527,18 +445,19 @@ public class HelperSchritte {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		 Date d = new Date(System.currentTimeMillis());
-		
-		 // d.setYear(42);
-		 d.setMonth(4);
-		 d.setDate(3);
-		 System.out.println(d.getTime());
+		Date d = new Date(System.currentTimeMillis());
 
-//		DbHelper helper = DbHelper.getInstance();
-//		List<StepObject> steps = DbHelper.getStepsForProcess(1165);
-//		for (StepObject so : steps) {
-//			logger.error(so.getTitle());
-//		}
+		// d.setYear(42);
+		d.setMonth(4);
+		d.setDate(3);
+		System.out.println(d.getTime());
+
+		// DbHelper helper = DbHelper.getInstance();
+		// List<StepObject> steps = DbHelper.getStepsForProcess(1165);
+		// for (StepObject so : steps) {
+		// logger.error(so.getTitle());
+		// }
 
 	}
+
 }

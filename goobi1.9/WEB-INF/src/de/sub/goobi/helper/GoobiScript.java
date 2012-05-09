@@ -26,7 +26,8 @@ package de.sub.goobi.helper;
  * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
- */import java.io.File;
+ */
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,8 @@ import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.RegelsatzDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -68,7 +71,6 @@ import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.helper.tasks.TiffWriterTask;
-
 
 //TODO: Delete me, this should be part of the Plugins...
 //TODO: Break this up into multiple classes with a common interface
@@ -81,14 +83,12 @@ public class GoobiScript {
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	/**
-	 * Starten des Scripts
-	 * ================================================================
+	 * Starten des Scripts ================================================================
 	 */
 	public void execute(List<Prozess> inProzesse, String inScript) {
 		this.myParameters = new HashMap<String, String>();
 		/*
-		 * -------------------------------- alle Suchparameter zerlegen und
-		 * erfassen --------------------------------
+		 * -------------------------------- alle Suchparameter zerlegen und erfassen --------------------------------
 		 */
 		StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
 		while (tokenizer.hasNext()) {
@@ -103,8 +103,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- die passende Methode mit den
-		 * richtigen Parametern übergeben --------------------------------
+		 * -------------------------------- die passende Methode mit den richtigen Parametern übergeben --------------------------------
 		 */
 		if (this.myParameters.get("action") == null) {
 			Helper.setFehlerMeldung(
@@ -115,8 +114,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Aufruf der richtigen Methode über
-		 * den Parameter --------------------------------
+		 * -------------------------------- Aufruf der richtigen Methode über den Parameter --------------------------------
 		 */
 		if (this.myParameters.get("action").equals("swapSteps")) {
 			swapSteps(inProzesse);
@@ -169,8 +167,7 @@ public class GoobiScript {
 			} else {
 				runScript(inProzesse, stepname, scriptname);
 			}
-		}
-		else {
+		} else {
 			Helper.setFehlerMeldung(
 					"goobiScriptfield",
 					"Unbekannte Action",
@@ -200,29 +197,20 @@ public class GoobiScript {
 
 		Helper.setMeldung("goobiScriptfield", "", "GoobiScript beendet");
 	}
-	
+
 	private void runScript(List<Prozess> inProzesse, String stepname, String scriptname) {
-		HelperSchritte hs = new HelperSchritte();
+		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 		for (Prozess p : inProzesse) {
 			for (Schritt step : p.getSchritteList()) {
 				if (step.getTitel().equalsIgnoreCase(stepname)) {
+					StepObject so = StepManager.getStepById(step.getId());
 					if (scriptname != null) {
 						if (step.getAllScripts().containsKey(scriptname)) {
 							String path = step.getAllScripts().get(scriptname);
-							try {
-								hs.executeScript(step, path, false);
-							} catch (SwapException e) {
-								Helper.setFehlerMeldung("Error while running script " + path, e);
-							}
+							hs.executeScriptForStepObject(so, path, false);
 						}
 					} else {
-						try {
-						hs.executeAllScripts(step, false);
-						} catch (SwapException e) {
-							Helper.setFehlerMeldung("Error while running scripts", e);
-						} catch (DAOException e) {
-							Helper.setFehlerMeldung("Error while running scripts", e);
-						}
+						hs.executeAllScriptsForStep(so, false);
 					}
 				}
 			}
@@ -231,8 +219,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Prozesse auslagern
-	 * ================================================================
+	 * Prozesse auslagern ================================================================
 	 */
 	private void swapOutProzesses(List<Prozess> inProzesse) {
 		for (Prozess p : inProzesse) {
@@ -254,8 +241,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Prozesse wieder einlagern
-	 * ================================================================
+	 * Prozesse wieder einlagern ================================================================
 	 */
 	private void swapInProzesses(List<Prozess> inProzesse) {
 		for (Prozess p : inProzesse) {
@@ -276,13 +262,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * voll allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen
-	 * ================================================================
+	 * voll allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen ================================================================
 	 */
 	private void importFromFileSystem(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("sourcefolder") == null || this.myParameters.get("sourcefolder").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "missing parameter: ", "sourcefolder");
@@ -321,13 +305,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Regelsatz setzen
-	 * ================================================================
+	 * Regelsatz setzen ================================================================
 	 */
 	private void setRuleset(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("ruleset") == null || this.myParameters.get("ruleset").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "ruleset");
@@ -355,13 +337,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Tauschen zweier Schritte gegeneinander
-	 * ================================================================
+	 * Tauschen zweier Schritte gegeneinander ================================================================
 	 */
 	private void swapSteps(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("swap1nr") == null || this.myParameters.get("swap1nr").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1nr");
@@ -391,14 +371,12 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
 			/*
-			 * -------------------------------- Swapsteps
-			 * --------------------------------
+			 * -------------------------------- Swapsteps --------------------------------
 			 */
 			Schritt s1 = null;
 			Schritt s2 = null;
@@ -434,13 +412,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Schritte löschen
-	 * ================================================================
+	 * Schritte löschen ================================================================
 	 */
 	private void deleteStep(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -448,8 +424,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
@@ -474,13 +449,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Schritte hinzufuegen
-	 * ================================================================
+	 * Schritte hinzufuegen ================================================================
 	 */
 	private void addStep(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -497,8 +470,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
@@ -522,13 +494,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * ShellScript an Schritt hängen
-	 * ================================================================
+	 * ShellScript an Schritt hängen ================================================================
 	 */
 	private void addShellScriptToStep(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
@@ -539,15 +509,14 @@ public class GoobiScript {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "label");
 			return;
 		}
-		
+
 		if (this.myParameters.get("script") == null || this.myParameters.get("script").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
 			return;
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
@@ -574,13 +543,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * ShellScript an Schritt hängen
-	 * ================================================================
+	 * ShellScript an Schritt hängen ================================================================
 	 */
 	private void addModuleToStep(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -593,8 +560,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
@@ -619,13 +585,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Flag von Schritten setzen
-	 * ================================================================
+	 * Flag von Schritten setzen ================================================================
 	 */
 	private void setTaskProperty(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -658,8 +622,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		ProzessDAO sdao = new ProzessDAO();
 		for (Prozess proz : inProzesse) {
@@ -706,13 +669,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Schritte auf bestimmten Status setzen
-	 * ================================================================
+	 * Schritte auf bestimmten Status setzen ================================================================
 	 */
 	private void setStepStatus(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -731,8 +692,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
@@ -755,13 +715,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Schritte auf bestimmten Reihenfolge setzen
-	 * ================================================================
+	 * Schritte auf bestimmten Reihenfolge setzen ================================================================
 	 */
 	private void setStepNumber(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -779,8 +737,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
@@ -803,13 +760,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Benutzer zu Schritt hinzufügen
-	 * ================================================================
+	 * Benutzer zu Schritt hinzufügen ================================================================
 	 */
 	private void adduser(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -836,8 +791,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
@@ -867,13 +821,11 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Benutzergruppe zu Schritt hinzufügen
-	 * ================================================================
+	 * Benutzergruppe zu Schritt hinzufügen ================================================================
 	 */
 	private void addusergroup(List<Prozess> inProzesse) {
 		/*
-		 * -------------------------------- Validierung der Actionparameter
-		 * --------------------------------
+		 * -------------------------------- Validierung der Actionparameter --------------------------------
 		 */
 		if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
 			Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
@@ -900,8 +852,7 @@ public class GoobiScript {
 		}
 
 		/*
-		 * -------------------------------- Durchführung der Action
-		 * --------------------------------
+		 * -------------------------------- Durchführung der Action --------------------------------
 		 */
 		SchrittDAO sdao = new SchrittDAO();
 		for (Prozess proz : inProzesse) {
@@ -930,8 +881,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * TiffHeader von den Prozessen löschen
-	 * ================================================================
+	 * TiffHeader von den Prozessen löschen ================================================================
 	 */
 	public void deleteTiffHeaderFile(List<Prozess> inProzesse) {
 		for (Prozess proz : inProzesse) {
@@ -949,8 +899,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * TiffHeader von den Prozessen neu schreiben
-	 * ================================================================
+	 * TiffHeader von den Prozessen neu schreiben ================================================================
 	 */
 	private void writeTiffHeader(List<Prozess> inProzesse) {
 		for (Iterator<Prozess> iter = inProzesse.iterator(); iter.hasNext();) {
@@ -962,8 +911,7 @@ public class GoobiScript {
 	}
 
 	/**
-	 * Imagepfad in den Metadaten neu setzen (evtl. vorhandene zunächst löschen)
-	 * ================================================================
+	 * Imagepfad in den Metadaten neu setzen (evtl. vorhandene zunächst löschen) ================================================================
 	 */
 	public void updateImagePath(List<Prozess> inProzesse) {
 		for (Prozess proz : inProzesse) {

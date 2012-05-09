@@ -34,9 +34,9 @@ import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
@@ -110,8 +110,8 @@ public class StatQuestCorrections implements
 		SQLQuery query = session.createSQLQuery(natSQL);
 
 		//needs to be there otherwise an exception is thrown
-		query.addScalar("stepCount", Hibernate.DOUBLE);
-		query.addScalar("intervall", Hibernate.STRING);
+		query.addScalar("stepCount", StandardBasicTypes.DOUBLE);
+		query.addScalar("intervall", StandardBasicTypes.STRING);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();

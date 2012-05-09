@@ -141,7 +141,7 @@ public class HibernateUtilOld {
 				// log.debug("Opening new Session for this thread.");
 				if (getInterceptor() != null) {
 					log.debug("Using interceptor: " + getInterceptor().getClass());
-					s = getSessionFactory().openSession(getInterceptor());
+					s = getSessionFactory().openSession();
 				} else {
 					s = getSessionFactory().openSession();
 				}
@@ -226,15 +226,15 @@ public class HibernateUtilOld {
 	 * @param session
 	 *            The Hibernate Session to be reconnected.
 	 */
-	@SuppressWarnings("deprecation")
-	public static void reconnect(Session session) throws InfrastructureException {
-		try {
-			session.reconnect();
-			threadSession.set(session);
-		} catch (HibernateException ex) {
-			throw new InfrastructureException(ex);
-		}
-	}
+//	@SuppressWarnings("deprecation")
+//	public static void reconnect(Session session) throws InfrastructureException {
+//		try {
+//			session.reconnect();
+//			threadSession.set(session);
+//		} catch (HibernateException ex) {
+//			throw new InfrastructureException(ex);
+//		}
+//	}
 
 	/**
 	 * Disconnect and return Session from current Thread.

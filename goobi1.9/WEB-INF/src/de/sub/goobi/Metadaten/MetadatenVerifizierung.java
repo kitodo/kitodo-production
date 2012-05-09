@@ -189,7 +189,7 @@ public class MetadatenVerifizierung {
 
 		MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
 		try {
-			if (!mih.checkIfImagesValid(inProzess, inProzess.getImagesOrigDirectory())) {
+			if (!mih.checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesOrigDirectory())) {
 				ergebnis = false;
 			}
 		} catch (Exception e) {

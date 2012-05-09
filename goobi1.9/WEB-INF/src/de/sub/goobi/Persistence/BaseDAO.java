@@ -29,7 +29,6 @@ package de.sub.goobi.Persistence;
  */
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -62,7 +61,7 @@ public abstract class BaseDAO implements Serializable {
 				session.evict(obj);
 				session.delete(obj);
 				session.flush();
-				session.connection().commit();
+				session.beginTransaction().commit();
 			}
 		} catch (Exception e) {
 			rollback();
@@ -90,7 +89,7 @@ public abstract class BaseDAO implements Serializable {
 				Object obj = session.load(c, id);
 				session.delete(obj);
 				session.flush();
-				session.connection().commit();
+				session.beginTransaction().commit();
 			}
 		} catch (Exception e) {
 			rollback();
@@ -178,15 +177,13 @@ public abstract class BaseDAO implements Serializable {
 			// session.evict(obj);
 			session.saveOrUpdate(obj);
 			session.flush();
-			session.connection().commit();
+			session.beginTransaction().commit();
 			// session.update(obj);
 		} catch (HibernateException he) {
 			rollback();
 			throw new DAOException(he);
-		} catch (SQLException sqle) {
-			rollback();
-			throw new DAOException(sqle);
 		}
+		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -197,13 +194,11 @@ public abstract class BaseDAO implements Serializable {
 				session.saveOrUpdate(obj);
 			}
 			session.flush();
-			session.connection().commit();
+			session.beginTransaction().commit();
 		} catch (HibernateException he) {
 			rollback();
 			throw new DAOException(he);
-		} catch (SQLException sqle) {
-			rollback();
-			throw new DAOException(sqle);
+	
 		}
 	}
 
@@ -218,12 +213,12 @@ public abstract class BaseDAO implements Serializable {
 		try {
 			Session session = Helper.getHibernateSession();
 			if (session != null) {
-				session.connection().rollback();
+				session.beginTransaction().rollback();
 			}
 		} catch (HibernateException he) {
 			throw new DAOException(he);
-		} catch (SQLException sqle) {
-			throw new DAOException(sqle);
+//		} catch (SQLException sqle) {
+//			throw new DAOException(sqle);
 		}
 	}
 
@@ -247,6 +242,22 @@ public abstract class BaseDAO implements Serializable {
 		session.refresh(o);
 	}
 
+	protected Object loadObj(Class c, Integer id) throws DAOException {
+		try {
+			Session session = Helper.getHibernateSession();
+			if (session == null) {
+				session = HibernateUtil.getSessionFactory().openSession();
+				Object o = session.load(c, id);
+				session.close();
+				return o;
+			}
+			return session.load(c, id);
+		} catch (HibernateException he) {
+			throw new DAOException(he);
+		}
+	}
+
+	
 	protected void updateObj(Object o) {
 		Session session = Helper.getHibernateSession();
 		if (session == null) {

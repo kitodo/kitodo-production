@@ -42,7 +42,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.hibernate.context.ManagedSessionContext;
+import org.hibernate.context.internal.ManagedSessionContext;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
@@ -58,7 +58,7 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-		org.hibernate.classic.Session currentSession;
+		org.hibernate.Session currentSession;
 		HttpSession httpSession;
 
 		try {
@@ -73,7 +73,7 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 				currentSession.setFlushMode(FlushMode.MANUAL);
 			} else {
 				// log.debug("< Continuing conversation");
-				currentSession = (org.hibernate.classic.Session) disconnectedSession;
+				currentSession = disconnectedSession;
 			}
 
 		} catch (Exception e) {

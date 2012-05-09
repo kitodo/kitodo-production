@@ -71,7 +71,7 @@ public class HibernateSessionFilter2 implements Filter {
 			session = hsl.getSession();
 		}
 		if (session != null && !session.isConnected()) {
-			session.reconnect();
+//			session.reconnect();
 		}
 
 		try {

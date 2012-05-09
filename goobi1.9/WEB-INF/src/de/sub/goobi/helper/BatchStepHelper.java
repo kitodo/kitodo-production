@@ -60,13 +60,14 @@ import de.sub.goobi.Metadaten.MetadatenImagesHelper;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
 
 public class BatchStepHelper {
 
@@ -752,13 +753,11 @@ public class BatchStepHelper {
 		for (Schritt step : this.steps) {
 
 			if (step.getAllScripts().containsKey(this.script)) {
-
+				StepObject so = StepManager.getStepById(step.getId());
 				String scriptPath = step.getAllScripts().get(this.script);
-				try {
-					new HelperSchritte().executeScript(step, scriptPath, false);
-				} catch (SwapException e) {
-					logger.error(e);
-				}
+				
+					new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, scriptPath, false);
+				
 			}
 		}
 
@@ -824,7 +823,7 @@ public class BatchStepHelper {
 				if (s.isTypImagesSchreiben()) {
 					MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
 					try {
-						if (!mih.checkIfImagesValid(s.getProzess(), s.getProzess().getImagesOrigDirectory())) {
+						if (!mih.checkIfImagesValid(s.getProzess().getTitel(), s.getProzess().getImagesOrigDirectory())) {
 							return "";
 						}
 					} catch (Exception e) {
@@ -834,8 +833,9 @@ public class BatchStepHelper {
 			}
 
 			this.myDav.UploadFromHome(s.getProzess());
-			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-			new HelperSchritte().SchrittAbschliessen(s, true);
+			StepObject so = StepManager.getStepById(s.getId());
+			so.setEditType(StepEditType.MANUAL_MULTI.getValue());
+			new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
 		}
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();

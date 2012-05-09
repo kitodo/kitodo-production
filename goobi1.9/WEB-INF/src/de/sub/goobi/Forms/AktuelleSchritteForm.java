@@ -68,11 +68,14 @@ import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.SimpleDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
@@ -81,7 +84,6 @@ import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
 
 public class AktuelleSchritteForm extends BasisForm {
 	private static final long serialVersionUID = 5841566727939692509L;
@@ -462,7 +464,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (this.mySchritt.isTypImagesSchreiben()) {
 				MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
 				try {
-					if (!mih.checkIfImagesValid(this.mySchritt.getProzess(), this.mySchritt.getProzess().getImagesOrigDirectory())) {
+					if (!mih.checkIfImagesValid(this.mySchritt.getProzess().getTitel(), this.mySchritt.getProzess().getImagesOrigDirectory())) {
 						return "";
 					}
 				} catch (Exception e) {
@@ -486,7 +488,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		 */
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
+		StepObject so = StepManager.getStepById(this.mySchritt.getId());
+		new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
+//		new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
 		return FilterAlleStart();
 	}
 
@@ -784,12 +788,9 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public void executeScript() {
-
-		try {
-			new HelperSchritte().executeScript(this.mySchritt, this.scriptPath, false);
-		} catch (SwapException e) {
-			myLogger.error(e);
-		}
+		StepObject so = StepManager.getStepById(this.mySchritt.getId());
+			new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, this.scriptPath, false);
+		
 
 	}
 

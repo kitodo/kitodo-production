@@ -36,9 +36,9 @@ import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
@@ -86,11 +86,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
-		return flagIncludeLoops;
+		return this.flagIncludeLoops;
 	}
 
 	public String getErrMessage() {
-		return errMessage;
+		return this.errMessage;
 	}
 
 	/**
@@ -101,23 +101,23 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	public Boolean isDataComplete() {
 		// this.resetErrorList();
 		Boolean error = false;
-		if (timeFilterFrom == null) {
+		if (this.timeFilterFrom == null) {
 			logger.debug("time from is not set");
 			error = true;
 		}
-		if (timeFilterTo == null) {
+		if (this.timeFilterTo == null) {
 			logger.debug("time to is not set");
 			error = true;
 		}
-		if (requiredDailyOutput == null) {
+		if (this.requiredDailyOutput == null) {
 			logger.debug("daily output is not set");
 			error = true;
 		}
-		if (terminatingStep == null) {
+		if (this.terminatingStep == null) {
 			logger.debug("terminating step is not set");
 			error = true;
 		}
-		if (myIDlist == null) {
+		if (this.myIDlist == null) {
 			logger.debug("processes filter is not set");
 			error = true;
 		}
@@ -127,16 +127,16 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	public void setReferenceCurve(Boolean flagIn) {
 		if (flagIn == null) {
-			flagReferenceCurve = false;
+			this.flagReferenceCurve = false;
 		} else {
-			flagReferenceCurve = flagIn;
+			this.flagReferenceCurve = flagIn;
 		}
-		isDirty = true;
+		this.isDirty = true;
 	}
 
 	public void setRequiredDailyOutput(Double requiredDailyOutput) {
 		this.requiredDailyOutput = requiredDailyOutput;
-		isDirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * @param includeLoops
 	 */
 	public void setIncludeLoops(Boolean includeLoops) {
-		flagIncludeLoops = includeLoops;
+		this.flagIncludeLoops = includeLoops;
 	}
 
 	/*
@@ -155,11 +155,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		DataRow dataRow = new DataRow(Helper.getTranslation("requiredOutput"));
 		dataRow.setShowPoint(false);
 
-		Double requiredOutputPerTimeUnit = requiredDailyOutput * timeGrouping.getDayFactor();
+		Double requiredOutputPerTimeUnit = this.requiredDailyOutput * this.timeGrouping.getDayFactor();
 
 		// assembling a requiredOutputRow from the labels in the reference row
 		// and the calculated requiredOutputPerTimeUnit
-		for (String title : timeGrouping.getDateRow(timeFilterFrom, timeFilterTo)) {
+		for (String title : this.timeGrouping.getDateRow(this.timeFilterFrom, this.timeFilterTo)) {
 			dataRow.addValue(title, requiredOutputPerTimeUnit);
 		}
 		return dataRow;
@@ -178,7 +178,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		Integer count = orientationRow.getNumberValues();
 
-		Double remainingOutput = requiredDailyOutput * timeGrouping.getDayFactor() * count;
+		Double remainingOutput = this.requiredDailyOutput * this.timeGrouping.getDayFactor() * count;
 		Double remainingAverageOutput = remainingOutput / count;
 
 		// DateTime from = new DateTime(this.timeFilterFrom);
@@ -197,7 +197,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 				remainingOutput = remainingOutput - doneValue;
 			}
 			count--;
-			Date breakOffDate = new DateTime(timeFilterFrom).plusDays((int) (i * timeGrouping.getDayFactor())).toDate();
+			Date breakOffDate = new DateTime(this.timeFilterFrom).plusDays((int) (i * this.timeGrouping.getDayFactor())).toDate();
 			if (breakOffDate.before(new Date())) {
 				remainingAverageOutput = remainingOutput / count;
 			}
@@ -209,11 +209,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	public void setDataSource(IDataSource inSource) {
 		// gathering IDs from the filter passed by dataSource
 		try {
-			myIDlist = ((IEvaluableFilter) inSource).getIDList();
+			this.myIDlist = ((IEvaluableFilter) inSource).getIDList();
 		} catch (UnsupportedOperationException e) {
 			logger.warn(e);
 		}
-		isDirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -221,12 +221,12 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * @returns if reference curve is used of average production
 	 */
 	public Boolean getReferenceCurve() {
-		return flagReferenceCurve;
+		return this.flagReferenceCurve;
 	}
 
 	public DataRow getRefRow() {
-		if (flagReferenceCurve) {
-			return referenceCurve(getDataRow(terminatingStep));
+		if (this.flagReferenceCurve) {
+			return referenceCurve(getDataRow(this.terminatingStep));
 		} else {
 			return requiredOutput();
 		}
@@ -260,13 +260,13 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * (org.goobi.production.flow.statistics.IDataSource)
 	 */
 	private DataTable getDataTable() {
-		if (myDataTable != null && !isDirty) {
-			return myDataTable;
+		if (this.myDataTable != null && !this.isDirty) {
+			return this.myDataTable;
 		}
 
 		DataTable tableStepCompleted = getAllSteps(HistoryEventType.stepDone);
 
-		tableStepCompleted.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
+		tableStepCompleted.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
 
 		// show in line graph
@@ -275,8 +275,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		tableStepCompleted.setShowableInPieChart(false);
 		tableStepCompleted = tableStepCompleted.getDataTableInverted();
 
-		myDataTable = tableStepCompleted;
-		isDirty = false;
+		this.myDataTable = tableStepCompleted;
+		this.isDirty = false;
 		return tableStepCompleted;
 	}
 
@@ -300,9 +300,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
-		timeFilterFrom = timeFrom;
-		timeFilterTo = timeTo;
-		isDirty = true;
+		this.timeFilterFrom = timeFrom;
+		this.timeFilterTo = timeTo;
+		this.isDirty = true;
 	}
 
 	/*
@@ -337,8 +337,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestByName(timeFilterFrom, timeFilterTo, timeGrouping, myIDlist).getSQL(requestedType, null, true,
-				flagIncludeLoops);
+		String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true,
+				this.flagIncludeLoops);
 
 		return buildDataTableFromSQL(natSQL);
 	}
@@ -357,13 +357,13 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	private DataTable buildDataTableFromSQL(String natSQL) {
 		Session session = Helper.getHibernateSession();
 
-		if (commonWorkFlow == null) {
+		if (this.commonWorkFlow == null) {
 			return null;
 		}
 
 		DataRow headerRow = new DataRow("Header - delete again");
 
-		for (StepInformation step : commonWorkFlow) {
+		for (StepInformation step : this.commonWorkFlow) {
 			String stepName = step.getTitle();
 			headerRow.setName("header - delete again");
 			headerRow.addValue(stepName, Double.parseDouble("0"));
@@ -372,9 +372,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		SQLQuery query = session.createSQLQuery(natSQL);
 
 		// needs to be there otherwise an exception is thrown
-		query.addScalar("stepCount", Hibernate.DOUBLE);
-		query.addScalar("stepName", Hibernate.STRING);
-		query.addScalar("intervall", Hibernate.STRING);
+		query.addScalar("stepCount", StandardBasicTypes.DOUBLE);
+		query.addScalar("stepName", StandardBasicTypes.STRING);
+		query.addScalar("intervall", StandardBasicTypes.STRING);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();
@@ -460,7 +460,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	public void setCommonWorkflow(List<StepInformation> commonWorkFlow) {
 		this.commonWorkFlow = commonWorkFlow;
-		isDirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -470,7 +470,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	public void setTerminatingStep(String terminatingStep) {
 		this.terminatingStep = terminatingStep;
-		isDirty = true;
+		this.isDirty = true;
 	}
 
 	/**
@@ -481,30 +481,30 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	public List<String> getSelectableSteps() {
 		List<String> selectableList = new ArrayList<String>();
 		selectableList.add(Helper.getTranslation("selectAll"));
-		for (StepInformation steps : commonWorkFlow) {
+		for (StepInformation steps : this.commonWorkFlow) {
 			selectableList.add(steps.getTitle());
 		}
 		return selectableList;
 	}
 
 	public void setSelectedSteps(List<String> inSteps) {
-		isDirty = true;
+		this.isDirty = true;
 		if (inSteps.contains(Helper.getTranslation("selectAll"))) {
-			selectedSteps = new ArrayList<String>();
-			for (StepInformation steps : commonWorkFlow) {
-				selectedSteps.add(steps.getTitle());
-				terminatingStep = steps.getTitle();
+			this.selectedSteps = new ArrayList<String>();
+			for (StepInformation steps : this.commonWorkFlow) {
+				this.selectedSteps.add(steps.getTitle());
+				this.terminatingStep = steps.getTitle();
 			}
 		} else {
-			selectedSteps = inSteps;
+			this.selectedSteps = inSteps;
 			if (inSteps.size() > 0) {
-				terminatingStep = inSteps.get(inSteps.size() - 1);
+				this.terminatingStep = inSteps.get(inSteps.size() - 1);
 			}
 		}
 	}
 
 	public List<String> getSelectedSteps() {
-		return selectedSteps;
+		return this.selectedSteps;
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * checks if testString is contained in workflow
 	 */
 	private Boolean isInWorkFlow(String testString) {
-		for (StepInformation step : commonWorkFlow) {
+		for (StepInformation step : this.commonWorkFlow) {
 			if (step.getTitle().equals(testString)) {
 				return true;
 			}
@@ -534,9 +534,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	public DataTable getSelectedTable() {
 		getDataTable();
-		DataTable returnTable = new DataTable(terminatingStep);
+		DataTable returnTable = new DataTable(this.terminatingStep);
 		returnTable.addDataRow(getRefRow());
-		for (String stepTitle : selectedSteps) {
+		for (String stepTitle : this.selectedSteps) {
 			returnTable.addDataRow(getDataRow(stepTitle));
 		}
 		// rest this, so that unit knows that no changes were made in between
@@ -550,11 +550,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	public boolean hasChanged() {
-		return isDirty;
+		return this.isDirty;
 	}
 
 	public TimeUnit getTimeUnit() {
-		return timeGrouping;
+		return this.timeGrouping;
 	}
 
 	/*
@@ -566,7 +566,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 	@Override
 	public void setTimeUnit(TimeUnit timeUnit) {
-		isDirty = true;
-		timeGrouping = timeUnit;
+		this.isDirty = true;
+		this.timeGrouping = timeUnit;
 	}
 }

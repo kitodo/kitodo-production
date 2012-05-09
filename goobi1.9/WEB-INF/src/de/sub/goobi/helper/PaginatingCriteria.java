@@ -16,6 +16,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 
 /**
@@ -389,7 +390,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#uniqueResult()
 	 */
 	public Integer count() throws HibernateException {
-		return (Integer) this.clone.uniqueResult();
+		return ((Long) this.clone.uniqueResult()).intValue();
 	}
 	
 	
@@ -400,6 +401,66 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	public String getClassName(){
 		return this.myClassName;
+	}
+
+	@Override
+	public Criteria createAlias(String arg0, String arg1, JoinType arg2) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createAlias(String arg0, String arg1, JoinType arg2, Criterion arg3) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createAlias(String arg0, String arg1, int arg2, Criterion arg3) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String arg0, JoinType arg1) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String arg0, String arg1, JoinType arg2) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String arg0, String arg1, JoinType arg2, Criterion arg3) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String arg0, String arg1, int arg2, Criterion arg3) throws HibernateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isReadOnlyInitialized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Criteria setReadOnly(boolean arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

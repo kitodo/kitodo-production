@@ -138,9 +138,9 @@ public class MetadatenImagesHelper {
 		}
 
 		if (directory==null){
-			checkIfImagesValid(inProzess, inProzess.getImagesTifDirectory());			
+			checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesTifDirectory());			
 		}else{
-			checkIfImagesValid(inProzess, inProzess.getImagesDirectory() + directory);
+			checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesDirectory() + directory);
 		}
 		
 
@@ -297,7 +297,7 @@ public class MetadatenImagesHelper {
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public boolean checkIfImagesValid(Prozess inProzess, String folder) throws IOException, InterruptedException, SwapException, DAOException {
+	public boolean checkIfImagesValid(String title, String folder) throws IOException, InterruptedException, SwapException, DAOException {
 		boolean isValid = true;
 		this.myLastImage = 0;
 
@@ -309,7 +309,7 @@ public class MetadatenImagesHelper {
 		if (dir.exists()) {
 			String[] dateien = dir.list(Helper.dataFilter);
 			if (dateien == null || dateien.length == 0) {
-				Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] No images found");
+				Helper.setFehlerMeldung("[" + title + "] No images found");
 				return false;
 			}
 
@@ -326,7 +326,7 @@ public class MetadatenImagesHelper {
 						curFile = iterator.next();
 						int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
 						if (curFileNumber != counter + myDiff) {
-							Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] expected Image " + (counter + myDiff) + " but found File "
+							Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff) + " but found File "
 									+ curFile);
 							myDiff = curFileNumber - counter;
 							isValid = false;
@@ -334,17 +334,17 @@ public class MetadatenImagesHelper {
 					}
 				} catch (NumberFormatException e1) {
 					isValid = false;
-					Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] Filename of image wrong - not an 8-digit-number: " + curFile);
+					Helper.setFehlerMeldung("[" + title + "] Filename of image wrong - not an 8-digit-number: " + curFile);
 				}
 				return isValid;
 			}
 			return true;
 		}
-		Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] No image-folder found");
+		Helper.setFehlerMeldung("[" + title + "] No image-folder found");
 		return false;
 	}
 
-	private static class GoobiImageFileComparator implements Comparator<String> {
+	public static class GoobiImageFileComparator implements Comparator<String> {
 
 		@Override
 		public int compare(String s1, String s2) {

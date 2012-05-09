@@ -51,4 +51,13 @@ public class StepManager {
 			logger.error("Cannot not save history event", e);
 		}
 	}
+
+	public static List<String> loadScripts(int id) {
+		try {
+			return DbHelper.getScriptsForStep( id);
+		} catch (SQLException e) {
+			logger.error("Cannot not save history event", e);
+		}
+		return new ArrayList<String>();
+	}
 }

@@ -84,4 +84,9 @@ public class ProzessDAO extends BaseDAO {
 		Object o = t;
 		updateObj(o);
 	}
+	
+	public Prozess load(int id) throws DAOException {
+		return (Prozess) loadObj(Prozess.class, id);
+	}
+	
 }
