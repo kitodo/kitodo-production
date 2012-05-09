@@ -42,6 +42,7 @@ import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 //TODO: Try to move this methods to UGH (ugh.util.UGHUtils would be a better place)
@@ -206,8 +207,13 @@ public class UghHelper {
 	public String convertLanguage(String inLanguage) {
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
-		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opaclanguages.txt";
+		String filename;
+		if (context != null) {
+			HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+			filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opaclanguages.txt";
+		} else {
+			filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "opaclanguages.txt";
+		}
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		try {
 			FileInputStream fis = new FileInputStream(filename);
@@ -233,8 +239,13 @@ public class UghHelper {
 		String temp = inString;
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
-		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opacumlaut.txt";
+		String filename;
+		if (context != null) {
+			HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+			filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "opacumlaut.txt";
+		} else {
+			filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "opacumlaut.txt";
+		}
 
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		try {

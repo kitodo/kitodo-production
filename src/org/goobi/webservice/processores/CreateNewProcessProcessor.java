@@ -24,18 +24,14 @@ package org.goobi.webservice.processores;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
 import org.goobi.webservice.ActiveMQProcessor;
 import org.goobi.webservice.MapMessageObjectReader;
-import org.goobi.webservice.WebServiceResult;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
@@ -44,7 +40,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.ReportLevel;
 
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
@@ -108,7 +103,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
 		createNewProcessMain(template, opac, field, value, id, collections);
 	}
-
+	
 	/**
 	 * This is the main routine used to create new processes.
 	 * 
@@ -138,7 +133,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
 			newProcess.setDigitalCollections(validCollectionsForProcess(
 					collections, newProcess));
-			getBibliorgaphicData(newProcess, id, opac, field, value);
+			getBibliorgaphicData(newProcess, opac, field, value);
 			setAdditionalField(newProcess, DIGITAL_ID_FIELD_NAME, id);
 			newProcess.CalcProzesstitel();
 			newProcess.NeuenProzessAnlegen();
@@ -204,7 +199,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
 		Prozess result = null;
 		for (Prozess aTemplate : allTemplates) {
-			if (aTemplate.getTitel() == templateTitle) {
+			if (aTemplate.getTitel().equals(templateTitle)) {
 				result = aTemplate;
 				break;
 			}
@@ -247,17 +242,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * This is equal to manually choosing a catalogue and a search field,
 	 * entering the search string and clicking “Apply”.
 	 * 
-	 * Some efforts had to be made to capture errors potentially occurring here,
-	 * as the application logic is implemented straight ahead in the form class
-	 * and errors can be figured out only by examining the FacesContext for
-	 * FacesMessages that have SEVERITY_ERROR.
-	 * 
-	 * There is a loop in case that there is an “Error on reading opac”, since
-	 * the OPAC may be temporarily unavailable. In this case, the method will
-	 * submit a WebServiceResult of ReportLevel.WARN prior to falling asleep for
-	 * WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR milliseconds It will then retry the
-	 * request. After WAIT_AT_MOST_ON_OPAC_ERROR milliseconds, a
-	 * RuntimeException will be thrown.
+	 * Since the underlying OpacAuswerten() method doesn’t raise exceptions, we
+	 * count the populated “additional details” fields before and after running
+	 * the request and assume the method to have failed if not even one more
+	 * field was populated by the method call.
 	 * 
 	 * @param inputForm
 	 *            the ProzesskopieForm to be set
@@ -270,46 +258,43 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @param value
 	 *            the search string
 	 * @throws RuntimeException
-	 *             is thrown on unmanageable errors
+	 *             is thrown if the search didn’t bring any results
 	 */
-	private void getBibliorgaphicData(ProzesskopieForm inputForm, String id,
-			String opac, String field, String value) throws RuntimeException {
-		boolean success = true;
-		FacesContext context = FacesContext.getCurrentInstance();
-		FacesMessage message = null;
-		long millisPassed = 0;
+	private void getBibliorgaphicData(ProzesskopieForm inputForm, String opac,
+			String field, String value) throws RuntimeException {
 
 		inputForm.setOpacKatalog(opac);
 		inputForm.setOpacSuchfeld(field);
 		inputForm.setOpacSuchbegriff(value);
 
-		do {
-			inputForm.OpacAuswerten();
+		int before = countPopulatedAdditionalFields(inputForm);
+		inputForm.OpacAuswerten();
+		int afterwards = countPopulatedAdditionalFields(inputForm);
 
-			@SuppressWarnings("unchecked")
-			Iterator<FacesMessage> messages = context.getMessages(null);
-			while (messages.hasNext()) {
-				message = messages.next();
-				if (FacesMessage.SEVERITY_ERROR == message.getSeverity()) {
-					if (!message.getSummary().startsWith(
-							"Error on reading opac"))
-						throw new RuntimeException(message.getSummary());
-					else {
-						new WebServiceResult(queueName, id, ReportLevel.WARN,
-								message.getSummary()).send();
-						messages.remove();
-						try {
-							wait(WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR);
-						} catch (InterruptedException irrelevant) {
-						}
-						millisPassed += WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR;
-						success = false;
-			}	}	}
+		if (!(afterwards > before))
+			throw new RuntimeException(
+					"Searching the OPAC didn’t yield any results.");
+	}
 
-		} while (!success && millisPassed < WAIT_AT_MOST_ON_OPAC_ERROR);
+	/**
+	 * The function countPopulatedAdditionalFields() returns the number of
+	 * AdditionalFields in the given ProzesskopieForm that have meaningful
+	 * content.
+	 * 
+	 * @param form
+	 *            a ProzesskopieForm object to examine
+	 * @return the number of AdditionalFields populated
+	 */
+	private int countPopulatedAdditionalFields(ProzesskopieForm form) {
+		int result = 0;
 
-		if (!success)
-			throw new RuntimeException(message.getSummary());
+		for (AdditionalField field : form.getAdditionalFields()) {
+			String value = field.getWert();
+			if (value != null && value.length() > 0)
+				result++;
+		}
+
+		return result;
 	}
 
 	/**
@@ -329,15 +314,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	private void setAdditionalField(ProzesskopieForm inputForm, String key,
 			String value) throws RuntimeException {
 
-		List<AdditionalField> addFieldsList = inputForm.getAdditionalFields();
-		AdditionalField myField = null;
-		for (Iterator<AdditionalField> i = addFieldsList.iterator(); i
-				.hasNext(); myField = i.next()) {
-			if (myField.getTitel().equals(key)) {
-				myField.setWert(value);
+		for(AdditionalField field : inputForm.getAdditionalFields()) {
+			if (key.equals(field.getTitel())){
+				field.setWert(value);
 				return;
 			}
 		}
+		
 		throw new RuntimeException("Couldn’t set “" + key + "” to “" + value
 				+ "”: No such field in record.");
 	}
