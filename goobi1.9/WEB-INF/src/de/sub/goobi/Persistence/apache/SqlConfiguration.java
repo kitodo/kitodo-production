@@ -8,7 +8,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
+import org.apache.log4j.helpers.Loader;
 public class SqlConfiguration {
 
 	// TODO aus Konfig holen
@@ -25,9 +25,8 @@ public class SqlConfiguration {
 	private static SqlConfiguration sqlConfiguration = new SqlConfiguration();
 
 	private SqlConfiguration() {
-		String file = "hibernate.cfg.xml";
-		File f = new File(file);
 		try {
+			File f = new File(Loader.getResource("hibernate.cfg.xml").getFile());
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = builder.build(f);
 			Element root = doc.getRootElement();

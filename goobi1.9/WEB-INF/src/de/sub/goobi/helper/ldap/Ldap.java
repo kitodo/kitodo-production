@@ -133,6 +133,7 @@ public class Ldap {
 
 		// Start TLS
 		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
+			myLogger.debug("use TLS for auth");
 //			String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
 //			System.setProperty("javax.net.ssl.trustStore", keystore);
 			env = new Hashtable<String, String>();
@@ -159,12 +160,9 @@ public class Ldap {
 
 			} catch (IOException e) {
 				myLogger.error("TLS negotiation error:", e);
-
 				return false;
 			} catch (NamingException e) {
-
 				myLogger.error("JNDI error:", e);
-
 				return false;
 			} finally {
 				if (tls != null) {
@@ -183,7 +181,7 @@ public class Ldap {
 				}
 			}
 		} else {
-
+			myLogger.debug("don't use TLS for auth");
 			if (ConfigMain.getBooleanParameter("useSimpleAuthentification", false)) {
 				env.put(Context.SECURITY_AUTHENTICATION, "none");
 				// TODO auf passwort testen
@@ -194,13 +192,17 @@ public class Ldap {
 			myLogger.debug("ldap environment set");
 
 			try {
+				myLogger.debug("start classic ldap authentification");
+				myLogger.debug("user DN is " + getUserDN(inBenutzer));
+				
 				if (ConfigMain.getParameter("ldap_AttributeToTest") == null) {
-					new InitialDirContext(env);
 					myLogger.debug("ldap attribute to test is null");
+					new InitialDirContext(env);
 					return true;
 				} else {
 					myLogger.debug("ldap attribute to test is not null");
 					DirContext ctx = new InitialDirContext(env);
+					
 					Attributes attrs = ctx.getAttributes(getUserDN(inBenutzer));
 					Attribute la = attrs.get(ConfigMain.getParameter("ldap_AttributeToTest"));
 					myLogger.debug("ldap attributes set");
