@@ -41,6 +41,7 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. 
@@ -103,7 +104,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
 		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
 				this.getClass()).getTitle() + " "
-				+ Helper.getTranslation("_inGB"));
+				+ Messages.getString("_inGB"));
 
 		DataRow dataRow;
 
@@ -122,7 +123,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
 
-				dataRow.addValue(Helper.getTranslation("storageDifference"),
+				dataRow.addValue(Messages.getString("storageDifference"),
 						(new Converter(objArr[0]).getGB()));
 
 			} catch (Exception e) {
@@ -135,8 +136,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
 		// a list of DataTables is expected as return Object, even if there is only one 
 		// Data Table as it is here in this implementation
-		dtbl.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+		dtbl.setUnitLabel(Messages.getString(timeGrouping.getSingularTitle()));
 		allTables.add(dtbl);
 		return allTables;
 	}

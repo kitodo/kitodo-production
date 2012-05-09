@@ -31,7 +31,7 @@ import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.goobi.production.flow.statistics.hibernate.StatQuestUsergroups;
 import org.goobi.production.flow.statistics.hibernate.StatQuestVolumeStatus;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum for all statistic modes,
@@ -109,7 +109,7 @@ public enum StatisticsMode {
 	 * @return title of statistic question mode
 	 ****************************************************************************/
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 
 	/**

@@ -40,7 +40,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.context.ManagedSessionContext;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
 public class HibernateSessionConversationFilterWithoutTransaction implements Filter {
@@ -71,13 +71,13 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 			}
 
 		} catch (Exception e) {
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " Establishing Sessions", e));
+			throw new ServletException(new GUIExceptionWrapper(Messages.getString("err_noConnectionEstablished") + " Establishing Sessions", e));
 		}
 
 		try {
 			ManagedSessionContext.bind(currentSession);
 		} catch (Exception e) {
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " ManagedSessionContext", e));
+			throw new ServletException(new GUIExceptionWrapper(Messages.getString("err_noConnectionEstablished") + " ManagedSessionContext", e));
 		}
 
 		// #################################

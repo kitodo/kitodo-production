@@ -23,8 +23,6 @@
 package de.sub.goobi.helper;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.DateFormat;
 import java.util.*;
 
@@ -61,8 +59,6 @@ public class Helper implements Serializable, Observer {
 
 	private String myMetadatenVerzeichnis;
 	private String myConfigVerzeichnis;
-	static ResourceBundle bundle;
-	static ResourceBundle localBundle;
 
 	/**
 	 * Ermitteln eines bestimmten Paramters des Requests
@@ -173,12 +169,12 @@ public class Helper implements Serializable, Observer {
 		String msg = "";
 		String beschr = "";
 		try {
-			msg = bundle.getString(meldung);
+			msg = Messages.getString(meldung);
 		} catch (RuntimeException e) {
 			msg = meldung;
 		}
 		try {
-			beschr = bundle.getString(beschreibung);
+			beschr = Messages.getString(beschreibung);
 		} catch (RuntimeException e) {
 			beschr = beschreibung;
 		}
@@ -341,58 +337,6 @@ public class Helper implements Serializable, Observer {
 		String command = ConfigMain.getParameter("script_createDirMeta") + " ";
 		command += inDirPath;
 		callShell(command);
-	}
-
-	public static void loadLanguageBundle() {
-		myLogger.info("Loading message bundles.");
-		bundle = ResourceBundle.getBundle("messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		localBundle = loadLocalMessageBundleIfAvailable();
-	}
-
-	/**
-	  * Load local message bundle from file system only if file exists.
-	  *
-	  * @return Resource bundle for local messages. Returns NULL if no local message bundle could be found.
-	  */
-	private static ResourceBundle loadLocalMessageBundleIfAvailable() {
-		String localMessages = ConfigMain.getParameter("localMessages");
-		if (localMessages != null) {
-			File file = new File(localMessages);
-			if (file.exists()) {
-				myLogger.info("Local message bundle found: " + localMessages);
-				try {
-					URL resourceURL = file.toURI().toURL();
-					URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-					return ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
-				} catch (java.net.MalformedURLException muex) {
-					myLogger.error("Error reading local message bundle", muex);
-				}
-			}
-		}
-		return null;
-	}
-
-	public static String getTranslation(String dbTitel) {
-		// running instance of ResourceBundle doesn't respond on user language changes, workaround by instanciating it every time
-
-		try {
-			if (localBundle != null) {
-				if (localBundle.containsKey(dbTitel)) {
-					String trans = localBundle.getString(dbTitel);
-					return trans;
-				}
-				if (localBundle.containsKey(dbTitel.toLowerCase())) {
-					return localBundle.getString(dbTitel.toLowerCase());
-				}
-			}
-		} catch (RuntimeException e) {
-		}
-		try {
-			String msg = bundle.getString(dbTitel);
-			return msg;
-		} catch (RuntimeException e) {
-			return dbTitel;
-		}
 	}
 
 	/**

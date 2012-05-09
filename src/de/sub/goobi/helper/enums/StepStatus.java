@@ -22,7 +22,7 @@
 
 package de.sub.goobi.helper.enums;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum for status of steps, each one with integer value for database, with
@@ -79,7 +79,7 @@ public enum StepStatus {
 	 * @return title as translated string for current locale from standard-jsf-messages
 	 */
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 
 	/**

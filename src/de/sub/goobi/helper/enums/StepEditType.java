@@ -22,7 +22,7 @@
 
 package de.sub.goobi.helper.enums;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum for edit type of task steps each one has an integer value, and a title
@@ -78,7 +78,7 @@ public enum StepEditType {
 	 * @return title as translated string for current locale
 	 */
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 
 	/**
