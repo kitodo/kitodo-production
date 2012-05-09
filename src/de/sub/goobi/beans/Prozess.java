@@ -736,7 +736,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename)
+		throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
 		File temporaryAnchorFile;
 
