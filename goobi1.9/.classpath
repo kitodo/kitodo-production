@@ -103,6 +103,6 @@
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/annotations-api.jar"/>
 	<classpathentry kind="src" output="work" path="work"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/ugh-1.10.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/ugh.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
