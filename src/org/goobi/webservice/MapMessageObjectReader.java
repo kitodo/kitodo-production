@@ -1,7 +1,9 @@
 package org.goobi.webservice;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jms.JMSException;
@@ -89,4 +91,81 @@ public class MapMessageObjectReader {
 					+ key + "\"");
 		return result;
 	}
+
+	/**
+	 * The function getMapOfStringToString() fetches a Map<String,String> from a
+	 * MapMessage. This is a partly strict implementation that allows no null
+	 * element neither as key, nor as value. However, if no object was found for
+	 * the given key, or the key returned a null object, the function returns
+	 * null. Also, the Map is allowed to contain the empty String (“”) as key
+	 * and as values.
+	 * 
+	 * @param key
+	 *            the name of the map to return
+	 * @return the map requested
+	 * @throws IllegalArgumentException
+	 *             in case that the object returned by getObject returned object
+	 *             is not of type Map or any of the content elements are not of
+	 *             type String.
+	 */
+	public Map<String, String> getMapOfStringToString(String key) {
+		Map<String, String> result = new HashMap<String, String>();
+
+		Object mapObject = null;
+		try {
+			mapObject = ticket.getObject(key);
+		} catch (Exception irrelevant) {
+		}
+		if (mapObject == null)
+			return null;
+
+		if (!(mapObject instanceof Map<?, ?>))
+			throw new IllegalArgumentException("Incompatible types: \"" + key
+					+ "\" was not found to be of type Map<?, ?>.");
+		for (Object keyObject : ((Map<?, ?>) mapObject).keySet()) {
+			Object valueObject = ((Map<?, ?>) mapObject).get(keyObject);
+			if (keyObject == null || !(keyObject instanceof String))
+				throw new IllegalArgumentException(
+						"Incompatible types: A key element of \"" + key
+								+ "\" was not found to be of type String.");
+			if (valueObject == null || !(valueObject instanceof String))
+				throw new IllegalArgumentException(
+						"Incompatible types: A value element of \"" + key
+								+ "\" was not found to be of type String.");	
+			result.put((String) keyObject, (String) valueObject);
+		}
+		
+		return result;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

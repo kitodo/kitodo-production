@@ -25,6 +25,7 @@ package org.goobi.webservice.processores;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jms.MapMessage;
@@ -99,11 +100,14 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		String id = ticketReader.getMandatoryString("id");
 		String opac = ticketReader.getMandatoryString("opac");
 		String template = ticketReader.getMandatoryString("template");
+		Map<String, String> userFields = ticketReader
+				.getMapOfStringToString("userFields");
 		String value = ticketReader.getMandatoryString("value");
 
-		createNewProcessMain(template, opac, field, value, id, collections);
+		createNewProcessMain(template, opac, field, value, id, collections,
+				userFields);
 	}
-	
+
 	/**
 	 * This is the main routine used to create new processes.
 	 * 
@@ -121,13 +125,15 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *            identifier to be used for the digitisation
 	 * @param collections
 	 *            collections to add the digitisation to
+	 * @param userFields
+	 *            Values for additional fields can be set here (may be null)
 	 * @throws Exception
 	 *             in various cases, such as bad parameters or errors in the
 	 *             underlying layers
 	 */
 	private void createNewProcessMain(String template, String opac,
-			String field, String value, String id, Set<String> collections)
-			throws Exception {
+			String field, String value, String id, Set<String> collections,
+			Map<String, String> userFields) throws Exception {
 
 		try {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
@@ -135,6 +141,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 					collections, newProcess));
 			getBibliorgaphicData(newProcess, opac, field, value);
 			setAdditionalField(newProcess, DIGITAL_ID_FIELD_NAME, id);
+			if (userFields != null)
+				setUserFields(newProcess, userFields);
 			newProcess.CalcProzesstitel();
 			newProcess.NeuenProzessAnlegen();
 			logger.info("Created new process: " + id);
@@ -235,6 +243,28 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 					"Bad argument: One or more elements of \"collections\" is not available for template \""
 							+ process.getProzessVorlage().getTitel() + "\".");
 		return new ArrayList<String>(collections);
+	}
+
+	/**
+	 * The method setUserFields() allows to set any AdditionalField to a user
+	 * specific value.
+	 * 
+	 * @param form
+	 *            a ProzesskopieForm object whose AdditionalField objects are
+	 *            subject to the change
+	 * @param userFields
+	 *            the data to pass to the form
+	 * @throws RuntimeException
+	 *             in case that no field with a matching title was found in the
+	 *             ProzesskopieForm object
+	 */
+	private void setUserFields(ProzesskopieForm form,
+			Map<String, String> userFields) throws RuntimeException {
+
+		for (String key : userFields.keySet()) {
+			setAdditionalField(form, key, userFields.get(key));
+		}
+
 	}
 
 	/**
