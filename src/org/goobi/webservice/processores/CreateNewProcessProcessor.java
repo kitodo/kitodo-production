@@ -1,5 +1,6 @@
 package org.goobi.webservice.processores;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,16 +18,24 @@ import org.goobi.webservice.WebServiceResult;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.WriteException;
+
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.ReportLevel;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	// private static final Logger logger = Logger
 	// .getLogger(CreateNewProcessProcessor.class);
 
+	final String DIGITAL_ID_FIELD_NAME = "PPN digital a-Satz";
 	final int WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR = 131072; // msec
 	final int WAIT_AT_MOST_ON_OPAC_ERROR = 2097152; // msec
 
@@ -58,22 +67,24 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		Set<String> collections = new HashSet<String>();
 		collections.add("DigiWunschbuch");
 
-		createNewProcessMain(template, opac, field, value, id, collections);
+		try {
+			createNewProcessMain(template, opac, field, value, id, collections);
+		} catch (Exception irrelevant) {
+			irrelevant.printStackTrace();
+		}
 	}
 
 	private void createNewProcessMain(String template, String opac,
 			String field, String value, String id, Set<String> collections)
-			throws IllegalArgumentException {
+			throws Exception {
 
 		ProzesskopieForm newProcess = newProcessFromTemplate(template);
 		newProcess.setDigitalCollections(validCollectionsForProcess(
 				collections, newProcess));
 		getBibliorgaphicData(newProcess, id, opac, field, value);
-
-		// 4. Enter digital id and click to generate process title
-
-		// 5. submit create process
-
+		setAdditionalField(newProcess, DIGITAL_ID_FIELD_NAME, id);
+		newProcess.CalcProzesstitel();
+		newProcess.NeuenProzessAnlegen();
 	}
 
 	private ProzesskopieForm newProcessFromTemplate(String templateTitle)
@@ -125,12 +136,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 							+ process.getProzessVorlage().getTitel() + "\".");
 		return new ArrayList<String>(collections);
 	}
-	
-	private void getBibliorgaphicData(ProzesskopieForm inputForm, String id, String opac,
-			String field, String value) throws RuntimeException {
+
+	private void getBibliorgaphicData(ProzesskopieForm inputForm, String id,
+			String opac, String field, String value) throws RuntimeException {
 		boolean success = true;
-		long millisPassed = 0;
+		FacesContext context = FacesContext.getCurrentInstance();
 		FacesMessage message = null;
+		long millisPassed = 0;
 
 		inputForm.setOpacKatalog(opac);
 		inputForm.setOpacSuchfeld(field);
@@ -139,7 +151,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		do {
 			inputForm.OpacAuswerten();
 
-			FacesContext context = FacesContext.getCurrentInstance();
 			@SuppressWarnings("unchecked")
 			Iterator<FacesMessage> messages = context.getMessages(null);
 			while (messages.hasNext()) {
@@ -162,7 +173,22 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 				}
 			}
 		} while (!success && millisPassed < WAIT_AT_MOST_ON_OPAC_ERROR);
-		if(!success)
+		if (!success)
 			throw new RuntimeException(message.getSummary());
-	}	
+	}
+
+	private void setAdditionalField(ProzesskopieForm inputForm, String key,
+			String value) {
+
+		List<AdditionalField> addFieldsList = inputForm.getAdditionalFields();
+		AdditionalField myField = null;
+		for (Iterator<AdditionalField> i = addFieldsList.iterator(); i
+				.hasNext(); myField = i.next()) {
+			if (myField.getTitel().equals(key)) {
+				myField.setWert(value);
+				break;
+			}
+		}
+	}
+
 }
