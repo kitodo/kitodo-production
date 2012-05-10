@@ -58,6 +58,7 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.MetadataFormat;
@@ -728,17 +729,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return result;
 	}
 
-	private void renameMetadataFile(String oldFileName, String newFileName) {
-		File oldFile;
-		File newFile;
-
-		if (oldFileName != null && newFileName != null) {
-			oldFile = new File(oldFileName);
-			newFile = new File(newFileName);
-			oldFile.renameTo(newFile);
-		}
-	}
-
 	private String getTemporaryMetadataFileName(String fileName) {
 		File temporaryFile = new File(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
@@ -747,7 +737,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename)
+		throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
 		File temporaryAnchorFile;
 
@@ -762,7 +753,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
 			anchorFileName = directoryPath + File.separator + anchorFileName;
 
-			renameMetadataFile(temporaryAnchorFileName, anchorFileName);
+			FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
 		}
 	}
 
@@ -794,7 +785,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		writeResult = ff.write(temporaryMetadataFileName);
 		if (writeResult) {
 			createBackupFile();
-			renameMetadataFile(temporaryMetadataFileName, metadataFileName);
+			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
 			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 		}
 	}

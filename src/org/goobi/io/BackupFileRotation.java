@@ -22,10 +22,13 @@
 
 package org.goobi.io;
 
+import de.sub.goobi.helper.FilesystemHelper;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * Creates backup for files in a given directory that match a regular expression.
@@ -101,15 +104,10 @@ public class BackupFileRotation {
 	}
 
 	private void rename(String oldFileName, String newFileName) {
-		File oldFile = new File(oldFileName);
-		File newFile = new File(newFileName);
-
-		if (oldFile.exists()) {
-			boolean renameSuccessful = oldFile.renameTo(newFile);
-
-			if (!renameSuccessful) {
-				myLogger.warn("Renaming file from " + oldFileName + " to " +  newFileName + " failed.");
-			}
+		try {
+			FilesystemHelper.renameFile(oldFileName, newFileName);
+		} catch (IOException ioe) {
+			myLogger.warn("Renaming file from " + oldFileName + " to " + newFileName + " failed. Reason: " + ioe.getMessage());
 		}
 	}
 
