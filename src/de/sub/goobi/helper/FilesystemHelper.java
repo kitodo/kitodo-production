@@ -92,8 +92,7 @@ public class FilesystemHelper {
 				throw new IOException("Renaming of " + oldFileName + " into "
 						+ newFileName + " failed.");
 			} else if (millisWaited > 0)
-				logger.info("renameMetadataFile(): Rename finally succeeded after"
-						+ Integer.toString(millisWaited) + " milliseconds.");
+				logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
 		}
 	}
 }
