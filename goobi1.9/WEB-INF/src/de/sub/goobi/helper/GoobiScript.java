@@ -163,15 +163,15 @@ public class GoobiScript {
 			String stepname = this.myParameters.get("stepname");
 			String scriptname = this.myParameters.get("script");
 			if (stepname == null) {
-				Helper.setFehlerMeldung("missing parameter");
+				Helper.setFehlerMeldung("goobiScriptfield","","Missing parameter");
 			} else {
 				runScript(inProzesse, stepname, scriptname);
 			}
 		} else {
 			Helper.setFehlerMeldung(
 					"goobiScriptfield",
-					"Unbekannte Action",
-					" - möglich: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
+					"Unknown action",
+					" - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
 			return;
 		}
 
@@ -195,7 +195,7 @@ public class GoobiScript {
 		// e.printStackTrace();
 		// }
 
-		Helper.setMeldung("goobiScriptfield", "", "GoobiScript beendet");
+		Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
 	}
 
 	private void runScript(List<Prozess> inProzesse, String stepname, String scriptname) {
@@ -445,7 +445,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "deleteStep finished: ");
+		Helper.setMeldung("goobiScriptfield","", "deleteStep finished: ");
 	}
 
 	/**
@@ -490,7 +490,7 @@ public class GoobiScript {
 			}
 			Helper.setMeldung("goobiScriptfield", "Added step to process: ", proz.getTitel());
 		}
-		Helper.setMeldung("goobiScriptfield", "addStep finished: ");
+		Helper.setMeldung("goobiScriptfield", "", "addStep finished: ");
 	}
 
 	/**
@@ -539,7 +539,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "addShellScriptToStep finished: ");
+		Helper.setMeldung("goobiScriptfield", "", "addShellScriptToStep finished: ");
 	}
 
 	/**
@@ -581,7 +581,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "addModuleToStep finished: ");
+		Helper.setMeldung("goobiScriptfield", "","addModuleToStep finished: ");
 	}
 
 	/**
@@ -611,7 +611,7 @@ public class GoobiScript {
 
 		if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
 				&& !property.equals("exportdms") && !property.equals("batch") && !property.equals("automatic")) {
-			Helper.setFehlerMeldung("goobiScriptfield",
+			Helper.setFehlerMeldung("goobiScriptfield","",
 					"wrong parameter 'property'; possible values: metadata, readimages, writeimages, validate, exportdms");
 			return;
 		}
@@ -665,7 +665,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "setTaskProperty abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "","setTaskProperty abgeschlossen: ");
 	}
 
 	/**
@@ -706,12 +706,12 @@ public class GoobiScript {
 						Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitel(), e);
 						logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitel(), e);
 					}
-					Helper.setMeldung("goobiScriptfield", "stepstatus setted in process: ", proz.getTitel());
+					Helper.setMeldung("goobiScriptfield", "stepstatus set in process: ", proz.getTitel());
 					break;
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "setStepStatus finished: ");
+		Helper.setMeldung("goobiScriptfield", "","setStepStatus finished: ");
 	}
 
 	/**
@@ -756,7 +756,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "setStepNumber finished ");
+		Helper.setMeldung("goobiScriptfield", "","setStepNumber finished ");
 	}
 
 	/**

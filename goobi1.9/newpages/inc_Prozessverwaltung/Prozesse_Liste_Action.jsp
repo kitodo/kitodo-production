@@ -204,9 +204,8 @@
 
 					<jd:hideableArea id="goobiScript" saveState="view">
 						<h:panelGrid columns="1" style="margin-left:40px">
-
-
-							<h:messages errorClass="text_red" globalOnly="true"
+	
+							<h:message for="goobiScriptfield" errorClass="text_red"
 								infoClass="text_blue" showDetail="true" showSummary="true"
 								tooltip="true" />
 
