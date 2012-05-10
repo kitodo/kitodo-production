@@ -50,16 +50,14 @@ public class FilesystemHelperTest {
 
 	@After
 	public void tearDown() throws Exception {
-		deleteFile("test.xml");
-		deleteFile("test.new.xml");
 		deleteFile("old.xml");
 		deleteFile("new.xml");
 	}
 
 	@Test(expected = java.io.FileNotFoundException.class)
 	public void RenamingOfNonExistingFileShouldThrowFileNotFoundException () throws IOException {
-		String oldFileName = "test.xml";
-		String newFileName = "test.new.xml";
+		String oldFileName = "old.xml";
+		String newFileName = "new.xml";
 
 		FilesystemHelper.renameFile(oldFileName, newFileName);
 	}
