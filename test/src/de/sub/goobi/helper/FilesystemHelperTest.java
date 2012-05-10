@@ -65,11 +65,12 @@ public class FilesystemHelperTest {
 	}
 
 	@Test
-	public void ShouldRenameAFile()
+	public void shouldRenameAFile()
 		throws IOException {
 		createFile("old.xml");
 		FilesystemHelper.renameFile("old.xml", "new.xml");
 		assertFileExists("new.xml");
+		assertFileNotExists("old.xml");
 	}
 
 	private void assertFileExists(String fileName) {
