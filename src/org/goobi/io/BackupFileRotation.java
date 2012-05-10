@@ -106,8 +106,6 @@ public class BackupFileRotation {
 	private void rename(String oldFileName, String newFileName) {
 		try {
 			FilesystemHelper.renameFile(oldFileName, newFileName);
-		} catch (FileNotFoundException fnfe) {
-			myLogger.info(fnfe.getMessage());
 		} catch (IOException ioe) {
 			myLogger.warn("Renaming file from " + oldFileName + " to " + newFileName + " failed. Reason: " + ioe.getMessage());
 		}
