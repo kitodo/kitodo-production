@@ -73,6 +73,13 @@ public class FilesystemHelperTest {
 		assertFileNotExists("old.xml");
 	}
 
+	@Test
+	public void nothingHappensIfSourceFilenameIsNotSet()
+		throws IOException {
+		FilesystemHelper.renameFile(null, "new.xml");
+		assertFileNotExists("new.xml");
+	}
+
 	private void assertFileExists(String fileName) {
 		File newFile = new File(fileName);
 		if (!newFile.exists()) {
