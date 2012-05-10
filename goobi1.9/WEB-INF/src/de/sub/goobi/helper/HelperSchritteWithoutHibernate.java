@@ -98,8 +98,9 @@ public class HelperSchritteWithoutHibernate {
 		if (offeneSchritteGleicherReihenfolge == 0) {
 
 			int reihenfolge = 0;
+			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {
-				if (reihenfolge == 0) {
+				if (reihenfolge < myStep.getReihenfolge() && !matched) {
 					reihenfolge = myStep.getReihenfolge();
 				}
 
@@ -119,8 +120,11 @@ public class HelperSchritteWithoutHibernate {
 						automatischeSchritte.add(myStep);
 					}
 					StepManager.updateStep(myStep);
+					matched = true;
 				} else {
-					break;
+					if (matched) {
+						break;
+					}
 				}
 			}
 		}
@@ -246,7 +250,7 @@ public class HelperSchritteWithoutHibernate {
 			logger.error(e);
 		} catch (InterruptedException e) {
 			logger.error(e);
-		}		
+		}
 		CloseStepObjectAutomatic(step);
 	}
 

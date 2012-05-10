@@ -114,8 +114,9 @@ public class HelperSchritte {
 		if (offeneSchritteGleicherReihenfolge == 0) {
 
 			int reihenfolge = 0;
+			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {
-				if (reihenfolge == 0) {
+				if (reihenfolge < myStep.getReihenfolge() && !matched) {
 					reihenfolge = myStep.getReihenfolge();
 				}
 
@@ -135,8 +136,11 @@ public class HelperSchritte {
 						automatischeSchritte.add(myStep);
 					}
 					StepManager.updateStep(myStep);
+					matched = true;
 				} else {
-					break;
+					if (matched) {
+						break;
+					}
 				}
 			}
 		}
