@@ -95,7 +95,10 @@ public class FilesystemHelper {
 			logger.error("Rename " + oldFileName + " failed. This is a permanent error. Giving up.");
 			throw new IOException("Renaming of " + oldFileName + " into "
 					+ newFileName + " failed.");
-		} else if (millisWaited > 0)
+		}
+		
+		if (millisWaited > 0) {
 			logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
+		}
 	}
 }
