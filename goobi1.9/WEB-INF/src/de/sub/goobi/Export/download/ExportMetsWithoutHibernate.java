@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -51,12 +50,12 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.ProjectFileGroup;
-import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Forms.LoginForm;
-import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.apache.FolderInformation;
 import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
+import de.sub.goobi.Persistence.apache.ProjectManager;
+import de.sub.goobi.Persistence.apache.ProjectObject;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -69,7 +68,7 @@ public class ExportMetsWithoutHibernate {
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
 	private FolderInformation fi;
-	private Projekt project;
+	private ProjectObject project;
 	
 	protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
@@ -128,7 +127,7 @@ public class ExportMetsWithoutHibernate {
 		 */
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 		
-		this.project = new ProjektDAO().get(process.getProjekteID());
+		this.project =ProjectManager.getProjectById(process.getProjekteID());
 		String atsPpnBand = process.getTitle();
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
 		Fileformat gdzfile =  process.readMetadataFile(this.fi.getMetadataFilePath(), this.myPrefs);
@@ -241,7 +240,9 @@ public class ExportMetsWithoutHibernate {
 			// Replace all pathes with the given VariableReplacer, also the file
 			// group pathes!
 			VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(), this.myPrefs, process, null);
-			Set<ProjectFileGroup> myFilegroups = this.project.getFilegroups();
+			List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId()); 
+					
+				
 
 			if (myFilegroups != null && myFilegroups.size() > 0) {
 				for (ProjectFileGroup pfg : myFilegroups) {

@@ -43,13 +43,13 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Export.download.ExportMetsWithoutHibernate;
 import de.sub.goobi.Metadaten.MetadatenVerifizierungWithoutHibernate;
-import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.apache.FolderInformation;
 import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
+import de.sub.goobi.Persistence.apache.ProjectManager;
+import de.sub.goobi.Persistence.apache.ProjectObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
@@ -65,7 +65,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
 	private FolderInformation fi;
-	private Projekt project;
+	private ProjectObject project;
 	
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -102,10 +102,10 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	public void startExport(ProcessObject process) throws DAOException, IOException, PreferencesException, WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 	
-		this.project = new ProjektDAO().get(process.getProjekteID());
+		this.project =ProjectManager.getProjectById(process.getProjekteID());
 		
 		
-		this.cp = new ConfigProjects(this.project);
+		this.cp = new ConfigProjects(this.project.getTitel());
 		String atsPpnBand = process.getTitle();
 
 		/*

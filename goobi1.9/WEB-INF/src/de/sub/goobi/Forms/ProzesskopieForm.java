@@ -177,7 +177,7 @@ public class ProzesskopieForm {
 		 * --------------------------------*/
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt());
+			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
@@ -1136,7 +1136,7 @@ public class ProzesskopieForm {
 		String titeldefinition = "";
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt());
+			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
@@ -1254,7 +1254,7 @@ public class ProzesskopieForm {
 		String tif_definition = "";
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt());
+			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;

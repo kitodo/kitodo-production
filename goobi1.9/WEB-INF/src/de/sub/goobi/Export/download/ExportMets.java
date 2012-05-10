@@ -128,7 +128,7 @@ public class ExportMets {
 		Fileformat gdzfile = myProzess.readMetadataFile();
 
 		/* nur beim Rusdml-Projekt die Metadaten aufbereiten */
-		ConfigProjects cp = new ConfigProjects(myProzess.getProjekt());
+		ConfigProjects cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		if (cp.getParamList("dmsImport.check").contains("rusdml")) {
 			ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProzess, this.myPrefs, gdzfile);
 			atsPpnBand = expcorr.correctionStart();

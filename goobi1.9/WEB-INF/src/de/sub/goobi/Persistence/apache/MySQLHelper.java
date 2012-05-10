@@ -9,19 +9,20 @@ import java.util.List;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
+import de.sub.goobi.Beans.ProjectFileGroup;
 import de.sub.goobi.Beans.Regelsatz;
 
-public class DbHelper {
+public class MySQLHelper {
 
 	private static final int MAX_TRIES_NEW_CONNECTION = 5;
 	private static final int TIME_FOR_CONNECTION_VALID_CHECK = 5;
 
-	private static final Logger logger = Logger.getLogger(DbHelper.class);
+	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
-	private static DbHelper helper = new DbHelper();
+	private static MySQLHelper helper = new MySQLHelper();
 	private ConnectionManager cm = null;
 
-	private DbHelper() {
+	private MySQLHelper() {
 		SqlConfiguration config = SqlConfiguration.getInstance();
 		this.cm = new ConnectionManager(config);
 	}
@@ -63,7 +64,7 @@ public class DbHelper {
 		connection.close();
 	}
 
-	public static DbHelper getInstance() {
+	public static MySQLHelper getInstance() {
 		return helper;
 	}
 
@@ -74,55 +75,57 @@ public class DbHelper {
 		sql.append(" ORDER BY Reihenfolge ASC");
 		try {
 			logger.debug(sql.toString());
-			List<StepObject> ret = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToStepObjectListHandler);
+			List<StepObject> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectListHandler);
 			return ret;
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	public static List<Property> getProcessPropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM prozesseeigenschaften WHERE prozesseID = " + processId);	
+		sql.append("SELECT * FROM prozesseeigenschaften WHERE prozesseID = " + processId);
 		try {
-			List<Property> answer = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToProcessPropertyListHandler);
+			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessPropertyListHandler);
 			return answer;
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	public static List<Property> getTemplatePropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = (SELECT VorlagenID FROM vorlagen WHERE ProzesseID = " + processId);
+		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = (SELECT VorlagenID FROM vorlagen WHERE ProzesseID = "
+				+ processId);
 		try {
-			List<Property> answer = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToTemplatePropertyListHandler);
+			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToTemplatePropertyListHandler);
 			return answer;
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	public static List<Property> getProductPropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = (SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = " + processId);
+		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = (SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = "
+				+ processId);
 		try {
-			List<Property> answer = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToProductPropertyListHandler);
+			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler);
 			return answer;
 		} finally {
 			closeConnection(connection);
 		}
 	}
-	
+
 	public static ProcessObject getProcessObjectForId(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM prozesse WHERE ProzesseID = " + processId);
 		try {
-			ProcessObject answer = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToProcessHandler);
+			ProcessObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessHandler);
 			return answer;
 		} finally {
 			closeConnection(connection);
@@ -135,7 +138,7 @@ public class DbHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM metadatenkonfigurationen WHERE MetadatenKonfigurationID = " + rulesetId);
 		try {
-			Regelsatz ret =  new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToRulesetHandler);
+			Regelsatz ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler);
 			return ret;
 		} finally {
 			closeConnection(connection);
@@ -149,7 +152,7 @@ public class DbHelper {
 		// sql.append(" ORDER BY Reihenfolge ASC");
 		try {
 			logger.debug(sql.toString());
-			StepObject ret = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToStepObjectHandler);
+			StepObject ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectHandler);
 			return ret;
 		} finally {
 			closeConnection(connection);
@@ -162,7 +165,7 @@ public class DbHelper {
 		sql.append("SELECT * FROM schritte WHERE SchritteID = " + stepId);
 		try {
 			logger.debug(sql.toString());
-			List<String> ret = new QueryRunner().query(connection, sql.toString(), DbUtils.resultSetToScriptsHandler);
+			List<String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptsHandler);
 			return ret;
 		} finally {
 			closeConnection(connection);
@@ -238,6 +241,31 @@ public class DbHelper {
 			sql.append("UPDATE prozesse SET wikifield = '" + logValue + "' WHERE ProzesseID = " + processId + ";");
 
 			run.update(connection, sql.toString());
+		} finally {
+			closeConnection(connection);
+		}
+	}
+
+	public static ProjectObject getProjectObjectById(int projectId) throws SQLException {
+		Connection connection = helper.getConnection();
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM projekte WHERE ProjekteID = " + projectId);
+		try {
+			ProjectObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectHandler);
+			return answer;
+		} finally {
+			closeConnection(connection);
+		}
+	}
+
+	public static List<ProjectFileGroup> getFilegroupsForProjectId(int projectId) throws SQLException {
+		Connection connection = helper.getConnection();
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM projectfilegroups WHERE ProjekteID = " + projectId);
+		try {
+			List<ProjectFileGroup> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectFilegroupListHandler);
+			return answer;
+			
 		} finally {
 			closeConnection(connection);
 		}

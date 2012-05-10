@@ -99,7 +99,7 @@ public class ExportDms extends ExportMets {
 			TypeNotAllowedForParentException {
 		
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
-		this.cp = new ConfigProjects(myProzess.getProjekt());
+		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
 
 		/*

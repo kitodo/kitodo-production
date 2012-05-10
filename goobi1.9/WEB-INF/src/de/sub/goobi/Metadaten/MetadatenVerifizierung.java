@@ -325,7 +325,7 @@ public class MetadatenVerifizierung {
 		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.myProzess.getProjekt());
+			cp = new ConfigProjects(this.myProzess.getProjekt().getTitel());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + "] " + "IOException", e.getMessage());
 			return inFehlerList;

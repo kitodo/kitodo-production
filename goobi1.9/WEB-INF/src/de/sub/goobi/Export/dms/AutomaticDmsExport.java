@@ -98,7 +98,7 @@ public class AutomaticDmsExport extends ExportMets {
 			TypeNotAllowedForParentException {
 		new ProzessDAO().refresh(myProzess);
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
-		this.cp = new ConfigProjects(myProzess.getProjekt());
+		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
 
 		/*

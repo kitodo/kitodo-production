@@ -45,16 +45,15 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.apache.FolderInformation;
 import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
+import de.sub.goobi.Persistence.apache.ProjectManager;
+import de.sub.goobi.Persistence.apache.ProjectObject;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierungWithoutHibernate {
@@ -84,13 +83,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
-		Projekt project = null;
-		try {
-			project = new ProjektDAO().get(process.getProjekteID());
-		} catch (DAOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+		ProjectObject project  = ProjectManager.getProjectById(process.getProjekteID());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
 		this.processId = processId;
 		this.title = title;
@@ -339,13 +332,13 @@ public class MetadatenVerifizierungWithoutHibernate {
 	/**
 	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
 	 */
-	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language, Projekt project) {
+	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language, ProjectObject project) {
 		/*
 		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
 		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(project);
+			cp = new ConfigProjects(project.getTitel());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("[" + this.title + "] " + "IOException", e.getMessage());
 			return inFehlerList;

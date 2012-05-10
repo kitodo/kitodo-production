@@ -9,12 +9,12 @@ import org.apache.log4j.Logger;
 
 public class StepManager {
 
-	private static final Logger logger = Logger.getLogger(DbHelper.class);
+	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
 	public static StepObject getStepById(int stepId) {
 		StepObject so = null;
 		try {
-			so = DbHelper.getStepByStepId(stepId);
+			so = MySQLHelper.getStepByStepId(stepId);
 		} catch (SQLException e) {
 			logger.error("Cannot not load step with id " + stepId, e);
 		}
@@ -26,7 +26,7 @@ public class StepManager {
 		List<StepObject> answer = new ArrayList<StepObject>();
 
 		try {
-			answer = DbHelper.getStepsForProcess(processId);
+			answer = MySQLHelper.getStepsForProcess(processId);
 		} catch (SQLException e) {
 			logger.error("Cannot not load process with id " + processId, e);
 		}
@@ -37,7 +37,7 @@ public class StepManager {
 	public static void updateStep(StepObject step) {
 		
 		try {
-			DbHelper.getInstance().updateStep(step);
+			MySQLHelper.getInstance().updateStep(step);
 		} catch (SQLException e) {
 			logger.error("Cannot not save step with id " + step.getId(), e);
 		}
@@ -46,7 +46,7 @@ public class StepManager {
 
 	public static void addHistory(Date myDate, double order, String value, int type, int processId) {
 		try {
-			DbHelper.getInstance().addHistory( myDate,  order,  value,  type,  processId);
+			MySQLHelper.getInstance().addHistory( myDate,  order,  value,  type,  processId);
 		} catch (SQLException e) {
 			logger.error("Cannot not save history event", e);
 		}
@@ -54,7 +54,7 @@ public class StepManager {
 
 	public static List<String> loadScripts(int id) {
 		try {
-			return DbHelper.getScriptsForStep( id);
+			return MySQLHelper.getScriptsForStep( id);
 		} catch (SQLException e) {
 			logger.error("Cannot not save history event", e);
 		}

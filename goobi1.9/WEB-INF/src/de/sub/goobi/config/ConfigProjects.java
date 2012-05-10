@@ -37,7 +37,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.helper.Helper;
 
 public class ConfigProjects {
@@ -45,11 +44,11 @@ public class ConfigProjects {
 	private String projektTitel;
 	private static final Logger logger = Logger.getLogger(ConfigProjects.class);
 
-	public ConfigProjects(Projekt inProject) throws IOException {
-		this(inProject, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
+	public ConfigProjects(String projectTitle) throws IOException {
+		this(projectTitle, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
 	}
 
-	public ConfigProjects(Projekt inProject, String configPfad) throws IOException {
+	public ConfigProjects(String projectTitle, String configPfad) throws IOException {
 		if (!(new File(configPfad)).exists()) {
 			throw new IOException("File not found: " + configPfad);
 		}
@@ -65,7 +64,7 @@ public class ConfigProjects {
 		int countProjects = this.config.getMaxIndex("project");
 		for (int i = 0; i <= countProjects; i++) {
 			String title = this.config.getString("project(" + i + ")[@name]");
-			if (title.equals(inProject.getTitel())) {
+			if (title.equals(projectTitle)) {
 				this.projektTitel = "project(" + i + ").";
 				break;
 			}

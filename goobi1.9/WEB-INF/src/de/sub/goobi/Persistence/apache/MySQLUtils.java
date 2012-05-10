@@ -9,9 +9,10 @@ import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
 
+import de.sub.goobi.Beans.ProjectFileGroup;
 import de.sub.goobi.Beans.Regelsatz;
 
-public class DbUtils {
+public class MySQLUtils {
 
 	public static SimpleDateFormat sdfShowDateTime = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 
@@ -66,7 +67,7 @@ public class DbUtils {
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id =  rs.getInt("prozesseeigenschaftenID");
+				int id = rs.getInt("prozesseeigenschaftenID");
 				String title = rs.getString("Titel");
 				String value = rs.getString("Wert");
 				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
@@ -75,19 +76,18 @@ public class DbUtils {
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
 				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
-				answer.add(prop);	
+				answer.add(prop);
 			}
 			return answer;
 		}
 	};
-	
-	
+
 	public static ResultSetHandler<List<Property>> resultSetToTemplatePropertyListHandler = new ResultSetHandler<List<Property>>() {
 		@Override
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id =  rs.getInt("vorlageneigenschaftenID");
+				int id = rs.getInt("vorlageneigenschaftenID");
 				String title = rs.getString("Titel");
 				String value = rs.getString("Wert");
 				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
@@ -96,18 +96,18 @@ public class DbUtils {
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
 				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
-				answer.add(prop);	
+				answer.add(prop);
 			}
 			return answer;
 		}
 	};
-	
+
 	public static ResultSetHandler<List<Property>> resultSetToProductPropertyListHandler = new ResultSetHandler<List<Property>>() {
 		@Override
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id =  rs.getInt("werkstueckeeigenschaftenID");
+				int id = rs.getInt("werkstueckeeigenschaftenID");
 				String title = rs.getString("Titel");
 				String value = rs.getString("Wert");
 				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
@@ -116,14 +116,13 @@ public class DbUtils {
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
 				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
-				answer.add(prop);	
+				answer.add(prop);
 			}
 			return answer;
 		}
 	};
-	
-	public static ResultSetHandler<ProcessObject> resultSetToProcessHandler = new ResultSetHandler<ProcessObject>() {
 
+	public static ResultSetHandler<ProcessObject> resultSetToProcessHandler = new ResultSetHandler<ProcessObject>() {
 		@Override
 		public ProcessObject handle(ResultSet rs) throws SQLException {
 			if (rs.next()) {
@@ -150,7 +149,6 @@ public class DbUtils {
 			}
 			return null;
 		}
-
 	};
 
 	public static ResultSetHandler<List<String>> resultSetToScriptsHandler = new ResultSetHandler<List<String>>() {
@@ -201,4 +199,73 @@ public class DbUtils {
 
 		return so;
 	}
+
+	public static ResultSetHandler<ProjectObject> resultSetToProjectHandler = new ResultSetHandler<ProjectObject>() {
+		@Override
+		public ProjectObject handle(ResultSet rs) throws SQLException {
+			if (rs.next()) {
+				int projekteID = rs.getInt("ProjekteID");
+				String titel = rs.getString("Titel");
+				boolean useDmsImport = rs.getBoolean("useDmsImport");
+				int dmsImportTimeOut = rs.getInt("dmsImportTimeOut");
+				String dmsImportRootPath = rs.getString("dmsImportRootPath");
+				String dmsImportImagesPath = rs.getString("dmsImportImagesPath");
+				String dmsImportSuccessPath = rs.getString("dmsImportSuccessPath");
+				String dmsImportErrorPath = rs.getString("dmsImportErrorPath");
+				boolean dmsImportCreateProcessFolder = rs.getBoolean("dmsImportCreateProcessFolder");
+				String fileFormatInternal = rs.getString("fileFormatInternal");
+				String fileFormatDmsExport = rs.getString("fileFormatDmsExport");
+				String metsRightsOwner = rs.getString("metsRightsOwner");
+				String metsRightsOwnerLogo = rs.getString("metsRightsOwnerLogo");
+				String metsRightsOwnerSite = rs.getString("metsRightsOwnerSite");
+				String metsDigiprovReference = rs.getString("metsDigiprovReference");
+				String metsDigiprovPresentation = rs.getString("metsDigiprovPresentation");
+				String metsPointerPath = rs.getString("metsPointerPath");
+				String metsPointerPathAnchor = rs.getString("metsPointerPathAnchor");
+				String metsDigiprovReferenceAnchor = rs.getString("metsDigiprovReferenceAnchor");
+				String metsDigiprovPresentationAnchor = rs.getString("metsDigiprovPresentationAnchor");
+				String metsPurl = rs.getString("metsPurl");
+				String metsContentIDs = rs.getString("metsContentIDs");
+				String metsRightsOwnerMail = rs.getString("metsRightsOwnerMail");
+				Date startDate = rs.getTimestamp("startDate");
+				Date endDate = rs.getTimestamp("endDate");
+				int numberOfPages = rs.getInt("numberOfPages");
+				int numberOfVolumes = rs.getInt("numberOfVolumes");
+				boolean projectIsArchived = rs.getBoolean("projectIsArchived");
+				ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
+						dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
+						metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
+						metsPointerPathAnchor, metsDigiprovReferenceAnchor, metsDigiprovPresentationAnchor, metsPurl, metsContentIDs,
+						metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived);
+				return po;
+			}
+			return null;
+		}
+	};
+	public static ResultSetHandler<List<ProjectFileGroup>> resultSetToProjectFilegroupListHandler = new ResultSetHandler<List<ProjectFileGroup>>() {
+		@Override
+		public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
+			List<ProjectFileGroup> answer = new ArrayList<ProjectFileGroup>();
+			if (rs.next()) {
+				int ProjectFileGroupID = rs.getInt("ProjectFileGroupID");
+				String name = rs.getString("name");
+				String path = rs.getString("path");
+				String mimetype = rs.getString("mimetype");
+				String suffix = rs.getString("suffix");
+				int ProjekteID = rs.getInt("ProjekteID");
+				String folder = rs.getString("folder");
+				ProjectFileGroup pfg = new ProjectFileGroup();
+				pfg.setId(ProjectFileGroupID);
+				pfg.setName(name);
+				pfg.setPath(path);
+				pfg.setMimetype(mimetype);
+				pfg.setSuffix(suffix);
+				// ProjekteId?
+				pfg.setFolder(folder);
+				answer.add(pfg);
+			}
+			return answer;
+		}
+	};
+
 }
