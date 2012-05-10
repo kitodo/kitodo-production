@@ -69,8 +69,8 @@ public class FilesystemHelper {
 		newFile = new File(newFileName);
 
 		if (! oldFile.exists()) {
-			logger.debug("File " + oldFileName + " does not exists for renaming.");
-			throw new FileNotFoundException(oldFileName + " does not exists for renaming.");
+			logger.debug("File " + oldFileName + " does not exist for renaming.");
+			throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
 		}
 
 		do {
