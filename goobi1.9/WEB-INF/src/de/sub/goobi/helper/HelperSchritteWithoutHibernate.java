@@ -238,18 +238,25 @@ public class HelperSchritteWithoutHibernate {
 			dms.startExport(po);
 		} catch (DAOException e) {
 			logger.error(e);
+			return;
 		} catch (PreferencesException e) {
 			logger.error(e);
+			return;	
 		} catch (WriteException e) {
 			logger.error(e);
+			return;
 		} catch (SwapException e) {
 			logger.error(e);
+			return;
 		} catch (TypeNotAllowedForParentException e) {
 			logger.error(e);
+			return;
 		} catch (IOException e) {
 			logger.error(e);
+			return;
 		} catch (InterruptedException e) {
 			logger.error(e);
+			return;
 		}
 		CloseStepObjectAutomatic(step);
 	}

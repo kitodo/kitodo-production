@@ -773,7 +773,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		if (!checkForMetadataFile()) {
 			throw new IOException(" Can't open metadata file: " + getMetadataFilePath() + "!");
 		}
-//		checkForMetadataFile();
+		// checkForMetadataFile();
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
@@ -808,36 +808,38 @@ public class Prozess implements Serializable, IGoobiEntity {
 			FilenameFilter filter = new FileUtils.FileListFilter(FORMAT);
 			File metaFilePath = new File(getProcessDataDirectory());
 			File[] meta = metaFilePath.listFiles(filter);
-			List<File> files = Arrays.asList(meta);
-			Collections.reverse(files);
-
-			int count;
 			if (meta != null) {
-				if (files.size() > numberOfBackups) {
-					count = numberOfBackups;
-				} else {
-					count = meta.length;
-				}
-				while (count > 0) {
-					for (File data : files) {
-						if (data.getName().endsWith("xml." + (count - 1))) {
-							Long lastModified = data.lastModified();
-							File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
-							data.renameTo(newFile);
-							if (lastModified > 0L) {
-								newFile.setLastModified(lastModified);
-							}
-						}
-						if (data.getName().endsWith(".xml") && count == 1) {
-							Long lastModified = data.lastModified();
-							File newFile = new File(data.toString() + ".1");
-							data.renameTo(newFile);
-							if (lastModified > 0L) {
-								newFile.setLastModified(lastModified);
-							}
-						}
+				List<File> files = Arrays.asList(meta);
+				Collections.reverse(files);
+
+				int count;
+				if (meta != null) {
+					if (files.size() > numberOfBackups) {
+						count = numberOfBackups;
+					} else {
+						count = meta.length;
 					}
-					count--;
+					while (count > 0) {
+						for (File data : files) {
+							if (data.getName().endsWith("xml." + (count - 1))) {
+								Long lastModified = data.lastModified();
+								File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
+								data.renameTo(newFile);
+								if (lastModified > 0L) {
+									newFile.setLastModified(lastModified);
+								}
+							}
+							if (data.getName().endsWith(".xml") && count == 1) {
+								Long lastModified = data.lastModified();
+								File newFile = new File(data.toString() + ".1");
+								data.renameTo(newFile);
+								if (lastModified > 0L) {
+									newFile.setLastModified(lastModified);
+								}
+							}
+						}
+						count--;
+					}
 				}
 			}
 		}
@@ -856,8 +858,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 		return result;
 	}
-
-
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
@@ -912,6 +912,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * ================================================================
 	 */
 	public boolean getContainsUnreachableSteps() {
+		if (getSchritteList().size() == 0) {
+			return true;
+		}
 		for (Schritt s : getSchritteList()) {
 			if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
 				return true;

@@ -345,9 +345,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			this.myFilteredDataSource = new UserTemplatesFilter();
 			Criteria crit = this.myFilteredDataSource.getCriteria();
-			if (!this.showClosedProcesses) {
-				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
-			}
+//			if (!this.showClosedProcesses) {
+//				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+//			}
 
 			if (!this.showArchivedProjects) {
 				crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
@@ -423,7 +423,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 			}
 			/* alle Suchparameter miteinander kombinieren */
-			if (!this.showClosedProcesses) {
+			if (!this.showClosedProcesses && !this.modusAnzeige.equals("vorlagen")) {
 				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
 			}
 

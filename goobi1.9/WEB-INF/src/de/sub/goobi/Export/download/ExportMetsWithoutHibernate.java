@@ -69,7 +69,7 @@ public class ExportMetsWithoutHibernate {
 	protected Prefs myPrefs;
 	private FolderInformation fi;
 	private ProjectObject project;
-	
+
 	protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
 	/**
@@ -94,7 +94,7 @@ public class ExportMetsWithoutHibernate {
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
-		if (login!=null){
+		if (login != null) {
 			benutzerHome = login.getMyBenutzer().getHomeDir();
 		}
 		startExport(process, benutzerHome);
@@ -126,13 +126,12 @@ public class ExportMetsWithoutHibernate {
 		 * -------------------------------- Read Document --------------------------------
 		 */
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
-		
-		this.project =ProjectManager.getProjectById(process.getProjekteID());
+
+		this.project = ProjectManager.getProjectById(process.getProjekteID());
 		String atsPpnBand = process.getTitle();
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
-		Fileformat gdzfile =  process.readMetadataFile(this.fi.getMetadataFilePath(), this.myPrefs);
+		Fileformat gdzfile = process.readMetadataFile(this.fi.getMetadataFilePath(), this.myPrefs);
 
-		
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
@@ -173,9 +172,12 @@ public class ExportMetsWithoutHibernate {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@SuppressWarnings("deprecation")
-	protected void writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup) throws PreferencesException, WriteException,
-			IOException, InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
-
+	protected void writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
+			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
+			TypeNotAllowedForParentException {
+		this.fi = new FolderInformation(process.getId(), process.getTitle());
+		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
+		this.project = ProjectManager.getProjectById(process.getProjekteID());
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = this.fi.getImagesDirectory();
@@ -240,9 +242,7 @@ public class ExportMetsWithoutHibernate {
 			// Replace all pathes with the given VariableReplacer, also the file
 			// group pathes!
 			VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(), this.myPrefs, process, null);
-			List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId()); 
-					
-				
+			List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId());
 
 			if (myFilegroups != null && myFilegroups.size() > 0) {
 				for (ProjectFileGroup pfg : myFilegroups) {

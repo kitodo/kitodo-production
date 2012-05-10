@@ -65,6 +65,7 @@ import org.jdom.input.SAXBuilder;
 
 import ugh.dl.Prefs;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
@@ -108,6 +109,17 @@ public class MassImportForm {
 	}
 
 	public String Prepare() {
+		if (this.template.getContainsUnreachableSteps()) {
+			if (this.template.getSchritteList().size() == 0) {
+				Helper.setFehlerMeldung("No steps associated to workflow");
+			}
+			for (Schritt s : this.template.getSchritteList()) {
+				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
+					Helper.setFehlerMeldung("No user associated for: ", s.getTitel());
+				}
+			}
+			return "";
+		}
 		initializePossibleDigitalCollections();
 		return "MassImport";
 	}

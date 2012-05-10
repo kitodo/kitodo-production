@@ -53,7 +53,6 @@ public abstract class BaseDAO implements Serializable {
 	 *            the class to remove
 	 * @throws DAOException
 	 */
-	@SuppressWarnings("deprecation")
 	protected void removeObj(Object obj) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -78,7 +77,7 @@ public abstract class BaseDAO implements Serializable {
 	 *            the id of the class type
 	 * @throws DAOException
 	 */
-	@SuppressWarnings({ "deprecation", "rawtypes" })
+	@SuppressWarnings( "rawtypes" )
 	protected void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -169,7 +168,6 @@ public abstract class BaseDAO implements Serializable {
 	 * @param obj
 	 * @throws DAOException
 	 */
-	@SuppressWarnings("deprecation")
 	protected void storeObj(Object obj) throws DAOException {
 		try {
 
@@ -186,7 +184,6 @@ public abstract class BaseDAO implements Serializable {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	protected void storeList(List<Object> list) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -208,7 +205,6 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException
 	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
 	 */
-	@SuppressWarnings("deprecation")
 	protected void rollback() throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -242,6 +238,7 @@ public abstract class BaseDAO implements Serializable {
 		session.refresh(o);
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected Object loadObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
