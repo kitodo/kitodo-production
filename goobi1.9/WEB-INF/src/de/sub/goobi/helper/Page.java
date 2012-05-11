@@ -174,6 +174,7 @@ public class Page implements Serializable { // implements Iterator
 						if (objectToTest instanceof Schritt || objectToTest instanceof Prozess) {
 							Session session = Helper.getHibernateSession();
 							for (Object o : answer) {
+								// TODO hier prüfen ob valide ID?
 								session.refresh(o);
 							}
 						} 

@@ -20,6 +20,7 @@ import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Export.dms.AutomaticDmsExport;
+import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.apache.ProcessManager;
@@ -88,9 +89,12 @@ public class HelperSchritte {
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		currentStep.setBearbeitungszeitpunkt(myDate);
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			currentStep.setBearbeitungsbenutzer(ben.getId());
+		LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		if (lf != null) {
+			Benutzer ben = lf.getMyBenutzer();
+			if (ben != null) {
+				currentStep.setBearbeitungsbenutzer(ben.getId());
+			}
 		}
 		currentStep.setBearbeitungsende(myDate);
 		StepManager.updateStep(currentStep);
@@ -356,9 +360,9 @@ public class HelperSchritte {
 		}
 
 	}
-	
+
 	public void executeScriptForStepObject(StepObject step, String script, boolean automatic) {
-		
+
 	}
 
 	// TODO: Make this more generic, prefix should be configurable, this should be a workflow step

@@ -151,7 +151,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierungWithoutHibernate mv = new MetadatenVerifizierungWithoutHibernate();
 			if (!mv.validate(gdzfile, this.myPrefs, process.getId(), process.getTitle())) {
-				return;
+				throw new InterruptedException("invalid data");
+
 			}
 		}
 

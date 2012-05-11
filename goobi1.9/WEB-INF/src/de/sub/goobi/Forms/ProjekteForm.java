@@ -362,15 +362,15 @@ public class ProjekteForm extends BasisForm {
 		pl.add(Projections.count("sortHelperImages"));
 		crit.setProjection(pl);
 		List list = crit.list();
-		Integer images = 0;
-		Integer volumes = 0;
+		Long images = 0l;
+		Long volumes = 0l;
 		for (Object obj : list) {
 			Object[] row = (Object[]) obj;
-			images = (Integer) row[0];
-			volumes = (Integer) row[1];
+			images = (Long) row[0];
+			volumes = (Long) row[1];
 		}
-		this.myProjekt.setNumberOfPages(images);
-		this.myProjekt.setNumberOfVolumes(volumes);
+		this.myProjekt.setNumberOfPages(images.intValue());
+		this.myProjekt.setNumberOfVolumes(volumes.intValue());
 	}
 
 	/**

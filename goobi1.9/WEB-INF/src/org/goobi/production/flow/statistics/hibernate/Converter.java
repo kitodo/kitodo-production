@@ -69,7 +69,7 @@ class Converter {
 		if (obj == null) {
 			throw new NullPointerException();
 		}
-		myObject = obj;
+		this.myObject = obj;
 	}
 
 	/**
@@ -77,12 +77,14 @@ class Converter {
 	 * @return Integer if possible
 	 */
 	protected Integer getInteger() {
-		if (myObject instanceof Integer) {
-			return (Integer) myObject;
-		} else if (myObject instanceof Double) {
-			return ((Double) myObject).intValue();
-		} else if (myObject instanceof String) {
-			return Integer.parseInt((String) myObject);
+		if (this.myObject instanceof Integer) {
+			return (Integer) this.myObject;
+		} else if (this.myObject instanceof Double) {
+			return ((Double) this.myObject).intValue();
+		} else if (this.myObject instanceof String) {
+			return Integer.parseInt((String) this.myObject);
+		} else if (this.myObject instanceof Long) {
+			return ((Long) this.myObject).intValue();
 		} else {
 			throw new NumberFormatException();
 		}
@@ -93,15 +95,17 @@ class Converter {
 	 * @return Double if possible
 	 */
 	protected Double getDouble() {
-		if (myObject instanceof Integer) {
+		if (this.myObject instanceof Integer) {
 
-			return new Double(((Integer) myObject).intValue());
-		} else if (myObject instanceof Double) {
+			return new Double(((Integer) this.myObject).intValue());
+		} else if (this.myObject instanceof Double) {
 
-			return (Double) myObject;
-		} else if (myObject instanceof String) {
+			return (Double) this.myObject;
+		} else if (this.myObject instanceof String) {
 
-			return Double.parseDouble((String) myObject);
+			return Double.parseDouble((String) this.myObject);
+		} else if (this.myObject instanceof Long) {
+			return ((Long) this.myObject).doubleValue();
 		} else {
 			throw new NumberFormatException();
 		}
@@ -112,10 +116,10 @@ class Converter {
 	 * @return String, fall back is toString() method
 	 */
 	protected String getString() {
-		if (myObject instanceof Date) {
-			return sdf.format(myObject);
+		if (this.myObject instanceof Date) {
+			return this.sdf.format(this.myObject);
 		} else {
-			return myObject.toString();
+			return this.myObject.toString();
 
 		}
 	}

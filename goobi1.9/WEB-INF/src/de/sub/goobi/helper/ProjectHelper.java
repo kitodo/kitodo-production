@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
 import org.goobi.production.flow.statistics.StepInformation;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -64,8 +63,8 @@ public class ProjectHelper {
 
 	@SuppressWarnings("unchecked")
 	synchronized public static List<StepInformation> getProjectWorkFlowOverview(Projekt project) {
-		Integer totalNumberOfProc = 0;
-		Integer totalNumberOfImages = 0;
+		Long totalNumberOfProc = 0l;
+		Long totalNumberOfImages = 0l;
 
 		Session session = Helper.getHibernateSession();
 
@@ -92,8 +91,8 @@ public class ProjectHelper {
 		for (Object obj : list) {
 			Object[] row = (Object[]) obj;
 
-			totalNumberOfProc = (Integer) row[FieldList.totalProcessCount.fieldLocation];
-			totalNumberOfImages = (Integer) row[FieldList.totalImageCount.fieldLocation];
+			totalNumberOfProc = (Long) row[FieldList.totalProcessCount.fieldLocation];
+			totalNumberOfImages = (Long) row[FieldList.totalImageCount.fieldLocation];
 			;
 		}
 
@@ -137,8 +136,8 @@ public class ProjectHelper {
 
 		String title;
 		Double averageStepOrder;
-		Integer numberOfSteps;
-		Integer numberOfImages;
+		Long numberOfSteps;
+		Long numberOfImages;
 
 		List<StepInformation> workFlow = new ArrayList<StepInformation>();
 
@@ -146,14 +145,14 @@ public class ProjectHelper {
 			Object[] row = (Object[]) obj;
 
 			title = (String) (row[FieldList.stepName.fieldLocation]);
-			numberOfSteps = (Integer) (row[FieldList.stepCount.fieldLocation]);
+			numberOfSteps = (Long) (row[FieldList.stepCount.fieldLocation]);
 			averageStepOrder = (Double) (row[FieldList.stepOrder.fieldLocation]);
 
 			// in this step we only take the steps which are present in each of the workflows
 			if (numberOfSteps.equals(totalNumberOfProc)) {
 				StepInformation newStep = new StepInformation(title, averageStepOrder);
-				newStep.setNumberOfTotalImages(totalNumberOfImages);
-				newStep.setNumberOfTotalSteps(totalNumberOfProc);
+				newStep.setNumberOfTotalImages(totalNumberOfImages.intValue());
+				newStep.setNumberOfTotalSteps(totalNumberOfProc.intValue());
 				workFlow.add(newStep);
 			}
 		}
@@ -181,15 +180,15 @@ public class ProjectHelper {
 			Object[] row = (Object[]) obj;
 
 			title = (String) (row[FieldList.stepName.fieldLocation]);
-			numberOfSteps = (Integer) (row[FieldList.stepCount.fieldLocation]);
-			numberOfImages = (Integer) (row[FieldList.imageCount.fieldLocation]);
+			numberOfSteps = (Long) (row[FieldList.stepCount.fieldLocation]);
+			numberOfImages = (Long) (row[FieldList.imageCount.fieldLocation]);
 
 			// getting from the workflow collection the collection which represents step <title>
 			// we only created one for each step holding the counts of processes
 			for (StepInformation currentStep : workFlow) {
 				if (currentStep.getTitle().equals(title)) {
-					currentStep.setNumberOfStepsDone(numberOfSteps);
-					currentStep.setNumberOfImagesDone(numberOfImages);
+					currentStep.setNumberOfStepsDone(numberOfSteps.intValue());
+					currentStep.setNumberOfImagesDone(numberOfImages.intValue());
 				}
 			}
 		}
@@ -224,6 +223,7 @@ public class ProjectHelper {
 		/**
 		 * uses the field "stepOrder"
 		 */
+		@Override
 		public int compare(StepInformation arg0, StepInformation arg1) {
 			Double d1 = arg0.getAverageStepOrder();
 			Double d2 = arg1.getAverageStepOrder();
@@ -234,7 +234,7 @@ public class ProjectHelper {
 	// synchronized public static IGoobiCollection<IGoobiCollection<IProperty>> getWorkFlow (IGoobiObject instance, Boolean notOnlyCommonFlow) {
 	@SuppressWarnings("unchecked")
 	public static List<StepInformation> getWorkFlow(Projekt inProj, Boolean notOnlyCommonFlow) {
-		Integer totalNumberOfProc = 0;
+		Long totalNumberOfProc = 0l;
 		// false as default
 		if (notOnlyCommonFlow == null) {
 			notOnlyCommonFlow = false;
@@ -263,7 +263,7 @@ public class ProjectHelper {
 		for (Object obj : list) {
 			Object[] row = (Object[]) obj;
 
-			totalNumberOfProc = (Integer) row[FieldList.totalProcessCount.fieldLocation];
+			totalNumberOfProc = (Long) row[FieldList.totalProcessCount.fieldLocation];
 		}
 
 		proList = null;

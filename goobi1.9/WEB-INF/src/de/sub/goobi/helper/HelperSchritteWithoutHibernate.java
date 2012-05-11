@@ -16,7 +16,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Export.dms.AutomaticDmsExportWithoutHibernate;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.apache.FolderInformation;
 import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
@@ -57,7 +57,6 @@ import de.sub.goobi.helper.exceptions.SwapException;
 public class HelperSchritteWithoutHibernate {
 	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
-	ProzessDAO pdao = new ProzessDAO();
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
@@ -72,9 +71,12 @@ public class HelperSchritteWithoutHibernate {
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		currentStep.setBearbeitungszeitpunkt(myDate);
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			currentStep.setBearbeitungsbenutzer(ben.getId());
+		LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		if (lf != null) {
+			Benutzer ben = lf.getMyBenutzer();
+			if (ben != null) {
+				currentStep.setBearbeitungsbenutzer(ben.getId());
+			}
 		}
 		currentStep.setBearbeitungsende(myDate);
 		StepManager.updateStep(currentStep);
@@ -238,29 +240,45 @@ public class HelperSchritteWithoutHibernate {
 			dms.startExport(po);
 		} catch (DAOException e) {
 			logger.error(e);
+			abortStep(step);
 			return;
 		} catch (PreferencesException e) {
 			logger.error(e);
+			abortStep(step);
 			return;	
 		} catch (WriteException e) {
 			logger.error(e);
+			abortStep(step);
 			return;
 		} catch (SwapException e) {
 			logger.error(e);
+			abortStep(step);
 			return;
 		} catch (TypeNotAllowedForParentException e) {
 			logger.error(e);
+			abortStep(step);
 			return;
 		} catch (IOException e) {
 			logger.error(e);
+			abortStep(step);
 			return;
 		} catch (InterruptedException e) {
-			logger.error(e);
+			// validation error 
+			abortStep(step);
 			return;
 		}
 		CloseStepObjectAutomatic(step);
 	}
 
+	
+	private void abortStep(StepObject step) {
+	
+		step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
+		step.setEditType(StepEditType.AUTOMATIC.getValue());
+		
+		StepManager.updateStep(step);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws SQLException {
 		Date d = new Date(System.currentTimeMillis());
