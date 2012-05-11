@@ -52,6 +52,12 @@
 		<param-name>org.apache.myfaces.CONFIG_REFRESH_PERIOD</param-name>
 		<param-value>60</param-value>
 	</context-param>
+	
+	<context-param>
+  	  <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+  	  <param-value>true</param-value>
+	</context-param>
+	
 
 	<!-- WelcomeFile Filter -->
 	<!--

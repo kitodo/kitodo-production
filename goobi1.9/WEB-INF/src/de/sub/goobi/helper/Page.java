@@ -7,10 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Forms.LoginForm;
 
 /**
@@ -169,16 +166,16 @@ public class Page implements Serializable { // implements Iterator
 				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
 				if (this.results != null && this.results.size() > 0) {
 					List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
-					if (answer != null && answer.size()>0) {
-						Object objectToTest = answer.get(0);
-						if (objectToTest instanceof Schritt || objectToTest instanceof Prozess) {
-							Session session = Helper.getHibernateSession();
-							for (Object o : answer) {
-								// TODO hier prüfen ob valide ID?
-								session.refresh(o);
-							}
-						} 
-					}
+//					if (answer != null && answer.size()>0) {
+//						Object objectToTest = answer.get(0);
+//						if (objectToTest instanceof Schritt || objectToTest instanceof Prozess) {
+//							Session session = Helper.getHibernateSession();
+//							for (Object o : answer) {
+//								// TODO hier prüfen ob valide ID?
+//								session.refresh(o);
+//							}
+//						} 
+//					}
 
 
 					return answer;

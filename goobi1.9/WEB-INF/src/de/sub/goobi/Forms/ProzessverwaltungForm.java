@@ -99,7 +99,6 @@ import de.sub.goobi.Export.download.Multipage;
 import de.sub.goobi.Export.download.TiffHeader;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
@@ -136,7 +135,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	private Werkstueckeigenschaft myWerkstueckEigenschaft;
 	private Benutzergruppe myBenutzergruppe;
 	private ProzessDAO dao = new ProzessDAO();
-	private SchrittDAO stepdao = new SchrittDAO();
+//	private SchrittDAO stepdao = new SchrittDAO();
 	private String modusAnzeige = "aktuell";
 	private String modusBearbeiten = "";
 	private String goobiScript;
@@ -187,17 +186,26 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String Neu() {
 		this.myProzess = new Prozess();
+		this.myNewProcessTitle = "";
 		this.modusBearbeiten = "prozess";
 		return "ProzessverwaltungBearbeiten";
 	}
 
 	public String NeuVorlage() {
 		this.myProzess = new Prozess();
+		this.myNewProcessTitle = "";
 		this.myProzess.setIstTemplate(true);
 		this.modusBearbeiten = "prozess";
 		return "ProzessverwaltungBearbeiten";
 	}
 
+	
+	public String editProcess() {
+		Reload();
+		
+		return "ProzessverwaltungBearbeiten";
+	}
+	
 	public String Speichern() {
 		/*
 		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
@@ -1158,7 +1166,7 @@ public class ProzessverwaltungForm extends BasisForm {
 //				this.mySchritt = this.stepdao.load(this.mySchritt.getId());
 			Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
-				logger.error("could not refresh step with id " + this.mySchritt.getId(), e);
+				logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
 			}
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
@@ -1167,7 +1175,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				
 				 Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
-				logger.error("could not refresh process with id " + this.myProzess.getId(), e);
+				logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
 			}
 		}
 		return "";
