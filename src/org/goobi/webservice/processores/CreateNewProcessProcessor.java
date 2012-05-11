@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jms.MapMessage;
-
 import org.apache.log4j.Logger;
 import org.goobi.webservice.ActiveMQProcessor;
 import org.goobi.webservice.MapMessageObjectReader;
@@ -91,18 +89,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	}
 
 	@Override
-	protected void process(MapMessage ticket) throws Exception {
-		MapMessageObjectReader ticketReader = new MapMessageObjectReader(ticket);
+	protected void process(MapMessageObjectReader args) throws Exception {
 
-		Set<String> collections = ticketReader
-				.getMandatorySetOfString("collections");
-		String field = ticketReader.getMandatoryString("field");
-		String id = ticketReader.getMandatoryString("id");
-		String opac = ticketReader.getMandatoryString("opac");
-		String template = ticketReader.getMandatoryString("template");
-		Map<String, String> userFields = ticketReader
+		Set<String> collections = args.getMandatorySetOfString("collections");
+		String field = args.getMandatoryString("field");
+		String id = args.getMandatoryString("id");
+		String opac = args.getMandatoryString("opac");
+		String template = args.getMandatoryString("template");
+		Map<String, String> userFields = args
 				.getMapOfStringToString("userFields");
-		String value = ticketReader.getMandatoryString("value");
+		String value = args.getMandatoryString("value");
 
 		createNewProcessMain(template, opac, field, value, id, collections,
 				userFields);

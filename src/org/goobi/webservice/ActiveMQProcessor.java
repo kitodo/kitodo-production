@@ -52,7 +52,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
 	 *            A MapMessage which can be processor-specific except that it
 	 *            requires to have a field “id”.
 	 */
-	protected abstract void process(MapMessage ticket) throws Exception;
+	protected abstract void process(MapMessageObjectReader ticket) throws Exception;
 	
 	/**
 	 * Instantiating the class ActiveMQProcessor always requires to pass the
@@ -89,19 +89,16 @@ public abstract class ActiveMQProcessor implements MessageListener {
 	 */
 	@Override
 	public void onMessage(Message arg) {
-		MapMessage ticket = null;
+		MapMessageObjectReader ticket = null;
 		String TicketID = null;
 
 		try {
 			// Basic check ticket
 			if (arg instanceof MapMessage)
-				ticket = (MapMessage) arg;
+				ticket = new MapMessageObjectReader((MapMessage) arg);
 			else
 				throw new IllegalArgumentException("Incompatible types.");
-			TicketID = ticket.getString("id").trim();
-			if (TicketID == null || TicketID.length() == 0)
-				throw new IllegalArgumentException(
-						"Missing mandatory field \"id\".");
+			TicketID = ticket.getMandatoryString("id");
 
 			// process ticket
 			process(ticket);

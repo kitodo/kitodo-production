@@ -1,0 +1,104 @@
+                      Web service to create new processes
+
+Goobi.Production is equiped with a web service interface to automatically
+create new processes based on a given template. This allows the digitization
+process to be initiated from outside the application, for example by assigning
+a new digital ID to a record in a library catalogue (or—at choice of the
+library—by duplicating a record and assigning a new digital ID to the
+duplicate) and then running a script.
+
+The web service infrastructure is providet by an Active MQ server (see
+http://activemq.apache.org/ for details) which needs to be downloaded and
+started. Without further configuration, it provides everything necessary on
+port 61616 of the machine in question.
+
+The “activeMQ.hostURL” must be set in GoobiConfig.properties to point to this
+server. The “activeMQ.createNewProcess.queue” must be set to point to a queue
+of your choice where Goobi.Production shall pick up orders to create new
+processes.
+
+Orders must be javax.jms.MapMessage objects with the following key-value-pairs
+provided:
+
+	String template
+		name of the process template to use
+	String opac
+		Cataloge to use for lookup
+	String field
+		Field to look into, usually 12 (PPN)
+	String value
+		Value to look for, id of physical medium
+	String id
+		ID to be used as digital PPN
+	List<String> collections
+		Collections to be selected
+	Map<String, String> userFields (optional)
+		May be used to populates AdditionalField entries
+
+Here is a sample java client to do the job. It expects to be passed from the
+command line the Active MQ host (e.g. tcp://localhost:61616), the queue name
+and the parameters as listed above.
+
+To run this application, the following JARs from the ActiveMQ server’s /lib
+folder are required on the classpath:
+	* activemq-core
+	* geronimo-j2ee-management_1.1_spec
+	* genonimo-jms_1.1_spec
+	* log4j
+	* slf4j-api
+	* slf4j-log4j12
+
+--------------------------------[ Main.java ]----------------------------------
+import java.util.*;
+import javax.jms.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+public class Main {
+	public static int main(String[] args) { try {
+
+		// Check arguments
+		if (args.length < 8 || (args.length % 2) != 0) {
+			System.out.println("Parameters: Active MQ host, queue name, "
+					+ "template name, opac name,");
+			System.out.println("            no. of search field, search "
+					+ "string, digital id, collection name,");
+			System.out.println("            [additional details field, "
+					+ "value, [add. details field, value, [...");
+			return 1;
+		}
+
+		// Connect to server
+		Connection connection = new ActiveMQConnectionFactory(args[0])
+				.createConnection();
+		connection.start();
+		Session session = connection.createSession(false,
+				Session.AUTO_ACKNOWLEDGE);
+		Destination destination = session.createQueue(args[1]);
+		MessageProducer producer = session.createProducer(destination);
+		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+
+		// Create job ticket
+		MapMessage message = session.createMapMessage();
+		message.setString("template", args[2]);
+		message.setString("opac", args[3]);
+		message.setString("field", args[4]);
+		message.setString("value", args[5]);
+		message.setString("id", args[6]);
+		List<String> collections = new ArrayList<String>();
+		collections.add(args[7]);
+		message.setObject("collections", collections);
+		Map<String, String> userFields = new HashMap<String, String>();
+		for (int i = 8; i < args.length; i += 2)
+			userFields.put(args[i], args[i + 1]);
+		if (userFields.size() != 0)
+			message.setObject("userFields", userFields);
+
+		// Send job ticket
+		producer.send(message);
+
+		// Shutdown
+		session.close();
+		connection.close();
+	} catch (Exception e) {	e.printStackTrace(); return 2; }
+	return 0;
+}	}
