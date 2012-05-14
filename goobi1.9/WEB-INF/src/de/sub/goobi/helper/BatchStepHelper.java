@@ -505,8 +505,9 @@ public class BatchStepHelper {
 				se.setType(PropertyType.messageError);
 				se.setCreationDate(myDate);
 				se.setSchritt(temp);
+				String message =  Helper.getTranslation("KorrekturFuer")+ " " + temp.getTitel() + ": " +  this.problemMessage + " (" + ben.getNachVorname() + ")";
 				this.currentStep.getProzess().setWikifield(
-						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "error", this.problemMessage));
+						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "error", message));
 
 				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
@@ -646,8 +647,10 @@ public class BatchStepHelper {
 					this.stepDAO.save(step);
 				}
 			}
+			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " +  this.solutionMessage + " (" + ben.getNachVorname() + ")";
 			this.currentStep.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", this.solutionMessage));
+					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", message));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -700,7 +703,6 @@ public class BatchStepHelper {
 
 	public String getWikiField() {
 		return this.currentStep.getProzess().getWikifield();
-
 	}
 
 	public String getAddToWikiField() {

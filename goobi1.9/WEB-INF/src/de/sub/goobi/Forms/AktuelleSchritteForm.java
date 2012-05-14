@@ -372,7 +372,10 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			Criteria crit = this.myFilteredDataSource.getCriteria();
+			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+			userdefined.setFilterModes(false, false);
+			userdefined.setFilter("");
+			Criteria crit = userdefined.getCriteria();
 			crit.add(Restrictions.eq("titel", steptitle));
 			crit.add(Restrictions.eq("batchStep", true));
 
@@ -562,7 +565,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			se.setType(PropertyType.messageError);
 			se.setCreationDate(myDate);
 			se.setSchritt(temp);
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"error", this.problemMessage));
+			String message =  Helper.getTranslation("KorrekturFuer")+ " "  + temp.getTitel() + ": " + this.problemMessage + " (" + ben.getNachVorname() + ")";
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"error", message));
 			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
@@ -661,7 +665,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"info", this.solutionMessage));
+			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String message =   Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " (" + ben.getNachVorname() + ")";
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"info", message));
+			
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 		}
