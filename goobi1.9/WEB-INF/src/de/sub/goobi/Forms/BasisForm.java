@@ -31,10 +31,8 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 public class BasisForm implements Serializable {
 	private static final Logger logger = Logger
@@ -88,11 +86,11 @@ public class BasisForm implements Serializable {
 			return;
 		}
 		this.user.addFilter(this.filter);
-		try {
-			new BenutzerDAO().save(this.user);
-		} catch (DAOException e) {
-			logger.error(e);
-		}
+//		try {
+//			new BenutzerDAO().save(this.user);
+//		} catch (DAOException e) {
+//			logger.error(e);
+//		}
 	}
 	
 	public void removeFilterFromUser(){
@@ -100,10 +98,10 @@ public class BasisForm implements Serializable {
 			return;
 		}
 		this.user.removeFilter(this.filter);
-		try {
-			new BenutzerDAO().save(this.user);
-		} catch (DAOException e) {
-			logger.error(e);
-		}		
+//		try {
+//			new BenutzerDAO().save(this.user);
+//		} catch (DAOException e) {
+//			logger.error(e);
+//		}		
 	}
 }

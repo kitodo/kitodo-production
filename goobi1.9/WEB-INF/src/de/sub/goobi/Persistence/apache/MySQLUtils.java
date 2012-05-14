@@ -242,17 +242,19 @@ public class MySQLUtils {
 			return null;
 		}
 	};
+	
+	
 	public static ResultSetHandler<List<ProjectFileGroup>> resultSetToProjectFilegroupListHandler = new ResultSetHandler<List<ProjectFileGroup>>() {
 		@Override
 		public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
 			List<ProjectFileGroup> answer = new ArrayList<ProjectFileGroup>();
-			if (rs.next()) {
+			while (rs.next()) {
 				int ProjectFileGroupID = rs.getInt("ProjectFileGroupID");
 				String name = rs.getString("name");
 				String path = rs.getString("path");
 				String mimetype = rs.getString("mimetype");
 				String suffix = rs.getString("suffix");
-				int ProjekteID = rs.getInt("ProjekteID");
+//				int ProjekteID = rs.getInt("ProjekteID");
 				String folder = rs.getString("folder");
 				ProjectFileGroup pfg = new ProjectFileGroup();
 				pfg.setId(ProjectFileGroupID);
@@ -263,6 +265,19 @@ public class MySQLUtils {
 				// ProjekteId?
 				pfg.setFolder(folder);
 				answer.add(pfg);
+			}
+			return answer;
+		}
+	};
+	
+	
+	public static ResultSetHandler<List<String>> resultSetToFilterListtHandler = new ResultSetHandler<List<String>>() {
+		@Override
+		public List<String> handle(ResultSet rs) throws SQLException {
+			List<String> answer = new ArrayList<String>();
+			while (rs.next()) {
+				String filter = rs.getString("Wert");
+				answer.add(filter);
 			}
 			return answer;
 		}

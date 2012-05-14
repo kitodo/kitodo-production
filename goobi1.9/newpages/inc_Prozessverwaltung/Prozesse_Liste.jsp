@@ -310,7 +310,7 @@
 		</f:facet>
 
 		<%-- Bearbeiten-Schaltknopf: konkrete Prozesse --%>
-		<h:commandLink action="ProzessverwaltungBearbeiten" id="action10" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
+		<h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action10" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
 			title="#{msgs.prozessBearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:5px" />
 			<x:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}" />
@@ -318,7 +318,7 @@
 		</h:commandLink>
 
 		<%-- Bearbeiten-Schaltknopf: Vorlagen --%>
-		<h:commandLink action="ProzessverwaltungBearbeiten" id="action11"
+		<h:commandLink action="#{ProzessverwaltungForm.editProcess}" id="action11"
 			rendered="#{(LoginForm.maximaleBerechtigung == 1) && (ProzessverwaltungForm.modusAnzeige=='vorlagen')}" title="#{msgs.prozessBearbeiten}">
 			<h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:5px" />
 			<x:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item}" />
