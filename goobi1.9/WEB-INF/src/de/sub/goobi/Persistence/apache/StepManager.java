@@ -56,7 +56,7 @@ public class StepManager {
 		try {
 			return MySQLHelper.getScriptsForStep( id);
 		} catch (SQLException e) {
-			logger.error("Cannot not save history event", e);
+			logger.error("Cannot not load scripts for step with id " + id, e);
 		}
 		return new ArrayList<String>();
 	}
