@@ -135,7 +135,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	private Werkstueckeigenschaft myWerkstueckEigenschaft;
 	private Benutzergruppe myBenutzergruppe;
 	private ProzessDAO dao = new ProzessDAO();
-//	private SchrittDAO stepdao = new SchrittDAO();
+	// private SchrittDAO stepdao = new SchrittDAO();
 	private String modusAnzeige = "aktuell";
 	private String modusBearbeiten = "";
 	private String goobiScript;
@@ -199,13 +199,12 @@ public class ProzessverwaltungForm extends BasisForm {
 		return "ProzessverwaltungBearbeiten";
 	}
 
-	
 	public String editProcess() {
 		Reload();
-		
+
 		return "ProzessverwaltungBearbeiten";
 	}
-	
+
 	public String Speichern() {
 		/*
 		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
@@ -245,13 +244,14 @@ public class ProzessverwaltungForm extends BasisForm {
 					/* Vorgangstitel */
 					this.myProzess.setTitel(this.myNewProcessTitle);
 
-					/* Tiffwriter-Datei löschen */
-					GoobiScript gs = new GoobiScript();
-					ArrayList<Prozess> pro = new ArrayList<Prozess>();
-					pro.add(this.myProzess);
-					gs.deleteTiffHeaderFile(pro);
-					gs.updateImagePath(pro);
-
+					if (!this.myProzess.isIstTemplate()) {
+						/* Tiffwriter-Datei löschen */
+						GoobiScript gs = new GoobiScript();
+						ArrayList<Prozess> pro = new ArrayList<Prozess>();
+						pro.add(this.myProzess);
+						gs.deleteTiffHeaderFile(pro);
+						gs.updateImagePath(pro);
+					}
 				}
 			}
 
@@ -353,9 +353,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			this.myFilteredDataSource = new UserTemplatesFilter();
 			Criteria crit = this.myFilteredDataSource.getCriteria();
-//			if (!this.showClosedProcesses) {
-//				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
-//			}
+			// if (!this.showClosedProcesses) {
+			// crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+			// }
 
 			if (!this.showArchivedProjects) {
 				crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
@@ -1163,17 +1163,17 @@ public class ProzessverwaltungForm extends BasisForm {
 		// Helper.createNewHibernateSession();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
 			try {
-//				this.mySchritt = this.stepdao.load(this.mySchritt.getId());
-			Helper.getHibernateSession().refresh(this.mySchritt);
+				// this.mySchritt = this.stepdao.load(this.mySchritt.getId());
+				Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
 				logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
 			}
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
 			try {
-//				this.myProzess = this.dao.load(this.myProzess.getId());
-				
-				 Helper.getHibernateSession().refresh(this.myProzess);
+				// this.myProzess = this.dao.load(this.myProzess.getId());
+
+				Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
 				logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
 			}

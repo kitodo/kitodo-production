@@ -771,7 +771,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
 		if (!checkForMetadataFile()) {
-			throw new IOException(" Can't open metadata file: " + getMetadataFilePath() + "!");
+			throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath());
 		}
 		// checkForMetadataFile();
 		Hibernate.initialize(getRegelsatz());
@@ -850,9 +850,9 @@ public class Prozess implements Serializable, IGoobiEntity {
 		boolean result = true;
 		File f = new File(getMetadataFilePath());
 		if (!f.exists()) {
-			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
-			myLogger.warn(errorMessage);
-			Helper.setFehlerMeldung(errorMessage);
+//			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
+//			myLogger.warn(errorMessage);
+//			Helper.setFehlerMeldung(errorMessage);
 			result = false;
 		}
 
