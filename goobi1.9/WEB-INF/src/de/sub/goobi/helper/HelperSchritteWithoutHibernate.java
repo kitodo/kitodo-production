@@ -1,5 +1,6 @@
 package de.sub.goobi.helper;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -130,7 +131,13 @@ public class HelperSchritteWithoutHibernate {
 				}
 			}
 		}
-
+		ProcessObject po = ProcessManager.getProcessObjectForId(processId);
+		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
+		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory()))) {
+			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory())), processId);
+		}
+		
+		
 		updateProcessStatus(processId);
 
 		for (StepObject automaticStep : automatischeSchritte) {

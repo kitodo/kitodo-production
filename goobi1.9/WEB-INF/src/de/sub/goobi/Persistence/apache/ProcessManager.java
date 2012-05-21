@@ -31,6 +31,15 @@ public class ProcessManager {
 		}
 	}
 	
+	public static void updateImages(Integer numberOfFiles, int processId) {
+		try {
+			MySQLHelper.getInstance().updateImages(numberOfFiles, processId);
+		} catch (SQLException e) {
+			logger.error("Cannot not update status for process with id " + processId, e);
+		}
+		
+	}
+	
 	
 	public static void addLogfile(String value, int processId) {
 		try {
@@ -79,6 +88,9 @@ public class ProcessManager {
 		}
 		return answer;
 	}
+
+
+	
 	
 	
 }

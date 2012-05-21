@@ -232,6 +232,18 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
+	
+	public void updateImages(Integer numberOfFiles, int processId)  throws SQLException {
+		Connection connection = helper.getConnection();
+		try {
+			QueryRunner run = new QueryRunner();
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE prozesse SET sortHelperImages = '" + numberOfFiles + "' WHERE ProzesseID = " + processId + ";");
+			run.update(connection, sql.toString());
+		} finally {
+			closeConnection(connection);
+		}
+	}
 
 	public void updateProcessLog(String logValue, int processId) throws SQLException {
 		Connection connection = helper.getConnection();

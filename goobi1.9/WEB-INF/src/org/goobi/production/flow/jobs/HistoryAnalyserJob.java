@@ -39,6 +39,7 @@ import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
+import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
@@ -383,7 +384,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 		// if storedValue is different to current value - update history
 		if (diff != 0) {
-			inProcess.getHistory().add(new HistoryEvent(new Date(), diff, null, inType, inProcess));
+//			inProcess.getHistory().add(new HistoryEvent(new Date(), diff, null, inType, inProcess));
+			StepManager.addHistory(new Date(), diff, null,
+					inType.getValue(), inProcess.getId());
 			return true;
 		} else {
 			return false;

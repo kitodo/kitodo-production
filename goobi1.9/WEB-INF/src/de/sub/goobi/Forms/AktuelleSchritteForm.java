@@ -441,8 +441,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		 */
 		if (this.mySchritt.isTypImagesSchreiben()) {
 			try {
-				this.mySchritt.getProzess().setSortHelperImages(
-						FileUtils.getNumberOfFiles(new File(this.mySchritt.getProzess().getImagesOrigDirectory())));
+//				this.mySchritt.getProzess().setSortHelperImages(
+//						FileUtils.getNumberOfFiles(new File(this.mySchritt.getProzess().getImagesOrigDirectory())));
 				HistoryAnalyserJob.updateHistory(this.mySchritt.getProzess());
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("Error while calculation of storage and images", e);

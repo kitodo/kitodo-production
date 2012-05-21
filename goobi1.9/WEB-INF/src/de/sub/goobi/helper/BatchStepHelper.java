@@ -27,7 +27,6 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -807,7 +806,7 @@ public class BatchStepHelper {
 
 			if (s.isTypImagesSchreiben()) {
 				try {
-					s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
+//					s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
 					HistoryAnalyserJob.updateHistory(s.getProzess());
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("Error while calculation of storage and images", e);
