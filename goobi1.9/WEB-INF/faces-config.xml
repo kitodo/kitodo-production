@@ -64,7 +64,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<!-- Impressum -->
+		<!-- Mass Import -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MassImport</from-outcome>
@@ -83,7 +83,14 @@
 			<to-view-id>/newpages/MassImportPage3.jsp</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>MultiMassImportPage2</from-outcome>
+			<to-view-id>/newpages/MultiMassImportPage2.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	
 	<!-- Alle Benutzergruppen als Popup für die Bearbeitung der Benutzer-->
 	<navigation-rule>

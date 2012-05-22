@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.goobi.production.Import.DocstructElement;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.Import.ImportObject;
 import org.goobi.production.Import.Record;
@@ -211,9 +212,11 @@ public class MassImportForm {
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			this.plugin.setImportFolder(tempfolder);
 			this.plugin.setPrefs(prefs);
-			
+
 			if (StringUtils.isNotEmpty(this.idList)) {
-				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				// IImportPlugin plugin = (IImportPlugin)
+				// PluginLoader.getPlugin(PluginType.Import,
+				// this.currentPlugin);
 				List<String> ids = this.plugin.splitIds(this.idList);
 				List<Record> recordList = new ArrayList<Record>();
 				for (String id : ids) {
@@ -227,7 +230,9 @@ public class MassImportForm {
 				answer = this.plugin.generateFiles(recordList);
 			} else if (this.importFile != null) {
 				// uploaded file
-				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				// IImportPlugin plugin = (IImportPlugin)
+				// PluginLoader.getPlugin(PluginType.Import,
+				// this.currentPlugin);
 				this.plugin.setFile(this.importFile);
 				List<Record> recordList = this.plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
@@ -236,7 +241,9 @@ public class MassImportForm {
 				answer = this.plugin.generateFiles(recordList);
 			} else if (StringUtils.isNotEmpty(this.records)) {
 				// found list with records
-				// IImportPlugin plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+				// IImportPlugin plugin = (IImportPlugin)
+				// PluginLoader.getPlugin(PluginType.Import,
+				// this.currentPlugin);
 				List<Record> recordList = this.plugin.splitRecords(this.records);
 				for (Record r : recordList) {
 					r.setCollections(this.digitalCollections);
@@ -250,16 +257,16 @@ public class MassImportForm {
 				answer = this.plugin.generateFiles(recordList);
 				this.plugin.deleteFiles(this.selectedFilenames);
 			}
-		
+
 			if (answer.size() > 1) {
 				Session session = Helper.getHibernateSession();
-				
+
 				batchId = 1;
 				try {
 					batchId += (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
 				} catch (Exception e1) {
 				}
-				
+
 			}
 			for (ImportObject io : answer) {
 				if (batchId != null) {
@@ -267,7 +274,9 @@ public class MassImportForm {
 				}
 				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
 					Prozess p = JobCreation.generateProcess(io, this.template);
-					// int returnValue = HotfolderJob.generateProcess(io.getProcessTitle(), this.template, new File(tempfolder), null, "error", b);
+					// int returnValue =
+					// HotfolderJob.generateProcess(io.getProcessTitle(),
+					// this.template, new File(tempfolder), null, "error", b);
 					if (p == null) {
 						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle() + ", process generation failed");
 
@@ -644,6 +653,16 @@ public class MassImportForm {
 	public boolean getHasNextPage() {
 		java.lang.reflect.Method method;
 		try {
+			method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+			Object o = method.invoke(this.plugin);
+			@SuppressWarnings("unchecked")
+			List<DocstructElement> list = (List<DocstructElement>) o;
+			if (this.plugin != null && list != null ) {
+				return true;
+			}
+		} catch (Exception e) {
+		}
+		try {
 			method = this.plugin.getClass().getMethod("getProperties");
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
@@ -660,6 +679,17 @@ public class MassImportForm {
 		if (!testForData()) {
 			Helper.setFehlerMeldung("missingData");
 			return "";
+		} 
+		java.lang.reflect.Method method;
+		try {
+			method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+			Object o = method.invoke(this.plugin);
+			@SuppressWarnings("unchecked")
+			List<DocstructElement> list = (List<DocstructElement>) o;
+			if (this.plugin != null && list != null ) {
+				return "MultiMassImportPage2";
+			}
+		} catch (Exception e) {
 		}
 		return "MassImportFormPage2";
 	}
@@ -715,5 +745,19 @@ public class MassImportForm {
 		}
 		return "";
 	}
-
+	
+	public List<DocstructElement> getDocstructs() {
+	java.lang.reflect.Method method;
+	try {
+		method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+		Object o = method.invoke(this.plugin);
+		@SuppressWarnings("unchecked")
+		List<DocstructElement> list = (List<DocstructElement>) o;
+		if (this.plugin != null && list != null ) {
+			return list;
+		}
+	} catch (Exception e) {
+	}
+		return new ArrayList<DocstructElement>();
+	} 
 }

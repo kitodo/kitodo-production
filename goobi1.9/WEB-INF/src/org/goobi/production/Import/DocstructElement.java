@@ -1,4 +1,7 @@
-package org.goobi.production.plugin.interfaces;
+package org.goobi.production.Import;
+
+import ugh.dl.DocStruct;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,57 +29,25 @@ package org.goobi.production.plugin.interfaces;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.util.List;
-
-import org.goobi.production.Import.DocstructElement;
-import org.goobi.production.Import.ImportObject;
-import org.goobi.production.Import.Record;
-import org.goobi.production.enums.ImportType;
-import org.goobi.production.properties.ImportProperty;
-
-import de.sub.goobi.helper.exceptions.ImportPluginException;
-
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-
-public interface IImportPlugin extends IPlugin {
+public class DocstructElement {
+	private DocStruct docStruct;
+	private int order;
 	
-	public void setPrefs(Prefs prefs);
+	public DocstructElement(DocStruct docStruct,  int order) {
+		this.docStruct = docStruct;
+		this.order = order;
+	}
 	
-	public void setData(Record r);
-	
-	public Fileformat convertData() throws ImportPluginException;
-	
-	public String getImportFolder();
-	
-	public String getProcessTitle();
-
-	public List<ImportObject> generateFiles(List<Record> records);
-	
-	public void setImportFolder(String folder);
-	
-	public List<Record> splitRecords(String records);
-
-	public List<Record> generateRecordsFromFile();
-
-	public List<Record> generateRecordsFromFilenames(List<String> filenames);
-	
-	public void setFile(File importFile);
-	
-	public List<String> splitIds(String ids);
-	
-	public List<ImportType> getImportTypes();
-	
-	public List<ImportProperty> getProperties();
-	
-	public List<String> getAllFilenames();
-
-	public void deleteFiles(List<String> selectedFilenames);	
-	
-	public List<DocstructElement> getCurrentDocStructs();
-	
-	public void deleteDocstruct(DocstructElement docStruct);
-	
-	public void addDocstruct(DocstructElement docStruct);
+	public DocStruct getDocStruct() {
+		return docStruct;
+	}
+	public void setDocStruct(DocStruct docStruct) {
+		this.docStruct = docStruct;
+	}
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
+	}
 }
