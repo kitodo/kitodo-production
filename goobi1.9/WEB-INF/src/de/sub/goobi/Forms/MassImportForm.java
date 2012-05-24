@@ -595,6 +595,7 @@ public class MassImportForm {
 			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
 				this.allFilenames = this.plugin.getAllFilenames();
 			}
+			plugin.setPrefs(template.getRegelsatz().getPreferences());
 		}
 	}
 
@@ -605,6 +606,9 @@ public class MassImportForm {
 		return this.currentPlugin;
 	}
 
+	public IImportPlugin getPlugin() {
+		return plugin;
+	}
 	/**
 	 * @param usablePluginsForRecords
 	 *            the usablePluginsForRecords to set
@@ -760,4 +764,9 @@ public class MassImportForm {
 	}
 		return new ArrayList<DocstructElement>();
 	} 
+	
+	public int getDocstructssize() {
+		return getDocstructs().size();
+	}
+
 }

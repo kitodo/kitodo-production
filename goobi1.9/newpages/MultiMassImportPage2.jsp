@@ -72,7 +72,7 @@
 											<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
 												<x:dataTable var="property" id="processProperties" value="#{MassImportForm.properties}">
-	
+
 													<h:column>
 														<h:outputText value="#{property.name}:" />
 													</h:column>
@@ -84,7 +84,7 @@
 
 														<%-- numbers only --%>
 														<h:panelGroup id="prpvw15_1m" rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
-														<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
+															<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
 																<f:validateLongRange minimum="0" />
 															</h:inputText>
 														</h:panelGroup>
@@ -92,23 +92,20 @@
 														<%--  SelectOneMenu --%>
 														<h:panelGroup id="prpvw15_2" rendered="#{(property.type.name == 'list')}">
 															<h:selectOneMenu value="#{property.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
-																<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
-																	itemValue="#{propertys}" />
+																<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
 															</h:selectOneMenu>
 														</h:panelGroup>
 
 														<%--  SelectManyMenu --%>
 														<h:panelGroup id="prpvw15_3" rendered="#{(property.type.name == 'listmultiselect')}">
-															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}"
-																 size="5">
-																<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
-																	itemValue="#{propertys}" />
+															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}" size="5">
+																<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}" itemValue="#{propertys}" />
 															</h:selectManyListbox>
 														</h:panelGroup>
 
 														<%--  Boolean --%>
 														<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}">
-															<h:selectBooleanCheckbox value="#{property.booleanValue}"/>		
+															<h:selectBooleanCheckbox value="#{property.booleanValue}" />
 														</h:panelGroup>
 
 														<%--  Date  --%>
@@ -120,22 +117,38 @@
 												</x:dataTable>
 
 
-												<htm:hr/>
-												
+												<htm:hr />
+
+
+
 												<x:dataTable var="docstruct" id="docstructs" value="#{MassImportForm.docstructs}">
+													<h:column>
+														<h:selectOneMenu value="#{docstruct.docStruct}">
+															<si:selectItems value="#{MassImportForm.plugin.possibleDocstructs}" itemLabel="#{test}" itemValue="#{test}" var="test" />
+														</h:selectOneMenu>
+													</h:column>
+
+													<h:column>
+														<h:outputText value="#{msgs.order}:" />
+														<h:inputText  value="#{docstruct.order}" />
 													
-														<h:column>
-															<h:outputText value="#{docstruct.docStruct.type.name}"/>								
-														</h:column>
+													</h:column>
+
+													<h:column>
+														<h:commandLink  action="#{MassImportForm.plugin.addDocstruct}">
+														<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" />
 														
-														<h:column>
-															<h:outputText value="#{docstruct.order}"/>
-														</h:column>
+														</h:commandLink>
 														
-													
-													
+													<h:commandLink action="#{MassImportForm.plugin.deleteDocstruct}" rendered="#{MassImportForm.docstructssize > 1}">
+														<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" />
+														<x:updateActionListener property="#{MassImportForm.plugin.docstruct}" value="#{docstruct}" />
+													</h:commandLink>
+													</h:column>
+
+
 												</x:dataTable>
-												
+
 
 
 											</htm:td>

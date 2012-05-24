@@ -1,6 +1,6 @@
 package org.goobi.production.Import;
 
-import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -29,19 +29,20 @@ import ugh.dl.DocStruct;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 public class DocstructElement {
-	private DocStruct docStruct;
+	private String docStruct;
 	private int order;
 	
-	public DocstructElement(DocStruct docStruct,  int order) {
+	public DocstructElement(String docStruct,  int order) {
 		this.docStruct = docStruct;
 		this.order = order;
 	}
 	
-	public DocStruct getDocStruct() {
+	public String getDocStruct() {
 		return docStruct;
 	}
-	public void setDocStruct(DocStruct docStruct) {
+	public void setDocStruct(String docStruct) {
 		this.docStruct = docStruct;
 	}
 	public int getOrder() {

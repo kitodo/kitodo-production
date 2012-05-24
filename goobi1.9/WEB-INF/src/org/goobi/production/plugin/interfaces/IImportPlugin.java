@@ -76,7 +76,13 @@ public interface IImportPlugin extends IPlugin {
 	
 	public List<DocstructElement> getCurrentDocStructs();
 	
-	public void deleteDocstruct(DocstructElement docStruct);
+	public String deleteDocstruct();
 	
-	public void addDocstruct(DocstructElement docStruct);
+	public String addDocstruct();
+	
+	public List<String> getPossibleDocstructs();
+	
+	public DocstructElement getDocstruct();
+	
+	public void setDocstruct(DocstructElement dse);
 }
