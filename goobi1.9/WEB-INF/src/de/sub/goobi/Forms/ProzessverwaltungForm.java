@@ -253,6 +253,7 @@ public class ProzessverwaltungForm extends BasisForm {
 						gs.updateImagePath(pro);
 					}
 				}
+				// TODO rename folder
 			}
 
 			try {
