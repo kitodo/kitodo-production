@@ -481,6 +481,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 			FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
 		}
 
+		// copy pdf files
+        File pdfs = new File(basepath + "_pdf" + File.separator);
+        if (pdfs.isDirectory()) {
+            FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
+        }
+        
 		// copy source files
 
 		File sourceDir = new File(basepath + "_src" + File.separator);

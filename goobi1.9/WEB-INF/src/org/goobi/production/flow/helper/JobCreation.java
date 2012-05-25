@@ -164,6 +164,12 @@ public class JobCreation {
 			}
 			deleteDirectory(imagesFolder);
 		}
+		
+		// copy pdf files
+        File pdfs = new File(basepath + "_pdf" + File.separator);
+        if (pdfs.isDirectory()) {
+            FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
+        }
 
 		// copy fulltext files
 
