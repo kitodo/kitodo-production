@@ -288,6 +288,7 @@ public class ExportMetsWithoutHibernate {
 
 			String anchor = this.project.getMetsPointerPathAnchor();
 			pointer = vp.replace(anchor);
+			mm.setMptrAnchorUrl(pointer);
 
 			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 			List<String> images = new ArrayList<String>();
