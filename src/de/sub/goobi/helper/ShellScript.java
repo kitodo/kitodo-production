@@ -107,7 +107,7 @@ public class ShellScript {
 	 */
 	public ShellScript(File executable) throws FileNotFoundException {
 		if (!executable.exists())
-			throw new FileNotFoundException();
+			throw new FileNotFoundException("Could not find executable: " + executable.getAbsolutePath());
 		command = executable.getAbsolutePath();
 	}
 
@@ -156,18 +156,21 @@ public class ShellScript {
 		commandLine.add(command);
 		if (args != null)
 			commandLine.addAll(args);
-		String[] callSequence = commandLine.toArray(new String[commandLine
-				.size()]);
-
 		Process process = null;
 		try {
+			String[] callSequence = commandLine.toArray(new String[commandLine
+					.size()]);
 			process = new ProcessBuilder(callSequence).start();
 			outputChannel = inputStreamToLinkedList(process.getInputStream());
 			errorChannel = inputStreamToLinkedList(process.getErrorStream());
+		} catch (IOException error) {
+			throw new IOException(error.getMessage());
 		} finally {
-			closeStream(process.getInputStream());
-			closeStream(process.getOutputStream());
-			closeStream(process.getErrorStream());
+			if (process != null) {
+				closeStream(process.getInputStream());
+				closeStream(process.getOutputStream());
+				closeStream(process.getErrorStream());
+			}
 		}
 		errorLevel = process.waitFor();
 		return errorLevel;
