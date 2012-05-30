@@ -53,10 +53,6 @@ import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.property.DisplayPropertyList;
 import de.sub.goobi.beans.property.IGoobiEntity;
 import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -66,6 +62,10 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 
 public class Prozess implements Serializable, IGoobiEntity {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
@@ -262,9 +262,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			rueckgabe += File.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-			if (!new File(rueckgabe).exists()) {
-				new Helper().createMetaDirectory(rueckgabe);
-			}
+			FilesystemHelper.createDirectory(rueckgabe);
 		}
 		return rueckgabe;
 	}
@@ -316,8 +314,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 				origOrdner = DIRECTORY_PREFIX + "_" + titel + "_" + DIRECTORY_SUFFIX;
 			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
-			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-				new Helper().createMetaDirectory(rueckgabe);
+			if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+				FilesystemHelper.createDirectory(rueckgabe);
 			}
 			return rueckgabe;
 		} else {
@@ -327,8 +325,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
-		if (!new File(pfad).exists())
-			new Helper().createMetaDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -369,8 +366,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = help.getGoobiDataDirectory() + id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
-		if (!new File(pfad).exists())
-			new Helper().createMetaDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -733,7 +729,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 		File temporaryFile = new File(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
 		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
-
 		return directoryPath + File.separator + temporaryFileName;
 	}
 

@@ -22,9 +22,21 @@
 
 package de.sub.goobi.helper;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -35,24 +47,12 @@ import org.hibernate.Session;
 import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.persistence.HibernateUtilOld;
-import de.sub.goobi.config.ConfigMain;
 
 //TODO: Check if more method can be made static
 public class Helper implements Serializable, Observer {
-
-	// Pictures of the "Helper" also known as Tree-Man
-	// From http://monsterbrains.blogspot.com/
-	// http://i35.tinypic.com/20jmwes.jpg
-	// http://i38.tinypic.com/9jezh5.jpg
-	// Comic Reference
-	// http://katzundgoldt.de/port_laestiges_serviceunt_1.htm Panel 5
-	// References to the original
-	// http://upload.wikimedia.org/wikipedia/commons/9/91/Bosch_Jardin_des_delices_detail.jpg
-	// http://en.wikipedia.org/wiki/The_Garden_of_Earthly_Delights
-	// http://www.abcgallery.com/B/bosch/bosch1.html
-	// http://www.mesart.com/artworksps.jsp.que.artist.eq.678.amp.series.eq.4634.shtml
 
 	private static final Logger myLogger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;
@@ -216,127 +216,6 @@ public class Helper implements Serializable, Observer {
 		}
 		return sess;
 		// Fix for Hibernate-Session-Management, old version - END
-	}
-
-	/* Helferklassen für kopieren von Verzeichnissen und Dateien */
-
-	/**
-	 * simple call of console command without any feedback, error handling or return value
-	 * ================================================================
-	 */
-	// TODO: Don't use this to create /pages/imagesTemp/
-	public static void callShell(String command) throws IOException, InterruptedException {
-		myLogger.debug("execute Shellcommand callShell: " + command);
-
-		if (isEmptyCommand(command)) {
-			return;
-		}
-
-		Process process = null;
-		try {
-			String[] commandToken = command.split("\\s");
-			process = new ProcessBuilder(commandToken).start();
-			process.waitFor();
-		} finally {
-			closeProcessStreams(process);
-		}
-	}
-
-	/**
-	 * Call scripts from console and give back error messages and return value of the called script
-	 * 
-	 */
-	public static Integer callShell2(String command) throws IOException, InterruptedException {
-		myLogger.debug("execute Shellcommand callShell2: " + command);
-		boolean errorsExist = false;
-		if (isEmptyCommand(command)) {
-			return 1;
-		}
-
-		Process process = null;
-		Scanner scanner = null;
-
-		try {
-			String[] commandToken = command.split("\\s");
-			process = new ProcessBuilder(commandToken).start();
-
-			scanner = new Scanner(process.getInputStream());
-			while (scanner.hasNextLine()) {
-				String myLine = scanner.nextLine();
-				setMeldung(myLine);
-			}
-			scanner.close();
-
-			scanner = new Scanner(process.getErrorStream());
-			while (scanner.hasNextLine()) {
-				errorsExist = true;
-				setFehlerMeldung(scanner.nextLine());
-			}
-			scanner.close();
-
-			int rueckgabe = process.waitFor();
-
-			if (errorsExist) {
-				return 1;
-			} else {
-				return rueckgabe;
-			}
-
-		} finally {
-			closeProcessStreams(process);
-
-			// HINT: Scanner implements Closeable on Java 1.7
-			if (scanner != null) {
-				scanner.close();
-			}
-		}
-	}
-
-	private static boolean isEmptyCommand(String command) {
-		return (command == null) || (command.length() == 0);
-	}
-	
-	public static void closeProcessStreams(Process process) {
-		if (process == null) {
-			return;
-		}
-
-		closeFile(process.getInputStream());
-		closeFile(process.getOutputStream());
-		closeFile(process.getErrorStream());
-	}
-
-	public static void closeFile (Closeable openFile) {
-		if (openFile == null) {
-			return;
-		}
-
-		try {
-			openFile.close();
-		} catch (IOException e) {
-			myLogger.warn("Could not close file.", e);
-			Helper.setFehlerMeldung("Could not close open file.");
-		}
-	}
-
-	// TODO: Move the Stuff below in a class for interaction with a local file system
-
-	public void createUserDirectory(String inDirPath, String inUser) throws IOException, InterruptedException {
-		/*
-		 * -------------------------------- Create directory with script --------------------------------
-		 */
-		String command = ConfigMain.getParameter("script_createDirUserHome") + " ";
-		command += inUser + " " + inDirPath;
-		callShell(command);
-	}
-
-	public void createMetaDirectory(String inDirPath) throws IOException, InterruptedException {
-		/*
-		 * -------------------------------- Create directory with script --------------------------------
-		 */
-		String command = ConfigMain.getParameter("script_createDirMeta") + " ";
-		command += inDirPath;
-		callShell(command);
 	}
 
 	/**
