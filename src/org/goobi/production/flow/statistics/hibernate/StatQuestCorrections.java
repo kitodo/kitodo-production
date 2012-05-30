@@ -41,6 +41,7 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.HistoryEventType;
 
 /*****************************************************************************
@@ -114,7 +115,7 @@ public class StatQuestCorrections implements
 
 		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
 				this.getClass()).getTitle()
-				+ Helper.getTranslation("_(number)"));
+				+ Messages.getString("_(number)"));
 
 		DataRow dataRow;
 
@@ -133,7 +134,7 @@ public class StatQuestCorrections implements
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
 				//dataRow.setName(new converter(objArr[2]).getString());
 
-				dataRow.addValue(Helper.getTranslation("Corrections/Errors"),
+				dataRow.addValue(Messages.getString("Corrections/Errors"),
 						(new Converter(objArr[0]).getDouble()));
 
 			} catch (Exception e) {
@@ -146,7 +147,7 @@ public class StatQuestCorrections implements
 
 		// a list of DataTables is expected as return Object, even if there is only one 
 		// Data Table as it is here in this implementation
-		dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit()
+		dtbl.setUnitLabel(Messages.getString(getTimeUnit()
 				.getSingularTitle()));
 		allTables.add(dtbl);
 		return allTables;

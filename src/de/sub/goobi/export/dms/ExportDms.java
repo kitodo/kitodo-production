@@ -46,6 +46,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -119,7 +120,7 @@ public class ExportDms extends ExportMets {
 		
 				
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + myProzess.getTitel(), e);
+			Helper.setFehlerMeldung(Messages.getString("exportError") + myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return;
 		}

@@ -35,19 +35,19 @@
 		style="position:absolute;top:15px;right:100px;margin:0px;"
 		title="deutsche Version">
 		<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-		<f:param name="locale" value="de" />
+		<f:param name="locale" value="de_DE" />
 	</h:commandLink>
 	<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang2"
 		style="position:absolute;top:15px;right:65px;margin:0px"
 		title="english version">
 		<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-		<f:param name="locale" value="en" />
+		<f:param name="locale" value="en_GB" />
 	</h:commandLink>
 	<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang3"
 		style="position:absolute;top:15px;right:30px;margin:0px" rendered="true"
 		title="russian version">
 		<h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
-		<f:param name="locale" value="ru" />
+		<f:param name="locale" value="ru_RU" />
 	</h:commandLink>
 
 </h:form>
@@ -79,17 +79,17 @@
 					<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
 						title="deutsche Version">
 						<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-						<f:param name="locale" value="de" />
+						<f:param name="locale" value="de_DE" />
 					</h:commandLink>
 					<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
 						title="english version">
 						<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-						<f:param name="locale" value="en" />
+						<f:param name="locale" value="en_GB" />
 					</h:commandLink>
 					<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
 						rendered="true" title="russian version">
 						<h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
-						<f:param name="locale" value="ru" />
+						<f:param name="locale" value="ru_RU" />
 					</h:commandLink>
 				</h:panelGrid>
 			</h:form>

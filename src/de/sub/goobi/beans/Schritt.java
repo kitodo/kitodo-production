@@ -37,6 +37,7 @@ import de.sub.goobi.beans.property.DisplayPropertyList;
 import de.sub.goobi.beans.property.IGoobiEntity;
 import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 
@@ -298,7 +299,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	}
 
 	public String getTitelLokalisiert() {
-		return Helper.getTranslation(titel);
+		return Messages.getString(titel);
 	}
 
 	public String getTitel() {

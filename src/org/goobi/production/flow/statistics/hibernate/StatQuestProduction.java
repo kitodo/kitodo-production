@@ -41,6 +41,7 @@ import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about the productivity of the
@@ -199,8 +200,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 		// a list of DataTables is expected as return Object, even if there is only one
 		// Data Table as it is here in this implementation
-		dtblChart.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
-		dtbl.setUnitLabel(Helper.getTranslation(timeGrouping.getSingularTitle()));
+		dtblChart.setUnitLabel(Messages.getString(timeGrouping.getSingularTitle()));
+		dtbl.setUnitLabel(Messages.getString(timeGrouping.getSingularTitle()));
 
 		dtblChart.setShowableInTable(false);
 		dtbl.setShowableInChart(false);

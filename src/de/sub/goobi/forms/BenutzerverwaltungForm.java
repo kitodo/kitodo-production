@@ -57,6 +57,7 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.LdapGruppenDAO;
 import de.sub.goobi.persistence.ProjektDAO;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.ldap.Ldap;
 
@@ -143,7 +144,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 				dao.save(myClass);
 				return "BenutzerAlle";
 			} else {
-				Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
+				Helper.setFehlerMeldung("", Messages.getString("loginBereitsVergeben"));
 				return "";
 			}
 		} catch (DAOException e) {
@@ -160,7 +161,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Matcher matcher = pattern.matcher(inLogin);
 		valide = matcher.matches();
 		if (!valide)
-			Helper.setFehlerMeldung("", Helper.getTranslation("loginNotValid"));
+			Helper.setFehlerMeldung("", Messages.getString("loginNotValid"));
 
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -175,7 +176,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			while ((str = in.readLine()) != null)
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
 					valide = false;
-					Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
+					Helper.setFehlerMeldung("", "Login " + str + Messages.getString("loginNotValid"));
 				}
 			in.close();
 		} catch (IOException e) {
@@ -319,7 +320,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Ldap myLdap = new Ldap();
 		try {
 			myLdap.createNewUser(myClass, myClass.getPasswortCrypt());
-			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + myClass.getNachVorname(), "");
+			Helper.setMeldung(null, Messages.getString("ldapWritten") + myClass.getNachVorname(), "");
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
 		}

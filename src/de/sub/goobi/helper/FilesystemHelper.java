@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
@@ -122,6 +121,8 @@ public class FilesystemHelper {
 	 *            New file name / destination
 	 * @throws IOException
 	 *             is thrown if the rename fails permanently
+ 	 * @throws FileNotFoundException
+	 *             is thrown if old file (source file of renaming) does not exists
 	 */
 	public static void renameFile(String oldFileName, String newFileName)
 			throws IOException {
@@ -132,33 +133,44 @@ public class FilesystemHelper {
 		boolean success;
 		int millisWaited = 0;
 
-		if (oldFileName != null && newFileName != null) {
-			oldFile = new File(oldFileName);
-			newFile = new File(newFileName);
-			do {
-				if (SystemUtils.IS_OS_WINDOWS
-						&& millisWaited == SLEEP_INTERVAL_MILLIS) {
-					logger.warn("renameMetadataFile(): This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
-					System.gc();
-				}
-				success = oldFile.renameTo(newFile);
-				if (!success) {
-					if (millisWaited == 0)
-						logger.info("renameMetadataFile(): Rename failed. File may be locked. Retrying.");
-					try {
-						Thread.sleep(SLEEP_INTERVAL_MILLIS);
-					} catch (InterruptedException e) {
-					}
-					millisWaited += SLEEP_INTERVAL_MILLIS;
-				}
-			} while (!success && millisWaited < MAX_WAIT_MILLIS);
+		if ((oldFileName == null) || (newFileName == null)) {
+			return;
+		}
+
+		oldFile = new File(oldFileName);
+		newFile = new File(newFileName);
+
+		if (! oldFile.exists()) {
+			logger.debug("File " + oldFileName + " does not exist for renaming.");
+			throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
+		}
+
+		do {
+			if (SystemUtils.IS_OS_WINDOWS
+					&& millisWaited == SLEEP_INTERVAL_MILLIS) {
+				logger.warn("Renaming " + oldFileName  + " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+				System.gc();
+			}
+			success = oldFile.renameTo(newFile);
 			if (!success) {
-				logger.error("renameMetadataFile(): Rename failed. This is a permanent error. Giving up.");
-				throw new IOException("Renaming of " + oldFileName + " into "
-						+ newFileName + " failed.");
-			} else if (millisWaited > 0)
-				logger.info("renameMetadataFile(): Rename finally succeeded after"
-						+ Integer.toString(millisWaited) + " milliseconds.");
+				if (millisWaited == 0)
+					logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
+				try {
+					Thread.sleep(SLEEP_INTERVAL_MILLIS);
+				} catch (InterruptedException e) {
+				}
+				millisWaited += SLEEP_INTERVAL_MILLIS;
+			}
+		} while (!success && millisWaited < MAX_WAIT_MILLIS);
+
+		if (!success) {
+			logger.error("Rename " + oldFileName + " failed. This is a permanent error. Giving up.");
+			throw new IOException("Renaming of " + oldFileName + " into "
+					+ newFileName + " failed.");
+		}
+		
+		if (millisWaited > 0) {
+			logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
 		}
 	}
 }

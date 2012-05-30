@@ -22,11 +22,21 @@
 
 package de.sub.goobi.helper;
 
-import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -37,9 +47,9 @@ import org.hibernate.Session;
 import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.persistence.HibernateUtilOld;
-import de.sub.goobi.config.ConfigMain;
 
 //TODO: Check if more method can be made static
 public class Helper implements Serializable, Observer {
@@ -49,8 +59,6 @@ public class Helper implements Serializable, Observer {
 
 	private String myMetadatenVerzeichnis;
 	private String myConfigVerzeichnis;
-	static ResourceBundle bundle;
-	static ResourceBundle localBundle;
 
 	/**
 	 * Ermitteln eines bestimmten Paramters des Requests
@@ -161,12 +169,12 @@ public class Helper implements Serializable, Observer {
 		String msg = "";
 		String beschr = "";
 		try {
-			msg = bundle.getString(meldung);
+			msg = Messages.getString(meldung);
 		} catch (RuntimeException e) {
 			msg = meldung;
 		}
 		try {
-			beschr = bundle.getString(beschreibung);
+			beschr = Messages.getString(beschreibung);
 		} catch (RuntimeException e) {
 			beschr = beschreibung;
 		}
@@ -208,58 +216,6 @@ public class Helper implements Serializable, Observer {
 		}
 		return sess;
 		// Fix for Hibernate-Session-Management, old version - END
-	}
-
-	public static void loadLanguageBundle() {
-		myLogger.info("Loading message bundles.");
-		bundle = ResourceBundle.getBundle("messages.messages", FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		localBundle = loadLocalMessageBundleIfAvailable();
-	}
-
-	/**
-	  * Load local message bundle from file system only if file exists.
-	  *
-	  * @return Resource bundle for local messages. Returns NULL if no local message bundle could be found.
-	  */
-	private static ResourceBundle loadLocalMessageBundleIfAvailable() {
-		String localMessages = ConfigMain.getParameter("localMessages");
-		if (localMessages != null) {
-			File file = new File(localMessages);
-			if (file.exists()) {
-				myLogger.info("Local message bundle found: " + localMessages);
-				try {
-					URL resourceURL = file.toURI().toURL();
-					URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-					return ResourceBundle.getBundle("messages", FacesContext.getCurrentInstance().getViewRoot().getLocale(), urlLoader);
-				} catch (java.net.MalformedURLException muex) {
-					myLogger.error("Error reading local message bundle", muex);
-				}
-			}
-		}
-		return null;
-	}
-
-	public static String getTranslation(String dbTitel) {
-		// running instance of ResourceBundle doesn't respond on user language changes, workaround by instanciating it every time
-
-		try {
-			if (localBundle != null) {
-				if (localBundle.containsKey(dbTitel)) {
-					String trans = localBundle.getString(dbTitel);
-					return trans;
-				}
-				if (localBundle.containsKey(dbTitel.toLowerCase())) {
-					return localBundle.getString(dbTitel.toLowerCase());
-				}
-			}
-		} catch (RuntimeException e) {
-		}
-		try {
-			String msg = bundle.getString(dbTitel);
-			return msg;
-		} catch (RuntimeException e) {
-			return dbTitel;
-		}
 	}
 
 	/**

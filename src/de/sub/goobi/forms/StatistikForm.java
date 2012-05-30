@@ -52,7 +52,7 @@ public class StatistikForm {
 	
 
 	/**
-	 * @return Anzahl aller Literatureintr�ge
+	 * @return Anzahl aller Literatureinträge
 	 * @throws DAOException
 	 */
 	public Integer getAnzahlLiteraturGesamt() {
@@ -62,12 +62,19 @@ public class StatistikForm {
 	
 
 	/**
-	 * @return Anzahl der Benutzer
+	 * The function getAnzahlBenutzer() counts the number of user accounts in
+	 * the goobi.production environment. Since user accounts are not hard
+	 * deleted from the database when the delete button is pressed a where
+	 * clause is used in the SQL statement to exclude the deleted accounts from
+	 * the sum.
+	 * 
+	 * @return the count of valid user accounts
 	 * @throws DAOException
-	 */
+	 *             if the current session can't be retrieved or an exception is
+	 *             thrown while performing the rollback.	 */
 	public Long getAnzahlBenutzer() {
 		try {
-			return new BenutzerDAO().count("from Benutzer");
+			return new BenutzerDAO().count("from Benutzer where isVisible is null");
 		} catch (DAOException e) {
 
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());

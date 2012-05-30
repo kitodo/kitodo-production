@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 public class ConfigMain implements Serializable{
 	private static final long serialVersionUID = -7167854300981799440L;
@@ -104,7 +105,7 @@ public class ConfigMain implements Serializable{
 				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
 				myLogger.error("IO error: " + ioe);
-				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
+				Helper.setFehlerMeldung(Messages.getString("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
 		return filename;

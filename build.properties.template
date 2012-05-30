@@ -20,12 +20,8 @@
 # Suite 330, Boston, MA 02111-1307 USA
 #
 
-#servlet.jar=/opt/apache-tomcat-5.5.32/common/lib/servlet-api.jar
 #tomcat.dir.lib=/opt/apache-tomcat-5.5.32/common/lib
 #tomcat.compile.jsp=false
 #javac.debug=true
 #javac.args=
-#dist.version=1.6.5-rc1
-#dist.url=http://launchpad.net/~ralf-claussnitzer/+junk/antbuild-goobi-1.6.5
-
 

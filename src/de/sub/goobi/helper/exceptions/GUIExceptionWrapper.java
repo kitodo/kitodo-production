@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * This class provides the tools it takes to generate a configurable Error
@@ -87,7 +87,7 @@ public class GUIExceptionWrapper extends Exception {
 	 * 
 	 */
 
-	private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
+	private String fallBackErrorMessage = Messages.getString("err_fallBackMessage");
 
 	private String userSeenErrorMessage = "";
 
@@ -133,14 +133,14 @@ public class GUIExceptionWrapper extends Exception {
 
 		try {
 			if (ConfigMain.getBooleanParameter("err_userHandling")) {
-				err_linkText = Helper.getTranslation("err_linkText");
-				err_linkText = err_linkText.replace("{0}", Helper.getTranslation("err_linkToPage")).replace("err_linkToPage", "./Main.jsf");
+				err_linkText = Messages.getString("err_linkText");
+				err_linkText = err_linkText.replace("{0}", Messages.getString("err_linkToPage")).replace("err_linkToPage", "./Main.jsf");
 
 				if (ConfigMain.getBooleanParameter("err_emailEnabled")) {
 
-					err_emailMessage = Helper.getTranslation("err_emailMessage");
-					err_subjectLine = Helper.getTranslation("err_subjectLine");
-					err_emailBody = Helper.getTranslation("err_emailBody");
+					err_emailMessage = Messages.getString("err_emailMessage");
+					err_subjectLine = Messages.getString("err_subjectLine");
+					err_emailBody = Messages.getString("err_emailBody");
 
 					Integer emailCounter = Integer.valueOf(0);
 					String email = "";
@@ -156,7 +156,7 @@ public class GUIExceptionWrapper extends Exception {
 
 				} else {
 					// no email service enabled, build standard message
-					err_emailMessage = Helper.getTranslation("err_noMailService");
+					err_emailMessage = Messages.getString("err_noMailService");
 
 				}
 			} else {
@@ -209,7 +209,7 @@ public class GUIExceptionWrapper extends Exception {
 
 		} else {
 			// if no adresse a general text will be provided by this class
-			emailPart = Helper.getTranslation("err_noMailService");
+			emailPart = Messages.getString("err_noMailService");
 		}
 
 		userSeenErrorMessage = internalErrorMsg + linkPart + htmlLineFeed

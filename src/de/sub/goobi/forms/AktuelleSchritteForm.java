@@ -48,7 +48,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import messages.Messages;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
@@ -226,7 +226,7 @@ public class AktuelleSchritteForm extends BasisForm {
 						 */
 						new ProzessDAO().save(mySchritt.getProzess());
 					} catch (DAOException e) {
-						Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
+						Helper.setFehlerMeldung(Messages.getString("stepSaveError"), e);
 						myLogger.error("step couldn't get saved", e);
 					} finally {
 						flagWait = false;
@@ -323,8 +323,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (propList.size() > 0) {
 			for (PropertyTemplate prop : propList) {
 				if (prop.isIstObligatorisch() && (prop.getWert() == null || prop.getWert().equals(""))) {
-					Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " "
-							+ Helper.getTranslation("requiredValue"));
+					Helper.setFehlerMeldung(Messages.getString("Eigenschaft") + " " + prop.getTitel() + " "
+							+ Messages.getString("requiredValue"));
 					return "";
 				}
 			}
