@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<project name="Goobi" default="dist" xmlns:artifact="urn:maven-artifact-ant">
+
+	<!-- Distribution specific settings. -->
+	<property name="dist.name" value="goobi" />
+	<property name="dist.version" value="1.9" />
+	<property name="dist.revision" value="multiple manifestations"/>
+
+	<!-- Directory settings -->
+	<property name="dir.lib" value="./WEB-INF/lib" />
+	<property name="dir.build" location="./build" />
+	<property name="dir.build.src" location="${dir.build}/src" />
+	<property name="dir.config" location="./config" />
+	<property name="dir.tests" location="./test/src" />
+	<property name="dir.src" location="./WEB-INF/src" />
+	<available file=".git" type="dir" property="git.present"/>
+
+	<path id="classpath">
+		<fileset dir="${dir.lib}" />
+		<fileset dir="/opt/digiverso/libs" />
+	</path>
+
+	<!-- Clean up generated and compiled files. -->
+	<target name="clean" description="Clean up generated and compiled files.">
+		<delete dir="${dir.build}" />
+	</target>
+
+	<!-- Create needed directories -->
+	<target name="createDirs" description="Create needed directories">
+		<mkdir dir="${dir.build}" />
+		<property name="dir.build.classes" value="${dir.build}/WEB-INF/classes" />
+		<mkdir dir="${dir.build.classes}" />
+		<mkdir dir="${dir.build.src}" />
+	</target>
+
+
+	<!-- Copy any resource or configuration files. -->
+	<target name="resources" depends="createDirs" description="Copy any resource or configuration files.">
+		<copy todir="${dir.build.classes}" includeEmptyDirs="no">
+			<fileset dir="${dir.src}">
+				<patternset>
+					<include name="**/*.txt" />
+					<include name="**/*.conf" />
+					<include name="**/*.properties" />
+					<include name="**/*.jpg" />
+					<include name="**/sRGB.icc" />
+					<include name="**/log4j.properties" />
+					<include name="**/goobi_config.properties" />
+					<include name="**/contentServerConfig.xml" />
+					<include name="**/hibernate.cfg.xml" />
+					<exclude name="**/TODO" />
+					<include name="**/*.xml" />
+					<exclude name="build.xml" />
+				</patternset>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Copy configuration files. -->
+	<target name="copyConfig" description="Copy configuration files.">
+		<fixcrlf srcdir="${dir.build.classes}" includes="**/*.properties" />
+		<fixcrlf srcdir="${dir.build.classes}" includes="**/*.xml" />
+	</target>
+
+	<!-- Warn if Servlet API isn't found -->
+	<target name="warnServletAPI" depends="checkServletAPI" if="servletAPI.warn">
+		<echo>Servlet API not found on classpath!</echo>
+		<echo>run this build file via "ant -lib /path/to/servlet-api.jar"</echo>
+		<echo>CLASSPATH = ${java.class.path}</echo>
+		<fail message="Servlet API not found!" />
+	</target>
+
+	<!-- Check if serlet API is present. -->
+	<target name="checkServletAPI" description="Check if serlet API is present.">
+		<condition property="servletAPI.warn">
+			<not>
+				<available classname="javax.servlet.http.HttpServlet" property="servletAPI.present" classpathref="classpath" />
+			</not>
+		</condition>
+	</target>
+
+	<!-- copy sources to build directory -->
+	<target name="copySources" description="Copy the sources to the build directory">
+		<copy todir="${dir.build.src}">
+			<fileset dir="${dir.src}" />
+		</copy>
+		<copy todir="${dir.build.src}" overwrite="true" failonerror="false" >
+			<fileset dir="${private.dir}" />
+		</copy>
+	</target>
+
+	<!-- Normal build of application. -->
+	<target name="compile" depends="copySources, createDirs, writeVersion" description="Normal build of application.">
+
+		<javac srcdir="${dir.build.src}" destdir="${dir.build}/WEB-INF/classes" target="1.5" encoding="UTF8" debug="true" debuglevel="lines, vars, source">
+			<compilerarg value="-Xlint" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<!-- Build of war file. -->
+	<target name="war" depends="compile, resources, copyConfig" description="Build of war file.">
+
+		<war destfile="${dir.build}/${dist.name}-${dist.version}.war" webxml="WEB-INF/web.xml">
+			<classes dir="${dir.build.classes}" />
+			<lib dir="WEB-INF/lib" />
+			<fileset dir="." includes="WEB-INF/*.*, index.jsp" excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*" />
+			<fileset dir="." includes="js/**/*.*" />
+		
+			<zipfileset dir="pages" prefix="pages">
+				<patternset>
+					<include name="**/*.jsp" />
+					<include name="**/*.png" />
+				</patternset>
+			</zipfileset>
+			<zipfileset dir="newpages" prefix="newpages">
+				<patternset>
+					<include name="**/*.jsp" />
+					<include name="**/*.gif" />
+					<include name="**/*.png" />
+					<include name="**/*.jpg" />
+					<include name="**/*.ico" />
+				</patternset>
+			</zipfileset>
+			<zipfileset dir="css" prefix="css" />
+		</war>
+	</target>
+
+	<target name="git.revision" description="Store git revision in ${repository.version}" >
+	    <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="" >
+	        <arg value="describe"/>
+	        <arg value="--tags"/>
+	        <arg value="--always"/>
+	        <arg value="HEAD"/>
+	    </exec>
+	    <condition property="repository.version" value="${git.revision}" else="unknown">
+	        <and>
+	            <isset property="git.revision"/>
+	            <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+	        </and>
+	    </condition>
+	</target>
+
+
+	<!-- Build single war file. -->
+	<target name="dist" depends="clean, war, copyConfig" description="Build single war file.">
+	<!--	<delete dir="${dir.build.src}"/>
+	-->
+		<echo>Alles ist gut</echo>
+		<echo>building revision ${dist.version}-${git.revision}</echo>
+	</target>
+
+	<!-- Build all, not really needed yet. -->
+	<target name="all" depends="dist" description="Build all, not really needed yet." />
+
+	<!-- rewrite the Version file with informations from the build system, not used yet-->
+	<target name="writeVersion" depends="git.revision" description="writes the build version">
+		<tstamp>
+		<format property="date" pattern="dd−MMMM−yyyy" locale="en" />
+		</tstamp>
+		<echo file="${dir.build.src}/org/goobi/production/GoobiVersion.java">
+			package org.goobi.production;
+			/*
+			DO NOT CHANGE THIS FILE, IT'S GENERATED BY ANT!
+			*/
+			public class GoobiVersion {
+				public final static String VERSION = "${dist.name}";
+				public final static String BUILDVERSION = "${dist.version}-${git.revision}";
+				public final static String BUILDDATE = "${date}";
+			}
+		</echo>
+	</target>
+
+</project>

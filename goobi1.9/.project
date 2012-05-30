@@ -26,4 +26,11 @@
 		<nature>com.sysdeo.eclipse.tomcat.tomcatnature</nature>
 		<nature>net.sourceforge.metrics.nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>private</name>
+			<type>2</type>
+			<location>/Users/steffen/git/goobi-private/Goobi-Configuration/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

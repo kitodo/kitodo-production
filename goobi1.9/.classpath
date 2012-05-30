@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="WEB-INF/src"/>
+	<classpathentry excluding="Messages/|hibernate.cfg.xml" kind="src" path="WEB-INF/src"/>
+	<classpathentry kind="src" path="private"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/chartcreator-1.2.0-RC1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/clibwrapper_jiio.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-beanutils-1.7.0.jar"/>
