@@ -346,4 +346,13 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
+
+	public static List<Integer> getStepIds(String query) throws SQLException {
+		Connection connection = helper.getConnection();
+		try {
+			return new QueryRunner().query(connection, query, MySQLUtils.resultSetToIntegerListHandler);
+		} finally {
+			closeConnection(connection);
+		}
+	}
 }

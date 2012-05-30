@@ -80,10 +80,21 @@ public class StepManager {
 
 	public static List<String> loadScripts(int id) {
 		try {
-			return MySQLHelper.getScriptsForStep( id);
+			return MySQLHelper.getScriptsForStep(id);
 		} catch (SQLException e) {
 			logger.error("Cannot not load scripts for step with id " + id, e);
 		}
 		return new ArrayList<String>();
 	}
+	
+	
+	public static List<Integer> getStepIds(String query) {
+		try {
+			return MySQLHelper.getStepIds(query);
+		} catch (SQLException e) {
+			logger.error("Cannot not load steps", e);
+		}
+		return new ArrayList<Integer>();
+	}
+	
 }

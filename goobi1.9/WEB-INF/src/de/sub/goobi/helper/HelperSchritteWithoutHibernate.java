@@ -290,7 +290,7 @@ public class HelperSchritteWithoutHibernate {
 	public static void main(String[] args) throws SQLException {
 		Date d = new Date(System.currentTimeMillis());
 		d.setMonth(4);
-		d.setDate(7);
+		d.setDate(17);
 		System.out.println(d.getTime());
 
 		// DbHelper helper = DbHelper.getInstance();

@@ -202,7 +202,7 @@ public class MySQLUtils {
 		}
 	};
 
-	public static StepObject parseStepObject(ResultSet rs) throws SQLException {
+	private static StepObject parseStepObject(ResultSet rs) throws SQLException {
 		StepObject so = null;
 
 		if (rs != null) {
@@ -307,6 +307,21 @@ public class MySQLUtils {
 			}
 			return answer;
 		}
+	};
+	
+	public static ResultSetHandler<List<Integer>> resultSetToIntegerListHandler = new ResultSetHandler<List<Integer>>() {
+
+		@Override
+		public List<Integer> handle(ResultSet rs) throws SQLException {
+			List<Integer> answer = new ArrayList<Integer>();
+			while (rs.next()){
+				answer.add(new Integer(rs.getInt(1)));
+			}
+		
+			return answer;
+		}
+	
+	
 	};
 
 }
