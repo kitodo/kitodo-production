@@ -54,6 +54,7 @@ import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.dl.Reference;
+import ugh.dl.RomanNumeral;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
@@ -70,7 +71,8 @@ import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
 import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 public class MetadatenImagesHelper {
-	private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
+	private static final Logger logger = Logger
+			.getLogger(MetadatenImagesHelper.class);
 	private Prefs myPrefs;
 	private DigitalDocument mydocument;
 	private int myLastImage = 0;
@@ -98,8 +100,9 @@ public class MetadatenImagesHelper {
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public void createPagination(Prozess inProzess, String directory) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
-			DAOException {
+	public void createPagination(Prozess inProzess, String directory)
+			throws TypeNotAllowedForParentException, IOException,
+			InterruptedException, SwapException, DAOException {
 		DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
 		DocStruct log = this.mydocument.getLogicalDocStruct();
@@ -108,7 +111,7 @@ public class MetadatenImagesHelper {
 				log = log.getAllChildren().get(0);
 			}
 		}
-		
+
 		/*-------------------------------- 
 		 * der physische Baum wird nur
 		 * angelegt, wenn er noch nicht existierte
@@ -120,15 +123,20 @@ public class MetadatenImagesHelper {
 			/*-------------------------------- 
 			 * Probleme mit dem FilePath
 			 * -------------------------------- */
-			MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+			MetadataType MDTypeForPath = this.myPrefs
+					.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
 				// mdForPath.setType(MDTypeForPath);
 				// TODO: add the possibilty for using other image formats
 				if (SystemUtils.IS_OS_WINDOWS) {
-					mdForPath.setValue("file:/" + inProzess.getImagesDirectory() + inProzess.getTitel().trim() + "_tif");
+					mdForPath.setValue("file:/"
+							+ inProzess.getImagesDirectory()
+							+ inProzess.getTitel().trim() + "_tif");
 				} else {
-					mdForPath.setValue("file://" + inProzess.getImagesDirectory() + inProzess.getTitel().trim() + "_tif");
+					mdForPath.setValue("file://"
+							+ inProzess.getImagesDirectory()
+							+ inProzess.getTitel().trim() + "_tif");
 				}
 				physicaldocstruct.addMetadata(mdForPath);
 			} catch (MetadataTypeNotAllowedException e1) {
@@ -137,18 +145,20 @@ public class MetadatenImagesHelper {
 			this.mydocument.setPhysicalDocStruct(physicaldocstruct);
 		}
 
-		if (directory==null){
-			checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesTifDirectory());			
-		}else{
-			checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesDirectory() + directory);
+		if (directory == null) {
+			checkIfImagesValid(inProzess.getTitel(),
+					inProzess.getImagesTifDirectory());
+		} else {
+			checkIfImagesValid(inProzess.getTitel(),
+					inProzess.getImagesDirectory() + directory);
 		}
-		
 
 		/*------------------------------- 
 		 * retrieve existing pages/images
 		 * -------------------------------*/
 		DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
-		List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
+		List<DocStruct> oldPages = physicaldocstruct
+				.getAllChildrenByTypeAndMetadataType("page", "*");
 		if (oldPages == null) {
 			oldPages = new ArrayList<DocStruct>();
 		}
@@ -156,6 +166,10 @@ public class MetadatenImagesHelper {
 		/*-------------------------------- 
 		 * add new page/images if necessary
 		 * --------------------------------*/
+
+		String defaultPagination = ConfigMain.getParameter(
+				"MetsEditorDefaultPagination", "uncounted");
+
 		if (oldPages.size() < this.myLastImage) {
 			for (int i = oldPages.size(); i < this.myLastImage; i++) {
 				DocStruct dsPage = this.mydocument.createDocStruct(newPage);
@@ -167,25 +181,36 @@ public class MetadatenImagesHelper {
 					 * --------------------------------
 					 */
 					physicaldocstruct.addChild(dsPage);
-					MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+					MetadataType mdt = this.myPrefs
+							.getMetadataTypeByName("physPageNumber");
 					Metadata mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
-					
+
 					/*
 					 * -------------------------------- die logischen
 					 * Seitennummern anlegen, die der Benutzer auch ändern kann
 					 * --------------------------------
 					 */
-					mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
+					mdt = this.myPrefs
+							.getMetadataTypeByName("logicalPageNumber");
 					mdTemp = new Metadata(mdt);
 					// mdTemp.setType(mdt);
-					mdTemp.setValue(String.valueOf(i + 1));
+
+					if (defaultPagination.equalsIgnoreCase("arabic")) {
+						mdTemp.setValue(String.valueOf(i + 1));
+					} else if (defaultPagination.equalsIgnoreCase("roman")) {
+						RomanNumeral roman = new RomanNumeral();
+						roman.setValue(i + 1);
+						mdTemp.setValue(roman.getNumber());
+					} else {
+						mdTemp.setValue("uncounted");
+					}
+
 					dsPage.addMetadata(mdTemp);
 					log.addReferenceTo(dsPage, "logical_physical");
-							
-							
+
 					// myLogger.debug("fertig mit Paginierung für Nr. " + i +
 					// " von " + myBildLetztes);
 				} catch (TypeNotAllowedAsChildException e) {
@@ -197,11 +222,13 @@ public class MetadatenImagesHelper {
 		}
 
 		else if (oldPages.size() > this.myLastImage) {
-			MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+			MetadataType mdt = this.myPrefs
+					.getMetadataTypeByName("physPageNumber");
 			for (DocStruct page : oldPages) {
 				List<? extends Metadata> mdts = page.getAllMetadataByType(mdt);
 				if (mdts.size() != 1) {
-					throw new SwapException("found page DocStruct with more or less than 1 pysical pagination");
+					throw new SwapException(
+							"found page DocStruct with more or less than 1 pysical pagination");
 					// return myLastImage;
 				}
 				/*
@@ -210,7 +237,8 @@ public class MetadatenImagesHelper {
 				 */
 				if (Integer.parseInt(mdts.get(0).getValue()) > this.myLastImage) {
 					physicaldocstruct.removeChild(page);
-					List<Reference> refs = new ArrayList<Reference>(page.getAllFromReferences());
+					List<Reference> refs = new ArrayList<Reference>(
+							page.getAllFromReferences());
 					for (ugh.dl.Reference ref : refs) {
 						ref.getSource().removeReferenceTo(page);
 					}
@@ -229,7 +257,8 @@ public class MetadatenImagesHelper {
 	 * @throws IOException
 	 * @throws ImageManipulatorException
 	 */
-	public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation) throws ImageManagerException, IOException,
+	public void scaleFile(String inFileName, String outFileName, int inSize,
+			int intRotation) throws ImageManagerException, IOException,
 			ImageManipulatorException {
 		logger.trace("start scaleFile");
 		int tmpSize = inSize / 3;
@@ -239,28 +268,35 @@ public class MetadatenImagesHelper {
 		logger.trace("tmpSize: " + tmpSize);
 		if (ConfigMain.getParameter("ContentServerUrl") == null) {
 			logger.trace("api");
-			ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
+			ImageManager im = new ImageManager(new File(inFileName).toURI()
+					.toURL());
 			logger.trace("im");
-			RenderedImage ri = im.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
+			RenderedImage ri = im.scaleImageByPixel(tmpSize, tmpSize,
+					ImageManager.SCALE_BY_PERCENT, intRotation);
 			logger.trace("ri");
 			JpegInterpreter pi = new JpegInterpreter(ri);
 			logger.trace("pi");
-			FileOutputStream outputFileStream = new FileOutputStream(outFileName);
+			FileOutputStream outputFileStream = new FileOutputStream(
+					outFileName);
 			logger.trace("output");
 			pi.writeToStream(null, outputFileStream);
 			logger.trace("write stream");
 			outputFileStream.close();
 			logger.trace("close stream");
 		} else {
-			String cs = ConfigMain.getParameter("ContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation + "&format=jpg";
+			String cs = ConfigMain.getParameter("ContentServerUrl")
+					+ inFileName + "&scale=" + tmpSize + "&rotate="
+					+ intRotation + "&format=jpg";
 			cs = cs.replace("\\", "/");
 			logger.trace("url: " + cs);
 			URL csUrl = new URL(cs);
 			HttpClient httpclient = new HttpClient();
 			GetMethod method = new GetMethod(csUrl.toString());
 			logger.trace("get");
-			Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
-			method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
+			Integer contentServerTimeOut = ConfigMain.getIntParameter(
+					"goobiContentServerTimeOut", 60000);
+			method.getParams().setParameter("http.socket.timeout",
+					contentServerTimeOut);
 			int statusCode = httpclient.executeMethod(method);
 			if (statusCode != HttpStatus.SC_OK) {
 				return;
@@ -297,7 +333,9 @@ public class MetadatenImagesHelper {
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public boolean checkIfImagesValid(String title, String folder) throws IOException, InterruptedException, SwapException, DAOException {
+	public boolean checkIfImagesValid(String title, String folder)
+			throws IOException, InterruptedException, SwapException,
+			DAOException {
 		boolean isValid = true;
 		this.myLastImage = 0;
 
@@ -315,26 +353,33 @@ public class MetadatenImagesHelper {
 
 			// ArrayList<String> images = getImageFiles(inProzess);
 			this.myLastImage = dateien.length;
-			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals(
+					"\\d{8}")) {
 				List<String> filesDirs = Arrays.asList(dateien);
 				Collections.sort(filesDirs);
 				int counter = 1;
 				int myDiff = 0;
 				String curFile = null;
 				try {
-					for (Iterator<String> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
+					for (Iterator<String> iterator = filesDirs.iterator(); iterator
+							.hasNext(); counter++) {
 						curFile = iterator.next();
-						int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
+						int curFileNumber = Integer.parseInt(curFile.substring(
+								0, curFile.indexOf(".")));
 						if (curFileNumber != counter + myDiff) {
-							Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff) + " but found File "
-									+ curFile);
+							Helper.setFehlerMeldung("[" + title
+									+ "] expected Image " + (counter + myDiff)
+									+ " but found File " + curFile);
 							myDiff = curFileNumber - counter;
 							isValid = false;
 						}
 					}
 				} catch (NumberFormatException e1) {
 					isValid = false;
-					Helper.setFehlerMeldung("[" + title + "] Filename of image wrong - not an 8-digit-number: " + curFile);
+					Helper.setFehlerMeldung("["
+							+ title
+							+ "] Filename of image wrong - not an 8-digit-number: "
+							+ curFile);
 				}
 				return isValid;
 			}
@@ -348,7 +393,8 @@ public class MetadatenImagesHelper {
 
 		@Override
 		public int compare(String s1, String s2) {
-			String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
+			String imageSorting = ConfigMain.getParameter("ImageSorting",
+					"number");
 			s1 = s1.substring(0, s1.lastIndexOf("."));
 			s2 = s2.substring(0, s2.lastIndexOf("."));
 
@@ -377,7 +423,8 @@ public class MetadatenImagesHelper {
 	 * @throws InvalidImagesException
 	 */
 
-	public ArrayList<String> getImageFiles(Prozess myProzess) throws InvalidImagesException {
+	public ArrayList<String> getImageFiles(Prozess myProzess)
+			throws InvalidImagesException {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesTifDirectory());
@@ -403,7 +450,8 @@ public class MetadatenImagesHelper {
 		}
 	}
 
-	public List<String> getDataFiles(Prozess myProzess) throws InvalidImagesException {
+	public List<String> getDataFiles(Prozess myProzess)
+			throws InvalidImagesException {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesTifDirectory());
@@ -428,7 +476,7 @@ public class MetadatenImagesHelper {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param myProzess
@@ -439,7 +487,8 @@ public class MetadatenImagesHelper {
 	 * @throws InvalidImagesException
 	 */
 
-	public ArrayList<String> getImageFiles(Prozess myProzess, String directory) throws InvalidImagesException {
+	public ArrayList<String> getImageFiles(Prozess myProzess, String directory)
+			throws InvalidImagesException {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesDirectory() + directory);
@@ -465,36 +514,37 @@ public class MetadatenImagesHelper {
 		}
 	}
 
-//	/**
-//	 * {@link FilenameFilter} for all sort of images
-//	 */
-//
-//	public static FilenameFilter filter = new FilenameFilter() {
-//		@Override
-//		public boolean accept(File dir, String name) {
-//			boolean validImage = false;
-//			// jpeg
-//			if (name.endsWith("jpg") || name.endsWith("JPG") || name.endsWith("jpeg") || name.endsWith("JPEG")) {
-//				validImage = true;
-//			}
-//			if (name.endsWith(".tif") || name.endsWith(".TIF")) {
-//				validImage = true;
-//			}
-//			// png
-//			if (name.endsWith(".png") || name.endsWith(".PNG")) {
-//				validImage = true;
-//			}
-//			// gif
-//			if (name.endsWith(".gif") || name.endsWith(".GIF")) {
-//				validImage = true;
-//			}
-//			// jpeg2000
-//			if (name.endsWith(".jp2") || name.endsWith(".JP2")) {
-//				validImage = true;
-//			}
-//
-//			return validImage;
-//		}
-//	};
+	// /**
+	// * {@link FilenameFilter} for all sort of images
+	// */
+	//
+	// public static FilenameFilter filter = new FilenameFilter() {
+	// @Override
+	// public boolean accept(File dir, String name) {
+	// boolean validImage = false;
+	// // jpeg
+	// if (name.endsWith("jpg") || name.endsWith("JPG") || name.endsWith("jpeg")
+	// || name.endsWith("JPEG")) {
+	// validImage = true;
+	// }
+	// if (name.endsWith(".tif") || name.endsWith(".TIF")) {
+	// validImage = true;
+	// }
+	// // png
+	// if (name.endsWith(".png") || name.endsWith(".PNG")) {
+	// validImage = true;
+	// }
+	// // gif
+	// if (name.endsWith(".gif") || name.endsWith(".GIF")) {
+	// validImage = true;
+	// }
+	// // jpeg2000
+	// if (name.endsWith(".jp2") || name.endsWith(".JP2")) {
+	// validImage = true;
+	// }
+	//
+	// return validImage;
+	// }
+	// };
 
 }
