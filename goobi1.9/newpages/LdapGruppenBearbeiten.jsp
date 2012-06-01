@@ -37,7 +37,7 @@
 									action="LdapGruppenAlle" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:outputText id="id4" value="#{msgs.neueLdapgruppeAnlegen}"
-									rendered="#{LdapgruppenForm.myLdapGruppe.id == null}" />
+									rendered="#{LdapGruppenForm.myLdapGruppe.id == null}" />
 								<h:outputText id="id5" value="#{msgs.ldapgruppeBearbeiten}"
 									rendered="#{LdapGruppenForm.myLdapGruppe.id != null}" />
 							</h:panelGroup>
