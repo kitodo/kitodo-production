@@ -90,7 +90,8 @@ public class Page implements Serializable { // implements Iterator
 			 */
 			// results = criteria.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
 		} catch (HibernateException e) {
-			logger.error("Failed to get paginated results: " + e);
+			// no hits found, error is thrown
+			logger.debug("Failed to get paginated results: " + e);
 		}
 	}
 

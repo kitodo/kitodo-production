@@ -29,7 +29,9 @@ package de.sub.goobi.Persistence.apache;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -86,7 +88,14 @@ public class StepManager {
 		}
 		return new ArrayList<String>();
 	}
-	
+	public static Map<String,String> loadScriptMap(int id) {
+		try {
+			return MySQLHelper.getScriptMapForStep(id);
+		} catch (SQLException e) {
+			logger.error("Cannot not load scripts for step with id " + id, e);
+		}
+		return new HashMap<String, String>();
+	}
 	
 	public static List<Integer> getStepIds(String query) {
 		try {

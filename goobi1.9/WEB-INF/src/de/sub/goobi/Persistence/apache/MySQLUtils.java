@@ -31,7 +31,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.dbutils.ResultSetHandler;
 
@@ -196,6 +198,37 @@ public class MySQLUtils {
 				}
 				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad5"));
+				}
+			}
+			return answer;
+		}
+	};
+	
+	
+	public static ResultSetHandler<Map<String,String>> resultSetToScriptMapHandler = new ResultSetHandler<Map<String,String>>() {
+		@Override
+		public Map<String,String> handle(ResultSet rs) throws SQLException {
+			Map<String,String> answer = new HashMap<String, String>();
+			if (rs.next()) {
+				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
+					String name = rs.getString("scriptName1");
+					answer.put(name, rs.getString("typAutomatischScriptpfad"));
+				}
+				if (rs.getString("typAutomatischScriptpfad2") != null && rs.getString("typAutomatischScriptpfad2").length() > 0) {
+					String name = rs.getString("scriptName2");
+					answer.put(name, rs.getString("typAutomatischScriptpfad2"));
+				}
+				if (rs.getString("typAutomatischScriptpfad3") != null && rs.getString("typAutomatischScriptpfad3").length() > 0) {
+					String name = rs.getString("scriptName3");
+					answer.put(name, rs.getString("typAutomatischScriptpfad3"));
+				}
+				if (rs.getString("typAutomatischScriptpfad4") != null && rs.getString("typAutomatischScriptpfad4").length() > 0) {
+					String name = rs.getString("scriptName4");
+					answer.put(name, rs.getString("typAutomatischScriptpfad4"));
+				}
+				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
+					String name = rs.getString("scriptName5");
+					answer.put(name, rs.getString("typAutomatischScriptpfad5"));
 				}
 			}
 			return answer;

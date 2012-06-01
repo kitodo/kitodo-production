@@ -69,6 +69,7 @@ public class HelperSchritteWithoutHibernate {
 	}
 
 	private void closeStepObject(StepObject currentStep, int processId) {
+		logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		currentStep.setBearbeitungszeitpunkt(myDate);
@@ -111,7 +112,7 @@ public class HelperSchritteWithoutHibernate {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
-
+					logger.debug("open step " + myStep.getTitle());
 					myStep.setBearbeitungsstatus(1);
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);

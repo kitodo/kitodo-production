@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
@@ -197,6 +198,19 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
+	
+	public static Map<String,String> getScriptMapForStep(int stepId) throws SQLException {
+		Connection connection = helper.getConnection();
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM schritte WHERE SchritteID = " + stepId);
+		try {
+			logger.debug(sql.toString());
+			Map<String,String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler);
+			return ret;
+		} finally {
+			closeConnection(connection);
+		}
+	}
 
 	public int updateStep(StepObject step) throws SQLException {
 		int ret = -1;
@@ -221,7 +235,7 @@ public class MySQLHelper {
 			sql.append("typAutomatisch = " + step.isTypAutomatisch());
 
 			sql.append(" WHERE SchritteID = " + step.getId() + ";");
-
+			logger.debug("saving step: " + sql.toString());
 			run.update(connection, sql.toString());
 			// logger.debug(sql);
 			ret = step.getId();
@@ -240,6 +254,7 @@ public class MySQLHelper {
 			String propNames = "numericValue, stringvalue, type, date, processId";
 			String propValues = "'" + order + "','" + value + "','" + type + "','" + datetime + "','" + processId + "'";
 			String sql = "INSERT INTO " + "history" + " (" + propNames + ") VALUES (" + propValues + ")";
+			logger.trace("added history event " + sql);
 			run.update(connection, sql);
 		} finally {
 			closeConnection(connection);
