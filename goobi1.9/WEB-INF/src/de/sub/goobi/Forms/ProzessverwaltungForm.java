@@ -34,6 +34,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -105,7 +106,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
@@ -634,7 +634,11 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public void SchrittUebernehmen() {
 		this.mySchritt.setEditTypeEnum(StepEditType.ADMIN);
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 		this.myProzess.getSchritte().add(this.mySchritt);
 		this.mySchritt.setProzess(this.myProzess);
 		Speichern();
@@ -998,7 +1002,11 @@ public class ProzessverwaltungForm extends BasisForm {
 				// logger.error("passt: " + step.getTitel() + "   " +
 				// step.getReihenfolge());
 				step.setEditTypeEnum(StepEditType.ADMIN);
-				HelperSchritte.updateEditing(step);
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 				step.setBearbeitungsstatusDown();
 				break;
 			}
@@ -1037,7 +1045,11 @@ public class ProzessverwaltungForm extends BasisForm {
 			if (this.mySchritt.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
 			} else {
-				HelperSchritte.updateEditing(this.mySchritt);
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 			}
 		}
 		Speichern();
@@ -1046,7 +1058,11 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String SchrittStatusDown() {
 		this.mySchritt.setEditTypeEnum(StepEditType.ADMIN);
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 		this.mySchritt.setBearbeitungsstatusDown();
 		Speichern();
 		deleteSymlinksFromUserHomes();

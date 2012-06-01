@@ -74,7 +74,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
@@ -251,7 +250,11 @@ public class AktuelleSchritteForm extends BasisForm {
 				else {
 					this.mySchritt.setBearbeitungsstatusEnum(StepStatus.INWORK);
 					this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-					HelperSchritte.updateEditing(this.mySchritt);
+					mySchritt.setBearbeitungszeitpunkt(new Date());
+					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+					if (ben != null) {
+						mySchritt.setBearbeitungsbenutzer(ben);
+					}
 					if (this.mySchritt.getBearbeitungsbeginn() == null) {
 						Date myDate = new Date();
 						this.mySchritt.setBearbeitungsbeginn(myDate);
@@ -328,7 +331,11 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
 				s.setBearbeitungsstatusEnum(StepStatus.INWORK);
 				s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				HelperSchritte.updateEditing(s);
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 				if (s.getBearbeitungsbeginn() == null) {
 					Date myDate = new Date();
 					s.setBearbeitungsbeginn(myDate);
@@ -344,7 +351,11 @@ public class AktuelleSchritteForm extends BasisForm {
 					} catch (Exception e1) {
 
 					}
-					HelperSchritte.updateEditing(s);
+					mySchritt.setBearbeitungszeitpunkt(new Date());
+				
+					if (ben != null) {
+						mySchritt.setBearbeitungsbenutzer(ben);
+					}
 					this.myDav.DownloadToHome(s.getProzess(), s.getId().intValue(), !s.isTypImagesSchreiben());
 
 				}
@@ -422,7 +433,11 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.mySchritt.setBearbeitungsbeginn(null);
 		}
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 
 		try {
 			/*
@@ -547,7 +562,11 @@ public class AktuelleSchritteForm extends BasisForm {
 		Date myDate = new Date();
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 		this.mySchritt.setBearbeitungsbeginn(null);
 
 		try {
@@ -558,7 +577,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			temp.setCorrectionStep();
 			temp.setBearbeitungsende(null);
 			Schritteigenschaft se = new Schritteigenschaft();
-			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		
 
 			se.setTitel(Helper.getTranslation("Korrektur notwendig"));
 			se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
@@ -627,7 +646,11 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
 		this.mySchritt.setBearbeitungsende(now);
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 
 		try {
 			SchrittDAO dao = new SchrittDAO();
@@ -652,7 +675,10 @@ public class AktuelleSchritteForm extends BasisForm {
 				}
 				Schritteigenschaft seg = new Schritteigenschaft();
 				seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
 						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
 				seg.setSchritt(step);
@@ -665,7 +691,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message =   Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " (" + ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(),"info", message));
 			
@@ -684,7 +709,11 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 
 	public String UploadFromHome() {
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProzess().getTitel());
 		return "";
@@ -696,7 +725,11 @@ public class AktuelleSchritteForm extends BasisForm {
 		} catch (Exception e1) {
 
 		}
-		HelperSchritte.updateEditing(this.mySchritt);
+		mySchritt.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			mySchritt.setBearbeitungsbenutzer(ben);
+		}
 		this.myDav.DownloadToHome(this.mySchritt.getProzess(), this.mySchritt.getId().intValue(), !this.mySchritt.isTypImagesSchreiben());
 
 		return "";
@@ -745,7 +778,11 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
 				step.setBearbeitungsstatusEnum(StepStatus.INWORK);
 				step.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				HelperSchritte.updateEditing(step);
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 				step.setBearbeitungsbeginn(new Date());
 				Prozess proz = step.getProzess();
 				try {
@@ -769,7 +806,11 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
 				step.setBearbeitungsstatusEnum(StepStatus.INWORK);
 				step.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				HelperSchritte.updateEditing(step);
+				mySchritt.setBearbeitungszeitpunkt(new Date());
+				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				if (ben != null) {
+					mySchritt.setBearbeitungsbenutzer(ben);
+				}
 				step.setBearbeitungsbeginn(new Date());
 				Prozess proz = step.getProzess();
 				try {

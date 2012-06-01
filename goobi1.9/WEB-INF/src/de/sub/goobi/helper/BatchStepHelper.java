@@ -480,7 +480,11 @@ public class BatchStepHelper {
 		Date myDate = new Date();
 		this.currentStep.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 		this.currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		HelperSchritte.updateEditing(this.currentStep);
+		currentStep.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			currentStep.setBearbeitungsbenutzer(ben);
+		}
 		this.currentStep.setBearbeitungsbeginn(null);
 
 		try {
@@ -497,7 +501,7 @@ public class BatchStepHelper {
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
 				Schritteigenschaft se = new Schritteigenschaft();
-				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				
 
 				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
 				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
@@ -603,7 +607,11 @@ public class BatchStepHelper {
 		this.currentStep.setBearbeitungsstatusEnum(StepStatus.DONE);
 		this.currentStep.setBearbeitungsende(now);
 		this.currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		HelperSchritte.updateEditing(this.currentStep);
+		currentStep.setBearbeitungszeitpunkt(new Date());
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben != null) {
+			currentStep.setBearbeitungsbenutzer(ben);
+		}
 
 		try {
 			Schritt temp = null;
@@ -636,7 +644,6 @@ public class BatchStepHelper {
 					}
 					Schritteigenschaft seg = new Schritteigenschaft();
 					seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 					seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
 							+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
 					seg.setSchritt(step);
@@ -646,7 +653,6 @@ public class BatchStepHelper {
 					this.stepDAO.save(step);
 				}
 			}
-			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " +  this.solutionMessage + " (" + ben.getNachVorname() + ")";
 			this.currentStep.getProzess().setWikifield(
 					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", message));
@@ -786,7 +792,11 @@ public class BatchStepHelper {
 				s.setBearbeitungsbeginn(null);
 			}
 			s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-			HelperSchritte.updateEditing(s);
+			currentStep.setBearbeitungszeitpunkt(new Date());
+			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			if (ben != null) {
+				currentStep.setBearbeitungsbenutzer(ben);
+			}
 
 			try {
 				this.pdao.save(s.getProzess());
