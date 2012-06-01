@@ -207,7 +207,8 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String Speichern() {
 		/*
-		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
+		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
+		 * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
 		 */
 		if (this.myProzess != null && this.myProzess.getTitel() != null) {
 			if (!this.myProzess.getTitel().equals(this.myNewProcessTitle)) {
@@ -241,6 +242,38 @@ public class ProzessverwaltungForm extends BasisForm {
 							}
 						}
 					}
+
+					try {
+						{
+							// renaming image directories
+							String imageDirectory = myProzess.getImagesDirectory();
+							File dir = new File(imageDirectory);
+							if (dir.exists() && dir.isDirectory()) {
+								File[] subdirs = dir.listFiles();
+								for (File imagedir : subdirs) {
+									if (imagedir.isDirectory()) {
+										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+									}
+								}
+							}
+						}
+						{
+							// renaming ocr directories
+							String ocrDirectory = myProzess.getOcrDirectory();
+							File dir = new File(ocrDirectory);
+							if (dir.exists() && dir.isDirectory()) {
+								File[] subdirs = dir.listFiles();
+								for (File imagedir : subdirs) {
+									if (imagedir.isDirectory()) {
+										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+									}
+								}
+							}
+						}
+					} catch (Exception e) {
+						logger.warn("could not rename folder", e);
+					}
+
 					/* Vorgangstitel */
 					this.myProzess.setTitel(this.myNewProcessTitle);
 
@@ -253,7 +286,7 @@ public class ProzessverwaltungForm extends BasisForm {
 						gs.updateImagePath(pro);
 					}
 				}
-				// TODO rename folder
+
 			}
 
 			try {
@@ -355,7 +388,8 @@ public class ProzessverwaltungForm extends BasisForm {
 			this.myFilteredDataSource = new UserTemplatesFilter();
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			// if (!this.showClosedProcesses) {
-			// crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
+			// crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus",
+			// "100000000")));
 			// }
 
 			if (!this.showArchivedProjects) {
@@ -821,8 +855,9 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public void DownloadToHome() {
 		/*
-		 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde, ansonsten
-		 * Download
+		 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
+		 * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+		 * ansonsten Download
 		 */
 		if (!this.myProzess.isImageFolderInUse()) {
 			WebDav myDav = new WebDav();
@@ -838,7 +873,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		WebDav myDav = new WebDav();
 		for (Prozess proz : (List<Prozess>) this.page.getListReload()) {
 			/*
-			 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+			 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer
+			 * in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
 			 * ansonsten Download
 			 */
 			if (!proz.isImageFolderInUse()) {
@@ -1430,8 +1466,9 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	/**
-	 * ist called via jsp at the end of building a chart in include file Prozesse_Liste_Statistik.jsp and resets the statistics so that with the next
-	 * reload a chart is not shown anymore
+	 * ist called via jsp at the end of building a chart in include file
+	 * Prozesse_Liste_Statistik.jsp and resets the statistics so that with the
+	 * next reload a chart is not shown anymore
 	 * 
 	 * @author Wulf
 	 */
@@ -1605,7 +1642,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 			String OutputFileName = "export.xml";
 			/*
-			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der
+			 * Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
@@ -1687,7 +1725,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der
+			 * Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
@@ -1712,7 +1751,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der
+			 * Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
@@ -1779,7 +1819,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der
+			 * Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
