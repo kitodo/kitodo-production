@@ -138,7 +138,7 @@ public class ExportMets {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		writeMetsFile(myProzess, targetFileName, gdzfile, false);
-		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+		
 	}
 
 	/**
@@ -216,8 +216,9 @@ public class ExportMets {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
 				dd = null;
+				return;
 			}
 		}
 
@@ -303,6 +304,7 @@ public class ExportMets {
 				myLogger.error(e);
 			}
 			mm.write(targetFileName);
+			Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
 		}
 	}
 

@@ -51,6 +51,7 @@ import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.xml.sax.SAXParseException;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -412,8 +413,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * #####################################################
+	 * ##################################################### ## ## Helper ##
+	 * #####################################################
+	 * ####################################################
 	 */
 
 	public Projekt getProjekt() {
@@ -821,20 +824,22 @@ public class Prozess implements Serializable, IGoobiEntity {
 					}
 					while (count > 0) {
 						for (File data : files) {
-							if (data.getName().endsWith("xml." + (count - 1))) {
-								Long lastModified = data.lastModified();
-								File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
-								data.renameTo(newFile);
-								if (lastModified > 0L) {
-									newFile.setLastModified(lastModified);
+							if (data.length() != 0) {
+								if (data.getName().endsWith("xml." + (count - 1))) {
+									Long lastModified = data.lastModified();
+									File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
+									data.renameTo(newFile);
+									if (lastModified > 0L) {
+										newFile.setLastModified(lastModified);
+									}
 								}
-							}
-							if (data.getName().endsWith(".xml") && count == 1) {
-								Long lastModified = data.lastModified();
-								File newFile = new File(data.toString() + ".1");
-								data.renameTo(newFile);
-								if (lastModified > 0L) {
-									newFile.setLastModified(lastModified);
+								if (data.getName().endsWith(".xml") && count == 1) {
+									Long lastModified = data.lastModified();
+									File newFile = new File(data.toString() + ".1");
+									data.renameTo(newFile);
+									if (lastModified > 0L) {
+										newFile.setLastModified(lastModified);
+									}
 								}
 							}
 						}
@@ -850,9 +855,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 		boolean result = true;
 		File f = new File(getMetadataFilePath());
 		if (!f.exists()) {
-//			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
-//			myLogger.warn(errorMessage);
-//			Helper.setFehlerMeldung(errorMessage);
+			// String errorMessage =
+			// Helper.getTranslation("metadataFileNotFound") + " " +
+			// f.getAbsolutePath();
+			// myLogger.warn(errorMessage);
+			// Helper.setFehlerMeldung(errorMessage);
 			result = false;
 		}
 
@@ -908,7 +915,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner Benutzergruppe zugewiesen ist
+	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner
+	 * Benutzergruppe zugewiesen ist
 	 * ================================================================
 	 */
 	public boolean getContainsUnreachableSteps() {
@@ -924,7 +932,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * check if there is one task in edit mode, where the user has the rights to write to image folder
+	 * check if there is one task in edit mode, where the user has the rights to
+	 * write to image folder
 	 * ================================================================
 	 */
 	public boolean isImageFolderInUse() {
@@ -937,7 +946,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * get user of task in edit mode with rights to write to image folder ================================================================
+	 * get user of task in edit mode with rights to write to image folder
+	 * ================================================================
 	 */
 	public Benutzer getImageFolderInUseUser() {
 		for (Schritt s : getSchritteList()) {
@@ -949,8 +959,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null Values (thats why Boolean) and
-	 * MyFaces seams not to like Boolean (thats why boolean for the GUI) ================================================================
+	 * here differet Getters and Setters for the same value, because Hibernate
+	 * does not like bit-Fields with null Values (thats why Boolean) and MyFaces
+	 * seams not to like Boolean (thats why boolean for the GUI)
+	 * ================================================================
 	 */
 	public Boolean isSwappedOutHibernate() {
 		return this.swappedOut;

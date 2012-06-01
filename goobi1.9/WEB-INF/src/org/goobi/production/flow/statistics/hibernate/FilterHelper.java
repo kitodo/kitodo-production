@@ -71,7 +71,9 @@ class FilterHelper {
 		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		Benutzer aktuellerNutzer = null;
 		try {
-			aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
+			if (loginForm != null) {
+				aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
+			}
 		} catch (DAOException e) {
 			logger.warn("DAOException", e);
 		} catch (Exception e) {
@@ -102,7 +104,8 @@ class FilterHelper {
 		idList.add(Integer.valueOf(0));
 
 		/*
-		 * -------------------------------- hits by user groups --------------------------------
+		 * -------------------------------- hits by user groups
+		 * --------------------------------
 		 */
 		Criteria critGroups = session.createCriteria(Schritt.class);
 
@@ -135,12 +138,15 @@ class FilterHelper {
 		for (Object o : critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
 			idList.add((Integer) o);
 		}
-		// for (Iterator<Object> it = critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		// for (Iterator<Object> it =
+		// critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator();
+		// it.hasNext();) {
 		// idList.add((Integer) it.next());
 		// }
 
 		/*
-		 * -------------------------------- Users only --------------------------------
+		 * -------------------------------- Users only
+		 * --------------------------------
 		 */
 		Criteria critUser = session.createCriteria(Schritt.class);
 
@@ -172,18 +178,22 @@ class FilterHelper {
 		for (Object o : critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
 			idList.add((Integer) o);
 		}
-		// for (Iterator<Object> it = critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		// for (Iterator<Object> it =
+		// critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator();
+		// it.hasNext();) {
 		// idList.add((Integer) it.next());
 		// }
 
 		/*
-		 * -------------------------------- only taking the hits by restricting to the ids --------------------------------
+		 * -------------------------------- only taking the hits by restricting
+		 * to the ids --------------------------------
 		 */
 		con.add(Restrictions.in("id", idList));
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the step filter in first positon.
+	 * This functions extracts the Integer from the parameters passed with the
+	 * step filter in first positon.
 	 * 
 	 * @param String
 	 *            parameter
@@ -196,7 +206,8 @@ class FilterHelper {
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the step filter in last positon.
+	 * This functions extracts the Integer from the parameters passed with the
+	 * step filter in last positon.
 	 * 
 	 * @param String
 	 *            parameter
@@ -209,7 +220,8 @@ class FilterHelper {
 	}
 
 	/**
-	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further processing it reduces the necessity to
+	 * This function analyzes the parameters on a step filter and returns a
+	 * StepFilter enum to direct further processing it reduces the necessity to
 	 * apply some filter keywords
 	 * 
 	 * @param String
@@ -243,7 +255,8 @@ class FilterHelper {
 	}
 
 	/**
-	 * This enum represents the result of parsing the step<modifier>: filter Restrictions
+	 * This enum represents the result of parsing the step<modifier>: filter
+	 * Restrictions
 	 ****************************************************************************/
 	protected static enum StepFilter {
 		exact, range, min, max, name, unknown
@@ -551,19 +564,24 @@ class FilterHelper {
 	}
 
 	/**
-	 * This method builds a criteria depending on a filter string and some other parameters passed on along the initial criteria. The filter is parsed
-	 * and depending on which data structures are used for applying filtering restrictions conjunctions are formed and collect the restrictions and
-	 * then will be applied on the corresponding criteria. A criteria is only added if needed for the presence of filters applying to it.
+	 * This method builds a criteria depending on a filter string and some other
+	 * parameters passed on along the initial criteria. The filter is parsed and
+	 * depending on which data structures are used for applying filtering
+	 * restrictions conjunctions are formed and collect the restrictions and
+	 * then will be applied on the corresponding criteria. A criteria is only
+	 * added if needed for the presence of filters applying to it.
 	 * 
 	 * 
 	 * @param inFilter
 	 * @param crit
 	 * @param isTemplate
 	 * @param returnParameters
-	 *            Object containing values which need to be set and returned to UserDefinedFilter
+	 *            Object containing values which need to be set and returned to
+	 *            UserDefinedFilter
 	 * @param userAssignedStepsOnly
 	 * @param stepOpenOnly
-	 * @return String used to pass on error messages about errors in the filter expression
+	 * @return String used to pass on error messages about errors in the filter
+	 *         expression
 	 */
 	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
 			Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
@@ -995,7 +1013,8 @@ class FilterHelper {
 	 * @param parameters
 	 * @return
 	 ************************************************************************************/
-	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart, StepStatus inStatus, boolean negate, String filterPrefix) {
+	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart, StepStatus inStatus, boolean negate,
+			String filterPrefix) {
 		// extracting the substring into parameter (filter parameters e.g. 5,
 		// -5,
 		// 5-10, 5- or "Qualitätssicherung")
@@ -1003,8 +1022,10 @@ class FilterHelper {
 		String parameters = filterPart.substring(filterPart.indexOf(":") + 1);
 		String message = "";
 		/*
-		 * -------------------------------- Analyzing the parameters and what user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
-		 * Qualitätssicherung ->name) handling the filter according to the parameters --------------------------------
+		 * -------------------------------- Analyzing the parameters and what
+		 * user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
+		 * Qualitätssicherung ->name) handling the filter according to the
+		 * parameters --------------------------------
 		 */
 
 		switch (FilterHelper.getStepFilter(parameters)) {

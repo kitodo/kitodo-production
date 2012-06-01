@@ -555,7 +555,7 @@ public class BatchStepHelper {
 	public List<SelectItem> getPreviousStepsForProblemReporting() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Schritt> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
-				.add(Restrictions.lt("reihenfolge", this.currentStep.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+				.add(Restrictions.lt("reihenfolge", this.currentStep.getReihenfolge())).addOrder(Order.desc("reihenfolge")).createCriteria("prozess")
 				.add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
 		for (Schritt s : alleVorherigenSchritte) {
 			answer.add(new SelectItem(s.getTitel(), s.getTitelMitBenutzername()));
@@ -567,7 +567,7 @@ public class BatchStepHelper {
 	public List<SelectItem> getNextStepsForProblemSolution() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Schritt> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
-				.add(Restrictions.ge("reihenfolge", this.currentStep.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
+				.add(Restrictions.gt("reihenfolge", this.currentStep.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
 				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.currentStep.getProzess().getId())).list();
 		for (Schritt s : alleNachfolgendenSchritte) {
 			answer.add(new SelectItem(s.getTitel(), s.getTitelMitBenutzername()));

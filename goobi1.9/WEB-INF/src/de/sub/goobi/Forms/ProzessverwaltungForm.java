@@ -55,6 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.goobi.production.flow.statistics.StatisticsManager;
@@ -149,6 +150,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	private ProcessProperty processProperty;
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
+	private String addToWikiField = "";
 
 	private boolean showStatistics = false;
 
@@ -1873,7 +1875,47 @@ public class ProzessverwaltungForm extends BasisForm {
 		return this.showArchivedProjects;
 	}
 
-	// TODO property
+	
+	/**
+	 * @return values for wiki field
+	 */
+	public String getWikiField() {
+		return this.myProzess.getWikifield();
+
+	}
+
+	/**
+	 * sets new value for wiki field
+	 * 
+	 * @param inString
+	 */
+	public void setWikiField(String inString) {
+		this.myProzess.setWikifield(inString);
+	}
+
+	public String getAddToWikiField() {
+		return this.addToWikiField;
+	}
+
+	public void setAddToWikiField(String addToWikiField) {
+		this.addToWikiField = addToWikiField;
+	}
+
+	public void addToWikiField() {
+		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+		this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess.getWikifield(),"user", message));
+		this.addToWikiField = "";
+		try {
+			this.dao.save(myProzess);
+		} catch (DAOException e) {
+			logger.error(e);
+		}
+	}
+	
+	
+	
+	
 
 	public ProcessProperty getProcessProperty() {
 		return this.processProperty;

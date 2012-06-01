@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.xml.sax.SAXParseException;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;

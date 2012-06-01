@@ -336,6 +336,24 @@ public class ExportDms extends ExportMets {
 //		Helper help = new Helper();
 //		File tifOrdner = new File(myProzess.getImagesTifDirectory());
 
+		// download sources
+		File sources = new File(myProzess.getSourceDirectory());
+		if (sources.exists()) {
+			File destination = new File(benutzerHome + File.separator
+					+ atsPpnBand + "_src");
+			if (!destination.exists()) {
+				destination.mkdir();
+			}
+			// TODO all data??
+			File[] dateien = sources.listFiles();
+			for (int i = 0; i < dateien.length; i++) {
+				File meinZiel = new File(destination + File.separator
+						+ dateien[i].getName());
+				Helper.copyFile(dateien[i], meinZiel);
+			}
+		}
+		
+		
 		File txtFolder = new File(myProzess.getTxtDirectory());
 		if (txtFolder.exists()) {
 			File destination = new File(benutzerHome + File.separator

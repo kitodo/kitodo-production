@@ -136,7 +136,7 @@ public class ExportMetsWithoutHibernate {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		writeMetsFile(process, targetFileName, gdzfile, false);
-		Helper.setMeldung(null, process.getTitle() + ": ", "Export finished");
+		
 	}
 
 	/**
@@ -215,8 +215,9 @@ public class ExportMetsWithoutHibernate {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
 				dd = null;
+				return;
 			}
 		}
 
@@ -302,6 +303,7 @@ public class ExportMetsWithoutHibernate {
 				myLogger.error(e);
 			}
 			mm.write(targetFileName);
+			Helper.setMeldung(null, process.getTitle() + ": ", "Export finished");
 		}
 	}
 }

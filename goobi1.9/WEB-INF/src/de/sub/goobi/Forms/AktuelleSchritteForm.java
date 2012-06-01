@@ -549,7 +549,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Schritt> getPreviousStepsForProblemReporting() {
 		List<Schritt> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
-				.add(Restrictions.lt("reihenfolge", this.mySchritt.getReihenfolge())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+				.add(Restrictions.lt("reihenfolge", this.mySchritt.getReihenfolge())).addOrder(Order.desc("reihenfolge")).createCriteria("prozess")
 				.add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleVorherigenSchritte;
 	}
@@ -634,7 +634,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Schritt> getNextStepsForProblemSolution() {
 		List<Schritt> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
-				.add(Restrictions.ge("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
+				.add(Restrictions.gt("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
 				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleNachfolgendenSchritte;
 	}
