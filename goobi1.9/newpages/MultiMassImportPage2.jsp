@@ -129,7 +129,7 @@
 													</h:column>
 
 													<h:column>
-														<h:outputText value="#{msgs.order}:" />
+														<h:outputText value="#{msgs.reihenfolge}:" />
 														<h:inputText  value="#{docstruct.order}" />
 													
 													</h:column>
