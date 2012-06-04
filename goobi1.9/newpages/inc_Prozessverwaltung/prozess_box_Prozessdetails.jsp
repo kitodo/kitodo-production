@@ -8,49 +8,49 @@
 	<htm:tr style="vertical-align:top">
 		<htm:td>
 			<%-- Box für die Darstellung der Details --%>
-			<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="main_statistikboxen"
-				rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
+			<h:form id="processdetails">
+				<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="main_statistikboxen"
+					rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
+					<htm:tr>
+						<htm:td styleClass="main_statistikboxen_row1">
+							<h:outputText value="#{msgs.prozess}" />
+						</htm:td>
+						<htm:td styleClass="main_statistikboxen_row1" align="right">
+							<h:commandLink action="#{ProzessverwaltungForm.Reload}">
+								<h:graphicImage value="/newpages/images/reload.gif" />
+							</h:commandLink>
+						</htm:td>
+					</htm:tr>
 
-				<htm:tr>
-					<htm:td styleClass="main_statistikboxen_row1">
-						<h:outputText value="#{msgs.prozess}" />
-					</htm:td>
-					<htm:td styleClass="main_statistikboxen_row1" align="right">
-						<h:commandLink action="#{ProzessverwaltungForm.Reload}">
-							<h:graphicImage value="/newpages/images/reload.gif" />
-						</h:commandLink>
-					</htm:td>
-				</htm:tr>
 
+					<htm:tr>
+						<htm:td styleClass="main_statistikboxen_row2" colspan="2">
+							<htm:table border="0" width="100%" cellpadding="2">
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.prozessTitel}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.titel}" />
+									</htm:td>
+									<htm:td rowspan="2" align="right" rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+										<h:commandLink title="#{msgs.prozessdetailsBearbeiten}" action="#{NavigationForm.Reload}" style=";margin-right:20px">
+											<h:graphicImage value="/newpages/images/buttons/edit_20.gif" />
+											<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="prozess" />
+										</h:commandLink>
+									</htm:td>
+								</htm:tr>
 
-				<htm:tr>
-					<htm:td styleClass="main_statistikboxen_row2" colspan="2">
-						<htm:table border="0" width="100%" cellpadding="2">
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.prozessTitel}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{ProzessverwaltungForm.myProzess.titel}" />
-								</htm:td>
-								<htm:td rowspan="2" align="right" rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-									<h:commandLink title="#{msgs.prozessdetailsBearbeiten}" action="#{NavigationForm.Reload}" style=";margin-right:20px">
-										<h:graphicImage value="/newpages/images/buttons/edit_20.gif" />
-										<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="prozess" />
-									</h:commandLink>
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.projekt}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.projekt.titel}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.projekt}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{ProzessverwaltungForm.myProzess.projekt.titel}" />
-								</htm:td>
-							</htm:tr>
-
-							<%-- 			<htm:tr>
+								<%-- 			<htm:tr>
 					<htm:td width="150">
 						<h:outputText value="#{msgs.ausgabename}:" />
 					</htm:td>
@@ -60,66 +60,67 @@
 					</htm:td>
 				</htm:tr>
 --%>
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.erstellungsdatum}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{ProzessverwaltungForm.myProzess.erstellungsdatum}" />
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.erstellungsdatum}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.erstellungsdatum}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.regelsatz}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText value="#{ProzessverwaltungForm.myProzess.regelsatz.titel}" />
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.regelsatz}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.regelsatz.titel}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.inAuswahllisteAnzeigen}:" />
-								</htm:td>
-								<htm:td>
-									<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
-									<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.inAuswahllisteAnzeigen}:" />
+									</htm:td>
+									<htm:td>
+										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
+										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText value="#{msgs.istTemplate}:" />
-								</htm:td>
-								<htm:td>
-									<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.istTemplate}" />
-									<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.istTemplate}" />
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText value="#{msgs.istTemplate}:" />
+									</htm:td>
+									<htm:td>
+										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.istTemplate}" />
+										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.istTemplate}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText styleClass="text_light" value="#{msgs.id}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.myProzess.id}" />
-								</htm:td>
-							</htm:tr>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText styleClass="text_light" value="#{msgs.id}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.myProzess.id}" />
+									</htm:td>
+								</htm:tr>
 
-							<htm:tr>
-								<htm:td width="150">
-									<h:outputText styleClass="text_light" value="#{msgs.batch}:" />
-								</htm:td>
-								<htm:td>
-									<h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.myProzess.batchID}" />
-								</htm:td>
-							</htm:tr>
-						</htm:table>
+								<htm:tr>
+									<htm:td width="150">
+										<h:outputText styleClass="text_light" value="#{msgs.batch}:" />
+									</htm:td>
+									<htm:td>
+										<h:outputText styleClass="text_light" value="#{ProzessverwaltungForm.myProzess.batchID}" />
+									</htm:td>
+								</htm:tr>
+							</htm:table>
 
-					</htm:td>
-				</htm:tr>
-			</htm:table>
+						</htm:td>
+					</htm:tr>
+				</htm:table>
+			</h:form>
 		</htm:td>
 		<htm:td>
 
@@ -223,7 +224,7 @@
 	tinyMCE
 			.init({
 				mode : "exact",
-				elements : "proceditform:htmleditorform:myTextArea",
+				elements : "htmleditorform:myTextArea",
 				theme : "advanced",
 				width : "100%",
 				height : "200px",
