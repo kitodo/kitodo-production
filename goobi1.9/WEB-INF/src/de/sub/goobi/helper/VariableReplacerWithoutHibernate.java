@@ -117,7 +117,8 @@ public class VariableReplacerWithoutHibernate {
 			String metaFile = fi.getMetadataFilePath().replace("\\", "/");
 			String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");
-			String sourcepath = fi.getSourceDirectory().replace("\\", "/");
+			String sourcePath = fi.getSourceDirectory().replace("\\", "/");
+			String importPath = fi.getImportDirectory().replace("\\", "/");	
 			Regelsatz ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
 			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getDatei();
 
@@ -134,8 +135,11 @@ public class VariableReplacerWithoutHibernate {
 			if (processpath.endsWith(File.separator)) {
 				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
 			}
-			if (sourcepath.endsWith(File.separator)) {
-				sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
+			if (importPath.endsWith(File.separator)) {
+				importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
+			}
+			if (sourcePath.endsWith(File.separator)) {
+				sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
 			}
 			if (ocrBasisPath.endsWith(File.separator)) {
 				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
@@ -177,8 +181,11 @@ public class VariableReplacerWithoutHibernate {
 			if (inString.contains("(processpath)")) {
 				inString = inString.replace("(processpath)", processpath);
 			}
+			if (inString.contains("(importpath)")){
+				inString = inString.replace("(importpath)", importPath);
+			}
 			if (inString.contains("(sourcepath)")){
-				inString = inString.replace("(sourcepath)", sourcepath);
+				inString = inString.replace("(sourcepath)", sourcePath);
 			}
 			if (inString.contains("(ocrbasispath)")){
 				inString = inString.replace("(ocrbasispath)", ocrBasisPath);

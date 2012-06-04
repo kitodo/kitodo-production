@@ -119,7 +119,9 @@ public class VariableReplacer {
 			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
 			String ocrBasisPath = this.process.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = this.process.getTxtDirectory().replace("\\", "/");
-			String sourcepath = this.process.getImportDirectory().replace("\\", "/");
+			// TODO name ändern?
+			String sourcePath = this.process.getSourceDirectory().replace("\\", "/");
+			String importPath = this.process.getImportDirectory().replace("\\", "/");
 			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
 			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
@@ -135,8 +137,11 @@ public class VariableReplacer {
 			if (processpath.endsWith(File.separator)) {
 				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
 			}
-			if (sourcepath.endsWith(File.separator)) {
-				sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
+			if (importPath.endsWith(File.separator)) {
+				importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
+			}
+			if (sourcePath.endsWith(File.separator)) {
+				sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
 			}
 			if (ocrBasisPath.endsWith(File.separator)) {
 				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
@@ -178,9 +183,13 @@ public class VariableReplacer {
 			if (inString.contains("(processpath)")) {
 				inString = inString.replace("(processpath)", processpath);
 			}
-			if (inString.contains("(sourcepath)")){
-				inString = inString.replace("(sourcepath)", sourcepath);
+			if (inString.contains("(importpath)")){
+				inString = inString.replace("(importpath)", importPath);
 			}
+			if (inString.contains("(sourcepath)")){
+				inString = inString.replace("(sourcepath)", sourcePath);
+			}
+			
 			if (inString.contains("(ocrbasispath)")){
 				inString = inString.replace("(ocrbasispath)", ocrBasisPath);
 			}

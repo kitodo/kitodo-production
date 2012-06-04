@@ -371,13 +371,14 @@ public class Prozess implements Serializable, IGoobiEntity {
 		String[] verzeichnisse = dir.list(filterVerz);
 		if (verzeichnisse == null || verzeichnisse.length == 0 ) {
 			sourceFolder = new File(dir, titel + "_source");
-			sourceFolder.mkdir();
+			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
+				sourceFolder.mkdir();				
+			}
 		} else {
 			sourceFolder = new File(dir, verzeichnisse[0]);
 		}
 		
 		return sourceFolder.getAbsolutePath();
-
 	}
 	
 

@@ -28,6 +28,7 @@ package de.sub.goobi.Persistence.apache;
  */
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +41,9 @@ import org.apache.commons.lang.SystemUtils;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 public class FolderInformation {
 
@@ -189,13 +192,38 @@ public class FolderInformation {
 		return getOcrDirectory() + this.title + "_xml" + File.separator;
 	}
 
-	public String getSourceDirectory() {
-		return getProcessDataDirectory() + "source" + File.separator;
+	public String getImportDirectory() {
+		return getProcessDataDirectory() + "import" + File.separator;
 	}
 
 	public String getMetadataFilePath() {
 		return getProcessDataDirectory() + "meta.xml";
 	}
+	
+	
+	
+	public String getSourceDirectory() {
+		File dir = new File(getImagesDirectory());
+		FilenameFilter filterVerz = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return (name.endsWith("_" + "source"));
+			}
+		};
+		File sourceFolder = null;
+		String[] verzeichnisse = dir.list(filterVerz);
+		if (verzeichnisse == null || verzeichnisse.length == 0 ) {
+			sourceFolder = new File(dir, title + "_source");
+			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
+				sourceFolder.mkdir();				
+			}
+		} else {
+			sourceFolder = new File(dir, verzeichnisse[0]);
+		}
+		
+		return sourceFolder.getAbsolutePath();
+	}
+	
 
 	public Map<String, String> getFolderForProcess() {
 		Map<String, String> answer = new HashMap<String, String>();
@@ -207,6 +235,7 @@ public class FolderInformation {
 		String ocrBasisPath = getOcrDirectory().replace("\\", "/");
 		String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
 		String sourcepath = getSourceDirectory().replace("\\", "/");
+		String importpath = getImportDirectory().replace("\\", "/");
 		if (tifpath.endsWith(File.separator)) {
 			tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
 		}
@@ -248,6 +277,7 @@ public class FolderInformation {
 		answer.put("(imagepath)", imagepath);
 		answer.put("(processpath)", processpath);
 		answer.put("(sourcepath)", sourcepath);
+		answer.put("(importpath)", importpath);
 		answer.put("(ocrbasispath)", ocrBasisPath);
 		answer.put("(ocrplaintextpath)", ocrPlaintextPath);
 		answer.put("(metaFile)", metaFile);
