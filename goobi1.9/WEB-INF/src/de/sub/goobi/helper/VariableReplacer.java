@@ -119,7 +119,7 @@ public class VariableReplacer {
 			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
 			String ocrBasisPath = this.process.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = this.process.getTxtDirectory().replace("\\", "/");
-			String sourcepath = this.process.getSourceDirectory().replace("\\", "/");
+			String sourcepath = this.process.getImportDirectory().replace("\\", "/");
 			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
 			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */

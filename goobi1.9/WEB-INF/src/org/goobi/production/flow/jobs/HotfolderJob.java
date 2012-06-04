@@ -301,7 +301,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 						File sourceDir = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
 								+ "_src" + File.separator);
 						if (sourceDir.isDirectory()) {
-							FileUtils.moveDirectory(sourceDir, new File(p.getSourceDirectory()));
+							FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
 						}
 
 						try {
@@ -491,7 +491,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 		File sourceDir = new File(basepath + "_src" + File.separator);
 		if (sourceDir.isDirectory()) {
-			FileUtils.moveDirectory(sourceDir, new File(p.getSourceDirectory()));
+			FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
 		}
 
 		try {

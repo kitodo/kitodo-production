@@ -358,6 +358,28 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return pfad;
 	}
+	
+	public String getSourceDirectory() throws IOException, InterruptedException, SwapException, DAOException {
+		File dir = new File(getImagesDirectory());
+		FilenameFilter filterVerz = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return (name.endsWith("_" + "source"));
+			}
+		};
+		File sourceFolder = null;
+		String[] verzeichnisse = dir.list(filterVerz);
+		if (verzeichnisse == null || verzeichnisse.length == 0 ) {
+			sourceFolder = new File(dir, titel + "_source");
+			sourceFolder.mkdir();
+		} else {
+			sourceFolder = new File(dir, verzeichnisse[0]);
+		}
+		
+		return sourceFolder.getAbsolutePath();
+
+	}
+	
 
 	public String getProcessDataDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectoryIgnoreSwapping();
@@ -399,8 +421,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return getOcrDirectory() + this.titel + "_xml" + File.separator;
 	}
 
-	public String getSourceDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getProcessDataDirectory() + "source" + File.separator;
+	public String getImportDirectory() throws SwapException, DAOException, IOException, InterruptedException {
+		return getProcessDataDirectory() + "import" + File.separator;
 	}
 
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {

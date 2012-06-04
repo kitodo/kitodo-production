@@ -184,7 +184,7 @@ public class JobCreation {
 
 		File sourceDir = new File(basepath + "_src" + File.separator);
 		if (sourceDir.isDirectory()) {
-			FileUtils.moveDirectory(sourceDir, new File(p.getSourceDirectory()));
+			FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
 		}
 
 		try {
