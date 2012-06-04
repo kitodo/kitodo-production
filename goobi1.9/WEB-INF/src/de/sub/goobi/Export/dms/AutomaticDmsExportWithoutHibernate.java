@@ -290,45 +290,80 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			}
 		}
 		
+		File ocr = new File(fi.getOcrDirectory());
+		if (ocr.exists()) {
+			File[] folder = ocr.listFiles();
+			for (File dir : folder) {
+				if (dir.isDirectory()) {
+					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
+					File destination = new File(benutzerHome + File.separator + atsPpnBand + "_" + suffix);
+					if (!destination.exists()) {
+						destination.mkdir();
+					}
+					File[] files = dir.listFiles();
+					for (int i = 0; i < files.length; i++) {
+						File target = new File(destination + File.separator + files[i].getName());
+						Helper.copyFile(files[i], target);
+					}
+				}
+			}
+		}
 		
-		File txtFolder = new File(this.fi.getTxtDirectory());
-		if (txtFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = txtFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
-			}
-		}
-
-		File wordFolder = new File(this.fi.getWordDirectory());
-		if (wordFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = wordFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
-			}
-		}
-
-		File pdfFolder = new File(this.fi.getPdfDirectory());
-		if (pdfFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = pdfFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
-			}
-		}
+		
+//		File sources = new File(fi.getSourceDirectory());
+//		if (sources.exists()) {
+//			File destination = new File(benutzerHome + File.separator
+//					+ atsPpnBand + "_src");
+//			if (!destination.exists()) {
+//				destination.mkdir();
+//			}
+//			File[] dateien = sources.listFiles();
+//			for (int i = 0; i < dateien.length; i++) {
+//				File meinZiel = new File(destination + File.separator
+//						+ dateien[i].getName());
+//				Helper.copyFile(dateien[i], meinZiel);
+//			}
+//		}
+//		
+//		
+//		File txtFolder = new File(this.fi.getTxtDirectory());
+//		if (txtFolder.exists()) {
+//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
+//			if (!destination.exists()) {
+//				destination.mkdir();
+//			}
+//			File[] dateien = txtFolder.listFiles();
+//			for (int i = 0; i < dateien.length; i++) {
+//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+//				Helper.copyFile(dateien[i], meinZiel);
+//			}
+//		}
+//
+//		File wordFolder = new File(this.fi.getWordDirectory());
+//		if (wordFolder.exists()) {
+//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
+//			if (!destination.exists()) {
+//				destination.mkdir();
+//			}
+//			File[] dateien = wordFolder.listFiles();
+//			for (int i = 0; i < dateien.length; i++) {
+//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+//				Helper.copyFile(dateien[i], meinZiel);
+//			}
+//		}
+//
+//		File pdfFolder = new File(this.fi.getPdfDirectory());
+//		if (pdfFolder.exists()) {
+//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
+//			if (!destination.exists()) {
+//				destination.mkdir();
+//			}
+//			File[] dateien = pdfFolder.listFiles();
+//			for (int i = 0; i < dateien.length; i++) {
+//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
+//				Helper.copyFile(dateien[i], meinZiel);
+//			}
+//		}
 	}
 
 	public void imageDownload(ProcessObject myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
