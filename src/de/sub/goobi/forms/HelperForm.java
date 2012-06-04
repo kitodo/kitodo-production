@@ -42,7 +42,7 @@ import org.goobi.production.GoobiVersion;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
 
@@ -112,22 +112,22 @@ public class HelperForm {
 
 	public String getApplicationWebsiteMsg() {
 		String rueck = ConfigMain.getParameter("ApplicationWebsiteMsg", getApplicationWebsiteUrl());
-		return Helper.getTranslation(rueck);
+		return Messages.getString(rueck);
 	}
 
 	public String getApplicationHomepageMsg() {
 		String rueck = ConfigMain.getParameter("ApplicationHomepageMsg", getApplicationWebsiteUrl());
-		return Helper.getTranslation(rueck);
+		return Messages.getString(rueck);
 	}
 
 	public String getApplicationTechnicalBackgroundMsg() {
 		String rueck = ConfigMain.getParameter("ApplicationTechnicalBackgroundMsg", getApplicationWebsiteUrl());
-		return Helper.getTranslation(rueck);
+		return Messages.getString(rueck);
 	}
 
 	public String getApplicationImpressumMsg() {
 		String rueck = ConfigMain.getParameter("ApplicationImpressumMsg", getApplicationWebsiteUrl());
-		return Helper.getTranslation(rueck);
+		return Messages.getString(rueck);
 	}
 
 	public String getApplicationIndividualHeader() {

@@ -53,17 +53,19 @@ import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.property.DisplayPropertyList;
 import de.sub.goobi.beans.property.IGoobiEntity;
 import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 
 public class Prozess implements Serializable, IGoobiEntity {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
@@ -98,6 +100,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	private DisplayPropertyList displayProperties;
 	private String wikifield;
+
+	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
 	public Prozess() {
 		swappedOut = false;
@@ -211,7 +215,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
 			} catch (Exception e) {
 				// TODO Meldung in messages implementieren
-				Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
+				Helper.setFehlerMeldung(Messages.getString("userNotFound"), e);
 			}
 		}
 		return rueckgabe;
@@ -258,9 +262,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			rueckgabe += File.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-			if (!new File(rueckgabe).exists()) {
-				new Helper().createMetaDirectory(rueckgabe);
-			}
+			FilesystemHelper.createDirectory(rueckgabe);
 		}
 		return rueckgabe;
 	}
@@ -312,8 +314,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 				origOrdner = DIRECTORY_PREFIX + "_" + titel + "_" + DIRECTORY_SUFFIX;
 			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
-			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-				new Helper().createMetaDirectory(rueckgabe);
+			if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+				FilesystemHelper.createDirectory(rueckgabe);
 			}
 			return rueckgabe;
 		} else {
@@ -323,8 +325,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
-		if (!new File(pfad).exists())
-			new Helper().createMetaDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -365,8 +366,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = help.getGoobiDataDirectory() + id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
-		if (!new File(pfad).exists())
-			new Helper().createMetaDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -716,7 +716,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		File f = new File(getMetadataFilePath());
 
 		if (!f.exists()) {
-			String errorMessage = Helper.getTranslation("metadataFileNotFound") + " " + f.getAbsolutePath();
+			String errorMessage = Messages.getString("metadataFileNotFound") + " " + f.getAbsolutePath();
 			myLogger.warn(errorMessage);
 			Helper.setFehlerMeldung(errorMessage);
 			result = false;
@@ -725,22 +725,38 @@ public class Prozess implements Serializable, IGoobiEntity {
 		return result;
 	}
 
-	private void renameMetadataFile(String oldFileName, String newFileName) {
-		File oldFile;
-		File newFile;
+	private String getTemporaryMetadataFileName(String fileName) {
+		File temporaryFile = new File(fileName);
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
+		return directoryPath + File.separator + temporaryFileName;
+	}
 
-		if (oldFileName != null && newFileName != null) {
-			oldFile = new File(oldFileName);
-			newFile = new File(newFileName);
-			oldFile.renameTo(newFile);
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename)
+		throws IOException {
+		File temporaryFile = new File(temporaryMetadataFilename);
+		File temporaryAnchorFile;
+
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
+
+		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
+
+		if (temporaryAnchorFile.exists()) {
+			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
+
+			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
+			anchorFileName = directoryPath + File.separator + anchorFileName;
+
+			FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
 		}
 	}
-	
+
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
 		String metadataFileName;
-		String metadataFileNameNew;
+		String temporaryMetadataFileName;
 		boolean writeResult;
 
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
@@ -758,13 +774,14 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		metadataFileName = getMetadataFilePath();
-		metadataFileNameNew = metadataFileName + ".new";
+		temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
 
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		writeResult = ff.write(metadataFileNameNew);
+		writeResult = ff.write(temporaryMetadataFileName);
 		if (writeResult) {
 			createBackupFile();
-			renameMetadataFile(metadataFileNameNew, metadataFileName);
+			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
+			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 		}
 	}
 

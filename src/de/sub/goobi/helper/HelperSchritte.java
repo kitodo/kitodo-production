@@ -208,7 +208,7 @@ public class HelperSchritte {
 
 			try {
 				logger.info("Calling the shell: " + script);
-				int rueckgabe = Helper.callShell2(script);
+				int rueckgabe = ShellScript.legacyCallShell2(script);
 				if (fullautomatic) {
 					if (rueckgabe == 0)
 						closeStep(mySchritt, fullautomatic);

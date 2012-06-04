@@ -38,7 +38,7 @@ import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. 
@@ -85,7 +85,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
 		DataTable dtbl = new DataTable(title.toString());
 		dtbl.setShowableInPieChart(true);
-		DataRow dRow = new DataRow(Helper.getTranslation("count"));
+		DataRow dRow = new DataRow(Messages.getString("count"));
 
 		for (Object obj : crit.list()) {
 			Object[] objArr = (Object[]) obj;
@@ -96,7 +96,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();
 
-		dtbl.setUnitLabel(Helper.getTranslation("project"));
+		dtbl.setUnitLabel(Messages.getString("project"));
 		allTables.add(dtbl);
 		return allTables;
 	}

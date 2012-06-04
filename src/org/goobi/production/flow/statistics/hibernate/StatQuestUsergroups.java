@@ -40,6 +40,7 @@ import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. 
@@ -74,7 +75,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 
 		DataTable dtbl = new DataTable(title.toString());
 		dtbl.setShowableInPieChart(true);
-		DataRow dRow = new DataRow(Helper.getTranslation("count"));
+		DataRow dRow = new DataRow(Messages.getString("count"));
 
 		for (Object obj : crit.list()) {
 			Schritt step = (Schritt) obj;
@@ -86,7 +87,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 		dtbl.addDataRow(dRow);
 		List<DataTable> allTables = new ArrayList<DataTable>();
 
-		dtbl.setUnitLabel(Helper.getTranslation("benutzergruppe"));
+		dtbl.setUnitLabel(Messages.getString("benutzergruppe"));
 		allTables.add(dtbl);
 		return allTables;
 	}

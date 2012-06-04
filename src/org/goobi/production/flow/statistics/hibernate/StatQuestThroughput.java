@@ -44,6 +44,7 @@ import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.enums.HistoryEventType;
 
 /*****************************************************************************
@@ -121,20 +122,20 @@ public class StatQuestThroughput implements
 		// a list of DataTables is expected as return Object, even if there is only one 
 		// Data Table as it is here in this implementation
 		DataTable tableStepOpenAndDone = getAllSteps(HistoryEventType.stepOpen);
-		tableStepOpenAndDone.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+		tableStepOpenAndDone.setUnitLabel(Messages
+				.getString(timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle()
-				+ " (" + Helper.getTranslation("openSteps") + ")");
+				+ " (" + Messages.getString("openSteps") + ")");
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone.setShowableInChart(false);
 		allTables.add(tableStepOpenAndDone);
 
 		tableStepOpenAndDone = getAllSteps(HistoryEventType.stepDone);
-		tableStepOpenAndDone.setUnitLabel(Helper
-				.getTranslation(timeGrouping.getSingularTitle()));
+		tableStepOpenAndDone.setUnitLabel(Messages
+				.getString(timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle()
-				+ " (" + Helper.getTranslation("doneSteps") + ")");
+				+ " (" + Messages.getString("doneSteps") + ")");
 		tableStepOpenAndDone.setShowableInChart(false);
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
@@ -181,7 +182,7 @@ public class StatQuestThroughput implements
 
 			// to merge we just take each table and dump the entire content in a 
 			// row for the open step
-			DataRow rowOpenSteps = new DataRow(Helper.getTranslation("openSteps")
+			DataRow rowOpenSteps = new DataRow(Messages.getString("openSteps")
 					+ " " + i.toString());
 			for (DataRow dtr : tableStepOpen.getDataRows()) {
 				rowOpenSteps.addValue(dtr.getName(), dtr.getValue(0));
@@ -195,12 +196,12 @@ public class StatQuestThroughput implements
 				title = tableStepDone.getName();
 			}
 
-			tableStepOpenAndDone = new DataTable(Helper.getTranslation("throughput") + " "
-					+ Helper.getTranslation("steps") + " " + title);
+			tableStepOpenAndDone = new DataTable(Messages.getString("throughput") + " "
+					+ Messages.getString("steps") + " " + title);
 			tableStepOpenAndDone.addDataRow(rowOpenSteps);
 
 			// row for the done step
-			rowOpenSteps = new DataRow(Helper.getTranslation("doneSteps") + " "
+			rowOpenSteps = new DataRow(Messages.getString("doneSteps") + " "
 					+ i.toString());
 			for (DataRow dtr : tableStepDone.getDataRows()) {
 				rowOpenSteps.addValue(dtr.getName(), dtr.getValue(0));
@@ -214,7 +215,7 @@ public class StatQuestThroughput implements
 			
 			//inverting the orientation
 			tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
-			tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(timeGrouping
+			tableStepOpenAndDone.setUnitLabel(Messages.getString(timeGrouping
 					.getSingularTitle()));
 
 			//Dates may not be all in the right order because of it's composition from 2 tables

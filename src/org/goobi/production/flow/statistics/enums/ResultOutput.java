@@ -22,7 +22,7 @@
 
 package org.goobi.production.flow.statistics.enums;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum of all result output possibilities for the statistics
@@ -66,7 +66,7 @@ public enum ResultOutput {
 	 * @return localized title
 	 ****************************************************************************/
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 
 	/**

@@ -22,7 +22,7 @@
 
 package de.sub.goobi.helper.enums;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum of all history event types for all history events for processes
@@ -115,7 +115,7 @@ public enum HistoryEventType {
 	 * @return title as translated string for current locale from standard-jsf-messages
 	 */
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 
 	

@@ -28,6 +28,7 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.metadaten.MetadatenSperrung;
@@ -38,7 +39,6 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 import java.util.List;
 
 public class LoginForm {
@@ -70,7 +70,7 @@ public class LoginForm {
 		myBenutzer = null;
 		/* ohne Login gleich abbrechen */
 		if (login == null) {
-			Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
+			Helper.setFehlerMeldung("login", "", Messages.getString("wrongLogin"));
 		} else {
 
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
@@ -108,7 +108,7 @@ public class LoginForm {
 					Helper.setFehlerMeldung("passwort", "", "wrong password");
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
-				Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
+				Helper.setFehlerMeldung("login", "", Messages.getString("wrongLogin"));
 			}
 		}
 		// checking if saved css stylesheet is available, if not replace it by something available
@@ -177,11 +177,11 @@ public class LoginForm {
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
 		if (!myBenutzer.istPasswortKorrekt(passwortAendernAlt)) {
-			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Helper.getTranslation("aktuellesPasswortFalsch"));
+			Helper.setFehlerMeldung("passwortform:passwortAendernAlt", "", Messages.getString("aktuellesPasswortFalsch"));
 		} else {
 			/* ist das neue Passwort beide Male gleich angegeben? */
 			if (!passwortAendernNeu1.equals(passwortAendernNeu2)) {
-				Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Helper.getTranslation("neuesPasswortNichtGleich"));
+				Helper.setFehlerMeldung("passwortform:passwortAendernNeu1", "", Messages.getString("neuesPasswortNichtGleich"));
 			} else {
 				try {
 					/* wenn alles korrekt, dann jetzt speichern */
@@ -192,7 +192,7 @@ public class LoginForm {
 					new BenutzerDAO().save(temp);
 					myBenutzer = temp;
 
-					Helper.setMeldung(null, "", Helper.getTranslation("passwortGeaendert"));
+					Helper.setMeldung(null, "", Messages.getString("passwortGeaendert"));
 				} catch (DAOException e) {
 					Helper.setFehlerMeldung("could not save", e.getMessage());
 				} catch (NoSuchAlgorithmException e) {
@@ -214,7 +214,7 @@ public class LoginForm {
 			temp.setConfVorgangsdatumAnzeigen(myBenutzer.isConfVorgangsdatumAnzeigen());
 			new BenutzerDAO().save(temp);
 			myBenutzer = temp;
-			Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
+			Helper.setMeldung(null, "", Messages.getString("configurationChanged"));
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
 		}

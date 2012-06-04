@@ -27,58 +27,63 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
- * Klasse SpracheForm für die Umstellung der Sprache aus dem 
- * laufenden Servlet
+ * The SpracheForm class serves to switch the displayed language for the current
+ * user in the running application
  */
 public class SpracheForm {
-   private Locale locale;
+	private Locale locale;
 
-   
-
-   public SpracheForm() {
-	   while (FacesContext.getCurrentInstance().getApplication().getSupportedLocales().hasNext()){
-		   locale = (Locale) FacesContext.getCurrentInstance().getApplication().getSupportedLocales().next();
-		   break;
-	   }
-
-      FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-      Helper.loadLanguageBundle();
-   }
-
-   
-
-   /**
-    * ermitteln auf welche Sprache umgestellt werden soll
-    * 
-    * @return Navigationsanweisung "null" als String - daher ein Reload der gleichen Seite mit neuer Sprache
-    */
-   public String SpracheUmschalten() {
-
-      String aktuelleSprache = Helper.getRequestParameter("locale");
-
-      if ("en".equals(aktuelleSprache))
-         locale = Locale.UK;
-
-      if ("de".equals(aktuelleSprache))
-         locale = Locale.GERMANY;
-
-      if ("ru".equals(aktuelleSprache))
-         locale = new Locale("ru", "RU");
-
-		if ("es".equals(aktuelleSprache)) {
-			locale = new Locale("es");
+	/**
+	 * The constructor of this class sets the locale to the first available
+	 * value and loads the required MessageBundle
+	 */
+	public SpracheForm() {
+		while (FacesContext.getCurrentInstance().getApplication()
+				.getSupportedLocales().hasNext()) {
+			locale = (Locale) FacesContext.getCurrentInstance()
+					.getApplication().getSupportedLocales().next();
+			break;
 		}
-		
-      FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-      Helper.loadLanguageBundle();
-      return Helper.getRequestParameter("ziel");
-   }
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
+		Messages.loadLanguageBundle();
+	}
 
-   
+	/**
+	 * The procedure switchLanguage is used to alter the application’s interface
+	 * language.
+	 * 
+	 * @param langCodeCombined
+	 *            This parameter can be either of form “‹language›” or of form
+	 *            “‹language›_‹country›”, e.g. “en” or “en_GB” are valid values.
+	 */
+	public void switchLanguage(String langCodeCombined) {
+		String[] languageCode = langCodeCombined.split("_");
+		if (languageCode.length == 2) {
+			locale = new Locale(languageCode[0], languageCode[1]);
+		} else {
+			locale = new Locale(languageCode[0]);
+		}
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
+		Messages.loadLanguageBundle();
+	}
 
-   public Locale getLocale() {
-      return locale;
-   }
+	/**
+	 * The procedure SpracheUmschalten is called from /pages/Metadaten2oben.jsp
+	 * to switch the language.
+	 * 
+	 * @return the empty String to point to the JSF framework to remain on the
+	 *         current page
+	 */
+	public String SpracheUmschalten() {
+		String languageCodeCombined = Helper.getRequestParameter("locale");
+		switchLanguage(languageCodeCombined);
+		return Helper.getRequestParameter("ziel");
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
 }

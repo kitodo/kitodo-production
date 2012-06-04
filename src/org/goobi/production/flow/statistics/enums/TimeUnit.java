@@ -30,7 +30,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 /**
  * Enum of all time units for the statistics
@@ -105,7 +105,7 @@ public enum TimeUnit {
 	 * @return localized title
 	 ****************************************************************************/
 	public String getTitle() {
-		return Helper.getTranslation(title);
+		return Messages.getString(title);
 	}
 	
 	/**

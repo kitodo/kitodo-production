@@ -81,6 +81,7 @@ import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -148,7 +149,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 				if (!myNewProcessTitle.matches(validateRegEx)) {
 					modusBearbeiten = "prozess";
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
+					Helper.setFehlerMeldung(Messages.getString("UngueltigerTitelFuerVorgang"));
 					return "";
 				} else {
 					/* Prozesseigenschaften */
@@ -644,7 +645,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			WebDav myDav = new WebDav();
 			myDav.DownloadToHome(myProzess, 0, false);
 		} else {
-			Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + myProzess.getTitel() + " " + Helper.getTranslation("isInUse"),
+			Helper.setMeldung(null, Messages.getString("directory ") + " " + myProzess.getTitel() + " " + Messages.getString("isInUse"),
 					myProzess.getImageFolderInUseUser().getNachVorname());
 		}
 	}
@@ -660,7 +661,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			if (!proz.isImageFolderInUse()) {
 				myDav.DownloadToHome(proz, 0, false);
 			} else {
-				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
+				Helper.setMeldung(null, Messages.getString("directory ") + " " + proz.getTitel() + " " + Messages.getString("isInUse"), proz
 						.getImageFolderInUseUser().getNachVorname());
 			}
 		}
@@ -675,7 +676,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				if (!proz.isImageFolderInUse()) {
 					myDav.DownloadToHome(proz, 0, false);
 				} else {
-					Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"),
+					Helper.setMeldung(null, Messages.getString("directory ") + " " + proz.getTitel() + " " + Messages.getString("isInUse"),
 							proz.getImageFolderInUseUser().getNachVorname());
 				}
 			}
@@ -690,7 +691,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			if (!proz.isImageFolderInUse()) {
 				myDav.DownloadToHome(proz, 0, false);
 			} else {
-				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
+				Helper.setMeldung(null, Messages.getString("directory ") + " " + proz.getTitel() + " " + Messages.getString("isInUse"), proz
 						.getImageFolderInUseUser().getNachVorname());
 			}
 		}

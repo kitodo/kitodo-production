@@ -137,10 +137,14 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		 * these something is wrong, timestamp pattern overrules status, in that
 		 * case status gets changed to match one of these pattern
 		 * 
-		 * status begin in work work done 0 null null null 1 null null null 2
-		 * set set null 3 set set set
-		 * 
-		 * 
+		 * <pre>
+		 *         status |  begin    in work    work done
+		 *         -------+-------------------------------  
+		 *           0    |  null     null       null
+		 *           1    |  null     null       null
+		 *           2    |  set      set        null
+		 *           3    |  set      set        set
+		 * </pre>
 		 */
 
 		for (Schritt step : inProcess.getSchritteList()) {
@@ -510,19 +514,16 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return duplicateEventRemoved;
 	}
 
-	public static Boolean updateHistoryForProcess(Prozess inProc){
-		Boolean updated;
+	public static Boolean updateHistoryForProcess(Prozess inProc) {
+		Boolean updated = false;
 		try {
 			updated = updateHistory(inProc);
-		} catch (IOException e) {
-		} catch (InterruptedException e) {
-		} catch (SwapException e) {
-		} catch (DAOException e) {
+			updated = updateHistoryForSteps(inProc);
+		} catch (Exception ex) {
+			logger.warn("Updating history failed.", ex);
+			updated = false;
 		}
-		updated = updateHistoryForSteps(inProc);
-		
 		return updated;
-		
 	}
 
 }

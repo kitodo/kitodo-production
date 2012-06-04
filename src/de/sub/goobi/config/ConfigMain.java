@@ -33,7 +33,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 
 public class ConfigMain implements Serializable{
 	private static final long serialVersionUID = -7167854300981799440L;
@@ -99,14 +101,11 @@ public class ConfigMain implements Serializable{
 			filename = session.getServletContext().getRealPath("/pages/imagesTemp") + File.separator;
 	
 			/* den Ordner neu anlegen, wenn er nicht existiert */
-			Helper help = new Helper();
 			try {
-				if (!new File(filename).exists()) {
-					help.createMetaDirectory(filename);
-				}
+				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
 				myLogger.error("IO error: " + ioe);
-				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
+				Helper.setFehlerMeldung(Messages.getString("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
 		return filename;

@@ -41,7 +41,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.context.ManagedSessionContext;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Messages;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
 public class HibernateSessionConversationFilter implements Filter {
@@ -72,13 +72,13 @@ public class HibernateSessionConversationFilter implements Filter {
 			}
 
 		} catch (Exception e) {
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " Establishing Sessions", e));
+			throw new ServletException(new GUIExceptionWrapper(Messages.getString("err_noConnectionEstablished") + " Establishing Sessions", e));
 		}
 
 		try {
 			ManagedSessionContext.bind(currentSession);
 		} catch (Exception e) {
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " ManagedSessionContext", e));
+			throw new ServletException(new GUIExceptionWrapper(Messages.getString("err_noConnectionEstablished") + " ManagedSessionContext", e));
 		}
 
 		try {
@@ -86,7 +86,7 @@ public class HibernateSessionConversationFilter implements Filter {
 		} catch (HibernateException e) {
 			log.error("no database connection available", e);
 			ManagedSessionContext.unbind(sf);
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " BeginTransaction", e));
+			throw new ServletException(new GUIExceptionWrapper(Messages.getString("err_noConnectionEstablished") + " BeginTransaction", e));
 		}
 
 		// #################################

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import dubious.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.ldap.Ldap;
@@ -355,9 +356,7 @@ public class Benutzer implements Serializable {
 		if (!rueckgabe.endsWith(File.separator))
 			rueckgabe += File.separator;
 		/* wenn das Verzeichnis nicht "" ist, aber noch nicht existiert, dann jetzt anlegen */
-		File homePath = new File(rueckgabe);
-		if (!homePath.exists())
-			new Helper().createUserDirectory(rueckgabe, login);
+		FilesystemHelper.createDirectoryForUser(rueckgabe, login);
 		return rueckgabe;
 	}
 
