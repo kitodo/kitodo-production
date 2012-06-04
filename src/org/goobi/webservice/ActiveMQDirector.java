@@ -23,6 +23,7 @@
 package org.goobi.webservice;
 
 import javax.jms.Connection;
+import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -142,15 +143,27 @@ public class ActiveMQDirector implements ServletContextListener,
 
 	/**
 	 * This sets up a connection to the topic the results shall be written to.
+	 * The delivery mode is set so “persistent” to allow consumers not online
+	 * with the server in the moment of message submission to read the messages
+	 * later. The log messages are set to be kept on the server for 7 days. This
+	 * value can be overridden from the GoobiConfig.properties parameter
+	 * “activeMQ.results.timeToLive”. The time to live must be specified in
+	 * milliseconds; 0 disables the oblivion. (See also:
+	 * http://docs.oracle.com/javaee/6/api/javax/jms/MessageProducer.html#setTimeToLive%28long%29 )
 	 * 
 	 * @param topic
 	 *            name of the active MQ topic
 	 * @return a MessageProducer object ready for writing or „null” on error
 	 */
 	protected MessageProducer setUpReportChannel(String topic) {
+		MessageProducer result;
 		try {
-			Destination results = session.createTopic(topic);
-			return session.createProducer(results);
+			Destination channel = session.createTopic(topic);
+			result = session.createProducer(channel);
+			result.setDeliveryMode(DeliveryMode.PERSISTENT);
+			result.setTimeToLive(ConfigMain.getLongParameter(
+					"activeMQ.results.timeToLive", 604800000));
+			return result;
 		} catch (Exception e) {
 			logger.fatal("Error setting up report channel \"" + topic
 					+ "\": Giving up.", e);
@@ -158,6 +171,11 @@ public class ActiveMQDirector implements ServletContextListener,
 		return null;
 	}
 
+	/**
+	 * This method is referenced from this.connectToServer() − see there.
+	 * 
+	 * @see javax.jms.ExceptionListener#onException(javax.jms.JMSException)
+	 */
 	@Override
 	public void onException(JMSException exce) {
 		logger.error(exce);
