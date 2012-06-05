@@ -420,6 +420,13 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
+		<!-- PreferencesForm -->
+	<managed-bean>
+		<managed-bean-name>DocketForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.Forms.DocketForm </managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- LdapGruppenForm -->
 	<managed-bean>
 		<managed-bean-name>LdapGruppenForm</managed-bean-name>

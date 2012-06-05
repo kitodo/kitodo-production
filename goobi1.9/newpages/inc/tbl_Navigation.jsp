@@ -220,6 +220,18 @@
 								value="33" />
 						</h:commandLink>
 
+						<%-- Dockets --%>
+						<h:commandLink styleClass="mlink" id="navigation"
+							action="#{DocketForm.FilterKein}"
+							style="#{NavigationForm.aktuell == '45' ? 'font-weight: bold;':'font-weight:normal ;'}">
+							<h:panelGroup rendered="#{NavigationForm.aktuell == '45'}">
+								<f:verbatim>&#8250; </f:verbatim>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.dockets}" />
+							<x:updateActionListener property="#{NavigationForm.aktuell}"
+								value="45" />
+						</h:commandLink>
+
 						<%-- Ldapgruppen --%>
 						<h:commandLink styleClass="mlink" id="ldapgroups"
 							action="#{LdapGruppenForm.FilterKein}"
