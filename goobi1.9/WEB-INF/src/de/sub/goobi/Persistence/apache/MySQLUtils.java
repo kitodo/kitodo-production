@@ -291,11 +291,13 @@ public class MySQLUtils {
 				int numberOfPages = rs.getInt("numberOfPages");
 				int numberOfVolumes = rs.getInt("numberOfVolumes");
 				boolean projectIsArchived = rs.getBoolean("projectIsArchived");
+				Integer docketId = rs.getInt("docketID");
+			
 				ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
 						dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
 						metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
 						metsPointerPathAnchor, metsDigiprovReferenceAnchor, metsDigiprovPresentationAnchor, metsPurl, metsContentIDs,
-						metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived);
+						metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived,docketId);
 				return po;
 			}
 			return null;

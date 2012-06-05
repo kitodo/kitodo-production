@@ -103,6 +103,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
+	private Docket docket;
+	
 	private final MetadatenSperrung msp = new MetadatenSperrung();
 	Helper help = new Helper();
 
@@ -1128,6 +1130,14 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		return null;
+	}
+
+	public Docket getDocket() {
+		return docket;
+	}
+
+	public void setDocket(Docket docket) {
+		this.docket = docket;
 	}
 
 }

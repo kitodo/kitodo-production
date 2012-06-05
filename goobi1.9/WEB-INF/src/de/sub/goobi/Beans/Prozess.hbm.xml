@@ -27,7 +27,8 @@
 		<many-to-one name="projekt" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
 		
 		<many-to-one name="regelsatz" class="de.sub.goobi.Beans.Regelsatz" column="MetadatenKonfigurationID"/>
-	<!--<many-to-one name="batch" class="de.sub.goobi.Beans.Batch" column="batchID"/>-->
+	
+		<many-to-one name="docket" class="de.sub.goobi.Beans.Docket" column="docketID"/>
 		
 		<set name="schritte" cascade="all,delete-orphan" inverse="true" order-by="Reihenfolge" lazy="true">
 			<key column="ProzesseID"/>

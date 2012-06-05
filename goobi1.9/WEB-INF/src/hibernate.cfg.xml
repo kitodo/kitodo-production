@@ -49,6 +49,7 @@
 		<mapping resource="de/sub/goobi/Beans/Benutzergruppe.hbm.xml" />
 		<mapping resource="de/sub/goobi/Beans/Benutzer.hbm.xml" />
 		<mapping resource="de/sub/goobi/Beans/Benutzereigenschaft.hbm.xml" />
+		<mapping resource="de/sub/goobi/Beans/Docket.hbm.xml" />		
 		<mapping resource="de/sub/goobi/Beans/Prozess.hbm.xml" />
 		<mapping resource="de/sub/goobi/Beans/Prozesseigenschaft.hbm.xml" />
 		<mapping resource="de/sub/goobi/Beans/Schritt.hbm.xml" />

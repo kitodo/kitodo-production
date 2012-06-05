@@ -229,6 +229,7 @@ public class BeanHelper {
 			eigneu.setProzess(prozessKopie);
 			myEigenschaften.add(eigneu);
 		}
+		// TODO read property configuration
 		prozessKopie.setEigenschaften(myEigenschaften);
 	}
 
