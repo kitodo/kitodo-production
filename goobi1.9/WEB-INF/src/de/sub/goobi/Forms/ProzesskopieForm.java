@@ -159,6 +159,7 @@ public class ProzesskopieForm {
 		this.prozessKopie.setInAuswahllisteAnzeigen(false);
 		this.prozessKopie.setProjekt(this.prozessVorlage.getProjekt());
 		this.prozessKopie.setRegelsatz(this.prozessVorlage.getRegelsatz());
+		this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
 		this.digitalCollections = new ArrayList<String>();
 
 		/*

@@ -108,7 +108,7 @@
 										<htm:tr>
 											<htm:td styleClass="eingabeBoxen_row3" align="left">
 												<h:commandButton id="id21" value="#{msgs.abbrechen}"
-													action="RegelsaetzeAlle" immediate="true" />
+													action="DocketList" immediate="true" />
 											</htm:td>
 											<htm:td styleClass="eingabeBoxen_row3" align="right">
 												<h:commandButton id="id22" value="#{msgs.loeschen}"

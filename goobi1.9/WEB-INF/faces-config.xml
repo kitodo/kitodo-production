@@ -373,6 +373,12 @@
 		<converter-id>RegelsatzConverter</converter-id>
 		<converter-class>de.sub.goobi.Converter.RegelsatzConverter</converter-class>
 	</converter>
+
+	<!-- Docket Converter for Select-Boxes -->
+	<converter>
+		<converter-id>DocketConverter</converter-id>
+		<converter-class>de.sub.goobi.Converter.DocketConverter</converter-class>
+	</converter>	
 	
 	<!-- Process Converter for Select-Boxes -->
 	<converter>

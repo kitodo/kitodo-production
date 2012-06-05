@@ -1059,9 +1059,13 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String downloadDocket() {
-		myLogger.debug("generate run note for process " + this.id);
+		
+		myLogger.debug("generate docket for process " + this.id);
 		String rootpath = ConfigMain.getParameter("xsltFolder");
-		File xsltfile = new File(rootpath, "docket.xsl");
+		File xsltfile = new File(rootpath, "docket.xsl");	
+		if (docket != null) {
+			xsltfile = new File(rootpath, docket.getFile());
+		}
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

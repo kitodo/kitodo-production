@@ -43,7 +43,9 @@ import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 
+import de.sub.goobi.Beans.Docket;
 import de.sub.goobi.Beans.Regelsatz;
+import de.sub.goobi.Persistence.DocketDAO;
 import de.sub.goobi.Persistence.RegelsatzDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -169,6 +171,21 @@ public class HelperForm {
 		}
 		return myPrefs;
 	}
+	
+	public List<SelectItem> getDockets() {
+		List<SelectItem> answer = new ArrayList<SelectItem>();
+		try {
+			List<Docket> temp = new DocketDAO().search("from Docket ORDER BY name");
+			for (Docket d : temp) {
+				answer.add(new SelectItem(d, d.getName(), null));
+			}
+		} catch (DAOException e) {
+			
+		}
+		
+		return answer;
+	}
+	
 
 	public List<String> getFileFormats() {
 		ArrayList<String> ffs = new ArrayList<String>();

@@ -122,7 +122,7 @@
 				</htm:table>
 			</h:form>
 		</htm:td>
-		<htm:td>
+		<htm:td rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
 
 			<h:form id="htmleditorform">
 				<h:inputText id="myTextArea" value="#{ProzessverwaltungForm.wikiField}" style="width: 50%" />
@@ -185,6 +185,14 @@
 							<f:selectItems value="#{HelperForm.regelsaetze}" />
 						</h:selectOneMenu>
 						<x:message for="Regelsatz" style="color: red" replaceIdWithLabel="true" />
+					</h:panelGroup>
+
+					<h:outputLabel for="Docket" value="#{msgs.docket}" />
+					<h:panelGroup>
+						<h:selectOneMenu id="docket" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.myProzess.docket}" converter="DocketConverter">
+							<f:selectItem itemValue="" itemLabel="#{msgs.defaultDocket}" />
+							<f:selectItems value="#{HelperForm.dockets}" />
+						</h:selectOneMenu>
 					</h:panelGroup>
 
 					<h:outputText value="#{msgs.inAuswahllisteAnzeigen}" />
