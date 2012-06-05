@@ -320,6 +320,22 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- Dockets -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>DocketList</from-outcome>
+			<to-view-id>/newpages/DocketList.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>DocketEdit</from-outcome>
+			<to-view-id>/newpages/DocketEdit.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
 	<!-- Bearbeitung der Benutzerberechtigungen für die Schritte -->
 	<navigation-rule>
 		<navigation-case>
