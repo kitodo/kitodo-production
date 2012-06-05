@@ -138,37 +138,37 @@
 </htm:table>
 
 
+<h:form>
+	<%-- Box für die Bearbeitung der Details --%>
+	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" rendered="#{ProzessverwaltungForm.modusBearbeiten=='prozess'}">
 
-<%-- Box für die Bearbeitung der Details --%>
-<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen" rendered="#{ProzessverwaltungForm.modusBearbeiten=='prozess'}">
+		<htm:tr>
+			<htm:td styleClass="eingabeBoxen_row1" colspan="2">
+				<h:outputText value="#{msgs.prozess}" />
+			</htm:td>
+		</htm:tr>
+		<%-- Formular für die Bearbeitung des Prozesses --%>
+		<htm:tr>
+			<htm:td styleClass="eingabeBoxen_row2" colspan="2">
+				<h:panelGrid columns="2">
 
-	<htm:tr>
-		<htm:td styleClass="eingabeBoxen_row1" colspan="2">
-			<h:outputText value="#{msgs.prozess}" />
-		</htm:td>
-	</htm:tr>
-	<%-- Formular für die Bearbeitung des Prozesses --%>
-	<htm:tr>
-		<htm:td styleClass="eingabeBoxen_row2" colspan="2">
-			<h:panelGrid columns="2">
+					<%-- Felder --%>
+					<h:outputLabel for="titel" value="#{msgs.prozessTitel}" />
+					<h:panelGroup>
+						<h:inputText id="titel" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.myNewProcessTitle}" required="true" />
+						<x:message for="titel" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}" />
+					</h:panelGroup>
 
-				<%-- Felder --%>
-				<h:outputLabel for="titel" value="#{msgs.prozessTitel}" />
-				<h:panelGroup>
-					<h:inputText id="titel" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.myNewProcessTitle}" required="true" />
-					<x:message for="titel" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}" />
-				</h:panelGroup>
+					<h:outputLabel for="prozess" value="#{msgs.projekt}" />
+					<h:panelGroup>
+						<h:selectOneMenu id="prozess" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
+							<f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}" />
+							<f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}" />
+						</h:selectOneMenu>
+						<x:message for="prozess" style="color: red" detailFormat="#{msgs.keinProjektAngegeben}" />
+					</h:panelGroup>
 
-				<h:outputLabel for="prozess" value="#{msgs.projekt}" />
-				<h:panelGroup>
-					<h:selectOneMenu id="prozess" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
-						<f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}" />
-						<f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}" />
-					</h:selectOneMenu>
-					<x:message for="prozess" style="color: red" detailFormat="#{msgs.keinProjektAngegeben}" />
-				</h:panelGroup>
-
-				<%-- Ausgabename
+					<%-- Ausgabename
 				<h:outputLabel for="ausgabename" value="#{msgs.ausgabename}" />
 				<h:panelGroup>
 					<h:inputText id="ausgabename"
@@ -177,44 +177,45 @@
 					<x:message for="ausgabename" style="color: red" />
 				</h:panelGroup>
  --%>
-				<%-- Preferences --%>
-				<h:outputLabel for="Regelsatz" value="#{msgs.regelsatz}" />
-				<h:panelGroup>
-					<h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.myProzess.regelsatz}" converter="RegelsatzConverter"
-						style="width: 300px;margin-right:15px" required="true">
-						<f:selectItems value="#{HelperForm.regelsaetze}" />
-					</h:selectOneMenu>
-					<x:message for="Regelsatz" style="color: red" replaceIdWithLabel="true" />
-				</h:panelGroup>
+					<%-- Preferences --%>
+					<h:outputLabel for="Regelsatz" value="#{msgs.regelsatz}" />
+					<h:panelGroup>
+						<h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.myProzess.regelsatz}" converter="RegelsatzConverter"
+							style="width: 300px;margin-right:15px" required="true">
+							<f:selectItems value="#{HelperForm.regelsaetze}" />
+						</h:selectOneMenu>
+						<x:message for="Regelsatz" style="color: red" replaceIdWithLabel="true" />
+					</h:panelGroup>
 
-				<h:outputText value="#{msgs.inAuswahllisteAnzeigen}" />
-				<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
+					<h:outputText value="#{msgs.inAuswahllisteAnzeigen}" />
+					<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
 
-				<h:outputText value="#{msgs.istTemplate}" />
-				<h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.myProzess.istTemplate}" />
-			</h:panelGrid>
+					<h:outputText value="#{msgs.istTemplate}" />
+					<h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.myProzess.istTemplate}" />
+				</h:panelGrid>
 
-		</htm:td>
-	</htm:tr>
+			</htm:td>
+		</htm:tr>
 
-	<htm:tr>
-		<htm:td styleClass="eingabeBoxen_row3" align="left">
-			<h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
-				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
-			</h:commandButton>
-		</htm:td>
-		<htm:td styleClass="eingabeBoxen_row3" align="right">
-			<h:commandButton value="#{msgs.contentLoeschen}" action="#{ProzessverwaltungForm.ContentLoeschen}"
-				onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}?')" rendered="#{ProzessverwaltungForm.myProzess.id != null}" />
-			<h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.Loeschen}"
-				onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')" rendered="#{ProzessverwaltungForm.myProzess.id != null}" />
-			<h:commandButton value="#{msgs.speichern}" action="#{ProzessverwaltungForm.Speichern}" id="absenden">
-				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
-			</h:commandButton>
-		</htm:td>
-	</htm:tr>
+		<htm:tr>
+			<htm:td styleClass="eingabeBoxen_row3" align="left">
+				<h:commandButton value="#{msgs.abbrechen}" immediate="true" action="#{NavigationForm.Reload}">
+					<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
+				</h:commandButton>
+			</htm:td>
+			<htm:td styleClass="eingabeBoxen_row3" align="right">
+				<h:commandButton value="#{msgs.contentLoeschen}" action="#{ProzessverwaltungForm.ContentLoeschen}"
+					onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}?')" rendered="#{ProzessverwaltungForm.myProzess.id != null}" />
+				<h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.Loeschen}"
+					onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')" rendered="#{ProzessverwaltungForm.myProzess.id != null}" />
+				<h:commandButton value="#{msgs.speichern}" action="#{ProzessverwaltungForm.Speichern}" id="absenden">
+					<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
+				</h:commandButton>
+			</htm:td>
+		</htm:tr>
 
-</htm:table>
+	</htm:table>
+</h:form>
 <%-- // Box für die Bearbeitung der Details --%>
 
 
