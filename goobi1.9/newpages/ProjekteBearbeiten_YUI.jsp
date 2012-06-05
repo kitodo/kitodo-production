@@ -12,6 +12,8 @@
 <%-- ######################################## 
 
 							Projekt bearbeiten
+							
+							does anyone use this page anymore?
 
 	#########################################--%>
 <a4j:keepAlive beanName="ProjekteForm" />
