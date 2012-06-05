@@ -103,14 +103,15 @@ public abstract class ActiveMQProcessor implements MessageListener {
 			// process ticket
 			process(ticket);
 
+			// if everything ‘s fine, report success
+			new WebServiceResult(queueName, TicketID, ReportLevel.SUCCESS)
+					.send();
+
 		} catch (Exception exce) {
 			// report any errors
 			new WebServiceResult(queueName, TicketID, ReportLevel.FATAL,
-					exce.toString()).send();
+					exce.getMessage()).send();
 		}
-
-		// if everything ‘s fine, report success
-		new WebServiceResult(queueName, TicketID, ReportLevel.SUCCESS).send();
 	}
 
 	/**

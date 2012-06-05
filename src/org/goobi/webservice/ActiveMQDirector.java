@@ -153,7 +153,7 @@ public class ActiveMQDirector implements ServletContextListener,
 	 * 
 	 * @param topic
 	 *            name of the active MQ topic
-	 * @return a MessageProducer object ready for writing or „null” on error
+	 * @return a MessageProducer object ready for writing or “null” on error
 	 */
 	protected MessageProducer setUpReportChannel(String topic) {
 		MessageProducer result;
