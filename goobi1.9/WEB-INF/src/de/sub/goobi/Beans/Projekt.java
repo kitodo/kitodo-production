@@ -40,7 +40,7 @@ import org.hibernate.HibernateException;
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 
-public class Projekt implements Serializable {
+public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
 	private Integer id;
 	private String titel;
@@ -458,5 +458,10 @@ public class Projekt implements Serializable {
 
 	public Boolean getProjectIsArchived() {
 		return this.projectIsArchived;
+	}
+
+	@Override
+	public int compareTo(Projekt o) {
+		return this.getTitel().compareTo(o.getTitel());
 	}
 }

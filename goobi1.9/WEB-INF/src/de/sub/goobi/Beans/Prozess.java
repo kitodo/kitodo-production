@@ -104,7 +104,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
 	private Docket docket;
-	
+	private Boolean synchronizeWrite = false;
+
 	private final MetadatenSperrung msp = new MetadatenSperrung();
 	Helper help = new Helper();
 
@@ -360,7 +361,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 		return pfad;
 	}
-	
+
 	public String getSourceDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		File dir = new File(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
@@ -371,18 +372,17 @@ public class Prozess implements Serializable, IGoobiEntity {
 		};
 		File sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
-		if (verzeichnisse == null || verzeichnisse.length == 0 ) {
+		if (verzeichnisse == null || verzeichnisse.length == 0) {
 			sourceFolder = new File(dir, titel + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
-				sourceFolder.mkdir();				
+				sourceFolder.mkdir();
 			}
 		} else {
 			sourceFolder = new File(dir, verzeichnisse[0]);
 		}
-		
+
 		return sourceFolder.getAbsolutePath();
 	}
-	
 
 	public String getProcessDataDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectoryIgnoreSwapping();
@@ -821,7 +821,15 @@ public class Prozess implements Serializable, IGoobiEntity {
 			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
 			ff = new RDFFile(this.regelsatz.getPreferences());
 		}
-		ff.read(getMetadataFilePath());
+		try {
+			ff.read(getMetadataFilePath());
+		} catch (ReadException e) {
+			if (e.getMessage().startsWith("Parse error at line -1")) {
+				Helper.setFehlerMeldung("metadataCorrupt");
+			} else {
+				throw e;
+			}
+		}
 		return ff;
 	}
 
@@ -893,24 +901,34 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
-		Fileformat ff;
-		Hibernate.initialize(getRegelsatz());
-		switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
-		case METS:
-			ff = new MetsMods(this.regelsatz.getPreferences());
-			break;
+		synchronized (synchronizeWrite) {
+			if (!this.synchronizeWrite) {
+				this.synchronizeWrite = true;
+				try {
+					Fileformat ff;
+					Hibernate.initialize(getRegelsatz());
+					switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
+					case METS:
+						ff = new MetsMods(this.regelsatz.getPreferences());
+						break;
 
-		case RDF:
-			ff = new RDFFile(this.regelsatz.getPreferences());
-			break;
+					case RDF:
+						ff = new RDFFile(this.regelsatz.getPreferences());
+						break;
 
-		default:
-			ff = new XStream(this.regelsatz.getPreferences());
-			break;
+					default:
+						ff = new XStream(this.regelsatz.getPreferences());
+						break;
+					}
+					createBackupFile();
+					ff.setDigitalDocument(gdzfile.getDigitalDocument());
+					ff.write(getMetadataFilePath());
+				} finally {
+					this.synchronizeWrite = false;
+				}
+			}
 		}
-		createBackupFile();
-		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		ff.write(getMetadataFilePath());
+		synchronizeWrite = false;
 	}
 
 	public void writeMetadataAsTemplateFile(Fileformat inFile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
@@ -1059,10 +1077,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	public String downloadDocket() {
-		
+
 		myLogger.debug("generate docket for process " + this.id);
 		String rootpath = ConfigMain.getParameter("xsltFolder");
-		File xsltfile = new File(rootpath, "docket.xsl");	
+		File xsltfile = new File(rootpath, "docket.xsl");
 		if (docket != null) {
 			xsltfile = new File(rootpath, docket.getFile());
 		}

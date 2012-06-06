@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -223,7 +224,10 @@ public class Benutzer implements Serializable {
 		if (this.benutzergruppen == null) {
 			return new ArrayList<Benutzergruppe>();
 		} else {
-			return new ArrayList<Benutzergruppe>(this.benutzergruppen);
+			List<Benutzergruppe> answer = new ArrayList<Benutzergruppe>(this.benutzergruppen);
+			Collections.sort(answer);
+			return answer;
+			
 		}
 	}
 
@@ -332,7 +336,10 @@ public class Benutzer implements Serializable {
 		if (this.projekte == null) {
 			return new ArrayList<Projekt>();
 		} else {
-			return new ArrayList<Projekt>(this.projekte);
+			List<Projekt> answer = new ArrayList<Projekt>(this.projekte);
+			Collections.sort(answer);
+			return answer;
+			
 		}
 	}
 

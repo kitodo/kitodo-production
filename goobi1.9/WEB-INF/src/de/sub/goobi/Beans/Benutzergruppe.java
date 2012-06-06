@@ -1,4 +1,5 @@
 package de.sub.goobi.Beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -37,12 +38,14 @@ import org.hibernate.Hibernate;
 /**
  * Usergroups owning different access rights, represented by integer values
  * 
- * 1: Administration - can do anything 2: Projectmanagement - may do a lot (but not user management, no user switch, no administrative form) 3: User
- * and process (basically like 4 but can be used for setting aditional boundaries later, if so desired) 4: User only: can see current steps
+ * 1: Administration - can do anything 2: Projectmanagement - may do a lot (but
+ * not user management, no user switch, no administrative form) 3: User and
+ * process (basically like 4 but can be used for setting aditional boundaries
+ * later, if so desired) 4: User only: can see current steps
  * 
  * ================================================================
  */
-public class Benutzergruppe implements Serializable {
+public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> {
 	private static final long serialVersionUID = -5924845694417474352L;
 	private Integer id;
 	private String titel;
@@ -57,8 +60,10 @@ public class Benutzergruppe implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * #####################################################
+	 * ##################################################### ## ## Getter und
+	 * Setter ## #####################################################
+	 * ####################################################
 	 */
 
 	public Integer getId() {
@@ -117,11 +122,11 @@ public class Benutzergruppe implements Serializable {
 
 	public List<Benutzer> getBenutzerList() {
 		try {
-		Hibernate.initialize(getBenutzer());
+			Hibernate.initialize(getBenutzer());
 		} catch (org.hibernate.HibernateException e) {
-			
+
 		}
-		
+
 		if (this.benutzer == null) {
 			return new ArrayList<Benutzer>();
 		} else {
@@ -160,6 +165,11 @@ public class Benutzergruppe implements Serializable {
 
 	public void setPanelAusgeklappt(boolean panelAusgeklappt) {
 		this.panelAusgeklappt = panelAusgeklappt;
+	}
+
+	@Override
+	public int compareTo(Benutzergruppe o) {
+		return this.getTitel().compareTo(o.getTitel());
 	}
 
 }

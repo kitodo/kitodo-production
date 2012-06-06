@@ -575,7 +575,7 @@ public class Metadaten {
 			Helper.setFehlerMeldung(e);
 			return Helper.getRequestParameter("zurueck");
 		} catch (ReadException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
+			Helper.setFehlerMeldung(e.getMessage());
 			return Helper.getRequestParameter("zurueck");
 		} catch (PreferencesException e) {
 			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
