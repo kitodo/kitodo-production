@@ -1,4 +1,5 @@
 package org.goobi.production.flow.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -41,6 +42,7 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -48,7 +50,6 @@ import de.sub.goobi.helper.exceptions.SwapException;
 public class JobCreation {
 	private static final Logger logger = Logger.getLogger(JobCreation.class);
 
-	
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
@@ -124,7 +125,7 @@ public class JobCreation {
 		}
 		return p;
 	}
-	
+
 	public static boolean testTitle(String titel) {
 		if (titel != null) {
 			long anzahl = 0;
@@ -142,63 +143,111 @@ public class JobCreation {
 		}
 		return true;
 	}
+
 	
 	@SuppressWarnings("static-access")
-	private static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
-
-		File imagesFolder = new File(basepath);
-		if (!imagesFolder.exists()) {
-			imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
-		}
-		if (imagesFolder.exists() && imagesFolder.isDirectory()) {
-			List<String> imageDir = new ArrayList<String>();
-
-			String[] files = imagesFolder.list();
-			for (int i = 0; i < files.length; i++) {
-				imageDir.add(files[i]);
+	public static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
+		if (ConfigMain.getBooleanParameter("importUseOldConfiguration", false)) {
+			File imagesFolder = new File(basepath);
+			if (!imagesFolder.exists()) {
+				imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
 			}
-			for (String file : imageDir) {
-				File image = new File(imagesFolder, file);
-				File dest = new File(p.getImagesOrigDirectory() + image.getName());
-				FileUtils.moveFile(image, dest);
+			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+				List<String> imageDir = new ArrayList<String>();
+
+				String[] files = imagesFolder.list();
+				for (int i = 0; i < files.length; i++) {
+					imageDir.add(files[i]);
+				}
+				for (String file : imageDir) {
+					File image = new File(imagesFolder, file);
+					File dest = new File(p.getImagesOrigDirectory() + image.getName());
+					FileUtils.moveFile(image, dest);
+				}
+				deleteDirectory(imagesFolder);
 			}
-			deleteDirectory(imagesFolder);
+
+			// copy pdf files
+			File pdfs = new File(basepath + "_pdf" + File.separator);
+			if (pdfs.isDirectory()) {
+				FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
+			}
+
+			// copy fulltext files
+
+			File fulltext = new File(basepath + "_txt");
+
+			if (fulltext.isDirectory()) {
+
+				FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
+			}
+
+			// copy source files
+
+			File sourceDir = new File(basepath + "_src" + File.separator);
+			if (sourceDir.isDirectory()) {
+				FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
+			}
+
+			try {
+				FileUtils.forceDelete(metsfile);
+			} catch (Exception e) {
+				logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
+
+			}
+			File anchor = new File(basepath + "_anchor.xml");
+			if (anchor.exists()) {
+				FileUtils.deleteQuietly(anchor);
+			}
 		}
-		
-		// copy pdf files
-        File pdfs = new File(basepath + "_pdf" + File.separator);
-        if (pdfs.isDirectory()) {
-            FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
-        }
 
-		// copy fulltext files
-
-		File fulltext = new File(basepath + "_txt");
-
-		if (fulltext.isDirectory()) {
-
-			FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
-		}
-
-		// copy source files
-
-		File sourceDir = new File(basepath + "_src" + File.separator);
-		if (sourceDir.isDirectory()) {
-			FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
-		}
-
-		try {
-			FileUtils.forceDelete(metsfile);
-		} catch (Exception e) {
-			logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
-
-		}
-		File anchor = new File(basepath + "_anchor.xml");
-		if (anchor.exists()) {
-			FileUtils.deleteQuietly(anchor);
+		else {
+			// new folder structure for process imports
+			File importFolder = new File(basepath);
+			if (importFolder.exists() && importFolder.isDirectory()) {
+				File[] folderList = importFolder.listFiles();
+				for (File directory : folderList) {
+					if (directory.getName().contains("images")) {
+						File[] imageList = directory.listFiles();
+						for (File imagedir : imageList) {
+							if (imagedir.isDirectory()) {
+								FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
+							} else {
+								FileUtils.moveFile(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
+							}
+						}
+					} else if (directory.getName().contains("ocr")) {
+						File ocr = new File(p.getOcrDirectory());
+						if (!ocr.exists()) {
+							ocr.mkdir();
+						}
+						File[] ocrList = directory.listFiles();
+						for (File ocrdir : ocrList) {
+							if (ocrdir.isDirectory()) {
+								FileUtils.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
+							} else {
+								FileUtils.moveFile(ocrdir, new File(ocr, ocrdir.getName()));
+							}
+						}
+					} else {
+						File i = new File(p.getImportDirectory());
+						if (!i.exists()) {
+							i.mkdir();
+						}
+						File[] importList = directory.listFiles();
+						for (File importdir : importList) {
+							if (importdir.isDirectory()) {
+								FileUtils.moveDirectory(importdir, new File(i, importdir.getName()));
+							} else {
+								FileUtils.moveFile(importdir, new File(i, importdir.getName()));
+							}
+						}
+					}
+				}
+			}
 		}
 	}
-	
+
 	private static void deleteDirectory(File directory) {
 		try {
 			FileUtils.deleteDirectory(directory);

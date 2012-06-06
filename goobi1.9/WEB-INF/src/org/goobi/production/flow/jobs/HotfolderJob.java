@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.goobi.production.Import.GoobiHotfolder;
 import org.goobi.production.Import.ImportObject;
 import org.goobi.production.cli.helper.CopyProcess;
+import org.goobi.production.flow.helper.JobCreation;
 
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -411,7 +412,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			cp.OpacAuswerten();
 			try {
 				p = cp.createProcess(io);
-				moveFiles(metsfile, basepath, p);
+				JobCreation.moveFiles(metsfile, basepath, p);
 
 			} catch (ReadException e) {
 				Helper.setFehlerMeldung(e);
@@ -447,62 +448,6 @@ public class HotfolderJob extends AbstractGoobiJob {
 			FileUtils.deleteDirectory(directory);
 		} catch (IOException e) {
 			logger.error(e);
-		}
-	}
-
-	@SuppressWarnings("static-access")
-	private static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
-
-		File imagesFolder = new File(basepath);
-		if (!imagesFolder.exists()) {
-			imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
-		}
-		if (imagesFolder.exists() && imagesFolder.isDirectory()) {
-			List<String> imageDir = new ArrayList<String>();
-
-			String[] files = imagesFolder.list();
-			for (int i = 0; i < files.length; i++) {
-				imageDir.add(files[i]);
-			}
-			for (String file : imageDir) {
-				File image = new File(imagesFolder, file);
-				File dest = new File(p.getImagesOrigDirectory() + image.getName());
-				FileUtils.moveFile(image, dest);
-			}
-			deleteDirectory(imagesFolder);
-		}
-
-		// copy fulltext files
-
-		File fulltext = new File(basepath + "_txt");
-
-		if (fulltext.isDirectory()) {
-
-			FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
-		}
-
-		// copy pdf files
-        File pdfs = new File(basepath + "_pdf" + File.separator);
-        if (pdfs.isDirectory()) {
-            FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
-        }
-        
-		// copy source files
-
-		File sourceDir = new File(basepath + "_src" + File.separator);
-		if (sourceDir.isDirectory()) {
-			FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
-		}
-
-		try {
-			FileUtils.forceDelete(metsfile);
-		} catch (Exception e) {
-			logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
-
-		}
-		File anchor = new File(basepath + "_anchor.xml");
-		if (anchor.exists()) {
-			FileUtils.deleteQuietly(anchor);
 		}
 	}
 }
