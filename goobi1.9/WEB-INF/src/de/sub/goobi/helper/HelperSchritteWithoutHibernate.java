@@ -23,6 +23,7 @@ import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -242,7 +243,10 @@ public class HelperSchritteWithoutHibernate {
 	}
 
 	public void executeDmsExport(StepObject step, boolean automatic) {
-		AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate();
+		AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(ConfigMain.getBooleanParameter("automaticExportWithImages", true));
+		if (!ConfigMain.getBooleanParameter("automaticExportWithOcr", true)) {
+			dms.setExportFulltext(false);
+		}
 		ProcessObject po = ProcessManager.getProcessObjectForId(step.getProcessId());
 		try {
 			dms.startExport(po);

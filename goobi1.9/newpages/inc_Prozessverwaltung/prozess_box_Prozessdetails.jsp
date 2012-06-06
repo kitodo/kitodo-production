@@ -226,8 +226,8 @@
 </h:form>
 <%-- // Box für die Bearbeitung der Details --%>
 
+<h:outputText value="<script src=\"" escape="false"/><h:outputText value="#{HelperForm.servletPathWithHostAsUrl}/js/tiny_mce/tiny_mce.js"/><h:outputText value="\" type=\"text/javascript\"></script>" escape="false"/>
 
-<script src="../js/tiny_mce/tiny_mce.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 	tinyMCE
