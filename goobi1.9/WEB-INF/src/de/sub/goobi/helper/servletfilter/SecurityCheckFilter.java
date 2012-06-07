@@ -68,7 +68,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
       HttpServletResponse hres = (HttpServletResponse) response;
       HttpSession session = hreq.getSession();
 
-      if (session.isNew()) {
+      if (session.isNew() && !hreq.getRequestURI().contains("newpages/Main.jsf")) {
          hres.sendRedirect(hreq.getContextPath());
          return;
       }
