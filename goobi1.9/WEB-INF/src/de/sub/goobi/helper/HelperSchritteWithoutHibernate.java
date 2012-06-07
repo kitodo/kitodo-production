@@ -185,21 +185,26 @@ public class HelperSchritteWithoutHibernate {
 		List<String> scriptpaths = StepManager.loadScripts(step.getId());
 		int count = 1;
 		int size = scriptpaths.size();
+		int returnParameter = 0;
 		for (String script : scriptpaths) {
+			if (returnParameter != 0) {
+				abortStep(step);
+				break;
+			}
 			if (script != null && !script.equals(" ") && script.length() != 0) {
 				if (automatic && (count == size)) {
-					executeScriptForStepObject(step, script, true);
+					returnParameter= executeScriptForStepObject(step, script, true);
 				} else {
-					executeScriptForStepObject(step, script, false);
+					returnParameter= executeScriptForStepObject(step, script, false);
 				}
 			}
 			count++;
 		}
 	}
 
-	public void executeScriptForStepObject(StepObject step, String script, boolean automatic) {
+	public int executeScriptForStepObject(StepObject step, String script, boolean automatic) {
 		if (script == null || script.length() == 0) {
-			return;
+			return -1;
 		}
 		script = script.replace("{", "(").replace("}", ")");
 		DigitalDocument dd = null;
@@ -220,10 +225,10 @@ public class HelperSchritteWithoutHibernate {
 		VariableReplacerWithoutHibernate replacer = new VariableReplacerWithoutHibernate(dd, prefs, po, step);
 
 		script = replacer.replace(script);
-
+		int rueckgabe = -1;
 		try {
 			logger.info("Calling the shell: " + script);
-			int rueckgabe = Helper.callShell2(script);
+			rueckgabe = Helper.callShell2(script);
 			if (automatic) {
 				if (rueckgabe == 0) {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
@@ -240,6 +245,7 @@ public class HelperSchritteWithoutHibernate {
 		} catch (InterruptedException e) {
 			Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
 		}
+		return rueckgabe;
 	}
 
 	public void executeDmsExport(StepObject step, boolean automatic) {
@@ -294,8 +300,8 @@ public class HelperSchritteWithoutHibernate {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws SQLException {
 		Date d = new Date(System.currentTimeMillis());
-		d.setMonth(4);
-		d.setDate(17);
+		d.setMonth(5);
+		d.setDate(4);
 		System.out.println(d.getTime());
 
 		// DbHelper helper = DbHelper.getInstance();
