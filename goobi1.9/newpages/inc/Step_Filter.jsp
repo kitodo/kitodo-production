@@ -28,8 +28,13 @@
 
 	<h:panelGroup id="aslsid4">
 		
+		
 		<h:outputText value="#{msgs.showAutomaticTasks}:"  rendered="#{showUserRelatedFilter}" />
 		<x:selectBooleanCheckbox id="check3" forceId="true" value="#{Form.showAutomaticTasks}" rendered="#{showUserRelatedFilter}" onchange="document.getElementById('check2').checked=false; document.getElementById('FilterAlle').click()" style="margin-right:40px" />
+		
+		
+		<h:outputText value="#{msgs.hideCorrectionTasks}:"  rendered="#{showUserRelatedFilter}" />
+		<x:selectBooleanCheckbox id="check4" forceId="true" value="#{Form.hideCorrectionTasks}" rendered="#{showUserRelatedFilter}" onchange="document.getElementById('check2').checked=false; document.getElementById('FilterAlle').click()" style="margin-right:40px" />
 		
 
 		<h:outputText id="aslsid5" value="#{msgs.nurEigeneAufgabenAnzeigen}:"  rendered="#{showUserRelatedFilter}" />

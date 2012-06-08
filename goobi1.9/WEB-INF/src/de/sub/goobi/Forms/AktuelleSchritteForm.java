@@ -102,6 +102,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private boolean nurOffeneSchritte = false;
 	private boolean nurEigeneSchritte = false;
 	private boolean showAutomaticTasks = false;
+	private boolean hideCorrectionTasks = false;
 	private HashMap<String, Boolean> anzeigeAnpassen;
 	private IEvaluableFilter myFilteredDataSource;
 	private String scriptPath;
@@ -167,6 +168,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (!this.showAutomaticTasks) {
 				crit.add(Restrictions.eq("typAutomatisch", false));
 			}
+			if (hideCorrectionTasks) {
+				crit.add(Restrictions.not(Restrictions.eq("prioritaet", 10)));
+			}
+			
 			sortList(crit);
 			this.page = new Page(crit, 0);
 			// calcHomeImages();
@@ -1421,6 +1426,14 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void setShowAutomaticTasks(boolean showAutomaticTasks) {
 		this.showAutomaticTasks = showAutomaticTasks;
+	}
+
+	public boolean getHideCorrectionTasks() {
+		return hideCorrectionTasks;
+	}
+
+	public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+		this.hideCorrectionTasks = hideCorrectionTasks;
 	}
 
 }
