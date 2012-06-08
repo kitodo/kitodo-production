@@ -1083,6 +1083,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 		File xsltfile = new File(rootpath, "docket.xsl");
 		if (docket != null) {
 			xsltfile = new File(rootpath, docket.getFile());
+			if (!xsltfile.exists()) {
+				Helper.setFehlerMeldung("docketMissing");
+				return "";
+			}
 		}
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
@@ -1092,7 +1096,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			String contentType = servletContext.getMimeType(fileName);
 			response.setContentType(contentType);
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-
+			
 			// write run note to servlet output stream
 			try {
 				ServletOutputStream out = response.getOutputStream();
