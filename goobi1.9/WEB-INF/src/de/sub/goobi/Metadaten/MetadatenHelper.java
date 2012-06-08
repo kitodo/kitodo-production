@@ -90,8 +90,8 @@ public class MetadatenHelper implements Comparator<Object> {
 			for (Metadata old : inOldDocstruct.getAllMetadata()) {
 				boolean match = false;
 
-				if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-					for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
+				if (newDocstruct.getPossibleMetadataTypes() != null && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+					for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
 						if (mt.getName().equals(old.getType().getName())) {
 							match = true;
 							break;
@@ -121,8 +121,8 @@ public class MetadatenHelper implements Comparator<Object> {
 		if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
 			for (Person old : inOldDocstruct.getAllPersons()) {
 				boolean match = false;
-				if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-					for (MetadataType mt : newDocstruct.getAddableMetadataTypes()) {
+				if (newDocstruct.getPossibleMetadataTypes() != null && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+					for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
 						if (mt.getName().equals(old.getType().getName())) {
 							match = true;
 							break;
@@ -131,13 +131,6 @@ public class MetadatenHelper implements Comparator<Object> {
 					if (!match) {
 						Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
 								+ newDocstruct.getType().getName());
-
-						// if (newDocstruct.getAddableMetadataTypes() != null && newDocstruct.getAddableMetadataTypes().size() > 0) {
-						// if (!newDocstruct.getAddableMetadataTypes().contains(old.getType())) {
-						// Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
-						// + newDocstruct.getType().getName());
-						//
-						// return inOldDocstruct;
 					} else {
 						newDocstruct.addPerson(old);
 					}
@@ -629,7 +622,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		/*
 		 * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
 		 */
-		List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
+		List<MetadataType> types = myDocStruct.getPossibleMetadataTypes();
 		if (types == null) {
 			types = new ArrayList<MetadataType>();
 		}
