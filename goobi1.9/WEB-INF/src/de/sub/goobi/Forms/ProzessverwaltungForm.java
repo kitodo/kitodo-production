@@ -871,6 +871,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		} else {
 			Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + this.myProzess.getTitel() + " " + Helper.getTranslation("isInUse"),
 					this.myProzess.getImageFolderInUseUser().getNachVorname());
+			WebDav myDav = new WebDav();
+			myDav.DownloadToHome(this.myProzess, 0, true);
 		}
 	}
 
@@ -888,6 +890,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			} else {
 				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
 						.getImageFolderInUseUser().getNachVorname());
+				myDav.DownloadToHome(proz, 0, true);
 			}
 		}
 		Helper.setMeldung(null, "createdInUserHome", "");
@@ -903,6 +906,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				} else {
 					Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"),
 							proz.getImageFolderInUseUser().getNachVorname());
+					myDav.DownloadToHome(proz, 0, true);
 				}
 			}
 		}
@@ -918,6 +922,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			} else {
 				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
 						.getImageFolderInUseUser().getNachVorname());
+				myDav.DownloadToHome(proz, 0, true);
 			}
 		}
 		Helper.setMeldung(null, "createdInUserHomeAll", "");
