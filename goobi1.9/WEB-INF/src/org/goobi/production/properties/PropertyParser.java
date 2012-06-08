@@ -17,9 +17,7 @@ import de.sub.goobi.helper.Helper;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
- * 			- http://digiverso.com 
- * 			- http://www.intranda.com
+ * Visit the websites for more information. - http://digiverso.com - http://www.intranda.com
  * 
  * Copyright 2012, intranda GmbH, Göttingen
  * 
@@ -116,11 +114,11 @@ public class PropertyParser {
 		String stepTitle = mySchritt.getTitel();
 		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
-		
+
 		if (mySchritt.getProzess().isIstTemplate()) {
 			return properties;
 		}
-		
+
 		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
 		XMLConfiguration config;
 		try {
@@ -190,7 +188,7 @@ public class PropertyParser {
 		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
 		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList(); 
+		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList();
 		for (Prozesseigenschaft pe : plist) {
 
 			for (ProcessProperty pp : listClone) {
@@ -216,15 +214,15 @@ public class PropertyParser {
 			}
 		}
 
-//		// add 'eigenschaft' to all ProcessProperties
-//		for (ProcessProperty pp : properties) {
-//			if (pp.getProzesseigenschaft() == null) {
-//				Prozesseigenschaft pe = new Prozesseigenschaft();
-//				pe.setProzess(mySchritt.getProzess());
-//				mySchritt.getProzess().getEigenschaften().add(pe);
-//				pp.setProzesseigenschaft(pe);
-//			}
-//		}
+		// // add 'eigenschaft' to all ProcessProperties
+		// for (ProcessProperty pp : properties) {
+		// if (pp.getProzesseigenschaft() == null) {
+		// Prozesseigenschaft pe = new Prozesseigenschaft();
+		// pe.setProzess(mySchritt.getProzess());
+		// mySchritt.getProzess().getEigenschaften().add(pe);
+		// pp.setProzesseigenschaft(pe);
+		// }
+		// }
 
 		return properties;
 	}
@@ -234,6 +232,16 @@ public class PropertyParser {
 		String projectTitle = process.getProjekt().getTitel();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 		if (process.isIstTemplate()) {
+			List<Prozesseigenschaft> plist = process.getEigenschaftenList();
+			for (Prozesseigenschaft pe : plist) {
+				ProcessProperty pp = new ProcessProperty();
+				pp.setName(pe.getTitel());
+				pp.setProzesseigenschaft(pe);
+				pp.setType(Type.TEXT);
+				pp.setValue(pe.getWert());
+				pp.setContainer(pe.getContainer());
+				properties.add(pp);
+			}
 			return properties;
 		}
 		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
@@ -287,8 +295,7 @@ public class PropertyParser {
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
 		for (Prozesseigenschaft pe : plist) {
 
-			
-			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all			
+			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
 			if (pe.getTitel() != null) {
 
 				for (ProcessProperty pp : listClone) {
@@ -315,10 +322,10 @@ public class PropertyParser {
 		// add 'eigenschaft' to all ProcessProperties
 		for (ProcessProperty pp : properties) {
 			if (pp.getProzesseigenschaft() == null) {
-//				Prozesseigenschaft pe = new Prozesseigenschaft();
-//				pe.setProzess(process);
-//				process.getEigenschaften().add(pe);
-//				pp.setProzesseigenschaft(pe);
+				// Prozesseigenschaft pe = new Prozesseigenschaft();
+				// pe.setProzess(process);
+				// process.getEigenschaften().add(pe);
+				// pp.setProzesseigenschaft(pe);
 			} else {
 				plist.remove(pp.getProzesseigenschaft());
 			}
@@ -338,7 +345,7 @@ public class PropertyParser {
 			}
 		}
 		logger.debug("all properties are " + properties.size());
-		
+
 		return properties;
 	}
 }
