@@ -63,7 +63,7 @@
 				</htm:tr>
 
 				<htm:tr>
-					<htm:td width="150">
+					<htm:td width="150" style="vertical-align:top">
 						<h:outputText value="#{msgs.typ}:" />
 					</htm:td>
 					<htm:td>

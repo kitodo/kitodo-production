@@ -127,6 +127,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 				Disjunction ex = Restrictions.disjunction();
 				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
+				// TODO add filter for project and for user group
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
@@ -223,7 +224,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String ZuGruppeHinzufuegen() {
 		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
-			this.myClass.getBenutzergruppen().add(new BenutzergruppenDAO().get(gruppenID));
+			Benutzergruppe usergroup = new BenutzergruppenDAO().get(gruppenID);
+			if (!this.myClass.getBenutzergruppen().contains(usergroup)) {
+				this.myClass.getBenutzergruppen().add(usergroup);				
+			}
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
@@ -247,7 +251,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String ZuProjektHinzufuegen() {
 		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
-			this.myClass.getProjekte().add(new ProjektDAO().get(projektID));
+			Projekt project = new ProjektDAO().get(projektID);
+			if (!this.myClass.getProjekte().contains(project)) {
+				this.myClass.getProjekte().add(project);
+			}
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
