@@ -273,7 +273,7 @@
 
 								<%--  Date  --%>
 								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
-									<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.value}"
+									<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.dateValue}"
 										enableManualInput="true">
 									</rich:calendar>
 								</h:panelGroup>

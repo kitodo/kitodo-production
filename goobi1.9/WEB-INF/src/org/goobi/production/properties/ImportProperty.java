@@ -28,7 +28,11 @@ package org.goobi.production.properties;
  * exception statement from your version.
  */
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -186,6 +190,26 @@ public class ImportProperty implements IProperty{
 			this.value = "true";
 		} else {
 			this.value = "false";
+		}
+	}
+
+	public void setDateValue(Date inDate) {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		value= format.format(inDate);
+	}
+
+	
+	public Date getDateValue() {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(format.parse(value));
+			cal.set(Calendar.HOUR, 12);
+			return cal.getTime();
+		} catch (ParseException e) {
+			return new Date();
+		} catch (NullPointerException e) {
+			return new Date();
 		}
 	}
 }

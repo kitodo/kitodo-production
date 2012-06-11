@@ -26,6 +26,7 @@ package org.goobi.production.properties;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.util.Date;
 import java.util.List;
 
 public interface IProperty {
@@ -68,6 +69,9 @@ public interface IProperty {
 
 	public abstract boolean isValid();
 
+	public void setDateValue(Date inDate);
+	
+	public Date getDateValue();
 //	public abstract void save(Schritt step);
 
 //	public abstract Prozesseigenschaft getProzesseigenschaft();
