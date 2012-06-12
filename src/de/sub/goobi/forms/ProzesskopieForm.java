@@ -23,6 +23,7 @@
 package de.sub.goobi.forms;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigOpac;
 import de.sub.goobi.config.ConfigOpacDoctype;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Messages;
@@ -932,46 +934,22 @@ public class ProzesskopieForm {
 		return possibleDigitalCollection;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		possibleDigitalCollection = new ArrayList<String>();
-		String filename = help.getGoobiConfigDirectory() + "digitalCollections.xml";
-		if (!(new File(filename).exists())) {
-			Helper.setFehlerMeldung("File not found: ", filename);
-			return;
-		}
-
-		try {
-			/* Datei einlesen und Root ermitteln */
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = builder.build(new File(filename));
-			Element root = doc.getRootElement();
-			/* alle Projekte durchlaufen */
-			List<Element> projekte = root.getChildren();
-			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-				Element projekt = (Element) iter.next();
-				List<Element> projektnamen = projekt.getChildren("name");
-				for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-					Element projektname = (Element) iterator.next();
-
-					/*
-					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
-					 */
-					if (projektname.getText().equalsIgnoreCase(prozessKopie.getProjekt().getTitel())) {
-						List<Element> myCols = projekt.getChildren("DigitalCollection");
-						for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-							Element col = (Element) it2.next();
-							possibleDigitalCollection.add(col.getText());
-						}
-					}
-				}
-			}
+		try{
+			possibleDigitalCollection = DigitalCollections.possibleDigitalCollectionsForProcess(prozessKopie);
+		} catch (FileNotFoundException e1) {
+			myLogger.error("File not found: ", e1);
+			Helper.setFehlerMeldung("File not found: ", e1);
 		} catch (JDOMException e1) {
 			myLogger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		} catch (IOException e1) {
 			myLogger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+		} finally {
+			if(possibleDigitalCollection == null)
+				possibleDigitalCollection = new ArrayList<String>();
 		}
 
 		// if only one collection is possible take it directly

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>ws</short-name>
+	<uri>http://taglib.production.goobi.org/webService</uri>
+	<function>
+		<name>getAdditionalFieldsToBeCompletedManually</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getAdditionalFieldsToBeCompletedManually()</function-signature>
+	</function>
+	<function>
+		<name>getCatalogues</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getCatalogues()</function-signature>
+	</function>
+	<function>
+		<name>getCollections</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getCollections()</function-signature>
+	</function>
+	<function>
+		<name>getProjects</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getProjects()</function-signature>
+	</function>
+	<function>
+		<name>getProjectsAndTemplates</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getProjectsAndTemplates()</function-signature>
+	</function>
+	<function>
+		<name>getSearchFields</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getSearchFields()</function-signature>
+	</function>
+	<function>
+		<name>getTemplates</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getTemplates()</function-signature>
+	</function>
+</taglib>
