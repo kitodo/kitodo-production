@@ -70,7 +70,9 @@ public class GoobiProcess {
 			@SuppressWarnings(value="unchecked")
 			List<GoobiProcessInformation> list = (List<GoobiProcessInformation>) criteria.list();
 
-			result.addAll(list);
+			if ((list != null) && (list.size() > 0)) {
+				result.addAll(list);
+			}
 		} catch (HibernateException he) {
 			myLogger.error("Catched Hibernate exception: " + he.getMessage());
 		}
