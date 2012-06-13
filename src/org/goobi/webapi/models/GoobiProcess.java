@@ -22,13 +22,19 @@
 
 package org.goobi.webapi.models;
 
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcessInformation;
 import org.hibernate.*;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GoobiProcess {
@@ -44,30 +50,28 @@ public class GoobiProcess {
 		session = Helper.getHibernateSession();
 
 		try {
-
-			sqlQuery = "SELECT we.Wert AS ppn,ve.Wert AS title "
+/*
+			sqlQuery = "SELECT we.Wert AS identifier,ve.Wert AS title "
 				+ " FROM werkstuecke w "
 				+ " INNER JOIN werkstueckeeigenschaften we ON we.werkstueckeID = w.werkstueckeID "
 				+ " INNER JOIN vorlagen v ON v.ProzesseID = w.ProzesseID "
 				+ " INNER JOIN vorlageneigenschaften ve ON ve.VorlagenID = v.VorlagenID "
 				+ " WHERE ( we.Titel='PPN digital a-Satz' OR we.Titel='PPN digital f-Satz' ) "
 				+ " AND ve.Titel='Titel' "
-				+ " ORDER BY ppn ";
+				+ " ORDER BY identifier ";
 
 			Query query = session
 					.createSQLQuery(sqlQuery)
-					.addScalar("ppn", Hibernate.TEXT)
-					.addScalar("title", Hibernate.TEXT);
+					.addScalar("identifier", Hibernate.TEXT)
+					.addScalar("title", Hibernate.TEXT)
+					.setResultTransformer(Transformers.aliasToBean(GoobiProcessInformation.class));
 
-			for (Object aQuery : query.list()) {
-				Object row[] = (Object[]) aQuery;
-				String identifier = (String) row[0];
-				String title = (String) row[1];
-				map.put(identifier, new GoobiProcessInformation(identifier, title));
+			for (Object row : query.list()) {
+				GoobiProcessInformation gpi = (GoobiProcessInformation) row;
+				map.put(gpi.getIdentifier(), gpi);
 			}
+*/
 
-			/*
-			// works but produces a hell of a lot sql queries
 			Criteria criteria = session
 					.createCriteria(Prozess.class)
 					.createAlias("vorlagen", "v")
@@ -77,33 +81,18 @@ public class GoobiProcess {
 					.add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
 					.add(Restrictions.eq("ve.titel", "Titel"))
 					.addOrder(Order.asc("we.wert"))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("we.wert"), "identifier")
+							.add(Projections.property("ve.wert"), "title")
+					)
+					.setResultTransformer(Transformers.aliasToBean(GoobiProcessInformation.class))
 					;
-			List queryResults = criteria.list();
+			@SuppressWarnings(value="unchecked")
+			List<GoobiProcessInformation> list = (List<GoobiProcessInformation>) criteria.list();
 
-			for (Object row : queryResults) {
-				Prozess prozess = (Prozess) row;
-				String identifier = null;
-				String title = null;
-				for (Vorlage v : prozess.getVorlagenList()) {
-					for (Vorlageeigenschaft ve : v.getEigenschaftenList()) {
-						if (ve.getTitel().equals("Titel")) {
-							title = ve.getWert();
-						}
-					}
-				}
-				for (Werkstueck w : prozess.getWerkstueckeList()) {
-					for (Werkstueckeigenschaft we : w.getEigenschaftenList()) {
-						String titel = we.getTitel();
-						if (titel.equals("PPN digital a-Satz") || titel.equals("PPN ditial f-Satz")) {
-							identifier = we.getWert();
-						}
-					}
-				}
-				if (identifier != null && title != null) {
-					map.put(identifier, new GoobiProcessInformation(identifier, title));
-				}
+			for(GoobiProcessInformation gpi : list) {
+				map.put(gpi.getIdentifier(), gpi);
 			}
-			*/
 
 		} catch (HibernateException he) {
 			myLogger.error("Catched Hibernate exception: " + he.getMessage());

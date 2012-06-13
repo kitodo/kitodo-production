@@ -33,7 +33,10 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,15 +90,18 @@ public class GoobiProcessState {
 					.add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
 					.add(Restrictions.eq("we.wert", ppnIdentifier))
 					.addOrder(Order.asc("reihenfolge"))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("reihenfolge"), "ordering")
+							.add(Projections.property("bearbeitungsstatus"), "state")
+							.add(Projections.property("titel"), "title")
+					)
+					.setResultTransformer(Transformers.aliasToBean(GoobiProcessStateInformation.class))
 					;
 
-			for (Object row : criteria.list()) {
-				Schritt schritt = (Schritt) row;
-				Integer reihenfolge = schritt.getReihenfolge();
-				Integer bearbeitungsStatus = schritt.getBearbeitungsstatusEnum().getValue();
-				String titel = schritt.getTitel();
-				result.add(new GoobiProcessStateInformation(reihenfolge, bearbeitungsStatus, titel));
-			}
+			@SuppressWarnings(value = "unchecked")
+			List<GoobiProcessStateInformation> list = (List<GoobiProcessStateInformation>) criteria.list();
+
+			result.addAll(list);
 		} catch (HibernateException he) {
 			myLogger.error("Catched Hibernate exception: " + he.getMessage());
 		}
