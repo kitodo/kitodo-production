@@ -33,7 +33,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -58,30 +57,7 @@ public class GoobiProcessState {
 		}
 
 		try {
-			/*
-			String sqlQuery = "SELECT s.Reihenfolge AS ordering, s.Bearbeitungsstatus AS state, s.Titel AS title"
-				+ " FROM schritte AS s "
-				+ " INNER JOIN werkstuecke w ON w.ProzesseID=s.ProzesseID "
-				+ " INNER JOIN werkstueckeeigenschaften we ON we.WerkstueckeID = w.WerkstueckeID "
-				+ " WHERE ( we.Titel='PPN digital a-Satz' OR we.Titel='PPN digital f-Satz' ) "
-				+ " AND we.Wert='"  + ppnIdentifier + "'"
-				+ " ORDER BY ordering ASC ";
 
-			Query query = session
-					.createSQLQuery(sqlQuery)
-					.addScalar("ordering", Hibernate.INTEGER)
-					.addScalar("state", Hibernate.INTEGER)
-					.addScalar("title", Hibernate.TEXT);
-
-			for (Object queryObject : query.list()) {
-
-				Object row[] = (Object[]) queryObject;
-				Integer ordering = (Integer) row[0];
-				Integer state = (Integer) row[1];
-				String title = (String) row[2];
-				result.add(new GoobiProcessStateInformation(ordering, state, title));
-			}
-             */
 			Criteria criteria = session
 					.createCriteria(Schritt.class)
 					.createAlias("prozess", "p")

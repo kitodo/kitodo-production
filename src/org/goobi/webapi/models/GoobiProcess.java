@@ -27,16 +27,16 @@ import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcessInformation;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GoobiProcess {
 
@@ -44,34 +44,12 @@ public class GoobiProcess {
 
 	public static List<GoobiProcessInformation> getAllProcesses()	{
 		Session session;
-		String sqlQuery;
 		List<GoobiProcessInformation> result;
 
 		result = new ArrayList<GoobiProcessInformation>();
 		session = Helper.getHibernateSession();
 
 		try {
-/*
-			sqlQuery = "SELECT we.Wert AS identifier,ve.Wert AS title "
-				+ " FROM werkstuecke w "
-				+ " INNER JOIN werkstueckeeigenschaften we ON we.werkstueckeID = w.werkstueckeID "
-				+ " INNER JOIN vorlagen v ON v.ProzesseID = w.ProzesseID "
-				+ " INNER JOIN vorlageneigenschaften ve ON ve.VorlagenID = v.VorlagenID "
-				+ " WHERE ( we.Titel='PPN digital a-Satz' OR we.Titel='PPN digital f-Satz' ) "
-				+ " AND ve.Titel='Titel' "
-				+ " ORDER BY identifier ";
-
-			Query query = session
-					.createSQLQuery(sqlQuery)
-					.addScalar("identifier", Hibernate.TEXT)
-					.addScalar("title", Hibernate.TEXT)
-					.setResultTransformer(Transformers.aliasToBean(GoobiProcessInformation.class));
-
-			for (Object row : query.list()) {
-				GoobiProcessInformation gpi = (GoobiProcessInformation) row;
-				result.add(gpi);
-			}
-*/
 
 			Criteria criteria = session
 					.createCriteria(Prozess.class)
@@ -88,11 +66,11 @@ public class GoobiProcess {
 					)
 					.setResultTransformer(Transformers.aliasToBean(GoobiProcessInformation.class))
 					;
+
 			@SuppressWarnings(value="unchecked")
 			List<GoobiProcessInformation> list = (List<GoobiProcessInformation>) criteria.list();
 
 			result.addAll(list);
-
 		} catch (HibernateException he) {
 			myLogger.error("Catched Hibernate exception: " + he.getMessage());
 		}
