@@ -67,7 +67,7 @@ public class GoobiProcessState {
 					.add(Restrictions.eq("we.wert", ppnIdentifier))
 					.addOrder(Order.asc("reihenfolge"))
 					.setProjection(Projections.projectionList()
-							.add(Projections.property("reihenfolge"), "ordering")
+							.add(Projections.property("reihenfolge"), "sequence")
 							.add(Projections.property("bearbeitungsstatus"), "state")
 							.add(Projections.property("titel"), "title")
 					)

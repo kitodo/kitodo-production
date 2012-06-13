@@ -27,24 +27,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GoobiProcessStateInformation {
 
-	private Integer ordering;
+	private Integer sequence;
 	private Integer state;
 	private String title;
 
 	public GoobiProcessStateInformation() {}
 
-	public GoobiProcessStateInformation(Integer ordering, Integer state, String title) {
-		this.ordering = ordering;
+	public GoobiProcessStateInformation(Integer sequence, Integer state, String title) {
+		this.sequence = sequence;
 		this.state = state;
 		this.title = title;
 	}
 
-	public Integer getOrdering() {
-		return ordering;
+	public Integer getSequence() {
+		return sequence;
 	}
 
-	public void setOrdering(Integer ordering) {
-		this.ordering = ordering;
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	public Integer getState() {
