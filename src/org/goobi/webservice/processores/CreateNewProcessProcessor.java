@@ -142,10 +142,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			newProcess.CalcProzesstitel();
 			String state = newProcess.NeuenProzessAnlegen();
 			if (!state.equals("ProzessverwaltungKopie3"))
-				throw new RuntimeException(
-						"NeuenProzessAnlegen() returned erroneous state “"
-								+ state
-								+ "”. See the Goobi logs for error details.");
+				throw new RuntimeException();
 			logger.info("Created new process: " + id);
 		} catch (Exception exited) {
 			logger.error("Failed to create new process: " + id, exited);

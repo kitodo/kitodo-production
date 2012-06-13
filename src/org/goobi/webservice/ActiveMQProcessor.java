@@ -22,11 +22,15 @@
 
 package org.goobi.webservice;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.ReportLevel;
 
 /**
@@ -90,7 +94,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
 	@Override
 	public void onMessage(Message arg) {
 		MapMessageObjectReader ticket = null;
-		String TicketID = null;
+		String ticketID = null;
 
 		try {
 			// Basic check ticket
@@ -98,18 +102,27 @@ public abstract class ActiveMQProcessor implements MessageListener {
 				ticket = new MapMessageObjectReader((MapMessage) arg);
 			else
 				throw new IllegalArgumentException("Incompatible types.");
-			TicketID = ticket.getMandatoryString("id");
+			ticketID = ticket.getMandatoryString("id");
 
+			// turn on logging
+			Map<String,String> loggingConfig = new HashMap<String,String>();
+			loggingConfig.put("queueName", queueName);
+			loggingConfig.put("id", ticketID);
+			Helper.activeMQReporting = loggingConfig;
+			
 			// process ticket
 			process(ticket);
+			
+			// turn off logging again
+			Helper.activeMQReporting = null;
 
 			// if everything ‘s fine, report success
-			new WebServiceResult(queueName, TicketID, ReportLevel.SUCCESS)
+			new WebServiceResult(queueName, ticketID, ReportLevel.SUCCESS)
 					.send();
 
 		} catch (Exception exce) {
 			// report any errors
-			new WebServiceResult(queueName, TicketID, ReportLevel.FATAL,
+			new WebServiceResult(queueName, ticketID, ReportLevel.FATAL,
 					exce.getMessage()).send();
 		}
 	}

@@ -42,13 +42,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.goobi.webservice.WebServiceResult;
 import org.hibernate.Session;
 import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.enums.ReportLevel;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
 //TODO: Check if more method can be made static
@@ -59,6 +62,7 @@ public class Helper implements Serializable, Observer {
 
 	private String myMetadatenVerzeichnis;
 	private String myConfigVerzeichnis;
+	public static Map<String, String> activeMQReporting = null;
 
 	/**
 	 * Ermitteln eines bestimmten Paramters des Requests
@@ -146,43 +150,59 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control übergeben
+	 * The method setMeldung() adds an error message for a given control to the
+	 * current form.
+	 * 
+	 * @param control
+	 *            Name of control that caused the error or “null” if the error
+	 *            was not caused by a control
+	 * @param messageKey
+	 *            The key of the error message. The method will try to resolve
+	 *            the key against its messages file.
+	 * @param descriptionKey
+	 *            The description key of the error. The method will try to
+	 *            resolve the key against its messages file.
+	 * @param infoOnly
+	 *            Set to false for error messages. Set to true for info
+	 *            messages.
 	 */
-	private static void setMeldung(String control, String meldung, String beschreibung, boolean nurInfo) {
+	private static void setMeldung(String control, String messageKey,
+			String descriptionKey, boolean infoOnly) {
 		FacesContext context = FacesContext.getCurrentInstance();
 
-		// Never forget: Strings are immutable
-		meldung = meldung.replaceAll("<", "&lt;");
-		meldung = meldung.replaceAll(">", "&gt;");
-		beschreibung = beschreibung.replaceAll("<", "&lt;");
-		beschreibung = beschreibung.replaceAll(">", "&gt;");
-		/* wenn kein Kontext da ist, dann die Meldungen in Log */
-		if (context == null) {
-			if (nurInfo) {
-				myLogger.info(meldung + " " + beschreibung);
-			} else {
-				myLogger.error(meldung + " " + beschreibung);
-			}
-			return;
-		}
-
-		String msg = "";
-		String beschr = "";
+		String message;
+		String description;
 		try {
-			msg = Messages.getString(meldung);
+			message = Messages.getString(messageKey);
 		} catch (RuntimeException e) {
-			msg = meldung;
+			message = messageKey;
 		}
 		try {
-			beschr = Messages.getString(beschreibung);
+			description = Messages.getString(descriptionKey);
 		} catch (RuntimeException e) {
-			beschr = beschreibung;
+			description = descriptionKey;
 		}
 
-		if (nurInfo) {
-			context.addMessage(control, new FacesMessage(FacesMessage.SEVERITY_INFO, msg, beschr));
-		} else {
-			context.addMessage(control, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, beschr));
+		message = message.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+		description = description.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+		String compoundMessage = message.replaceFirst(":\\s*$", "") + ": "
+				+ description;
+
+		/* If the Active MQ service is at work, report errors there, too. */
+		if (activeMQReporting != null) {
+			new WebServiceResult(activeMQReporting.get("queueName"),
+					activeMQReporting.get("id"), infoOnly ? ReportLevel.INFO
+							: ReportLevel.ERROR, compoundMessage).send();
+		}
+
+		if (context != null) {
+			context.addMessage(
+					control,
+					new FacesMessage(infoOnly ? FacesMessage.SEVERITY_INFO
+							: FacesMessage.SEVERITY_ERROR, message, description));
+		} else { // wenn kein Kontext da ist, dann die Meldungen in Log
+			myLogger.log(infoOnly ? Level.INFO : Level.ERROR, compoundMessage);
 		}
 	}
 
