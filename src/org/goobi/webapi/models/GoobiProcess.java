@@ -33,6 +33,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +42,12 @@ public class GoobiProcess {
 
 	private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
 
-	public static Map<String, GoobiProcessInformation> getAllProcesses()	{
+	public static List<GoobiProcessInformation> getAllProcesses()	{
 		Session session;
 		String sqlQuery;
-		Map<String, GoobiProcessInformation> map;
+		List<GoobiProcessInformation> result;
 
-		map = new HashMap<String, GoobiProcessInformation>();
+		result = new ArrayList<GoobiProcessInformation>();
 		session = Helper.getHibernateSession();
 
 		try {
@@ -68,7 +69,7 @@ public class GoobiProcess {
 
 			for (Object row : query.list()) {
 				GoobiProcessInformation gpi = (GoobiProcessInformation) row;
-				map.put(gpi.getIdentifier(), gpi);
+				result.add(gpi);
 			}
 */
 
@@ -90,15 +91,13 @@ public class GoobiProcess {
 			@SuppressWarnings(value="unchecked")
 			List<GoobiProcessInformation> list = (List<GoobiProcessInformation>) criteria.list();
 
-			for(GoobiProcessInformation gpi : list) {
-				map.put(gpi.getIdentifier(), gpi);
-			}
+			result.addAll(list);
 
 		} catch (HibernateException he) {
 			myLogger.error("Catched Hibernate exception: " + he.getMessage());
 		}
 
-		return map;
+		return result;
 	}
 
 }

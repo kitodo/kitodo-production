@@ -49,7 +49,7 @@ public class ProcessesState {
 	public List<GoobiProcessInformation> getProcesses(){
 		List<GoobiProcessInformation> processes = new ArrayList<GoobiProcessInformation>();
 
-		processes.addAll(GoobiProcess.getAllProcesses().values());
+		processes.addAll(GoobiProcess.getAllProcesses());
 
 		return processes;
 	}
