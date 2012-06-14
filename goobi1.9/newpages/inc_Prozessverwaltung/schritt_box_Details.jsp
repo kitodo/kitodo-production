@@ -194,7 +194,7 @@
 
 				<h:outputLabel for="chkautomatisch" value="#{msgs.ScriptSchritt}" />
 				<h:panelGroup>
-					<x:selectBooleanCheckbox forceId="true" id="chkautomatisch" onclick="txtAutomatischAnzeigen()"
+					<x:selectBooleanCheckbox style="vertical-align:top" forceId="true" id="chkautomatisch" onclick="txtAutomatischAnzeigen()"
 						value="#{ProzessverwaltungForm.mySchritt.typScriptStep}" />
 					<x:panelGrid columns="2" forceId="true" id="scripttable">
 
