@@ -43,26 +43,46 @@ import de.sub.goobi.helper.Helper;
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
  * a queue configured by "activeMQ.createNewProcess.queue" on application
- * startup.
- * 
- * It expects MapMessages on that queue containing:
+ * startup. It was designed to create new processes from outside Goobi. There
+ * are two ways providing to create new processes. If the MapMessage on that
+ * queue contains of all the fields listed, the bibliographic data is retrieved
+ * using a catalogue configured within Goobi:
  * 
  * <dl>
  * 		<dt>String id</dt>
  * 			<dd>ID to be used as digital PPN</dd>
  * 		<dt>String template</dt>
- * 			<dd>name of the process template to use</dd>
+ * 			<dd>name of the process template to use. A list of all available
+ *              templates can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listTemplates.jsp</kbd>.</dd>
  * 		<dt>String opac</dt>
- * 			<dd>Cataloge to use for lookup</dd>
+ * 			<dd>Cataloge to use for lookup. A list of all available catalogues
+ *              can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listCatalogues.jsp</kbd>.</dd>
  * 		<dt>String field</dt>
- * 			<dd>Field to look into, usually 12 (PPN)</dd>
+ * 			<dd>Field to look into, usually 12 (PPN). A list of all available
+ *              search fields can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listSearchFields.jsp</kbd>.</dd>
  * 		<dt>String value</dt>
  * 			<dd>Value to look for, id of physical medium</dd>
  * 		<dt>Set&lt;String&gt; collections</dt>
- * 			<dd>Collections to be selected</dd>
+ * 			<dd>Collections to be selected. A list of all available collections
+ *              can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listCollections.jsp</kbd>.</dd>
+ * 		<dt>Map&lt;String, String&gt; userFields collections</dt>
+ * 			<dd>Fields to be populated manually. A list of fields required in
+ *              addition to the data provided from a well configured catalogue
+ *              can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listAdditionalFields.jsp</kbd>,
+ *              a list of all fields (if not using the catalogue lookup feature)
+ *              can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listFieldConfig.jsp</kbd>
+ *          </dd>
  * </dl>
  * 
- * It will then create a new process based on the given template.
+ * If “opac” is missing, it will try to create a process just upon the data
+ * passed in the “userFields” − “field” and “value” will be ignored in that
+ * case.
  * 
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
@@ -92,16 +112,21 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	protected void process(MapMessageObjectReader args) throws Exception {
 
 		Set<String> collections = args.getMandatorySetOfString("collections");
-		String field = args.getMandatoryString("field");
 		String id = args.getMandatoryString("id");
-		String opac = args.getMandatoryString("opac");
 		String template = args.getMandatoryString("template");
 		Map<String, String> userFields = args
 				.getMapOfStringToString("userFields");
-		String value = args.getMandatoryString("value");
+		if(args.hasField("opac")){
+			String opac = args.getMandatoryString("opac");
+			String field = args.getMandatoryString("field");
+			String value = args.getMandatoryString("value");
+			createNewProcessMain(template, opac, field, value, id, collections,
+					userFields);
+		}else{
+			createNewProcessMain(template, null, null, null, id, collections,
+					userFields);
+		}
 
-		createNewProcessMain(template, opac, field, value, id, collections,
-				userFields);
 	}
 
 	/**
@@ -135,7 +160,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
 			newProcess.setDigitalCollections(validCollectionsForProcess(
 					collections, newProcess));
-			getBibliorgaphicData(newProcess, opac, field, value);
+			if(opac != null)
+				getBibliorgaphicData(newProcess, opac, field, value);
 			setAdditionalField(newProcess, DIGITAL_ID_FIELD_NAME, id);
 			if (userFields != null)
 				setUserFields(newProcess, userFields);

@@ -80,6 +80,55 @@ public class WebServiceTaglib {
 		return JSONValue.toJSONString(result);
 	}
 
+	public static String getAllFields() throws Exception {
+		Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+
+		@SuppressWarnings("unchecked")
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
+				.createCriteria(Prozess.class).list();
+
+		for (Prozess p : processes) {
+			if (p.isIstTemplate()) {
+				Map<String, Object> fields = new HashMap<String, Object>();
+				ConfigProjects projectConfig = new ConfigProjects(
+						p.getProjekt());
+				Integer numFields = projectConfig.getParamList(
+						"createNewProcess.itemlist.item").size();
+				for (Integer field = 0; field < numFields; field++) {
+					String fieldRef = "createNewProcess.itemlist.item(" + field
+							+ ")";
+					String fieldName = projectConfig.getParamString(fieldRef);
+					Map<String, Object> fieldConfig = new HashMap<String, Object>();
+					fieldConfig
+							.put("from",
+									projectConfig.getParamString(fieldRef
+											+ "[@from]"));
+					Integer selectEntries = projectConfig.getParamList(
+							fieldRef + ".select").size();
+					if (selectEntries > 0) {
+						Map<String, String> selectConfig = new HashMap<String, String>();
+						for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
+							String key = projectConfig.getParamString(fieldRef
+									+ ".select(" + selectEntry + ")");
+							String value = projectConfig
+									.getParamString(fieldRef + ".select("
+											+ selectEntry + ")[@label]");
+							selectConfig.put(key, value);
+						}
+						fieldConfig.put("select", selectConfig);
+					}
+					fieldConfig.put(
+							"required",
+							projectConfig.getParamBoolean(fieldRef
+									+ "[@required]"));
+					fields.put(fieldName, fieldConfig);
+				}
+				result.put(p.getTitel(), fields);
+			}
+		}
+		return JSONValue.toJSONString(result);
+	}
+
 	/**
 	 * The function getCatalogues() returns a list that contains all catalogues
 	 * configured to read in bibliographic data from

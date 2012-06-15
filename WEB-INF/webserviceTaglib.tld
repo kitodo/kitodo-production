@@ -11,6 +11,11 @@
 		<function-signature>java.util.String getAdditionalFieldsToBeCompletedManually()</function-signature>
 	</function>
 	<function>
+		<name>getAllFields</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getAllFields()</function-signature>
+	</function>
+	<function>
 		<name>getCatalogues</name>
 		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
 		<function-signature>java.util.String getCatalogues()</function-signature>

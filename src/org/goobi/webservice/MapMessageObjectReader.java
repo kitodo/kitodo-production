@@ -159,13 +159,25 @@ public class MapMessageObjectReader {
 		
 		return result;
 	}
+
+	/**
+	 * The function hasField() tests whether a field can be obtained from a
+	 * MapMessage.
+	 * 
+	 * @param string
+	 *            name of the field
+	 * @return true or false
+	 * @throws IllegalArgumentException
+	 *             can be thrown by MapMessage
+	 * @throws JMSException
+	 *             can be thrown by MapMessage
+	 */
+	public boolean hasField(String string) throws IllegalArgumentException,
+			JMSException {
+		String result = ticket.getString(string);
+		return (result == null || result.length() == 0);
+	}
 }
-
-
-
-
-
-
 
 
 
