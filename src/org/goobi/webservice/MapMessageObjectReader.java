@@ -175,7 +175,7 @@ public class MapMessageObjectReader {
 	public boolean hasField(String string) throws IllegalArgumentException,
 			JMSException {
 		String result = ticket.getString(string);
-		return (result == null || result.length() == 0);
+		return (result != null && result.length() > 0);
 	}
 }
 
