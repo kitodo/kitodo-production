@@ -126,6 +126,8 @@ public class HelperSchritteWithoutHibernate {
 					}
 					StepManager.updateStep(myStep);
 					matched = true;
+					// TODO remove this later
+					RefreshObject.refreshStep(myStep.getId());
 				} else {
 					if (matched) {
 						break;
@@ -145,7 +147,7 @@ public class HelperSchritteWithoutHibernate {
 		for (StepObject automaticStep : automatischeSchritte) {
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
 			myThread.start();
-		}
+		}		
 	}
 
 	public void updateProcessStatus(int processId) {
