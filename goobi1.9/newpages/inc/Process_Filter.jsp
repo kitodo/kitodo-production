@@ -28,12 +28,6 @@
 
 	<h:panelGroup id="aslsid4" >
 
-		<h:outputText id="aslsid6sdf" value="#{msgs.showArchivedProjects}:"  rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
-		<x:selectBooleanCheckbox id="check1" forceId="true" value="#{Form.showArchivedProjects}" onchange="document.getElementById('FilterAlle').click()" style="margin-right:40px" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
-
-
-		<h:outputText id="aslsid6" value="#{msgs.showClosedProcesses}:"  />
-		<x:selectBooleanCheckbox id="check2" forceId="true" value="#{Form.showClosedProcesses}" onchange="document.getElementById('FilterAlle').click()" style="margin-right:40px" />
 
 		
 		<h:outputText id="aslsid7" value="#{msgs.filter}: " />

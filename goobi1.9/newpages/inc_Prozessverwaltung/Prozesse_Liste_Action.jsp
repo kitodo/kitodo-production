@@ -454,6 +454,15 @@
 
 					<jd:hideableArea id="changeView" saveState="view">
 						<h:panelGrid columns="2" style="margin-left:40px">
+						
+							<h:outputText  value="#{msgs.showArchivedProjects}:"  rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
+							<x:selectBooleanCheckbox   value="#{ProzessverwaltungForm.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
+
+
+							<h:outputText  value="#{msgs.showClosedProcesses}:"  />
+							<x:selectBooleanCheckbox   value="#{ProzessverwaltungForm.showClosedProcesses}" />
+							
+						
 							<h:outputText value="#{msgs.auswahlboxen}" />
 							<h:selectBooleanCheckbox id="check1"
 								value="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}" />
@@ -473,7 +482,7 @@
 							<h:selectBooleanCheckbox id="check5"
 								value="#{ProzessverwaltungForm.anzeigeAnpassen['swappedOut']}" />
 						</h:panelGrid>
-						<h:commandLink action="#{NavigationForm.Reload}" id="reloadcheck"
+						<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="reloadcheck"
 							style="margin-left:44px" title="#{msgs.uebernehmen}">
 							<h:outputText value="#{msgs.uebernehmen}" />
 						</h:commandLink>

@@ -79,6 +79,23 @@
 
 				<jd:hideableArea id="changeView" saveState="view">
 					<h:panelGrid columns="2" style="margin-left:40px">
+					
+						<h:outputText value="#{msgs.showAutomaticTasks}:"  />
+						<x:selectBooleanCheckbox id="check3" forceId="true" value="#{AktuelleSchritteForm.showAutomaticTasks}" style="margin-right:40px" />
+		
+		
+						<h:outputText value="#{msgs.hideCorrectionTasks}:"  />
+						<x:selectBooleanCheckbox id="check4" forceId="true" value="#{AktuelleSchritteForm.hideCorrectionTasks}"  style="margin-right:40px" />
+						
+				
+						<h:outputText id="aslsid5" value="#{msgs.nurEigeneAufgabenAnzeigen}:"  />
+						<x:selectBooleanCheckbox id="check1" forceId="true" value="#{AktuelleSchritteForm.nurEigeneSchritte}"  style="margin-right:40px" />
+				
+						<h:outputText id="aslsid6" value="#{msgs.nurOffeneAufgabenAnzeigen}:"  />
+						<x:selectBooleanCheckbox id="check2" forceId="true" value="#{AktuelleSchritteForm.nurOffeneSchritte}"  style="margin-right:40px" />
+					
+					
+					
 						<h:outputText value="#{msgs.auswahlboxen}" rendered="#{false}" />
 						<h:selectBooleanCheckbox rendered="#{false}"
 							value="#{AktuelleSchritteForm.anzeigeAnpassen['selectionBoxes']}" />
@@ -101,7 +118,7 @@
 						<h:selectBooleanCheckbox
 							value="#{AktuelleSchritteForm.anzeigeAnpassen['lockings']}" />
 					</h:panelGrid>
-					<h:commandLink action="#{NavigationForm.Reload}"
+					<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}"
 						style="margin-left:44px" title="#{msgs.uebernehmen}">
 						<h:outputText value="#{msgs.uebernehmen}" />
 					</h:commandLink>
