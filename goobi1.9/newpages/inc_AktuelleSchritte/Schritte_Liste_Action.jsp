@@ -69,15 +69,15 @@
 	<htm:tr valign="top">
 		<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
-			<h:panelGroup id="viewgroup">
-				<jd:hideableController for="changeView" id="viewswitcher"
-					title="#{msgs.anzeigeAnpassen}">
+			<h:panelGroup>
+				<jd:hideableController for="changeSearch" id="viewswitcher2"
+					title="#{msgs.filterAnpassen}">
 					<h:graphicImage value="/newpages/images/buttons/view3.gif"
 						style="margin-left:5px;margin-right:8px;vertical-align:middle" />
-					<h:outputText value="#{msgs.anzeigeAnpassen}" />
+					<h:outputText value="#{msgs.filterAnpassen}" />
 				</jd:hideableController>
 
-				<jd:hideableArea id="changeView" saveState="view">
+				<jd:hideableArea id="changeSearch" saveState="view">
 					<h:panelGrid columns="2" style="margin-left:40px">
 					
 						<h:outputText value="#{msgs.showAutomaticTasks}:"  />
@@ -96,6 +96,25 @@
 					
 					
 					
+					
+					</h:panelGrid>
+					<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}"
+						style="margin-left:44px" title="#{msgs.uebernehmen}">
+						<h:outputText value="#{msgs.uebernehmen}" />
+					</h:commandLink>
+				</jd:hideableArea>
+			</h:panelGroup>
+
+			<h:panelGroup id="viewgroup">
+				<jd:hideableController for="changeView" id="viewswitcher"
+					title="#{msgs.anzeigeAnpassen}">
+					<h:graphicImage value="/newpages/images/buttons/view3.gif"
+						style="margin-left:5px;margin-right:8px;vertical-align:middle" />
+					<h:outputText value="#{msgs.anzeigeAnpassen}" />
+				</jd:hideableController>
+
+				<jd:hideableArea id="changeView" saveState="view">
+					<h:panelGrid columns="2" style="margin-left:40px">			
 						<h:outputText value="#{msgs.auswahlboxen}" rendered="#{false}" />
 						<h:selectBooleanCheckbox rendered="#{false}"
 							value="#{AktuelleSchritteForm.anzeigeAnpassen['selectionBoxes']}" />
@@ -118,7 +137,7 @@
 						<h:selectBooleanCheckbox
 							value="#{AktuelleSchritteForm.anzeigeAnpassen['lockings']}" />
 					</h:panelGrid>
-					<h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}"
+					<h:commandLink action="#{NavigationForm.Reload}"
 						style="margin-left:44px" title="#{msgs.uebernehmen}">
 						<h:outputText value="#{msgs.uebernehmen}" />
 					</h:commandLink>
