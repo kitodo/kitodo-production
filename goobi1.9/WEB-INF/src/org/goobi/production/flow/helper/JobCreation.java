@@ -211,7 +211,10 @@ public class JobCreation {
 						File[] imageList = directory.listFiles();
 						for (File imagedir : imageList) {
 							if (imagedir.isDirectory()) {
-								FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
+								for (File file : imagedir.listFiles()) {
+									FileUtils.moveFile(file, new File(p.getImagesDirectory() + imagedir.getName(), file.getName()));
+								}
+//								FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							} else {
 								FileUtils.moveFile(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							}
