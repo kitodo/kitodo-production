@@ -49,8 +49,6 @@ import de.sub.goobi.helper.Helper;
  * using a catalogue configured within Goobi:
  * 
  * <dl>
- * 		<dt>String id</dt>
- * 			<dd>ID to be used as digital PPN</dd>
  * 		<dt>String template</dt>
  * 			<dd>name of the process template to use. A list of all available
  *              templates can be obtained in JSON format calling
@@ -94,9 +92,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * This is the “magic numbers” section − the values can be overridden in
 	 * GoobiConfig.properties
 	 */
-	final String DIGITAL_ID_FIELD_NAME = ConfigMain.getParameter(
-			"activeMQ.createNewProcess.digitalIdFieldName",
-			"PPN digital a-Satz");
 	final long WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR = ConfigMain
 			.getLongParameter(
 					"activeMQ.createNewProcess.waitBetweenOpacRequestsOnError",
@@ -162,7 +157,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 					collections, newProcess));
 			if(opac != null)
 				getBibliorgaphicData(newProcess, opac, field, value);
-			setAdditionalField(newProcess, DIGITAL_ID_FIELD_NAME, id);
 			if (userFields != null)
 				setUserFields(newProcess, userFields);
 			newProcess.CalcProzesstitel();
