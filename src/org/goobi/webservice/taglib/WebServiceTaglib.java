@@ -19,108 +19,46 @@ import de.sub.goobi.helper.Helper;
 public class WebServiceTaglib {
 
 	/**
-	 * The function getAdditionalFieldsToBeCompletedManually() returns a map
-	 * that contains all fields which have to be provided manually on process
-	 * creation for each process template.
+	 * The function getAllFields() returns a map that contains all fields for
+	 * each process template with their respective configurations.
 	 * 
 	 * @return A map in JSON format
 	 */
-
-	public static String getAdditionalFieldsToBeCompletedManually()
-			throws Exception {
-		Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
-
-		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
-
-		for (Prozess p : processes) {
-			if (p.isIstTemplate()) {
-				Map<String, Object> fields = new HashMap<String, Object>();
-				ConfigProjects projectConfig = new ConfigProjects(
-						p.getProjekt());
-				Integer numFields = projectConfig.getParamList(
-						"createNewProcess.itemlist.item").size();
-				for (Integer field = 0; field < numFields; field++) {
-					String fieldRef = "createNewProcess.itemlist.item(" + field
-							+ ")";
-					if (!projectConfig.getParamBoolean(fieldRef
-							+ "[@ughbinding]")
-							&& projectConfig.getParamString(
-									fieldRef + "[@from]").equals("werk")) {
-
-						String fieldName = projectConfig
-								.getParamString(fieldRef);
-						Map<String, Object> fieldConfig = new HashMap<String, Object>();
-						Integer selectEntries = projectConfig.getParamList(
-								fieldRef + ".select").size();
-						if (selectEntries > 0) {
-							Map<String, String> selectConfig = new HashMap<String, String>();
-							for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
-								String key = projectConfig
-										.getParamString(fieldRef + ".select("
-												+ selectEntry + ")");
-								String value = projectConfig
-										.getParamString(fieldRef + ".select("
-												+ selectEntry + ")[@label]");
-								selectConfig.put(key, value);
-							}
-							fieldConfig.put("select", selectConfig);
-						}
-						fieldConfig.put(
-								"required",
-								projectConfig.getParamBoolean(fieldRef
-										+ "[@required]"));
-						fields.put(fieldName, fieldConfig);
-					}
-				}
-				result.put(p.getTitel(), fields);
-			}
-		}
-		return JSONValue.toJSONString(result);
-	}
 
 	public static String getAllFields() throws Exception {
 		Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 
 		for (Prozess p : processes) {
 			if (p.isIstTemplate()) {
 				Map<String, Object> fields = new HashMap<String, Object>();
-				ConfigProjects projectConfig = new ConfigProjects(
-						p.getProjekt());
-				Integer numFields = projectConfig.getParamList(
-						"createNewProcess.itemlist.item").size();
+				ConfigProjects projectConfig = new ConfigProjects(p.getProjekt());
+				Integer numFields = projectConfig.getParamList("createNewProcess.itemlist.item").size();
 				for (Integer field = 0; field < numFields; field++) {
-					String fieldRef = "createNewProcess.itemlist.item(" + field
-							+ ")";
+					String fieldRef = "createNewProcess.itemlist.item(" + field + ")";
 					String fieldName = projectConfig.getParamString(fieldRef);
 					Map<String, Object> fieldConfig = new HashMap<String, Object>();
-					fieldConfig
-							.put("from",
-									projectConfig.getParamString(fieldRef
-											+ "[@from]"));
-					Integer selectEntries = projectConfig.getParamList(
-							fieldRef + ".select").size();
+					fieldConfig.put("from", projectConfig.getParamString(fieldRef + "[@from]"));
+					if (projectConfig.getParamBoolean(fieldRef + "[@ughbinding]")) {
+						fieldConfig.put("ughbinding", Boolean.TRUE);
+						fieldConfig.put("docstruct", projectConfig.getParamString(fieldRef + "[@docstruct]"));
+						fieldConfig.put("metadata", projectConfig.getParamString(fieldRef + "[@metadata]"));
+					} else {
+						fieldConfig.put("ughbinding", Boolean.FALSE);
+					}
+					Integer selectEntries = projectConfig.getParamList(fieldRef + ".select").size();
 					if (selectEntries > 0) {
 						Map<String, String> selectConfig = new HashMap<String, String>();
 						for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
-							String key = projectConfig.getParamString(fieldRef
-									+ ".select(" + selectEntry + ")");
-							String value = projectConfig
-									.getParamString(fieldRef + ".select("
-											+ selectEntry + ")[@label]");
+							String key = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")");
+							String value = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")[@label]");
 							selectConfig.put(key, value);
 						}
 						fieldConfig.put("select", selectConfig);
 					}
-					fieldConfig.put(
-							"required",
-							projectConfig.getParamBoolean(fieldRef
-									+ "[@required]"));
+					fieldConfig.put("required", projectConfig.getParamBoolean(fieldRef + "[@required]"));
 					fields.put(fieldName, fieldConfig);
 				}
 				result.put(p.getTitel(), fields);
@@ -150,12 +88,10 @@ public class WebServiceTaglib {
 		HashMap<String, List<String>> result = new HashMap<String, List<String>>();
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 		for (Prozess process : processes) {
 			if (process.isIstTemplate()) {
-				result.put(process.getTitel(), DigitalCollections
-						.possibleDigitalCollectionsForProcess(process));
+				result.put(process.getTitel(), DigitalCollections.possibleDigitalCollectionsForProcess(process));
 			}
 		}
 		return JSONValue.toJSONString(result);
@@ -170,8 +106,7 @@ public class WebServiceTaglib {
 		Set<String> projects = new HashSet<String>();
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 		for (Prozess process : processes) {
 			if (process.isIstTemplate()) {
 				projects.add(process.getProjekt().getTitel());
@@ -190,13 +125,11 @@ public class WebServiceTaglib {
 		Map<String, Set<String>> data = new HashMap<String, Set<String>>();
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 		for (Prozess process : processes) {
 			if (process.isIstTemplate()) {
 				String projectName = process.getProjekt().getTitel();
-				Set<String> templateList = data.containsKey(projectName) ? data
-						.get(projectName) : new HashSet<String>();
+				Set<String> templateList = data.containsKey(projectName) ? data.get(projectName) : new HashSet<String>();
 				templateList.add(process.getTitel());
 				data.put(projectName, templateList);
 			}
@@ -204,8 +137,7 @@ public class WebServiceTaglib {
 
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		for (String projectName : data.keySet())
-			result.put(projectName,
-					new ArrayList<String>(data.get(projectName)));
+			result.put(projectName, new ArrayList<String>(data.get(projectName)));
 
 		return JSONValue.toJSONString(result);
 	}
@@ -246,8 +178,7 @@ public class WebServiceTaglib {
 		ArrayList<String> result = new ArrayList<String>();
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession()
-				.createCriteria(Prozess.class).list();
+		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 		for (Prozess process : processes) {
 			if (process.isIstTemplate()) {
 				result.add(process.getTitel());
