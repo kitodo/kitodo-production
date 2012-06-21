@@ -1083,6 +1083,14 @@ class FilterHelper {
 				returnParameters.setCriticalQuery();
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
+			}catch (NumberFormatException e){
+				try {
+					FilterHelper.filterStepName(con, parameters, inStatus, negate, filterPrefix);
+				} catch (NullPointerException e1) {
+					message = "stepdone is preset, don't use 'step' filters";
+				} catch (Exception e1) {
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
+				}
 			} catch (Exception e) {
 				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
 			}
