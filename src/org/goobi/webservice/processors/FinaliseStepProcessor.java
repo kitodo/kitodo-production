@@ -2,14 +2,10 @@ package org.goobi.webservice.processors;
 
 import org.goobi.webservice.ActiveMQProcessor;
 import org.goobi.webservice.MapMessageObjectReader;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.AktuelleSchritteForm;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.SchrittDAO;
 
@@ -35,9 +31,6 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 
 	protected AktuelleSchritteForm getStep(Integer stepID) throws DAOException {
 		AktuelleSchritteForm result = new AktuelleSchritteForm();
-//		Session hibernateSession = Helper.getHibernateSession();
-//		Criteria databaseRequest = hibernateSession.createCriteria(Schritt.class).add(Restrictions.eq("id", stepID));
-//		Schritt step = (Schritt) databaseRequest.list().get(0);
 		Schritt step = new SchrittDAO().get(stepID);
 		result.setMySchritt(step);
 		return result;
