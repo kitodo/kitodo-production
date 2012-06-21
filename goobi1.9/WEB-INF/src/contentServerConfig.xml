@@ -113,5 +113,9 @@
     * sample: <contentCache useCache="false" path="/home/goobi/gcsCache" size="300"/>
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <contentCache useShortFileNames="true" useCache="false" path="C:/Goobi/cache" size="30"/>
-    		
+   
+
+	<thumbnailCache useCache="false" />		
+	<pdfCache useCache="false" />
+	
 </config>

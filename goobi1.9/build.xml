@@ -3,7 +3,6 @@
 
 	<!-- Distribution specific settings. -->
 	<property name="dist.name" value="goobi" />
-	<property name="dist.version" value="1.9" />
 	<property name="dist.revision" value="multiple manifestations"/>
 
 	<!-- Directory settings -->
@@ -101,7 +100,7 @@
 	<!-- Build of war file. -->
 	<target name="war" depends="compile, resources, copyConfig" description="Build of war file.">
 
-		<war destfile="${dir.build}/${dist.name}-${dist.version}.war" webxml="WEB-INF/web.xml">
+		<war destfile="${dir.build}/${dist.name}.war" webxml="WEB-INF/web.xml">
 			<classes dir="${dir.build.classes}" />
 			<lib dir="WEB-INF/lib" />
 			<fileset dir="." includes="WEB-INF/*.*, index.jsp" excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*" />
@@ -144,10 +143,10 @@
 
 	<!-- Build single war file. -->
 	<target name="dist" depends="clean, war, copyConfig" description="Build single war file.">
-	<!--	<delete dir="${dir.build.src}"/>
-	-->
+		<delete dir="${dir.build.src}"/>
+	
 		<echo>Alles ist gut</echo>
-		<echo>building revision ${dist.version}-${git.revision}</echo>
+		<echo>building revision ${dist.name}-${git.revision}</echo>
 	</target>
 
 	<!-- Build all, not really needed yet. -->
@@ -165,7 +164,7 @@
 			*/
 			public class GoobiVersion {
 				public final static String VERSION = "${dist.name}";
-				public final static String BUILDVERSION = "${dist.version}-${git.revision}";
+				public final static String BUILDVERSION = "${git.revision}";
 				public final static String BUILDDATE = "${date}";
 			}
 		</echo>
