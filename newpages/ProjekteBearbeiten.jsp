@@ -39,6 +39,9 @@
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="inc/head.jsp"%>
+	
+	<link href="../css/tabbedPane.css" rel="stylesheet" type="text/css" />
+	
 	<body>
 
 	<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
@@ -99,7 +102,14 @@
 										<htm:td styleClass="eingabeBoxen_row2" colspan="2">
 
 											<h:panelGrid columns="2" rowClasses="top">
-
+										
+											<x:panelTabbedPane serverSideTabSwitch="true" immediateTabChange="false" styleClass="tabbedPane" activeTabStyleClass="activeTab"
+												inactiveTabStyleClass="inactiveTab" disabledTabStyleClass="disabledTab" activeSubStyleClass="activeSub"
+												inactiveSubStyleClass="inactiveSub" tabContentStyleClass="tabContent">
+												<x:panelTab label="#{msgs.details}">
+												<htm:div id="tab1">
+														<h:panelGrid columns="2" rowClasses="top" id="projgrid2" styleClass="tableDetails ">
+												
 												<%-- Titel --%>
 												<h:outputLabel for="titel" value="#{msgs.titel}" />
 												<h:panelGroup>
@@ -110,15 +120,150 @@
 														replaceIdWithLabel="true" />
 												</h:panelGroup>
 
-												<%-- Mets als internes Speicherformat (ansonsten xStream) 
-												<h:outputText value="#{msgs.metsAlsInternesSpeicherformat}" />
-												<h:selectBooleanCheckbox style="margin-right:15px"
-													value="#{ProjekteForm.myProjekt.metsFormatInternal}" /> --%>
+															<%-- number of pages --%>
 
-												<%-- Mets als Exportformat (ansonsten RDF XML)
-												<h:outputText value="#{msgs.metsAlsDmsExportformat}" />
-												<h:selectBooleanCheckbox style="margin-right:15px"
-													value="#{ProjekteForm.myProjekt.metsFormatDmsExport}" /> --%>
+															<h:outputText id="vwid8" value="#{msgs.numberImages}:" />
+															<h:panelGroup>
+																<h:inputText id="id24" style="width: 200px;margin-right:15px" value="#{ProjekteForm.myProjekt.numberOfPages}">
+																	<%--		<a4j:support id="vwid10" event="onkeyup" reRender="projectForm:calcs" />  --%>
+																</h:inputText>
+																<h:commandLink action="#{ProjekteForm.GenerateValuesForStatistics}">
+																	<h:graphicImage alt="#{msgs.generateValues}" value="/newpages/images/buttons/reload.gif" style="margin-right:10px" />
+																</h:commandLink>
+															</h:panelGroup>
+
+															<%-- number of volumes --%>
+															<h:outputText id="vwid11" value="#{msgs.numberVolumes}:" />
+															<h:inputText id="id25" style="width: 200px;margin-right:15px" value="#{ProjekteForm.myProjekt.numberOfVolumes}">
+																<%--				<a4j:support id="vwid13" event="onkeyup" reRender="projectForm:calcs" /> --%>
+															</h:inputText>
+
+															<%-- startdate --%>
+															<h:outputText id="vwid14" value="#{msgs.startdate}:" />
+															<%--
+																	<h:inputText id="id26" style="width: 200px;margin-right:15px"
+																	value="#{ProjekteForm.myProjekt.startDate}" />
+																--%>
+															<x:inputCalendar id="vwid15" style="width:200px" value="#{ProjekteForm.myProjekt.startDate}" renderAsPopup="true"
+																renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" styleClass="projekteBearbeiten"
+																imageLocation="/newpages/images/calendarImages/" popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
+
+															<%-- enddate --%>
+															<h:outputText id="vwid17" value="#{msgs.enddate}:" />
+															<%--
+																<h:inputText id="id27" style="width: 200px;margin-right:15px"
+																	value="#{ProjekteForm.myProjekt.endDate}" />
+																--%>
+															<x:inputCalendar id="vwid18" style="width:200px" value="#{ProjekteForm.myProjekt.endDate}" renderAsPopup="true"
+																renderPopupButtonAsImage="true" popupTodayString="#{msgs.heute}" popupWeekString="#{msgs.kw}" styleClass="projekteBearbeiten"
+																monthYearRowClass="monthYearRowClass" imageLocation="/newpages/images/calendarImages/"
+																popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
+															<%--popupButtonImageUrl="images/calender.gif"--%>
+
+														</h:panelGrid>
+	
+														<htm:table styleClass="tableCalcStat tableDetails">
+
+															<htm:tbody>
+																<htm:tr styleClass="header">
+																	<htm:td>
+																		<%-- pages per volume --%>
+																		<h:outputText id="vwid22" value="#{msgs.imagesPerVolume}:" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid23" value="#{ProjekteForm.calcImagesPerVolume}" />
+																	</htm:td>
+																	<htm:td></htm:td>
+																	<htm:td></htm:td>
+																</htm:tr>
+																<htm:tr>
+																	<%-- duration --%>
+																	<htm:td>
+																		<h:outputText id="vwid24" value="#{msgs.durationInMonth}:" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid25" value="#{ProjekteForm.calcDuration}" />
+																	</htm:td>
+																	<htm:td></htm:td>
+																	<htm:td></htm:td>
+																</htm:tr>
+																<htm:tr rendered="#{ProjekteForm.calcDuration > 11}">
+																	<%-- throughputPerYear --%>
+																	<htm:td>
+																		<h:outputText id="vwid26" value="#{msgs.volumesPerYear}:" rendered="#{ProjekteForm.calcDuration > 11}" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid27" value="#{ProjekteForm.calcThroughputPerYear}" rendered="#{ProjekteForm.calcDuration > 11}" />
+																	</htm:td>
+																	<htm:td styleClass="right">
+																		<h:outputText id="id28" value="#{msgs.pagesPerYear}:" />
+																	</htm:td>
+																	<htm:td>
+																		<h:outputText id="id29" value="#{ProjekteForm.calcThroughputPagesPerYear}" />
+																	</htm:td>
+																</htm:tr>
+																<htm:tr rendered="#{ProjekteForm.calcDuration > 2}">
+																	<%-- throughputPerQuarter --%>
+																	<htm:td>
+																		<h:outputText id="vwid28" value="#{msgs.volumesPerQuarter}:" rendered="#{ProjekteForm.calcDuration > 2}" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid29" value="#{ProjekteForm.calcThroughputPerQuarter}" rendered="#{ProjekteForm.calcDuration > 2}" />
+																	</htm:td>
+																	<htm:td styleClass="right">
+																		<%--pages per Quarter --%>
+																		<h:outputText id="vwid38" value="#{msgs.pagesPerQuarter}:" />
+																	</htm:td>
+																	<htm:td>
+																		<h:outputText id="vwid39" value="#{ProjekteForm.calcTroughputPagesPerQuarter}" />
+																	</htm:td>
+
+																</htm:tr>
+																<htm:tr rendered="#{ProjekteForm.calcDuration > 0}">
+																	<%-- throughputPerMonth --%>
+																	<htm:td>
+																		<h:outputText id="vwid30" value="#{msgs.volumesPerMonth}:" rendered="#{ProjekteForm.calcDuration > 0}" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid31" value="#{ProjekteForm.calcThroughputPerMonth}" rendered="#{ProjekteForm.calcDuration > 0}" />
+																	</htm:td>
+																	<%-- average pages per month --%>
+																	<htm:td styleClass="right">
+
+																		<h:outputText id="vwid36" value="#{msgs.pagesPerMonth}:" />
+																	</htm:td>
+																	<htm:td>
+																		<h:outputText id="vwid37" value="#{ProjekteForm.calcThroughputPagesPerMonth}" />
+																	</htm:td>
+																</htm:tr>
+																<htm:tr>
+
+																	<%-- throughputPerDay --%>
+																	<htm:td>
+																		<h:outputText id="vwid32" value="#{msgs.volumesPerDay}:" />
+																	</htm:td>
+																	<htm:td styleClass="left">
+																		<h:outputText id="vwid33" value="#{ProjekteForm.calcThroughputPerDay}" />
+																	</htm:td>
+																	<htm:td styleClass="right">
+																		<%--pages per day --%>
+																		<h:outputText id="vwid34" value="#{msgs.pagesPerDay}:" />
+																	</htm:td>
+																	<htm:td>
+																		<h:outputText id="vwid35" value="#{ProjekteForm.calcPagesPerDay}" />
+																	</htm:td>
+																</htm:tr>
+
+															</htm:tbody>
+														</htm:table>
+													</htm:div>
+												</x:panelTab>
+												<%-- END label="Details" --%>
+												
+												<x:panelTab label="#{msgs.technischeDaten}">
+													<htm:div id="tab2">
+														<h:panelGrid columns="2" rowClasses="top" id="projgrid3">
+
 
 												<%-- internes Speicherformat --%>
 												<h:outputText value="#{msgs.internesSpeicherformat}" />
@@ -176,6 +321,16 @@
 													<x:message for="timeout" style="color: red"
 														replaceIdWithLabel="true" />
 												</h:panelGroup>
+
+														</h:panelGrid>
+													</htm:div>
+												</x:panelTab>
+												<%--END  label="DMS Import"--%>
+
+												<x:panelTab label="#{msgs.metsParamater}">
+
+													<htm:div id="tab3">
+														<h:panelGrid columns="2" rowClasses="top" id="projgrid4">
 
 												<%-- metsRightsOwner --%>
 												<h:outputText value="#{msgs.metsRightsOwner}" />
@@ -301,6 +456,14 @@
 												</h:panelGroup>
 
 											</h:panelGrid>
+											
+																							</htm:div>
+												</x:panelTab>
+												<%--END label="Mets Parameter" --%>	
+												</x:panelTabbedPane>
+											</h:panelGrid>
+
+											
 										</htm:td>
 									</htm:tr>
 
