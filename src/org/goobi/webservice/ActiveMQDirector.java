@@ -35,7 +35,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
-import org.goobi.webservice.processores.CreateNewProcessProcessor;
+import org.goobi.webservice.processors.CreateNewProcessProcessor;
+import org.goobi.webservice.processors.FinaliseStepProcessor;
 
 import de.sub.goobi.config.ConfigMain;
 
@@ -68,7 +69,8 @@ public class ActiveMQDirector implements ServletContextListener,
 	protected static ActiveMQProcessor[] services;
 	static{
 		services = new ActiveMQProcessor[] {
-			new CreateNewProcessProcessor()
+			new CreateNewProcessProcessor(),
+			new FinaliseStepProcessor()
 		};
 	}
 
@@ -92,8 +94,7 @@ public class ActiveMQDirector implements ServletContextListener,
 			if (session != null) {
 				registerListeners(services);
 				if (ConfigMain.getParameter("activeMQ.results.topic", null) != null) {
-					resultsTopic = setUpReportChannel(ConfigMain
-							.getParameter("activeMQ.results.topic"));
+					resultsTopic = setUpReportChannel(ConfigMain.getParameter("activeMQ.results.topic"));
 	}	}	}	}
 
 	/**
@@ -107,8 +108,7 @@ public class ActiveMQDirector implements ServletContextListener,
 	 */
 	protected Session connectToServer(String server) {
 		try {
-			connection = new ActiveMQConnectionFactory(server)
-					.createConnection();
+			connection = new ActiveMQConnectionFactory(server).createConnection();
 			connection.start();
 			connection.setExceptionListener(this); // → ActiveMQDirector.onException()
 			return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -131,14 +131,12 @@ public class ActiveMQDirector implements ServletContextListener,
 			if (processor.getQueueName() != null) {
 				MessageConsumer messageChecker = null;
 				try {
-					Destination queue = session.createQueue(processor
-							.getQueueName());
+					Destination queue = session.createQueue(processor.getQueueName());
 					messageChecker = session.createConsumer(queue);
 					messageChecker.setMessageListener(processor);
 					processor.saveChecker(messageChecker);
 				} catch (Exception e) {
-					logger.fatal("Error setting up monitoring for \""
-							+ processor.getQueueName() + "\": Giving up.", e);
+					logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
 	}	}	}	}
 
 	/**
@@ -161,12 +159,10 @@ public class ActiveMQDirector implements ServletContextListener,
 			Destination channel = session.createTopic(topic);
 			result = session.createProducer(channel);
 			result.setDeliveryMode(DeliveryMode.PERSISTENT);
-			result.setTimeToLive(ConfigMain.getLongParameter(
-					"activeMQ.results.timeToLive", 604800000));
+			result.setTimeToLive(ConfigMain.getLongParameter("activeMQ.results.timeToLive", 604800000));
 			return result;
 		} catch (Exception e) {
-			logger.fatal("Error setting up report channel \"" + topic
-					+ "\": Giving up.", e);
+			logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
 		}
 		return null;
 	}
@@ -226,7 +222,7 @@ public class ActiveMQDirector implements ServletContextListener,
 		} catch (JMSException e) {
 			logger.error(e);
 		}
-		
+
 		// shut down connection
 		try {
 			connection.close();

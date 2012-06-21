@@ -115,6 +115,43 @@ public class MapMessageObjectReader {
 	}
 
 	/**
+	 * The function getString() fetches a String from a MapMessage. This is an
+	 * access forward to the native function of the MapMessage. You may
+	 * consider to use getMandatoryString() instead.
+	 * 
+	 * @param key
+	 *            the name of the string to return
+	 * @return the string requested (may be null or empty)
+	 * @throws JMSException
+	 *             can be thrown by MapMessage.getString(String)
+	 */
+
+	public String getString(String key) throws JMSException {
+		return ticket.getString(key);
+	}
+
+	/**
+	 * The function getMandatoryInteger() fetches an Integer object from a MapMessage. This is
+	 * a strict implementation that requires the Integer not to be null.
+	 * 
+	 * @param key
+	 *            the name of the string to return
+	 * @return the string requested
+	 * @throws IllegalArgumentException
+	 *             in case that getObject returns null
+	 * @throws JMSException
+	 *             can be thrown by MapMessage.getString(String)
+	 */
+	public Integer getMandatoryInteger(String key) throws IllegalArgumentException,
+			JMSException {
+		Integer result = ticket.getInt(key);
+		if (result == null)
+			throw new IllegalArgumentException("Missing mandatory argument: \""
+					+ key + "\"");
+		return result;
+	}
+
+	/**
 	 * The function getMapOfStringToString() fetches a Map<String,String> from a
 	 * MapMessage. This is a partly strict implementation that allows no null
 	 * element neither as key, nor as value. However, if no object was found for

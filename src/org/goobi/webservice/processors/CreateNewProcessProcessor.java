@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webservice.processores;
+package org.goobi.webservice.processors;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -85,19 +85,15 @@ import de.sub.goobi.helper.Helper;
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
-	private static final Logger logger = Logger
-			.getLogger(CreateNewProcessProcessor.class);
+	private static final Logger logger = Logger.getLogger(CreateNewProcessProcessor.class);
 
 	/**
 	 * This is the “magic numbers” section − the values can be overridden in
 	 * GoobiConfig.properties
 	 */
-	final long WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR = ConfigMain
-			.getLongParameter(
-					"activeMQ.createNewProcess.waitBetweenOpacRequestsOnError",
-					131072);
-	final long WAIT_AT_MOST_ON_OPAC_ERROR = ConfigMain.getLongParameter(
-			"activeMQ.createNewProcess.waitAtMostOnOpacError", 2097152);
+	final long WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR = ConfigMain.getLongParameter(
+			"activeMQ.createNewProcess.waitBetweenOpacRequestsOnError", 131072);
+	final long WAIT_AT_MOST_ON_OPAC_ERROR = ConfigMain.getLongParameter("activeMQ.createNewProcess.waitAtMostOnOpacError", 2097152);
 
 	public CreateNewProcessProcessor() {
 		super(ConfigMain.getParameter("activeMQ.createNewProcess.queue", null));
@@ -109,17 +105,14 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		Set<String> collections = args.getMandatorySetOfString("collections");
 		String id = args.getMandatoryString("id");
 		String template = args.getMandatoryString("template");
-		Map<String, String> userFields = args
-				.getMapOfStringToString("userFields");
-		if(args.hasField("opac")){
+		Map<String, String> userFields = args.getMapOfStringToString("userFields");
+		if (args.hasField("opac")) {
 			String opac = args.getMandatoryString("opac");
 			String field = args.getMandatoryString("field");
 			String value = args.getMandatoryString("value");
-			createNewProcessMain(template, opac, field, value, id, collections,
-					userFields);
-		}else{
-			createNewProcessMain(template, null, null, null, id, collections,
-					userFields);
+			createNewProcessMain(template, opac, field, value, id, collections, userFields);
+		} else {
+			createNewProcessMain(template, null, null, null, id, collections, userFields);
 		}
 
 	}
@@ -147,15 +140,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in various cases, such as bad parameters or errors in the
 	 *             underlying layers
 	 */
-	private void createNewProcessMain(String template, String opac,
-			String field, String value, String id, Set<String> collections,
+	private void createNewProcessMain(String template, String opac, String field, String value, String id, Set<String> collections,
 			Map<String, String> userFields) throws Exception {
 
 		try {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
-			newProcess.setDigitalCollections(validCollectionsForProcess(
-					collections, newProcess));
-			if(opac != null)
+			newProcess.setDigitalCollections(validCollectionsForProcess(collections, newProcess));
+			if (opac != null)
 				getBibliorgaphicData(newProcess, opac, field, value);
 			if (userFields != null)
 				setUserFields(newProcess, userFields);
@@ -180,13 +171,11 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws IllegalArgumentException
 	 *             if no suitable template is found
 	 */
-	private ProzesskopieForm newProcessFromTemplate(String templateTitle)
-			throws IllegalArgumentException {
+	private ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
 		ProzesskopieForm result = new ProzesskopieForm();
 
 		List<Prozess> allTemplates = allTemplatesFromDatabase();
-		Prozess selectedTemplate = selectTemplateByTitle(allTemplates,
-				templateTitle);
+		Prozess selectedTemplate = selectTemplateByTitle(allTemplates, templateTitle);
 		result.setProzessVorlage(selectedTemplate);
 		result.Prepare();
 		return result;
@@ -220,8 +209,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             is thrown, if there is no template matching the given
 	 *             templateTitle
 	 */
-	private Prozess selectTemplateByTitle(List<Prozess> allTemplates,
-			String templateTitle) throws IllegalArgumentException {
+	private Prozess selectTemplateByTitle(List<Prozess> allTemplates, String templateTitle) throws IllegalArgumentException {
 
 		Prozess result = null;
 		for (Prozess aTemplate : allTemplates) {
@@ -231,8 +219,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			}
 		}
 		if (result == null)
-			throw new IllegalArgumentException("Bad argument: No template \""
-					+ templateTitle + "\" available.");
+			throw new IllegalArgumentException("Bad argument: No template \"" + templateTitle + "\" available.");
 		return result;
 	}
 
@@ -251,15 +238,12 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that the given collection isn’t a valid subset of the
 	 *             digitalCollections possible here
 	 */
-	private List<String> validCollectionsForProcess(Set<String> collections,
-			ProzesskopieForm process) throws IllegalArgumentException {
+	private List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) throws IllegalArgumentException {
 
-		HashSet<String> possibleCollections = new HashSet<String>(
-				process.getPossibleDigitalCollections());
+		HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
 		if (!possibleCollections.containsAll(collections))
-			throw new IllegalArgumentException(
-					"Bad argument: One or more elements of \"collections\" is not available for template \""
-							+ process.getProzessVorlage().getTitel() + "\".");
+			throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not available for template \""
+					+ process.getProzessVorlage().getTitel() + "\".");
 		return new ArrayList<String>(collections);
 	}
 
@@ -276,8 +260,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that no field with a matching title was found in the
 	 *             ProzesskopieForm object
 	 */
-	private void setUserFields(ProzesskopieForm form,
-			Map<String, String> userFields) throws RuntimeException {
+	private void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
 
 		for (String key : userFields.keySet()) {
 			setAdditionalField(form, key, userFields.get(key));
@@ -308,8 +291,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws RuntimeException
 	 *             is thrown if the search didn’t bring any results
 	 */
-	private void getBibliorgaphicData(ProzesskopieForm inputForm, String opac,
-			String field, String value) throws RuntimeException {
+	private void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value) throws RuntimeException {
 
 		inputForm.setOpacKatalog(opac);
 		inputForm.setOpacSuchfeld(field);
@@ -320,8 +302,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		int afterwards = countPopulatedAdditionalFields(inputForm);
 
 		if (!(afterwards > before))
-			throw new RuntimeException(
-					"Searching the OPAC didn’t yield any results.");
+			throw new RuntimeException("Searching the OPAC didn’t yield any results.");
 	}
 
 	/**
@@ -359,18 +340,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that no field with a matching title was found in the
 	 *             ProzesskopieForm object
 	 */
-	private void setAdditionalField(ProzesskopieForm inputForm, String key,
-			String value) throws RuntimeException {
+	private void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
 
-		for(AdditionalField field : inputForm.getAdditionalFields()) {
-			if (key.equals(field.getTitel())){
+		for (AdditionalField field : inputForm.getAdditionalFields()) {
+			if (key.equals(field.getTitel())) {
 				field.setWert(value);
 				return;
 			}
 		}
-		
-		throw new RuntimeException("Couldn’t set “" + key + "” to “" + value
-				+ "”: No such field in record.");
+
+		throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
 	}
 
 }

@@ -29,7 +29,7 @@ provided:
 	String value
 		Value to look for, id of physical medium
 	String id
-		ID to be used as digital PPN
+		Ticket ID (used in log responses)
 	List<String> collections
 		Collections to be selected
 	Map<String, String> userFields (optional)
