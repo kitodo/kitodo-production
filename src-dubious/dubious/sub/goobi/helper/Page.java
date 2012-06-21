@@ -48,7 +48,7 @@ public class Page implements Serializable {
 	public Page(Criteria criteria, int page) {
 		this.page = page;
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null)
+		if (login == null || login.getMyBenutzer() == null)
 			this.pageSize = 10;
 		else
 			this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();

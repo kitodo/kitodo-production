@@ -94,7 +94,7 @@ class FilterHelper {
 		/* identify current user */
 		LoginForm login = (LoginForm) Helper
 				.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null)
+		if (login == null || login.getMyBenutzer() == null)
 			return;
 		/* init id-list, preset with item 0 */
 		List<Integer> idList = new ArrayList<Integer>();
