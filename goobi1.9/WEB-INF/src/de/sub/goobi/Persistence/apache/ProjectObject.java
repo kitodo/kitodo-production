@@ -58,14 +58,13 @@ public class ProjectObject {
 	private int numberOfPages;
 	private int numberOfVolumes;
 	private boolean projectIsArchived;
-	private Integer docketId;
 
 	public ProjectObject(int projekteID, String titel, boolean useDmsImport, int dmsImportTimeOut, String dmsImportRootPath,
 			String dmsImportImagesPath, String dmsImportSuccessPath, String dmsImportErrorPath, boolean dmsImportCreateProcessFolder,
 			String fileFormatInternal, String fileFormatDmsExport, String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
 			String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath, String metsPointerPathAnchor,
 			String metsDigiprovReferenceAnchor, String metsDigiprovPresentationAnchor, String metsPurl, String metsContentIDs,
-			String metsRightsOwnerMail, Date startDate, Date endDate, int numberOfPages, int numberOfVolumes, boolean projectIsArchived, int docketId) {
+			String metsRightsOwnerMail, Date startDate, Date endDate, int numberOfPages, int numberOfVolumes, boolean projectIsArchived) {
 		this.id = projekteID;
 		this.Titel = titel;
 		this.useDmsImport = useDmsImport;
@@ -94,7 +93,6 @@ public class ProjectObject {
 		this.numberOfPages = numberOfPages;
 		this.numberOfVolumes = numberOfVolumes;
 		this.projectIsArchived = projectIsArchived;
-		this.docketId = docketId;
 	}
 
 	public int getId() {
@@ -320,13 +318,4 @@ public class ProjectObject {
 	public void setProjectIsArchived(boolean projectIsArchived) {
 		this.projectIsArchived = projectIsArchived;
 	}
-
-	public int getDocketId() {
-		return docketId;
-	}
-
-	public void setDocketId(int docketId) {
-		this.docketId = docketId;
-	}
-
 }
