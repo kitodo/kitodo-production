@@ -42,10 +42,10 @@
 
 	<htm:tr styleClass="rowTop">
 		<htm:td width="150" style="">
-			<h:outputText value="#{msgs.bemerkung}:" />
+			<h:outputText value="#{msgs.addToProcessLog}:" />
 		</htm:td>
 		<htm:td>
-			<h:inputTextarea value="#{ProzesskopieForm.prozessVorlage.wikifield}" styleClass="prozessKopieFeldbreite" />
+			<h:inputTextarea value="#{ProzesskopieForm.addToWikiField}" styleClass="prozessKopieFeldbreite" />
 		</htm:td>
 	</htm:tr>
 
