@@ -8,17 +8,16 @@
 
 <%-- ++++++++++++++++     Action      ++++++++++++++++ --%>
 <htm:table cellpadding="3" cellspacing="0" width="100%"
-	styleClass="eingabeBoxen" style="margin-top:20px"
-	rendered="#{AktuelleSchritteForm.page.totalResults > 0}">
+	styleClass="eingabeBoxen" style="margin-top:20px">
 	<htm:tr>
 		<htm:td styleClass="eingabeBoxen_row1" colspan="2">
 			<h:outputText value="#{msgs.moeglicheAktionen}" />
 		</htm:td>
 	</htm:tr>
 	<htm:tr valign="top"
-		rendered="#{LoginForm.myBenutzer.mitMassendownload}">
+		rendered="#{LoginForm.myBenutzer.mitMassendownload && AktuelleSchritteForm.page.totalResults > 0}">
 		<htm:td styleClass="eingabeBoxen_row2">
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="1" >
 
 				<%-- Upload-Schaltknopf --%>
 				<h:commandLink action="#{AktuelleSchritteForm.UploadFromHomeAlle}"
