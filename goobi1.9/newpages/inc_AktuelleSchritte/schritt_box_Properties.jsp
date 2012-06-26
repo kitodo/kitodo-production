@@ -66,7 +66,7 @@
 		</htm:thead>
 		<x:dataList var="container" value="#{AktuelleSchritteForm.containerList}" rowCountVar="rowCount" rowIndexVar="rowIndex">
 			<x:dataList var="proc" value="#{AktuelleSchritteForm.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-				<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
+				<htm:tr styleClass="standardTable_Row1" rendered="#{container==0 }">
 					<htm:td>
 						<h:outputText value="#{proc.name}" />
 					</htm:td>

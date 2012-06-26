@@ -166,8 +166,11 @@ public class PropertyParser {
 				if (containsCurrentStepTitle) {
 					// showProcessGroupAccessCondition
 					String groupAccess = config.getString("property(" + i + ").showProcessGroup[@access]");
-					pp.setShowProcessGroupAccessCondition(AccessCondition.getAccessConditionByName(groupAccess));
-
+					if (groupAccess != null) {
+						pp.setShowProcessGroupAccessCondition(AccessCondition.getAccessConditionByName(groupAccess));
+					} else {
+						pp.setShowProcessGroupAccessCondition(AccessCondition.WRITE);
+					}
 					// validation expression
 					pp.setValidation(config.getString("property(" + i + ").validation"));
 					// type
