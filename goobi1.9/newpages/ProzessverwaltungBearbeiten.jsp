@@ -54,10 +54,11 @@
 								<%@include file="inc_Prozessverwaltung/prozess_box_Prozessdetails.jsp"%>
 
 								<h:form id="proceditform" onkeypress="ifEnterClick(event, 'proceditform:absenden');">
-									<%-- Schritte --%>
-									<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
 
 									<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
+										<%-- Schritte --%>
+										<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
+
 										<%-- Vorlagen --%>
 										<f:subview id="subVorlage" rendered="#{ProzessverwaltungForm.myProzess.vorlagenSize != 0}">
 											<%@include file="inc_Prozessverwaltung/prozess_box_Vorlagen.jsp"%>
@@ -67,10 +68,10 @@
 										<f:subview id="subWerk" rendered="#{ProzessverwaltungForm.myProzess.werkstueckeSize != 0}">
 											<%@include file="inc_Prozessverwaltung/prozess_box_Werkstuecke.jsp"%>
 										</f:subview>
-									</f:subview>
 
-									<%-- Prozesseigenschaften --%>
-									<%@include file="inc_Prozessverwaltung/prozess_box_Properties.jsp"%>
+										<%-- Prozesseigenschaften --%>
+										<%@include file="inc_Prozessverwaltung/prozess_box_Properties.jsp"%>
+									</f:subview>
 
 								</h:form>
 							</htm:td>
