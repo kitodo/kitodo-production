@@ -55,7 +55,8 @@ public class ProcessProperty implements IProperty, Serializable {
 	private List<ShowStepCondition> showStepConditions;
 	private AccessCondition showProcessGroupAccessCondition;
 	private Prozesseigenschaft prozesseigenschaft;
-
+	private AccessCondition currentStepAccessCondition;
+	
 	public ProcessProperty() {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
@@ -407,5 +408,13 @@ public class ProcessProperty implements IProperty, Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	public AccessCondition getCurrentStepAccessCondition() {
+		return currentStepAccessCondition;
+	}
+
+	public void setCurrentStepAccessCondition(AccessCondition currentStepAccessCondition) {
+		this.currentStepAccessCondition = currentStepAccessCondition;
 	}
 }
