@@ -116,8 +116,6 @@
                                                             itemLabel="#{msgs.administration}" />
                                                         <f:selectItem itemValue="2"
                                                             itemLabel="#{msgs.prozessverwaltung}" />
-                                                        <f:selectItem itemValue="3"
-                                                            itemLabel="#{msgs.erweiterteNutzerBerechtigung}" />
                                                         <f:selectItem itemValue="4"
                                                             itemLabel="#{msgs.normaleNutzerBerechtigung}" />
                                                     </x:selectOneMenu>
