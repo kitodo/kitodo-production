@@ -29,6 +29,7 @@ package de.sub.goobi.Metadaten;
 import java.util.ArrayList;
 
 import ugh.dl.DocStruct;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {
@@ -77,8 +78,10 @@ public class TreeNodeStruct3 extends TreeNode {
 	}
 
 	public String getMainTitle() {
-		if (this.mainTitle!=null && this.mainTitle.length() > 50) {
-			return this.mainTitle.substring(0, 49);
+		
+		int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
+		if (maxSize > 0 && this.mainTitle!=null && this.mainTitle.length() > maxSize){
+			return this.mainTitle.substring(0, maxSize -1);
 		}
 		
 		return this.mainTitle;
