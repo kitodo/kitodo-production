@@ -87,14 +87,6 @@ import de.sub.goobi.helper.Helper;
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	private static final Logger logger = Logger.getLogger(CreateNewProcessProcessor.class);
 
-	/**
-	 * This is the “magic numbers” section − the values can be overridden in
-	 * GoobiConfig.properties
-	 */
-	final long WAIT_BETWEEN_OPAC_REQUESTS_ON_ERROR = ConfigMain.getLongParameter(
-			"activeMQ.createNewProcess.waitBetweenOpacRequestsOnError", 131072);
-	final long WAIT_AT_MOST_ON_OPAC_ERROR = ConfigMain.getLongParameter("activeMQ.createNewProcess.waitAtMostOnOpacError", 2097152);
-
 	public CreateNewProcessProcessor() {
 		super(ConfigMain.getParameter("activeMQ.createNewProcess.queue", null));
 	}
