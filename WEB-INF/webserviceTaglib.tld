@@ -26,6 +26,11 @@
 		<function-signature>java.util.String getCollections()</function-signature>
 	</function>
 	<function>
+		<name>getAllDoctypes</name>
+		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
+		<function-signature>java.util.String getAllDoctypes()</function-signature>
+	</function>
+	<function>
 		<name>getProjects</name>
 		<function-class>org.goobi.webservice.taglib.WebServiceTaglib</function-class>
 		<function-signature>java.util.String getProjects()</function-signature>

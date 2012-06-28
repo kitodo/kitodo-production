@@ -12,6 +12,7 @@ import org.json.simple.JSONValue;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigOpac;
+import de.sub.goobi.config.ConfigOpacDoctype;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.Helper;
@@ -93,6 +94,30 @@ public class WebServiceTaglib {
 			if (process.isIstTemplate()) {
 				result.put(process.getTitel(), DigitalCollections.possibleDigitalCollectionsForProcess(process));
 			}
+		}
+		return JSONValue.toJSONString(result);
+	}
+
+	/**
+	 * The function getAllDoctypes() returns a list of all doctypes configured
+	 * in Goobi.
+	 * 
+	 * @return A list in JSON format
+	 */
+	public static String getAllDoctypes() throws Exception {
+		HashMap<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+		ConfigOpac co = new ConfigOpac();
+		List<ConfigOpacDoctype> mediaTypesList = co.getAllDoctypes();
+		for (ConfigOpacDoctype mediaTypeEntry : mediaTypesList) {
+			Map<String, Object> resultEntry = new HashMap<String, Object>();
+			resultEntry.put("containedWork", Boolean.valueOf(mediaTypeEntry.isContainedWork()));
+			resultEntry.put("labels", mediaTypeEntry.getLabels());
+			resultEntry.put("mappings", mediaTypeEntry.getMappings());
+			resultEntry.put("multiVolume", Boolean.valueOf(mediaTypeEntry.isMultiVolume()));
+			resultEntry.put("periodical", Boolean.valueOf(mediaTypeEntry.isPeriodical()));
+			resultEntry.put("rulesetType", mediaTypeEntry.getRulesetType());
+			resultEntry.put("tifHeaderType", mediaTypeEntry.getTifHeaderType());
+			result.put(mediaTypeEntry.getTitle(), resultEntry);
 		}
 		return JSONValue.toJSONString(result);
 	}
