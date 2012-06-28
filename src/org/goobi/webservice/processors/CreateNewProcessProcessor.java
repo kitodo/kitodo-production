@@ -73,7 +73,7 @@ import de.sub.goobi.helper.Helper;
  * 		<dt>String docType</dt>
  * 			<dd>DocType value to use if no catalogue request is performed. A
  *              list of possible values can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listDoctypes.jsp</kbd></dd>
+ *              <kbd><em>{ContextRoot}</em>/ws/listAllDoctypes.jsp</kbd></dd>
  * 		<dt>Set&lt;String&gt; collections</dt>
  * 			<dd>Collections to be selected. A list of all available collections
  *              can be obtained in JSON format calling
