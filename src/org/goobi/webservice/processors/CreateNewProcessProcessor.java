@@ -24,6 +24,7 @@ package org.goobi.webservice.processors;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.hibernate.Session;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigOpacDoctype;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
@@ -46,7 +48,12 @@ import de.sub.goobi.helper.Helper;
  * startup. It was designed to create new processes from outside Goobi. There
  * are two ways providing to create new processes. If the MapMessage on that
  * queue contains of all the fields listed, the bibliographic data is retrieved
- * using a catalogue configured within Goobi:
+ * using a catalogue configured within Goobi. If “opac” is missing, it will try
+ * to create a process just upon the data passed in the “userFields” − “field”
+ * and “value” will be ignored in that case, and the “docType” can be set
+ * manually.
+ * 
+ * Field summary:
  * 
  * <dl>
  * 		<dt>String template</dt>
@@ -63,24 +70,20 @@ import de.sub.goobi.helper.Helper;
  *              <kbd><em>{ContextRoot}</em>/ws/listSearchFields.jsp</kbd>.</dd>
  * 		<dt>String value</dt>
  * 			<dd>Value to look for, id of physical medium</dd>
+ * 		<dt>String docType</dt>
+ * 			<dd>DocType value to use if no catalogue request is performed. A
+ *              list of possible values can be obtained in JSON format calling
+ *              <kbd><em>{ContextRoot}</em>/ws/listDoctypes.jsp</kbd></dd>
  * 		<dt>Set&lt;String&gt; collections</dt>
  * 			<dd>Collections to be selected. A list of all available collections
  *              can be obtained in JSON format calling
  *              <kbd><em>{ContextRoot}</em>/ws/listCollections.jsp</kbd>.</dd>
  * 		<dt>Map&lt;String, String&gt; userFields collections</dt>
- * 			<dd>Fields to be populated manually. A list of fields required in
- *              addition to the data provided from a well configured catalogue
- *              can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listAdditionalFields.jsp</kbd>,
- *              a list of all fields (if not using the catalogue lookup feature)
- *              can be obtained in JSON format calling
+ * 			<dd>Fields to be populated manually. A list of fields can be
+ *              obtained in JSON format calling
  *              <kbd><em>{ContextRoot}</em>/ws/listFieldConfig.jsp</kbd>
  *          </dd>
  * </dl>
- * 
- * If “opac” is missing, it will try to create a process just upon the data
- * passed in the “userFields” − “field” and “value” will be ignored in that
- * case.
  * 
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
@@ -102,9 +105,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			String opac = args.getMandatoryString("opac");
 			String field = args.getMandatoryString("field");
 			String value = args.getMandatoryString("value");
-			createNewProcessMain(template, opac, field, value, id, collections, userFields);
+			createNewProcessMain(template, opac, field, value, id, null, collections, userFields);
 		} else {
-			createNewProcessMain(template, null, null, null, id, collections, userFields);
+			String docType = args.getString("docType");
+			createNewProcessMain(template, null, null, null, id, docType, collections, userFields);
 		}
 
 	}
@@ -117,13 +121,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *            from
 	 * @param opac
 	 *            name of the connection to a library catalogue to load the
-	 *            bibliographic data from
+	 *            bibliographic data from (may be null)
 	 * @param field
-	 *            number of the catalogue search field
+	 *            number of the catalogue search field (ignored if “opac” is
+	 *            null)
 	 * @param value
-	 *            search string
+	 *            search string (ignored if “opac” is null)
 	 * @param id
 	 *            identifier to be used for the digitisation
+	 * @param docType
+	 *            docType to set (may be null)
 	 * @param collections
 	 *            collections to add the digitisation to
 	 * @param userFields
@@ -132,14 +139,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in various cases, such as bad parameters or errors in the
 	 *             underlying layers
 	 */
-	private void createNewProcessMain(String template, String opac, String field, String value, String id, Set<String> collections,
-			Map<String, String> userFields) throws Exception {
+	protected void createNewProcessMain(String template, String opac, String field, String value, String id, String docType,
+			Set<String> collections, Map<String, String> userFields) throws Exception {
 
 		try {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
 			newProcess.setDigitalCollections(validCollectionsForProcess(collections, newProcess));
 			if (opac != null)
 				getBibliorgaphicData(newProcess, opac, field, value);
+			if (docType != null && docTypeIsPossible(newProcess, docType))
+				newProcess.setDocType(docType);
 			if (userFields != null)
 				setUserFields(newProcess, userFields);
 			newProcess.CalcProzesstitel();
@@ -163,7 +172,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws IllegalArgumentException
 	 *             if no suitable template is found
 	 */
-	private ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
+	protected ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
 		ProzesskopieForm result = new ProzesskopieForm();
 
 		List<Prozess> allTemplates = allTemplatesFromDatabase();
@@ -178,7 +187,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * 
 	 * @return a List<Prozess> holding all templates
 	 */
-	private List<Prozess> allTemplatesFromDatabase() {
+	protected List<Prozess> allTemplatesFromDatabase() {
 		Session hibernateSession = Helper.getHibernateSession();
 		Criteria request = hibernateSession.createCriteria(Prozess.class);
 
@@ -201,7 +210,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             is thrown, if there is no template matching the given
 	 *             templateTitle
 	 */
-	private Prozess selectTemplateByTitle(List<Prozess> allTemplates, String templateTitle) throws IllegalArgumentException {
+	protected Prozess selectTemplateByTitle(List<Prozess> allTemplates, String templateTitle) throws IllegalArgumentException {
 
 		Prozess result = null;
 		for (Prozess aTemplate : allTemplates) {
@@ -230,13 +239,44 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that the given collection isn’t a valid subset of the
 	 *             digitalCollections possible here
 	 */
-	private List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) throws IllegalArgumentException {
+	protected List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) throws IllegalArgumentException {
 
 		HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
 		if (!possibleCollections.containsAll(collections))
 			throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not available for template \""
 					+ process.getProzessVorlage().getTitel() + "\".");
 		return new ArrayList<String>(collections);
+	}
+
+	/**
+	 * The function docTypeIsPossible() tests whether a given docType String can
+	 * be applied to a given process template. If so, it will return “true”,
+	 * otherwise, it will throw an informative IllegalArgumentException.
+	 * 
+	 * @param dialog
+	 *            the ProzesskopieForm object to test against
+	 * @param docType
+	 *            the desired docType ID string
+	 * @return true on success
+	 * @throws IllegalArgumentException
+	 *             if a docType is not applicable to the template or the docType
+	 *             isn’t valid
+	 */
+	protected boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) throws IllegalArgumentException {
+		Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
+		if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE))
+			throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide the standard field “doctype”.");
+
+		boolean valueIsValid = false;
+		ConfigOpacDoctype option = null;
+		for (Iterator<ConfigOpacDoctype> configOpacDoctypeIterator = dialog.getAllDoctypes().iterator(); !valueIsValid
+				&& configOpacDoctypeIterator.hasNext(); option = configOpacDoctypeIterator.next())
+			valueIsValid = docType.equals(option.getTitle());
+		if (!valueIsValid)
+			throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide a docType “{0}”.".replace("{0}",
+					docType));
+
+		return true;
 	}
 
 	/**
@@ -252,7 +292,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that no field with a matching title was found in the
 	 *             ProzesskopieForm object
 	 */
-	private void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
+	protected void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
 
 		for (String key : userFields.keySet()) {
 			setAdditionalField(form, key, userFields.get(key));
@@ -283,7 +323,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws RuntimeException
 	 *             is thrown if the search didn’t bring any results
 	 */
-	private void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value) throws RuntimeException {
+	protected void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value) throws RuntimeException {
 
 		inputForm.setOpacKatalog(opac);
 		inputForm.setOpacSuchfeld(field);
@@ -306,7 +346,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *            a ProzesskopieForm object to examine
 	 * @return the number of AdditionalFields populated
 	 */
-	private int countPopulatedAdditionalFields(ProzesskopieForm form) {
+	protected int countPopulatedAdditionalFields(ProzesskopieForm form) {
 		int result = 0;
 
 		for (AdditionalField field : form.getAdditionalFields()) {
@@ -332,7 +372,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that no field with a matching title was found in the
 	 *             ProzesskopieForm object
 	 */
-	private void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
+	protected void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
 
 		for (AdditionalField field : inputForm.getAdditionalFields()) {
 			if (key.equals(field.getTitel())) {
