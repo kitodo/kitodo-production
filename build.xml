@@ -295,24 +295,15 @@
 
 	<!-- Build standalone CLI jar -->
 	<target name="jar" depends="compile, copy-config">
-
-		<manifestclasspath property="manifest.classpath" jarfile="${build.dist.jar}">
-			<classpath>
-				<fileset dir="${lib.dir}" includes="*.jar"/>
-			</classpath>
-		</manifestclasspath>
-
 		<jar destfile="${build.dist.jar}">
 			<fileset dir="${build.classes}" includes="**/*.class, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
-			<zipfileset dir="${lib.dir}" prefix="lib"/>
-			
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Implementation-Title" value="${ant.project.name}"/>
 				<attribute name="Implementation-Version" value="${build.dist.version}"/>
 				<attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
 				<attribute name="Implementation-URL" value="${build.dist.url}"/>
 				<attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
-				<attribute name="Class-Path" value=". ${manifest.classpath}"/>
 				<attribute name="Main-Class" value="org.goobi.production.cli.CommandLineInterface"/>
 			</manifest>
 		</jar>
