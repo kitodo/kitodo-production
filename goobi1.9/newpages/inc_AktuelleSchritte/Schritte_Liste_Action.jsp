@@ -67,7 +67,7 @@
 
 	<htm:tr valign="top">
 		<htm:td styleClass="eingabeBoxen_row2" colspan="2">
-
+			<h:panelGrid columns="1" >
 			<h:panelGroup>
 				<jd:hideableController for="changeSearch" id="viewswitcher2"
 					title="#{msgs.filterAnpassen}">
@@ -142,7 +142,7 @@
 					</h:commandLink>
 				</jd:hideableArea>
 			</h:panelGroup>
-
+</h:panelGrid>
 		</htm:td>
 	</htm:tr>
 

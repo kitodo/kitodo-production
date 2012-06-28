@@ -333,6 +333,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + this.myClass.getNachVorname(), "");
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
+			Helper.setFehlerMeldung(e.getMessage());
 		}
 		return "";
 	}

@@ -46,6 +46,7 @@ public class ImportProperty implements IProperty{
 	private String value = "";
 	private List<String> possibleValues = new ArrayList<String>();
 	private List<String> projects = new ArrayList<String>();
+	private boolean required = false;
 	
 	public ImportProperty() {
 		this.possibleValues = new ArrayList<String>();
@@ -211,5 +212,13 @@ public class ImportProperty implements IProperty{
 		} catch (NullPointerException e) {
 			return new Date();
 		}
+	}
+
+	public boolean getRequired() {
+		return required;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 }
