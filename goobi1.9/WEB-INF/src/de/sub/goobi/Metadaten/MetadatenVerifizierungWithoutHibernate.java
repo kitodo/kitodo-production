@@ -63,7 +63,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 //	Prozess myProzess;
 	boolean autoSave = false;
 
-	private int processId;
+//	private int processId;
 	private String title;
 	
 	public boolean validate(Prozess inProzess) {
@@ -85,7 +85,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
 		ProjectObject project  = ProjectManager.getProjectById(process.getProjekteID());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
-		this.processId = processId;
+//		this.processId = processId;
 		this.title = title;
 		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 //		this.myProzess = inProzess;

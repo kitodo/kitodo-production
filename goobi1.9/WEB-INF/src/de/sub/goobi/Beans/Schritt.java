@@ -98,6 +98,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
+	@SuppressWarnings("deprecation")
 	private DisplayPropertyList displayProperties;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
@@ -810,6 +811,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
 	 */
+	@SuppressWarnings("deprecation")
 	public DisplayPropertyList getDisplayProperties() {
 		if (this.displayProperties == null) {
 			this.displayProperties = new DisplayPropertyList(this);

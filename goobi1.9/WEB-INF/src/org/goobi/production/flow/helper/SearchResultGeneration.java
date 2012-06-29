@@ -54,6 +54,7 @@ public class SearchResultGeneration {
 		this.showArchivedProjects = showArchivedProjects;
 	}
 
+	@SuppressWarnings("deprecation")
 	public HSSFWorkbook getResult() {
 //		 long start = System.currentTimeMillis();
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
@@ -74,7 +75,7 @@ public class SearchResultGeneration {
 		@SuppressWarnings("unchecked")
 		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 //		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(500).list();
-	
+
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Search results");

@@ -47,6 +47,7 @@ public class Vorlage implements Serializable, IGoobiEntity {
 	private String herkunft;
 	private Prozess prozess;
 	private Set<Vorlageeigenschaft> eigenschaften;
+	@SuppressWarnings("deprecation")
 	private DisplayPropertyList displayProperties;
 
 	private boolean panelAusgeklappt = true;
@@ -156,6 +157,7 @@ public class Vorlage implements Serializable, IGoobiEntity {
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
 	 */
+	@SuppressWarnings("deprecation")
 	public DisplayPropertyList getDisplayProperties() {
 		if (this.displayProperties == null) {
 			this.displayProperties = new DisplayPropertyList(this);

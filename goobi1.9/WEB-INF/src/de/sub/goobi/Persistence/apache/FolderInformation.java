@@ -28,7 +28,6 @@ package de.sub.goobi.Persistence.apache;
  */
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,9 +40,7 @@ import org.apache.commons.lang.SystemUtils;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
 
 public class FolderInformation {
 

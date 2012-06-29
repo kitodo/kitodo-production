@@ -51,7 +51,6 @@ import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.xml.sax.SAXParseException;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -115,6 +114,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private static int numberOfBackups = 0;
 	private static String FORMAT = "";
 
+	@SuppressWarnings("deprecation")
 	private DisplayPropertyList displayProperties;
 	private String wikifield = "";
 
@@ -179,6 +179,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public Set<HistoryEvent> getHistory() {
 		try {
+			@SuppressWarnings("unused")
 			Session s = Helper.getHibernateSession();
 			Hibernate.initialize(this.history);
 		} catch (HibernateException e) {
@@ -809,16 +810,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
-			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
+//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
 		} else if (type.equals("mets")) {
-			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
+//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsMods(this.regelsatz.getPreferences());
 		} else if (type.equals("xstream")) {
-			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
+//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
 			ff = new XStream(this.regelsatz.getPreferences());
 		} else {
-			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
+//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
 			ff = new RDFFile(this.regelsatz.getPreferences());
 		}
 		try {
@@ -1064,6 +1065,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * @return instance of {@link DisplayPropertyList}
 	 */
 
+	@SuppressWarnings("deprecation")
 	public DisplayPropertyList getDisplayProperties() {
 		if (this.displayProperties == null) {
 			this.displayProperties = new DisplayPropertyList(this);

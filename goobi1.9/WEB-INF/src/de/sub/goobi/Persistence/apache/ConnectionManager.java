@@ -35,8 +35,6 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import net.xeoh.plugins.base.annotations.meta.Author;
-
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
