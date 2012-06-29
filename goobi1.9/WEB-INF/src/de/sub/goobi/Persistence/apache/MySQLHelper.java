@@ -138,7 +138,7 @@ public class MySQLHelper {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = (SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = "
-				+ processId);
+				+ processId + ")");
 		try {
 			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler);
 			return answer;
