@@ -90,7 +90,7 @@ public class LoginForm {
 				Benutzer b = treffer.get(0);
 				/* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde, jetzt Meldung anzeigen */
 				if (!b.isIstAktiv()) {
-					Helper.setFehlerMeldung("login", "", "login inactiv");
+					Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
 					return "";
 				}
 				/* wenn passwort auch richtig ist, den benutzer übernehmen */
@@ -109,7 +109,7 @@ public class LoginForm {
 					}
 				} else {
 					// schonEingeloggt = false;
-					Helper.setFehlerMeldung("passwort", "", "wrong password");
+					Helper.setFehlerMeldung("passwort", "", Helper.getTranslation("wrongPassword"));
 				}
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
