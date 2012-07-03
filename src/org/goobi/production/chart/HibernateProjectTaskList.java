@@ -55,9 +55,7 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 
-		int count = 0;
 		while (list.next()) {
-			count++;
 			Schritt step = (Schritt) list.get(0);
 			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
 
