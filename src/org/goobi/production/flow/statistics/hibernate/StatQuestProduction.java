@@ -70,7 +70,6 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	 * 
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 ****************************************************************************/
-	@SuppressWarnings("unchecked")
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		// contains an intger representing "reihenfolge" in schritte, as defined for this request

@@ -65,7 +65,6 @@ public class Helper implements Serializable, Observer {
 	 * 
 	 * @return Paramter als String
 	 */
-	@SuppressWarnings("unchecked")
 	public static String getRequestParameter(String Parameter) {
 		/* einen bestimmten übergebenen Parameter ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();

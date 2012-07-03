@@ -844,7 +844,6 @@ public class CopyProcess extends ProzesskopieForm {
 		return possibleDigitalCollection;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		possibleDigitalCollection = new ArrayList<String>();
 		String filename = new Helper().getGoobiConfigDirectory() + "digitalCollections.xml";
@@ -992,7 +991,6 @@ public class CopyProcess extends ProzesskopieForm {
 	/**
 	 * Prozesstitel und andere Details generieren ================================================================
 	 */
-	@SuppressWarnings("unchecked")
 	public void CalcProzesstitel() {
 		String newTitle = "";
 		String titeldefinition = "";
@@ -1102,7 +1100,6 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
-	@SuppressWarnings("unchecked")
 	public void CalcTiffheader() {
 		String tif_definition = "";
 		ConfigProjects cp = null;

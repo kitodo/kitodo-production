@@ -339,7 +339,6 @@ public class ProjekteForm extends BasisForm {
 	 * generates values for count of volumes and images for statistics
 	 */
 
-	@SuppressWarnings("unchecked")
 	public void GenerateValuesForStatistics() {
 		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", myProjekt));
 		ProjectionList pl = Projections.projectionList();

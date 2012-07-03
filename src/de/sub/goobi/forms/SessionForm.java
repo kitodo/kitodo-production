@@ -44,8 +44,7 @@ import de.sub.goobi.beans.Benutzer;
 public class SessionForm {
 
    private int sessionZeit = 3600 * 2; // 2 Stunden
-   @SuppressWarnings("unchecked")
-private List alleSessions = new ArrayList();
+   private List alleSessions = new ArrayList();
    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
    private String aktuelleZeit = formatter.format(new Date());
    private String bitteAusloggen = "";
@@ -67,7 +66,6 @@ private List alleSessions = new ArrayList();
 
    
 
-	@SuppressWarnings("unchecked")
 	public List getAlleSessions() {
 		try {
 			return alleSessions;
@@ -183,8 +181,7 @@ public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenut
    
 
    /* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
-   @SuppressWarnings("unchecked")
-public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
+   public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
       boolean rueckgabe = false;
       //TODO: Don't use Iterators
       for (Iterator iter = alleSessions.iterator(); iter.hasNext();) {

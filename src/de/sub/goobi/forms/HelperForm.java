@@ -190,7 +190,7 @@ public class HelperForm {
 	}
 
 	// TODO: Try to avoid Iterators, usr for loops instead
-	@SuppressWarnings( { "unchecked", "unused" })
+	@SuppressWarnings("unused")
 	public boolean getMessagesExist() {
 		boolean rueck = false;
 		FacesContext context = FacesContext.getCurrentInstance();

@@ -733,7 +733,6 @@ public class Metadaten {
 	 * ##################################################### ####################################################
 	 */
 
-	@SuppressWarnings("unchecked")
 	private String MetadatenalsTree3Einlesen1() {
 		HashMap map;
 		TreeNodeStruct3 knoten;
@@ -840,7 +839,6 @@ public class Metadaten {
 		return rueckgabe.trim();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setMyStrukturelement(DocStruct inStruct) {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
@@ -1824,7 +1822,6 @@ public class Metadaten {
 	/**
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
-	@SuppressWarnings("unchecked")
 	public String SeitenVonChildrenUebernehmen() {
 		if (!SperrungAktualisieren())
 			return "SperrungAbgelaufen";
@@ -2285,7 +2282,6 @@ public class Metadaten {
 			TreeDurchlaufen(tree3);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void TreeDurchlaufen(TreeNodeStruct3 inTreeStruct) {
 		DocStruct temp = inTreeStruct.getStruct();
 		if (inTreeStruct.getStruct() == myDocStruct)
