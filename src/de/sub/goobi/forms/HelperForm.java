@@ -145,7 +145,7 @@ public class HelperForm {
 		// TODO: Avoid SQL here
 		List<Regelsatz> temp = new RegelsatzDAO().search("from Regelsatz ORDER BY titel");
 		for (Iterator<Regelsatz> iter = temp.iterator(); iter.hasNext();) {
-			Regelsatz an = (Regelsatz) iter.next();
+			Regelsatz an = iter.next();
 			myPrefs.add(new SelectItem(an, an.getTitel(), null));
 		}
 		return myPrefs;
