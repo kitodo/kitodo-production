@@ -23,18 +23,21 @@
 package de.sub.goobi.helper;
 
 //TODO: Replace with a VFS
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.TiffHeader;
 
 public class WebDav {
 	private static final Logger myLogger = Logger.getLogger(WebDav.class);
