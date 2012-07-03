@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -38,39 +39,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import de.sub.goobi.Beans.Benutzer;
+import de.sub.goobi.helper.Helper;
 
 /**
- * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions 
+ * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
  * 
  * @author Steffen Hankiewicz
  * @version 1.00 - 16.01.2005
  */
 public class SessionForm {
-   //   private static final Logger logger = Logger.getLogger(SessionForm.class);
-   private int sessionZeit = 3600 * 2; // 2 Stunden
-   @SuppressWarnings("rawtypes")
-private List alleSessions = new ArrayList();
-   private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-   private String aktuelleZeit = this.formatter.format(new Date());
-   private String bitteAusloggen = "";
-      
-   
+	// private static final Logger logger = Logger.getLogger(SessionForm.class);
+	@SuppressWarnings("rawtypes")
+	private List alleSessions = new ArrayList();
+	private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+	private String aktuelleZeit = this.formatter.format(new Date());
+	private String bitteAusloggen = "";
 
-   public int getAktiveSessions() {
-      if (this.alleSessions == null) {
-		return 0;
-	} else {
-		return this.alleSessions.size();
+	public int getAktiveSessions() {
+		if (this.alleSessions == null) {
+			return 0;
+		} else {
+			return this.alleSessions.size();
+		}
 	}
-   }
 
-   
-
-   public String getAktuelleZeit() {
-      return this.aktuelleZeit;
-   }
-
-   
+	public String getAktuelleZeit() {
+		return this.aktuelleZeit;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public List getAlleSessions() {
@@ -81,178 +76,159 @@ private List alleSessions = new ArrayList();
 		}
 	}
 
-   
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void sessionAdd(HttpSession insession) {
+		// logger.debug("sessionAdd-start");
+		HashMap map = new HashMap();
+		map.put("id", insession.getId());
+		map.put("created", this.formatter.format(new Date()));
+		map.put("last", this.formatter.format(new Date()));
+		map.put("last2", Long.valueOf(System.currentTimeMillis()));
+		map.put("user", " - ");
+		map.put("userid", Integer.valueOf(0));
+		map.put("session", insession);
+		map.put("browserIcon", "none.gif");
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (context != null) {
+			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-private void sessionAdd(HttpSession insession) {
-      //      logger.debug("sessionAdd-start");
-      insession.setMaxInactiveInterval(this.sessionZeit);
-      
-      HashMap map = new HashMap();
-      map.put("id", insession.getId());
-      map.put("created", this.formatter.format(new Date()));
-      map.put("last", this.formatter.format(new Date()));
-      map.put("last2", Long.valueOf(System.currentTimeMillis()));
-      map.put("user", " - ");
-      map.put("userid", Integer.valueOf(0));
-      map.put("session", insession);
-      map.put("browserIcon", "none.gif");
-      FacesContext context = FacesContext.getCurrentInstance();
-      if (context != null) {
-         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-         
-         String address = request.getRemoteAddr();
-         if (address.startsWith("127.0.0.1")) {
-        	 address = request.getHeader("x-forwarded-for");
-        	 if (address == null) {
-        		 address = "127.0.0.1";
-        	 }
-         }
-         map.put("address", address);
-         
-         String mybrowser = request.getHeader("User-Agent");
-         if (mybrowser==null) {
-			mybrowser="-";
-		}
-         map.put("browser", mybrowser);
-         if (mybrowser.indexOf("Gecko") > 0) {
-			map.put("browserIcon", "mozilla.png");
-		}
-         if (mybrowser.indexOf("Firefox") > 0) {
-			map.put("browserIcon", "firefox.png");
-		}
-         if (mybrowser.indexOf("MSIE") > 0) {
-			map.put("browserIcon", "ie.png");
-		}
-         if (mybrowser.indexOf("Opera") > 0) {
-			map.put("browserIcon", "opera.gif");
-		}
-         if (mybrowser.indexOf("Safari") > 0) {
-			map.put("browserIcon", "safari.gif");
-		}
-         if (mybrowser.indexOf("Konqueror") > 0) {
-			map.put("browserIcon", "konqueror.gif");
-		}
-         if (mybrowser.indexOf("Netscape") > 0) {
-			map.put("browserIcon", "netscape.gif");
-		}
-      }
-      this.alleSessions.add(map);
-      //      logger.debug("sessionAdd-ende");
-   }
-
-   
-
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-private void sessionsAufraeumen() {
-      List temp = new ArrayList(this.alleSessions);
-      for (Iterator iter = temp.iterator(); iter.hasNext();) {
-         HashMap map = (HashMap) iter.next();
-         long differenz = System.currentTimeMillis() - ((Long) map.get("last2")).longValue();
-         //         logger.debug(element.get("last2") + ": " + String.valueOf(differenz / 1000));
-         if (differenz / 1000 > this.sessionZeit || map.get("address") == null || (map.get("user").equals("- ausgeloggt - ")) ){
-            this.alleSessions.remove(map);
-         }
-      }
-   }
-
-   
-
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-public void sessionAktualisieren(HttpSession insession) {
-      //      logger.debug("sessionAktualisieren-start");
-      boolean gefunden = false;
-      this.aktuelleZeit = this.formatter.format(new Date());
-      for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-         HashMap map = (HashMap) iter.next();
-         if (map.get("id").equals(insession.getId())) {
-            map.put("last", this.formatter.format(new Date()));
-            map.put("last2", Long.valueOf(System.currentTimeMillis()));
-            gefunden = true;
-            break;
-         }
-      }
-      if (!gefunden) {
-		sessionAdd(insession);
-	}
-      sessionsAufraeumen();
-      //      logger.debug("sessionAktualisieren-ende");
-   }
-
-   
-
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
-      //      logger.debug("sessionBenutzerAktualisieren-start");
-      for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-         HashMap map = (HashMap) iter.next();
-         if (map.get("id").equals(insession.getId())) {
-            if (inBenutzer != null) {
-               insession.setAttribute("User", inBenutzer.getNachVorname());
-               map.put("user", inBenutzer.getNachVorname());
-               map.put("userid", inBenutzer.getId());
-               insession.setMaxInactiveInterval(inBenutzer.getSessiontimeout());
-            } else {
-               map.put("user", "- ausgeloggt - ");
-               map.put("userid", Integer.valueOf(0));
-            }
-            break;
-         }
-      }
-      //      logger.debug("sessionBenutzerAktualisieren-ende");
-   }
-
-   
-
-   /* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
-   @SuppressWarnings( "rawtypes" )
-public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
-      boolean rueckgabe = false;
-      for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
-         HashMap map = (HashMap) iter.next();
-         boolean sessiongleich = map.get("id").equals(insession.getId());
-         boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
-         if (!sessiongleich && nutzergleich) {
-            rueckgabe = true;
-            break;
-         }
-      }
-      return rueckgabe;
-   }
-
-   
-
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
-      List alleSessionKopie = new ArrayList(this.alleSessions);
-      for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
-         HashMap map = (HashMap) iter.next();
-         boolean sessiongleich = map.get("id").equals(inSession.getId());
-         boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
-         if (!sessiongleich && nutzergleich) {
-            HttpSession tempSession = (HttpSession) map.get("session");
-            try {
-               if (tempSession!=null) {
-				tempSession.invalidate();
+			String address = request.getRemoteAddr();
+			if (address.startsWith("127.0.0.1")) {
+				address = request.getHeader("x-forwarded-for");
+				if (address == null) {
+					address = "127.0.0.1";
+				}
 			}
-            } catch (RuntimeException e) {
-            }
-            this.alleSessions.remove(map);
-         }
-      }
-   }
+			map.put("address", address);
 
-   
+			String mybrowser = request.getHeader("User-Agent");
+			if (mybrowser == null) {
+				mybrowser = "-";
+			}
+			map.put("browser", mybrowser);
+			if (mybrowser.indexOf("Gecko") > 0) {
+				map.put("browserIcon", "mozilla.png");
+			}
+			if (mybrowser.indexOf("Firefox") > 0) {
+				map.put("browserIcon", "firefox.png");
+			}
+			if (mybrowser.indexOf("MSIE") > 0) {
+				map.put("browserIcon", "ie.png");
+			}
+			if (mybrowser.indexOf("Opera") > 0) {
+				map.put("browserIcon", "opera.gif");
+			}
+			if (mybrowser.indexOf("Safari") > 0) {
+				map.put("browserIcon", "safari.gif");
+			}
+			if (mybrowser.indexOf("Konqueror") > 0) {
+				map.put("browserIcon", "konqueror.gif");
+			}
+			if (mybrowser.indexOf("Netscape") > 0) {
+				map.put("browserIcon", "netscape.gif");
+			}
+		}
+		this.alleSessions.add(map);
+		// logger.debug("sessionAdd-ende");
+	}
 
-   public String getBitteAusloggen() {
-      return this.bitteAusloggen;
-   }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void sessionsAufraeumen(int time) {
+		List temp = new ArrayList(this.alleSessions);
+		for (Iterator iter = temp.iterator(); iter.hasNext();) {
+			HashMap map = (HashMap) iter.next();
+			long differenz = System.currentTimeMillis() - ((Long) map.get("last2")).longValue();
+			// logger.debug(element.get("last2") + ": " + String.valueOf(differenz / 1000));
+			if (differenz / 1000 > time || map.get("address") == null || (map.get("user").equals("- ausgeloggt - "))) {
+				this.alleSessions.remove(map);
+			}
+		}
+	}
 
-   
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void sessionAktualisieren(HttpSession insession) {
+		// logger.debug("sessionAktualisieren-start");
+		boolean gefunden = false;
+		this.aktuelleZeit = this.formatter.format(new Date());
+		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
+			HashMap map = (HashMap) iter.next();
+			if (map.get("id").equals(insession.getId())) {
+				map.put("last", this.formatter.format(new Date()));
+				map.put("last2", Long.valueOf(System.currentTimeMillis()));
+				gefunden = true;
+				break;
+			}
+		}
+		if (!gefunden) {
+			sessionAdd(insession);
+		}
+		sessionsAufraeumen(insession.getMaxInactiveInterval());
+		// logger.debug("sessionAktualisieren-ende");
+	}
 
-   public void setBitteAusloggen(String bitteAusloggen) {
-      this.bitteAusloggen = bitteAusloggen;
-   }
-   
-   
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
+		// logger.debug("sessionBenutzerAktualisieren-start");
+		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
+			HashMap map = (HashMap) iter.next();
+			if (map.get("id").equals(insession.getId())) {
+				if (inBenutzer != null) {
+					insession.setAttribute("User", inBenutzer.getNachVorname());
+					map.put("user", inBenutzer.getNachVorname());
+					map.put("userid", inBenutzer.getId());
+					insession.setMaxInactiveInterval(inBenutzer.getSessiontimeout());
+				} else {
+					map.put("user", "- ausgeloggt - ");
+					map.put("userid", Integer.valueOf(0));
+				}
+				break;
+			}
+		}
+		// logger.debug("sessionBenutzerAktualisieren-ende");
+	}
+
+	/* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
+	@SuppressWarnings("rawtypes")
+	public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
+		boolean rueckgabe = false;
+		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
+			HashMap map = (HashMap) iter.next();
+			boolean sessiongleich = map.get("id").equals(insession.getId());
+			boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
+			if (!sessiongleich && nutzergleich) {
+				rueckgabe = true;
+				break;
+			}
+		}
+		return rueckgabe;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
+		List alleSessionKopie = new ArrayList(this.alleSessions);
+		for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
+			HashMap map = (HashMap) iter.next();
+			boolean sessiongleich = map.get("id").equals(inSession.getId());
+			boolean nutzergleich = inBenutzer.getId().intValue() == ((Integer) map.get("userid")).intValue();
+			if (!sessiongleich && nutzergleich) {
+				HttpSession tempSession = (HttpSession) map.get("session");
+				try {
+					if (tempSession != null) {
+						tempSession.invalidate();
+					}
+				} catch (RuntimeException e) {
+				}
+				this.alleSessions.remove(map);
+			}
+		}
+	}
+
+	public String getBitteAusloggen() {
+		return this.bitteAusloggen;
+	}
+
+	public void setBitteAusloggen(String bitteAusloggen) {
+		this.bitteAusloggen = bitteAusloggen;
+	}
+
 }
