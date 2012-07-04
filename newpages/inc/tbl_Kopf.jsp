@@ -79,12 +79,12 @@
 						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
 							title="deutsche Version">
 							<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-							<f:param name="locale" value="de_DE" />
+							<f:param name="locale" value="de" />
 						</h:commandLink>
 						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang2"
 							title="english version">
 							<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-							<f:param name="locale" value="en_GB" />
+							<f:param name="locale" value="en" />
 						</h:commandLink>
 						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang3"
 							rendered="false" title="russian version">
