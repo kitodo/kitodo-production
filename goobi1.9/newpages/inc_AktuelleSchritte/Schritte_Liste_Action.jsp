@@ -8,15 +8,14 @@
 
 <%-- ++++++++++++++++     Action      ++++++++++++++++ --%>
 <htm:table cellpadding="3" cellspacing="0" width="100%"
-	styleClass="eingabeBoxen" style="margin-top:20px"
-	rendered="#{AktuelleSchritteForm.page.totalResults > 0}">
+	styleClass="eingabeBoxen" style="margin-top:20px">
 	<htm:tr>
 		<htm:td styleClass="eingabeBoxen_row1" colspan="2">
 			<h:outputText value="#{msgs.moeglicheAktionen}" />
 		</htm:td>
 	</htm:tr>
 	<htm:tr valign="top"
-		rendered="#{LoginForm.myBenutzer.mitMassendownload}">
+		rendered="#{LoginForm.myBenutzer.mitMassendownload && AktuelleSchritteForm.page.totalResults > 0}">
 		<htm:td styleClass="eingabeBoxen_row2">
 			<h:panelGrid columns="1">
 
@@ -81,18 +80,18 @@
 					<h:panelGrid columns="2" style="margin-left:40px">
 					
 						<h:outputText value="#{msgs.showAutomaticTasks}:"  />
-						<x:selectBooleanCheckbox id="check3" forceId="true" value="#{AktuelleSchritteForm.showAutomaticTasks}" style="margin-right:40px" />
+						<h:selectBooleanCheckbox id="check3" value="#{AktuelleSchritteForm.showAutomaticTasks}" style="margin-right:40px" />
 		
 		
 						<h:outputText value="#{msgs.hideCorrectionTasks}:"  />
-						<x:selectBooleanCheckbox id="check4" forceId="true" value="#{AktuelleSchritteForm.hideCorrectionTasks}"  style="margin-right:40px" />
+						<h:selectBooleanCheckbox id="check4"  value="#{AktuelleSchritteForm.hideCorrectionTasks}"  style="margin-right:40px" />
 						
 				
 						<h:outputText id="aslsid5" value="#{msgs.nurEigeneAufgabenAnzeigen}:"  />
-						<x:selectBooleanCheckbox id="check1" forceId="true" value="#{AktuelleSchritteForm.nurEigeneSchritte}"  style="margin-right:40px" />
+						<h:selectBooleanCheckbox id="check1" value="#{AktuelleSchritteForm.nurEigeneSchritte}"  style="margin-right:40px" />
 				
 						<h:outputText id="aslsid6" value="#{msgs.nurOffeneAufgabenAnzeigen}:"  />
-						<x:selectBooleanCheckbox id="check2" forceId="true" value="#{AktuelleSchritteForm.nurOffeneSchritte}"  style="margin-right:40px" />
+						<h:selectBooleanCheckbox id="check2" value="#{AktuelleSchritteForm.nurOffeneSchritte}"  style="margin-right:40px" />
 					
 					
 					
