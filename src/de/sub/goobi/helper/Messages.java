@@ -22,49 +22,62 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+
 import javax.faces.context.FacesContext;
+
 import org.apache.log4j.Logger;
+
+import de.sub.goobi.config.ConfigMain;
 
 public class Messages {
 	private static final Logger logger = Logger.getLogger(Messages.class);
 
-	private static ResourceBundle bundle;
-	private static ResourceBundle localBundle;
+	protected static Map<Locale, ResourceBundle> commonMessages = new HashMap<Locale, ResourceBundle>();
+	protected static Map<Locale, ResourceBundle> localMessages = new HashMap<Locale, ResourceBundle>();
 
-	public static void loadLanguageBundle() {
-		bundle = ResourceBundle.getBundle("messages", FacesContext
-				.getCurrentInstance().getViewRoot().getLocale());
-		localBundle = loadLocalMessageBundleIfAvailable();
+	static{
+		@SuppressWarnings("unchecked")
+		Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		while (polyglot.hasNext()) {
+			Locale language = polyglot.next();
+			commonMessages.put(language, ResourceBundle.getBundle("messages", language));
+			ResourceBundle local = loadLocalMessageBundleIfAvailable(language);
+			if (local != null)
+				localMessages.put(language, local);
+		}
 	}
 
 	/**
 	 * A parameter “localMessages” can be configured in GoobiConfig.properties.
 	 * If this points to a valid path where the messages_*.properties files can
-	 * be found, these are used instead. Load local message bundle from file
-	 * system only if file exists.
+	 * be found, these are used instead. Load local message commonMessages from
+	 * file system only if file exists.
 	 * 
-	 * @return Resource bundle for local messages. Returns NULL if no local
-	 *         message bundle could be found.
+	 * @param variant
+	 *            The language
+	 * 
+	 * @return Resource commonMessages for local messages. Returns NULL if no
+	 *         local message commonMessages could be found.
 	 */
-	private static ResourceBundle loadLocalMessageBundleIfAvailable() {
+	private static ResourceBundle loadLocalMessageBundleIfAvailable(Locale variant) {
 		String localMessages = ConfigMain.getParameter("localMessages");
 		if (localMessages != null) {
 			File path = new File(localMessages);
 			if (path.exists()) {
 				try {
 					URL pathURL = path.toURI().toURL();
-					URLClassLoader urlLoader = new URLClassLoader(
-							new URL[] { pathURL });
-					return ResourceBundle.getBundle("messages", FacesContext
-							.getCurrentInstance().getViewRoot().getLocale(),
-							urlLoader);
+					URLClassLoader urlLoader = new URLClassLoader(new URL[] { pathURL });
+					return ResourceBundle.getBundle("messages", variant, urlLoader);
 				} catch (java.net.MalformedURLException e) {
-					logger.error("Error reading local message bundle", e);
+					logger.error("Error reading local message commonMessages", e);
 				}
 			}
 		}
@@ -72,33 +85,49 @@ public class Messages {
 	}
 
 	/**
-	 * The function getString() returns the translated key in the given language.
+	 * The function getString() returns the translated key in the language
+	 * currently configured in the front end.
 	 * 
 	 * @param key
 	 *            A key to to be looked up in the messages.
-	 * @return The verbalisation for the given key in the chosen application
-	 *         frontend’s language
+	 * 
+	 * @return The verbalisation for the given key in the language chosen
 	 */
 	public static String getString(String key) {
-		// running instance of ResourceBundle doesn't respond on user language
-		// changes, workaround by instantiating it every time
-
+		Locale desiredLanguage = null;
 		try {
-			if (localBundle != null) {
-				if (localBundle.containsKey(key)) {
-					String trans = localBundle.getString(key);
-					return trans;
-				}
-				if (localBundle.containsKey(key.toLowerCase())) {
-					return localBundle.getString(key.toLowerCase());
-				}
-			}
-		} catch (RuntimeException e) {
+			desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		} catch (NullPointerException skip) {
+		}
+		if (desiredLanguage != null)
+			return getString(desiredLanguage, key);
+		else
+			return getString(Locale.ENGLISH, key).concat(" [Could not retrieve desired language, switching to English.]");
+	}
+
+	/**
+	 * The function getString() returns the translated key in the given
+	 * language.
+	 * 
+	 * @param language
+	 *            The locale wanted.
+	 * @param key
+	 *            A key to to be looked up in the messages.
+	 * 
+	 * @return The verbalisation for the given key in the requested language
+	 */
+	public static String getString(Locale language, String key) {
+		if (localMessages.containsKey(language)) {
+			ResourceBundle languageLocal = localMessages.get(language);
+			if (languageLocal.containsKey(key))
+				return languageLocal.getString(key);
+			String lowKey = key.toLowerCase();
+			if (languageLocal.containsKey(lowKey))
+				return languageLocal.getString(lowKey);
 		}
 		try {
-			String msg = bundle.getString(key);
-			return msg;
-		} catch (RuntimeException e) {
+			return commonMessages.get(language).getString(key);
+		} catch (RuntimeException irrelevant) {
 			return key;
 		}
 	}

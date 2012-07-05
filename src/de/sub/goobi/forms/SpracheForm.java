@@ -31,29 +31,23 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Messages;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
  * user in the running application
  */
 public class SpracheForm {
-	private Locale locale;
 
 	/**
-	 * The constructor of this class sets the locale to the first available
-	 * value and loads the required MessageBundle
+	 * The constructor of this class loads the required MessageBundle
 	 */
 	public SpracheForm() {
-		while (FacesContext.getCurrentInstance().getApplication()
-				.getSupportedLocales().hasNext()) {
-			locale = (Locale) FacesContext.getCurrentInstance()
-					.getApplication().getSupportedLocales().next();
-			break;
+		String p = ConfigMain.getParameter("language.force-default");
+		if(p != null && p.length() > 0){
+			FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(p));
 		}
-		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-		Messages.loadLanguageBundle();
 	}
 
 	/**
@@ -121,13 +115,13 @@ public class SpracheForm {
 	 */
 	public void switchLanguage(String langCodeCombined) {
 		String[] languageCode = langCodeCombined.split("_");
+		Locale locale = null;
 		if (languageCode.length == 2) {
 			locale = new Locale(languageCode[0], languageCode[1]);
 		} else {
 			locale = new Locale(languageCode[0]);
 		}
 		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-		Messages.loadLanguageBundle();
 	}
 
 	/**
@@ -144,6 +138,6 @@ public class SpracheForm {
 	}
 
 	public Locale getLocale() {
-		return locale;
+		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	}
 }
