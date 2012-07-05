@@ -73,7 +73,7 @@
 				</htm:td>
 
 
-				<htm:td valign="middle" align="right" style="padding: 3 3 0 0">
+				<htm:td valign="middle" align="right" style="padding-right: 3px">
 
 					<h:form style="margin:0px" id="headform">
 
