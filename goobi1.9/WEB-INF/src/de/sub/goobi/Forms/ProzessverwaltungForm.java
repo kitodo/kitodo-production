@@ -209,8 +209,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public String Speichern() {
 		/*
-		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
-		 * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
+		 * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
 		 */
 		if (this.myProzess != null && this.myProzess.getTitel() != null) {
 			if (!this.myProzess.getTitel().equals(this.myNewProcessTitle)) {
@@ -861,9 +860,8 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public void DownloadToHome() {
 		/*
-		 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
-		 * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
-		 * ansonsten Download
+		 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde, ansonsten
+		 * Download
 		 */
 		if (!this.myProzess.isImageFolderInUse()) {
 			WebDav myDav = new WebDav();
@@ -881,8 +879,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		WebDav myDav = new WebDav();
 		for (Prozess proz : (List<Prozess>) this.page.getListReload()) {
 			/*
-			 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer
-			 * in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+			 * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
 			 * ansonsten Download
 			 */
 			if (!proz.isImageFolderInUse()) {
@@ -1489,9 +1486,8 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	/**
-	 * ist called via jsp at the end of building a chart in include file
-	 * Prozesse_Liste_Statistik.jsp and resets the statistics so that with the
-	 * next reload a chart is not shown anymore
+	 * ist called via jsp at the end of building a chart in include file Prozesse_Liste_Statistik.jsp and resets the statistics so that with the next
+	 * reload a chart is not shown anymore
 	 * 
 	 * @author Wulf
 	 */
@@ -1665,8 +1661,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 			String OutputFileName = "export.xml";
 			/*
-			 * -------------------------------- Vorbereiten der
-			 * Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
@@ -1748,8 +1743,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der
-			 * Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
@@ -1774,8 +1768,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der
-			 * Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
@@ -1842,8 +1835,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der
-			 * Header-Informationen --------------------------------
+			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
@@ -1880,7 +1872,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		return this.showArchivedProjects;
 	}
 
-	
 	/**
 	 * @return values for wiki field
 	 */
@@ -1907,20 +1898,18 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void addToWikiField() {
-		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess.getWikifield(),"user", message));
-		this.addToWikiField = "";
-		try {
-			this.dao.save(myProzess);
-		} catch (DAOException e) {
-			logger.error(e);
+		if (addToWikiField != null && addToWikiField.length() > 0) {
+			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+			this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess.getWikifield(), "user", message));
+			this.addToWikiField = "";
+			try {
+				this.dao.save(myProzess);
+			} catch (DAOException e) {
+				logger.error(e);
+			}
 		}
 	}
-	
-	
-	
-	
 
 	public ProcessProperty getProcessProperty() {
 		return this.processProperty;
