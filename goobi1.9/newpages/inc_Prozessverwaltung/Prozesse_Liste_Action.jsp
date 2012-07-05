@@ -361,10 +361,10 @@
 						<h:panelGrid columns="2" style="margin-left:40px">
 
 							<h:outputText value="#{msgs.showArchivedProjects}:" rendered="#{(LoginForm.maximaleBerechtigung == 1)}" />
-							<x:selectBooleanCheckbox value="#{ProzessverwaltungForm.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}" />
+							<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}" />
 
 							<h:outputText value="#{msgs.showClosedProcesses}:" />
-							<x:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}" />
+							<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}" />
 						</h:panelGrid>
 						<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" style="margin-left:44px" title="#{msgs.uebernehmen}">
 							<h:outputText value="#{msgs.uebernehmen}" />
