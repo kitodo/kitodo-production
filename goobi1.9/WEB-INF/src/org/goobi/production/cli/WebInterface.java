@@ -73,6 +73,13 @@ public class WebInterface extends HttpServlet {
 			String password = "";
 			try {
 				ip = req.getRemoteHost();
+				if (ip.startsWith("127.0.0.1")) {
+					ip = req.getHeader("x-forwarded-for");
+					if (ip == null) {
+						ip = "127.0.0.1";
+					}
+				}
+				
 				Map<String, String[]> map = req.getParameterMap();
 				String[] pwMap = map.get("token");
 				password = pwMap[0];
