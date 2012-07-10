@@ -170,7 +170,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
 			for (Iterator<String> iter = seitenOhneDocstructs.iterator(); iter.hasNext();) {
 				String seite = iter.next();
-				Helper.setFehlerMeldung(title + ": " + Helper.getTranslation("MetadataPaginationPage"), seite);
+				Helper.setFehlerMeldung(title + ": " + Helper.getTranslation("MetadataPaginationPages"), seite);
 			}
 			ergebnis = false;
 		}
