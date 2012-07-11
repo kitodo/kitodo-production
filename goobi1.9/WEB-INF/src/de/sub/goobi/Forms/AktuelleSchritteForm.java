@@ -296,8 +296,15 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.flagWait = false;
 		}
 		return "AktuelleSchritteBearbeiten";
-
 	}
+	
+	public String EditStep() {
+		
+		Helper.getHibernateSession().refresh(mySchritt);
+		
+		return "AktuelleSchritteBearbeiten";
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public String TakeOverBatch() {
