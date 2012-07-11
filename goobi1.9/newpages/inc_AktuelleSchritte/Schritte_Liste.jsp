@@ -337,7 +337,7 @@
 		</h:commandLink>
 
 		<%-- Bearbeiten-Schaltknopf (eigener Schritt) --%>
-		<h:commandLink action="AktuelleSchritteBearbeiten" id="view1"
+		<h:commandLink action="#{AktuelleSchritteForm.EditStep}" id="view1"
 			rendered="#{(item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && !item.batchStep) || (item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep && !item.batchSize)}"
 			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
@@ -345,7 +345,7 @@
 		</h:commandLink>
 
 		<%-- Bearbeiten-Schaltknopf (fremder Schritt) --%>
-		<h:commandLink action="AktuelleSchritteBearbeiten" id="view2"
+		<h:commandLink action="#{AktuelleSchritteForm.EditStep}" id="view2"
 			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && (!item.batchStep || !item.batchSize)}"
 			title="#{msgs.inBearbeitungDurch}: #{(item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname : '')}">
 			<h:graphicImage value="/newpages/images/buttons/admin1c.gif" />
