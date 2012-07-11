@@ -276,7 +276,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 		// download sources
 		File sources = new File(fi.getSourceDirectory());
-		if (sources.exists()) {
+		if (sources.exists() && sources.list().length > 0) {
 			File destination = new File(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
@@ -294,7 +294,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		if (ocr.exists()) {
 			File[] folder = ocr.listFiles();
 			for (File dir : folder) {
-				if (dir.isDirectory()) {
+				if (dir.isDirectory() && dir.list().length > 0) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + "_" + suffix);
 					if (!destination.exists()) {
@@ -389,7 +389,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * -------------------------------- jetzt die Ausgangsordner in die
 		 * Zielordner kopieren --------------------------------
 		 */
-		if (tifOrdner.exists()) {
+		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
 			File zielTif = new File(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
