@@ -296,7 +296,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			for (File dir : folder) {
 				if (dir.isDirectory()) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					File destination = new File(benutzerHome + File.separator + atsPpnBand + "_" + suffix);
+					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
