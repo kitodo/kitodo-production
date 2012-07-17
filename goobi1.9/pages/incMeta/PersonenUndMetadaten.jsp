@@ -171,7 +171,7 @@
 				</h:selectOneMenu>
 				<h:outputText id="myOutput" value="#{Item.value}"	
 								rendered="#{(Item.outputType == 'readonly')}"
-								styleClass="metadatenInput" style="width: 350px;" />
+								styleClass="metadatenInput" style="width: 350px; border: 0 none;" />
 			</h:column>
 
 
