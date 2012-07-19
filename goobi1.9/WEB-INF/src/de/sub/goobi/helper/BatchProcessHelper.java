@@ -137,7 +137,10 @@ public class BatchProcessHelper {
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
 			if (!this.processProperty.isValid()) {
-				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				List<String> param = new ArrayList<String>();
+				param.add(processProperty.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);	
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
@@ -160,10 +163,10 @@ public class BatchProcessHelper {
 			}
 			try {
 				this.pdao.save(this.currentProcess);
-				Helper.setMeldung("Property saved");
+				Helper.setMeldung("propertySaved");
 			} catch (DAOException e) {
 				logger.error(e);
-				Helper.setFehlerMeldung("Properties could not be saved");
+				Helper.setFehlerMeldung("propertyNotSaved");
 			}
 		}
 	}
@@ -174,7 +177,10 @@ public class BatchProcessHelper {
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
 			if (!this.processProperty.isValid()) {
-				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				List<String> param = new ArrayList<String>();
+				param.add(processProperty.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);	
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
@@ -234,12 +240,15 @@ public class BatchProcessHelper {
 				} catch (DAOException e) {
 					error = true;
 					logger.error(e);
-					Helper.setFehlerMeldung("Properties for process " + process.getTitel() + " could not be saved");
+					List<String> param = new ArrayList<String>();
+					param.add(process.getTitel());
+					String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+					Helper.setFehlerMeldung(value);
 				}
 			}
 		}
 		if (!error) {
-			Helper.setMeldung("Properties saved");
+			Helper.setMeldung("propertiesSaved");
 		}
 	}
 

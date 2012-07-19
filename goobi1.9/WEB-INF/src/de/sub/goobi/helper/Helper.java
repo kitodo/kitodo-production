@@ -47,6 +47,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
@@ -225,6 +226,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static String getString(Locale language, String key) {
+		
 		if (localMessages.containsKey(language)) {
 			ResourceBundle languageLocal = localMessages.get(language);
 			if (languageLocal.containsKey(key))
@@ -459,10 +461,33 @@ public class Helper implements Serializable, Observer {
 		} catch (NullPointerException skip) {
 		}
 		if (desiredLanguage != null) {
-			return getString(desiredLanguage, dbTitel);
+			return getString(new Locale(desiredLanguage.getLanguage()), dbTitel);
 		} else {
 			return getString(Locale.ENGLISH, dbTitel);
 		}
+	}
+
+	public static String getTranslation(String dbTitel, List<String> parameterList) {
+		String value = "";
+		Locale desiredLanguage = null;
+		try {
+			desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		} catch (NullPointerException skip) {
+		}
+		if (desiredLanguage != null) {
+			value = getString(new Locale(desiredLanguage.getLanguage()), dbTitel);
+		} else {
+			value = getString(Locale.ENGLISH, dbTitel);
+		}
+		if (parameterList != null && parameterList.size() > 0) {
+			int parameterCount = 0;
+			for (String parameter : parameterList ) {
+				value = value.replace("{"+ parameterCount + "}", parameter);
+				parameterCount++;
+			}
+		}
+
+		return value;
 	}
 
 	/**

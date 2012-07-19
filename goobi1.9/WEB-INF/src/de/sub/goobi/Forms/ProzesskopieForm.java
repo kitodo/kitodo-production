@@ -135,11 +135,13 @@ public class ProzesskopieForm {
 	public String Prepare() {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			if (this.prozessVorlage.getSchritteList().size() == 0) {
-				Helper.setFehlerMeldung("No steps associated to workflow");
+				Helper.setFehlerMeldung("noStepsInWorkflow"); 
 			}
 			for (Schritt s : this.prozessVorlage.getSchritteList()) {
 				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
-					Helper.setFehlerMeldung("No user associated for: ", s.getTitel());
+					List<String> param = new ArrayList<String>();
+					param.add(s.getTitel());
+					Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param)); 
 				}
 			}
 			return "";

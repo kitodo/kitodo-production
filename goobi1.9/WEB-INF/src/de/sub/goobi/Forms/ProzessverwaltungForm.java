@@ -1956,7 +1956,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		boolean valid = true;
 		for (IProperty p : this.processPropertyList) {
 			if (!p.isValid()) {
-				Helper.setFehlerMeldung("Property " + p.getName() + " not valid");
+				List<String> param = new ArrayList<String>();
+				param.add(p.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);	
 				valid = false;
 			}
 		}
@@ -1997,7 +2000,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
 			if (!this.processProperty.isValid()) {
-				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+				List<String> param = new ArrayList<String>();
+				param.add(processProperty.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);		
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
@@ -2019,10 +2025,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 			try {
 				this.dao.save(this.myProzess);
-				Helper.setMeldung("Property saved");
+				Helper.setMeldung("propertiesSaved");
 			} catch (DAOException e) {
 				logger.error(e);
-				Helper.setFehlerMeldung("Properties could not be saved");
+				Helper.setFehlerMeldung("propertiesNotSaved");
 			}
 		}
 		loadProcessProperties();
@@ -2074,7 +2080,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			this.dao.save(this.myProzess);
 		} catch (DAOException e) {
 			logger.error(e);
-			Helper.setFehlerMeldung("Properties could not be deleted");
+			Helper.setFehlerMeldung("propertiesNotDeleted");
 		}
 		// saveWithoutValidation();
 		loadProcessProperties();
@@ -2152,10 +2158,10 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 		try {
 			this.dao.save(this.myProzess);
-			Helper.setMeldung("Property saved");
+			Helper.setMeldung("propertySaved");
 		} catch (DAOException e) {
 			logger.error(e);
-			Helper.setFehlerMeldung("Properties could not be saved");
+			Helper.setFehlerMeldung("propertiesNotSaved");
 		}
 		loadProcessProperties();
 

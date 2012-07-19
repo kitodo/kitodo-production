@@ -1192,7 +1192,10 @@ public class AktuelleSchritteForm extends BasisForm {
 		boolean valid = true;
 		for (IProperty p : this.processPropertyList) {
 			if (!p.isValid()) {
-				Helper.setFehlerMeldung("Property " + p.getName() + " not valid");
+				List<String> param = new ArrayList<String>();
+				param.add(p.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);
 				valid = false;
 			}
 		}
@@ -1220,10 +1223,10 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			try {
 				this.pdao.save(p);
-				Helper.setMeldung("Properties saved");
+				Helper.setMeldung("propertiesSaved");
 			} catch (DAOException e) {
 				myLogger.error(e);
-				Helper.setFehlerMeldung("Properties could not be saved");
+				Helper.setFehlerMeldung("propertiesNotSaved");
 			}
 		}
 	}
@@ -1233,6 +1236,10 @@ public class AktuelleSchritteForm extends BasisForm {
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
 			if (!this.processProperty.isValid()) {
+				List<String> param = new ArrayList<String>();
+				param.add(processProperty.getName());
+				String value = Helper.getTranslation("propertyNotValid", param);
+				Helper.setFehlerMeldung(value);
 				Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
 				return;
 			}
@@ -1256,10 +1263,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 			try {
 				this.pdao.save(this.mySchritt.getProzess());
-				Helper.setMeldung("Property saved");
+				Helper.setMeldung("propertySaved");
 			} catch (DAOException e) {
 				myLogger.error(e);
-				Helper.setFehlerMeldung("Properties could not be saved");
+				Helper.setFehlerMeldung("propertyNotSaved");
 			}
 		}
 		loadProcessProperties();
@@ -1335,7 +1342,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
 			myLogger.error(e);
-			Helper.setFehlerMeldung("Properties could not be deleted");
+			Helper.setFehlerMeldung("propertiesNotDeleted");
 		}
 		// saveWithoutValidation();
 		loadProcessProperties();
