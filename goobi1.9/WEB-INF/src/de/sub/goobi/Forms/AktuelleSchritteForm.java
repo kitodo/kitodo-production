@@ -565,6 +565,10 @@ public class AktuelleSchritteForm extends BasisForm {
 				.add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleVorherigenSchritte;
 	}
+	
+	public int getSizeOfPreviousStepsForProblemReporting() {
+		return getPreviousStepsForProblemReporting().size();
+	}
 
 	@SuppressWarnings("unchecked")
 	public String ReportProblem() {
@@ -649,6 +653,10 @@ public class AktuelleSchritteForm extends BasisForm {
 				.add(Restrictions.gt("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
 				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleNachfolgendenSchritte;
+	}
+	
+	public int getSizeOfNextStepsForProblemSolution() {
+		return getNextStepsForProblemSolution().size();
 	}
 
 	@SuppressWarnings("unchecked")
