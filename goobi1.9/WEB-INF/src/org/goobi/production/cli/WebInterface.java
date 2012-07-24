@@ -131,7 +131,7 @@ public class WebInterface extends HttpServlet {
 			// }
 
 			// get correct plugin from list
-			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPlugin(PluginType.Command, this.command);
+			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, this.command);
 			if (myCommandPlugin == null) {
 				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;

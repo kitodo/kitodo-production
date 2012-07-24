@@ -54,7 +54,18 @@ public class PluginLoader {
 		return new ArrayList<IPlugin>(plugins);
 	}
 
-	public static IPlugin getPlugin(PluginType inType, String inId) {
+	public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
+		PluginManagerUtil pmu = initialize(inType);
+		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
+		for (IPlugin p : plugins) {
+			if (p.getTitle().equals(inTitle)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public static IPlugin getPluginById(PluginType inType, String inId) {
 		PluginManagerUtil pmu = initialize(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
 		for (IPlugin p : plugins) {
