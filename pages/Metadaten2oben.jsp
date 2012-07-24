@@ -98,13 +98,13 @@
 								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
 									title="deutsche Version" target="rechts">
 									<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-									<f:param name="locale" value="de_DE" />
+									<f:param name="locale" value="de" />
 									<f:param name="ziel" value="Metadaten2rechts" />
 								</h:commandLink>
 								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
 									title="english version" target="rechts">
 									<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-									<f:param name="locale" value="en_GB" />
+									<f:param name="locale" value="en" />
 									<f:param name="ziel" value="Metadaten2rechts" />
 								</h:commandLink>
 								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"

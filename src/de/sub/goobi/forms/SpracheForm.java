@@ -27,7 +27,6 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Messages;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -48,7 +47,6 @@ public class SpracheForm {
 			break;
 		}
 		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-		Messages.loadLanguageBundle();
 	}
 
 	/**
@@ -67,7 +65,6 @@ public class SpracheForm {
 			locale = new Locale(languageCode[0]);
 		}
 		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
-		Messages.loadLanguageBundle();
 	}
 
 	/**
