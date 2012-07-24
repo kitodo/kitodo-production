@@ -227,11 +227,10 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
-			boolean successfulStore;
 			calculateMetadataAndImages();
 			cleanupMetadata();
 			// ignoring result of store operation
-			successfulStore = storeMetadata();
+			storeMetadata();
 			return "";
 		}
 	}
@@ -733,7 +732,6 @@ public class Metadaten {
 	 * ##################################################### ####################################################
 	 */
 
-	@SuppressWarnings("unchecked")
 	private String MetadatenalsTree3Einlesen1() {
 		HashMap map;
 		TreeNodeStruct3 knoten;
@@ -803,7 +801,6 @@ public class Metadaten {
 		if (inStrukturelement.getType().getName().equals("Periodical") || inStrukturelement.getType().getName().equals("PeriodicalVolume"))
 			OberKnoten.setExpanded(true);
 
-		int zaehler = 0;
 		/*
 		 * -------------------------------- vom aktuellen Strukturelement alle Kinder in den Tree packen --------------------------------
 		 */
@@ -815,7 +812,6 @@ public class Metadaten {
 				if (label == null)
 					label = kind.getType().getName();
 				TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
-				zaehler++;
 				OberKnoten.addChild(tns);
 				MetadatenalsTree3Einlesen2(kind, tns);
 			}
@@ -840,7 +836,6 @@ public class Metadaten {
 		return rueckgabe.trim();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setMyStrukturelement(DocStruct inStruct) {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
@@ -1824,7 +1819,6 @@ public class Metadaten {
 	/**
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
-	@SuppressWarnings("unchecked")
 	public String SeitenVonChildrenUebernehmen() {
 		if (!SperrungAktualisieren())
 			return "SperrungAbgelaufen";
@@ -2285,7 +2279,6 @@ public class Metadaten {
 			TreeDurchlaufen(tree3);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void TreeDurchlaufen(TreeNodeStruct3 inTreeStruct) {
 		DocStruct temp = inTreeStruct.getStruct();
 		if (inTreeStruct.getStruct() == myDocStruct)

@@ -320,7 +320,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * 				read in first in order to get a certain sorting 
 	 * @return DataTable
 	 */
-	@SuppressWarnings("unchecked")
 	private DataTable buildDataTableFromSQL(String natSQL) {
 		Session session = Helper.getHibernateSession();
 

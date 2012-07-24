@@ -96,7 +96,6 @@ public class ExportDms_CorrectRusdml {
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws DocStructHasNoTypeException
 	 */
-	@SuppressWarnings("unchecked")
 	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
 
 		RusdmlDropMetadata(inStruct);

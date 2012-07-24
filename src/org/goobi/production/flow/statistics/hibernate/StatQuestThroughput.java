@@ -320,7 +320,7 @@ public class StatQuestThroughput implements
 	 * 				read in first in order to get a certain sorting 
 	 * @return DataTable
 	 */
-	@SuppressWarnings("unchecked")
+	
 	//TODO Remove redundant code
 	private DataTable buildDataTableFromSQL(String natSQL, String headerFromSQL) {
 		Session session = Helper.getHibernateSession();
@@ -431,7 +431,6 @@ public class StatQuestThroughput implements
 	 * 
 	 * @param requestedType
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer getMaxStepCount(HistoryEventType requestedType) {
 
 		// adding time restrictions
@@ -459,7 +458,6 @@ public class StatQuestThroughput implements
 	 * 
 	 * @param requestedType
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer getMinStepCount(HistoryEventType requestedType) {
 
 		// adding time restrictions

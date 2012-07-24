@@ -23,7 +23,6 @@ import de.sub.goobi.forms.LoginForm;
  * @author Gavin King
  * @author Eric Broyles
  */
-@SuppressWarnings("unchecked")
 public class Page implements Serializable {
 	private static final long serialVersionUID = -290320409344472392L;
 	//TODO: Use generics

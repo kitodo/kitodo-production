@@ -57,7 +57,6 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 		return myTaskList;
 	}
 
-	@SuppressWarnings("unchecked")
 	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
 
 		Session session = Helper.getHibernateSession();

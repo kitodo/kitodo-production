@@ -22,13 +22,13 @@
 
 package org.goobi.io;
 
-import de.sub.goobi.helper.FilesystemHelper;
-import org.apache.log4j.Logger;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
+import org.apache.log4j.Logger;
+
+import de.sub.goobi.helper.FilesystemHelper;
 
 /**
  * Creates backup for files in a given directory that match a regular expression.

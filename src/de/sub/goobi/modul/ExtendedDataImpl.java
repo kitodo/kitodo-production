@@ -75,9 +75,7 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
-   //TODO: Use generics
-   @SuppressWarnings("unchecked")
-public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.add(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -252,9 +250,7 @@ public int add(String sessionId, String type, int count, HashMap pp) throws Goob
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/
-   //TODO: Use generics
-   @SuppressWarnings("unchecked")
-public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.set(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);

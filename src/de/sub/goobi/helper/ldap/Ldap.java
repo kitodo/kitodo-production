@@ -46,14 +46,13 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchResult;
 
-import dubious.sub.goobi.helper.encryption.MD4;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
+import dubious.sub.goobi.helper.encryption.MD4;
 
 public class Ldap {
 	private static final Logger myLogger = Logger.getLogger(Ldap.class);

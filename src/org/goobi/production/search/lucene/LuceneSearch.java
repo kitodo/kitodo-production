@@ -53,7 +53,6 @@ import de.sub.goobi.config.ConfigMain;
 public class LuceneSearch implements ISearch {
 	static Analyzer analyser;
 	private static String index_path = "";
-	private static String analyser_path = "";
 	static LuceneSearch search;
 	private static final Logger logger = Logger.getLogger(LuceneSearch.class);
 	private Version luceneVersion = Version.LUCENE_24;

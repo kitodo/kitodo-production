@@ -145,7 +145,7 @@ public class HelperForm {
 		// TODO: Avoid SQL here
 		List<Regelsatz> temp = new RegelsatzDAO().search("from Regelsatz ORDER BY titel");
 		for (Iterator<Regelsatz> iter = temp.iterator(); iter.hasNext();) {
-			Regelsatz an = (Regelsatz) iter.next();
+			Regelsatz an = iter.next();
 			myPrefs.add(new SelectItem(an, an.getTitel(), null));
 		}
 		return myPrefs;
@@ -189,19 +189,8 @@ public class HelperForm {
 		return reqUrl;
 	}
 
-	// TODO: Try to avoid Iterators, usr for loops instead
-	@SuppressWarnings( { "unchecked", "unused" })
 	public boolean getMessagesExist() {
-		boolean rueck = false;
-		FacesContext context = FacesContext.getCurrentInstance();
-		for (Iterator it = context.getClientIdsWithMessages(); it.hasNext();) {
-			Object o = it.next();
-		}
-		for (Iterator it = context.getMessages(); it.hasNext();) {
-			FacesMessage o = (FacesMessage) it.next();
-			rueck = true;
-		}
-		return rueck;
+		return FacesContext.getCurrentInstance().getMessages().hasNext();
 	}
 
 	public List<SelectItem> getCssFiles() {

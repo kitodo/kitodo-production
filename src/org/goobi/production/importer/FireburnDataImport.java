@@ -454,7 +454,6 @@ public class FireburnDataImport {
 	 * @throws JDOMException
 	 * @throws ParseException
 	 *****************************************************************************************/
-	@SuppressWarnings("unchecked")
 	private ArrayList<FireburnProperty> loadDataFromXml(String filename) throws JDOMException, IOException, ParseException {
 		ArrayList<FireburnProperty> returnList = new ArrayList<FireburnProperty>();
 		Document doc = new SAXBuilder().build(new File(filename));

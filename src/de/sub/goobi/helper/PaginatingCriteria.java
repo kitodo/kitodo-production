@@ -76,7 +76,6 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @param clazz
 	 * @param session
 	 */
-	@SuppressWarnings("unchecked")
 	public PaginatingCriteria(Class clazz, Session session) {
 		criteria = session.createCriteria(clazz);
 		clone = session.createCriteria(clazz);
@@ -344,7 +343,6 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @return List
 	 * @see Criteria#list()
 	 */
-	@SuppressWarnings("unchecked")
 	public List list() throws HibernateException {
 		return criteria.list();
 	}

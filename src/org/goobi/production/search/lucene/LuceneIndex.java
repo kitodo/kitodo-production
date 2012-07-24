@@ -71,8 +71,6 @@ public class LuceneIndex implements IIndexer {
 
 	static RAMDirectory ramDir = null;
 	private static String index_path = "";
-	private static String analyser_path = "";
-
 	static Analyzer analyser;
 	private static LuceneIndex li;
 	private static MaxFieldLength mfl = new MaxFieldLength(1000);

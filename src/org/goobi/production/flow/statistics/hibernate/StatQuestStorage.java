@@ -67,7 +67,6 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 */
-	@SuppressWarnings("unchecked")
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		List<DataTable> allTables = new ArrayList<DataTable>();

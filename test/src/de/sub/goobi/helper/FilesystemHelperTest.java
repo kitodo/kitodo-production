@@ -22,20 +22,17 @@
 
 package de.sub.goobi.helper;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
-import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
-
-import org.apache.log4j.BasicConfigurator;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import org.apache.log4j.BasicConfigurator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class FilesystemHelperTest {
 
