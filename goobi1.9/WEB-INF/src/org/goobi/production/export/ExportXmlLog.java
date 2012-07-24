@@ -33,11 +33,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.log4j.Logger;
 import org.goobi.production.IProcessDataExport;
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
@@ -72,7 +72,8 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * 
  */
 public class ExportXmlLog implements IProcessDataExport {
-
+	private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
+	
 	/**
 	 * This method exports the production metadata as xml to a given directory
 	 * 
@@ -439,15 +440,17 @@ public class ExportXmlLog implements IProcessDataExport {
 			}
 
 		} catch (SwapException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (DAOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (JDOMException e) {
-			e.printStackTrace();
+			logger.error(e);
+		} catch (JaxenException e) {
+			logger.error(e);
 		}
 
 		processElm.setContent(processElements);
@@ -455,21 +458,15 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	}
 
-	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces) {
-		try {
+	@SuppressWarnings("unchecked")
+	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces) throws JaxenException {
 			JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
-			// logger.info("query: " + xpath.getRootExpr().getText());
 			// Add all namespaces
 			for (String key : namespaces.keySet()) {
 				Namespace value = namespaces.get(key);
 				xpath.addNamespace(key, value.getURI());
 			}
 			return xpath.selectNodes(element);
-
-		} catch (JaxenException e) {
-			System.out.println("XPath query error:: " + expr + " - " + e.getMessage());
-		}
-		return null;
 	}
 
 	/**
