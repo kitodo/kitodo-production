@@ -31,14 +31,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.production.IProcessDataExport;
+import org.jaxen.JaxenException;
+import org.jaxen.jdom.JDOMXPath;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
@@ -52,7 +60,10 @@ import de.sub.goobi.Beans.Vorlage;
 import de.sub.goobi.Beans.Vorlageeigenschaft;
 import de.sub.goobi.Beans.Werkstueck;
 import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
  * This class provides xml logfile generation. After the the generation the file will be written to user home directory
@@ -378,9 +389,87 @@ public class ExportXmlLog implements IProcessDataExport {
 			processElements.add(digdoc);
 		}
 
+		// METS information
+		Element metsElement = new Element("metsInformation", xmlns);
+		ArrayList<Element> metadataElements = new ArrayList<Element>();
+
+		try {
+			String filename = process.getMetadataFilePath();
+			Document metsDoc = new SAXBuilder().build(filename);
+			Document anchorDoc = null;
+			String anchorfilename = process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml");
+			File anchorFile = new File(anchorfilename);
+			if (anchorFile.exists() && anchorFile.canRead()) {
+				anchorDoc = new SAXBuilder().build(anchorfilename);
+			}
+			HashMap<String, Namespace> namespaces = new HashMap<String, Namespace>();
+
+			HashMap<String, String> names = getNamespacesFromConfig();
+			for (String key : names.keySet()) {
+				namespaces.put(key, Namespace.getNamespace(key, names.get(key)));
+			}
+
+			HashMap<String, String> fields = getMetsFieldsFromConfig(false);
+			for (String key : fields.keySet()) {
+				List<Element> metsValues = getMetsValues(fields.get(key), metsDoc, namespaces);
+				for (Element element : metsValues) {
+					Element ele = new Element("property", xmlns);
+					ele.setAttribute("name", key);
+					ele.addContent(element.getTextTrim());
+					metadataElements.add(ele);
+				}
+			}
+
+			if (anchorDoc != null) {
+				fields = getMetsFieldsFromConfig(true);
+				for (String key : fields.keySet()) {
+					List<Element> metsValues = getMetsValues(fields.get(key), anchorDoc, namespaces);
+					for (Element element : metsValues) {
+						Element ele = new Element("property", xmlns);
+						ele.setAttribute("name", key);
+						ele.addContent(element.getTextTrim());
+						metadataElements.add(ele);
+					}
+				}
+			}
+
+			if (metadataElements != null) {
+				metsElement.addContent(metadataElements);
+				processElements.add(metsElement);
+			}
+
+		} catch (SwapException e) {
+			e.printStackTrace();
+		} catch (DAOException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		}
+
 		processElm.setContent(processElements);
 		return doc;
 
+	}
+
+	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces) {
+		try {
+			JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
+			// logger.info("query: " + xpath.getRootExpr().getText());
+			// Add all namespaces
+			for (String key : namespaces.keySet()) {
+				Namespace value = namespaces.get(key);
+				xpath.addNamespace(key, value.getURI());
+			}
+			return xpath.selectNodes(element);
+
+		} catch (JaxenException e) {
+			System.out.println("XPath query error:: " + expr + " - " + e.getMessage());
+		}
+		return null;
 	}
 
 	/**
@@ -461,7 +550,8 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-			// FileOutputStream fos = new FileOutputStream(new File("/opt/digiverso/goobi/users/testadmin/test.xml"));
+			// FileOutputStream fos = new FileOutputStream(new
+			// File("/opt/digiverso/goobi/users/testadmin/test.xml"));
 			// outp.output(answer, fos);
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
@@ -477,4 +567,55 @@ public class ExportXmlLog implements IProcessDataExport {
 		}
 
 	}
+
+	private HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
+		String xmlpath = "mets.property";
+		if (useAnchor) {
+			xmlpath = "anchor.property";
+		}
+
+		HashMap<String, String> fields = new HashMap<String, String>();
+		try {
+			File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+			if (file.exists() && file.canRead()) {
+				XMLConfiguration config = new XMLConfiguration(file);
+				config.setListDelimiter('&');
+				config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+				int count = config.getMaxIndex(xmlpath);
+				for (int i = 0; i <= count; i++) {
+					String name = config.getString(xmlpath + "(" + i + ")[@name]");
+					String value = config.getString(xmlpath + "(" + i + ")[@value]");
+					fields.put(name, value);
+				}
+			}
+		} catch (Exception e) {
+			fields = new HashMap<String, String>();
+		}
+		return fields;
+	}
+
+	private HashMap<String, String> getNamespacesFromConfig() {
+		HashMap<String, String> nss = new HashMap<String, String>();
+		try {
+			File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+			if (file.exists() && file.canRead()) {
+				XMLConfiguration config = new XMLConfiguration(file);
+				config.setListDelimiter('&');
+				config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+				int count = config.getMaxIndex("namespace");
+				for (int i = 0; i <= count; i++) {
+					String name = config.getString("namespace(" + i + ")[@name]");
+					String value = config.getString("namespace(" + i + ")[@value]");
+					nss.put(name, value);
+				}
+			}
+		} catch (Exception e) {
+			nss = new HashMap<String, String>();
+		}
+		return nss;
+
+	}
+
 }
