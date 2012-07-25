@@ -112,7 +112,7 @@
 								<%-- Schliessen-Schaltknopf --%>
 								<jp:closePopupFrame>
 								<%-- TODO: Use massage files here --%>
-									<h:commandLink value="schließen"
+									<h:commandLink value="#{msgs.close}"
 										action="#{NavigationForm.JeniaPopupCloseAction}"></h:commandLink>
 								</jp:closePopupFrame>
 							</htm:td>
