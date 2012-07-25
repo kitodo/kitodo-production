@@ -30,7 +30,7 @@
 		<link>
 			<name>private</name>
 			<type>2</type>
-			<location>/Users/steffen/git/goobi-private/Goobi-Configuration/src</location>
+			<location>/home/robert/git/goobi-private/Goobi-Configuration/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>
