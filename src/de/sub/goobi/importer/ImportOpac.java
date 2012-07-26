@@ -78,7 +78,7 @@ public class ImportOpac {
 		if (coc == null)
 			throw new IOException("Catalogue not found: " + inKatalog + ", please check Configuration in opac.xml");
 		Catalogue cat = new Catalogue(coc.getDescription(), coc.getAddress(), coc.getPort(), coc.getCbs(), coc.getDatabase());
-		Helper.setMeldung(null, "verwendeter Katalog: ", coc.getDescription());
+		Helper.setMeldung(null, "catalogue_used", coc.getDescription());
 
 		GetOpac myOpac = new GetOpac(cat);
 		myOpac.setData_character_encoding(coc.getCharset());

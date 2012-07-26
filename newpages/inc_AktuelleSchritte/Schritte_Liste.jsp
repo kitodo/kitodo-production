@@ -436,7 +436,7 @@
 				</htm:div>
 			</f:facet>
 
-			<h:outputText value="K"
+			<h:outputText value="#{msgs.ideographCorrection}:"
 				style="color:red;font-weight:bold;font-size:20px;margin-left:5px" />
 		</x:popup>
 
