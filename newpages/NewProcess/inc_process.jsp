@@ -87,9 +87,6 @@
 	</h:commandLink>
 </h:panelGrid>
 
-<x:commandButton action="#{ProzesskopieForm.OpacAuswerten}"
-	id="OpacRequest" forceId="true" style="display:none" />
-
 <h:panelGroup
 	rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
 	<f:verbatim>
