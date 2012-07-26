@@ -57,32 +57,20 @@ import de.sub.goobi.helper.Helper;
  * 
  * <dl>
  * 		<dt>String template</dt>
- * 			<dd>name of the process template to use. A list of all available
- *              templates can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listTemplates.jsp</kbd>.</dd>
+ * 			<dd>name of the process template to use.</dd>
  * 		<dt>String opac</dt>
- * 			<dd>Cataloge to use for lookup. A list of all available catalogues
- *              can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listCatalogues.jsp</kbd>.</dd>
+ * 			<dd>Cataloge to use for lookup.</dd>
  * 		<dt>String field</dt>
- * 			<dd>Field to look into, usually 12 (PPN). A list of all available
- *              search fields can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listSearchFields.jsp</kbd>.</dd>
+ * 			<dd>Field to look into, usually 12 (PPN).</dd>
  * 		<dt>String value</dt>
  * 			<dd>Value to look for, id of physical medium</dd>
  * 		<dt>String docType</dt>
- * 			<dd>DocType value to use if no catalogue request is performed. A
- *              list of possible values can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listAllDoctypes.jsp</kbd></dd>
+ * 			<dd>DocType value to use if no catalogue request is performed.</dd>
  * 		<dt>Set&lt;String&gt; collections</dt>
- * 			<dd>Collections to be selected. A list of all available collections
- *              can be obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listCollections.jsp</kbd>.</dd>
+ * 			<dd>Collections to be selected.</dd>
  * 		<dt>Map&lt;String, String&gt; userFields collections</dt>
- * 			<dd>Fields to be populated manually. A list of fields can be
- *              obtained in JSON format calling
- *              <kbd><em>{ContextRoot}</em>/ws/listFieldConfig.jsp</kbd>
- *          </dd>
+ * 			<dd>Fields to be populated manually.
+ * 		</dd>
  * </dl>
  * 
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
