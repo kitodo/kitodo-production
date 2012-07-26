@@ -93,11 +93,6 @@
 									</htm:tr>
 
 									<htm:tr>
-										<htm:td styleClass="eingabeBoxen_row3" align="left">
-											<h:commandButton value="#{msgs.abbrechen}" immediate="true"
-												action="ProzessverwaltungAlle">
-											</h:commandButton>
-										</htm:td>
 										<htm:td styleClass="eingabeBoxen_row3" align="right">
 											<h:commandButton value="#{msgs.weiter}"
 												rendered="#{ProzesskopieForm.prozessKopie.eigenschaftenSize>0}"
@@ -106,6 +101,11 @@
 											<h:commandButton value="#{msgs.speichern}"
 												rendered="#{ProzesskopieForm.prozessKopie.eigenschaftenSize==0}"
 												action="#{ProzesskopieForm.NeuenProzessAnlegen}">
+											</h:commandButton>
+										</htm:td>
+										<htm:td styleClass="eingabeBoxen_row3" align="left">
+											<h:commandButton value="#{msgs.abbrechen}" immediate="true"
+												action="ProzessverwaltungAlle">
 											</h:commandButton>
 										</htm:td>
 									</htm:tr>
