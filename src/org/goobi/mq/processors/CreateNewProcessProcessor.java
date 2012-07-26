@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webservice.processors;
+package org.goobi.mq.processors;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.goobi.webservice.ActiveMQProcessor;
-import org.goobi.webservice.MapMessageObjectReader;
+import org.goobi.mq.ActiveMQProcessor;
+import org.goobi.mq.MapMessageObjectReader;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 

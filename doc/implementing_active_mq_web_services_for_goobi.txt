@@ -11,7 +11,7 @@ read from a topic is still available to others. Consumer clients can actively
 check the server or may register listeners with the server to be notified of
 new messages.
 
-This behaviour has already been implemented to Goobi: The org.goobi.webservice.
+This behaviour has already been implemented to Goobi: The org.goobi.mq.
 ActiveMQDirector is a ServletContextListener which is registered in web.xml.
 On application startup, it registers all consumers from its “services” variable
 to the server configured in “activeMQ.hostURL”. 
@@ -40,9 +40,9 @@ implementation may use arbitrary “activeMQ.myService.*” entries in
 GoobiConfig.properties for configuration.
 
 ---------------------[ Service processor skeleton sample ]---------------------
-package org.goobi.webservice.processores;
+package org.goobi.mq.processores;
 
-import org.goobi.webservice.*;
+import org.goobi.mq.*;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.enums.ReportLevel;
 

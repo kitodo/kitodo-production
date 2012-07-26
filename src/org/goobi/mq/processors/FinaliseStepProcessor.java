@@ -20,11 +20,11 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webservice.processors;
+package org.goobi.mq.processors;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.goobi.webservice.ActiveMQProcessor;
-import org.goobi.webservice.MapMessageObjectReader;
+import org.goobi.mq.ActiveMQProcessor;
+import org.goobi.mq.MapMessageObjectReader;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.AktuelleSchritteForm;
@@ -58,7 +58,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 	 * @param ticket
 	 *            the incoming message
 	 * 
-	 * @see org.goobi.webservice.ActiveMQProcessor#process(org.goobi.webservice.MapMessageObjectReader)
+	 * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
 	 */
 	protected void process(MapMessageObjectReader ticket) throws Exception {
 		AktuelleSchritteForm dialog = new AktuelleSchritteForm();

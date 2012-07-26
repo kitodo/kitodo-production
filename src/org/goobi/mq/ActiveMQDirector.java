@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webservice;
+package org.goobi.mq;
 
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
@@ -35,8 +35,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
-import org.goobi.webservice.processors.CreateNewProcessProcessor;
-import org.goobi.webservice.processors.FinaliseStepProcessor;
+import org.goobi.mq.processors.CreateNewProcessProcessor;
+import org.goobi.mq.processors.FinaliseStepProcessor;
 
 import de.sub.goobi.config.ConfigMain;
 

@@ -217,7 +217,7 @@
 
 	<!-- Listener to run ActiveMQ services -->
 	<listener>
-		<listener-class>org.goobi.webservice.ActiveMQDirector</listener-class>
+		<listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
 	</listener>
 
 	<!--
