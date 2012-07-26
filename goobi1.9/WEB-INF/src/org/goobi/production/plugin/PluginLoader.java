@@ -76,6 +76,18 @@ public class PluginLoader {
 		return null;
 	}
 
+	@Deprecated
+	public static IPlugin getPlugin(PluginType inType, String inTitle) {
+		PluginManagerUtil pmu = initialize(inType);
+		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
+		for (IPlugin p : plugins) {
+			if (p.getTitle().equals(inTitle)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
 	private static PluginManagerUtil initialize(PluginType inType) {
 		PluginManager pm = PluginManagerFactory.createPluginManager();
 		String path = ConfigMain.getParameter("pluginFolder") + inType.getName() + "/";

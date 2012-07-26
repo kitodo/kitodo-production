@@ -6,7 +6,7 @@
 
 
 
-<h:dataTable var="docstruct" id="docstructs" value="#{MassImportForm.docstructs}" headerClass="Tabelle">
+<h:dataTable var="docstruct" id="docstructs" value="#{MassImportForm.docstructs}" headerClass="Tabelle2">
 
 	<h:column>
 		<f:facet name="header">
