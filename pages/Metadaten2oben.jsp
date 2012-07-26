@@ -90,38 +90,6 @@
 									<h:outputText />
 								</h:panelGrid>
 							</htm:td>
-<%--
-							<htm:td width="105px" align="right" valign="middle"
-								style="padding:3px">
-								<x:inputText rendered="false" id="treeReload" forceId="true" />
-								<h:commandLink rendered="false" id="treeReloadButton"
-									value="TreeReloaden" action="Metadaten3links" target="links" />
-								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
-									title="deutsche Version" target="rechts">
-									<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-									<f:param name="locale" value="de" />
-									<f:param name="ziel" value="Metadaten2rechts" />
-								</h:commandLink>
-								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
-									title="english version" target="rechts">
-									<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-									<f:param name="locale" value="en" />
-									<f:param name="ziel" value="Metadaten2rechts" />
-								</h:commandLink>
-								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
-									title="spanish version" target="rechts" rendered="false">
-									<h:graphicImage value="/newpages/images/flag_es_ganzklein.gif" />
-									<f:param name="locale" value="es" />
-									<f:param name="ziel" value="Metadaten2rechts" />
-								</h:commandLink>
-								<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
-									title="english version" target="rechts" rendered="false">
-									<h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
-									<f:param name="locale" value="ru_RU" />
-									<f:param name="ziel" value="Metadaten2rechts" />
-								</h:commandLink>
-							</htm:td>
---%>
 						</htm:tr>
 					</htm:table>
 				</htm:td>
