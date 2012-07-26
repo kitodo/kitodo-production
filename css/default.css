@@ -77,11 +77,13 @@ table {
 }
 
 .layoutKopf {
-	color: #434387;
 	border-style: solid;
 	border-width: 1px;
 	border-color: #0083e2;
 	background-color: #B3D4EF;
+}
+.layoutKopf, .layoutKopf a{
+	color: white;
 }
 
 .layoutFuss {
@@ -726,4 +728,25 @@ span.jscalendar-DB-title-control-normal-style:hover{
 	color: black;
 }
 .monthYearRowClass{
+}
+
+/*
+   ------------------------------------------------------------
+   Language switch
+   ------------------------------------------------------------
+*/
+.languageSwitch span:before {
+    content: "•";
+    padding: 0 4px;
+    font-weight: normal;
+}
+.languageSwitch span:first-child:before {
+    content: "";
+    padding: 0;
+}
+.languageSwitch a:hover {
+    color: white;
+}
+.languageSwitch .currentLanguage {
+    font-weight: bold;
 }

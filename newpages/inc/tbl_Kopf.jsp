@@ -73,25 +73,31 @@
 				</htm:td>
 
 
-				<htm:td valign="top" align="right" style="padding: 3 3 0 0">
+				<htm:td valign="middle" align="right" style="padding-right: 3px">
 
 					<h:form style="margin:0px" id="headform">
-						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
-							title="deutsche Version">
-							<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
-							<f:param name="locale" value="de" />
-						</h:commandLink>
-						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang2"
-							title="english version">
-							<h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
-							<f:param name="locale" value="en" />
-						</h:commandLink>
-						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang3"
-							rendered="false" title="russian version">
-							<h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
-							<f:param name="locale" value="ru" />
-						</h:commandLink>
-						<htm:br/>
+
+					<%-- First call to h:commandLink renders an <input type="hidden" name="autoScroll" />
+						 element surrounded by new line characters which would result in additional white
+						 space after the first link. This empty link will fix that problem: --%>
+						<h:commandLink/>
+						
+						<htm:div styleClass="languageSwitch">
+							<x:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
+								<htm:span styleClass="alterLanguage" rendered="#{not availableLanguage.selected}">
+									<h:commandLink action="#{SpracheForm.SpracheUmschalten}"
+											title="#{availableLanguage.displayLanguageTranslated}">
+										<f:param name="locale" value="#{availableLanguage.id}" />
+										<h:outputText value="#{availableLanguage.displayLanguageSelf}" />
+									</h:commandLink>
+								</htm:span>
+								<htm:span styleClass="currentLanguage" rendered="#{availableLanguage.selected}"
+										title="#{availableLanguage.displayLanguageTranslated}">
+									<h:outputText value="#{availableLanguage.displayLanguageSelf}"/>
+								</htm:span>
+							</x:dataList>
+						</htm:div>
+
 						<%-- logout --%>
 							<h:commandLink action="#{LoginForm.Ausloggen}" id="logout2"
     							rendered="#{LoginForm.myBenutzer != null}"

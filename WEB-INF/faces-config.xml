@@ -30,9 +30,8 @@
 	 <application>
 	 	<locale-config>
 	 	<default-locale>en</default-locale>
-	 	<supported-locale>de</supported-locale>
-	 	<supported-locale>en</supported-locale>
-	 	<supported-locale>es</supported-locale>
+		 	<supported-locale>de</supported-locale>
+		 	<supported-locale>en</supported-locale>
 	 	</locale-config>
 	 </application>
    
