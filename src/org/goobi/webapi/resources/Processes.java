@@ -24,6 +24,7 @@ package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
 import org.goobi.webapi.beans.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessStep;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -63,6 +64,26 @@ public class Processes {
         }
 
         return process;
+    }
+
+    @GET
+    @Path("{ppnIdentifier}/steps")
+    public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") String PPN) {
+
+        if (!org.goobi.webapi.validators.IdentifierPpn.isValid(PPN)) {
+            throw new WebApplicationException(
+                    status(Status.BAD_REQUEST)
+                            .entity("The given Identifier is no valid PPN.")
+                            .build());
+        }
+
+        List<GoobiProcessStep> resultList = org.goobi.webapi.models.GoobiProcess.getAllProcessSteps(PPN);
+
+        if (resultList == null) {
+            throw new NotFoundException("No such process.");
+        }
+
+        return resultList;
     }
 
 }

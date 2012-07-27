@@ -23,9 +23,12 @@
 package org.goobi.webapi.models;
 
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
+import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.validators.IdentifierPpn;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -111,5 +114,43 @@ public class GoobiProcess {
 
 		return result;
 	}
+
+    public static List<GoobiProcessStep> getAllProcessSteps(String PPN)	{
+        List<GoobiProcessStep> result;
+        Session session;
+
+        result = new ArrayList<GoobiProcessStep>();
+        session = Helper.getHibernateSession();
+
+        try {
+
+            Criteria criteria = session
+                    .createCriteria(Schritt.class)
+                    .createAlias("prozess", "p")
+                    .createAlias("prozess.werkstuecke", "w")
+                    .createAlias("prozess.werkstuecke.eigenschaften", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
+                    .add(Restrictions.eq("we.wert", PPN))
+                    .addOrder(Order.asc("reihenfolge"))
+                    .setProjection(Projections.projectionList()
+                            .add(Projections.property("reihenfolge"), "sequence")
+                            .add(Projections.property("bearbeitungsstatus"), "state")
+                            .add(Projections.property("titel"), "title")
+                    )
+                    .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class))
+                    ;
+
+            @SuppressWarnings(value = "unchecked")
+            List<GoobiProcessStep> list = (List<GoobiProcessStep>) criteria.list();
+
+            if ((list != null) && (list.size() > 0)) {
+                result.addAll(list);
+            }
+        } catch (HibernateException he) {
+            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+        }
+
+        return result;
+    }
 
 }
