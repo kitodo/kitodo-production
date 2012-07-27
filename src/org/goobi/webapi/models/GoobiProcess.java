@@ -25,10 +25,8 @@ package org.goobi.webapi.models;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
-
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcessStep;
-import org.goobi.webapi.validators.IdentifierPpn;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,7 +40,7 @@ import java.util.List;
 
 public class GoobiProcess {
 
-	private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
+    private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
 
     public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(String PPN) {
         Session session;
@@ -77,45 +75,44 @@ public class GoobiProcess {
         return result;
     }
 
-	public static List<org.goobi.webapi.beans.GoobiProcess> getAllProcesses()	{
-		Session session;
-		List<org.goobi.webapi.beans.GoobiProcess> result;
+    public static List<org.goobi.webapi.beans.GoobiProcess> getAllProcesses() {
+        Session session;
+        List<org.goobi.webapi.beans.GoobiProcess> result;
 
-		result = new ArrayList<org.goobi.webapi.beans.GoobiProcess>();
-		session = Helper.getHibernateSession();
+        result = new ArrayList<org.goobi.webapi.beans.GoobiProcess>();
+        session = Helper.getHibernateSession();
 
-		try {
+        try {
 
-			Criteria criteria = session
-					.createCriteria(Prozess.class)
-					.createAlias("vorlagen", "v")
-					.createAlias("vorlagen.eigenschaften", "ve")
-					.createAlias("werkstuecke", "w")
-					.createAlias("werkstuecke.eigenschaften", "we")
-					.add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
-					.add(Restrictions.eq("ve.titel", "Titel"))
-					.addOrder(Order.asc("we.wert"))
-					.setProjection(Projections.projectionList()
-							.add(Projections.property("we.wert"), "identifier")
-							.add(Projections.property("ve.wert"), "title")
-					)
-					.setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class))
-					;
+            Criteria criteria = session
+                    .createCriteria(Prozess.class)
+                    .createAlias("vorlagen", "v")
+                    .createAlias("vorlagen.eigenschaften", "ve")
+                    .createAlias("werkstuecke", "w")
+                    .createAlias("werkstuecke.eigenschaften", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
+                    .add(Restrictions.eq("ve.titel", "Titel"))
+                    .addOrder(Order.asc("we.wert"))
+                    .setProjection(Projections.projectionList()
+                            .add(Projections.property("we.wert"), "identifier")
+                            .add(Projections.property("ve.wert"), "title")
+                    )
+                    .setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class));
 
-			@SuppressWarnings(value="unchecked")
-			List<org.goobi.webapi.beans.GoobiProcess> list = (List<org.goobi.webapi.beans.GoobiProcess>) criteria.list();
+            @SuppressWarnings(value = "unchecked")
+            List<org.goobi.webapi.beans.GoobiProcess> list = (List<org.goobi.webapi.beans.GoobiProcess>) criteria.list();
 
-			if ((list != null) && (list.size() > 0)) {
-				result.addAll(list);
-			}
-		} catch (HibernateException he) {
-			myLogger.error("Catched Hibernate exception: " + he.getMessage());
-		}
+            if ((list != null) && (list.size() > 0)) {
+                result.addAll(list);
+            }
+        } catch (HibernateException he) {
+            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-    public static List<GoobiProcessStep> getAllProcessSteps(String PPN)	{
+    public static List<GoobiProcessStep> getAllProcessSteps(String PPN) {
         List<GoobiProcessStep> result;
         Session session;
 
@@ -137,8 +134,7 @@ public class GoobiProcess {
                             .add(Projections.property("bearbeitungsstatus"), "state")
                             .add(Projections.property("titel"), "title")
                     )
-                    .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class))
-                    ;
+                    .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class));
 
             @SuppressWarnings(value = "unchecked")
             List<GoobiProcessStep> list = (List<GoobiProcessStep>) criteria.list();

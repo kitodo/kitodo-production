@@ -31,7 +31,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.ws.rs.core.Response.*;
+import static javax.ws.rs.core.Response.Status;
+import static javax.ws.rs.core.Response.status;
 
 @Path("/processes")
 public class Processes {

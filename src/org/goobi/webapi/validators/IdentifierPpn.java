@@ -27,21 +27,21 @@ import java.util.regex.Pattern;
 
 public class IdentifierPpn {
 
-	public static boolean isValid(String identifier) {
-		Boolean result;
-		int flags = Pattern.CASE_INSENSITIVE;
-		Pattern pattern;
-		Matcher matcher;
+    public static boolean isValid(String identifier) {
+        Boolean result;
+        int flags = Pattern.CASE_INSENSITIVE;
+        Pattern pattern;
+        Matcher matcher;
 
-		if ((identifier == null) || (identifier.length() == 0)) {
-			result = false;
-		} else {
-			pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);
-			matcher = pattern.matcher(identifier);
-			result = matcher.matches();
-		}
+        if ((identifier == null) || (identifier.length() == 0)) {
+            result = false;
+        } else {
+            pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);
+            matcher = pattern.matcher(identifier);
+            result = matcher.matches();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 }
