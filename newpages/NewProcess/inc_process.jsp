@@ -79,7 +79,7 @@
 		rendered="#{ProzesskopieForm.useOpac}"
 		style="margin-left:7px;margin-right:7px; width:200px"
 		onkeypress="return checkOpac('OpacRequest',event)" />
-	<h:commandLink action="#{ProzesskopieForm.OpacAuswerten}"
+	<h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery"
 		rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
 		<h:graphicImage value="/newpages/images/buttons/opac.gif"
 			style="vertical-align:middle; margin-right:3px" />

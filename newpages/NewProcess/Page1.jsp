@@ -47,7 +47,7 @@
 			<htm:td valign="top" styleClass="layoutInhalt">
 
 				<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-				<h:form id="pageform1">
+				<h:form id="pageform1" onkeypress="return ignoreEnterKey(event);">
 					<%-- Breadcrumb --%>
 					<h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
 						<h:panelGroup>
@@ -124,23 +124,51 @@
 		<%@include file="/newpages/inc/tbl_Fuss.jsp"%>
 	</htm:table>
 
+<script type="text/javascript">
+	function getKeyCode(e) {
+		var keycode;
+
+		keycode = e.keyCode ? e.keyCode : e.charCode;
+		//alert('keycode ' + keycode);
+
+		return keycode;
+	}
+
+	function checkOpac(commandId,e){
+		var keycode;
+
+		keycode = getKeyCode(e);
+
+		e.stopPropagation();
+		if (keycode == 36) {
+			return false;
+		} else if ((keycode == 13) && (commandId == 'OpacRequest') ){
+			element = document.getElementById('pageform1:performOpacQuery');
+			if (element) {
+				element.click();
+				return false;
+			}
+		} else {
+			return true;
+		}
+
+		return true;
+	}
+
+	function ignoreEnterKey(e) {
+		var keycode;
+
+		keycode = getKeyCode(e);
+
+		if (keycode == 13) {
+			return false;
+		}
+
+		return true;
+	}
+
+</script>
+
 	</body>
 </f:view>
-<script language="javascript">
-    function checkOpac(commandId,e){
-        var keycode;
-        if (window.event) 
-        	keycode = window.event.keyCode;
-        else if (e) 
-        	keycode = e.which;
-        else 
-        	return true;
-        
-        //alert (keycode);
-        if (keycode == 36)
-        	return false;
-        else
-        	return true;
-	}
-</script>
 </html>
