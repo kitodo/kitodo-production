@@ -87,15 +87,15 @@ public class ExportMets {
 	 * @throws DocStructHasNoTypeException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public void startExport(Prozess myProzess) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
+	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
 			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
-		if (login!=null){
+		if (login != null) {
 			benutzerHome = login.getMyBenutzer().getHomeDir();
 		}
-		startExport(myProzess, benutzerHome);
+		return startExport(myProzess, benutzerHome);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class ExportMets {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public void startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
 			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
 			SwapException, DAOException, TypeNotAllowedForParentException {
 
@@ -137,8 +137,8 @@ public class ExportMets {
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
-		writeMetsFile(myProzess, targetFileName, gdzfile, false);
-		
+		return writeMetsFile(myProzess, targetFileName, gdzfile, false);
+
 	}
 
 	/**
@@ -174,8 +174,9 @@ public class ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@SuppressWarnings("deprecation")
-	protected void writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup) throws PreferencesException, WriteException,
-			IOException, InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
+	protected boolean writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
+			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
+			TypeNotAllowedForParentException {
 
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
@@ -218,11 +219,12 @@ public class ExportMets {
 			} else {
 				Helper.setFehlerMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
 				dd = null;
-				return;
+				return false;
 			}
 		}
-
-		if (dd != null) {
+//		if (dd == null) {
+//			return false;
+//		} else {
 			for (ContentFile cf : dd.getFileSet().getAllFiles()) {
 				String location = cf.getLocation();
 				// If the file's location string shoes no sign of any protocol,
@@ -300,16 +302,19 @@ public class ExportMets {
 				dd.overrideContentFiles(images);
 			} catch (IndexOutOfBoundsException e) {
 				myLogger.error(e);
+				return false;
 			} catch (InvalidImagesException e) {
 				myLogger.error(e);
+				return false;
 			}
 			mm.write(targetFileName);
 			Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
-		}
+			return true;
+//		}
 	}
 
-	//	private static String getMimetype(String filename) {
-//		FileNameMap fnm = URLConnection.getFileNameMap();
-//		return fnm.getContentTypeFor(filename);
-//	}
+	// private static String getMimetype(String filename) {
+	// FileNameMap fnm = URLConnection.getFileNameMap();
+	// return fnm.getContentTypeFor(filename);
+	// }
 }

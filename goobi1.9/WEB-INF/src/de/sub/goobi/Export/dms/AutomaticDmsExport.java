@@ -93,7 +93,7 @@ public class AutomaticDmsExport extends ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@Override
-	public void startExport(Prozess myProzess) throws IOException, InterruptedException, WriteException, PreferencesException,
+	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException, WriteException, PreferencesException,
 			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		new ProzessDAO().refresh(myProzess);
@@ -128,7 +128,7 @@ public class AutomaticDmsExport extends ExportMets {
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
-			return;
+			return false;
 		}
 
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
@@ -140,7 +140,7 @@ public class AutomaticDmsExport extends ExportMets {
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierung mv = new MetadatenVerifizierung();
 			if (!mv.validate(gdzfile, this.myPrefs, myProzess)) {
-				return;
+				return false;
 			}
 		}
 
@@ -160,19 +160,19 @@ public class AutomaticDmsExport extends ExportMets {
 			/* alte Import-Ordner löschen */
 			if (!Helper.deleteDir(benutzerHome)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Import folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Success-Ordner löschen */
 			File successFile = new File(myProzess.getProjekt().getDmsImportSuccessPath() + File.separator + myProzess.getTitel());
 			if (!Helper.deleteDir(successFile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Success folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Error-Ordner löschen */
 			File errorfile = new File(myProzess.getProjekt().getDmsImportErrorPath() + File.separator + myProzess.getTitel());
 			if (!Helper.deleteDir(errorfile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Error folder could not be cleared");
-				return;
+				return false;
 			}
 
 			if (!benutzerHome.exists()) {
@@ -192,7 +192,7 @@ public class AutomaticDmsExport extends ExportMets {
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), e);
-			return;
+			return false;
 		}
 
 		/*
@@ -260,7 +260,7 @@ public class AutomaticDmsExport extends ExportMets {
 		// Helper.setMeldung(null, myProzess.getTitel() + ": ",
 		// "Export finished");
 		// }
-		return;
+		return true;
 	}
 
 	/**

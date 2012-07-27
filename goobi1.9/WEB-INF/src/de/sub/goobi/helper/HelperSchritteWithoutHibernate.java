@@ -257,7 +257,12 @@ public class HelperSchritteWithoutHibernate {
 		}
 		ProcessObject po = ProcessManager.getProcessObjectForId(step.getProcessId());
 		try {
-			dms.startExport(po);
+			boolean validate = dms.startExport(po);
+			if (validate) {
+				CloseStepObjectAutomatic(step);
+			} else {
+				abortStep(step);
+			}
 		} catch (DAOException e) {
 			logger.error(e);
 			abortStep(step);
@@ -287,7 +292,7 @@ public class HelperSchritteWithoutHibernate {
 			abortStep(step);
 			return;
 		}
-		CloseStepObjectAutomatic(step);
+		
 	}
 
 	

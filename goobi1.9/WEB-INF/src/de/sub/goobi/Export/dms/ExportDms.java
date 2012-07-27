@@ -91,7 +91,7 @@ public class ExportDms extends ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@Override
-	public void startExport(Prozess myProzess, String inZielVerzeichnis)
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis)
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, DocStructHasNoTypeException,
 			MetadataTypeNotAllowedException, ExportFileException,
@@ -132,7 +132,7 @@ public class ExportDms extends ExportMets {
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError")
 					+ myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
-			return;
+			return false;
 		}
 
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
@@ -145,7 +145,7 @@ public class ExportDms extends ExportMets {
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierung mv = new MetadatenVerifizierung();
 			if (!mv.validate(gdzfile, this.myPrefs, myProzess)) {
-				return;
+				return false;
 			}
 		}
 
@@ -169,7 +169,7 @@ public class ExportDms extends ExportMets {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Import folder could not be cleared");
-					return;
+					return false;
 				}
 				/* alte Success-Ordner löschen */
 				File successFile = new File(myProzess.getProjekt()
@@ -180,7 +180,7 @@ public class ExportDms extends ExportMets {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Success folder could not be cleared");
-					return;
+					return false;
 				}
 				/* alte Error-Ordner löschen */
 				File errorfile = new File(myProzess.getProjekt()
@@ -191,7 +191,7 @@ public class ExportDms extends ExportMets {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Error folder could not be cleared");
-					return;
+					return false;
 				}
 
 				if (!benutzerHome.exists()) {
@@ -207,7 +207,7 @@ public class ExportDms extends ExportMets {
 				Helper.setFehlerMeldung(
 						"Export canceled: " + myProzess.getTitel(),
 						"could not delete home directory");
-				return;
+				return false;
 			}
 			prepareUserDirectory(zielVerzeichnis);
 		}
@@ -229,7 +229,7 @@ public class ExportDms extends ExportMets {
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(
 					"Export canceled, Process: " + myProzess.getTitel(), e);
-			return;
+			return false;
 		}
 
 		/*
@@ -305,6 +305,7 @@ public class ExportDms extends ExportMets {
 			Helper.setMeldung(null, myProzess.getTitel() + ": ",
 					"Export finished");
 		}
+		return true;
 	}
 
 	/**
