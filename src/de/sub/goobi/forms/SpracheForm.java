@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 import de.sub.goobi.config.ConfigMain;
@@ -39,6 +40,8 @@ import de.sub.goobi.helper.Helper;
  * user in the running application
  */
 public class SpracheForm {
+	
+	public static final String SESSION_LOCALE_FIELD_ID = "lang";
 
 	/**
 	 * The constructor of this class loads the required MessageBundle
@@ -113,6 +116,7 @@ public class SpracheForm {
 	 *            This parameter can be either of form “‹language›” or of form
 	 *            “‹language›_‹country›”, e.g. “en” or “en_GB” are valid values.
 	 */
+	@SuppressWarnings("unchecked")
 	public void switchLanguage(String langCodeCombined) {
 		String[] languageCode = langCodeCombined.split("_");
 		Locale locale = null;
@@ -121,7 +125,9 @@ public class SpracheForm {
 		} else {
 			locale = new Locale(languageCode[0]);
 		}
-		FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.getViewRoot().setLocale(locale);
+		context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
 	}
 
 	/**
@@ -138,6 +144,17 @@ public class SpracheForm {
 	}
 
 	public Locale getLocale() {
-		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		FacesContext fac = FacesContext.getCurrentInstance();
+		@SuppressWarnings("rawtypes")
+		Map session = fac.getExternalContext().getSessionMap();
+		UIViewRoot frame = fac.getViewRoot();
+		if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
+			Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
+			if (frame.getLocale() != locale)
+				frame.setLocale(locale);
+			return locale;
+		} else {
+			return frame.getLocale();
+		}
 	}
 }
