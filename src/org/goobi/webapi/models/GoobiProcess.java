@@ -140,7 +140,7 @@ public class GoobiProcess {
             @SuppressWarnings(value = "unchecked")
             List<GoobiProcessStep> list = (List<GoobiProcessStep>) criteria.list();
 
-            if ((list != null) && (list.size() > 0)) {
+            if ((list != null) && (!list.isEmpty())) {
                 result.addAll(list);
             }
         } catch (HibernateException he) {

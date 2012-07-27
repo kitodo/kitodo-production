@@ -67,7 +67,7 @@ public class Processes {
 
         List<GoobiProcessStep> resultList = org.goobi.webapi.models.GoobiProcess.getAllProcessSteps(ippn);
 
-        if (resultList == null) {
+        if (resultList.isEmpty()) {
             throw new NotFoundException("No such process.");
         }
 
