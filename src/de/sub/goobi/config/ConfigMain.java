@@ -119,9 +119,9 @@ public class ConfigMain implements Serializable{
 	
 
 	/**
-	 * Ermitteln eines bestimmten Paramters der Konfiguration
+	 * Ermitteln eines bestimmten Parameters der Konfiguration
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter als String
 	 */
 	public static String getParameter(String inParameter) {
 		try {
@@ -135,10 +135,10 @@ public class ConfigMain implements Serializable{
 	
 	//TODO: Remove this methods, they are provided by Commons Configuration
 	/**
-	 * Ermitteln eines bestimmten Paramters der Konfiguration mit Angabe eines
+	 * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines
 	 * Default-Wertes
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter als String
 	 */
 	public static String getParameter(String inParameter, String inDefaultIfNull) {
 		try {
@@ -152,18 +152,18 @@ public class ConfigMain implements Serializable{
 	
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration, default if missing: false
+	 * Ermitteln eines boolean-Parameters der Konfiguration, default if missing: false
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter als String
 	 */
 	public static boolean getBooleanParameter(String inParameter) {
 		return getBooleanParameter(inParameter, false);
 	}
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration
+	 * Ermitteln eines boolean-Parameters der Konfiguration
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter als String
 	 */
 	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
 		return config.getBoolean(inParameter, inDefault);
@@ -172,17 +172,12 @@ public class ConfigMain implements Serializable{
 	
 
 	/**
-	 * Ermitteln eines long-Paramters der Konfiguration
+	 * Ermitteln eines long-Parameters der Konfiguration
 	 * 
-	 * @return Paramter als Long
+	 * @return Parameter als Long
 	 */
-	public static long getLongParameter(String inParameter, int inDefault) {
-		try {
-			return config.getLong(inParameter, inDefault);
-		} catch (RuntimeException e) {
-			myLogger.error(e);
-			return 0;
-		}
+	public static long getLongParameter(String inParameter, long inDefault) {
+		return config.getLong(inParameter, inDefault);
 	}
 
 	
@@ -190,7 +185,7 @@ public class ConfigMain implements Serializable{
 	/**
 	 * Request int-parameter from Configuration
 	 * 
-	 * @return Paramter as Int
+	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter) {
 		return getIntParameter(inParameter, 0);
@@ -199,7 +194,7 @@ public class ConfigMain implements Serializable{
 	/**
 	 * Request int-parameter from Configuration with default-value
 	 * 
-	 * @return Paramter as Int
+	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter, int inDefault) {
 		try {
