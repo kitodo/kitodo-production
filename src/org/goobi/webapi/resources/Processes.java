@@ -23,41 +23,43 @@
 package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
-import org.goobi.webapi.models.GoobiProcessState;
-import org.goobi.webapi.beans.GoobiProcessStateInformation;
+import org.goobi.webapi.models.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessInformation;
+import org.goobi.webapi.validators.IdentifierPpn;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessState {
+@Path("/processes")
+public class Processes {
 
 	@Context UriInfo uriInfo;
 	@Context Request request;
-	String ppnIdentifier;
-
-	public ProcessState(UriInfo uriInfo, Request request, String ppnIdentifier) {
-		this.uriInfo = uriInfo;
-		this.request = request;
-		this.ppnIdentifier = ppnIdentifier;
-	}
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-	public List<GoobiProcessStateInformation> getProzessState() {
-		List<GoobiProcessStateInformation> listStates;
+	public List<GoobiProcessInformation> getProcesses(){
+		List<GoobiProcessInformation> processes = new ArrayList<GoobiProcessInformation>();
 
-		listStates = GoobiProcessState.getProcessState(ppnIdentifier);
+		processes.addAll(GoobiProcess.getAllProcesses());
 
-		if ((listStates == null) || (listStates.size() == 0)) {
-			throw new NotFoundException("No such Goobi process.");
-		}
-
-		return listStates;
+		return processes;
 	}
 
+	@Path("{ppnIdentifier}")
+	public Process getProcess(@PathParam("ppnIdentifier") String ppnIdentifier) {
+		if (IdentifierPpn.isValid((ppnIdentifier))) {
+			return new Process(uriInfo, request, ppnIdentifier);
+		} else {
+			throw new NotFoundException("Given PPN is invalid.");
+		}
+	}
 }
