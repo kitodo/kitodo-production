@@ -93,7 +93,7 @@
 							<htm:td align="center">
 								<%-- Schliessen-Schaltknopf --%>
 								<jp:closePopupFrame>
-									<h:commandLink value="schließen"
+									<h:commandLink value="#{msgs.close}"
 										action="#{NavigationForm.JeniaPopupCloseAction}"></h:commandLink>
 								</jp:closePopupFrame>
 							</htm:td>
