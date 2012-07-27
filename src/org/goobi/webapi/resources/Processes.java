@@ -22,6 +22,7 @@
 
 package org.goobi.webapi.resources;
 
+import com.sun.jersey.api.NotFoundException;
 import org.goobi.webapi.beans.GoobiProcess;
 
 import javax.ws.rs.*;
@@ -55,7 +56,13 @@ public class Processes {
                             .build());
         }
 
-        return org.goobi.webapi.models.GoobiProcess.getProcessByPPN(PPN);
+        GoobiProcess process = org.goobi.webapi.models.GoobiProcess.getProcessByPPN(PPN);
+
+        if (process == null) {
+            throw new NotFoundException("No such process.");
+        }
+
+        return process;
     }
 
 }
