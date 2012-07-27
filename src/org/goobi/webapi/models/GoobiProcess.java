@@ -26,7 +26,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
-import org.goobi.webapi.beans.GoobiProcessInformation;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,11 +41,44 @@ public class GoobiProcess {
 
 	private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
 
-	public static List<GoobiProcessInformation> getAllProcesses()	{
-		Session session;
-		List<GoobiProcessInformation> result;
+    public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(String PPN) {
+        Session session;
+        org.goobi.webapi.beans.GoobiProcess result = null;
 
-		result = new ArrayList<GoobiProcessInformation>();
+        session = Helper.getHibernateSession();
+
+        try {
+
+            Criteria criteria = session
+                    .createCriteria(Prozess.class)
+                    .createAlias("vorlagen", "v")
+                    .createAlias("vorlagen.eigenschaften", "ve")
+                    .createAlias("werkstuecke", "w")
+                    .createAlias("werkstuecke.eigenschaften", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
+                    .add(Restrictions.eq("ve.titel", "Titel"))
+                    .add(Restrictions.eq("we.wert", PPN))
+                    .addOrder(Order.asc("we.wert"))
+                    .setProjection(Projections.projectionList()
+                            .add(Projections.property("we.wert"), "identifier")
+                            .add(Projections.property("ve.wert"), "title")
+                    )
+                    .setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class));
+
+            result = (org.goobi.webapi.beans.GoobiProcess) criteria.uniqueResult();
+
+        } catch (HibernateException he) {
+            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+        }
+
+        return result;
+    }
+
+	public static List<org.goobi.webapi.beans.GoobiProcess> getAllProcesses()	{
+		Session session;
+		List<org.goobi.webapi.beans.GoobiProcess> result;
+
+		result = new ArrayList<org.goobi.webapi.beans.GoobiProcess>();
 		session = Helper.getHibernateSession();
 
 		try {
@@ -64,11 +96,11 @@ public class GoobiProcess {
 							.add(Projections.property("we.wert"), "identifier")
 							.add(Projections.property("ve.wert"), "title")
 					)
-					.setResultTransformer(Transformers.aliasToBean(GoobiProcessInformation.class))
+					.setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class))
 					;
 
 			@SuppressWarnings(value="unchecked")
-			List<GoobiProcessInformation> list = (List<GoobiProcessInformation>) criteria.list();
+			List<org.goobi.webapi.beans.GoobiProcess> list = (List<org.goobi.webapi.beans.GoobiProcess>) criteria.list();
 
 			if ((list != null) && (list.size() > 0)) {
 				result.addAll(list);

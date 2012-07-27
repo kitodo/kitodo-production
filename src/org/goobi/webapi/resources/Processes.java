@@ -22,10 +22,7 @@
 
 package org.goobi.webapi.resources;
 
-import com.sun.jersey.api.NotFoundException;
-import org.goobi.webapi.models.GoobiProcess;
-import org.goobi.webapi.beans.GoobiProcessInformation;
-import org.goobi.webapi.validators.IdentifierPpn;
+import org.goobi.webapi.beans.GoobiProcess;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -41,25 +38,20 @@ import java.util.List;
 @Path("/processes")
 public class Processes {
 
-	@Context UriInfo uriInfo;
-	@Context Request request;
+    @GET
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public List<GoobiProcess> getProcesses() {
+        List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
 
-	@GET
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-	public List<GoobiProcessInformation> getProcesses(){
-		List<GoobiProcessInformation> processes = new ArrayList<GoobiProcessInformation>();
+        processes.addAll(org.goobi.webapi.models.GoobiProcess.getAllProcesses());
 
-		processes.addAll(GoobiProcess.getAllProcesses());
+        return processes;
+    }
 
-		return processes;
-	}
+    @GET
+    @Path("{ppnIdentifier}")
+    public GoobiProcess getProcess(@PathParam("ppnIdentifier") String PPN) {
+        return org.goobi.webapi.models.GoobiProcess.getProcessByPPN(PPN);
+    }
 
-	@Path("{ppnIdentifier}")
-	public Process getProcess(@PathParam("ppnIdentifier") String ppnIdentifier) {
-		if (IdentifierPpn.isValid((ppnIdentifier))) {
-			return new Process(uriInfo, request, ppnIdentifier);
-		} else {
-			throw new NotFoundException("Given PPN is invalid.");
-		}
-	}
 }

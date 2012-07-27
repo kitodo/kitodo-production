@@ -25,15 +25,15 @@ package org.goobi.webapi.beans;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class GoobiProcessInformation  {
+public class GoobiProcess {
 
 	private String identifier;
 
 	private String title;
 
-	public GoobiProcessInformation() {}
+	public GoobiProcess() {}
 
-	public GoobiProcessInformation(String identifier, String title) {
+	public GoobiProcess(String identifier, String title) {
 		this.identifier = identifier;
 		this.title = title;
 	}

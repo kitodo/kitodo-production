@@ -27,7 +27,7 @@ import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
 
-import org.goobi.webapi.beans.GoobiProcessStateInformation;
+import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.validators.IdentifierPpn;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -44,11 +44,11 @@ public class GoobiProcessState {
 
 	private static final Logger myLogger = Logger.getLogger(GoobiProcessState.class);
 
-	public static List<GoobiProcessStateInformation> getProcessState(String ppnIdentifier) {
-		List<GoobiProcessStateInformation> result;
+	public static List<GoobiProcessStep> getProcessState(String ppnIdentifier) {
+		List<GoobiProcessStep> result;
 		Session session;
 
-		result = new ArrayList<GoobiProcessStateInformation>();
+		result = new ArrayList<GoobiProcessStep>();
 		session = Helper.getHibernateSession();
 
 		if (!IdentifierPpn.isValid(ppnIdentifier)) {
@@ -71,11 +71,11 @@ public class GoobiProcessState {
 							.add(Projections.property("bearbeitungsstatus"), "state")
 							.add(Projections.property("titel"), "title")
 					)
-					.setResultTransformer(Transformers.aliasToBean(GoobiProcessStateInformation.class))
+					.setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class))
 					;
 
 			@SuppressWarnings(value = "unchecked")
-			List<GoobiProcessStateInformation> list = (List<GoobiProcessStateInformation>) criteria.list();
+			List<GoobiProcessStep> list = (List<GoobiProcessStep>) criteria.list();
 
 			if ((list != null) && (list.size() > 0)) {
 				result.addAll(list);
