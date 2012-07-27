@@ -27,6 +27,7 @@ import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.beans.IdentifierPPN;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,7 +43,7 @@ public class GoobiProcess {
 
     private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
 
-    public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(String PPN) {
+    public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
         Session session;
         org.goobi.webapi.beans.GoobiProcess result = null;
 
@@ -58,7 +59,7 @@ public class GoobiProcess {
                     .createAlias("werkstuecke.eigenschaften", "we")
                     .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
                     .add(Restrictions.eq("ve.titel", "Titel"))
-                    .add(Restrictions.eq("we.wert", PPN))
+                    .add(Restrictions.eq("we.wert", PPN.toString()))
                     .addOrder(Order.asc("we.wert"))
                     .setProjection(Projections.projectionList()
                             .add(Projections.property("we.wert"), "identifier")
@@ -112,7 +113,7 @@ public class GoobiProcess {
         return result;
     }
 
-    public static List<GoobiProcessStep> getAllProcessSteps(String PPN) {
+    public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
         List<GoobiProcessStep> result;
         Session session;
 
@@ -127,7 +128,7 @@ public class GoobiProcess {
                     .createAlias("prozess.werkstuecke", "w")
                     .createAlias("prozess.werkstuecke.eigenschaften", "we")
                     .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("we.wert", PPN))
+                    .add(Restrictions.eq("we.wert", PPN.toString()))
                     .addOrder(Order.asc("reihenfolge"))
                     .setProjection(Projections.projectionList()
                             .add(Projections.property("reihenfolge"), "sequence")

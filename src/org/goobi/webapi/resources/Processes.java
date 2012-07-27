@@ -25,14 +25,15 @@ package org.goobi.webapi.resources;
 import com.sun.jersey.api.NotFoundException;
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.beans.IdentifierPPN;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.ws.rs.core.Response.Status;
-import static javax.ws.rs.core.Response.status;
 
 @Path("/processes")
 public class Processes {
@@ -49,16 +50,9 @@ public class Processes {
 
     @GET
     @Path("{ppnIdentifier}")
-    public GoobiProcess getProcess(@PathParam("ppnIdentifier") String PPN) {
+    public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        if (!org.goobi.webapi.validators.IdentifierPpn.isValid(PPN)) {
-            throw new WebApplicationException(
-                    status(Status.BAD_REQUEST)
-                            .entity("The given Identifier is no valid PPN.")
-                            .build());
-        }
-
-        GoobiProcess process = org.goobi.webapi.models.GoobiProcess.getProcessByPPN(PPN);
+        GoobiProcess process = org.goobi.webapi.models.GoobiProcess.getProcessByPPN(ippn);
 
         if (process == null) {
             throw new NotFoundException("No such process.");
@@ -69,16 +63,9 @@ public class Processes {
 
     @GET
     @Path("{ppnIdentifier}/steps")
-    public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") String PPN) {
+    public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        if (!org.goobi.webapi.validators.IdentifierPpn.isValid(PPN)) {
-            throw new WebApplicationException(
-                    status(Status.BAD_REQUEST)
-                            .entity("The given Identifier is no valid PPN.")
-                            .build());
-        }
-
-        List<GoobiProcessStep> resultList = org.goobi.webapi.models.GoobiProcess.getAllProcessSteps(PPN);
+        List<GoobiProcessStep> resultList = org.goobi.webapi.models.GoobiProcess.getAllProcessSteps(ippn);
 
         if (resultList == null) {
             throw new NotFoundException("No such process.");

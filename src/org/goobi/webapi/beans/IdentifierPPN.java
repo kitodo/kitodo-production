@@ -20,12 +20,21 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webapi.validators;
+package org.goobi.webapi.beans;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IdentifierPpn {
+public class IdentifierPPN {
+
+    private String ppn;
+
+    public IdentifierPPN(String ppn) {
+        if (!isValid(ppn)) {
+            throw new IllegalArgumentException("Given string is not a valid PPN identifier.");
+        }
+        this.ppn = ppn;
+    }
 
     public static boolean isValid(String identifier) {
         Boolean result;
@@ -43,5 +52,10 @@ public class IdentifierPpn {
 
         return result;
     }
+
+    public String toString() {
+        return ppn;
+    }
+
 
 }
