@@ -91,8 +91,8 @@ public class Helper implements Serializable, Observer {
 
 	private String myMetadatenVerzeichnis;
 	private String myConfigVerzeichnis;
-	private static Map<Locale, ResourceBundle> commonMessages = new HashMap<Locale, ResourceBundle>();
-	private static Map<Locale, ResourceBundle> localMessages = new HashMap<Locale, ResourceBundle>();
+	private static Map<Locale, ResourceBundle> commonMessages = null;
+	private static Map<Locale, ResourceBundle> localMessages = null;
 
 	/**
 	 * Ermitteln eines bestimmten Paramters des Requests
@@ -226,7 +226,10 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static String getString(Locale language, String key) {
-		
+		if (commonMessages == null) {
+			loadMsgs();
+		}
+
 		if (localMessages.containsKey(language)) {
 			ResourceBundle languageLocal = localMessages.get(language);
 			if (languageLocal.containsKey(key))
@@ -420,8 +423,9 @@ public class Helper implements Serializable, Observer {
 		callShell(command);
 	}
 
-	static {
-
+	private static void loadMsgs() {
+		commonMessages = new HashMap<Locale, ResourceBundle>();
+		localMessages = new HashMap<Locale, ResourceBundle>();
 		Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 		while (polyglot.hasNext()) {
 			Locale language = polyglot.next();
