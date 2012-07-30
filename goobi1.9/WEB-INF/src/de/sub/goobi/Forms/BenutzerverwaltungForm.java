@@ -232,6 +232,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 					return "";
 				}
 			}
+			this.myClass.getBenutzergruppen().add(usergroup);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
