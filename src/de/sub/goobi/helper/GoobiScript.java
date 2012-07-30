@@ -858,7 +858,7 @@ public class GoobiScript {
 
 	private void exportDms(List<Prozess> processes, String exportImages) {
 		ExportDms dms;
-		if (exportImages.equals("false")) {
+		if (exportImages != null && exportImages.equals("false")) {
 			dms = new ExportDms(false);
 		} else {
 			dms = new ExportDms(true);
