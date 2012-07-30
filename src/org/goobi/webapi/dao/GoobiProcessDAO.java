@@ -39,9 +39,9 @@ import org.hibernate.transform.Transformers;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoobiProcess {
+public class GoobiProcessDAO {
 
-    private static final Logger myLogger = Logger.getLogger(GoobiProcess.class);
+    private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
     public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
         Session session;

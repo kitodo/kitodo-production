@@ -26,6 +26,7 @@ import com.sun.jersey.api.NotFoundException;
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
+import org.goobi.webapi.dao.GoobiProcessDAO;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -43,7 +44,7 @@ public class Processes {
     public List<GoobiProcess> getProcesses() {
         List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
 
-        processes.addAll(org.goobi.webapi.dao.GoobiProcess.getAllProcesses());
+        processes.addAll(GoobiProcessDAO.getAllProcesses());
 
         return processes;
     }
@@ -52,7 +53,7 @@ public class Processes {
     @Path("{ppnIdentifier}")
     public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        GoobiProcess process = org.goobi.webapi.dao.GoobiProcess.getProcessByPPN(ippn);
+        GoobiProcess process = GoobiProcessDAO.getProcessByPPN(ippn);
 
         if (process == null) {
             throw new NotFoundException("No such process.");
@@ -65,7 +66,7 @@ public class Processes {
     @Path("{ppnIdentifier}/steps")
     public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        List<GoobiProcessStep> resultList = org.goobi.webapi.dao.GoobiProcess.getAllProcessSteps(ippn);
+        List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
 
         if (resultList.isEmpty()) {
             throw new NotFoundException("No such process.");
