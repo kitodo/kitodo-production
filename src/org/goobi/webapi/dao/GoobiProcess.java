@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webapi.models;
+package org.goobi.webapi.dao;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
