@@ -754,10 +754,13 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
+
+		boolean backupCondition;
+		boolean writeResult;
+		File temporaryMetadataFile;
 		Fileformat ff;
 		String metadataFileName;
 		String temporaryMetadataFileName;
-		boolean writeResult;
 
 		switch (MetadataFormat.findFileFormatsHelperByName(projekt.getFileFormatInternal())) {
 		case METS:
@@ -778,7 +781,11 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		writeResult = ff.write(temporaryMetadataFileName);
-		if (writeResult) {
+		temporaryMetadataFile = new File(temporaryMetadataFileName);
+
+		backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+
+		if (backupCondition) {
 			createBackupFile();
 			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
 			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
