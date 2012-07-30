@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webapi.validators;
+package org.goobi.webapi.beans;
 
 import junit.framework.Assert;
 import org.junit.Test;
