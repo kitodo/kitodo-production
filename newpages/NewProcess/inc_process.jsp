@@ -79,16 +79,13 @@
 		rendered="#{ProzesskopieForm.useOpac}"
 		style="margin-left:7px;margin-right:7px; width:200px"
 		onkeypress="return checkOpac('OpacRequest',event)" />
-	<h:commandLink action="#{ProzesskopieForm.OpacAuswerten}"
+	<h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery"
 		rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
 		<h:graphicImage value="/newpages/images/buttons/opac.gif"
 			style="vertical-align:middle; margin-right:3px" />
 		<h:outputText value="#{msgs.uebernehmen}" />
 	</h:commandLink>
 </h:panelGrid>
-
-<x:commandButton action="#{ProzesskopieForm.OpacAuswerten}"
-	id="OpacRequest" forceId="true" style="display:none" />
 
 <h:panelGroup
 	rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
