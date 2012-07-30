@@ -26,10 +26,11 @@ import com.sun.jersey.api.ParamException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ParamExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<ParamException> {
+public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
     public Response toResponse(ParamException e) {
         return Response.status(Response.Status.BAD_REQUEST)
                 .entity(e.getCause().getMessage())

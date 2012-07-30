@@ -26,6 +26,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 import org.apache.log4j.Logger;
+import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
 import org.hibernate.Criteria;
@@ -43,9 +44,9 @@ public class GoobiProcessDAO {
 
     private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
-    public static org.goobi.webapi.beans.GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
+    public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
         Session session;
-        org.goobi.webapi.beans.GoobiProcess result = null;
+        GoobiProcess result = null;
 
         session = Helper.getHibernateSession();
 
@@ -65,9 +66,9 @@ public class GoobiProcessDAO {
                             .add(Projections.property("we.wert"), "identifier")
                             .add(Projections.property("ve.wert"), "title")
                     )
-                    .setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class));
+                    .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
-            result = (org.goobi.webapi.beans.GoobiProcess) criteria.uniqueResult();
+            result = (GoobiProcess) criteria.uniqueResult();
 
         } catch (HibernateException he) {
             myLogger.error("Catched Hibernate exception: " + he.getMessage());
@@ -76,11 +77,11 @@ public class GoobiProcessDAO {
         return result;
     }
 
-    public static List<org.goobi.webapi.beans.GoobiProcess> getAllProcesses() {
+    public static List<GoobiProcess> getAllProcesses() {
         Session session;
-        List<org.goobi.webapi.beans.GoobiProcess> result;
+        List<GoobiProcess> result;
 
-        result = new ArrayList<org.goobi.webapi.beans.GoobiProcess>();
+        result = new ArrayList<GoobiProcess>();
         session = Helper.getHibernateSession();
 
         try {
@@ -98,10 +99,10 @@ public class GoobiProcessDAO {
                             .add(Projections.property("we.wert"), "identifier")
                             .add(Projections.property("ve.wert"), "title")
                     )
-                    .setResultTransformer(Transformers.aliasToBean(org.goobi.webapi.beans.GoobiProcess.class));
+                    .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
             @SuppressWarnings(value = "unchecked")
-            List<org.goobi.webapi.beans.GoobiProcess> list = (List<org.goobi.webapi.beans.GoobiProcess>) criteria.list();
+            List<GoobiProcess> list = (List<GoobiProcess>) criteria.list();
 
             if ((list != null) && (list.size() > 0)) {
                 result.addAll(list);
