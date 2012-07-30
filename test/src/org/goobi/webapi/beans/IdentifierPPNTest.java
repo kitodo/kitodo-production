@@ -28,7 +28,7 @@ import org.junit.Test;
 public class IdentifierPPNTest {
 
 	@Test
-	public void givenValidePpnShouldCorrect() {
+	public void validPpnShouldValidateAsCorrect() {
 		String identifier = "32578597X";
 
 		Assert.assertTrue("Given PPN " + identifier + " should be correct.", IdentifierPPN.isValid(identifier));
