@@ -317,7 +317,7 @@
 				</htm:div>
 			</f:facet>
 
-			<h:outputText value="K" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" />
+			<h:outputText value="#{msgs.correctionK}" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" />
 		</x:popup>
 
 
