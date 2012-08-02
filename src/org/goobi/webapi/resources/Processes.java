@@ -52,7 +52,7 @@ public class Processes {
     @Path("{ppnIdentifier}")
     public GoobiProcess getProcess(@PathParam("ppnIdentifier") String identifier) {
 
-        GoobiProcess process = GoobiProcessDAO.getProcessByPPN(identifier);
+        GoobiProcess process = GoobiProcessDAO.getProcessByIdentifier(identifier);
 
         if (process == null) {
             throw new NotFoundException("No such process.");

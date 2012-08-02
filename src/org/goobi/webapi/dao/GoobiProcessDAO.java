@@ -43,7 +43,7 @@ public class GoobiProcessDAO {
 
     private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
-    public static GoobiProcess getProcessByPPN(String identifier) {
+    public static GoobiProcess getProcessByIdentifier(String identifier) {
         Session session;
         GoobiProcess result = null;
 
