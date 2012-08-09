@@ -28,7 +28,6 @@ import de.sub.goobi.helper.Helper;
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
-import org.goobi.webapi.beans.IdentifierPPN;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -44,7 +43,7 @@ public class GoobiProcessDAO {
 
     private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
-    public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
+    public static GoobiProcess getProcessByIdentifier(String identifier) {
         Session session;
         GoobiProcess result = null;
 
@@ -58,14 +57,15 @@ public class GoobiProcessDAO {
                     .createAlias("vorlagen.eigenschaften", "ve")
                     .createAlias("werkstuecke", "w")
                     .createAlias("werkstuecke.eigenschaften", "we")
+					// key PPN digital a/f-Satz could contain any string value
                     .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
                     .add(Restrictions.eq("ve.titel", "Titel"))
-                    .add(Restrictions.eq("we.wert", PPN.toString()))
+                    .add(Restrictions.eq("we.wert", identifier))
                     .addOrder(Order.asc("we.wert"))
                     .setProjection(Projections.projectionList()
-                            .add(Projections.property("we.wert"), "identifier")
-                            .add(Projections.property("ve.wert"), "title")
-                    )
+							.add(Projections.property("we.wert"), "identifier")
+							.add(Projections.property("ve.wert"), "title")
+					)
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
             result = (GoobiProcess) criteria.uniqueResult();
@@ -92,6 +92,7 @@ public class GoobiProcessDAO {
                     .createAlias("vorlagen.eigenschaften", "ve")
                     .createAlias("werkstuecke", "w")
                     .createAlias("werkstuecke.eigenschaften", "we")
+					// key PPN digital a/f-Satz could contain any string value
                     .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
                     .add(Restrictions.eq("ve.titel", "Titel"))
                     .addOrder(Order.asc("we.wert"))
@@ -114,7 +115,7 @@ public class GoobiProcessDAO {
         return result;
     }
 
-    public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
+    public static List<GoobiProcessStep> getAllProcessSteps(String identifier) {
         List<GoobiProcessStep> result;
         Session session;
 
@@ -128,14 +129,15 @@ public class GoobiProcessDAO {
                     .createAlias("prozess", "p")
                     .createAlias("prozess.werkstuecke", "w")
                     .createAlias("prozess.werkstuecke.eigenschaften", "we")
+					// key "PPN digital a/f-Satz" could contain any string value
                     .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("we.wert", PPN.toString()))
+                    .add(Restrictions.eq("we.wert", identifier))
                     .addOrder(Order.asc("reihenfolge"))
                     .setProjection(Projections.projectionList()
-                            .add(Projections.property("reihenfolge"), "sequence")
-                            .add(Projections.property("bearbeitungsstatus"), "state")
-                            .add(Projections.property("titel"), "title")
-                    )
+							.add(Projections.property("reihenfolge"), "sequence")
+							.add(Projections.property("bearbeitungsstatus"), "state")
+							.add(Projections.property("titel"), "title")
+					)
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class));
 
             @SuppressWarnings(value = "unchecked")
