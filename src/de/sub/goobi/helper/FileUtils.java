@@ -21,8 +21,9 @@
  */
 
 package de.sub.goobi.helper;
-//TODO Replace with SUB Commons
+
 import java.io.File;
+import java.io.FilenameFilter;
 
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
@@ -43,25 +44,31 @@ public class FileUtils {
 	 *            the file extension to use for counting, not case sensitive
 	 * @return number of files as Integer
 	 */
-	public static Integer getNumberOfFiles(File inDir) {
-		int anzahl = 0;
-		if (inDir.isDirectory()) {
-			/* --------------------------------
-			 * die Images zählen
-			 * --------------------------------*/
-			anzahl = inDir.list(MetadatenImagesHelper.filter).length;
 
-			/* --------------------------------
-			 * die Unterverzeichnisse durchlaufen
-			 * --------------------------------*/
+	public static Integer getNumberOfFiles(File inDir, final String ext) {
+		int count = 0;
+		if (inDir.isDirectory()) {
+			// Count the images
+			FilenameFilter filter = ext == null ? MetadatenImagesHelper.filter : new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.toLowerCase().endsWith(ext.toLowerCase());
+				}
+			};
+			count = inDir.list(filter).length;
+
+			// Count the contents of sub directories
 			String[] children = inDir.list();
 			for (int i = 0; i < children.length; i++) {
-				anzahl += getNumberOfFiles(new File(inDir, children[i]));
-				}
+				count += getNumberOfFiles(new File(inDir, children[i]), ext);
+			}
 		}
-		return anzahl;
+		return count;
 	}
-	
+
+	public static Integer getNumberOfFiles(File inDir) {
+		return getNumberOfFiles(inDir, null);
+	}
+
 	public static Integer getNumberOfFiles(String inDir) {
 		return getNumberOfFiles(new File(inDir));
 	}
