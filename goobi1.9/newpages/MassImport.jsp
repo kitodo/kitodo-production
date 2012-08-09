@@ -81,7 +81,7 @@
 
 															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
-															
+
 															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
@@ -93,6 +93,7 @@
 															<h:outputLabel for="plugins" value="#{msgs.importplugin}:" />
 															<h:selectOneMenu id="plugins" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
 																<a4j:support event="onchange" reRender="formupload" />
+																<f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue="" />
 																<si:selectItems value="#{MassImportForm.usablePluginsForRecords}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
@@ -110,7 +111,7 @@
 
 															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
-															
+
 															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
@@ -122,6 +123,7 @@
 															<h:outputLabel for="plugins2" value="#{msgs.importplugin}:" />
 															<h:selectOneMenu id="plugins2" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
 																<a4j:support event="onchange" reRender="formupload" />
+																<f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue="" />
 																<si:selectItems value="#{MassImportForm.usablePluginsForIDs}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
@@ -138,7 +140,7 @@
 
 															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
-															
+
 															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
@@ -150,6 +152,7 @@
 															<h:outputLabel for="plugins3" value="#{msgs.importplugin}:" />
 															<h:selectOneMenu id="plugins3" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
 																<a4j:support event="onchange" reRender="formupload" />
+																<f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue="" />
 																<si:selectItems value="#{MassImportForm.usablePluginsForFiles}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
 
@@ -170,7 +173,7 @@
 
 															<h:outputText value="#{msgs.project}:" />
 															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
-															
+
 															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
@@ -182,12 +185,13 @@
 															<h:outputLabel for="plugins3" value="#{msgs.importplugin}:" />
 															<h:selectOneMenu id="plugins3" value="#{MassImportForm.currentPlugin}" styleClass="processMassImport">
 																<a4j:support event="onchange" reRender="formupload" />
+																<f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue="" />
 																<si:selectItems value="#{MassImportForm.usablePluginsForFolder}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 															</h:selectOneMenu>
-															
+
 															<h:outputLabel for="filenames" value="#{msgs.dateien}:" />
-															
-															<h:selectManyListbox value="#{MassImportForm.selectedFilenames}" id="filenames" styleClass="processMassImport" style="height: 300px;"> 
+
+															<h:selectManyListbox value="#{MassImportForm.selectedFilenames}" id="filenames" styleClass="processMassImport" style="height: 300px;">
 																<si:selectItems itemLabel="#{file}" itemValue="#{file}" var="file" value="#{MassImportForm.allFilenames}" />
 															</h:selectManyListbox>
 

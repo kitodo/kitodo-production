@@ -120,9 +120,13 @@
 												<htm:hr />
 
 												<h:panelGroup rendered="#{MassImportForm.plugin.title == 'Multiple Manifestation Millennium Import'}">
-													<%-- <jsp:include  page="plugins/MultipleManifestationMillenniumImport.jsp" /> --%>
 													<%@include file="plugins/MultipleManifestationMillenniumImport.jsp"%>
 												</h:panelGroup>
+												
+												<h:panelGroup rendered="#{MassImportForm.plugin.title == 'Soton Multivolume Import'}">
+													<%@include file="plugins/SotonImport.jsp"%>
+												</h:panelGroup>
+												
 											</htm:td>
 										</htm:tr>
 

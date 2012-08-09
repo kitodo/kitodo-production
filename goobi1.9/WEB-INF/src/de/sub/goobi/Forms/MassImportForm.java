@@ -204,6 +204,10 @@ public class MassImportForm {
 
 	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
+		if (StringUtils.isEmpty(currentPlugin)) {
+			Helper.setFehlerMeldung("missingPlugin");
+			return "";
+		}
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Integer batchId = null;
@@ -597,7 +601,7 @@ public class MassImportForm {
 	 */
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
-		if (currentPlugin != null) {
+		if (currentPlugin != null && currentPlugin.length() > 0) {
 			this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, this.currentPlugin);
 			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
 				this.allFilenames = this.plugin.getAllFilenames();
