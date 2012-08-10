@@ -105,7 +105,7 @@
 			<htm:div style="border: 2px dashed silver">
 				<h:commandLink target="_self" action="#{NavigationForm.Reload}"
 					style="margin:5px" title="#{msgs.verschiebenAbbrechen}">
-					<h:graphicImage value="/newpages/images/buttons/save.gif"
+					<h:graphicImage value="/newpages/images/buttons/cancel1.gif"
 						style="border: 0px;vertical-align:middle;" />
 					<h:outputText value="#{msgs.abbrechen}"
 						title="#{msgs.verschiebenAbbrechen}" />
