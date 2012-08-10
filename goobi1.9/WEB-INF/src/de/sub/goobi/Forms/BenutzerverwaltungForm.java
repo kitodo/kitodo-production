@@ -60,6 +60,7 @@ import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.LdapGruppenDAO;
 import de.sub.goobi.Persistence.ProjektDAO;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -345,6 +346,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	public void setHideInactiveUsers(boolean hideInactiveUsers) {
 		this.hideInactiveUsers = hideInactiveUsers;
+	}
+
+	public boolean getLdapUsage() {
+		return ConfigMain.getBooleanParameter("ldap_use");
 	}
 
 }
