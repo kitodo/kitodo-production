@@ -341,12 +341,17 @@ public class ExportDms extends ExportMets {
 	private void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
 
 		if (! sourceDirectory.isDirectory()) {
-			myLogger.error(sourceDirectory.getName() + " is not a directory!");
+			myLogger.error("Given source " + sourceDirectory.getPath() + " is not a directory!");
 			return;
 		}
 
 		if (! destinationDirectory.exists()) {
-			destinationDirectory.mkdir();
+			boolean result;
+			result = destinationDirectory.mkdir();
+			if (! result) {
+				myLogger.error("Could not create directory " + destinationDirectory.getPath() + "!");
+				return;
+			}
 		}
 
 		File[] sourceFiles = sourceDirectory.listFiles();
