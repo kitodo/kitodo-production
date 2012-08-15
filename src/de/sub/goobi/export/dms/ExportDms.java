@@ -321,41 +321,42 @@ public class ExportDms extends ExportMets {
 		File txtFolder = new File(myProzess.getTxtDirectory());
 		if (txtFolder.exists()) {
 			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_txt");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = txtFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
-			}
+			copyDirectory(txtFolder, destination);
 		}
-		
-		
+
 		File wordFolder = new File(myProzess.getWordDirectory());
 		if (wordFolder.exists()) {
 			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_wc");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = wordFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
-			}
+			copyDirectory(wordFolder, destination);
 		}
 		
 		File pdfFolder = new File(myProzess.getPdfDirectory());
 		if (pdfFolder.exists()) {
 			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_pdf");
-			if (!destination.exists()) {
-				destination.mkdir();
-			}
-			File[] dateien = pdfFolder.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+			copyDirectory(pdfFolder, destination);
+		}
+
+	}
+
+	private void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+
+		if (! sourceDirectory.isDirectory()) {
+			myLogger.error(sourceDirectory.getName() + " is not a directory!");
+			return;
+		}
+
+		if (! destinationDirectory.exists()) {
+			destinationDirectory.mkdir();
+		}
+
+		File[] sourceFiles = sourceDirectory.listFiles();
+		if (sourceFiles != null) {
+			for (File sourceFile : sourceFiles) {
+				File destinationFile = new File(destinationDirectory + File.separator + sourceFile.getName());
+				Helper.copyFile(sourceFile, destinationFile);
 			}
 		}
-	}	
+
+	}
+
 }
