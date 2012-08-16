@@ -41,6 +41,7 @@ import static org.junit.Assert.*;
 import static org.goobi.log4j.AssertFileSystem.*;
 
 public class ExportDmsTest {
+	private static final String DUMMY_ATS = "test123";
 
 	private final static String DIRECTORY_PREFIX = UUID.randomUUID().toString() + "-";
 	private final static String DESTINATION_DIRECTORY = DIRECTORY_PREFIX + "destination";
@@ -48,6 +49,7 @@ public class ExportDmsTest {
 
 	private final static File destinationDirectory = new File(DESTINATION_DIRECTORY);
 	private final static File sourceDirectory = new File(SOURCE_DIRECTORY);
+	private final static File emptySourceSubDirectory = new File(SOURCE_DIRECTORY + File.separator + DUMMY_ATS + "_xml");
 
 	private TestAppender testAppender;
 
@@ -55,6 +57,7 @@ public class ExportDmsTest {
 	public static void createDirectories() {
 		destinationDirectory.mkdir();
 		sourceDirectory.mkdir();
+		emptySourceSubDirectory.mkdir();
 	}
 
 	@Before
@@ -65,6 +68,7 @@ public class ExportDmsTest {
 
 	@AfterClass
 	public static void removeDirectories() {
+		emptySourceSubDirectory.delete();
 		destinationDirectory.delete();
 		sourceDirectory.delete();
 	}
@@ -82,6 +86,15 @@ public class ExportDmsTest {
 		ExportDms fixture = new ExportDms();
 
 		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, "");
+
+		assertDirectoryIsEmpty("Destination directory should be empty.", destinationDirectory);
+	}
+
+	@Test
+	public void shouldDoNothingIfSubSourceDirectoryIsEmpty() throws IOException, SwapException, DAOException, InterruptedException {
+		ExportDms fixture = new ExportDms();
+
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
 
 		assertDirectoryIsEmpty("Destination directory should be empty.", destinationDirectory);
 	}
