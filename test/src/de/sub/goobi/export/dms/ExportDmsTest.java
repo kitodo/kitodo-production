@@ -58,7 +58,7 @@ public class ExportDmsTest {
 	}
 
 	@Before
-	public void setup() {
+	public void setupTestAppender() {
 		testAppender = new TestAppender();
 		BasicConfigurator.configure(testAppender);
 	}
