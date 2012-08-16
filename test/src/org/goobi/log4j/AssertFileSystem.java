@@ -64,4 +64,13 @@ public class AssertFileSystem {
 			Assert.fail("File " + fileName + " should not exist.");
 		}
 	}
+
+	public static void assertDirectoryIsEmpty(String message, File directory) {
+		if (! directory.isDirectory()) {
+		    Assert.fail(directory.getAbsolutePath() + " is not a directory!");
+		}
+
+		Assert.assertEquals(message, 0, directory.list().length);
+	}
+
 }
