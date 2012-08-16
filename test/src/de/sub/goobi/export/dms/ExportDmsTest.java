@@ -20,8 +20,9 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package de.sub.goobi.export;
+package de.sub.goobi.export.dms;
 
+import de.sub.goobi.export.dms.ExportDms;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;

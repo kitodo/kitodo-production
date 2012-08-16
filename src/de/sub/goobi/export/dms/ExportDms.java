@@ -321,7 +321,7 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	private void exportContentOfOcrDirectory(File ocrDirectory, File userHome, String atsPpnBand)
+	protected void exportContentOfOcrDirectory(File ocrDirectory, File userHome, String atsPpnBand)
 			throws IOException, SwapException, DAOException, InterruptedException {
 
 		if (ocrDirectory.exists()) {
