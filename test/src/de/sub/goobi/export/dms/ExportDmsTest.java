@@ -26,23 +26,47 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
+import org.goobi.log4j.AssertFileSystem;
 import org.goobi.log4j.TestAppender;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.goobi.log4j.AssertFileSystem.*;
 
 public class ExportDmsTest {
 
+	private final static String DIRECTORY_PREFIX = UUID.randomUUID().toString() + "-";
+	private final static String DESTINATION_DIRECTORY = DIRECTORY_PREFIX + "destination";
+	private final static String SOURCE_DIRECTORY = DIRECTORY_PREFIX + "source";
+
+	private final static File destinationDirectory = new File(DESTINATION_DIRECTORY);
+	private final static File sourceDirectory = new File(SOURCE_DIRECTORY);
+
 	private TestAppender testAppender;
+
+	@BeforeClass
+	public static void createDirectories() {
+		destinationDirectory.mkdir();
+		sourceDirectory.mkdir();
+	}
 
 	@Before
 	public void setup() {
 		testAppender = new TestAppender();
 		BasicConfigurator.configure(testAppender);
+	}
+
+	@AfterClass
+	public static void removeDirectories() {
+		destinationDirectory.delete();
+		sourceDirectory.delete();
 	}
 
 	@Test
@@ -51,6 +75,15 @@ public class ExportDmsTest {
 
 		fixture.exportContentOfOcrDirectory(new File("/foo/bar"), new File("userHome"), "");
 		assertWarning("OCR directory /foo/bar does not exists.");
+	}
+
+	@Test
+	public void shouldDoNothingWithEmptySourceDirectory() throws IOException, SwapException, DAOException, InterruptedException {
+		ExportDms fixture = new ExportDms();
+
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, "");
+
+		assertDirectoryIsEmpty("Destination directory should be empty.", destinationDirectory);
 	}
 
 	private void assertWarning(String message) {
