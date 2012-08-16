@@ -282,7 +282,19 @@ public class Prozess implements Serializable, IGoobiEntity {
 		}
 
 		if (tifOrdner.equals("")) {
-			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
+			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+			if (!suffix.equals("")) {
+				String[] folderList = dir.list();
+				for (String folder : folderList) {
+					if (folder.endsWith(suffix)) {
+						tifOrdner = folder;
+						break;
+					}
+				}
+			}
+			if (tifOrdner.equals("")) {
+				tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
+			}
 		}
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
@@ -342,9 +354,23 @@ public class Prozess implements Serializable, IGoobiEntity {
 			for (int i = 0; i < verzeichnisse.length; i++) {
 				origOrdner = verzeichnisse[i];
 			}
+
 			if (origOrdner.equals("")) {
-				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
+				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+				if (!suffix.equals("")) {
+					String[] folderList = dir.list();
+					for (String folder : folderList) {
+						if (folder.endsWith(suffix)) {
+							origOrdner = folder;
+							break;
+						}
+					}
+				}
+				if (origOrdner.equals("")) {
+					origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
+				}
 			}
+
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
 				new Helper().createMetaDirectory(rueckgabe);
@@ -439,10 +465,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Helper ##
-	 * #####################################################
-	 * ####################################################
+	 * ##################################################### ##################################################### ## ## Helper ##
+	 * ##################################################### ####################################################
 	 */
 
 	public Projekt getProjekt() {
@@ -810,16 +834,16 @@ public class Prozess implements Serializable, IGoobiEntity {
 		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
-//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
+			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
 		} else if (type.equals("mets")) {
-//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
+			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsMods(this.regelsatz.getPreferences());
 		} else if (type.equals("xstream")) {
-//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
+			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
 			ff = new XStream(this.regelsatz.getPreferences());
 		} else {
-//			Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
+			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
 			ff = new RDFFile(this.regelsatz.getPreferences());
 		}
 		try {
@@ -959,8 +983,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner
-	 * Benutzergruppe zugewiesen ist
+	 * prüfen, ob der Vorgang Schritte enthält, die keinem Benutzer und keiner Benutzergruppe zugewiesen ist
 	 * ================================================================
 	 */
 	public boolean getContainsUnreachableSteps() {
@@ -976,8 +999,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * check if there is one task in edit mode, where the user has the rights to
-	 * write to image folder
+	 * check if there is one task in edit mode, where the user has the rights to write to image folder
 	 * ================================================================
 	 */
 	public boolean isImageFolderInUse() {
@@ -990,8 +1012,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * get user of task in edit mode with rights to write to image folder
-	 * ================================================================
+	 * get user of task in edit mode with rights to write to image folder ================================================================
 	 */
 	public Benutzer getImageFolderInUseUser() {
 		for (Schritt s : getSchritteList()) {
@@ -1003,10 +1024,8 @@ public class Prozess implements Serializable, IGoobiEntity {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate
-	 * does not like bit-Fields with null Values (thats why Boolean) and MyFaces
-	 * seams not to like Boolean (thats why boolean for the GUI)
-	 * ================================================================
+	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null Values (thats why Boolean) and
+	 * MyFaces seams not to like Boolean (thats why boolean for the GUI) ================================================================
 	 */
 	public Boolean isSwappedOutHibernate() {
 		return this.swappedOut;
@@ -1098,7 +1117,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 			String contentType = servletContext.getMimeType(fileName);
 			response.setContentType(contentType);
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-			
+
 			// write run note to servlet output stream
 			try {
 				ServletOutputStream out = response.getOutputStream();

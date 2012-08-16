@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence.apache;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -91,7 +92,19 @@ public class FolderInformation {
 		}
 
 		if (tifOrdner.equals("")) {
-			tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
+			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+			if (!suffix.equals("")) {
+				String[] folderList = dir.list();
+				for (String folder : folderList) {
+					if (folder.endsWith(suffix)) {
+						tifOrdner = folder;
+						break;
+					}
+				}
+			}
+			if (tifOrdner.equals("")) {
+				tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
+			}
 		}
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
@@ -144,7 +157,19 @@ public class FolderInformation {
 				origOrdner = verzeichnisse[i];
 			}
 			if (origOrdner.equals("")) {
-				origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
+				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+				if (!suffix.equals("")) {
+					String[] folderList = dir.list();
+					for (String folder : folderList) {
+						if (folder.endsWith(suffix)) {
+							origOrdner = folder;
+							break;
+						}
+					}
+				}
+				if (origOrdner.equals("")) {
+					origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
+				}
 			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			// if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
@@ -196,9 +221,7 @@ public class FolderInformation {
 	public String getMetadataFilePath() {
 		return getProcessDataDirectory() + "meta.xml";
 	}
-	
-	
-	
+
 	public String getSourceDirectory() {
 		File dir = new File(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
@@ -209,18 +232,17 @@ public class FolderInformation {
 		};
 		File sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
-		if (verzeichnisse == null || verzeichnisse.length == 0 ) {
+		if (verzeichnisse == null || verzeichnisse.length == 0) {
 			sourceFolder = new File(dir, title + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
-				sourceFolder.mkdir();				
+				sourceFolder.mkdir();
 			}
 		} else {
 			sourceFolder = new File(dir, verzeichnisse[0]);
 		}
-		
+
 		return sourceFolder.getAbsolutePath();
 	}
-	
 
 	public Map<String, String> getFolderForProcess() {
 		Map<String, String> answer = new HashMap<String, String>();
@@ -303,7 +325,7 @@ public class FolderInformation {
 		}
 		return null;
 	}
-	
+
 	public List<String> getDataFiles() throws InvalidImagesException {
 		File dir;
 		try {
@@ -322,14 +344,14 @@ public class FolderInformation {
 			}
 			/* alle Dateien durchlaufen */
 			if (dataList != null && dataList.size() != 0) {
-				Collections.sort(dataList,  new GoobiImageFileComparator());
+				Collections.sort(dataList, new GoobiImageFileComparator());
 			}
 			return dataList;
 		} else {
 			return null;
 		}
 	}
-	
+
 	public static class GoobiImageFileComparator implements Comparator<String> {
 
 		@Override
