@@ -22,18 +22,40 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
 import org.apache.log4j.BasicConfigurator;
-import org.junit.BeforeClass;
+import org.apache.log4j.Level;
+import org.goobi.log4j.TestAppender;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
 public class ExportDmsTest {
 
-	@BeforeClass
-	public static void oneTimeSetUp() {
-		BasicConfigurator.configure();
+	private TestAppender testAppender;
+
+	@Before
+	public void setup() {
+		testAppender = new TestAppender();
+		BasicConfigurator.configure(testAppender);
+	}
+
+	@Test
+	public void shoudlRaiseWarningIfOcrDirectoryDoesNotExist() throws IOException, SwapException, DAOException, InterruptedException {
+		ExportDms fixture = new ExportDms();
+
+		fixture.exportContentOfOcrDirectory(new File("/foo/bar"), new File("userHome"), "");
+		assertWarning("OCR directory /foo/bar does not exists.");
+	}
+
+	private void assertWarning(String message) {
+		assertEquals("Expecting WARN log level", Level.WARN, testAppender.getLastEvent().getLevel());
+		assertEquals("Unexected log message", message, testAppender.getLastEvent().getMessage());
 	}
 
 }
