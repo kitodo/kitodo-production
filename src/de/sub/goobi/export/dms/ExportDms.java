@@ -197,6 +197,7 @@ public class ExportDms extends ExportMets {
 		try {
 			if (exportWithImages) {
 				imageDownload(myProzess, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
+				exportContentOfOcrDirectory(myProzess, benutzerHome, atsPpnBand);
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), e);
@@ -317,25 +318,25 @@ public class ExportDms extends ExportMets {
 				Helper.copyFile(dateien[i], meinZiel);
 			}
 		}
-		
-		File txtFolder = new File(myProzess.getTxtDirectory());
-		if (txtFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_txt");
-			copyDirectory(txtFolder, destination);
-		}
+	}
 
-		File wordFolder = new File(myProzess.getWordDirectory());
-		if (wordFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_wc");
-			copyDirectory(wordFolder, destination);
-		}
-		
-		File pdfFolder = new File(myProzess.getPdfDirectory());
-		if (pdfFolder.exists()) {
-			File destination = new File(benutzerHome + File.separator + atsPpnBand +"_pdf");
-			copyDirectory(pdfFolder, destination);
-		}
+	private void exportContentOfOcrDirectory(Prozess myProcess, File userHome, String atsPpnBand)
+			throws IOException, SwapException, DAOException, InterruptedException {
 
+		File ocr = new File(myProcess.getOcrDirectory());
+
+		if (ocr.exists()) {
+			File[] folder = ocr.listFiles();
+			if (folder != null) {
+				for (File ocrSubDirectory : folder) {
+					if (ocrSubDirectory.isDirectory() && ocrSubDirectory.list().length > 0) {
+						String suffix = ocrSubDirectory.getName().substring(ocrSubDirectory.getName().lastIndexOf("_"));
+						File destination = new File(userHome + File.separator + atsPpnBand + suffix);
+						copyDirectory(ocrSubDirectory, destination);
+					}
+				}
+			}
+		}
 	}
 
 	private void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
