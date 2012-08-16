@@ -197,7 +197,8 @@ public class ExportDms extends ExportMets {
 		try {
 			if (exportWithImages) {
 				imageDownload(myProzess, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
-				exportContentOfOcrDirectory(myProzess, benutzerHome, atsPpnBand);
+				File ocrDirectory = new File(myProzess.getOcrDirectory());
+				exportContentOfOcrDirectory(ocrDirectory, benutzerHome, atsPpnBand);
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), e);
@@ -320,13 +321,11 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	private void exportContentOfOcrDirectory(Prozess myProcess, File userHome, String atsPpnBand)
+	private void exportContentOfOcrDirectory(File ocrDirectory, File userHome, String atsPpnBand)
 			throws IOException, SwapException, DAOException, InterruptedException {
 
-		File ocr = new File(myProcess.getOcrDirectory());
-
-		if (ocr.exists()) {
-			File[] folder = ocr.listFiles();
+		if (ocrDirectory.exists()) {
+			File[] folder = ocrDirectory.listFiles();
 			if (folder != null) {
 				for (File ocrSubDirectory : folder) {
 					if (ocrSubDirectory.isDirectory() && ocrSubDirectory.list().length > 0) {
@@ -336,6 +335,8 @@ public class ExportDms extends ExportMets {
 					}
 				}
 			}
+		} else {
+			myLogger.warn("OCR directory " + ocrDirectory.getAbsolutePath() + " does not exists.");
 		}
 	}
 
