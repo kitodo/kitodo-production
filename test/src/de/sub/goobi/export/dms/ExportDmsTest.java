@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static org.goobi.log4j.AssertFileSystem.assertDirectoryIsEmpty;
+import static org.goobi.log4j.AssertFileSystem.assertFileExists;
 import static org.junit.Assert.assertEquals;
 
 public class ExportDmsTest {
@@ -45,18 +46,23 @@ public class ExportDmsTest {
 	private final static String DIRECTORY_PREFIX = UUID.randomUUID().toString() + "-";
 	private final static String DESTINATION_DIRECTORY = DIRECTORY_PREFIX + "destination";
 	private final static String SOURCE_DIRECTORY = DIRECTORY_PREFIX + "source";
+	private final static String SOURCE_SUB_DIRECTORY = SOURCE_DIRECTORY + File.separator + DUMMY_ATS + "_xml";
+	private final static String DUMMY_SOURCE_FILE_PATH = SOURCE_SUB_DIRECTORY + File.separator + "dummy.xml";
+	private final static String DUMMY_DESTINATION_FILE_PATH = DESTINATION_DIRECTORY + File.separator + DUMMY_ATS
+			+ "_xml" + File.separator + "dummy.xml";
 
 	private final static File destinationDirectory = new File(DESTINATION_DIRECTORY);
 	private final static File sourceDirectory = new File(SOURCE_DIRECTORY);
-	private final static File emptySourceSubDirectory = new File(SOURCE_DIRECTORY + File.separator + DUMMY_ATS + "_xml");
+	private final static File sourceSubDirectory = new File(SOURCE_SUB_DIRECTORY);
+	private final static File dummySourceFile = new File(DUMMY_SOURCE_FILE_PATH);
+	private final static File dummyDestinationFile = new File(DUMMY_DESTINATION_FILE_PATH);
 
 	private TestAppender testAppender;
 
 	@BeforeClass
 	public static void createDirectories() {
 		destinationDirectory.mkdir();
-		sourceDirectory.mkdir();
-		emptySourceSubDirectory.mkdir();
+		sourceSubDirectory.mkdirs();
 	}
 
 	@Before
@@ -67,9 +73,8 @@ public class ExportDmsTest {
 
 	@AfterClass
 	public static void removeDirectories() {
-		emptySourceSubDirectory.delete();
-		destinationDirectory.delete();
-		sourceDirectory.delete();
+		deleteRecursive(destinationDirectory);
+		deleteRecursive(sourceDirectory);
 	}
 
 	@Test
@@ -99,9 +104,30 @@ public class ExportDmsTest {
 		assertDirectoryIsEmpty("Destination directory should be empty.", destinationDirectory);
 	}
 
+	@Test
+	public void dummyFileShouldEndUpInDestinationDirectory() throws IOException, SwapException, DAOException, InterruptedException {
+		dummySourceFile.createNewFile();
+
+		ExportDms fixture = new ExportDms();
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
+
+		assertFileExists(dummyDestinationFile.getAbsolutePath());
+	}
+
 	private void assertWarning(String message) {
 		assertEquals("Expecting WARN log level", Level.WARN, testAppender.getLastEvent().getLevel());
 		assertEquals("Unexected log message", message, testAppender.getLastEvent().getMessage());
+	}
+
+	private static void deleteRecursive(File f) {
+		if (f.exists()) {
+			if (f.isDirectory()) {
+				for (File sf : f.listFiles()) {
+					deleteRecursive(sf);
+				}
+			}
+			f.delete();
+		}
 	}
 
 }
