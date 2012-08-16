@@ -26,7 +26,6 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
-import org.goobi.log4j.AssertFileSystem;
 import org.goobi.log4j.TestAppender;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,8 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
-import static org.goobi.log4j.AssertFileSystem.*;
+import static org.goobi.log4j.AssertFileSystem.assertDirectoryIsEmpty;
+import static org.junit.Assert.assertEquals;
 
 public class ExportDmsTest {
 	private static final String DUMMY_ATS = "test123";
@@ -78,6 +77,7 @@ public class ExportDmsTest {
 		ExportDms fixture = new ExportDms();
 
 		fixture.exportContentOfOcrDirectory(new File("/foo/bar"), new File("userHome"), "");
+
 		assertWarning("OCR directory /foo/bar does not exists.");
 	}
 
