@@ -46,23 +46,16 @@ public class ExportDmsTest {
 	private final static String DIRECTORY_PREFIX = UUID.randomUUID().toString() + "-";
 	private final static String DESTINATION_DIRECTORY = DIRECTORY_PREFIX + "destination";
 	private final static String SOURCE_DIRECTORY = DIRECTORY_PREFIX + "source";
-	private final static String SOURCE_SUB_DIRECTORY = SOURCE_DIRECTORY + File.separator + DUMMY_ATS + "_xml";
-	private final static String DUMMY_SOURCE_FILE_PATH = SOURCE_SUB_DIRECTORY + File.separator + "dummy.xml";
-	private final static String DUMMY_DESTINATION_FILE_PATH = DESTINATION_DIRECTORY + File.separator + DUMMY_ATS
-			+ "_xml" + File.separator + "dummy.xml";
 
 	private final static File destinationDirectory = new File(DESTINATION_DIRECTORY);
 	private final static File sourceDirectory = new File(SOURCE_DIRECTORY);
-	private final static File sourceSubDirectory = new File(SOURCE_SUB_DIRECTORY);
-	private final static File dummySourceFile = new File(DUMMY_SOURCE_FILE_PATH);
-	private final static File dummyDestinationFile = new File(DUMMY_DESTINATION_FILE_PATH);
 
 	private TestAppender testAppender;
 
 	@BeforeClass
 	public static void createDirectories() {
 		destinationDirectory.mkdir();
-		sourceSubDirectory.mkdirs();
+		sourceDirectory.mkdir();
 	}
 
 	@Before
@@ -106,6 +99,18 @@ public class ExportDmsTest {
 
 	@Test
 	public void dummyFileShouldEndUpInDestinationDirectory() throws IOException, SwapException, DAOException, InterruptedException {
+		String dummyDestinationFilePath = DESTINATION_DIRECTORY + File.separator + DUMMY_ATS
+				+ "_xml" + File.separator + "dummy.xml";
+
+		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "test_xml";
+
+		String dummySourceFilePath = sourceSubDirectoryName + File.separator + "dummy.xml";
+
+		File dummySourceFile = new File(dummySourceFilePath);
+		File sourceSubDirectory = new File(sourceSubDirectoryName);
+		File dummyDestinationFile = new File(dummyDestinationFilePath);
+
+		sourceSubDirectory.mkdir();
 		dummySourceFile.createNewFile();
 
 		ExportDms fixture = new ExportDms();
