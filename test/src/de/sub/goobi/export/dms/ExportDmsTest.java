@@ -156,6 +156,24 @@ public class ExportDmsTest {
 		assertFileNotExists(destinationDirectory.getAbsolutePath() + File.separator + DUMMY_ATS + "_" + File.separator + "dummy-ws.xml");
 	} 
 
+	@Test
+	public void contentOfDirectoriesWithOnlyUnderscoreInNameShouldBeIgnored()
+	throws IOException, SwapException, DAOException, InterruptedException {
+		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "___";
+		String dummySourceFilePath = sourceSubDirectoryName + File.separator + "dummy-ws.xml";
+
+		File sourceSubDirectory = new File(sourceSubDirectoryName);
+		sourceSubDirectory.mkdir();
+
+		File dummySourceFile = new File(dummySourceFilePath);
+		dummySourceFile.createNewFile();
+
+		ExportDms fixture = new ExportDms();
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
+
+		assertFileNotExists(destinationDirectory.getAbsolutePath() + File.separator + DUMMY_ATS + "_" + File.separator + "dummy-ws.xml");
+	} 
+
 	private void assertWarning(String message) {
 		assertEquals("Expecting WARN log level", Level.WARN, testAppender.getLastEvent().getLevel());
 		assertEquals("Unexected log message", message, testAppender.getLastEvent().getMessage());
