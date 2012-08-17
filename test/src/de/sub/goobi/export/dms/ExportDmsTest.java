@@ -36,8 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.goobi.log4j.AssertFileSystem.assertDirectoryIsEmpty;
-import static org.goobi.log4j.AssertFileSystem.assertFileExists;
+import static org.goobi.junit.AssertFileSystem.assertDirectoryIsEmpty;
+import static org.goobi.junit.AssertFileSystem.assertFileExists;
 import static org.junit.Assert.assertEquals;
 
 public class ExportDmsTest {

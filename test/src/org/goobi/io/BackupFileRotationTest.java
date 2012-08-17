@@ -22,7 +22,6 @@
 
 package org.goobi.io;
 
-import org.goobi.log4j.AssertFileSystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +29,7 @@ import org.junit.Test;
 
 import java.io.*;
 
-import static org.goobi.log4j.AssertFileSystem.*;
+import static org.goobi.junit.AssertFileSystem.*;
 
 import org.apache.log4j.BasicConfigurator;
 
