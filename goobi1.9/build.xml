@@ -53,6 +53,9 @@
 				</patternset>
 			</fileset>
 		</copy>
+		<copy todir="${dir.build.classes}" overwrite="true" failonerror="false" >
+			<fileset dir="${private.dir}" />
+		</copy>
 	</target>
 
 	<!-- Copy configuration files. -->
@@ -82,9 +85,6 @@
 	<target name="copySources" description="Copy the sources to the build directory">
 		<copy todir="${dir.build.src}">
 			<fileset dir="${dir.src}" />
-		</copy>
-		<copy todir="${dir.build.src}" overwrite="true" failonerror="false" >
-			<fileset dir="${private.dir}" />
 		</copy>
 	</target>
 
