@@ -23,6 +23,7 @@
 package de.sub.goobi.export.dms;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -325,7 +326,11 @@ public class ExportDms extends ExportMets {
 			throws IOException, SwapException, DAOException, InterruptedException {
 
 		if (ocrDirectory.exists()) {
-			File[] folder = ocrDirectory.listFiles();
+			File[] folder = ocrDirectory.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return (name.lastIndexOf("_") != -1);
+				}
+			});
 			if (folder != null) {
 				for (File ocrSubDirectory : folder) {
 					if (ocrSubDirectory.isDirectory() && ocrSubDirectory.list().length > 0) {

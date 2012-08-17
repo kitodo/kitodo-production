@@ -38,6 +38,7 @@ import java.util.UUID;
 
 import static org.goobi.junit.AssertFileSystem.assertDirectoryIsEmpty;
 import static org.goobi.junit.AssertFileSystem.assertFileExists;
+import static org.goobi.junit.AssertFileSystem.assertFileNotExists;
 import static org.junit.Assert.assertEquals;
 
 public class ExportDmsTest {
@@ -118,6 +119,24 @@ public class ExportDmsTest {
 
 		assertFileExists(dummyDestinationFile.getAbsolutePath());
 	}
+
+	@Test
+	public void contentOfDirectoriesWithoutSuffixShouldBeIgnored()
+	throws IOException, SwapException, DAOException, InterruptedException {
+		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "without-suffix";
+		String dummySourceFilePath = sourceSubDirectoryName + File.separator + "dummy-ws.xml";
+
+		File sourceSubDirectory = new File(sourceSubDirectoryName);
+		sourceSubDirectory.mkdir();
+
+		File dummySourceFile = new File(dummySourceFilePath);
+		dummySourceFile.createNewFile();
+
+		ExportDms fixture = new ExportDms();
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
+
+		assertFileNotExists(destinationDirectory.getAbsolutePath() + File.separator + DUMMY_ATS + File.separator + "dummy-ws.xml");
+	} 
 
 	private void assertWarning(String message) {
 		assertEquals("Expecting WARN log level", Level.WARN, testAppender.getLastEvent().getLevel());
