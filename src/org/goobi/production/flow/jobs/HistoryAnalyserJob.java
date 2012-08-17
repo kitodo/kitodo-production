@@ -41,7 +41,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.unigoettingen.sub.commons.util.file.FileUtils;
+import de.sub.goobi.helper.FileUtils;
 
 /**
  * HistoryJob proofs History of {@link Prozess} and creates missing
