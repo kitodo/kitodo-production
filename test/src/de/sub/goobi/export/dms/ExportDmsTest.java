@@ -121,9 +121,9 @@ public class ExportDmsTest {
 	}
 
 	@Test
-	public void contentOfDirectoriesWithoutSuffixShouldBeIgnored()
+	public void contentOfDirectoriesWithoutUnderscoreShouldBeIgnored()
 	throws IOException, SwapException, DAOException, InterruptedException {
-		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "without-suffix";
+		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "without-underscore";
 		String dummySourceFilePath = sourceSubDirectoryName + File.separator + "dummy-ws.xml";
 
 		File sourceSubDirectory = new File(sourceSubDirectoryName);
@@ -136,6 +136,24 @@ public class ExportDmsTest {
 		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
 
 		assertFileNotExists(destinationDirectory.getAbsolutePath() + File.separator + DUMMY_ATS + File.separator + "dummy-ws.xml");
+	} 
+
+	@Test
+	public void contentOfDirectoriesWithoutProperSuffixShouldBeIgnored()
+	throws IOException, SwapException, DAOException, InterruptedException {
+		String sourceSubDirectoryName = SOURCE_DIRECTORY + File.separator + "without-suffix_";
+		String dummySourceFilePath = sourceSubDirectoryName + File.separator + "dummy-ws.xml";
+
+		File sourceSubDirectory = new File(sourceSubDirectoryName);
+		sourceSubDirectory.mkdir();
+
+		File dummySourceFile = new File(dummySourceFilePath);
+		dummySourceFile.createNewFile();
+
+		ExportDms fixture = new ExportDms();
+		fixture.exportContentOfOcrDirectory(sourceDirectory, destinationDirectory, DUMMY_ATS);
+
+		assertFileNotExists(destinationDirectory.getAbsolutePath() + File.separator + DUMMY_ATS + "_" + File.separator + "dummy-ws.xml");
 	} 
 
 	private void assertWarning(String message) {

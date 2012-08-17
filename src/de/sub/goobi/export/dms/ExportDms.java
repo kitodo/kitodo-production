@@ -328,7 +328,9 @@ public class ExportDms extends ExportMets {
 		if (ocrDirectory.exists()) {
 			File[] folder = ocrDirectory.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return (name.lastIndexOf("_") != -1);
+					int liof = name.lastIndexOf("_");
+					int leng = name.length()-1;
+					return (liof > -1) && (liof < leng);
 				}
 			});
 			if (folder != null) {
