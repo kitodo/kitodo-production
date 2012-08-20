@@ -25,11 +25,7 @@ package de.sub.goobi.helper;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.faces.context.FacesContext;
 
@@ -45,7 +41,7 @@ public class Messages {
 
 	static{
 		@SuppressWarnings("unchecked")
-		Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		Iterator<Locale> polyglot = getSupportedLocalesIterator();
 		while (polyglot.hasNext()) {
 			Locale language = polyglot.next();
 			commonMessages.put(language, ResourceBundle.getBundle("messages", language));
@@ -53,6 +49,19 @@ public class Messages {
 			if (local != null)
 				localMessages.put(language, local);
 		}
+	}
+
+	private static Iterator getSupportedLocalesIterator() {
+		Iterator result;
+
+		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getApplication() != null) {
+			result = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		} else {
+			List<Locale> locales = new ArrayList<Locale>();
+			result = locales.iterator();
+		}
+
+		return result;
 	}
 
 	/**
