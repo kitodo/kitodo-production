@@ -33,6 +33,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import static java.util.Locale.getAvailableLocales;
+import static java.util.ResourceBundle.getBundle;
 
 public class Messages {
 	private static final Logger logger = Logger.getLogger(Messages.class);
@@ -45,11 +46,28 @@ public class Messages {
 		Iterator<Locale> polyglot = getSupportedLocalesIterator();
 		while (polyglot.hasNext()) {
 			Locale language = polyglot.next();
-			commonMessages.put(language, ResourceBundle.getBundle("messages", language));
-			ResourceBundle local = loadLocalMessageBundleIfAvailable(language);
-			if (local != null)
-				localMessages.put(language, local);
+
+			ResourceBundle commonMessageBundle = localCommonMessageBundleIfAvailable(language);
+			if (commonMessageBundle != null) {
+				commonMessages.put(language, commonMessageBundle);
+			}
+
+			ResourceBundle localMessageBundle = loadLocalMessageBundleIfAvailable(language);
+			if (localMessageBundle != null) {
+				localMessages.put(language, localMessageBundle);
+			}
 		}
+	}
+
+	private static ResourceBundle localCommonMessageBundleIfAvailable(Locale language) {
+		try {
+			return getBundle("messages", language);
+		} catch (NullPointerException npe) {
+			logger.error("Attempt to load message bundle, but no locale information given.");
+		} catch (MissingResourceException mre) {
+			logger.error("Cannot load common message bundle for language " + language.toString());
+		}
+		return null;
 	}
 
 	private static Iterator getSupportedLocalesIterator() {
@@ -84,7 +102,7 @@ public class Messages {
 				try {
 					URL pathURL = path.toURI().toURL();
 					URLClassLoader urlLoader = new URLClassLoader(new URL[] { pathURL });
-					return ResourceBundle.getBundle("messages", variant, urlLoader);
+					return getBundle("messages", variant, urlLoader);
 				} catch (java.net.MalformedURLException e) {
 					logger.error("Error reading local message commonMessages", e);
 				}
