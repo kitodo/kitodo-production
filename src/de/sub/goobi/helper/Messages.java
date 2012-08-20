@@ -42,10 +42,9 @@ public class Messages {
 	protected static Map<Locale, ResourceBundle> localMessages = new HashMap<Locale, ResourceBundle>();
 
 	static{
-		@SuppressWarnings("unchecked")
-		Iterator<Locale> polyglot = getSupportedLocalesIterator();
+		Iterator polyglot = getSupportedLocalesIterator();
 		while (polyglot.hasNext()) {
-			Locale language = polyglot.next();
+			Locale language = (Locale) polyglot.next();
 
 			ResourceBundle commonMessageBundle = localCommonMessageBundleIfAvailable(language);
 			if (commonMessageBundle != null) {
@@ -71,15 +70,10 @@ public class Messages {
 	}
 
 	private static Iterator getSupportedLocalesIterator() {
-		Iterator result;
-
 		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getApplication() != null) {
-			result = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
-		} else {
-			result = new ArrayIterator(getAvailableLocales());
+			return FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 		}
-
-		return result;
+		return new ArrayIterator(getAvailableLocales());
 	}
 
 	/**
