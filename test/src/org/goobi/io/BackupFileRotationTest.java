@@ -29,8 +29,7 @@ import org.junit.Test;
 
 import java.io.*;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
+import static org.goobi.junit.AssertFileSystem.*;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -166,16 +165,6 @@ public class BackupFileRotationTest {
 		assertFileNotExists(BACKUP_FILE_PATH + BACKUP_FILE_NAME + ".1");
 	}
 
-	private void assertLastModifiedDate(String fileName, long expectedLastModifiedDate) {
-		long currentLastModifiedDate = getLastModifiedFileDate(fileName);
-		assertEquals("Last modified date of file " + fileName + " differ:", expectedLastModifiedDate, currentLastModifiedDate);
-	}
-
-	private long getLastModifiedFileDate(String fileName) {
-		File testFile = new File(fileName);
-		return testFile.lastModified();
-	}
-
 	private void runBackup(int numberOfBackups) {
 		runBackup(numberOfBackups, BACKUP_FILE_NAME);
 	}
@@ -186,30 +175,6 @@ public class BackupFileRotationTest {
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
 		bfr.setFormat(format);
 		bfr.performBackup();
-	}
-
-	private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
-		File testFile = new File(fileName);
-		FileReader reader = new FileReader(testFile);
-		BufferedReader br = new BufferedReader(reader);
-		String content = br.readLine();
-		br.close();
-		reader.close();
-		assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
-	}
-
-	private void assertFileExists(String fileName) {
-		File newFile = new File(fileName);
-		if (!newFile.exists()) {
-			fail("File " + fileName + " does not exist.");
-		}
-	}
-
-	private void assertFileNotExists(String fileName) {
-		File newFile = new File(fileName);
-		if (newFile.exists()) {
-			fail("File " + fileName + " should not exist.");
-		}
 	}
 
 	private void createFile(String fileName) throws IOException {
