@@ -22,20 +22,18 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import org.apache.commons.collections.iterators.ArrayIterator;
+import org.apache.log4j.Logger;
+
+import javax.faces.context.FacesContext;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import javax.faces.context.FacesContext;
-
-import org.apache.log4j.Logger;
-
-import de.sub.goobi.config.ConfigMain;
+import static java.util.Locale.getAvailableLocales;
+import static java.util.ResourceBundle.getBundle;
 
 public class Messages {
 	private static final Logger logger = Logger.getLogger(Messages.class);
@@ -44,15 +42,38 @@ public class Messages {
 	protected static Map<Locale, ResourceBundle> localMessages = new HashMap<Locale, ResourceBundle>();
 
 	static{
-		@SuppressWarnings("unchecked")
-		Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		Iterator polyglot = getSupportedLocalesIterator();
 		while (polyglot.hasNext()) {
-			Locale language = polyglot.next();
-			commonMessages.put(language, ResourceBundle.getBundle("messages", language));
-			ResourceBundle local = loadLocalMessageBundleIfAvailable(language);
-			if (local != null)
-				localMessages.put(language, local);
+			Locale language = (Locale) polyglot.next();
+
+			ResourceBundle commonMessageBundle = localCommonMessageBundleIfAvailable(language);
+			if (commonMessageBundle != null) {
+				commonMessages.put(language, commonMessageBundle);
+			}
+
+			ResourceBundle localMessageBundle = loadLocalMessageBundleIfAvailable(language);
+			if (localMessageBundle != null) {
+				localMessages.put(language, localMessageBundle);
+			}
 		}
+	}
+
+	private static ResourceBundle localCommonMessageBundleIfAvailable(Locale language) {
+		try {
+			return getBundle("messages", language);
+		} catch (NullPointerException npe) {
+			logger.error("Attempt to load message bundle, but no locale information given.");
+		} catch (MissingResourceException mre) {
+			logger.error("Cannot load common message bundle for language " + language.toString());
+		}
+		return null;
+	}
+
+	private static Iterator getSupportedLocalesIterator() {
+		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getApplication() != null) {
+			return FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		}
+		return new ArrayIterator(getAvailableLocales());
 	}
 
 	/**
@@ -75,13 +96,25 @@ public class Messages {
 				try {
 					URL pathURL = path.toURI().toURL();
 					URLClassLoader urlLoader = new URLClassLoader(new URL[] { pathURL });
-					return ResourceBundle.getBundle("messages", variant, urlLoader);
+					return getBundle("messages", variant, urlLoader);
 				} catch (java.net.MalformedURLException e) {
 					logger.error("Error reading local message commonMessages", e);
 				}
 			}
 		}
 		return null;
+	}
+
+	private static Locale getCurrentUsedLanguage() {
+		Locale result;
+
+		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getViewRoot() != null) {
+			result = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		} else {
+			result = Locale.getDefault();
+		}
+
+		return result;
 	}
 
 	/**
@@ -94,11 +127,10 @@ public class Messages {
 	 * @return The verbalisation for the given key in the language chosen
 	 */
 	public static String getString(String key) {
-		Locale desiredLanguage = null;
-		try {
-			desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		} catch (NullPointerException skip) {
-		}
+		Locale desiredLanguage;
+
+		desiredLanguage = getCurrentUsedLanguage();
+
 		if (desiredLanguage != null)
 			return getString(desiredLanguage, key);
 		else
