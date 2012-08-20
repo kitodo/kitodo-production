@@ -93,6 +93,18 @@ public class Messages {
 		return null;
 	}
 
+	private static Locale getCurrentUsedLanguage() {
+		Locale result;
+
+		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getViewRoot() != null) {
+			result = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		} else {
+			result = Locale.getDefault();
+		}
+
+		return result;
+	}
+
 	/**
 	 * The function getString() returns the translated key in the language
 	 * currently configured in the front end.
@@ -103,11 +115,10 @@ public class Messages {
 	 * @return The verbalisation for the given key in the language chosen
 	 */
 	public static String getString(String key) {
-		Locale desiredLanguage = null;
-		try {
-			desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		} catch (NullPointerException skip) {
-		}
+		Locale desiredLanguage;
+
+		desiredLanguage = getCurrentUsedLanguage();
+
 		if (desiredLanguage != null)
 			return getString(desiredLanguage, key);
 		else
