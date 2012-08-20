@@ -22,16 +22,17 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import org.apache.commons.collections.iterators.ArrayIterator;
+import org.apache.log4j.Logger;
+
+import javax.faces.context.FacesContext;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
-import javax.faces.context.FacesContext;
-
-import org.apache.log4j.Logger;
-
-import de.sub.goobi.config.ConfigMain;
+import static java.util.Locale.getAvailableLocales;
 
 public class Messages {
 	private static final Logger logger = Logger.getLogger(Messages.class);
@@ -57,8 +58,7 @@ public class Messages {
 		if (FacesContext.getCurrentInstance() != null && FacesContext.getCurrentInstance().getApplication() != null) {
 			result = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 		} else {
-			List<Locale> locales = new ArrayList<Locale>();
-			result = locales.iterator();
+			result = new ArrayIterator(getAvailableLocales());
 		}
 
 		return result;
