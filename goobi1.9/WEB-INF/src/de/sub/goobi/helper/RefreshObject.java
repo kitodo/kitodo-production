@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -30,31 +31,23 @@ import org.hibernate.Session;
 
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 // FIXME remove this class, find a better way to update process status in hibernate
 public class RefreshObject {
-	private static ProzessDAO dao = new ProzessDAO();
-	private static SchrittDAO sdao = new SchrittDAO();
-	
+
 	public static void refreshProcess(int processID) {
-		try {
-			Session session = Helper.getHibernateSession();
-			Prozess o = dao.load(processID);
-			session.refresh(o);
-		} catch (DAOException e) {
-		}
+
+		Session session = Helper.getHibernateSession();
+		Prozess o = (Prozess) session.get(Prozess.class, processID);
+		session.refresh(o);
+
 	}
-	
+
 	public static void refreshStep(int stepID) {
-		try {
-			Session session = Helper.getHibernateSession();
-			Schritt o = sdao.load(stepID);
-			session.refresh(o);
-		} catch (DAOException e) {
-		}
+		Session session = Helper.getHibernateSession();
+		Schritt o = (Schritt) session.get(Schritt.class, stepID);
+		session.refresh(o);
+
 	}
 
 }
