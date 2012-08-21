@@ -44,6 +44,7 @@ import de.sub.goobi.Beans.Werkstueck;
 import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.config.ConfigMain;
 
+@SuppressWarnings("deprecation")
 public class ImportConfiguration {
 	
 	private static final Logger logger = Logger.getLogger(ImportConfiguration.class);

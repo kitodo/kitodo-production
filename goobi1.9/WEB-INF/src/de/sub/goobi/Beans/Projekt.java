@@ -464,4 +464,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	public int compareTo(Projekt o) {
 		return this.getTitel().compareTo(o.getTitel());
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this.getTitel().equals(((Projekt)obj).getTitel());
+	}
 }

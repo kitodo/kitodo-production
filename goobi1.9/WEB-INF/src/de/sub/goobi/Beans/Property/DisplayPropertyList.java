@@ -45,6 +45,8 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.exceptions.DAOException;
 
+// do not use this implementation, it will be removed in the next version
+@Deprecated
 public class DisplayPropertyList implements Serializable {
 
 	private static final long serialVersionUID = 7387181540617504176L;

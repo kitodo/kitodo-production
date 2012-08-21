@@ -1,6 +1,13 @@
 package org.goobi.production.Import;
 
-import ugh.dl.DocStructType;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.goobi.production.properties.ImportProperty;
+
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -33,11 +40,18 @@ import ugh.dl.DocStructType;
 public class DocstructElement {
 	private String docStruct;
 	private int order;
+//	protected List<ImportProperty> properties = new ArrayList<ImportProperty>();
 	
 	public DocstructElement(String docStruct,  int order) {
 		this.docStruct = docStruct;
 		this.order = order;
 	}
+	
+//	public DocstructElement(String docStruct,  int order, List<ImportProperty> properties) {
+//		this.docStruct = docStruct;
+//		this.order = order;
+//		this.properties = properties;
+//	}
 	
 	public String getDocStruct() {
 		return docStruct;
@@ -51,4 +65,19 @@ public class DocstructElement {
 	public void setOrder(int order) {
 		this.order = order;
 	}
+	
+//	public List<ImportProperty> getProperties() {
+//		return properties;
+//	}
+//	
+//	private ListDataModel columns = null;
+//	  public DataModel getColumnDataModel() {
+//		  if (columns == null) {
+//			columns = new ListDataModel(properties);
+//		}
+//		return columns;
+//	}
+
+	
+	
 }

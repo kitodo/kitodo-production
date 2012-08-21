@@ -1,4 +1,5 @@
 package de.sub.goobi.Forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -59,6 +60,7 @@ import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
 import de.sub.goobi.Persistence.LdapGruppenDAO;
 import de.sub.goobi.Persistence.ProjektDAO;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -70,7 +72,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	private BenutzerDAO dao = new BenutzerDAO();
 	private boolean hideInactiveUsers = true;
 	private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
-	
+
 	public String Neu() {
 		this.myClass = new Benutzer();
 		this.myClass.setVorname("");
@@ -84,10 +86,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String FilterKein() {
 		this.filter = null;
 		try {
-			//	HibernateUtil.clearSession();
+			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			// session.flush();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (this.hideInactiveUsers) {
@@ -113,10 +115,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 	 */
 	public String FilterAlleStart() {
 		try {
-			//	HibernateUtil.clearSession();
+			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			//	session.flush();
-				session.clear();
+			// session.flush();
+			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (this.hideInactiveUsers) {
@@ -133,7 +135,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			crit.addOrder(Order.asc("nachname"));
 			crit.addOrder(Order.asc("vorname"));
 			this.page = new Page(crit, 0);
-			//calcHomeImages();
+			// calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
@@ -180,7 +182,8 @@ public class BenutzerverwaltungForm extends BasisForm {
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "goobi_loginBlacklist.txt";
+		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
+				+ "goobi_loginBlacklist.txt";
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
 		try {
 			FileInputStream fis = new FileInputStream(filename);
@@ -225,9 +228,12 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			Benutzergruppe usergroup = new BenutzergruppenDAO().get(gruppenID);
-			if (!this.myClass.getBenutzergruppen().contains(usergroup)) {
-				this.myClass.getBenutzergruppen().add(usergroup);				
+			for (Benutzergruppe b : this.myClass.getBenutzergruppen()) {
+				if (b.equals(usergroup)) {
+					return "";
+				}
 			}
+			this.myClass.getBenutzergruppen().add(usergroup);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
@@ -252,9 +258,12 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			Projekt project = new ProjektDAO().get(projektID);
-			if (!this.myClass.getProjekte().contains(project)) {
-				this.myClass.getProjekte().add(project);
+			for (Projekt p : this.myClass.getProjekte()) {
+				if (p.equals(project)) {
+					return "";
+				}
 			}
+			this.myClass.getProjekte().add(project);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error on reading database", e.getMessage());
 			return null;
@@ -262,13 +271,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "";
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##                                                                                              
-	 ##                                                Getter und Setter                         
-	 ##                                                                                                    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ##################################################### ##################################################### ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
+	 */
 
 	public Benutzer getMyClass() {
 		return this.myClass;
@@ -284,13 +290,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 		}
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##												Ldap-Konfiguration									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * ##################################################### ##################################################### ## ## Ldap-Konfiguration ##
+	 * ##################################################### ####################################################
+	 */
 
 	public Integer getLdapGruppeAuswahl() {
 		if (this.myClass.getLdapGruppe() != null) {
@@ -332,6 +335,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + this.myClass.getNachVorname(), "");
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
+			Helper.setFehlerMeldung(e.getMessage());
 		}
 		return "";
 	}
@@ -342,6 +346,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	public void setHideInactiveUsers(boolean hideInactiveUsers) {
 		this.hideInactiveUsers = hideInactiveUsers;
+	}
+
+	public boolean getLdapUsage() {
+		return ConfigMain.getBooleanParameter("ldap_use");
 	}
 
 }

@@ -114,6 +114,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM prozesseeigenschaften WHERE prozesseID = " + processId);
 		try {
+			logger.debug(sql.toString());
 			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessPropertyListHandler);
 			return answer;
 		} finally {
@@ -127,6 +128,7 @@ public class MySQLHelper {
 		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = (SELECT VorlagenID FROM vorlagen WHERE ProzesseID = "
 				+ processId);
 		try {
+			logger.debug(sql.toString());
 			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToTemplatePropertyListHandler);
 			return answer;
 		} finally {
@@ -140,6 +142,7 @@ public class MySQLHelper {
 		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = (SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = "
 				+ processId + ")");
 		try {
+			logger.debug(sql.toString());
 			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler);
 			return answer;
 		} finally {
@@ -152,6 +155,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM prozesse WHERE ProzesseID = " + processId);
 		try {
+			logger.debug(sql.toString());
 			ProcessObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessHandler);
 			return answer;
 		} finally {
@@ -165,6 +169,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM metadatenkonfigurationen WHERE MetadatenKonfigurationID = " + rulesetId);
 		try {
+			logger.debug(sql.toString());
 			Regelsatz ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler);
 			return ret;
 		} finally {
@@ -267,7 +272,7 @@ public class MySQLHelper {
 			QueryRunner run = new QueryRunner();
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE prozesse SET sortHelperStatus = '" + value + "' WHERE ProzesseID = " + processId + ";");
-
+			logger.debug(sql.toString());
 			run.update(connection, sql.toString());
 		} finally {
 			closeConnection(connection);
@@ -280,6 +285,7 @@ public class MySQLHelper {
 			QueryRunner run = new QueryRunner();
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE prozesse SET sortHelperImages = '" + numberOfFiles + "' WHERE ProzesseID = " + processId + ";");
+			logger.debug(sql.toString());
 			run.update(connection, sql.toString());
 		} finally {
 			closeConnection(connection);
@@ -292,7 +298,7 @@ public class MySQLHelper {
 			QueryRunner run = new QueryRunner();
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE prozesse SET wikifield = '" + logValue + "' WHERE ProzesseID = " + processId + ";");
-
+			logger.debug(sql.toString());
 			run.update(connection, sql.toString());
 		} finally {
 			closeConnection(connection);
@@ -304,6 +310,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM projekte WHERE ProjekteID = " + projectId);
 		try {
+			logger.debug(sql.toString());
 			ProjectObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectHandler);
 			return answer;
 		} finally {
@@ -316,6 +323,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM projectfilegroups WHERE ProjekteID = " + projectId);
 		try {
+			logger.debug(sql.toString());
 			List<ProjectFileGroup> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectFilegroupListHandler);
 			return answer;
 
@@ -329,6 +337,7 @@ public class MySQLHelper {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM benutzereigenschaften WHERE Titel = '_filter' AND BenutzerID = " + userId);
 		try {
+			logger.debug(sql.toString());
 			List<String> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToFilterListtHandler);
 			return answer;
 		} finally {
@@ -344,6 +353,7 @@ public class MySQLHelper {
 			String propNames = "Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate, BenutzerID";
 			String propValues = "'_filter','" + filterstring + "'," + false + ",'" + 5 + "'," + null + ",'" + datetime + "','" + userId + "'";
 			String sql = "INSERT INTO " + "benutzereigenschaften" + " (" + propNames + ") VALUES (" + propValues + ")";
+			logger.debug(sql.toString());
 			run.update(connection, sql);
 		} finally {
 			closeConnection(connection);
@@ -355,7 +365,7 @@ public class MySQLHelper {
 		try {
 			QueryRunner run = new QueryRunner();
 			String sql = "DELETE FROM benutzereigenschaften WHERE Titel = '_filter' AND Wert = '" + filterstring + "'";
-
+			logger.debug(sql.toString());
 			run.update(connection, sql);
 		} finally {
 			closeConnection(connection);

@@ -241,7 +241,7 @@
 						</h:commandLink>
 
 						<%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke --%>
-						<h:panelGroup>
+						<h:panelGroup rendered="#{AktuelleSchritteForm.sizeOfPreviousStepsForProblemReporting > 0}">
 							<jd:hideableController for="korrektur" id="korrekturswitcher"
 								title="#{msgs.korrekturmeldungAnVorherigeStationSenden}">
 								<h:graphicImage
@@ -279,7 +279,7 @@
 						</h:panelGroup>
 
 						<%-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke --%>
-						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.prioritaet>9}">
+						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.prioritaet>9 && AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
 							<jd:hideableController for="solution" id="solutionswitcher"
 								title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">
 								<h:graphicImage

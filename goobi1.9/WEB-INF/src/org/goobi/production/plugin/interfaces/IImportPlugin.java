@@ -74,7 +74,7 @@ public interface IImportPlugin extends IPlugin {
 
 	public void deleteFiles(List<String> selectedFilenames);	
 	
-	public List<DocstructElement> getCurrentDocStructs();
+	public List<? extends DocstructElement> getCurrentDocStructs();
 	
 	public String deleteDocstruct();
 	

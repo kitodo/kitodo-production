@@ -91,23 +91,38 @@ public class MetadatenVerifizierung {
 			Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
 			try {
 				if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
-					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
-							+ identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
-							+ logical.getType().getNameByLanguage(metadataLanguage) + Helper.getTranslation("MetadataInvalidCharacter"));
+					List<String> parameter = new ArrayList<String>();
+					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
+					parameter.add(logical.getType().getNameByLanguage(metadataLanguage));
+					
+					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
+					
+//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+//							+ identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
+//							+ logical.getType().getNameByLanguage(metadataLanguage) + Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
 				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
-					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
-							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
-							+ firstChild.getType().getName());
+					List<String> parameter = new ArrayList<String>();
+					parameter.add(identifierTopStruct.getType().getName());
+					parameter.add(logical.getType().getName());
+					parameter.add(firstChild.getType().getName());
+					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierSame", parameter));
+//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
+//							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
+//							+ firstChild.getType().getName());
 					ergebnis = false;
 				}
 				if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
-					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierFirstChild.getType().getName()
-							+ " in DocStruct " + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
+					List<String> parameter = new ArrayList<String>();
+					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
+					parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
+					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
+//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierFirstChild.getType().getName()
+//							+ " in DocStruct " + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 			} catch (Exception e) {
@@ -157,7 +172,7 @@ public class MetadatenVerifizierung {
 		if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
 			for (Iterator<String> iter = seitenOhneDocstructs.iterator(); iter.hasNext();) {
 				String seite = iter.next();
-				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationPage"), seite);
+				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationPages"), seite);
 			}
 			ergebnis = false;
 		}
@@ -289,6 +304,7 @@ public class MetadatenVerifizierung {
 				real = ll.size();
 
 				if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
+				
 					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
 							+ Helper.getTranslation("MetadataIsEmpty"));
 				}

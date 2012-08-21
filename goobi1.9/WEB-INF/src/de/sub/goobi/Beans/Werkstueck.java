@@ -46,6 +46,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	private Integer id;
 	private Prozess prozess;
 	private Set<Werkstueckeigenschaft> eigenschaften;
+	@SuppressWarnings("deprecation")
 	private DisplayPropertyList displayProperties;
 
 	private boolean panelAusgeklappt = true;
@@ -152,6 +153,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 * 
 	 * @return instance of {@link DisplayPropertyList}
 	 */
+	@SuppressWarnings("deprecation")
 	public DisplayPropertyList getDisplayProperties() {
 		if (this.displayProperties == null) {
 			this.displayProperties = new DisplayPropertyList(this);

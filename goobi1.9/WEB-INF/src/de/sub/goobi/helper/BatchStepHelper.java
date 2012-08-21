@@ -501,14 +501,14 @@ public class BatchStepHelper {
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
 				Schritteigenschaft se = new Schritteigenschaft();
-				
 
 				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
 				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
 				se.setType(PropertyType.messageError);
 				se.setCreationDate(myDate);
 				se.setSchritt(temp);
-				String message =  Helper.getTranslation("KorrekturFuer")+ " " + temp.getTitel() + ": " +  this.problemMessage + " (" + ben.getNachVorname() + ")";
+				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
+						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess().setWikifield(
 						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "error", message));
 
@@ -653,9 +653,9 @@ public class BatchStepHelper {
 					this.stepDAO.save(step);
 				}
 			}
-			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " +  this.solutionMessage + " (" + ben.getNachVorname() + ")";
-			this.currentStep.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", message));
+			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
+					+ ben.getNachVorname() + ")";
+			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", message));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -719,29 +719,33 @@ public class BatchStepHelper {
 	}
 
 	public void addToWikiField() {
-		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "user", message));
-		this.addToWikiField = "";
-		try {
-			this.pdao.save(this.currentStep.getProzess());
-		} catch (DAOException e) {
-			logger.error(e);
-		}
-	}
-
-	public void addToWikiFieldForAll() {
-		Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-		for (Schritt s : this.steps) {
-			s.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(s.getProzess().getWikifield(), "user", message));
+		if (addToWikiField != null && addToWikiField.length() > 0) {
+			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "user", message));
+			this.addToWikiField = "";
 			try {
-				this.pdao.save(s.getProzess());
+				this.pdao.save(this.currentStep.getProzess());
 			} catch (DAOException e) {
 				logger.error(e);
 			}
 		}
-		this.addToWikiField = "";
+	}
+
+	public void addToWikiFieldForAll() {
+		if (addToWikiField != null && addToWikiField.length() > 0) {
+			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
+			for (Schritt s : this.steps) {
+				s.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(s.getProzess().getWikifield(), "user", message));
+				try {
+					this.pdao.save(s.getProzess());
+				} catch (DAOException e) {
+					logger.error(e);
+				}
+			}
+			this.addToWikiField = "";
+		}
 	}
 
 	/*
@@ -762,9 +766,9 @@ public class BatchStepHelper {
 			if (step.getAllScripts().containsKey(this.script)) {
 				StepObject so = StepManager.getStepById(step.getId());
 				String scriptPath = step.getAllScripts().get(this.script);
-				
-					new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, scriptPath, false);
-				
+
+				new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, scriptPath, false);
+
 			}
 		}
 
@@ -816,7 +820,7 @@ public class BatchStepHelper {
 
 			if (s.isTypImagesSchreiben()) {
 				try {
-//					s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
+					// s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
 					HistoryAnalyserJob.updateHistory(s.getProzess());
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("Error while calculation of storage and images", e);

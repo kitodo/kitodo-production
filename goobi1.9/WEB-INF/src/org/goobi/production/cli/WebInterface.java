@@ -73,13 +73,20 @@ public class WebInterface extends HttpServlet {
 			String password = "";
 			try {
 				ip = req.getRemoteHost();
+				if (ip.startsWith("127.0.0.1")) {
+					ip = req.getHeader("x-forwarded-for");
+					if (ip == null) {
+						ip = "127.0.0.1";
+					}
+				}
+				
 				Map<String, String[]> map = req.getParameterMap();
 				String[] pwMap = map.get("token");
 				password = pwMap[0];
 				// password = req.getParameterMap().get("token")[0];
 			} catch (Exception e) {
 				resp.setContentType("");
-				generateAnswer(resp, "Internal error", "Missing credentials");
+				generateAnswer(resp, 401, "Internal error", "Missing credentials");
 				return;
 
 			}
@@ -87,19 +94,19 @@ public class WebInterface extends HttpServlet {
 			Map<String, String[]> parameter = req.getParameterMap();
 			// command
 			if (parameter.size() == 0) {
-				generateAnswer(resp, "Empty request", "no parameters given");
+				generateAnswer(resp, 400,"Empty request", "no parameters given");
 				return;
 			}
 			if (parameter.get("command") == null) {
 				// error, no command found
-				generateAnswer(resp, "Empty command", "no command given");
+				generateAnswer(resp, 400, "Empty command", "no command given");
 				return;
 			}
 
 			this.command = parameter.get("command")[0];
 			if (this.command == null) {
 				// error, no command found
-				generateAnswer(resp, "Empty command", "No command given. Use help as command to get more information.");
+				generateAnswer(resp, 400,"Empty command", "No command given. Use help as command to get more information.");
 				return;
 			}
 			logger.debug("command: " + this.command);
@@ -108,7 +115,7 @@ public class WebInterface extends HttpServlet {
 			List<String> allowedCommandos = WebInterfaceConfig.getCredencials(ip, password);
 			if (!allowedCommandos.contains(this.command)) {
 				// error, no command found
-				generateAnswer(resp, "command not allowed", "command " + this.command + " not allowed for your IP (" + ip + ")");
+				generateAnswer(resp, 401, "command not allowed", "command " + this.command + " not allowed for your IP (" + ip + ")");
 				return;
 			}
 
@@ -124,9 +131,9 @@ public class WebInterface extends HttpServlet {
 			// }
 
 			// get correct plugin from list
-			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPlugin(PluginType.Command, this.command);
+			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginById(PluginType.Command, this.command);
 			if (myCommandPlugin == null) {
-				generateAnswer(resp, "invalid command", "command not found in list of command plugins");
+				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;
 			}
 			// System.out.println(myCommandPlugin.getTitle() + " -> " + myCommandPlugin.getId());
@@ -155,11 +162,11 @@ public class WebInterface extends HttpServlet {
 				myCommandPlugin.setHttpResponse(resp);
 			}
 			cr = myCommandPlugin.execute();
-			generateAnswer(resp, cr.getTitle(), cr.getMessage());
+			generateAnswer(resp, cr.getStatus(), cr.getTitle(), cr.getMessage());
 			return;
 
 		} else {
-			generateAnswer(resp, "web api deactivated", "web api not configured");
+			generateAnswer(resp, 404, "web api deactivated", "web api not configured");
 		}
 	}
 
@@ -175,14 +182,15 @@ public class WebInterface extends HttpServlet {
 			ICommandPlugin icp = (ICommandPlugin) iPlugin;
 			allHelp += "<h4>" + icp.help().getTitle() + "</h4>" + icp.help().getMessage() + "<br/><br/>";
 		}
-		generateAnswer(resp, "Goobi Web API Help", allHelp);
+		generateAnswer(resp, 200, "Goobi Web API Help", allHelp);
 	}
 
-	private void generateAnswer(HttpServletResponse resp, String title, String message) throws IOException {
-		generateAnswer(resp, new CommandResponse(title, message));
+	private void generateAnswer(HttpServletResponse resp, int status, String title, String message) throws IOException {
+		generateAnswer(resp, new CommandResponse(status, title, message));
 	}
 
 	private void generateAnswer(HttpServletResponse resp, CommandResponse cr) throws IOException {
+		resp.setStatus(cr.getStatus());
 		String answer = "";
 		answer += "<html><head></head><body>";
 		answer += "<h3>";

@@ -20,35 +20,32 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 
 /**
- * The source for this code was found at the web address
- * http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1
- * and changed by retaining the class name of the class which was used to 
- * instantiate the current instance of PaginatingCriteria
+ * The source for this code was found at the web address http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 and
+ * changed by retaining the class name of the class which was used to instantiate the current instance of PaginatingCriteria
  * 
  * 
  * Implementation of Criteria specifically for paginated searches.
-
- * When used with HibernatePaginatedList the count() method produces 
- * SELECT count(*) SQL for search to query total number of elements.
  * 
-
-
+ * When used with HibernatePaginatedList the count() method produces SELECT count(*) SQL for search to query total number of elements.
+ * 
+ * 
+ * 
  * 
  * @see com.sobyteme.pagination.HibernatePaginatedList
  * @see org.hibernate.Criteria
  * @see org.hibernate.CriteriaImpl
  * 
  * @author Steve
- *
+ * 
  */
-public class PaginatingCriteria implements Criteria, Serializable{	
+public class PaginatingCriteria implements Criteria, Serializable {
 	private static final long serialVersionUID = 5298336852980154554L;
 	// Criteria to be used for results.
 	private Criteria criteria;
 	// Criteria to be used for count.
 	private Criteria clone;
 	private String myClassName;
-	
+
 	/**
 	 * Constructor. Create 'real' Criteria and clone Criteria to do row count.
 	 * 
@@ -62,7 +59,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 		this.clone.setProjection(Projections.rowCount());
 		this.myClassName = clazz.getName();
 	}
-	
+
 	/**
 	 * Used internally.
 	 * 
@@ -95,6 +92,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 
 	/**
 	 * Adds Criterion to both the internal Criteria instances.
+	 * 
 	 * @param criterion
 	 * @return Criteria
 	 * @see Criteria#add(org.hibernate.criterion.Criterion)
@@ -122,8 +120,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#setFetchMode(java.lang.String, org.hibernate.FetchMode)
 	 */
 	@Override
-	public Criteria setFetchMode(String associationPath, FetchMode mode) 
-            throws HibernateException {
+	public Criteria setFetchMode(String associationPath, FetchMode mode) throws HibernateException {
 		this.clone.setFetchMode(associationPath, mode);
 		return this.criteria.setFetchMode(associationPath, mode);
 	}
@@ -157,12 +154,8 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Criteria createAlias(String associationPath, String alias) 
-            throws HibernateException {
-		return new PaginatingCriteria(
-                    this.criteria.createAlias(associationPath, alias), 
-                    this.clone.createAlias(associationPath, alias)
-                );
+	public Criteria createAlias(String associationPath, String alias) throws HibernateException {
+		return new PaginatingCriteria(this.criteria.createAlias(associationPath, alias), this.clone.createAlias(associationPath, alias));
 	}
 
 	/**
@@ -174,10 +167,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria createAlias(String arg0, String arg1, int arg2) throws HibernateException {
-	    return new PaginatingCriteria(
-                this.criteria.createAlias(arg0, arg1, arg2), 
-                this.clone.createAlias(arg0, arg1, arg2)
-            );
+		return new PaginatingCriteria(this.criteria.createAlias(arg0, arg1, arg2), this.clone.createAlias(arg0, arg1, arg2));
 	}
 
 	/**
@@ -187,10 +177,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria createCriteria(String associationPath) throws HibernateException {
-	    return new PaginatingCriteria(
-                this.criteria.createCriteria(associationPath), 
-                this.clone.createCriteria(associationPath)
-            );
+		return new PaginatingCriteria(this.criteria.createCriteria(associationPath), this.clone.createCriteria(associationPath));
 	}
 
 	/**
@@ -201,10 +188,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria createCriteria(String arg0, int arg1) throws HibernateException {
-	    return new PaginatingCriteria(
-                this.criteria.createCriteria(arg0, arg1), 
-                this.clone.createCriteria(arg0, arg1)
-            );
+		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1), this.clone.createCriteria(arg0, arg1));
 	}
 
 	/**
@@ -215,10 +199,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria createCriteria(String associationPath, String alias) throws HibernateException {
-	    return new PaginatingCriteria(
-                this.criteria.createCriteria(associationPath, alias), 
-                this.clone.createCriteria(associationPath, alias)
-            );
+		return new PaginatingCriteria(this.criteria.createCriteria(associationPath, alias), this.clone.createCriteria(associationPath, alias));
 	}
 
 	/**
@@ -230,10 +211,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria createCriteria(String arg0, String arg1, int arg2) throws HibernateException {
-	    return new PaginatingCriteria(
-                this.criteria.createCriteria(arg0, arg1, arg2), 
-                this.clone.createCriteria(arg0, arg1, arg2)
-            );
+		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1, arg2), this.clone.createCriteria(arg0, arg1, arg2));
 	}
 
 	/**
@@ -243,10 +221,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 */
 	@Override
 	public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-	    return new PaginatingCriteria(
-                this.criteria.setResultTransformer(resultTransformer), 
-                this.clone.setResultTransformer(resultTransformer)
-            );
+		return new PaginatingCriteria(this.criteria.setResultTransformer(resultTransformer), this.clone.setResultTransformer(resultTransformer));
 	}
 
 	/**
@@ -312,6 +287,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 
 	/**
 	 * Sets a comment on both internal Criteria instances
+	 * 
 	 * @param comment
 	 * @return Criteria
 	 * @see Criteria#setComment(java.lang.String)
@@ -366,8 +342,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#scroll(org.hibernate.ScrollMode)
 	 */
 	@Override
-	public ScrollableResults scroll(ScrollMode scrollMode) 
-            throws HibernateException {
+	public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
 		return this.criteria.scroll(scrollMode);
 	}
 
@@ -380,7 +355,7 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	public Object uniqueResult() throws HibernateException {
 		return this.criteria.uniqueResult();
 	}
-	
+
 	/**
 	 * Gets the row count applicable for this PaginatingCriteria.
 	 * 
@@ -390,16 +365,17 @@ public class PaginatingCriteria implements Criteria, Serializable{
 	 * @see Criteria#uniqueResult()
 	 */
 	public Integer count() throws HibernateException {
-		return ((Long) this.clone.uniqueResult()).intValue();
+		Long ur = (Long) this.clone.uniqueResult();
+		return new Integer(ur.intValue());
+		// return ((Long) this.clone.uniqueResult()).intValue();
 	}
-	
-	
+
 	/**
 	 * Returns the class name of the class returned by criteria.list()
 	 * 
 	 * @return String
 	 */
-	public String getClassName(){
+	public String getClassName() {
 		return this.myClassName;
 	}
 

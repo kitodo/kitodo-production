@@ -42,10 +42,13 @@ public class StepObject {
 	private boolean typAutomatisch = false;
 	private boolean typExport = false;
 	private int processId;
+	private boolean typeReadAcces = false;
+	private boolean typeWriteAcces = false;
+	private boolean typeMetadataAccess = false;
 	
 	
 	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt, Date bearbeitungsbeginn,
-			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId) {
+			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId, boolean readAccess, boolean writeAccess, boolean metadataAccess) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -58,7 +61,11 @@ public class StepObject {
 		this.editType = editType;
 		this.typExport = typExport;
 		this.typAutomatisch = typAutomatisch;
-		this.setProcessId(processId);
+		this.processId =processId;
+		this.setTypeReadAcces(readAccess);
+		this.typeWriteAcces = writeAccess;
+		this.typeMetadataAccess = metadataAccess;
+		
 	}
 
 	public int getId() {
@@ -157,6 +164,27 @@ public class StepObject {
 		this.typExport = typExport;
 	}
 
+	public boolean isTypeWriteAcces() {
+		return this.typeWriteAcces;
+	}
 
+	public void setTypeWriteAcces(boolean typeWriteAcces) {
+		this.typeWriteAcces = typeWriteAcces;
+	}
+	public boolean isTypeMetadataAccess() {
+		return this.typeMetadataAccess;
+	}
 
+	public void setTypeMetadataAccess(boolean typeMetadataAccess) {
+		this.typeMetadataAccess = typeMetadataAccess;
+	}
+
+	public boolean isTypeReadAcces() {
+		return typeReadAcces;
+	}
+
+	public void setTypeReadAcces(boolean typeReadAcces) {
+		this.typeReadAcces = typeReadAcces;
+	}
+	
 }

@@ -145,40 +145,40 @@
 							<htm:td>
 								<%-- textarea --%>
 								<h:panelGroup id="prpvw15_1" rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
-									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" />
+									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}" />
 								</h:panelGroup>
 
 								<%-- numbers only --%>
 								<h:panelGroup id="prpvw15_1mnk" rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
 
-									<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}">
+									<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<f:validateLongRange minimum="0" />
 									</h:inputText>
 								</h:panelGroup>
 
 								<%--  SelectOneMenu --%>
 								<h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
-									<h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px" id="prpvw15_2_1">
+									<h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px" id="prpvw15_2_1" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<si:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 											itemValue="#{myprocess_items}" />
 									</h:selectOneMenu>
 								</h:panelGroup>
 
 								<%--  SelectManyMenu --%>
-								<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
-									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5">
+								<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}" >
+									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<si:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 											itemValue="#{myprocess_items}" />
 									</h:selectManyListbox>
 								</h:panelGroup>
 
 								<%--  Boolean --%>
-								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
-									<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" />
+								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}" >
+									<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}" />
 								</h:panelGroup>
 
 								<%--  Date  --%>
-								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
+								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}" >
 									<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.dateValue}"
 										enableManualInput="true">
 									</rich:calendar>

@@ -65,7 +65,7 @@ import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 public class ExportPdf extends ExportMets {
 
 	@Override
-	public void startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
 			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
 			SwapException, DAOException, TypeNotAllowedForParentException {
 
@@ -189,13 +189,13 @@ public class ExportPdf extends ExportMets {
 					output.close();
 				} catch (IOException e1) {
 				}
-				return;
+				return false;
 			} finally {
 				if (method != null) {
 					method.releaseConnection();
 				}
-
 			}
 		}
+		return true;
 	}
 }

@@ -433,6 +433,13 @@ a.text_head:hover {
 	empty-cells: show;
 }
 
+.Tabelle2 {
+	font-size: 12px;
+	border: none;
+	empty-cells: show;
+	font-weight: normal;
+}
+
 .TabelleHeader {
 	padding-top: 3px;
 	padding-bottom: 3px;

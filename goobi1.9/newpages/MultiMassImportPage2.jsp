@@ -119,38 +119,14 @@
 
 												<htm:hr />
 
-
-
-												<x:dataTable var="docstruct" id="docstructs" value="#{MassImportForm.docstructs}">
-													<h:column>
-														<h:selectOneMenu value="#{docstruct.docStruct}">
-															<si:selectItems value="#{MassImportForm.plugin.possibleDocstructs}" itemLabel="#{test}" itemValue="#{test}" var="test" />
-														</h:selectOneMenu>
-													</h:column>
-
-													<h:column>
-														<h:outputText value="#{msgs.reihenfolge}:" />
-														<h:inputText  value="#{docstruct.order}" />
-													
-													</h:column>
-
-													<h:column>
-														<h:commandLink  action="#{MassImportForm.plugin.addDocstruct}">
-														<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" />
-														
-														</h:commandLink>
-														
-													<h:commandLink action="#{MassImportForm.plugin.deleteDocstruct}" rendered="#{MassImportForm.docstructssize > 1}">
-														<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" />
-														<x:updateActionListener property="#{MassImportForm.plugin.docstruct}" value="#{docstruct}" />
-													</h:commandLink>
-													</h:column>
-
-
-												</x:dataTable>
-
-
-
+												<h:panelGroup rendered="#{MassImportForm.plugin.title == 'Multiple Manifestation Millennium Import'}">
+													<%@include file="plugins/MultipleManifestationMillenniumImport.jsp"%>
+												</h:panelGroup>
+												
+												<h:panelGroup rendered="#{MassImportForm.plugin.title == 'Soton Multivolume Import'}">
+													<%@include file="plugins/SotonImport.jsp"%>
+												</h:panelGroup>
+												
 											</htm:td>
 										</htm:tr>
 

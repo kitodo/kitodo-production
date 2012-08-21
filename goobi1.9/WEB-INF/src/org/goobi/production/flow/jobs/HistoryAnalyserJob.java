@@ -415,7 +415,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	/***************************************************************************
 	 * updateHistoryForAllProcesses
 	 **************************************************************************/
-	@SuppressWarnings("deprecation")
 	public void updateHistoryForAllProcesses() {
 			logger.info("start history updating for all processes");
 			try {

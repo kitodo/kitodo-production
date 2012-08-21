@@ -70,7 +70,6 @@ import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
-// TODO FIXME alle Meldungen durch  messages-Meldungen ersetzen
 public class MassImportForm {
 	private static final Logger logger = Logger.getLogger(MassImportForm.class);
 	private Prozess template;
@@ -112,11 +111,13 @@ public class MassImportForm {
 	public String Prepare() {
 		if (this.template.getContainsUnreachableSteps()) {
 			if (this.template.getSchritteList().size() == 0) {
-				Helper.setFehlerMeldung("No steps associated to workflow");
+				Helper.setFehlerMeldung("noStepsInWorkflow");
 			}
 			for (Schritt s : this.template.getSchritteList()) {
 				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
-					Helper.setFehlerMeldung("No user associated for: ", s.getTitel());
+					List<String> param = new ArrayList<String>();
+					param.add(s.getTitel());
+					Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
 				}
 			}
 			return "";
@@ -203,6 +204,10 @@ public class MassImportForm {
 
 	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
+		if (StringUtils.isEmpty(currentPlugin)) {
+			Helper.setFehlerMeldung("missingPlugin");
+			return "";
+		}
 		if (testForData()) {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Integer batchId = null;
@@ -285,7 +290,11 @@ public class MassImportForm {
 						this.processList.add(p);
 					}
 				} else {
-					Helper.setFehlerMeldung("import failed for: " + io.getProcessTitle() + " Error message is: " + io.getErrorMessage());
+					List<String> param = new ArrayList<String>();
+					param.add(io.getProcessTitle());
+					param.add(io.getErrorMessage());
+					Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
+					// Helper.setFehlerMeldung("import failed for: " + io.getProcessTitle() + " Error message is: " + io.getErrorMessage());
 				}
 			}
 			if (answer.size() != this.processList.size()) {
@@ -316,7 +325,7 @@ public class MassImportForm {
 		OutputStream outputStream = null;
 		try {
 			if (this.uploadedFile == null) {
-				Helper.setFehlerMeldung("No file selected");
+				Helper.setFehlerMeldung("noFileSelected");
 				return;
 			}
 
@@ -343,11 +352,13 @@ public class MassImportForm {
 			}
 
 			this.importFile = new File(filename);
-
-			Helper.setMeldung("File '" + basename + "' successfully uploaded, press 'Save' now...");
+			List<String> param = new ArrayList<String>();
+			param.add(basename);
+			Helper.setMeldung(Helper.getTranslation("uploadSuccessful", param));
+			// Helper.setMeldung("File '" + basename + "' successfully uploaded, press 'Save' now...");
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
-			Helper.setFehlerMeldung("Upload failed");
+			Helper.setFehlerMeldung("uploadFailed");
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -590,8 +601,8 @@ public class MassImportForm {
 	 */
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
-		if (currentPlugin != null) {
-			this.plugin = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, this.currentPlugin);
+		if (currentPlugin != null && currentPlugin.length() > 0) {
+			this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, this.currentPlugin);
 			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
 				this.allFilenames = this.plugin.getAllFilenames();
 			}
@@ -609,6 +620,7 @@ public class MassImportForm {
 	public IImportPlugin getPlugin() {
 		return plugin;
 	}
+
 	/**
 	 * @param usablePluginsForRecords
 	 *            the usablePluginsForRecords to set
@@ -660,8 +672,8 @@ public class MassImportForm {
 			method = this.plugin.getClass().getMethod("getCurrentDocStructs");
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
-			List<DocstructElement> list = (List<DocstructElement>) o;
-			if (this.plugin != null && list != null ) {
+			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
+			if (this.plugin != null && list != null) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -683,14 +695,14 @@ public class MassImportForm {
 		if (!testForData()) {
 			Helper.setFehlerMeldung("missingData");
 			return "";
-		} 
+		}
 		java.lang.reflect.Method method;
 		try {
 			method = this.plugin.getClass().getMethod("getCurrentDocStructs");
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
-			List<DocstructElement> list = (List<DocstructElement>) o;
-			if (this.plugin != null && list != null ) {
+			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
+			if (this.plugin != null && list != null) {
 				return "MultiMassImportPage2";
 			}
 		} catch (Exception e) {
@@ -749,24 +761,27 @@ public class MassImportForm {
 		}
 		return "";
 	}
-	
-	public List<DocstructElement> getDocstructs() {
-	java.lang.reflect.Method method;
-	try {
-		method = this.plugin.getClass().getMethod("getCurrentDocStructs");
-		Object o = method.invoke(this.plugin);
-		@SuppressWarnings("unchecked")
-		List<DocstructElement> list = (List<DocstructElement>) o;
-		if (this.plugin != null && list != null ) {
-			return list;
+
+	public List<? extends DocstructElement> getDocstructs() {
+		java.lang.reflect.Method method;
+		try {
+			method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+			Object o = method.invoke(this.plugin);
+			@SuppressWarnings("unchecked")
+			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
+			if (this.plugin != null && list != null) {
+				return list;
+			}
+		} catch (Exception e) {
 		}
-	} catch (Exception e) {
-	}
 		return new ArrayList<DocstructElement>();
-	} 
-	
+	}
+
 	public int getDocstructssize() {
 		return getDocstructs().size();
 	}
 
+	public String getInclude() {
+		return "plugins/" + plugin.getId() + ".jsp";
+	}
 }

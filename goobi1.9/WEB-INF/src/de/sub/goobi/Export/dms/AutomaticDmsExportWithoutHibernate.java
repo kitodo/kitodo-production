@@ -99,7 +99,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	 */
 	
 	@Override
-	public void startExport(ProcessObject process) throws DAOException, IOException, PreferencesException, WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
+	public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException, WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 	
 		this.project =ProjectManager.getProjectById(process.getProjekteID());
@@ -138,7 +138,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
-			return;
+			return false;
 		}
 
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
@@ -151,7 +151,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierungWithoutHibernate mv = new MetadatenVerifizierungWithoutHibernate();
 			if (!mv.validate(gdzfile, this.myPrefs, process.getId(), process.getTitle())) {
-				throw new InterruptedException("invalid data");
+				return false;
 
 			}
 		}
@@ -173,19 +173,19 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			/* alte Import-Ordner löschen */
 			if (!Helper.deleteDir(benutzerHome)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Import folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Success-Ordner löschen */
 			File successFile = new File(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
 			if (!Helper.deleteDir(successFile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Success folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Error-Ordner löschen */
 			File errorfile = new File(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
 			if (!Helper.deleteDir(errorfile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Error folder could not be cleared");
-				return;
+				return false;
 			}
 
 			if (!benutzerHome.exists()) {
@@ -206,7 +206,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
-			return;
+			return false;
 		}
 
 		/*
@@ -243,7 +243,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			// return ;
 		}
 	
-		return;
+		return true;
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 		// download sources
 		File sources = new File(fi.getSourceDirectory());
-		if (sources.exists()) {
+		if (sources.exists() && sources.list().length > 0) {
 			File destination = new File(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
@@ -294,7 +294,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		if (ocr.exists()) {
 			File[] folder = ocr.listFiles();
 			for (File dir : folder) {
-				if (dir.isDirectory()) {
+				if (dir.isDirectory() && dir.list().length > 0) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
@@ -389,7 +389,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * -------------------------------- jetzt die Ausgangsordner in die
 		 * Zielordner kopieren --------------------------------
 		 */
-		if (tifOrdner.exists()) {
+		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
 			File zielTif = new File(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */

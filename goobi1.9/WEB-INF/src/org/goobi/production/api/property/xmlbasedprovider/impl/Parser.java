@@ -45,7 +45,7 @@ import de.sub.goobi.helper.enums.PropertyType;
  * 
  *******************************************************************************/
 
-
+@Deprecated
 public class Parser {
 	// Strings used in xml
 	private static final String PROPERTY = "property";

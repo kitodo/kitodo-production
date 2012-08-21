@@ -48,7 +48,6 @@ public class SpracheForm {
 	   }
 //      locale = Locale.GERMANY;
       FacesContext.getCurrentInstance().getViewRoot().setLocale(this.locale);
-      Helper.loadLanguageBundle();
    }
 
    
@@ -79,7 +78,6 @@ public class SpracheForm {
 		}
 		
       FacesContext.getCurrentInstance().getViewRoot().setLocale(this.locale);
-      Helper.loadLanguageBundle();
       return Helper.getRequestParameter("ziel");
    }
 

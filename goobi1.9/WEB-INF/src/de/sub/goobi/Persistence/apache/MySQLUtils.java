@@ -252,8 +252,11 @@ public class MySQLUtils {
 			int editType = rs.getInt("edittype");
 			boolean typExport = rs.getBoolean("typExportDMS");
 			boolean typAutomatisch = rs.getBoolean("typAutomatisch");
+			boolean readAccess = rs.getBoolean("typImagesLesen");
+			boolean writeAccess = rs.getBoolean("typImagesSchreiben");
+			boolean metadataAccess = rs.getBoolean("typMetadaten");
 			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn, bearbeitungsende,
-					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId);
+					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess);
 		}
 
 		return so;

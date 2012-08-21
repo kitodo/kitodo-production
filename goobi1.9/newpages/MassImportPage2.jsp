@@ -51,7 +51,7 @@
 									</htm:h3>
 
 									<%-- globale Warn- und Fehlermeldungen --%>
-									<h:messages id="id8" globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+									<h:messages id="id8" globalOnly="false" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
 									<%-- Box für die Bearbeitung der Details --%>
 									<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
@@ -79,19 +79,19 @@
 
 													<h:column>
 														<h:panelGroup id="prpvw15_1" rendered="#{property.type.name == 'text'}">
-															<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{property.value}" />
+															<h:inputText id="inputText" style="width: 500px;margin-right:15px" value="#{property.value}" required="#{property.required}"  />
 														</h:panelGroup>
 
 														<%-- numbers only --%>
 														<h:panelGroup id="prpvw15_1m" rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
-														<h:inputText id="Number" style="width: 500px;margin-right:15px" value="#{property.value}">
+														<h:inputText id="number" style="width: 500px;margin-right:15px" value="#{property.value}"  required="#{property.required}" >
 																<f:validateLongRange minimum="0" />
 															</h:inputText>
 														</h:panelGroup>
 
 														<%--  SelectOneMenu --%>
 														<h:panelGroup id="prpvw15_2" rendered="#{(property.type.name == 'list')}">
-															<h:selectOneMenu value="#{property.value}" id="prpvw15_2_1" style="width: 500px;margin-right:15px">
+															<h:selectOneMenu value="#{property.value}" id="selectMenu" style="width: 500px;margin-right:15px"  required="#{property.required}" >
 																<si:selectItems id="prpvw15_2_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
 																	itemValue="#{propertys}" />
 															</h:selectOneMenu>
@@ -99,21 +99,21 @@
 
 														<%--  SelectManyMenu --%>
 														<h:panelGroup id="prpvw15_3" rendered="#{(property.type.name == 'listmultiselect')}">
-															<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{property.valueList}"
-																 size="5">
+															<h:selectManyListbox id="selectManyMenu" style="width: 500px;margin-right:15px" value="#{property.valueList}"
+																 size="5" required="#{property.required}">
 																<si:selectItems id="prpvw15_3_2" value="#{property.possibleValues}" var="propertys" itemLabel="#{propertys}"
 																	itemValue="#{propertys}" />
 															</h:selectManyListbox>
 														</h:panelGroup>
 
 														<%--  Boolean --%>
-														<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}">
-															<h:selectBooleanCheckbox value="#{property.booleanValue}"/>		
+														<h:panelGroup id="prpvw15_4" rendered="#{(property.type.name == 'boolean')}"  >
+															<h:selectBooleanCheckbox id="checkbox" value="#{property.booleanValue}" required="#{property.required}"/>		
 														</h:panelGroup>
 
 														<%--  Date  --%>
-														<h:panelGroup id="prpvw15_5" rendered="#{(property.type.name == 'date')}">
-															<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true">
+														<h:panelGroup id="prpvw15_5" rendered="#{(property.type.name == 'date')}" >
+															<rich:calendar id="calendar" datePattern="dd.MM.yyyy" value="#{property.value}" enableManualInput="true"  required="#{property.required}">
 															</rich:calendar>
 														</h:panelGroup>
 													</h:column>

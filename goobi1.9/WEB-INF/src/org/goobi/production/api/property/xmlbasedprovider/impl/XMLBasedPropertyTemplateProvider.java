@@ -41,6 +41,7 @@ import de.sub.goobi.config.ConfigMain;
  * @author Igor Toker
  * 
  ***************************************************************************************************/
+@Deprecated
 public class XMLBasedPropertyTemplateProvider implements IPropertyTemplatesProvider {
 
 	private static final String PROJECT = "project";

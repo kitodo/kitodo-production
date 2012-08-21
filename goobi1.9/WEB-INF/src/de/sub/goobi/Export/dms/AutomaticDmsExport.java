@@ -93,7 +93,7 @@ public class AutomaticDmsExport extends ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@Override
-	public void startExport(Prozess myProzess) throws IOException, InterruptedException, WriteException, PreferencesException,
+	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException, WriteException, PreferencesException,
 			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		new ProzessDAO().refresh(myProzess);
@@ -102,8 +102,7 @@ public class AutomaticDmsExport extends ExportMets {
 		String atsPpnBand = myProzess.getTitel();
 
 		/*
-		 * -------------------------------- Dokument einlesen
-		 * --------------------------------
+		 * -------------------------------- Dokument einlesen --------------------------------
 		 */
 		Fileformat gdzfile;
 		Fileformat newfile;
@@ -129,26 +128,24 @@ public class AutomaticDmsExport extends ExportMets {
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
-			return;
+			return false;
 		}
 
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
 		/*
-		 * -------------------------------- Metadaten validieren
-		 * --------------------------------
+		 * -------------------------------- Metadaten validieren --------------------------------
 		 */
 
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierung mv = new MetadatenVerifizierung();
 			if (!mv.validate(gdzfile, this.myPrefs, myProzess)) {
-				return;
+				return false;
 			}
 		}
 
 		/*
-		 * -------------------------------- Speicherort vorbereiten und
-		 * downloaden --------------------------------
+		 * -------------------------------- Speicherort vorbereiten und downloaden --------------------------------
 		 */
 		String zielVerzeichnis;
 		File benutzerHome;
@@ -163,19 +160,19 @@ public class AutomaticDmsExport extends ExportMets {
 			/* alte Import-Ordner löschen */
 			if (!Helper.deleteDir(benutzerHome)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Import folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Success-Ordner löschen */
 			File successFile = new File(myProzess.getProjekt().getDmsImportSuccessPath() + File.separator + myProzess.getTitel());
 			if (!Helper.deleteDir(successFile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Success folder could not be cleared");
-				return;
+				return false;
 			}
 			/* alte Error-Ordner löschen */
 			File errorfile = new File(myProzess.getProjekt().getDmsImportErrorPath() + File.separator + myProzess.getTitel());
 			if (!Helper.deleteDir(errorfile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), "Error folder could not be cleared");
-				return;
+				return false;
 			}
 
 			if (!benutzerHome.exists()) {
@@ -184,8 +181,7 @@ public class AutomaticDmsExport extends ExportMets {
 		}
 
 		/*
-		 * -------------------------------- der eigentliche Download der Images
-		 * --------------------------------
+		 * -------------------------------- der eigentliche Download der Images --------------------------------
 		 */
 		try {
 			if (this.exportWithImages) {
@@ -196,14 +192,12 @@ public class AutomaticDmsExport extends ExportMets {
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + myProzess.getTitel(), e);
-			return;
+			return false;
 		}
 
 		/*
-		 * -------------------------------- zum Schluss Datei an gewünschten Ort
-		 * exportieren entweder direkt in den Import-Ordner oder ins
-		 * Benutzerhome anschliessend den Import-Thread starten
-		 * --------------------------------
+		 * -------------------------------- zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
+		 * Benutzerhome anschliessend den Import-Thread starten --------------------------------
 		 */
 		if (myProzess.getProjekt().isUseDmsImport()) {
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
@@ -266,12 +260,11 @@ public class AutomaticDmsExport extends ExportMets {
 		// Helper.setMeldung(null, myProzess.getTitel() + ": ",
 		// "Export finished");
 		// }
-		return;
+		return true;
 	}
 
 	/**
-	 * run through all metadata and children of given docstruct to trim the
-	 * strings calls itself recursively
+	 * run through all metadata and children of given docstruct to trim the strings calls itself recursively
 	 */
 	private void trimAllMetadata(DocStruct inStruct) {
 		/* trimm all metadata values */
@@ -299,25 +292,23 @@ public class AutomaticDmsExport extends ExportMets {
 
 		// download sources
 		File sources = new File(myProzess.getSourceDirectory());
-		if (sources.exists()) {
-			File destination = new File(benutzerHome + File.separator
-					+ atsPpnBand + "_src");
+		if (sources.exists() && sources.list().length > 0) {
+			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
 			}
 			File[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator
-						+ dateien[i].getName());
+				File meinZiel = new File(destination + File.separator + dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);
 			}
 		}
-		
+
 		File ocr = new File(myProzess.getOcrDirectory());
 		if (ocr.exists()) {
 			File[] folder = ocr.listFiles();
 			for (File dir : folder) {
-				if (dir.isDirectory()) {
+				if (dir.isDirectory() && dir.list().length > 0) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
@@ -331,54 +322,51 @@ public class AutomaticDmsExport extends ExportMets {
 				}
 			}
 		}
-		
-		
-		
-//		File txtFolder = new File(myProzess.getTxtDirectory());
-//		if (txtFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = txtFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File wordFolder = new File(myProzess.getWordDirectory());
-//		if (wordFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = wordFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File pdfFolder = new File(myProzess.getPdfDirectory());
-//		if (pdfFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = pdfFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
+
+		// File txtFolder = new File(myProzess.getTxtDirectory());
+		// if (txtFolder.exists()) {
+		// File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
+		// if (!destination.exists()) {
+		// destination.mkdir();
+		// }
+		// File[] dateien = txtFolder.listFiles();
+		// for (int i = 0; i < dateien.length; i++) {
+		// File meinZiel = new File(destination + File.separator + dateien[i].getName());
+		// Helper.copyFile(dateien[i], meinZiel);
+		// }
+		// }
+		//
+		// File wordFolder = new File(myProzess.getWordDirectory());
+		// if (wordFolder.exists()) {
+		// File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
+		// if (!destination.exists()) {
+		// destination.mkdir();
+		// }
+		// File[] dateien = wordFolder.listFiles();
+		// for (int i = 0; i < dateien.length; i++) {
+		// File meinZiel = new File(destination + File.separator + dateien[i].getName());
+		// Helper.copyFile(dateien[i], meinZiel);
+		// }
+		// }
+		//
+		// File pdfFolder = new File(myProzess.getPdfDirectory());
+		// if (pdfFolder.exists()) {
+		// File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
+		// if (!destination.exists()) {
+		// destination.mkdir();
+		// }
+		// File[] dateien = pdfFolder.listFiles();
+		// for (int i = 0; i < dateien.length; i++) {
+		// File meinZiel = new File(destination + File.separator + dateien[i].getName());
+		// Helper.copyFile(dateien[i], meinZiel);
+		// }
+		// }
 	}
 
 	public void imageDownload(Prozess myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 		/*
-		 * -------------------------------- erstmal alle Filter
-		 * --------------------------------
+		 * -------------------------------- erstmal alle Filter --------------------------------
 		 */
 		// FilenameFilter filterTifDateien = new FilenameFilter() {
 		// public boolean accept(File dir, String name) {
@@ -387,17 +375,15 @@ public class AutomaticDmsExport extends ExportMets {
 		// };
 
 		/*
-		 * -------------------------------- dann den Ausgangspfad ermitteln
-		 * --------------------------------
+		 * -------------------------------- dann den Ausgangspfad ermitteln --------------------------------
 		 */
 		Helper help = new Helper();
 		File tifOrdner = new File(myProzess.getImagesTifDirectory());
 
 		/*
-		 * -------------------------------- jetzt die Ausgangsordner in die
-		 * Zielordner kopieren --------------------------------
+		 * -------------------------------- jetzt die Ausgangsordner in die Zielordner kopieren --------------------------------
 		 */
-		if (tifOrdner.exists()) {
+		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
 			File zielTif = new File(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
@@ -407,8 +393,7 @@ public class AutomaticDmsExport extends ExportMets {
 				}
 			} else {
 				/*
-				 * wenn kein Agora-Import, dann den Ordner mit
-				 * Benutzerberechtigung neu anlegen
+				 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {

@@ -72,10 +72,15 @@ public class BatchForm extends BasisForm {
 	private String batchfilter;
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
-	private int MAX_HITS = 100;
+	
 	private ProzessDAO dao = new ProzessDAO();
 	private String modusBearbeiten = "";
 
+	private int getBatchMaxSize(){
+		int batchsize =ConfigMain.getIntParameter("batchMaxSize",100);
+		return batchsize;
+	}
+	
 	public List<Prozess> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
@@ -121,7 +126,7 @@ public class BatchForm extends BasisForm {
 	public void loadProcessData() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.setMaxResults(this.MAX_HITS);
+		crit.setMaxResults(getBatchMaxSize());
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 		List<Integer> ids = new ArrayList<Integer>();
 		for (String s : this.selectedBatches) {
@@ -149,7 +154,7 @@ public class BatchForm extends BasisForm {
 		Criteria crit = this.myFilteredDataSource.getCriteria();
 		crit.addOrder(Order.desc("erstellungsdatum"));
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-		crit.setMaxResults(this.MAX_HITS);
+		crit.setMaxResults(getBatchMaxSize());
 		try {
 			this.currentProcesses = crit.list();
 		} catch (HibernateException e) {
@@ -168,7 +173,7 @@ public class BatchForm extends BasisForm {
 		if (number != null) {
 			Session session = Helper.getHibernateSession();
 			Query query = session.createQuery("select distinct batchID from Prozess order by batchID desc");
-			query.setMaxResults(this.MAX_HITS);
+			query.setMaxResults(getBatchMaxSize());
 
 			List<Integer> allBatches = query.list();
 			this.currentBatches = new ArrayList<Batch>();
@@ -180,7 +185,7 @@ public class BatchForm extends BasisForm {
 		} else {
 			Session session = Helper.getHibernateSession();
 			Query query = session.createQuery("select distinct batchID from Prozess order by batchID desc");
-			query.setMaxResults(this.MAX_HITS);
+			query.setMaxResults(getBatchMaxSize());
 			List<Integer> ids = query.list();
 			this.currentBatches = new ArrayList<Batch>();
 			for (Integer in : ids) {
@@ -255,13 +260,13 @@ public class BatchForm extends BasisForm {
 		} else if (this.selectedBatches.size() == 1) {
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Prozess.class);
-			crit.setMaxResults(this.MAX_HITS);
+			crit.setMaxResults(getBatchMaxSize());
 			crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 //			List<Integer> ids = new ArrayList<Integer>();
 			crit.add(Restrictions.eq("batchID", new Integer(this.selectedBatches.get(0))));
 			docket = crit.list();
 		} else {
-			Helper.setFehlerMeldung("toḾanyBatchesSelected");
+			Helper.setFehlerMeldung("tooManyBatchesSelected");
 		}
 		if (docket.size() > 0) {
 			if (!facesContext.getResponseComplete()) {

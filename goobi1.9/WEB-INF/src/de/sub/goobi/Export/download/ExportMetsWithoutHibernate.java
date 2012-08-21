@@ -89,7 +89,7 @@ public class ExportMetsWithoutHibernate {
 	 * @throws DocStructHasNoTypeException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public void startExport(ProcessObject process) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
+	public boolean startExport(ProcessObject process) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
 			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -97,7 +97,7 @@ public class ExportMetsWithoutHibernate {
 		if (login != null) {
 			benutzerHome = login.getMyBenutzer().getHomeDir();
 		}
-		startExport(process, benutzerHome);
+		return startExport(process, benutzerHome);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class ExportMetsWithoutHibernate {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public void startExport(ProcessObject process, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
+	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
 			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
 			SwapException, DAOException, TypeNotAllowedForParentException {
 
@@ -135,7 +135,7 @@ public class ExportMetsWithoutHibernate {
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
-		writeMetsFile(process, targetFileName, gdzfile, false);
+		return writeMetsFile(process, targetFileName, gdzfile, false);
 		
 	}
 
@@ -172,7 +172,7 @@ public class ExportMetsWithoutHibernate {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@SuppressWarnings("deprecation")
-	protected void writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
+	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
@@ -188,7 +188,7 @@ public class ExportMetsWithoutHibernate {
 		DigitalDocument dd = gdzfile.getDigitalDocument();
 		if (dd.getFileSet() == null) {
 			Helper.setFehlerMeldung(process.getTitle() + ": digital document does not contain images; aborting");
-			return;
+			return false;
 		}
 
 		/*
@@ -217,7 +217,7 @@ public class ExportMetsWithoutHibernate {
 			} else {
 				Helper.setFehlerMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
 				dd = null;
-				return;
+				return false;
 			}
 		}
 
@@ -305,5 +305,6 @@ public class ExportMetsWithoutHibernate {
 			mm.write(targetFileName);
 			Helper.setMeldung(null, process.getTitle() + ": ", "Export finished");
 		}
+		return true;
 	}
 }
