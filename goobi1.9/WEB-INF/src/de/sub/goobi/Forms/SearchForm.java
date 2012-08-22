@@ -404,6 +404,7 @@ public class SearchForm {
 				.get("ProzessverwaltungForm");
 		if (form != null) {
 			form.filter = search;
+			form.setModusAnzeige("aktuell");
 			return form.FilterAlleStart();
 		}
 		return "";
