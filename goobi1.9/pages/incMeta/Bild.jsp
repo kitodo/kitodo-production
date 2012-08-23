@@ -37,7 +37,7 @@
 				<htm:tr>
 					<htm:td rendered="#{Metadaten.bildNummer != '1'}">
 						<%-- zurueck-Schaltknopf--%>
-						<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{msgs.zurueck}" immediate="true">
+						<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.zurueck}" immediate="true">
 							<f:param name="Anzahl" value="-1" />
 						</a4j:commandLink>
 						<%-- Trennzeichen --%>
@@ -46,7 +46,7 @@
 					<htm:td align="center">
 						<h:panelGroup rendered="#{Metadaten.bildNummer != '1'}">
 							<%-- erstes-Schaltknopf --%>
-							<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="1" immediate="true">
+							<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="1" immediate="true">
 								<f:param name="Anzahl" value="-#{Metadaten.bildNummer}" />
 							</a4j:commandLink>
 							<%-- Trennzeichen --%>
@@ -61,7 +61,7 @@
 								<%-- wenn Bild groesser als 3 dann vorvorherige Seiten --%>
 								<h:panelGroup rendered="#{Metadaten.bildNummer > '3'}">
 									<%-- vorvorheriges Bild --%>
-									<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer -2}" immediate="true">
+									<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer -2}" immediate="true">
 										<f:param name="Anzahl" value="-2" />
 									</a4j:commandLink>
 									<%-- Trennzeichen --%>
@@ -69,7 +69,7 @@
 								</h:panelGroup>
 
 								<%-- vorheriges Bild --%>
-								<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer -1}" immediate="true">
+								<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer -1}" immediate="true">
 									<f:param name="Anzahl" value="-1" />
 								</a4j:commandLink>
 								<%-- Trennzeichen --%>
@@ -87,7 +87,7 @@
 								<%-- Trennzeichen --%>
 								<h:outputText value=" | " />
 								<%-- naechste Seite --%>
-								<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 1}" immediate="true">
+								<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 1}" immediate="true">
 									<f:param name="Anzahl" value="1" />
 								</a4j:commandLink>
 								<%-- wenn es mindestens das vorvorvorletzte Bild ist --%>
@@ -95,7 +95,7 @@
 									<%-- Trennzeichen --%>
 									<h:outputText value=" | " />
 									<%-- Uebernaechste Seite --%>
-									<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 2}" immediate="true">
+									<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 2}" immediate="true">
 										<f:param name="Anzahl" value="2" />
 									</a4j:commandLink>
 								</h:panelGroup>
@@ -105,7 +105,7 @@
 							<%-- Trennzeichen --%>
 							<h:outputText value=" | " />
 							<%-- letztes-Schaltknopf --%>
-							<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildLetztes}" immediate="true">
+							<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildLetztes}" immediate="true">
 								<f:param name="Anzahl" value="#{Metadaten.bildLetztes}" />
 							</a4j:commandLink>
 						</h:panelGroup>
@@ -115,7 +115,7 @@
 						<%-- vorwaerts-Schaltknopf --%>
 						<%-- Trennzeichen --%>
 						<h:outputText value=" | " />
-						<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{msgs.seiteVor}" immediate="true">
+						<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.seiteVor}" immediate="true">
 							<f:param name="Anzahl" value="1" />
 						</a4j:commandLink>
 					</htm:td>
@@ -127,7 +127,7 @@
 
 		<h:panelGroup style="text-align: center">
 			<%-- Zoom --%>
-			<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildZoomMinus}" id="zoomMinus" style="margin-left: 0px;margin-right:5px">
+			<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildZoomMinus}" id="zoomMinus" style="margin-left: 0px;margin-right:5px">
 				<h:graphicImage value="/newpages/images/zoom-.gif" style="border: 0px;vertical-align:middle" />
 			</a4j:commandLink>
 
@@ -145,17 +145,17 @@
 				onkeypress="return submitEnter('cmdZoom',event)" />
 			<x:commandButton action="#{Metadaten.BildGeheZu}" id="cmdZoom" forceId="true" value="go" style="display:none" />
 
-			<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.BildZoomPlus}" id="zoomPlus" style="margin-left: 7px;margin-right:9px">
+			<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildZoomPlus}" id="zoomPlus" style="margin-left: 7px;margin-right:9px">
 				<h:graphicImage value="/newpages/images/zoom+.gif" style="border: 0px;vertical-align:middle" />
 			</a4j:commandLink>
 			<%-- // Zoom --%>
 
 			<%-- rotation --%>
-			<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.rotateLeft}" id="rotateLeft" style="margin-left: 7px;margin-right:0px">
+			<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.rotateLeft}" id="rotateLeft" style="margin-left: 7px;margin-right:0px">
 				<h:graphicImage value="/newpages/images/rotateLeft.gif" style="border: 0px;vertical-align:middle" />
 			</a4j:commandLink>
 
-			<a4j:commandLink reRender="BildArea,myBild" action="#{Metadaten.rotateRight}" id="rotateRight" style="margin-left: 0px;margin-right:9px">
+			<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.rotateRight}" id="rotateRight" style="margin-left: 0px;margin-right:9px">
 				<h:graphicImage value="/newpages/images/rotateRight.gif" style="border: 0px;vertical-align:middle" />
 			</a4j:commandLink>
 			<%-- // rotation--%>
@@ -164,7 +164,7 @@
 			<h:outputText value="#{msgs.geheZuBild}:" style="margin-left:5px;margin-right:0px;font-size: 12px" title="#{msgs.geheZuImage}" />
 			<h:inputText value="#{Metadaten.bildNummerGeheZu}" onkeypress="return submitEnter('formularBild:goButton',event)"
 				style="width:30px;border-style: solid;border-color: silver;border-width: 1px" />
-			<a4j:commandButton reRender="BildArea,myBild" value="go" id="goButton" action="#{Metadaten.BildGeheZu}" style="margin-left:5px; display:none" />
+			<a4j:commandButton reRender="BildArea,myBild,imageform" value="go" id="goButton" action="#{Metadaten.BildGeheZu}" style="margin-left:5px; display:none" />
 
 			<%-- OCR --%>
 			<a4j:commandLink reRender="BildArea,myBild" id="ocrButton" action="#{Metadaten.showOcrResult}" rendered="#{Metadaten.showOcrButton}">
@@ -205,7 +205,7 @@
 
 		<s:submitOnEvent for="cmdOrdnerWechseln" event="change" />
 	</h:selectOneMenu>
-	<a4j:commandLink id="cmdOrdnerWechseln" reRender="BildArea,myBild" action="#{Metadaten.BildBlaettern}" value="#{msgs.ordnerWechseln}"
+	<a4j:commandLink id="cmdOrdnerWechseln" reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.ordnerWechseln}"
 		style="display: none">
 		<f:param name="Anzahl" value="0" />
 	</a4j:commandLink>
