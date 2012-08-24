@@ -485,8 +485,8 @@ public class Helper implements Serializable, Observer {
 		}
 		if (parameterList != null && parameterList.size() > 0) {
 			int parameterCount = 0;
-			for (String parameter : parameterList ) {
-				value = value.replace("{"+ parameterCount + "}", parameter);
+			for (String parameter : parameterList) {
+				value = value.replace("{" + parameterCount + "}", parameter);
 				parameterCount++;
 			}
 		}
@@ -684,6 +684,18 @@ public class Helper implements Serializable, Observer {
 			} else if (name.matches(prefix + "\\.flv")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.ogg")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.docx")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.doc")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.xls")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.xlsx")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.pptx")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.ppt")) {
 				fileOk = true;
 			}
 			return fileOk;
