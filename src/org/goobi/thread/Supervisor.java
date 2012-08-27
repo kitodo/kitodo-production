@@ -31,8 +31,18 @@ public class Supervisor extends Thread {
 
 	private List<Thread> threads = new ArrayList<Thread>();
 
-	public void addChild(Thread t) {
-		threads.add(t);
+	public void addChild(Thread child) {
+		threads.add(child);
+	}
+
+	public void run() {
+		while (!threads.isEmpty()) {
+			for(Thread t: threads) {
+				if (t.getState() == Thread.State.TERMINATED) {
+					threads.remove(t);
+				}
+			}
+		}
 	}
 
 }

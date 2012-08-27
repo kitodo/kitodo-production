@@ -22,6 +22,7 @@
 
 package org.goobi.thread;
 
+import java.lang.InterruptedException;
 import java.lang.Thread;
 
 import org.junit.Test;
@@ -33,14 +34,26 @@ public class SupervisorTest {
 	@Test
 	public void canBeStarted() {
 		Supervisor sv = new Supervisor();
+
+		assertEquals("Supervisor thread should be in NEW state.", Thread.State.NEW, sv.getState());
+	}
+
+	@Test
+	public void terminatesWhenStartedWithoutChildThreads()
+	throws InterruptedException {
+		Supervisor sv = new Supervisor();
 		sv.start();
 
-		assertEquals("Supervisor thread should be in RUNNABLE state.", Thread.State.RUNNABLE, sv.getState());
+		Thread.sleep(200);
+
+		assertEquals("Supervisor thread should be in TERMINATED state.", Thread.State.TERMINATED, sv.getState());
 	}
 
 	@Test
 	public void addedChildThreadShouldRemainInNewState() {
 
+		Supervisor sv = new Supervisor();
+		
 		Thread child = new Thread() {
 			public int runCount = 0;
 			public void run() {
@@ -48,11 +61,15 @@ public class SupervisorTest {
 			}
 		};
 
-		Supervisor sv = new Supervisor();
 		sv.addChild(child);
 
 		assertEquals("Child thread should be in NEW state.", Thread.State.NEW, child.getState());
 	}
 
+	@Test
+	public void foo() {
+
+	}
+	 
 }
 
