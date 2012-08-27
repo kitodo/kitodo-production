@@ -39,6 +39,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+import de.sub.goobi.config.ConfigMain;
 import dubious.sub.goobi.helper.Page;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -67,7 +68,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	private BenutzerDAO dao = new BenutzerDAO();
 	private boolean hideInactiveUsers = true;
 	private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
-	
+
 	public String Neu() {
 		myClass = new Benutzer();
 		myClass.setVorname("");
@@ -333,6 +334,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	public void setHideInactiveUsers(boolean hideInactiveUsers) {
 		this.hideInactiveUsers = hideInactiveUsers;
+	}
+
+	public boolean getLdapUsage() {
+		return ConfigMain.getBooleanParameter("ldap_use");
 	}
 
 }

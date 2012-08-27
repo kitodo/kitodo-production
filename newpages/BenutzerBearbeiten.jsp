@@ -155,8 +155,12 @@
 												</h:panelGroup>
 
 												<%-- LdapGruppe --%>
-												<h:outputLabel for="ldapGruppe" value="#{msgs.ldapgruppe}" />
-												<h:panelGroup>
+												<h:outputLabel 
+													for="ldapGruppe"
+													value="#{msgs.ldapgruppe}"
+													rendered="#{BenutzerverwaltungForm.ldapUsage}" />
+												<h:panelGroup 
+													rendered="#{BenutzerverwaltungForm.ldapUsage}">
 													<h:selectOneMenu id="ldapGruppe"
 														style="width: 300px;margin-right:15px"
 														value="#{BenutzerverwaltungForm.ldapGruppeAuswahl}"
@@ -169,13 +173,13 @@
 													<x:message for="ldapGruppe" style="color: red"
 														detailFormat="#{msgs.keineLdapgruppeAngegeben}" />
 														
-										<h:commandLink title="#{msgs.ldapKonfigurationSchreiben}"
-											action="#{BenutzerverwaltungForm.LdapKonfigurationSchreiben}"
-											rendered="#{BenutzerverwaltungForm.myClass.id != null}" >
-											<h:graphicImage value="/newpages/images/buttons/key3.gif" />
-											<x:updateActionListener
-												property="#{BenutzerverwaltungForm.myClass}" value="#{BenutzerverwaltungForm.myClass}" />
-										</h:commandLink>	
+													<h:commandLink title="#{msgs.ldapKonfigurationSchreiben}"
+														action="#{BenutzerverwaltungForm.LdapKonfigurationSchreiben}"
+														rendered="#{BenutzerverwaltungForm.myClass.id != null}" >
+														<h:graphicImage value="/newpages/images/buttons/key3.gif" />
+														<x:updateActionListener
+															property="#{BenutzerverwaltungForm.myClass}" value="#{BenutzerverwaltungForm.myClass}" />
+													</h:commandLink>
 												</h:panelGroup>
 
 												<%-- MetadatenSprache --%>
