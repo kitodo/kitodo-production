@@ -38,8 +38,13 @@ public class Supervisor extends Thread {
 	public void run() {
 		while (!threads.isEmpty()) {
 			for(Thread t: threads) {
-				if (t.getState() == Thread.State.TERMINATED) {
-					threads.remove(t);
+				switch (t.getState()) {
+					case NEW:
+						t.start();
+						break;
+					case TERMINATED:
+						threads.remove(t);
+						break;
 				}
 			}
 		}

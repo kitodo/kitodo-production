@@ -34,7 +34,6 @@ public class SupervisorTest {
 	@Test
 	public void canBeStarted() {
 		Supervisor sv = new Supervisor();
-
 		assertEquals("Supervisor thread should be in NEW state.", Thread.State.NEW, sv.getState());
 	}
 
@@ -51,24 +50,26 @@ public class SupervisorTest {
 
 	@Test
 	public void addedChildThreadShouldRemainInNewState() {
-
 		Supervisor sv = new Supervisor();
 		
-		Thread child = new Thread() {
-			public int runCount = 0;
-			public void run() {
-				runCount++;  
-			}
-		};
-
+		Thread child = new Thread();
 		sv.addChild(child);
-
+		
 		assertEquals("Child thread should be in NEW state.", Thread.State.NEW, child.getState());
 	}
 
 	@Test
-	public void foo() {
+	public void runsChildThreads()
+	throws InterruptedException {
+		Supervisor sv = new Supervisor();
+		
+		Thread child = new Thread();
+		sv.addChild(child);
+		sv.start();
 
+		Thread.sleep(200);
+
+		assertEquals("Child thread should have been run.", Thread.State.TERMINATED, child.getState());
 	}
 	 
 }
