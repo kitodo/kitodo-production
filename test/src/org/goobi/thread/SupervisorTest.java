@@ -41,6 +41,7 @@ public class SupervisorTest {
 	public void terminatesWhenStartedWithoutChildThreads()
 	throws InterruptedException {
 		Supervisor sv = new Supervisor();
+		sv.setYieldWaitTime(100);
 		sv.start();
 
 		Thread.sleep(200);
@@ -65,6 +66,7 @@ public class SupervisorTest {
 		
 		Thread child = new Thread();
 		sv.addChild(child);
+		sv.setYieldWaitTime(100);
 		sv.start();
 
 		Thread.sleep(200);
@@ -84,6 +86,7 @@ public class SupervisorTest {
 		sv.addChild(new Thread());
 
 		sv.ifAllTerminatedRun(new Runnable() { public void run() { trigger.pull(); } } );
+		sv.setYieldWaitTime(100);
 		sv.start();
 
 		Thread.sleep(200);

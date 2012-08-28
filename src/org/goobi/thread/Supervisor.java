@@ -25,6 +25,7 @@ package org.goobi.thread;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
+import java.lang.InterruptedException;
 import java.lang.Thread;
 
 public class Supervisor extends Thread {
@@ -33,8 +34,14 @@ public class Supervisor extends Thread {
 
 	private Runnable onAllTerminated = null;
 
+	private int yieldWaitTime = 1000;
+
 	public void addChild(Thread child) {
 		threads.add(child);
+	}
+
+	public void setYieldWaitTime(int millis) {
+		yieldWaitTime = millis;
 	}
 
 	public void ifAllTerminatedRun(Runnable r) {
@@ -42,7 +49,7 @@ public class Supervisor extends Thread {
 	}
 
 	public void run() {
-		while (!threads.isEmpty()) {
+		while (true) {
 			for(Thread t: threads) {
 				switch (t.getState()) {
 					case NEW:
@@ -53,9 +60,21 @@ public class Supervisor extends Thread {
 						break;
 				}
 			}
+			if (threads.isEmpty()) {
+				if (onAllTerminated != null) {
+					onAllTerminated.run();
+				}
+				break;
+			}
+			yieldFor(yieldWaitTime);	
 		}
-		if (onAllTerminated != null) {
-			onAllTerminated.run();
+	}
+
+	private void yieldFor(int millis) {
+		try {
+			yield();
+			sleep(millis);
+		} catch (InterruptedException ire) {
 		}
 	}
 
