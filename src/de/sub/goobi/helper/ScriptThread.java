@@ -46,9 +46,6 @@ public class ScriptThread extends Thread {
 		try {
 			boolean automatic = mySchritt.isTypAutomatisch();
 			hs.executeAllScripts(mySchritt, automatic);
-			if (automatic) {
-				Helper.getHibernateSession().close();
-			}
 		} catch (SwapException e) {
 			logger.error(e);
 		} catch (DAOException e) {
