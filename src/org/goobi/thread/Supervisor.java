@@ -25,6 +25,16 @@ package org.goobi.thread;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
+/**
+ * Thread supervisor that triggers code if all child threads have terminated.
+ *
+ * The supervisor is watching a list of child threads and executes a passed
+ * Runnable object if all child threads have finished execution. It in turn
+ * starts all child threads that have not been started when the supervisor starts.
+ * 
+ * If all child threads have finished execution, the supervisor may start a given
+ * Runnable implementation and then itself ends its execution.
+ */
 public class Supervisor extends Thread {
 
 	private List<Thread> threads = new CopyOnWriteArrayList<Thread>();
@@ -33,18 +43,48 @@ public class Supervisor extends Thread {
 
 	private int yieldWaitTime = 1000;
 
+	/**
+	 * Add a child thread to the watch list.
+	 *
+	 * @param child Child thread to watch.
+	 */
 	public void addChild(Thread child) {
 		threads.add(child);
 	}
 
+	/**
+	 * Set time in milliseconds that delay the supervisor execution after it
+	 * has called yield() to enable other threads to run.
+	 *
+	 * The supervisor sleeps for this time span until it watches the list of
+	 * child threads again. Default yield wait time is 1000 milliseconds.
+	 * Setting the wait time to zero will let the supervisor thread spin
+	 * useless CPU cycles polling the child thread list.
+	 *
+	 * @param millis Yield wait time in milliseconds.
+	 */
 	public void setYieldWaitTime(int millis) {
 		yieldWaitTime = millis;
 	}
 
+	/**
+	 * Set up a Runnable implementation that gets executed when all child
+	 * threads have terminated.
+ 	 *
+	 * The passed Runnable is executed only once.
+	 * 
+	 * @param r java.lang.Runnable implememtation
+	 */
 	public void ifAllTerminatedRun(Runnable r) {
 		onAllTerminated = r;
 	}
 
+	/**
+	 * Start watching the list of child threads and execute a given Runnable
+	 * when all child threads have reached termination state.
+	 *
+	 * Child threads that have not been started yet get started here.
+	 */
 	public void run() {
 		while (true) {
 			for(Thread t: threads) {
