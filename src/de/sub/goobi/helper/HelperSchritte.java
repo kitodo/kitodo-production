@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.goobi.thread.Supervisor;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -119,22 +120,30 @@ public class HelperSchritte {
 		} catch (DAOException e) {
 		}
 
-		if (automatic) {
-			try {
-				session.close();
-			} catch (Exception e) {
-			}
-		}
 		/*
 		 * -------------------------------- zum Schluss alle automatischen Schritte nehmen und deren Automatik ausführen
 		 * --------------------------------
 		 */
-		// TODO: Don't use iterators, use for loops instead
-		for (Iterator<Schritt> iter = automatischeSchritte.iterator(); iter.hasNext();) {
-			Schritt myStep = iter.next();
-			ScriptThread myThread = new ScriptThread(myStep);
-			myThread.start();
+
+		if (!automatischeSchritte.isEmpty()) { 
+			Supervisor scriptThreadSupervisor = new Supervisor();
+
+			final Session sessionRef = session;
+			scriptThreadSupervisor.ifAllTerminatedRun(new Runnable() {
+				public void run() {
+					if (sessionRef.isOpen() && sessionRef.isDirty()) {
+						sessionRef.flush();
+					}
+				}
+			});
+
+			for (Schritt step: automatischeSchritte) {
+				scriptThreadSupervisor.addChild(new ScriptThread(step));
+			}
+
+			scriptThreadSupervisor.start();
 		}
+
 	}
 
 	/**
