@@ -125,22 +125,24 @@ public class HelperSchritte {
 		 * --------------------------------
 		 */
 
-		Supervisor scriptThreadSupervisor = new Supervisor();
+		if (!automatischeSchritte.isEmpty()) { 
+			Supervisor scriptThreadSupervisor = new Supervisor();
 
-		final Session sessionRef = session;
-		scriptThreadSupervisor.ifAllTerminatedRun(new Runnable() {
-			public void run() {
-				if (sessionRef.isOpen() && sessionRef.isDirty()) {
-					sessionRef.flush();
+			final Session sessionRef = session;
+			scriptThreadSupervisor.ifAllTerminatedRun(new Runnable() {
+				public void run() {
+					if (sessionRef.isOpen() && sessionRef.isDirty()) {
+						sessionRef.flush();
+					}
 				}
+			});
+
+			for (Schritt step: automatischeSchritte) {
+				scriptThreadSupervisor.addChild(new ScriptThread(step));
 			}
-		});
 
-		for (Schritt step: automatischeSchritte) {
-			scriptThreadSupervisor.addChild(new ScriptThread(step));
+			scriptThreadSupervisor.start();
 		}
-
-		scriptThreadSupervisor.start();
 
 	}
 
