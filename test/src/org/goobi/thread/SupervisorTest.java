@@ -22,9 +22,6 @@
 
 package org.goobi.thread;
 
-import java.lang.InterruptedException;
-import java.lang.Thread;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

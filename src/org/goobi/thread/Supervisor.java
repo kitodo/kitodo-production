@@ -25,9 +25,6 @@ package org.goobi.thread;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
-import java.lang.InterruptedException;
-import java.lang.Thread;
-
 public class Supervisor extends Thread {
 
 	private List<Thread> threads = new CopyOnWriteArrayList<Thread>();
