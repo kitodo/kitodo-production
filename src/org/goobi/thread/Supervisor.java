@@ -62,8 +62,12 @@ public class Supervisor extends Thread {
 	 * useless CPU cycles polling the child thread list.
 	 *
 	 * @param millis Yield wait time in milliseconds.
+	 * @throws IllegalArgumentException if the value of millis is negative.
 	 */
 	public void setYieldWaitTime(int millis) {
+		if (millis < 0) {
+			throw new IllegalArgumentException("Length of time to wait cannot be negative.");
+		}
 		yieldWaitTime = millis;
 	}
 

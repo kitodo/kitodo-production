@@ -34,6 +34,12 @@ public class SupervisorTest {
 		assertEquals("Supervisor thread should be in NEW state.", Thread.State.NEW, sv.getState());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void throwsIllegalArgumentExceptionIfGivenNegativeYieldWaitTime() {
+		Supervisor sv = new Supervisor();
+		sv.setYieldWaitTime(-1);
+	}
+
 	@Test
 	public void terminatesWhenStartedWithoutChildThreads()
 	throws InterruptedException {
