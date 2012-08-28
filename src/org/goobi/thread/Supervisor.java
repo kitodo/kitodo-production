@@ -22,14 +22,14 @@
 
 package org.goobi.thread;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
 import java.lang.Thread;
 
 public class Supervisor extends Thread {
 
-	private List<Thread> threads = new ArrayList<Thread>();
+	private List<Thread> threads = new CopyOnWriteArrayList<Thread>();
 
 	public void addChild(Thread child) {
 		threads.add(child);
