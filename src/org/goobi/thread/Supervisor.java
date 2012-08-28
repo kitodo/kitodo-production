@@ -31,8 +31,14 @@ public class Supervisor extends Thread {
 
 	private List<Thread> threads = new CopyOnWriteArrayList<Thread>();
 
+	private Runnable onAllTerminated = null;
+
 	public void addChild(Thread child) {
 		threads.add(child);
+	}
+
+	public void ifAllTerminatedRun(Runnable r) {
+		onAllTerminated = r;
 	}
 
 	public void run() {
@@ -47,6 +53,9 @@ public class Supervisor extends Thread {
 						break;
 				}
 			}
+		}
+		if (onAllTerminated != null) {
+			onAllTerminated.run();
 		}
 	}
 

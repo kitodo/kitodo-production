@@ -72,5 +72,34 @@ public class SupervisorTest {
 		assertEquals("Child thread should have been run.", Thread.State.TERMINATED, child.getState());
 	}
 	 
+	@Test
+	public void runsHandlerWhenAllChildThreadsTerminated()
+	throws InterruptedException {
+		Supervisor sv = new Supervisor();
+
+		final Trigger trigger = new Trigger();
+
+		sv.addChild(new Thread());
+		sv.addChild(new Thread());
+		sv.addChild(new Thread());
+
+		sv.ifAllTerminatedRun(new Runnable() { public void run() { trigger.pull(); } } );
+		sv.start();
+
+		Thread.sleep(200);
+
+		assertTrue("Supervisor has not triggered Runnable on child termination.", trigger.hasBeenPulled());
+	}
+
+	private class Trigger {
+		private Boolean pulled = false;
+		public void pull() {
+			pulled = true;
+		}
+		public Boolean hasBeenPulled() {
+			return pulled;
+		}
+	}
+
 }
 
