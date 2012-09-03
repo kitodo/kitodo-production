@@ -42,6 +42,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.criterion.Order;
@@ -53,6 +54,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
+import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.Export.dms.ExportDms;
 import de.sub.goobi.Forms.AktuelleSchritteForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
@@ -845,7 +847,28 @@ public class BatchStepHelper {
 						Helper.setFehlerMeldung("Error on image validation: ", e);
 					}
 				}
+			
+				loadProcessProperties(s);
+				
+				for (ProcessProperty prop : processPropertyList) {
+					
+					if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED) && (prop.getValue() == null || prop.getValue().equals(""))) {
+						List<String> parameter = new ArrayList<String>();
+						parameter.add(prop.getName());
+						parameter.add(s.getProzess().getTitel());
+						Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
+						return "";
+					} else  if(!prop.isValid()) {
+						List<String> parameter = new ArrayList<String>();
+						parameter.add(prop.getName());
+						parameter.add(s.getProzess().getTitel());
+						Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyValidation", parameter));
+						return "";
+					}
+				}
 			}
+			
+			
 
 			this.myDav.UploadFromHome(s.getProzess());
 			StepObject so = StepManager.getStepById(s.getId());

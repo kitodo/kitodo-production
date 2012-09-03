@@ -46,6 +46,7 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
+import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
@@ -297,14 +298,13 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		return "AktuelleSchritteBearbeiten";
 	}
-	
+
 	public String EditStep() {
-		
+
 		Helper.getHibernateSession().refresh(mySchritt);
-		
+
 		return "AktuelleSchritteBearbeiten";
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	public String TakeOverBatch() {
@@ -502,16 +502,29 @@ public class AktuelleSchritteForm extends BasisForm {
 				}
 			}
 		}
-		List<PropertyTemplate> propList = this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList();
-		if (propList.size() > 0) {
-			for (PropertyTemplate prop : propList) {
-				if (prop.isIstObligatorisch() && (prop.getWert() == null || prop.getWert().equals(""))) {
-					Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " "
-							+ Helper.getTranslation("requiredValue"));
-					return "";
-				}
+
+		for (ProcessProperty prop : processPropertyList) {
+			if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED) && (prop.getValue() == null || prop.getValue().equals(""))) {
+				Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " " + Helper.getTranslation("requiredValue"));
+				return "";
+			} else  if(!prop.isValid()) {
+				List<String> parameter = new ArrayList<String>();
+				parameter.add(prop.getName());
+				Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
+				return "";
 			}
 		}
+
+		// List<PropertyTemplate> propList = this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList();
+		// if (propList.size() > 0) {
+		// for (PropertyTemplate prop : propList) {
+		// if (prop.isIstObligatorisch() && (prop.getWert() == null || prop.getWert().equals(""))) {
+		// Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " "
+		// + Helper.getTranslation("requiredValue"));
+		// return "";
+		// }
+		// }
+		// }
 
 		/*
 		 * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon vorher draussen
@@ -565,7 +578,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				.add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleVorherigenSchritte;
 	}
-	
+
 	public int getSizeOfPreviousStepsForProblemReporting() {
 		return getPreviousStepsForProblemReporting().size();
 	}
@@ -654,7 +667,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
 		return alleNachfolgendenSchritte;
 	}
-	
+
 	public int getSizeOfNextStepsForProblemSolution() {
 		return getNextStepsForProblemSolution().size();
 	}
