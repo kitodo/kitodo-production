@@ -61,7 +61,7 @@ public class JobCreation {
 		File metsfile = new File(metsfilename);
 		Prozess p = null;
 		if (!testTitle(processTitle)) {
-			logger.trace("wrong title");
+			logger.error("cannot create process, process title " + processTitle + "is allready in use");
 			// removing all data
 			File imagesFolder = new File(basepath);
 			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
@@ -99,29 +99,29 @@ public class JobCreation {
 				moveFiles(metsfile, basepath, p);
 
 			} catch (ReadException e) {
-				Helper.setFehlerMeldung(e);
+				Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
 				logger.error(e);
 			} catch (PreferencesException e) {
-				Helper.setFehlerMeldung(e);
+				Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
 				logger.error(e);
 			} catch (SwapException e) {
 				Helper.setFehlerMeldung(e);
 				logger.error(e);
 			} catch (DAOException e) {
-				Helper.setFehlerMeldung(e);
+				Helper.setFehlerMeldung("Cannot save process " + processTitle, e);
 				logger.error(e);
 			} catch (WriteException e) {
-				Helper.setFehlerMeldung(e);
+				Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
 				logger.error(e);
 			} catch (IOException e) {
-				Helper.setFehlerMeldung(e);
+				Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
 				logger.error(e);
 			} catch (InterruptedException e) {
 				Helper.setFehlerMeldung(e);
 				logger.error(e);
 			}
 		} else {
-			logger.trace("title is invalid");
+			logger.error("title " + processTitle + "is invalid");
 		}
 		return p;
 	}
@@ -144,7 +144,6 @@ public class JobCreation {
 		return true;
 	}
 
-	
 	@SuppressWarnings("static-access")
 	public static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
 		if (ConfigMain.getBooleanParameter("importUseOldConfiguration", false)) {
@@ -214,7 +213,7 @@ public class JobCreation {
 								for (File file : imagedir.listFiles()) {
 									FileUtils.moveFile(file, new File(p.getImagesDirectory() + imagedir.getName(), file.getName()));
 								}
-//								FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
+								// FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							} else {
 								FileUtils.moveFile(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							}
