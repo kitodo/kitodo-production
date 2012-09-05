@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -169,6 +170,8 @@ public class Metadaten {
 	private String pagesStart ="";
 	private String pagesEnd="";
 	private HashMap<String, Boolean> treeProperties;
+
+	protected ReentrantLock xmlReadingLock = new ReentrantLock();
 
 	/**
 	 * Konstruktor ================================================================
@@ -512,7 +515,12 @@ public class Metadaten {
 	 * Metadaten Einlesen
 	 * 
 	 */
-	public String XMLlesen() {
+		public String XMLlesen() {
+
+		if (!xmlReadingLock.tryLock()) {
+			return "";	
+		}
+		
 
 		/*
 		 * re-reading the ruleset.xml file

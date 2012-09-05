@@ -24,12 +24,47 @@ package de.sub.goobi.metadaten;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+
 public class MetadatenTest {
 
 	@Test(expected = NullPointerException.class)
 	public void throwsNullPointerExceptionWhenCalledWithoutInitializedHelper() {
 		Metadaten md = new Metadaten();
 		md.XMLlesen();
+	}
+
+	@Test
+	public void xmlReadingLockIsNotAquiredAfterCreation() {
+		Metadaten md = new Metadaten();
+		assertFalse("XML Reading Lock is already aquired but shouldn't be.",
+			md.xmlReadingLock.isLocked());
+	}
+
+	@Test
+	public void returnsEmptyStringIfXmlReadingLockIsAlreadyAquiredByOtherThread()
+	throws InterruptedException {
+		final Metadaten md = new Metadaten();
+		md.xmlReadingLock.lock();
+		final MutableString result = new MutableString();
+		
+		Thread t = new Thread() {
+			public void run() {
+				result.set(md.XMLlesen());
+			}
+		};
+		
+		t.start();
+		t.join();
+
+		assertEquals("Should return empty string is XML Reading Lock is aquired.", result.get(), "");
+	}
+
+	private class MutableString {
+		private String s;
+		public void set(String val) { s = val; }
+		public String get() { return s; }
 	}
 
 }
