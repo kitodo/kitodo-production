@@ -46,19 +46,29 @@ public class MetadatenTest {
 	public void returnsEmptyStringIfXmlReadingLockIsAlreadyAquiredByOtherThread()
 	throws InterruptedException {
 		final Metadaten md = new Metadaten();
-		md.xmlReadingLock.lock();
 		final MutableString result = new MutableString();
-		
 		Thread t = new Thread() {
 			public void run() {
 				result.set(md.XMLlesen());
 			}
 		};
 		
+		md.xmlReadingLock.lock();
 		t.start();
 		t.join();
 
 		assertEquals("Should return empty string is XML Reading Lock is aquired.", result.get(), "");
+	}
+
+	@Test
+	public void freesXmlReadingLockIfExceptionHappens()
+	throws InterruptedException {
+		final Metadaten md = new Metadaten();
+		try {
+			md.XMLlesen();
+		} catch (NullPointerException npe) {
+			assertFalse("Should free XML Reading Lock.", md.xmlReadingLock.isLocked());
+		}
 	}
 
 	private class MutableString {

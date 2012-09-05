@@ -511,16 +511,29 @@ public class Metadaten {
 	 * ## ##################################################### ####################################################
 	 */
 
+
+	public String XMLlesen() {
+		String result = "";
+
+		if (xmlReadingLock.tryLock()) {
+			try {
+				result = readXmlAndBuildTree();
+			} catch (RuntimeException rte) {
+				throw rte;
+			} finally {
+				xmlReadingLock.unlock();
+			}
+		}
+	
+		return result;
+	}
+
+
 	/**
 	 * Metadaten Einlesen
 	 * 
 	 */
-		public String XMLlesen() {
-
-		if (!xmlReadingLock.tryLock()) {
-			return "";	
-		}
-		
+		public String readXmlAndBuildTree() {
 
 		/*
 		 * re-reading the ruleset.xml file
