@@ -244,7 +244,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (!this.flagWait) {
 				this.flagWait = true;
 
-				Helper.getHibernateSession().clear();
+//				Helper.getHibernateSession().clear();
 				Helper.getHibernateSession().refresh(this.mySchritt);
 
 				if (this.mySchritt.getBearbeitungsstatusEnum() != StepStatus.OPEN) {
