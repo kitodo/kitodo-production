@@ -33,21 +33,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
-import de.sub.goobi.Beans.Property.DisplayPropertyList;
-import de.sub.goobi.Beans.Property.IGoobiEntity;
+
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 
-public class Werkstueck implements Serializable, IGoobiEntity {
+public class Werkstueck implements Serializable {
 	private static final long serialVersionUID = 123266825187246791L;
 	private Integer id;
 	private Prozess prozess;
 	private Set<Werkstueckeigenschaft> eigenschaften;
 	@SuppressWarnings("deprecation")
-	private DisplayPropertyList displayProperties;
 
 	private boolean panelAusgeklappt = true;
 
@@ -60,7 +57,7 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 	 * ##################################################### ####################################################
 	 */
 
-	@Override
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -119,50 +116,5 @@ public class Werkstueck implements Serializable, IGoobiEntity {
 			return new ArrayList<Werkstueckeigenschaft>();
 		}
 		return new ArrayList<Werkstueckeigenschaft>(this.eigenschaften);
-	}
-
-	@Override
-	public Status getStatus() {
-		return Status.getProductStatusFromEntity(this);
-	}
-
-	@Override
-	public List<IGoobiProperty> getProperties() {
-		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
-		returnlist.addAll(getEigenschaftenList());
-		return returnlist;
-	}
-
-	@Override
-	public void addProperty(IGoobiProperty toAdd) {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-		}
-		this.eigenschaften.add((Werkstueckeigenschaft) toAdd);
-	}
-
-	@Override
-	public void removeProperty(IGoobiProperty toRemove) {
-		getEigenschaften().remove(toRemove);
-		toRemove.setOwningEntity(null);
-
-	}
-
-	/**
-	 * 
-	 * @return instance of {@link DisplayPropertyList}
-	 */
-	@SuppressWarnings("deprecation")
-	public DisplayPropertyList getDisplayProperties() {
-		if (this.displayProperties == null) {
-			this.displayProperties = new DisplayPropertyList(this);
-		}
-		return this.displayProperties;
-	}
-
-	@Override
-	public void refreshProperties() {
-		this.displayProperties = null;
 	}
 }

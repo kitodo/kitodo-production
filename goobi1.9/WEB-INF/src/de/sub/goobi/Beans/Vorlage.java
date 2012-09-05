@@ -33,22 +33,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
-import de.sub.goobi.Beans.Property.DisplayPropertyList;
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 
-public class Vorlage implements Serializable, IGoobiEntity {
+public class Vorlage implements Serializable {
 	private static final long serialVersionUID = 1736135433162833277L;
 	private Integer id;
 	private String herkunft;
 	private Prozess prozess;
 	private Set<Vorlageeigenschaft> eigenschaften;
 	@SuppressWarnings("deprecation")
-	private DisplayPropertyList displayProperties;
 
 	private boolean panelAusgeklappt = true;
 
@@ -61,7 +58,7 @@ public class Vorlage implements Serializable, IGoobiEntity {
 	 * ##################################################### ####################################################
 	 */
 
-	@Override
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -129,44 +126,5 @@ public class Vorlage implements Serializable, IGoobiEntity {
 		return new ArrayList<Vorlageeigenschaft>(this.eigenschaften);
 	}
 
-	@Override
-	public Status getStatus() {
-		return Status.getResourceStatusFromEntity(this);
-	}
-
-	@Override
-	public List<IGoobiProperty> getProperties() {
-		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
-		returnlist.addAll(getEigenschaftenList());
-		return returnlist;
-	}
-
-	@Override
-	public void addProperty(IGoobiProperty toAdd) {
-		this.eigenschaften.add((Vorlageeigenschaft) toAdd);
-	}
-
-	@Override
-	public void removeProperty(IGoobiProperty toRemove) {
-		getEigenschaften().remove(toRemove);
-		toRemove.setOwningEntity(null);
-
-	}
-
-	/**
-	 * 
-	 * @return instance of {@link DisplayPropertyList}
-	 */
-	@SuppressWarnings("deprecation")
-	public DisplayPropertyList getDisplayProperties() {
-		if (this.displayProperties == null) {
-			this.displayProperties = new DisplayPropertyList(this);
-		}
-		return this.displayProperties;
-	}
-
-	@Override
-	public void refreshProperties() {
-		this.displayProperties = null;
-	}
+	
 }

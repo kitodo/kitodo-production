@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
 
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -187,21 +185,7 @@ public class Schritteigenschaft implements Serializable, IGoobiProperty {
 		this.schritt = schritt;
 	}
 
-	@Override
-	public Status getStatus() {
-		return Status.getStepStatus(this.schritt);
-	}
 
-	@Override
-	public IGoobiEntity getOwningEntity() {
-
-		return this.schritt;
-	}
-
-	@Override
-	public void setOwningEntity(IGoobiEntity inEntity) {
-		this.schritt = (Schritt) inEntity;
-	}
 	
 	@Override
 	public Integer getContainer() {

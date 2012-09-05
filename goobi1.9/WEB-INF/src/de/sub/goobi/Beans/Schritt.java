@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -44,15 +43,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Property.DisplayPropertyList;
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 
-public class Schritt implements Serializable, IGoobiEntity {
+public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
 	private Integer id;
 	private String titel;
@@ -99,7 +96,6 @@ public class Schritt implements Serializable, IGoobiEntity {
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
 	@SuppressWarnings("deprecation")
-	private DisplayPropertyList displayProperties;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
 	public Schritt() {
@@ -269,7 +265,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 		this.bearbeitungsbenutzer = bearbeitungsbenutzer;
 	}
 
-	@Override
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -779,52 +775,7 @@ public class Schritt implements Serializable, IGoobiEntity {
 
 	}
 
-	@Override
-	public Status getStatus() {
-		return Status.getStepStatus(this);
-	}
-
-	@Override
-	public List<IGoobiProperty> getProperties() {
-		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
-		returnlist.addAll(getEigenschaftenList());
-		return returnlist;
-	}
-
-	@Override
-	public void addProperty(IGoobiProperty toAdd) {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-		}
-		this.eigenschaften.add((Schritteigenschaft) toAdd);
-	}
-
-	@Override
-	public void removeProperty(IGoobiProperty toRemove) {
-		getEigenschaften().remove(toRemove);
-		toRemove.setOwningEntity(null);
-
-	}
-
-	/**
-	 * 
-	 * @return instance of {@link DisplayPropertyList}
-	 */
-	@SuppressWarnings("deprecation")
-	public DisplayPropertyList getDisplayProperties() {
-		if (this.displayProperties == null) {
-			this.displayProperties = new DisplayPropertyList(this);
-		}
-		return this.displayProperties;
-	}
-
-	@Override
-	public void refreshProperties() {
-		this.displayProperties = null;
-		getDisplayProperties();
-
-	}
+	
 
 	/*
 	 * batch step information

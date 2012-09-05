@@ -546,80 +546,91 @@ public class ProzessverwaltungForm extends BasisForm {
 	/*
 	 * Eigenschaften
 	 */
-
 	public String ProzessEigenschaftLoeschen() {
 		try {
-			this.myProzess.getEigenschaften().remove(this.myProzessEigenschaft);
-			this.dao.save(this.myProzess);
+			myProzess.getEigenschaften().remove(myProzessEigenschaft);
+			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
-		this.myProzess.refreshProperties();
 		return "";
 	}
 
 	public String SchrittEigenschaftLoeschen() {
 		try {
-			this.mySchritt.getEigenschaften().remove(this.mySchrittEigenschaft);
-			this.dao.save(this.myProzess);
+			mySchritt.getEigenschaften().remove(mySchrittEigenschaft);
+			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
-		this.mySchritt.refreshProperties();
 		return "";
 	}
 
 	public String VorlageEigenschaftLoeschen() {
 		try {
-			this.myVorlage.getEigenschaften().remove(this.myVorlageEigenschaft);
-			this.dao.save(this.myProzess);
+			myVorlage.getEigenschaften().remove(myVorlageEigenschaft);
+			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
-		this.myVorlage.refreshProperties();
 		return "";
 	}
 
 	public String WerkstueckEigenschaftLoeschen() {
 		try {
-			this.myWerkstueck.getEigenschaften().remove(this.myWerkstueckEigenschaft);
-			this.dao.save(this.myProzess);
+			myWerkstueck.getEigenschaften().remove(myWerkstueckEigenschaft);
+			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
-		this.myWerkstueck.refreshProperties();
+		return "";
+	}
+
+	public String ProzessEigenschaftNeu() {
+		myProzessEigenschaft = new Prozesseigenschaft();
+		return "";
+	}
+
+	public String SchrittEigenschaftNeu() {
+		mySchrittEigenschaft = new Schritteigenschaft();
+		return "";
+	}
+
+	public String VorlageEigenschaftNeu() {
+		myVorlageEigenschaft = new Vorlageeigenschaft();
+		return "";
+	}
+
+	public String WerkstueckEigenschaftNeu() {
+		myWerkstueckEigenschaft = new Werkstueckeigenschaft();
 		return "";
 	}
 
 	public String ProzessEigenschaftUebernehmen() {
-		this.myProzess.getEigenschaften().add((Prozesseigenschaft) this.myProzess.getDisplayProperties().getCurrentProperty().getProperty());
-		((Prozesseigenschaft) this.myProzess.getDisplayProperties().getCurrentProperty().getProperty()).setProzess(this.myProzess);
+		myProzess.getEigenschaften().add(myProzessEigenschaft);
+		myProzessEigenschaft.setProzess(myProzess);
 		Speichern();
-		this.myProzess.refreshProperties();
 		return "";
 	}
 
 	public String SchrittEigenschaftUebernehmen() {
-		this.mySchritt.getEigenschaften().add((Schritteigenschaft) this.mySchritt.getDisplayProperties().getCurrentProperty().getProperty());
-		((Schritteigenschaft) this.mySchritt.getDisplayProperties().getCurrentProperty().getProperty()).setSchritt(this.mySchritt);
+		mySchritt.getEigenschaften().add(mySchrittEigenschaft);
+		mySchrittEigenschaft.setSchritt(mySchritt);
 		Speichern();
-		this.mySchritt.refreshProperties();
 		return "";
 	}
 
 	public String VorlageEigenschaftUebernehmen() {
-		this.myVorlage.getEigenschaften().add((Vorlageeigenschaft) this.myVorlage.getDisplayProperties().getCurrentProperty().getProperty());
-		((Vorlageeigenschaft) this.myVorlage.getDisplayProperties().getCurrentProperty().getProperty()).setVorlage(this.myVorlage);
+		myVorlage.getEigenschaften().add(myVorlageEigenschaft);
+		myVorlageEigenschaft.setVorlage(myVorlage);
 		Speichern();
-		this.myVorlage.refreshProperties();
 		return "";
 	}
 
 	public String WerkstueckEigenschaftUebernehmen() {
-		this.myWerkstueck.getEigenschaften().add((Werkstueckeigenschaft) this.myWerkstueck.getDisplayProperties().getCurrentProperty().getProperty());
-		((Werkstueckeigenschaft) this.myWerkstueck.getDisplayProperties().getCurrentProperty().getProperty()).setWerkstueck(this.myWerkstueck);
+		myWerkstueck.getEigenschaften().add(myWerkstueckEigenschaft);
+		myWerkstueckEigenschaft.setWerkstueck(myWerkstueck);
 		Speichern();
-		this.myWerkstueck.refreshProperties();
 		return "";
 	}
 

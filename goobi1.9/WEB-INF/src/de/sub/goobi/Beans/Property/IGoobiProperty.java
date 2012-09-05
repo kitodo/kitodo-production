@@ -28,7 +28,6 @@ package de.sub.goobi.Beans.Property;
  */
 import java.util.Date;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
 
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -73,23 +72,6 @@ public interface IGoobiProperty {
 	 */
 	public PropertyType getType();
 
-	/**
-	 * 
-	 * @return {@link Status} of property
-	 */
-	public Status getStatus();
-
-	/**
-	 * 
-	 * @return {@link IGoobiEntity} of property
-	 */
-	public IGoobiEntity getOwningEntity();
-
-	/**
-	 * sets {@link IGoobiEntity} of property
-	 * @param inEntity
-	 */
-	public void setOwningEntity(IGoobiEntity inEntity);
 
 	public void setContainer(Integer order);
 	

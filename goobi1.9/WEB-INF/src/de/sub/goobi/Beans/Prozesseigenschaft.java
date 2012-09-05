@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
-
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -185,23 +182,6 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty {
 
 	public void setProzess(Prozess prozess) {
 		this.prozess = prozess;
-	}
-
-	@Override
-	public Status getStatus() {
-		return Status.getProcessStatus(this.prozess);
-	}
-
-	@Override
-	public IGoobiEntity getOwningEntity() {
-
-		return this.prozess;
-	}
-
-	@Override
-	public void setOwningEntity(IGoobiEntity inEntity) {
-		this.prozess = (Prozess) inEntity;
-
 	}
 
 	@Override

@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import org.goobi.production.api.property.xmlbasedprovider.impl.PropertyTemplate;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
@@ -68,7 +67,6 @@ import de.sub.goobi.Metadaten.MetadatenSperrung;
 import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
-import de.sub.goobi.Persistence.SimpleDAO;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
@@ -420,20 +418,20 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public void saveProperties() {
-		try {
-			/*
-			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-			 */
-
-			for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
-				this.mySchritt.getEigenschaften().add((Schritteigenschaft) pt.getProperty());
-				((Schritteigenschaft) pt.getProperty()).setSchritt(this.mySchritt);
-			}
-			new SimpleDAO().save(this.mySchritt);
-			this.mySchritt.refreshProperties();
-		} catch (DAOException e) {
-			myLogger.error("stupid dao-exception occured", e);
-		}
+//		try {
+//			/*
+//			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+//			 */
+//
+//			for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
+//				this.mySchritt.getEigenschaften().add((Schritteigenschaft) pt.getProperty());
+//				((Schritteigenschaft) pt.getProperty()).setSchritt(this.mySchritt);
+//			}
+//			new SimpleDAO().save(this.mySchritt);
+//			this.mySchritt.refreshProperties();
+//		} catch (DAOException e) {
+//			myLogger.error("stupid dao-exception occured", e);
+//		}
 	}
 
 	public String SchrittDurchBenutzerZurueckgeben() {
@@ -550,19 +548,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public String SperrungAufheben() {
 		MetadatenSperrung.UnlockProcess(this.mySchritt.getProzess().getId());
-		return "";
-	}
-
-	public String SchrittEigenschaftUebernehmen() {
-		this.mySchritt.setBearbeitungszeitpunkt(new Date());
-		this.mySchritt.getEigenschaften().add(this.mySchrittEigenschaft);
-		this.mySchrittEigenschaft.setSchritt(this.mySchritt);
-		try {
-			new SchrittDAO().save(this.mySchritt);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("error on saving step property", e);
-		}
-		this.mySchritt.refreshProperties();
 		return "";
 	}
 

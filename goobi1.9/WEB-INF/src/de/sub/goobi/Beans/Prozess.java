@@ -46,7 +46,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -60,9 +59,6 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
-import de.sub.goobi.Beans.Property.DisplayPropertyList;
-import de.sub.goobi.Beans.Property.IGoobiEntity;
-import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.Metadaten.MetadatenHelper;
 import de.sub.goobi.Metadaten.MetadatenSperrung;
 import de.sub.goobi.Persistence.BenutzerDAO;
@@ -76,7 +72,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 
-public class Prozess implements Serializable, IGoobiEntity {
+public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
 	private Integer id;
@@ -114,8 +110,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 	private static int numberOfBackups = 0;
 	private static String FORMAT = "";
 
-	@SuppressWarnings("deprecation")
-	private DisplayPropertyList displayProperties;
 	private String wikifield = "";
 
 	public Prozess() {
@@ -133,7 +127,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * Getter und Setter
 	 */
 
-	@Override
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -1052,49 +1046,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 
 	public void setWikifield(String wikifield) {
 		this.wikifield = wikifield;
-	}
-
-	@Override
-	public Status getStatus() {
-		return Status.getProcessStatus(this);
-	}
-
-	@Override
-	public List<IGoobiProperty> getProperties() {
-		List<IGoobiProperty> returnlist = new ArrayList<IGoobiProperty>();
-		returnlist.addAll(getEigenschaftenList());
-
-		return returnlist;
-	}
-
-	@Override
-	public void addProperty(IGoobiProperty toAdd) {
-		Hibernate.initialize(this.eigenschaften);
-		this.eigenschaften.add((Prozesseigenschaft) toAdd);
-	}
-
-	@Override
-	public void removeProperty(IGoobiProperty toRemove) {
-		getEigenschaften().remove(toRemove);
-		toRemove.setOwningEntity(null);
-	}
-
-	/**
-	 * 
-	 * @return instance of {@link DisplayPropertyList}
-	 */
-
-	@SuppressWarnings("deprecation")
-	public DisplayPropertyList getDisplayProperties() {
-		if (this.displayProperties == null) {
-			this.displayProperties = new DisplayPropertyList(this);
-		}
-		return this.displayProperties;
-	}
-
-	@Override
-	public void refreshProperties() {
-		this.displayProperties = null;
 	}
 
 	public String downloadDocket() {

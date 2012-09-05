@@ -62,10 +62,10 @@
 								<%@include
 									file="/newpages/inc_Prozessverwaltung/schritt_box_Details.jsp"%>
 
-								<%-- Schritteigenschaften --%>
+								<%-- Schritteigenschaften 
 								<%@include
 									file="/newpages/inc_Prozessverwaltung/schritt_box_Eigenschaften.jsp"%>
-
+								--%>
 								<%-- Benutzer-Berechtigungen --%>
 								<%@include
 									file="/newpages/inc_Prozessverwaltung/schritt_box_Benutzer.jsp"%>

@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
-
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -196,29 +193,7 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 		this.benutzer = benutzer;
 	}
 
-	/**
-	 * @exception UnsupportedOperationException
-	 */
-	@Override
-	public Status getStatus() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @exception UnsupportedOperationException
-	 */
-	@Override
-	public IGoobiEntity getOwningEntity() {
-		throw new UnsupportedOperationException();
-	}
 	
-	/**
-	 * @exception UnsupportedOperationException
-	 */
-	@Override
-	public void setOwningEntity(IGoobiEntity inEntity) {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public Integer getContainer() {

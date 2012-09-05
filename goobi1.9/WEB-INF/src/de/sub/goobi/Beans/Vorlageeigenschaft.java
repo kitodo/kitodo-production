@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.goobi.production.api.property.xmlbasedprovider.Status;
-
-import de.sub.goobi.Beans.Property.IGoobiEntity;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -186,20 +183,7 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 		return this.vorlage;
 	}
 
-	@Override
-	public Status getStatus() {
-		return Status.getResourceStatusFromEntity(this.vorlage);
-	}
-
-	@Override
-	public IGoobiEntity getOwningEntity() {
-		return this.vorlage;
-	}
-
-	@Override
-	public void setOwningEntity(IGoobiEntity inEntity) {
-		this.vorlage = (Vorlage) inEntity;
-	}
+	
 	
 	@Override
 	public Integer getContainer() {
