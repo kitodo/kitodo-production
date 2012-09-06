@@ -531,65 +531,43 @@ public class Metadaten {
 	}
 
 
-	/**
-	 * Metadaten Einlesen
-	 * 
-	 */
-		public String readXmlAndBuildTree() {
+    private String readXmlAndBuildTree() {
 
-		/*
-		 * re-reading the ruleset.xml file
-		 */
-		ConfigDispayRules.getInstance().refresh();
+        // refresh ruleset in case it has changed
+        ConfigDispayRules.getInstance().refresh();
 
-		Modes.setBindState(BindState.edit);
-		try {
-			myProzess = new ProzessDAO().get(new Integer(Helper.getRequestParameter("ProzesseID")));
-		} catch (NumberFormatException e1) {
-			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (DAOException e1) {
-			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		}
-		myBenutzerID = Helper.getRequestParameter("BenutzerID");
-		alleSeitenAuswahl_ersteSeite = "";
-		alleSeitenAuswahl_letzteSeite = "";
-		zurueck = Helper.getRequestParameter("zurueck");
-		nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true") ? true : false;
-		neuesElementWohin = "1";
-		tree3 = null;
-		try {
-			XMLlesenStart();
-		} catch (SwapException e) {
-			Helper.setFehlerMeldung(e);
-			return Helper.getRequestParameter("zurueck");
-		} catch (ReadException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (PreferencesException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (WriteException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (InterruptedException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		}
+        Modes.setBindState(BindState.edit);
 
-		TreeExpand();
-		sperrung.setLocked(myProzess.getId().intValue(), myBenutzerID);
-		return "Metadaten";
-	}
+        zurueck = Helper.getRequestParameter("zurueck");
 
-	/**
+        try {
+            myProzess = new ProzessDAO().get(new Integer(Helper.getRequestParameter("ProzesseID")));
+            myBenutzerID = Helper.getRequestParameter("BenutzerID");
+            nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true");
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("error while loading process data", e.getMessage());
+            return zurueck;
+        }
+
+        alleSeitenAuswahl_ersteSeite = "";
+        alleSeitenAuswahl_letzteSeite = "";
+        neuesElementWohin = "1";
+        tree3 = null;
+
+        try {
+            XMLlesenStart();
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("error while loading metadata", e.getMessage());
+            return zurueck;
+        }
+
+        TreeExpand();
+
+        sperrung.setLocked(myProzess.getId(), myBenutzerID);
+        return "Metadaten";
+    }
+
+    /**
 	 * Metadaten Einlesen
 	 * 
 	 * @throws ReadException
