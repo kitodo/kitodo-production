@@ -641,15 +641,8 @@ class FilterHelper {
 		}
 
 		if (conjProcesses != null || flagSteps) {
-			if (!flagProcesses) {
-
-				if (conjProcesses != null) {
-
-				}
-			} else {
-				if (conjProcesses != null) {
-					crit.add(conjProcesses);
-				}
+			if (flagProcesses) {
+				crit.add(conjProcesses);
 			}
 		}
 
@@ -667,16 +660,12 @@ class FilterHelper {
 		if (conjSteps != null) {
 			if (!flagSteps) {
 				crit.createCriteria("schritte", "steps");
-				crit.add(conjSteps);
-			} else {
-
-				crit.add(conjSteps);
 			}
+			crit.add(conjSteps);
 		}
 
 		if (conjTemplates != null) {
-			if (flagSteps){
-			}else{
+			if (!flagSteps){
 				crit.createCriteria("vorlagen", "vorl");
 				crit.createAlias("vorl.eigenschaften", "vorleig");
 				crit.add(conjTemplates);
@@ -684,13 +673,13 @@ class FilterHelper {
 		}
 
 		if (conjWorkPiece != null) {
-			if (flagSteps){
-			}else{
+			if (!flagSteps){
 				crit.createCriteria("werkstuecke", "werk");
 				crit.createAlias("werk.eigenschaften", "werkeig");
 				crit.add(conjWorkPiece);
 			}
 		}
+
 		if (conjUsers != null) {
 			crit.createCriteria("benutzer", "user");
 			crit.add(conjUsers);
