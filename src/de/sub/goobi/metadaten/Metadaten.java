@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -169,6 +170,8 @@ public class Metadaten {
 	private String pagesStart ="";
 	private String pagesEnd="";
 	private HashMap<String, Boolean> treeProperties;
+
+	ReentrantLock xmlReadingLock = new ReentrantLock();
 
 	/**
 	 * Konstruktor ================================================================
@@ -508,65 +511,63 @@ public class Metadaten {
 	 * ## ##################################################### ####################################################
 	 */
 
-	/**
-	 * Metadaten Einlesen
-	 * 
-	 */
+
 	public String XMLlesen() {
+		String result = "";
 
-		/*
-		 * re-reading the ruleset.xml file
-		 */
-		ConfigDispayRules.getInstance().refresh();
-
-		Modes.setBindState(BindState.edit);
-		try {
-			myProzess = new ProzessDAO().get(new Integer(Helper.getRequestParameter("ProzesseID")));
-		} catch (NumberFormatException e1) {
-			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (DAOException e1) {
-			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-			return Helper.getRequestParameter("zurueck");
+		if (xmlReadingLock.tryLock()) {
+			try {
+				result = readXmlAndBuildTree();
+			} catch (RuntimeException rte) {
+				throw rte;
+			} finally {
+				xmlReadingLock.unlock();
+			}
+		} else {
+			Helper.setFehlerMeldung("metadatenEditorThreadLock");
 		}
-		myBenutzerID = Helper.getRequestParameter("BenutzerID");
-		alleSeitenAuswahl_ersteSeite = "";
-		alleSeitenAuswahl_letzteSeite = "";
-		zurueck = Helper.getRequestParameter("zurueck");
-		nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true") ? true : false;
-		neuesElementWohin = "1";
-		tree3 = null;
-		try {
-			XMLlesenStart();
-		} catch (SwapException e) {
-			Helper.setFehlerMeldung(e);
-			return Helper.getRequestParameter("zurueck");
-		} catch (ReadException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (PreferencesException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (WriteException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (InterruptedException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		}
-
-		TreeExpand();
-		sperrung.setLocked(myProzess.getId().intValue(), myBenutzerID);
-		return "Metadaten";
+	
+		return result;
 	}
 
-	/**
+
+    private String readXmlAndBuildTree() {
+
+        // refresh ruleset in case it has changed
+        ConfigDispayRules.getInstance().refresh();
+
+        Modes.setBindState(BindState.edit);
+
+        zurueck = Helper.getRequestParameter("zurueck");
+
+        try {
+            myProzess = new ProzessDAO().get(new Integer(Helper.getRequestParameter("ProzesseID")));
+            myBenutzerID = Helper.getRequestParameter("BenutzerID");
+            nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true");
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("error while loading process data", e.getMessage());
+            return zurueck;
+        }
+
+        alleSeitenAuswahl_ersteSeite = "";
+        alleSeitenAuswahl_letzteSeite = "";
+        neuesElementWohin = "1";
+        tree3 = null;
+
+        try {
+            XMLlesenStart();
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("error while loading metadata", e.getMessage());
+            return zurueck;
+        }
+
+        TreeExpand();
+
+        sperrung.setLocked(myProzess.getId(), myBenutzerID);
+        return "Metadaten";
+    }
+
+    /**
 	 * Metadaten Einlesen
 	 * 
 	 * @throws ReadException
