@@ -478,9 +478,6 @@ class FilterHelper {
 		Boolean flagSteps = crit.getClassName().equals(Schritt.class.getName());
 		Boolean flagProcesses = crit.getClassName().equals(Prozess.class.getName());
 
-		// keeping a reference to the passed criteria
-		Criteria inCrit = crit;
-
 		Criteria critProcess = null;
 
 		// to collect and return feedback about erroneous use of filter expressions
@@ -657,19 +654,19 @@ class FilterHelper {
 				}
 			} else {
 				if (conjProcesses != null) {
-					inCrit.add(conjProcesses);
+					crit.add(conjProcesses);
 				}
 			}
 		}
 
 		if (flagSteps) {
 			if (conjProjects != null) {
-				inCrit.add(conjProjects);
+				crit.add(conjProjects);
 			}
 		} else {
-			inCrit.createCriteria("projekt", "proj");
+			crit.createCriteria("projekt", "proj");
 			if (conjProjects != null) {
-				inCrit.add(conjProjects);
+				crit.add(conjProjects);
 			}
 		}
 
@@ -679,7 +676,7 @@ class FilterHelper {
 				crit.add(conjSteps);
 			} else {
 
-				inCrit.add(conjSteps);
+				crit.add(conjSteps);
 			}
 		}
 
@@ -691,7 +688,7 @@ class FilterHelper {
 			}else{
 				crit.createCriteria("vorlagen", "vorl");
 				crit.createAlias("vorl.eigenschaften", "vorleig");
-				inCrit.add(conjTemplates);
+				crit.add(conjTemplates);
 			}
 		}
 
@@ -703,12 +700,12 @@ class FilterHelper {
 			}else{
 				crit.createCriteria("werkstuecke", "werk");
 				crit.createAlias("werk.eigenschaften", "werkeig");
-				inCrit.add(conjWorkPiece);
+				crit.add(conjWorkPiece);
 			}
 		}
 		if (conjUsers != null) {
 			crit.createCriteria("benutzer", "user");
-			inCrit.add(conjUsers);
+			crit.add(conjUsers);
 		}
 
 		return message;
