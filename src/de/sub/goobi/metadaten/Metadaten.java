@@ -171,7 +171,7 @@ public class Metadaten {
 	private String pagesEnd="";
 	private HashMap<String, Boolean> treeProperties;
 
-	protected ReentrantLock xmlReadingLock = new ReentrantLock();
+	ReentrantLock xmlReadingLock = new ReentrantLock();
 
 	/**
 	 * Konstruktor ================================================================
