@@ -478,8 +478,6 @@ class FilterHelper {
 		Boolean flagSteps = crit.getClassName().equals(Schritt.class.getName());
 		Boolean flagProcesses = crit.getClassName().equals(Prozess.class.getName());
 
-		Criteria critProcess = null;
-
 		// to collect and return feedback about erroneous use of filter expressions
 		String message = "";
 		
@@ -644,11 +642,9 @@ class FilterHelper {
 
 		if (conjProcesses != null || flagSteps) {
 			if (!flagProcesses) {
-				critProcess = crit.createCriteria("prozess", "proc");
 
 				if (conjProcesses != null) {
 
-					critProcess.add(conjProcesses);
 				}
 			} else {
 				if (conjProcesses != null) {
@@ -680,9 +676,6 @@ class FilterHelper {
 
 		if (conjTemplates != null) {
 			if (flagSteps){
-				critProcess.createCriteria("vorlagen", "vorl");
-				critProcess.createAlias("vorl.eigenschaften", "vorleig");
-				critProcess.add(conjTemplates);
 			}else{
 				crit.createCriteria("vorlagen", "vorl");
 				crit.createAlias("vorl.eigenschaften", "vorleig");
@@ -692,9 +685,6 @@ class FilterHelper {
 
 		if (conjWorkPiece != null) {
 			if (flagSteps){
-				critProcess.createCriteria("werkstuecke", "werk");
-				critProcess.createAlias("werk.eigenschaften", "werkeig");
-				critProcess.add(conjWorkPiece);
 			}else{
 				crit.createCriteria("werkstuecke", "werk");
 				crit.createAlias("werk.eigenschaften", "werkeig");
