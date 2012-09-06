@@ -475,16 +475,8 @@ class FilterHelper {
 		// restrictions apply, to avoid multiple analysis
 		// of the criteria it is only done here once and
 		// to set flags which are subsequently used
-		Boolean flagSteps = false;
-		Boolean flagProcesses = false;
-
-		if (crit.getClassName() == Prozess.class.getName()) {
-			flagProcesses = true;
-		}
-
-		if (crit.getClassName() == Schritt.class.getName()) {
-			flagSteps = true;
-		}
+		Boolean flagSteps = crit.getClassName().equals(Schritt.class.getName());
+		Boolean flagProcesses = crit.getClassName().equals(Prozess.class.getName());
 
 		// keeping a reference to the passed criteria
 		Criteria inCrit = crit;
