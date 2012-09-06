@@ -22,12 +22,26 @@
 
 package de.sub.goobi.metadaten;
 
+import org.apache.log4j.BasicConfigurator;
+
+import org.goobi.log4j.TestAppender;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class MetadatenTest {
+
+	private TestAppender testAppender;
+
+	@Before
+	public void setUpTestAppender() {
+		testAppender = new TestAppender();
+		BasicConfigurator.configure(testAppender);
+	}
 
 	@Test(expected = NullPointerException.class)
 	public void throwsNullPointerExceptionWhenCalledWithoutInitializedHelper() {
@@ -61,6 +75,23 @@ public class MetadatenTest {
 	}
 
 	@Test
+	public void logsErrorIfXmlReadingLockIsAlreadyAquiredByOtherThread()
+	throws InterruptedException {
+		final Metadaten md = new Metadaten();
+		Thread t = new Thread() {
+			public void run() {
+				md.XMLlesen();
+			}
+		};
+		
+		md.xmlReadingLock.lock();
+		t.start();
+		t.join();
+
+		assertLogMessageContains("metadatenEditorThreadLock");
+	}
+
+	@Test
 	public void freesXmlReadingLockIfExceptionHappens()
 	throws InterruptedException {
 		final Metadaten md = new Metadaten();
@@ -75,6 +106,11 @@ public class MetadatenTest {
 		private String s;
 		public void set(String val) { s = val; }
 		public String get() { return s; }
+	}
+
+	private void assertLogMessageContains(String message) {
+		String lastMessage = (String) testAppender.getLastEvent().getMessage();
+		assertTrue("Log message '" + lastMessage + "' does not contain '" + message + "'", lastMessage.contains(message));
 	}
 
 }

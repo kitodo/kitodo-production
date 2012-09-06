@@ -523,6 +523,8 @@ public class Metadaten {
 			} finally {
 				xmlReadingLock.unlock();
 			}
+		} else {
+			Helper.setFehlerMeldung("metadatenEditorThreadLock");
 		}
 	
 		return result;
