@@ -22,6 +22,7 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.helper.Messages;
 import org.apache.log4j.BasicConfigurator;
 
 import org.goobi.log4j.TestAppender;
@@ -88,7 +89,7 @@ public class MetadatenTest {
 		t.start();
 		t.join();
 
-		assertLogMessageContains("metadatenEditorThreadLock");
+		assertLogMessageContains(Messages.getString("metadatenEditorThreadLock"));
 	}
 
 	@Test
