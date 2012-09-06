@@ -521,11 +521,9 @@ class FilterHelper {
 		if (isTemplate != null) {
 			conjProcesses = Restrictions.conjunction();
 			if (!isTemplate) {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean
-						.valueOf(false)));
+				conjProcesses.add(Restrictions.eq("istTemplate", false));
 			} else {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean
-						.valueOf(true)));
+				conjProcesses.add(Restrictions.eq("istTemplate", true));
 			}
 		}
 
