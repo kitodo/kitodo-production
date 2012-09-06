@@ -480,8 +480,7 @@ class FilterHelper {
 
 		// keeping a reference to the passed criteria
 		Criteria inCrit = crit;
-		@SuppressWarnings("unused")
-		Criteria critProject = null;
+
 		Criteria critProcess = null;
 
 		// to collect and return feedback about erroneous use of filter expressions
@@ -664,7 +663,6 @@ class FilterHelper {
 		}
 
 		if (flagSteps) {
-			critProject = critProcess.createCriteria("projekt", "proj");
 			if (conjProjects != null) {
 				inCrit.add(conjProjects);
 			}
