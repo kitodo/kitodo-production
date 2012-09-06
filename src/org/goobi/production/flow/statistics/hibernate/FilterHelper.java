@@ -477,8 +477,6 @@ class FilterHelper {
 		// to set flags which are subsequently used
 		Boolean flagSteps = false;
 		Boolean flagProcesses = false;
-		@SuppressWarnings("unused")
-		Boolean flagSetCritProjects = false;
 
 		if (crit.getClassName() == Prozess.class.getName()) {
 			flagProcesses = true;
@@ -515,7 +513,6 @@ class FilterHelper {
 			// happens if user has admin rights
 			if (conjProjects.toString().equals("()")) {
 				conjProjects = null;
-				flagSetCritProjects = true;
 			}
 		}
 
