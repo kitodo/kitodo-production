@@ -5,7 +5,7 @@
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 
 <htm:table cellpadding="3" cellspacing="0" width="100%"
-	styleClass="main_statistikboxen">
+	styleClass="main_statistikboxen" rendered="#{StatistikForm.showStatistics}">
 	<htm:tr>
 		<htm:td styleClass="main_statistikboxen_row1">
 			<h:outputText value="#{msgs.statistikDatenbank}" />

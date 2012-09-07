@@ -62,7 +62,7 @@
 
 				<%-- aktive Benutzer --%>
 				<h:commandLink styleClass="mlink" action="aktiveBenutzerNeu"
-					style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}">
+					style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}" rendered="#{!HelperForm.anonymized}">
 					<h:panelGroup rendered="#{NavigationForm.aktuell == '12'}">
 						<f:verbatim>&#8250; </f:verbatim>
 					</h:panelGroup>
