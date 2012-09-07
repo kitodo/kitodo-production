@@ -646,15 +646,11 @@ class FilterHelper {
 			}
 		}
 
-		if (flagSteps) {
-			if (conjProjects != null) {
-				crit.add(conjProjects);
-			}
-		} else {
-			if (conjProjects != null) {
+		if (conjProjects != null) {
+			if (!flagSteps) {
 				crit.createCriteria("projekt", "proj");
-				crit.add(conjProjects);
 			}
+			crit.add(conjProjects);
 		}
 
 		if (conjSteps != null) {
