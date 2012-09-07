@@ -81,7 +81,7 @@
 												<h:panelGrid id="id12" columns="2" rowClasses="top">
 
 													<%-- Titel --%>
-													<h:outputLabel id="id13" for="titel" value="#{msgs.titel}" />
+													<h:outputLabel id="id13" for="titel" value="#{msgs.titel}:" />
 													<h:panelGroup id="id14">
 														<h:inputText id="titel"
 															style="width: 300px;margin-right:15px"
@@ -92,7 +92,7 @@
 													</h:panelGroup>
 
 													<%-- Dateiname --%>
-													<h:outputLabel id="id16" for="file" value="#{msgs.datei}" />
+													<h:outputLabel id="id16" for="file" value="#{msgs.datei}:" />
 													<h:panelGroup id="id17">
 														<h:inputText id="file"
 															style="width: 300px;margin-right:15px"
@@ -104,7 +104,7 @@
 
 													<%-- Sortierung nach Regelsatz alphabetisch --%>
 													<h:outputText id="id19"
-														value="#{msgs.metadatenSortierungNachRegelsatz}" />
+														value="#{msgs.metadatenSortierungNachRegelsatz}:" />
 													<h:selectBooleanCheckbox id="id20"
 														style="margin-right:15px"
 														value="#{RegelsaetzeForm.myRegelsatz.orderMetadataByRuleset}" />
