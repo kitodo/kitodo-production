@@ -651,8 +651,8 @@ class FilterHelper {
 				crit.add(conjProjects);
 			}
 		} else {
-			crit.createCriteria("projekt", "proj");
 			if (conjProjects != null) {
+				crit.createCriteria("projekt", "proj");
 				crit.add(conjProjects);
 			}
 		}
