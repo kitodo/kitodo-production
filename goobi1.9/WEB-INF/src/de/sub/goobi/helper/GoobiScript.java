@@ -163,10 +163,12 @@ public class GoobiScript {
 			String stepname = this.myParameters.get("stepname");
 			String scriptname = this.myParameters.get("script");
 			if (stepname == null) {
-				Helper.setFehlerMeldung("goobiScriptfield","","Missing parameter");
+				Helper.setFehlerMeldung("goobiScriptfield", "", "Missing parameter");
 			} else {
 				runScript(inProzesse, stepname, scriptname);
 			}
+		} else if (this.myParameters.get("action").equals("deleteProcess")) {
+			deleteProcess(inProzesse);
 		} else {
 			Helper.setFehlerMeldung(
 					"goobiScriptfield",
@@ -196,6 +198,30 @@ public class GoobiScript {
 		// }
 
 		Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
+	}
+
+	private void deleteProcess(List<Prozess> inProzesse) {
+		ProzessDAO dao = new ProzessDAO();
+		for (Prozess p : inProzesse) {
+			deleteMetadataDirectory(p);
+			try {
+				dao.remove(p);
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("could not delete process " + p.getTitel(), e);
+			}
+		}
+	}
+
+	private void deleteMetadataDirectory(Prozess p) {
+		try {
+			Helper.deleteDir(new File(p.getProcessDataDirectory()));
+			File ocr = new File(p.getOcrDirectory());
+			if (ocr.exists()) {
+				Helper.deleteDir(ocr);
+			}
+		} catch (Exception e) {
+			Helper.setFehlerMeldung("Can not delete metadata directory", e);
+		}
 	}
 
 	private void runScript(List<Prozess> inProzesse, String stepname, String scriptname) {
@@ -445,7 +471,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield","", "deleteStep finished: ");
+		Helper.setMeldung("goobiScriptfield", "", "deleteStep finished: ");
 	}
 
 	/**
@@ -581,7 +607,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "","addModuleToStep finished: ");
+		Helper.setMeldung("goobiScriptfield", "", "addModuleToStep finished: ");
 	}
 
 	/**
@@ -611,7 +637,7 @@ public class GoobiScript {
 
 		if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
 				&& !property.equals("exportdms") && !property.equals("batch") && !property.equals("automatic")) {
-			Helper.setFehlerMeldung("goobiScriptfield","",
+			Helper.setFehlerMeldung("goobiScriptfield", "",
 					"wrong parameter 'property'; possible values: metadata, readimages, writeimages, validate, exportdms");
 			return;
 		}
@@ -665,7 +691,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "","setTaskProperty abgeschlossen: ");
+		Helper.setMeldung("goobiScriptfield", "", "setTaskProperty abgeschlossen: ");
 	}
 
 	/**
@@ -711,7 +737,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "","setStepStatus finished: ");
+		Helper.setMeldung("goobiScriptfield", "", "setStepStatus finished: ");
 	}
 
 	/**
@@ -756,7 +782,7 @@ public class GoobiScript {
 				}
 			}
 		}
-		Helper.setMeldung("goobiScriptfield", "","setStepNumber finished ");
+		Helper.setMeldung("goobiScriptfield", "", "setStepNumber finished ");
 	}
 
 	/**
