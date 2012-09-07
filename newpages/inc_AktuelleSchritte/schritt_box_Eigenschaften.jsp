@@ -80,16 +80,6 @@
 			</h:column>
 		</x:dataTable>
 
-		<%-- Neu-Schaltknopf --%><%--
-		<h:commandLink action="#{AktuelleSchritteForm.SchrittEigenschaftNeu}" id="new"
-			value="#{msgs.eigenschaftHinzufuegen}"
-			title="#{msgs.eigenschaftHinzufuegen}"
-			rendered="#{AktuelleSchritteForm.modusBearbeiten!='schritteeigenschaft'}">
-			<x:updateActionListener
-				property="#{AktuelleSchritteForm.modusBearbeiten}"
-				value="schritteeigenschaft" />
-		</h:commandLink> --%>
-
 
 		<%-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ --%>
 		<%-- +++++++++++++++     Eigenschaft bearbeiten      ++++++++++++++++ --%>
