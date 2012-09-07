@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -171,6 +172,7 @@ public class Metadaten {
 	private String pagesStart = "";
 	private String pagesEnd = "";
 	private HashMap<String, Boolean> treeProperties;
+	private ReentrantLock xmlReadingLock = new ReentrantLock();
 
 	/**
 	 * Konstruktor ================================================================
@@ -541,7 +543,25 @@ public class Metadaten {
 	 * Metadaten Einlesen
 	 * 
 	 */
+
 	public String XMLlesen() {
+		String result = "";
+		if (xmlReadingLock.tryLock()) {
+			try {
+				result = readXmlAndBuildTree();
+			} catch (RuntimeException rte) {
+				throw rte;
+			} finally {
+				xmlReadingLock.unlock();
+			}
+		} else {
+			Helper.setFehlerMeldung("metadatenEditorThreadLock");
+		}
+
+		return result;
+	}
+
+	private String readXmlAndBuildTree() {
 
 		// myProzesseID = Helper.getRequestParameter("ProzesseID");
 
@@ -622,7 +642,7 @@ public class Metadaten {
 		this.myBild = null;
 		this.myBildNummer = 1;
 		this.myImageRotation = 0;
-		this.currentTifFolder=null;
+		this.currentTifFolder = null;
 		readAllTifFolders();
 
 		/*
@@ -654,7 +674,7 @@ public class Metadaten {
 			try {
 				createPagination();
 			} catch (TypeNotAllowedForParentException e) {
-				
+
 			}
 		}
 		// MetadatenImLogAusgeben(logicalTopstruct);
@@ -787,8 +807,6 @@ public class Metadaten {
 		this.myMetadaten = lsMeta;
 		this.myPersonen = lsPers;
 
-		
-		
 		/*
 		 * -------------------------------- die zugehörigen Seiten ermitteln --------------------------------
 		 */
@@ -1476,17 +1494,17 @@ public class Metadaten {
 			this.allTifFolders.add(verzeichnisse[i]);
 		}
 
-//		if (this.currentTifFolder == null || this.currentTifFolder.length() == 0) {
-			if (ConfigMain.getParameter("MetsEditorDefaultSuffix", null) != null) {
-				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix");
-				for (String directory : this.allTifFolders) {
-					if (directory.endsWith(suffix)) {
-						this.currentTifFolder = directory;
-						break;
-					}
+		// if (this.currentTifFolder == null || this.currentTifFolder.length() == 0) {
+		if (ConfigMain.getParameter("MetsEditorDefaultSuffix", null) != null) {
+			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix");
+			for (String directory : this.allTifFolders) {
+				if (directory.endsWith(suffix)) {
+					this.currentTifFolder = directory;
+					break;
 				}
 			}
-//		}
+		}
+		// }
 
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
 			this.currentTifFolder = new File(this.myProzess.getImagesTifDirectory()).getName();
