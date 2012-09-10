@@ -58,13 +58,13 @@ public class RegelsaetzeForm extends BasisForm {
 
 	public String Loeschen() {
 		try {
-
 			if (dao.hasAssignedProcesses(myRegelsatz)) {
-				throw new DAOException("Cannot delete. Ruleset still referenced in processes.");
+				Helper.setFehlerMeldung("regelsatzNichtLoeschbar");
+				return "";
+			} else {
+				dao.remove(myRegelsatz);
 			}
 
-
-			dao.remove(myRegelsatz);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
