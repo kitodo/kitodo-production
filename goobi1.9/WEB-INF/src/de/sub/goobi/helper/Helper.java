@@ -226,7 +226,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static String getString(Locale language, String key) {
-		if (commonMessages == null) {
+		if (commonMessages == null || commonMessages.size()<=1) {
 			loadMsgs();
 		}
 
@@ -426,31 +426,36 @@ public class Helper implements Serializable, Observer {
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
-		Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
-		while (polyglot.hasNext()) {
-			Locale language = polyglot.next();
-			commonMessages.put(language, ResourceBundle.getBundle("Messages.messages", language));
-			File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
-			if (file.exists()) {
-				// Load local message bundle from file system only if file exists;
-				// if value not exists in bundle, use default bundle from classpath
+		if (FacesContext.getCurrentInstance() != null) {
+			Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+			while (polyglot.hasNext()) {
+				Locale language = polyglot.next();
+				commonMessages.put(language, ResourceBundle.getBundle("Messages.messages", language));
+				File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
+				if (file.exists()) {
+					// Load local message bundle from file system only if file exists;
+					// if value not exists in bundle, use default bundle from classpath
 
-				try {
-					final URL resourceURL = file.toURI().toURL();
-					URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-						@Override
-						public URLClassLoader run() {
-							return new URLClassLoader(new URL[] { resourceURL });
+					try {
+						final URL resourceURL = file.toURI().toURL();
+						URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+							@Override
+							public URLClassLoader run() {
+								return new URLClassLoader(new URL[] { resourceURL });
+							}
+						});
+						ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
+						if (localBundle != null) {
+							localMessages.put(language, localBundle);
 						}
-					});
-					ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
-					if (localBundle != null) {
-						localMessages.put(language, localBundle);
-					}
 
-				} catch (Exception e) {
+					} catch (Exception e) {
+					}
 				}
 			}
+		} else {
+			Locale defaullLocale = new Locale("EN");
+			commonMessages.put(defaullLocale, ResourceBundle.getBundle("Messages.messages", defaullLocale));
 		}
 	}
 
