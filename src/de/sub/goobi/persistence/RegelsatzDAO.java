@@ -26,7 +26,7 @@ import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 
 import java.util.List;
 
@@ -55,16 +55,14 @@ public class RegelsatzDAO extends BaseDAO {
 	}
 
 	public boolean hasAssignedProcesses(Regelsatz r) {
-		Session newSession = Helper.getHibernateSession().getSessionFactory().openSession();
+		StatelessSession newSession = Helper.getHibernateSession().getSessionFactory().openStatelessSession();
 		Boolean result = false;
 		try {
-			Query q = newSession.createQuery("select count(*)>0 from Prozess as p where p.regelsatz = :regelsatz");
+			Query q = newSession.createQuery("select count(*) from Prozess as p where p.regelsatz = :regelsatz");
 			q.setEntity("regelsatz", r);
-			result = (Boolean) q.uniqueResult();
+			result = ((Long) q.uniqueResult()) > 0;
 		} finally {
-			if (newSession.isOpen()) {
-				newSession.close();
-			}
+			newSession.close();
 		}
 		return result;
 	}
