@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
 
 <%--
   ~ This file is part of the Goobi Application - a Workflow tool for the support of
@@ -107,27 +109,65 @@
 	<%-- Formular für die Bearbeitung der Eigenschaft --%>
 	<htm:tr>
 		<htm:td styleClass="eingabeBoxen_row2" colspan="2">
-			<h:panelGrid columns="2">
+			<x:aliasBean alias="#{myitem}" value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty}">
+				<h:panelGrid columns="2">
 
-				<%-- Felder --%>
-				<h:outputLabel for="eigenschafttitel" value="#{msgs.titel}" />
-				<h:panelGroup>
-					<h:inputText id="eigenschafttitel"
-						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.titel}"
-						required="true" />
-					<x:message for="eigenschafttitel" style="color: red"
-						detailFormat="#{msgs.keinTitelAngegeben}" />
-				</h:panelGroup>
 
-				<h:outputLabel for="eigenschaftwert" value="#{msgs.wert}" />
-				<h:panelGroup>
-					<h:inputText id="eigenschaftwert"
-						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.wert}" />
-				</h:panelGroup>
-			</h:panelGrid>
+					<%-- Felder --%>
+					<h:outputLabel for="eigenschafttitel" value="#{msgs.titel}" />
+					<h:panelGroup>
+						<h:inputText id="eigenschafttitel" style="width: 500px;margin-right:15px"
+							value="#{ProzessverwaltungForm.mySchritt.displayProperties.currentProperty.titel}" required="true" />
+						<x:message for="eigenschafttitel" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}" />
+					</h:panelGroup>
 
+
+
+					<h:outputText value="#{msgs.wert}" />
+					<%-- textarea --%>
+					<h:panelGroup id="prpvw15_1" rendered="#{((myitem.type.name == 'string') || (myitem.type.name == 'null'))}">
+						<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myitem.selectedValue}" required="#{myitem.required}" />
+					</h:panelGroup>
+
+					<%-- numbers only --%>
+					<h:panelGroup id="prpvw15_1mnk" rendered="#{myitem.type.name == 'integer' || myitem.type.name == 'number'}">
+
+						<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myitem.selectedValue}" required="#{myitem.required}">
+							<f:validateLongRange minimum="0" />
+						</h:inputText>
+					</h:panelGroup>
+
+					<%--  SelectOneMenu --%>
+					<h:panelGroup id="prpvw15_2" rendered="#{(myitem.type.name == 'list')}">
+						<h:selectOneMenu value="#{myitem.selectedValue}" style="width: 500px;margin-right:15px" id="prpvw15_2_1">
+							<si:selectItems id="prpvw15_2_2" value="#{myitem.valuesList}" var="myitems" itemLabel="#{myitems}" itemValue="#{myitems}" />
+						</h:selectOneMenu>
+					</h:panelGroup>
+
+					<%--  SelectManyMenu --%>
+					<h:panelGroup id="prpvw15_3" rendered="#{(myitem.type.name == 'listmultiselect')}">
+						<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myitem.selectedValuesList}" required="#{myitem.required}"
+							size="10">
+							<si:selectItems id="prpvw15_3_2" value="#{myitem.valuesList}" var="myitems" itemLabel="#{myitems}" itemValue="#{myitems}" />
+						</h:selectManyListbox>
+					</h:panelGroup>
+
+					<%--  Boolean --%>
+					<h:panelGroup id="prpvw15_4" rendered="#{(myitem.type.name == 'boolean')}">
+						<h:selectOneMenu value="#{myitem.selectedValue}" style="width: 500px;margin-right:15px" id="prpvw15_4_1" required="#{myitem.required}">
+							<f:selectItem id="prpvw15_4_2" itemValue="true" itemLabel="#{msgs.yes}" />
+							<f:selectItem id="prpvw15_4_3" itemValue="false" itemLabel="#{msgs.no}" />
+						</h:selectOneMenu>
+					</h:panelGroup>
+
+					<%--  Date  --%>
+					<h:panelGroup id="prpvw15_5" style="width: 500px;margin-right:15px" rendered="#{(myitem.type.name == 'date')}">
+						<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy" value="#{myitem.date}" enableManualInput="true">
+						</rich:calendar>
+					</h:panelGroup>
+
+				</h:panelGrid>
+			</x:aliasBean>
 		</htm:td>
 	</htm:tr>
 
