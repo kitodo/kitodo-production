@@ -91,7 +91,7 @@
 	<!-- Normal build of application. -->
 	<target name="compile" depends="copySources, createDirs, writeVersion" description="Normal build of application.">
 
-		<javac srcdir="${dir.build.src}" destdir="${dir.build}/WEB-INF/classes" target="1.5" encoding="UTF8" debug="true" debuglevel="lines, vars, source">
+		<javac srcdir="${dir.build.src}" destdir="${dir.build}/WEB-INF/classes" target="1.5" encoding="UTF8" source="1.5">
 			<compilerarg value="-Xlint" />
 			<classpath refid="classpath" />
 		</javac>

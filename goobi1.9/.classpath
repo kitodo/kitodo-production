@@ -34,7 +34,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/junit-4.3.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/mets-1.7.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/mods-3.3.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/mysql-connector-java-5.1.6.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/oscache-2.3.2.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/quartz-all-1.6.5.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/resolver.jar"/>

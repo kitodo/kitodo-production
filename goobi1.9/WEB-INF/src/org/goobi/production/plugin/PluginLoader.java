@@ -65,16 +65,7 @@ public class PluginLoader {
 		return null;
 	}
 	
-	public static IPlugin getPluginById(PluginType inType, String inId) {
-		PluginManagerUtil pmu = initialize(inType);
-		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
-		for (IPlugin p : plugins) {
-			if (p.getId().equals(inId)) {
-				return p;
-			}
-		}
-		return null;
-	}
+
 
 	@Deprecated
 	public static IPlugin getPlugin(PluginType inType, String inTitle) {

@@ -41,7 +41,6 @@ public abstract class AbstractStepPlugin implements IStepPlugin {
 
 	private static final Logger logger = Logger.getLogger(AbstractStepPlugin.class);
 
-	protected String id = "abstract_step";
 	protected String name = "Abstract Step Plugin";
 	protected String version = "1.0";
 	protected String description = "Abstract description for abstract step";
@@ -60,10 +59,7 @@ public abstract class AbstractStepPlugin implements IStepPlugin {
 		return this.name + " v" + this.version;
 	}
 
-	@Override
-	public String getId() {
-		return this.id;
-	}
+
 	
 	@Override
 	public String getDescription() {
