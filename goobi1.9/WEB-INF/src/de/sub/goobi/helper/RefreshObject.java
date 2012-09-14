@@ -31,13 +31,17 @@ import org.hibernate.Session;
 
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.Persistence.HibernateUtilOld;
 
 // FIXME remove this class, find a better way to update process status in hibernate
 public class RefreshObject {
 
 	public static void refreshProcess(int processID) {
-
 		Session session = Helper.getHibernateSession();
+		if (session == null || !session.isOpen() || !session.isConnected()) {
+			HibernateUtilOld.rebuildSessionFactory();
+			session=Helper.getHibernateSession();
+		}
 		Prozess o = (Prozess) session.get(Prozess.class, processID);
 		session.refresh(o);
 
@@ -45,7 +49,10 @@ public class RefreshObject {
 
 	public static void refreshStep(int stepID) {
 		Session session = Helper.getHibernateSession();
-		Schritt o = (Schritt) session.get(Schritt.class, stepID);
+		if (session == null || !session.isOpen() || !session.isConnected()) {
+			HibernateUtilOld.rebuildSessionFactory();
+			session=Helper.getHibernateSession();
+		}		Schritt o = (Schritt) session.get(Schritt.class, stepID);
 		session.refresh(o);
 
 	}
