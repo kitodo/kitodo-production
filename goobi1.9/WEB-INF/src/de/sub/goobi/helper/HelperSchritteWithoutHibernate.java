@@ -136,8 +136,8 @@ public class HelperSchritteWithoutHibernate {
 		}
 		ProcessObject po = ProcessManager.getProcessObjectForId(processId);
 		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory()))) {
-			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory())), processId);
+		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
+			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))), processId);
 		}
 		
 		

@@ -1353,7 +1353,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				}
 			}
 			if (tempImg == 0) {
-				tempImg = FileUtils.getNumberOfFiles(new File(proz.getImagesOrigDirectory()));
+				tempImg = FileUtils.getNumberOfFiles(new File(proz.getImagesOrigDirectory(true)));
 				if (tempImg > 0) {
 					changed = true;
 				}

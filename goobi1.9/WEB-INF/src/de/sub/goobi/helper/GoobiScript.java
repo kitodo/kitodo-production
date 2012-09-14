@@ -307,7 +307,7 @@ public class GoobiScript {
 		try {
 
 			for (Prozess p : inProzesse) {
-				File imagesFolder = new File(p.getImagesOrigDirectory());
+				File imagesFolder = new File(p.getImagesOrigDirectory(false));
 				if (imagesFolder.list().length > 0) {
 					Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue()
 							+ "] has allready data in image folder");

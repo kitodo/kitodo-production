@@ -378,7 +378,7 @@ public class AutomaticDmsExport extends ExportMets {
 		 * -------------------------------- dann den Ausgangspfad ermitteln --------------------------------
 		 */
 		Helper help = new Helper();
-		File tifOrdner = new File(myProzess.getImagesTifDirectory());
+		File tifOrdner = new File(myProzess.getImagesTifDirectory(true));
 
 		/*
 		 * -------------------------------- jetzt die Ausgangsordner in die Zielordner kopieren --------------------------------

@@ -113,9 +113,9 @@ public class VariableReplacer {
 		// replace paths and files
 		try {
 			String processpath = this.process.getProcessDataDirectory().replace("\\", "/");
-			String tifpath = this.process.getImagesTifDirectory().replace("\\", "/");
+			String tifpath = this.process.getImagesTifDirectory(false).replace("\\", "/");
 			String imagepath = this.process.getImagesDirectory().replace("\\", "/");
-			String origpath = this.process.getImagesOrigDirectory().replace("\\", "/");
+			String origpath = this.process.getImagesOrigDirectory(false).replace("\\", "/");
 			String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
 			String ocrBasisPath = this.process.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = this.process.getTxtDirectory().replace("\\", "/");

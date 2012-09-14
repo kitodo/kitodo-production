@@ -272,7 +272,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 							}
 							for (String file : imageDir) {
 								File image = new File(images, file);
-								File dest = new File(p.getImagesOrigDirectory() + image.getName());
+								File dest = new File(p.getImagesOrigDirectory(false) + image.getName());
 								FileUtils.moveFile(image, dest);
 							}
 							FileUtils.deleteDirectory(images);

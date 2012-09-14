@@ -383,7 +383,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * --------------------------------
 		 */
 		Helper help = new Helper();
-		File tifOrdner = new File(this.fi.getImagesTifDirectory());
+		File tifOrdner = new File(this.fi.getImagesTifDirectory(true));
 
 		/*
 		 * -------------------------------- jetzt die Ausgangsordner in die

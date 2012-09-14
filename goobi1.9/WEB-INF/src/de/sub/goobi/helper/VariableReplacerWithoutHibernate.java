@@ -111,9 +111,9 @@ public class VariableReplacerWithoutHibernate {
 			FolderInformation fi = new FolderInformation(this.process.getId(), this.process.getTitle());
 			
 			String processpath = fi.getProcessDataDirectory().replace("\\", "/");
-			String tifpath = fi.getImagesTifDirectory().replace("\\", "/");
+			String tifpath = fi.getImagesTifDirectory(false).replace("\\", "/");
 			String imagepath = fi.getImagesDirectory().replace("\\", "/");
-			String origpath = fi.getImagesOrigDirectory().replace("\\", "/");
+			String origpath = fi.getImagesOrigDirectory(false).replace("\\", "/");
 			String metaFile = fi.getMetadataFilePath().replace("\\", "/");
 			String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");

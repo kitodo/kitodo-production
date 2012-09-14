@@ -70,7 +70,7 @@ public class FolderInformation {
 	// String sourcepath = this.process.getSourceDirectory().replace("\\", "/");
 	// String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
 
-	public String getImagesTifDirectory() {
+	public String getImagesTifDirectory(boolean useFallBack) {
 		File dir = new File(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
@@ -91,7 +91,7 @@ public class FolderInformation {
 			}
 		}
 
-		if (tifOrdner.equals("")) {
+		if (tifOrdner.equals("") && useFallBack) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 			if (!suffix.equals("")) {
 				String[] folderList = dir.list();
@@ -126,7 +126,7 @@ public class FolderInformation {
 	public Boolean getTifDirectoryExists() {
 		File testMe;
 
-		testMe = new File(getImagesTifDirectory());
+		testMe = new File(getImagesTifDirectory(true));
 
 		if (testMe.list() == null) {
 			return false;
@@ -138,7 +138,7 @@ public class FolderInformation {
 		}
 	}
 
-	public String getImagesOrigDirectory() {
+	public String getImagesOrigDirectory(boolean useFallBack) {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
 			File dir = new File(getImagesDirectory());
 			DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -156,7 +156,8 @@ public class FolderInformation {
 			for (int i = 0; i < verzeichnisse.length; i++) {
 				origOrdner = verzeichnisse[i];
 			}
-			if (origOrdner.equals("")) {
+			
+			if (origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
 					String[] folderList = dir.list();
@@ -177,7 +178,7 @@ public class FolderInformation {
 			// }
 			return rueckgabe;
 		} else {
-			return getImagesTifDirectory();
+			return getImagesTifDirectory(useFallBack);
 		}
 	}
 
@@ -244,12 +245,12 @@ public class FolderInformation {
 		return sourceFolder.getAbsolutePath();
 	}
 
-	public Map<String, String> getFolderForProcess() {
+	public Map<String, String> getFolderForProcess(boolean useFallBack) {
 		Map<String, String> answer = new HashMap<String, String>();
 		String processpath = getProcessDataDirectory().replace("\\", "/");
-		String tifpath = getImagesTifDirectory().replace("\\", "/");
+		String tifpath = getImagesTifDirectory(useFallBack).replace("\\", "/");
 		String imagepath = getImagesDirectory().replace("\\", "/");
-		String origpath = getImagesOrigDirectory().replace("\\", "/");
+		String origpath = getImagesOrigDirectory(useFallBack).replace("\\", "/");
 		String metaFile = getMetadataFilePath().replace("\\", "/");
 		String ocrBasisPath = getOcrDirectory().replace("\\", "/");
 		String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
@@ -317,7 +318,7 @@ public class FolderInformation {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
 		}
-		String folder = this.getImagesTifDirectory();
+		String folder = this.getImagesTifDirectory(false);
 		folder = folder.substring(0, folder.lastIndexOf("_"));
 		folder = folder + "_" + methodName;
 		if (new File(folder).exists()) {
@@ -329,7 +330,7 @@ public class FolderInformation {
 	public List<String> getDataFiles() throws InvalidImagesException {
 		File dir;
 		try {
-			dir = new File(getImagesTifDirectory());
+			dir = new File(getImagesTifDirectory(true));
 			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);

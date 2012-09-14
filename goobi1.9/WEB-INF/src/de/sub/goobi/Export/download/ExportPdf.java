@@ -136,7 +136,7 @@ public class ExportPdf extends ExportMets {
 					}
 					String url = "";
 					FilenameFilter filter = new FileUtils.FileListFilter("\\d*\\.tif");
-					File imagesDir = new File(myProzess.getImagesTifDirectory());
+					File imagesDir = new File(myProzess.getImagesTifDirectory(true));
 					File[] meta = imagesDir.listFiles(filter);
 					ArrayList<String> filenames = new ArrayList<String>();
 					for (File data : meta) {

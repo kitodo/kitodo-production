@@ -160,7 +160,7 @@ public class JobCreation {
 				}
 				for (String file : imageDir) {
 					File image = new File(imagesFolder, file);
-					File dest = new File(p.getImagesOrigDirectory() + image.getName());
+					File dest = new File(p.getImagesOrigDirectory(false) + image.getName());
 					FileUtils.moveFile(image, dest);
 				}
 				deleteDirectory(imagesFolder);

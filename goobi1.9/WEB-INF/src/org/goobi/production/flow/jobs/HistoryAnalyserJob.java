@@ -101,13 +101,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			updated = true;
 		}
 		/* imagesWork */
-		Integer numberWork = FileUtils.getNumberOfFiles(new File(inProcess.getImagesTifDirectory()), ".tif");
+		Integer numberWork = FileUtils.getNumberOfFiles(new File(inProcess.getImagesTifDirectory(true)), ".tif");
 		if (updateHistoryEvent(inProcess, HistoryEventType.imagesWorkDiff, numberWork.longValue())) {
 			updated = true;
 		}
 
 		/* imagesMaster */
-		Integer numberMaster = FileUtils.getNumberOfFiles(new File(inProcess.getImagesOrigDirectory()), ".tif");
+		Integer numberMaster = FileUtils.getNumberOfFiles(new File(inProcess.getImagesOrigDirectory(true)), ".tif");
 		if (updateHistoryEvent(inProcess, HistoryEventType.imagesMasterDiff, numberMaster.longValue())) {
 			updated = true;
 		}

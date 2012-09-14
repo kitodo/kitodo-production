@@ -391,7 +391,7 @@ public class ExportDms extends ExportMets {
 		 * --------------------------------
 		 */
 		Helper help = new Helper();
-		File tifOrdner = new File(myProzess.getImagesTifDirectory());
+		File tifOrdner = new File(myProzess.getImagesTifDirectory(true));
 
 		/*
 		 * -------------------------------- jetzt die Ausgangsordner in die

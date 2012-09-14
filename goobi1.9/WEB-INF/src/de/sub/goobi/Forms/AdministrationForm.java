@@ -297,7 +297,7 @@ public class AdministrationForm implements Serializable {
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
 				auf.setSortHelperMetadata(zaehlen.getNumberOfUghElements(auf, CountType.METADATA));
-				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new File(auf.getImagesOrigDirectory())));
+				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new File(auf.getImagesOrigDirectory(true))));
 				dao.save(auf);
 			} catch (RuntimeException e) {
 				myLogger.error("Fehler bei Band: " + auf.getTitel(), e);

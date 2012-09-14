@@ -202,7 +202,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 		MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
 		try {
-			if (!mih.checkIfImagesValid(title, fi.getImagesOrigDirectory())) {
+			if (!mih.checkIfImagesValid(title, fi.getImagesOrigDirectory(true))) {
 				ergebnis = false;
 			}
 		} catch (Exception e) {

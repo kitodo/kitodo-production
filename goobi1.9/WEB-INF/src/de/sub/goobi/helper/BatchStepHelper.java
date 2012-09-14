@@ -840,7 +840,7 @@ public class BatchStepHelper {
 				if (s.isTypImagesSchreiben()) {
 					MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
 					try {
-						if (!mih.checkIfImagesValid(s.getProzess().getTitel(), s.getProzess().getImagesOrigDirectory())) {
+						if (!mih.checkIfImagesValid(s.getProzess().getTitel(), s.getProzess().getImagesOrigDirectory(false))) {
 							return "";
 						}
 					} catch (Exception e) {
