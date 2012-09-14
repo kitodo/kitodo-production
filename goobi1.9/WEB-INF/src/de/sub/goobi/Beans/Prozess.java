@@ -286,9 +286,9 @@ public class Prozess implements Serializable {
 					}
 				}
 			}
-			if (tifOrdner.equals("")) {
-				tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
-			}
+		}
+		if (tifOrdner.equals("")) {
+			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
 		}
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
@@ -360,11 +360,10 @@ public class Prozess implements Serializable {
 						}
 					}
 				}
-				if (origOrdner.equals("")) {
-					origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
-				}
 			}
-
+			if (origOrdner.equals("")) {
+				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
+			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
 				new Helper().createMetaDirectory(rueckgabe);

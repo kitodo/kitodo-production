@@ -102,9 +102,9 @@ public class FolderInformation {
 					}
 				}
 			}
-			if (tifOrdner.equals("")) {
-				tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
-			}
+		}
+		if (tifOrdner.equals("")) {
+			tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
 		}
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
@@ -156,7 +156,7 @@ public class FolderInformation {
 			for (int i = 0; i < verzeichnisse.length; i++) {
 				origOrdner = verzeichnisse[i];
 			}
-			
+
 			if (origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
@@ -168,10 +168,11 @@ public class FolderInformation {
 						}
 					}
 				}
-				if (origOrdner.equals("")) {
-					origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
-				}
 			}
+			if (origOrdner.equals("")) {
+				origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
+			}
+
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			// if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
 			// new Helper().createMetaDirectory(rueckgabe);
