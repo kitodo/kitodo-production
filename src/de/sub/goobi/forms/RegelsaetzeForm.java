@@ -22,17 +22,22 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.RegelsatzDAO;
+
 import dubious.sub.goobi.helper.Page;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.persistence.RegelsatzDAO;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 public class RegelsaetzeForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
@@ -47,12 +52,20 @@ public class RegelsaetzeForm extends BasisForm {
 
 	public String Speichern() {
 		try {
+			assertValidRulesetFilePath();
 			dao.save(myRegelsatz);
 			return "RegelsaetzeAlle";
-		} catch (DAOException e) {
+		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
 			logger.error(e);
 			return "";
+		}
+	}
+
+	private void assertValidRulesetFilePath() throws FileNotFoundException {
+		File rulesetFile = new File(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + myRegelsatz.getDatei());
+		if (!rulesetFile.exists()) {
+			throw new FileNotFoundException("Ruleset file " + rulesetFile.getAbsolutePath() + " cannot be found");
 		}
 	}
 
