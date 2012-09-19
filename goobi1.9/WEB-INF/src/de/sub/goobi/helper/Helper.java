@@ -55,8 +55,10 @@ import java.util.Observer;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -226,7 +228,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static String getString(Locale language, String key) {
-		if (commonMessages == null || commonMessages.size()<=1) {
+		if (commonMessages == null || commonMessages.size() <= 1) {
 			loadMsgs();
 		}
 
@@ -266,7 +268,15 @@ public class Helper implements Serializable, Observer {
 		if (context == null) {
 			return null;
 		} else {
-			return context.getApplication().createValueBinding(expr).getValue(context);
+			Object value = null;
+			Application application = context.getApplication();
+			if (application != null) {
+				ValueBinding vb = application.createValueBinding(expr);
+				if (vb != null) {
+					value = vb.getValue(context);
+				}
+			}
+			return value;
 		}
 	}
 
