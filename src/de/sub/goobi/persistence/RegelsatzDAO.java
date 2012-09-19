@@ -22,10 +22,13 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import org.hibernate.Query;
+import org.hibernate.StatelessSession;
+
+import java.util.List;
 
 public class RegelsatzDAO extends BaseDAO {
 
@@ -49,6 +52,25 @@ public class RegelsatzDAO extends BaseDAO {
 	public void remove(Regelsatz t) throws DAOException {
 		if (t.getId() != null)
 			removeObj(t);
+	}
+
+	/**
+	 * Check if a Ruleset is referenced by existing Processes.
+	 *
+	 * @param  r Ruleset object to check for existing Processes referencing it.
+	 * @return True, if the given Ruleset is referenced by existing Processes, false otherwise.
+	 */
+	public boolean hasAssignedProcesses(Regelsatz r) {
+		StatelessSession newSession = Helper.getHibernateSession().getSessionFactory().openStatelessSession();
+		Boolean result = false;
+		try {
+			Query q = newSession.createQuery("select count(*) from Prozess as p where p.regelsatz = :regelsatz");
+			q.setEntity("regelsatz", r);
+			result = ((Long) q.uniqueResult()) > 0;
+		} finally {
+			newSession.close();
+		}
+		return result;
 	}
 
 	public void remove(Integer id) throws DAOException {

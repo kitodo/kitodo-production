@@ -22,17 +22,22 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.RegelsatzDAO;
+
 import dubious.sub.goobi.helper.Page;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.persistence.RegelsatzDAO;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 public class RegelsaetzeForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
@@ -47,18 +52,33 @@ public class RegelsaetzeForm extends BasisForm {
 
 	public String Speichern() {
 		try {
-			dao.save(myRegelsatz);
-			return "RegelsaetzeAlle";
-		} catch (DAOException e) {
+			if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
+				dao.save(myRegelsatz);
+				return "RegelsaetzeAlle";
+			} else {
+				Helper.setFehlerMeldung("regelsatzDateiNichtGefunden");
+			}
+		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
 			logger.error(e);
-			return "";
 		}
+		return "";
+	}
+
+	private boolean hasValidRulesetFilePath(Regelsatz r, String pathToRulesets) {
+		File rulesetFile = new File(pathToRulesets + r.getDatei());
+		return rulesetFile.exists(); 
 	}
 
 	public String Loeschen() {
 		try {
-			dao.remove(myRegelsatz);
+			if (dao.hasAssignedProcesses(myRegelsatz)) {
+				Helper.setFehlerMeldung("regelsatzNichtLoeschbar");
+				return "";
+			} else {
+				dao.remove(myRegelsatz);
+			}
+
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
