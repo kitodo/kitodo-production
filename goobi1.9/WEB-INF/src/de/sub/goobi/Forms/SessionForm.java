@@ -92,7 +92,7 @@ public class SessionForm {
 			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 
 			String address = request.getRemoteAddr();
-			if (address.startsWith("127.0.0.1")) {
+			if (address != null && address.startsWith("127.0.0.1")) {
 				address = request.getHeader("x-forwarded-for");
 				if (address == null) {
 					address = "127.0.0.1";
