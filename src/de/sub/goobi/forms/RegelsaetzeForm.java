@@ -52,21 +52,22 @@ public class RegelsaetzeForm extends BasisForm {
 
 	public String Speichern() {
 		try {
-			assertValidRulesetFilePath();
-			dao.save(myRegelsatz);
-			return "RegelsaetzeAlle";
+			if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
+				dao.save(myRegelsatz);
+				return "RegelsaetzeAlle";
+			} else {
+				Helper.setFehlerMeldung("regelsatzDateiNichtGefunden");
+			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
 			logger.error(e);
-			return "";
 		}
+		return "";
 	}
 
-	private void assertValidRulesetFilePath() throws FileNotFoundException {
-		File rulesetFile = new File(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + myRegelsatz.getDatei());
-		if (!rulesetFile.exists()) {
-			throw new FileNotFoundException("Ruleset file " + rulesetFile.getAbsolutePath() + " cannot be found");
-		}
+	private boolean hasValidRulesetFilePath(Regelsatz r, String pathToRulesets) {
+		File rulesetFile = new File(pathToRulesets + r.getDatei());
+		return rulesetFile.exists(); 
 	}
 
 	public String Loeschen() {
