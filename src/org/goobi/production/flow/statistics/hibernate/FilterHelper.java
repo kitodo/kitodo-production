@@ -475,27 +475,11 @@ class FilterHelper {
 		// restrictions apply, to avoid multiple analysis
 		// of the criteria it is only done here once and
 		// to set flags which are subsequently used
-		Boolean flagSteps = false;
-		Boolean flagProcesses = false;
-		@SuppressWarnings("unused")
-		Boolean flagSetCritProjects = false;
-
-		if (crit.getClassName() == Prozess.class.getName()) {
-			flagProcesses = true;
-		}
-
-		if (crit.getClassName() == Schritt.class.getName()) {
-			flagSteps = true;
-		}
-
-		// keeping a reference to the passed criteria
-		Criteria inCrit = crit;
-		@SuppressWarnings("unused")
-		Criteria critProject = null;
-		Criteria critProcess = null;
+		Boolean flagSteps = crit.getClassName().equals(Schritt.class.getName());
+		Boolean flagProcesses = crit.getClassName().equals(Prozess.class.getName());
 
 		// to collect and return feedback about erroneous use of filter expressions
-		String message = new String("");
+		String message = "";
 		
 		StrTokenizer tokenizer = new StrTokenizer(inFilter, ' ', '\"');
 
@@ -515,7 +499,6 @@ class FilterHelper {
 			// happens if user has admin rights
 			if (conjProjects.toString().equals("()")) {
 				conjProjects = null;
-				flagSetCritProjects = true;
 			}
 		}
 
@@ -536,11 +519,9 @@ class FilterHelper {
 		if (isTemplate != null) {
 			conjProcesses = Restrictions.conjunction();
 			if (!isTemplate) {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean
-						.valueOf(false)));
+				conjProcesses.add(Restrictions.eq("istTemplate", false));
 			} else {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean
-						.valueOf(true)));
+				conjProcesses.add(Restrictions.eq("istTemplate", true));
 			}
 		}
 
@@ -660,68 +641,44 @@ class FilterHelper {
 		}
 
 		if (conjProcesses != null || flagSteps) {
-			if (!flagProcesses) {
-				critProcess = crit.createCriteria("prozess", "proc");
-
-				if (conjProcesses != null) {
-
-					critProcess.add(conjProcesses);
-				}
-			} else {
-				if (conjProcesses != null) {
-					inCrit.add(conjProcesses);
-				}
+			if (flagProcesses) {
+				crit.add(conjProcesses);
 			}
 		}
 
-		if (flagSteps) {
-			critProject = critProcess.createCriteria("projekt", "proj");
-			if (conjProjects != null) {
-				inCrit.add(conjProjects);
+		if (conjProjects != null) {
+			if (!flagSteps) {
+				crit.createCriteria("projekt", "proj");
 			}
-		} else {
-			inCrit.createCriteria("projekt", "proj");
-			if (conjProjects != null) {
-				inCrit.add(conjProjects);
-			}
+			crit.add(conjProjects);
 		}
 
 		if (conjSteps != null) {
 			if (!flagSteps) {
 				crit.createCriteria("schritte", "steps");
-				crit.add(conjSteps);
-			} else {
-
-				inCrit.add(conjSteps);
 			}
+			crit.add(conjSteps);
 		}
 
 		if (conjTemplates != null) {
-			if (flagSteps){
-				critProcess.createCriteria("vorlagen", "vorl");
-				critProcess.createAlias("vorl.eigenschaften", "vorleig");
-				critProcess.add(conjTemplates);
-			}else{
+			if (!flagSteps){
 				crit.createCriteria("vorlagen", "vorl");
 				crit.createAlias("vorl.eigenschaften", "vorleig");
-				inCrit.add(conjTemplates);
+				crit.add(conjTemplates);
 			}
 		}
 
 		if (conjWorkPiece != null) {
-			if (flagSteps){
-				critProcess.createCriteria("werkstuecke", "werk");
-				critProcess.createAlias("werk.eigenschaften", "werkeig");
-				critProcess.add(conjWorkPiece);
-			}else{
+			if (!flagSteps){
 				crit.createCriteria("werkstuecke", "werk");
 				crit.createAlias("werk.eigenschaften", "werkeig");
-				inCrit.add(conjWorkPiece);
+				crit.add(conjWorkPiece);
 			}
 		}
+
 		if (conjUsers != null) {
 			crit.createCriteria("benutzer", "user");
-			inCrit.add(conjUsers);
+			crit.add(conjUsers);
 		}
 
 		return message;

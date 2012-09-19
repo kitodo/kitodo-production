@@ -62,7 +62,7 @@ public class Page implements Serializable {
 				totalResults = criteria.list().size();
 			}
 		} catch (HibernateException e) {
-			logger.error("Failed to get paginated results: " + e);
+			logger.error("Failed to get paginated results: ", e);
 		}
 	}
 
