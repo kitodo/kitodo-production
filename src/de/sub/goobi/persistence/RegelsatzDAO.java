@@ -54,6 +54,12 @@ public class RegelsatzDAO extends BaseDAO {
 			removeObj(t);
 	}
 
+	/**
+	 * Check if a Ruleset is referenced by existing Processes.
+	 *
+	 * @param  r Ruleset object to check for existing Processes referencing it.
+	 * @return True, if the given Ruleset is referenced by existing Processes, false otherwise.
+	 */
 	public boolean hasAssignedProcesses(Regelsatz r) {
 		StatelessSession newSession = Helper.getHibernateSession().getSessionFactory().openStatelessSession();
 		Boolean result = false;
