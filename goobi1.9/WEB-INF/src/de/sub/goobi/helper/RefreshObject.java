@@ -40,7 +40,7 @@ public class RefreshObject {
 		Session session = Helper.getHibernateSession();
 		if (session == null || !session.isOpen() || !session.isConnected()) {
 			HibernateUtilOld.rebuildSessionFactory();
-			session=Helper.getHibernateSession();
+			session = HibernateUtilOld.getSession();
 		}
 		Prozess o = (Prozess) session.get(Prozess.class, processID);
 		session.refresh(o);
@@ -51,8 +51,9 @@ public class RefreshObject {
 		Session session = Helper.getHibernateSession();
 		if (session == null || !session.isOpen() || !session.isConnected()) {
 			HibernateUtilOld.rebuildSessionFactory();
-			session=Helper.getHibernateSession();
-		}		Schritt o = (Schritt) session.get(Schritt.class, stepID);
+			session = HibernateUtilOld.getSession();
+		}
+		Schritt o = (Schritt) session.get(Schritt.class, stepID);
 		session.refresh(o);
 
 	}
