@@ -74,7 +74,9 @@
 								<%@include file="inc_Prozessverwaltung/prozess_box_Prozessdetails.jsp"%>
 
 								<%-- Schritte --%>
-								<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
+								<c:if test="${ProzessverwaltungForm.myProzess.id != null}">
+								    <%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
+								</c:if>
 
 								<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null && not ProzessverwaltungForm.myProzess.istTemplate}">
 									<%-- Vorlagen --%>
@@ -89,7 +91,9 @@
 								</f:subview>
 
 								<%-- Prozesseigenschaften --%>
-								<%@include file="inc_Prozessverwaltung/prozess_box_Prozesseigenschaften.jsp"%>
+								<c:if test="${ProzessverwaltungForm.myProzess.id != null}">
+								    <%@include file="inc_Prozessverwaltung/prozess_box_Prozesseigenschaften.jsp"%>
+								</c:if>
 
 							</htm:td>
 						</htm:tr>
