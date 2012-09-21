@@ -686,19 +686,21 @@ public class Helper implements Serializable, Observer {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.avi")) {
+			} else if (name.matches(prefix + "\\.[aA][vV][iI]")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.mp4")) {
+			} else if (name.matches(prefix + "\\.[mM][pP][gG]")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.mp3")) {
+			} else if (name.matches(prefix + "\\.[mM][pP]4")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.wav")) {
+			} else if (name.matches(prefix + "\\.[mM][pP]3")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.wmv")) {
+			} else if (name.matches(prefix + "\\.[wW][aA][vV]")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.flv")) {
+			} else if (name.matches(prefix + "\\.[wW][mM][vV]")) {
 				fileOk = true;
-			} else if (name.matches(prefix + "\\.ogg")) {
+			} else if (name.matches(prefix + "\\.[fF][lL][vV]")) {
+				fileOk = true;
+			} else if (name.matches(prefix + "\\.[oO][gG][gG]")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.docx")) {
 				fileOk = true;

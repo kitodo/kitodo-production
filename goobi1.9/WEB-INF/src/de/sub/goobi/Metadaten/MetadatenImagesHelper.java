@@ -347,7 +347,7 @@ public class MetadatenImagesHelper {
 		if (dir.exists()) {
 			String[] dateien = dir.list(Helper.dataFilter);
 			if (dateien == null || dateien.length == 0) {
-				Helper.setFehlerMeldung("[" + title + "] No images found");
+				Helper.setFehlerMeldung("[" + title + "] No objects found");
 				return false;
 			}
 
