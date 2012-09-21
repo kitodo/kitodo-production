@@ -242,7 +242,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (!this.flagWait) {
 				this.flagWait = true;
 
-//				Helper.getHibernateSession().clear();
+				// Helper.getHibernateSession().clear();
 				Helper.getHibernateSession().refresh(this.mySchritt);
 
 				if (this.mySchritt.getBearbeitungsstatusEnum() != StepStatus.OPEN) {
@@ -341,10 +341,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN)) {
 				s.setBearbeitungsstatusEnum(StepStatus.INWORK);
 				s.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				mySchritt.setBearbeitungszeitpunkt(new Date());
+				s.setBearbeitungszeitpunkt(new Date());
 				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				if (ben != null) {
-					mySchritt.setBearbeitungsbenutzer(ben);
+					s.setBearbeitungsbenutzer(ben);
 				}
 				if (s.getBearbeitungsbeginn() == null) {
 					Date myDate = new Date();
@@ -361,10 +361,10 @@ public class AktuelleSchritteForm extends BasisForm {
 					} catch (Exception e1) {
 
 					}
-					mySchritt.setBearbeitungszeitpunkt(new Date());
+					s.setBearbeitungszeitpunkt(new Date());
 
 					if (ben != null) {
-						mySchritt.setBearbeitungsbenutzer(ben);
+						s.setBearbeitungsbenutzer(ben);
 					}
 					this.myDav.DownloadToHome(s.getProzess(), s.getId().intValue(), !s.isTypImagesSchreiben());
 
@@ -505,7 +505,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			if (prop.getCurrentStepAccessCondition().equals(AccessCondition.WRITEREQUIRED) && (prop.getValue() == null || prop.getValue().equals(""))) {
 				Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " " + Helper.getTranslation("requiredValue"));
 				return "";
-			} else  if(!prop.isValid()) {
+			} else if (!prop.isValid()) {
 				List<String> parameter = new ArrayList<String>();
 				parameter.add(prop.getName());
 				Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
