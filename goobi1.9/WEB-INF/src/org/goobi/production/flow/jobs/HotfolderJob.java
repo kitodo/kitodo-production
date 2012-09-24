@@ -45,8 +45,11 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
@@ -315,6 +318,13 @@ public class HotfolderJob extends AbstractGoobiJob {
 								+ "_anchor.xml");
 						if (anchor.exists()) {
 							FileUtils.deleteQuietly(anchor);
+						}
+						List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
+						for (StepObject s : steps) {
+							if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch()) {
+								ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+								myThread.start();
+							}
 						}
 					}
 				} catch (ReadException e) {

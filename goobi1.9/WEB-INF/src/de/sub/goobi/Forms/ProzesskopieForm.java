@@ -86,10 +86,13 @@ import de.sub.goobi.Beans.Werkstueckeigenschaft;
 import de.sub.goobi.Import.ImportOpac;
 import de.sub.goobi.Persistence.BenutzerDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -738,6 +741,14 @@ public class ProzesskopieForm {
 
 		/* damit die Sortierung stimmt nochmal einlesen */
 		Helper.getHibernateSession().refresh(this.prozessKopie);
+		
+		List<StepObject> steps = StepManager.getStepsForProcess(prozessKopie.getId());
+		for (StepObject s : steps) {
+			if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch() ) {
+				ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+				myThread.start();
+			}
+		}
 		return "ProzessverwaltungKopie3";
 
 	}
