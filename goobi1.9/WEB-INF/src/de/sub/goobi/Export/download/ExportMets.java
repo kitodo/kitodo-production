@@ -222,47 +222,38 @@ public class ExportMets {
 				return false;
 			}
 		}
-//		if (dd == null) {
-//			return false;
-//		} else {
-			for (ContentFile cf : dd.getFileSet().getAllFiles()) {
-				String location = cf.getLocation();
-				// If the file's location string shoes no sign of any protocol,
-				// use the file protocol.
-				if (!location.contains("://")) {
-					location = "file://" + location;
-				}
-				URL url = new URL(location);
-				File f = new File(imageFolder, url.getFile());
-				cf.setLocation(f.toURI().toString());
+		// if (dd == null) {
+		// return false;
+		// } else {
+		for (ContentFile cf : dd.getFileSet().getAllFiles()) {
+			String location = cf.getLocation();
+			// If the file's location string shoes no sign of any protocol,
+			// use the file protocol.
+			if (!location.contains("://")) {
+				location = "file://" + location;
 			}
+			URL url = new URL(location);
+			File f = new File(imageFolder, url.getFile());
+			cf.setLocation(f.toURI().toString());
+		}
 
-			mm.setDigitalDocument(dd);
+		mm.setDigitalDocument(dd);
 
-			/*
-			 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
-			 * --------------------------------
-			 */
-			// Replace all pathes with the given VariableReplacer, also the file
-			// group pathes!
-			VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
-			Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
+		/*
+		 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
+		 * --------------------------------
+		 */
+		// Replace all pathes with the given VariableReplacer, also the file
+		// group pathes!
+		VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
+		Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
 
-			if (myFilegroups != null && myFilegroups.size() > 0) {
-				for (ProjectFileGroup pfg : myFilegroups) {
-					// check if source files exists
-					if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-						File folder = new File(myProzess.getMethodFromName(pfg.getFolder()));
-						if (folder.exists() && folder.list().length > 0) {
-							VirtualFileGroup v = new VirtualFileGroup();
-							v.setName(pfg.getName());
-							v.setPathToFiles(vp.replace(pfg.getPath()));
-							v.setMimetype(pfg.getMimetype());
-							v.setFileSuffix(pfg.getSuffix());
-							mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
-						}
-					} else {
-
+		if (myFilegroups != null && myFilegroups.size() > 0) {
+			for (ProjectFileGroup pfg : myFilegroups) {
+				// check if source files exists
+				if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+					File folder = new File(myProzess.getMethodFromName(pfg.getFolder()));
+					if (folder.exists() && folder.list().length > 0) {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());
 						v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -270,47 +261,68 @@ public class ExportMets {
 						v.setFileSuffix(pfg.getSuffix());
 						mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 					}
+				} else {
+
+					VirtualFileGroup v = new VirtualFileGroup();
+					v.setName(pfg.getName());
+					v.setPathToFiles(vp.replace(pfg.getPath()));
+					v.setMimetype(pfg.getMimetype());
+					v.setFileSuffix(pfg.getSuffix());
+					mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 				}
 			}
+		}
 
-			// Replace rights and digiprov entries.
-			mm.setRightsOwner(vp.replace(myProzess.getProjekt().getMetsRightsOwner()));
-			mm.setRightsOwnerLogo(vp.replace(myProzess.getProjekt().getMetsRightsOwnerLogo()));
-			mm.setRightsOwnerSiteURL(vp.replace(myProzess.getProjekt().getMetsRightsOwnerSite()));
-			mm.setRightsOwnerContact(vp.replace(myProzess.getProjekt().getMetsRightsOwnerMail()));
-			mm.setDigiprovPresentation(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentation()));
-			mm.setDigiprovReference(vp.replace(myProzess.getProjekt().getMetsDigiprovReference()));
-			mm.setDigiprovPresentationAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentationAnchor()));
-			mm.setDigiprovReferenceAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovReferenceAnchor()));
+		// Replace rights and digiprov entries.
+		mm.setRightsOwner(vp.replace(myProzess.getProjekt().getMetsRightsOwner()));
+		mm.setRightsOwnerLogo(vp.replace(myProzess.getProjekt().getMetsRightsOwnerLogo()));
+		mm.setRightsOwnerSiteURL(vp.replace(myProzess.getProjekt().getMetsRightsOwnerSite()));
+		mm.setRightsOwnerContact(vp.replace(myProzess.getProjekt().getMetsRightsOwnerMail()));
+		mm.setDigiprovPresentation(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentation()));
+		mm.setDigiprovReference(vp.replace(myProzess.getProjekt().getMetsDigiprovReference()));
+		mm.setDigiprovPresentationAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentationAnchor()));
+		mm.setDigiprovReferenceAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovReferenceAnchor()));
 
-			mm.setPurlUrl(vp.replace(myProzess.getProjekt().getMetsPurl()));
-			mm.setContentIDs(vp.replace(myProzess.getProjekt().getMetsContentIDs()));
+		mm.setPurlUrl(vp.replace(myProzess.getProjekt().getMetsPurl()));
+		mm.setContentIDs(vp.replace(myProzess.getProjekt().getMetsContentIDs()));
 
-			String pointer = myProzess.getProjekt().getMetsPointerPath();
-			pointer = vp.replace(pointer);
-			mm.setMptrUrl(pointer);
+		String pointer = myProzess.getProjekt().getMetsPointerPath();
+		pointer = vp.replace(pointer);
+		mm.setMptrUrl(pointer);
 
-			String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
-			pointer = vp.replace(anchor);
-			mm.setMptrAnchorUrl(pointer);
+		String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
+		pointer = vp.replace(anchor);
+		mm.setMptrAnchorUrl(pointer);
 
-			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-			List<String> images = new ArrayList<String>();
-			try {
-				// TODO andere Dateigruppen nicht mit image Namen ersetzen
-				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
-				dd.overrideContentFiles(images);
-			} catch (IndexOutOfBoundsException e) {
-				myLogger.error(e);
-				return false;
-			} catch (InvalidImagesException e) {
-				myLogger.error(e);
-				return false;
+		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+		List<String> images = new ArrayList<String>();
+		try {
+			// TODO andere Dateigruppen nicht mit image Namen ersetzen
+			images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+			int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+			if (images != null) {
+				int sizeOfImages = images.size();
+				if (sizeOfPagination == sizeOfImages) {
+					dd.overrideContentFiles(images);
+				} else {
+					List<String> param = new ArrayList<String>();
+					param.add(String.valueOf(sizeOfPagination));
+					param.add(String.valueOf(sizeOfImages));
+					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+					return false;
+				}
 			}
-			mm.write(targetFileName);
-			Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
-			return true;
-//		}
+		} catch (IndexOutOfBoundsException e) {
+			myLogger.error(e);
+			return false;
+		} catch (InvalidImagesException e) {
+			myLogger.error(e);
+			return false;
+		}
+		mm.write(targetFileName);
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+		return true;
+		// }
 	}
 
 	// private static String getMimetype(String filename) {

@@ -136,7 +136,7 @@ public class ExportMetsWithoutHibernate {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		return writeMetsFile(process, targetFileName, gdzfile, false);
-		
+
 	}
 
 	/**
@@ -296,8 +296,21 @@ public class ExportMetsWithoutHibernate {
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen
 				images = this.fi.getDataFiles();
-				dd.overrideContentFiles(images);
+				if (images != null) {
+					int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+					int sizeOfImages = images.size();
+					if (sizeOfPagination == sizeOfImages) {
+						dd.overrideContentFiles(images);
+					} else {
+						List<String> param = new ArrayList<String>();
+						param.add(String.valueOf(sizeOfPagination));
+						param.add(String.valueOf(sizeOfImages));
+						Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+						return false;
+					}
+				} 
 			} catch (IndexOutOfBoundsException e) {
+
 				myLogger.error(e);
 			} catch (InvalidImagesException e) {
 				myLogger.error(e);
