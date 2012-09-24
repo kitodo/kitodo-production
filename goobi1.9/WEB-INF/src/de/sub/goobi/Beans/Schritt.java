@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -802,13 +801,15 @@ public class Schritt implements Serializable {
 		Integer batchNumber = this.prozess.getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			userdefined.setFilterModes(false, false);
-			userdefined.setFilter("");
-			Criteria crit = userdefined.getCriteria();
+//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+//			userdefined.setFilterModes(false, false);
+//			userdefined.setFilter("");
+			Session session = Helper.getHibernateSession();
+			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", this.titel));
 
 			// only steps with same batchid
+			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
 			if (crit.list().size() > 1) {
