@@ -33,11 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-
-import de.sub.goobi.Beans.Property.IGoobiProperty;
 
 public class Vorlage implements Serializable {
 	private static final long serialVersionUID = 1736135433162833277L;
@@ -45,7 +42,6 @@ public class Vorlage implements Serializable {
 	private String herkunft;
 	private Prozess prozess;
 	private Set<Vorlageeigenschaft> eigenschaften;
-	@SuppressWarnings("deprecation")
 
 	private boolean panelAusgeklappt = true;
 
@@ -58,7 +54,6 @@ public class Vorlage implements Serializable {
 	 * ##################################################### ####################################################
 	 */
 
-	
 	public Integer getId() {
 		return this.id;
 	}
@@ -120,11 +115,11 @@ public class Vorlage implements Serializable {
 		try {
 			Hibernate.initialize(this.eigenschaften);
 		} catch (HibernateException e) {
-		}		if (this.eigenschaften == null) {
+		}
+		if (this.eigenschaften == null) {
 			return new ArrayList<Vorlageeigenschaft>();
 		}
 		return new ArrayList<Vorlageeigenschaft>(this.eigenschaften);
 	}
 
-	
 }

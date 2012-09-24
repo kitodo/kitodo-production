@@ -43,7 +43,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
@@ -95,7 +94,6 @@ public class Schritt implements Serializable {
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
-	@SuppressWarnings("deprecation")
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
 	public Schritt() {
@@ -265,7 +263,6 @@ public class Schritt implements Serializable {
 		this.bearbeitungsbenutzer = bearbeitungsbenutzer;
 	}
 
-	
 	public Integer getId() {
 		return this.id;
 	}
@@ -774,8 +771,6 @@ public class Schritt implements Serializable {
 		return answer;
 
 	}
-
-	
 
 	/*
 	 * batch step information

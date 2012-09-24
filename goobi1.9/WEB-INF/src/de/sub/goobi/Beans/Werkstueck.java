@@ -36,16 +36,11 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
-
-import de.sub.goobi.Beans.Property.IGoobiProperty;
-
 public class Werkstueck implements Serializable {
 	private static final long serialVersionUID = 123266825187246791L;
 	private Integer id;
 	private Prozess prozess;
 	private Set<Werkstueckeigenschaft> eigenschaften;
-	@SuppressWarnings("deprecation")
-
 	private boolean panelAusgeklappt = true;
 
 	public Werkstueck() {
@@ -57,7 +52,6 @@ public class Werkstueck implements Serializable {
 	 * ##################################################### ####################################################
 	 */
 
-	
 	public Integer getId() {
 		return this.id;
 	}
