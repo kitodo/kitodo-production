@@ -16,7 +16,7 @@
 		<htm:br />
 		<htm:br />
 		<h:commandLink action="#{Metadaten.goZurueck}" target="_parent">
-			<h:outputText value="zur�ck" style="font-size: 11px" />
+			<h:outputText value="#{msgs.goBack}" style="font-size: 11px" />
 		</h:commandLink>
 
 	</h:form>
