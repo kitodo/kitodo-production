@@ -104,8 +104,7 @@ class FilterHelper {
 		idList.add(Integer.valueOf(0));
 
 		/*
-		 * -------------------------------- hits by user groups
-		 * --------------------------------
+		 * -------------------------------- hits by user groups --------------------------------
 		 */
 		Criteria critGroups = session.createCriteria(Schritt.class);
 
@@ -145,8 +144,7 @@ class FilterHelper {
 		// }
 
 		/*
-		 * -------------------------------- Users only
-		 * --------------------------------
+		 * -------------------------------- Users only --------------------------------
 		 */
 		Criteria critUser = session.createCriteria(Schritt.class);
 
@@ -185,15 +183,13 @@ class FilterHelper {
 		// }
 
 		/*
-		 * -------------------------------- only taking the hits by restricting
-		 * to the ids --------------------------------
+		 * -------------------------------- only taking the hits by restricting to the ids --------------------------------
 		 */
 		con.add(Restrictions.in("id", idList));
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the
-	 * step filter in first positon.
+	 * This functions extracts the Integer from the parameters passed with the step filter in first positon.
 	 * 
 	 * @param String
 	 *            parameter
@@ -206,8 +202,7 @@ class FilterHelper {
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the
-	 * step filter in last positon.
+	 * This functions extracts the Integer from the parameters passed with the step filter in last positon.
 	 * 
 	 * @param String
 	 *            parameter
@@ -220,8 +215,7 @@ class FilterHelper {
 	}
 
 	/**
-	 * This function analyzes the parameters on a step filter and returns a
-	 * StepFilter enum to direct further processing it reduces the necessity to
+	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further processing it reduces the necessity to
 	 * apply some filter keywords
 	 * 
 	 * @param String
@@ -255,8 +249,7 @@ class FilterHelper {
 	}
 
 	/**
-	 * This enum represents the result of parsing the step<modifier>: filter
-	 * Restrictions
+	 * This enum represents the result of parsing the step<modifier>: filter Restrictions
 	 ****************************************************************************/
 	protected static enum StepFilter {
 		exact, range, min, max, name, unknown
@@ -526,11 +519,17 @@ class FilterHelper {
 			// tok.substring(5).split(" ")
 			String[] tempids = tok.substring(tok.indexOf(":") + 1).split(" ");
 			for (int i = 0; i < tempids.length; i++) {
-				int tempid = Integer.parseInt(tempids[i]);
-				listIds.add(tempid);
+				try {
+					int tempid = Integer.parseInt(tempids[i]);
+					listIds.add(tempid);
+				} catch (NumberFormatException e) {
+					Helper.setFehlerMeldung(tempids[i] + Helper.getTranslation("NumberFormatError"));
+				}
 			}
 		}
-		con.add(Restrictions.in("id", listIds));
+		if (listIds.size() > 0) {
+			con.add(Restrictions.in("id", listIds));
+		}
 	}
 
 	/**
@@ -564,24 +563,19 @@ class FilterHelper {
 	}
 
 	/**
-	 * This method builds a criteria depending on a filter string and some other
-	 * parameters passed on along the initial criteria. The filter is parsed and
-	 * depending on which data structures are used for applying filtering
-	 * restrictions conjunctions are formed and collect the restrictions and
-	 * then will be applied on the corresponding criteria. A criteria is only
-	 * added if needed for the presence of filters applying to it.
+	 * This method builds a criteria depending on a filter string and some other parameters passed on along the initial criteria. The filter is parsed
+	 * and depending on which data structures are used for applying filtering restrictions conjunctions are formed and collect the restrictions and
+	 * then will be applied on the corresponding criteria. A criteria is only added if needed for the presence of filters applying to it.
 	 * 
 	 * 
 	 * @param inFilter
 	 * @param crit
 	 * @param isTemplate
 	 * @param returnParameters
-	 *            Object containing values which need to be set and returned to
-	 *            UserDefinedFilter
+	 *            Object containing values which need to be set and returned to UserDefinedFilter
 	 * @param userAssignedStepsOnly
 	 * @param stepOpenOnly
-	 * @return String used to pass on error messages about errors in the filter
-	 *         expression
+	 * @return String used to pass on error messages about errors in the filter expression
 	 */
 	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
 			Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
@@ -1022,10 +1016,8 @@ class FilterHelper {
 		String parameters = filterPart.substring(filterPart.indexOf(":") + 1);
 		String message = "";
 		/*
-		 * -------------------------------- Analyzing the parameters and what
-		 * user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
-		 * Qualitätssicherung ->name) handling the filter according to the
-		 * parameters --------------------------------
+		 * -------------------------------- Analyzing the parameters and what user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
+		 * Qualitätssicherung ->name) handling the filter according to the parameters --------------------------------
 		 */
 
 		switch (FilterHelper.getStepFilter(parameters)) {
@@ -1083,7 +1075,7 @@ class FilterHelper {
 				returnParameters.setCriticalQuery();
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
-			}catch (NumberFormatException e){
+			} catch (NumberFormatException e) {
 				try {
 					FilterHelper.filterStepName(con, parameters, inStatus, negate, filterPrefix);
 				} catch (NullPointerException e1) {
