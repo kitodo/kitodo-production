@@ -541,7 +541,7 @@ public class CopyProcess extends ProzesskopieForm {
 		/* kein Titel */
 		if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
 			valide = false;
-			Helper.setFehlerMeldung("UnvollstaendigeDaten: ", "kein Vorgangstitel angegeben");
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 		}
 
 		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
@@ -562,7 +562,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 			if (anzahl > 0) {
 				valide = false;
-				Helper.setFehlerMeldung("UngueltigeDaten: ", "der Vorgangstitel wird bereits verwendet");
+				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 			}
 		}
 
@@ -572,7 +572,7 @@ public class CopyProcess extends ProzesskopieForm {
 		/* keine Collektion ausgewählt */
 		if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
 			valide = false;
-			Helper.setFehlerMeldung("UnvollstaendigeDaten: ", "keine Kollektion angegeben");
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorNoCollection"));
 		}
 
 		/*
@@ -581,7 +581,7 @@ public class CopyProcess extends ProzesskopieForm {
 		for (AdditionalField field : this.additionalFields) {
 			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getWert()))) {
 				valide = false;
-				Helper.setFehlerMeldung("UnvollstaendigeDaten: ", field.getTitel() + " nicht angegeben");
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty")); 
 			}
 		}
 		return valide;
@@ -615,7 +615,7 @@ public class CopyProcess extends ProzesskopieForm {
 			/* kein Titel */
 			if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
 				valide = false;
-				Helper.setFehlerMeldung("UnvollstaendigeDaten: ", "kein Vorgangstitel angegeben");
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 			}
 
 			// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
@@ -636,7 +636,7 @@ public class CopyProcess extends ProzesskopieForm {
 				}
 				if (anzahl > 0) {
 					valide = false;
-					Helper.setFehlerMeldung("UngueltigeDaten: ", "der Vorgangstitel wird bereits verwendet");
+					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 				}
 			}
 		}
