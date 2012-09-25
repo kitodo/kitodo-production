@@ -51,6 +51,7 @@ import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -313,15 +314,23 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			userdefined.setFilterModes(true, false);
-			userdefined.setFilter("");
-			Criteria crit = userdefined.getCriteria();
+			Session session = Helper.getHibernateSession();
+			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
-
 			// only steps with same batchid
+			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
+			
+//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+//			userdefined.setFilterModes(true, false);
+//			userdefined.setFilter("");
+//			Criteria crit = userdefined.getCriteria();
+//			crit.add(Restrictions.eq("titel", steptitle));
+//
+//			// only steps with same batchid
+//			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+//			crit.add(Restrictions.eq("batchStep", true));
 			currentStepsOfBatch = crit.list();
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
@@ -393,15 +402,21 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			userdefined.setFilterModes(false, false);
-			userdefined.setFilter("");
-			Criteria crit = userdefined.getCriteria();
+//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+//			userdefined.setFilterModes(false, false);
+//			userdefined.setFilter("");
+//			Criteria crit = userdefined.getCriteria();
+//			crit.add(Restrictions.eq("titel", steptitle));
+//			crit.add(Restrictions.eq("batchStep", true));
+			Session session = Helper.getHibernateSession();
+			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
-			crit.add(Restrictions.eq("batchStep", true));
-
 			// only steps with same batchid
+			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			crit.add(Restrictions.eq("batchStep", true));
+			// only steps with same batchid
+//			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			currentStepsOfBatch = crit.list();
 		} else {
 			return "AktuelleSchritteBearbeiten";
