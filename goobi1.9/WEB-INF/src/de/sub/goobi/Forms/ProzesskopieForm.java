@@ -911,6 +911,7 @@ public class ProzesskopieForm {
 		/* Tiffheader */
 		bh.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
 		bh.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+		bh.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
 	}
 
 	public String getDocType() {
