@@ -166,6 +166,14 @@ public class WebDav implements Serializable {
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer != null && inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
+			File projectDirectory = new File (nach = nach.replaceAll(" ", "__"));
+			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
+				List<String> param = new ArrayList<String>();
+				param.add(String.valueOf(nach.replaceAll(" ", "__")));
+				Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
+				myLogger.error("Can not create project directory " + nach.replaceAll(" ", "__"));
+				return;
+			}
 		}
 		nach += myProzess.getTitel() + " [" + myProzess.getId() + "]";
 
