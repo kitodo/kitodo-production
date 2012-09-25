@@ -348,18 +348,25 @@ public class MySQLUtils {
 	};
 	
 	public static ResultSetHandler<List<Integer>> resultSetToIntegerListHandler = new ResultSetHandler<List<Integer>>() {
-
 		@Override
 		public List<Integer> handle(ResultSet rs) throws SQLException {
 			List<Integer> answer = new ArrayList<Integer>();
 			while (rs.next()){
 				answer.add(new Integer(rs.getInt(1)));
 			}
-		
 			return answer;
 		}
-	
-	
 	};
 
+	
+	public static ResultSetHandler<Integer> resultSetToIntegerHandler = new ResultSetHandler<Integer>() {
+		@Override
+		public Integer handle(ResultSet rs) throws SQLException {
+			Integer answer = null;
+			if (rs.next()){
+				answer = new Integer(rs.getInt(1));
+			}
+			return answer;
+		}
+	};
 }

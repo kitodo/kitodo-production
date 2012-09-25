@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence.apache;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -203,14 +204,14 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
-	
-	public static Map<String,String> getScriptMapForStep(int stepId) throws SQLException {
+
+	public static Map<String, String> getScriptMapForStep(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM schritte WHERE SchritteID = " + stepId);
 		try {
 			logger.debug(sql.toString());
-			Map<String,String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler);
+			Map<String, String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler);
 			return ret;
 		} finally {
 			closeConnection(connection);
@@ -278,8 +279,8 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
-	
-	public void updateImages(Integer numberOfFiles, int processId)  throws SQLException {
+
+	public void updateImages(Integer numberOfFiles, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
 			QueryRunner run = new QueryRunner();
@@ -376,6 +377,26 @@ public class MySQLHelper {
 		Connection connection = helper.getConnection();
 		try {
 			return new QueryRunner().query(connection, query, MySQLUtils.resultSetToIntegerListHandler);
+		} finally {
+			closeConnection(connection);
+		}
+	}
+
+	public static int getCountOfProcessesWithRuleset(int rulesetId) throws SQLException {
+		Connection connection = helper.getConnection();
+		String query = "select count(ProzesseID) from prozesse where MetadatenKonfigurationID = " + rulesetId;
+		try {
+			return new QueryRunner().query(connection, query, MySQLUtils.resultSetToIntegerHandler);
+		} finally {
+			closeConnection(connection);
+		}
+	}
+	
+	public static int getCountOfProcessesWithDocket(int docketId) throws SQLException {
+		Connection connection = helper.getConnection();
+		String query = "select count(ProzesseID) from prozesse where  docketID= " + docketId;
+		try {
+			return new QueryRunner().query(connection, query, MySQLUtils.resultSetToIntegerHandler);
 		} finally {
 			closeConnection(connection);
 		}

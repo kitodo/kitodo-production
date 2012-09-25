@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence.apache;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -36,7 +37,6 @@ import de.sub.goobi.Beans.Regelsatz;
 
 public class ProcessManager {
 
-	
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
 	public static ProcessObject getProcessObjectForId(int processId) {
@@ -47,8 +47,7 @@ public class ProcessManager {
 		}
 		return null;
 	}
-	
-	
+
 	public static void updateProcessStatus(String value, int processId) {
 		try {
 			MySQLHelper.getInstance().updateProcessStatus(value, processId);
@@ -56,17 +55,16 @@ public class ProcessManager {
 			logger.error("Cannot not update status for process with id " + processId, e);
 		}
 	}
-	
+
 	public static void updateImages(Integer numberOfFiles, int processId) {
 		try {
 			MySQLHelper.getInstance().updateImages(numberOfFiles, processId);
 		} catch (SQLException e) {
 			logger.error("Cannot not update status for process with id " + processId, e);
 		}
-		
+
 	}
-	
-	
+
 	public static void addLogfile(String value, int processId) {
 		try {
 			MySQLHelper.getInstance().updateProcessLog(value, processId);
@@ -74,8 +72,7 @@ public class ProcessManager {
 			logger.error("Cannot not update status for process with id " + processId, e);
 		}
 	}
-	
-	
+
 	public static Regelsatz getRuleset(int rulesetId) {
 		try {
 			return MySQLHelper.getRulesetForId(rulesetId);
@@ -84,7 +81,7 @@ public class ProcessManager {
 		}
 		return null;
 	}
-	
+
 	public static List<Property> getProcessProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -94,7 +91,7 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 	public static List<Property> getTemplateProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -104,7 +101,7 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 	public static List<Property> getProductProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -115,8 +112,24 @@ public class ProcessManager {
 		return answer;
 	}
 
-
+	public static int getNumberOfProcessesWithRuleset(int rulesetId) {
+		Integer answer = null;
+		try {
+			answer = MySQLHelper.getCountOfProcessesWithRuleset(rulesetId);
+		} catch (SQLException e) {
+			logger.error("Cannot not load information about ruleset with id " + rulesetId, e);
+		}
+		return answer;
+	}
 	
-	
+	public static int getNumberOfProcessesWithDocket(int docketId) {
+		Integer answer = null;
+		try {
+			answer = MySQLHelper.getCountOfProcessesWithDocket(docketId);
+		} catch (SQLException e) {
+			logger.error("Cannot not load information about docket with id " + docketId, e);
+		}
+		return answer;
+	}
 	
 }
