@@ -54,6 +54,7 @@ import de.sub.goobi.Persistence.apache.ProjectObject;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierungWithoutHibernate {
@@ -213,6 +214,25 @@ public class MetadatenVerifizierungWithoutHibernate {
 		/*
 		 * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
 		 */
+		
+		try {
+			List<String> images = fi.getDataFiles();
+			if (images != null) {
+				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+				int sizeOfImages = images.size();
+				if (sizeOfPagination != sizeOfImages) {
+					List<String> param = new ArrayList<String>();
+					param.add(String.valueOf(sizeOfPagination));
+					param.add(String.valueOf(sizeOfImages));
+					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+					return false;
+				}
+			} 
+		} catch (InvalidImagesException e1) {
+			Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
+			ergebnis = false;
+		}
+		
 		try {
 			if (this.autoSave) {
 				process.writeMetadataFile(gdzfile,fi.getMetadataFilePath(), inPrefs , project.getFileFormatInternal());

@@ -49,6 +49,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierung {
@@ -211,6 +212,25 @@ public class MetadatenVerifizierung {
 			Helper.setFehlerMeldung(inProzess.getTitel() + ": ", e);
 			ergebnis = false;
 		}
+		
+		try {
+			List<String> images = mih.getDataFiles(myProzess);
+			if (images != null) {
+				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+				int sizeOfImages = images.size();
+				if (sizeOfPagination != sizeOfImages) {
+					List<String> param = new ArrayList<String>();
+					param.add(String.valueOf(sizeOfPagination));
+					param.add(String.valueOf(sizeOfImages));
+					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+					return false;
+				}
+			} 
+		} catch (InvalidImagesException e1) {
+			Helper.setFehlerMeldung(inProzess.getTitel() + ": ", e1);
+			ergebnis = false;
+		}
+			
 
 		/*
 		 * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
@@ -300,29 +320,29 @@ public class MetadatenVerifizierung {
 			String number = dst.getNumberOfMetadataType(mdt);
 			List<? extends Metadata> ll = inStruct.getAllMetadataByType(mdt);
 			int real = 0;
-//			if (ll.size() > 0) {
-				real = ll.size();
+			// if (ll.size() > 0) {
+			real = ll.size();
 
-				if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
-				
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataIsEmpty"));
-				}
-				/* jetzt die Typen prüfen */
-				if (number.equals("1m") && real != 1) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataNotOneElement") + " " + real + Helper.getTranslation("MetadataTimes"));
-				}
-				if (number.equals("1o") && real > 1) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataToManyElements") + " " + real + " " + Helper.getTranslation("MetadataTimes"));
-				}
-				if (number.equals("+") && real == 0) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataNotEnoughElements"));
-				}
+			if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
+
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataIsEmpty"));
 			}
-//		}
+			/* jetzt die Typen prüfen */
+			if (number.equals("1m") && real != 1) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataNotOneElement") + " " + real + Helper.getTranslation("MetadataTimes"));
+			}
+			if (number.equals("1o") && real > 1) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataToManyElements") + " " + real + " " + Helper.getTranslation("MetadataTimes"));
+			}
+			if (number.equals("+") && real == 0) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataNotEnoughElements"));
+			}
+		}
+		// }
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
 		if (inStruct.getAllChildren() != null) {
 			for (DocStruct child : inStruct.getAllChildren()) {
@@ -527,8 +547,8 @@ public class MetadatenVerifizierung {
 						}
 					}
 					if (!isOk && !this.autoSave) {
-						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "+  md.getValue() + " "
-								+ Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
+						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "
+								+ md.getValue() + " " + Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
 					}
 					if (!isOk && this.autoSave) {
 						md.setValue(md.getValue() + new StringTokenizer(prop_endswith, "|").nextToken());
