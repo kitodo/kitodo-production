@@ -40,7 +40,7 @@
 
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
-    <property name="build.dist.version" value="1.8.1" />
+    <property name="build.dist.version" value="1.8.2" />
     <property name="build.dist.vendor" value="SLUB Dresden"/>
     <property name="build.dist.url" value="http://launchpad.net/goobi-production"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
