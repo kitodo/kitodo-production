@@ -89,6 +89,9 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 			IDlist = originalFilter.getIDList();
 		} catch (UnsupportedOperationException e) {
 		}
+		if (IDlist == null || IDlist.size() == 0) {
+			return null;
+		}
 
 		// adding time restrictions
 		String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo,

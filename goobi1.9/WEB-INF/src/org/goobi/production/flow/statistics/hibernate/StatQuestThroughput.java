@@ -124,6 +124,9 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		} catch (UnsupportedOperationException e) {
 		}
 
+		if (myIDlist == null || myIDlist.size() == 0) {
+			return null;
+		}
 		/*
 		 * ======================================================================
 		 * ==============

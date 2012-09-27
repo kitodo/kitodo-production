@@ -106,6 +106,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 			IDlist = originalFilter.getIDList();
 		} catch (UnsupportedOperationException e) {
 		}
+		if (IDlist == null || IDlist.size() == 0) {
+			return null;
+		}
 		String natSQL = "";
 		// adding time restrictions
 		if (stepname == null) {

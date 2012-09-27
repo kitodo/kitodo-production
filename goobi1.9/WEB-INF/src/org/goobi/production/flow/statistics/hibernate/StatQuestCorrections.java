@@ -99,7 +99,10 @@ public class StatQuestCorrections implements
 			IDlist = originalFilter.getIDList();
 		} catch (UnsupportedOperationException e) {
 		}
-
+		if (IDlist == null || IDlist.size() == 0) {
+			return null;
+		}
+		
 		// adding time restrictions
 		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
 				getTimeUnit(), IDlist).getSQL(HistoryEventType.stepError, null,
