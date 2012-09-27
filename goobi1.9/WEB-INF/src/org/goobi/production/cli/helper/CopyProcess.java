@@ -1124,6 +1124,7 @@ public class CopyProcess extends ProzesskopieForm {
 				addProperty(vor, ve);
 			}
 			bh.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
+			bh.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
 		}
 	}
 
