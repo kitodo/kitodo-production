@@ -284,9 +284,12 @@
 	function focusForPicture(){
 	  //alert(document.getElementById("hiddenBildNummer").value);
 	  //alert(document.getElementById("formular1:BildNummer").value);
-	  //alert(document.getElementsByName("formular1:myCheckboxes").length);
+	  //alert(document.getElementsByName("formular2:myCheckboxes").length);
 	  for (i = 0; i < document.getElementsByName("formular2:myCheckboxes").length; i++) {
 	    if (i==document.getElementById("hiddenBildNummer").value -1){
+ 	    	if (i +1 < document.getElementsByName("formular2:myCheckboxes").length) {
+ 	    		document.getElementsByName("formular2:myCheckboxes")[i+1].focus();
+ 	    	}
 	      document.getElementsByName("formular2:myCheckboxes")[i].focus();
 	    }
 	  }
