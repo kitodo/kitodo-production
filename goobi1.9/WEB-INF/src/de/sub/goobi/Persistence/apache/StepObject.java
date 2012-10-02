@@ -45,10 +45,11 @@ public class StepObject {
 	private boolean typeReadAcces = false;
 	private boolean typeWriteAcces = false;
 	private boolean typeMetadataAccess = false;
+	private boolean typeFinishImmediately = false;
 	
 	
 	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt, Date bearbeitungsbeginn,
-			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId, boolean readAccess, boolean writeAccess, boolean metadataAccess) {
+			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId, boolean readAccess, boolean writeAccess, boolean metadataAccess, boolean typeFinishImmediately) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -65,6 +66,7 @@ public class StepObject {
 		this.setTypeReadAcces(readAccess);
 		this.typeWriteAcces = writeAccess;
 		this.typeMetadataAccess = metadataAccess;
+		this.setTypeFinishImmediately(typeFinishImmediately);
 		
 	}
 
@@ -185,6 +187,14 @@ public class StepObject {
 
 	public void setTypeReadAcces(boolean typeReadAcces) {
 		this.typeReadAcces = typeReadAcces;
+	}
+
+	public boolean isTypeFinishImmediately() {
+		return typeFinishImmediately;
+	}
+
+	public void setTypeFinishImmediately(boolean typeFinishImmediately) {
+		this.typeFinishImmediately = typeFinishImmediately;
 	}
 	
 }

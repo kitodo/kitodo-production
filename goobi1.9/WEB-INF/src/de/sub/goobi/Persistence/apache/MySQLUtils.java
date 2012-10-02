@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence.apache;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -203,12 +204,11 @@ public class MySQLUtils {
 			return answer;
 		}
 	};
-	
-	
-	public static ResultSetHandler<Map<String,String>> resultSetToScriptMapHandler = new ResultSetHandler<Map<String,String>>() {
+
+	public static ResultSetHandler<Map<String, String>> resultSetToScriptMapHandler = new ResultSetHandler<Map<String, String>>() {
 		@Override
-		public Map<String,String> handle(ResultSet rs) throws SQLException {
-			Map<String,String> answer = new HashMap<String, String>();
+		public Map<String, String> handle(ResultSet rs) throws SQLException {
+			Map<String, String> answer = new HashMap<String, String>();
 			if (rs.next()) {
 				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
 					String name = rs.getString("scriptName1");
@@ -255,8 +255,10 @@ public class MySQLUtils {
 			boolean readAccess = rs.getBoolean("typImagesLesen");
 			boolean writeAccess = rs.getBoolean("typImagesSchreiben");
 			boolean metadataAccess = rs.getBoolean("typMetadaten");
+			boolean typeFinishImmediately = rs.getBoolean("typBeimAnnehmenAbschliessen");
 			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn, bearbeitungsende,
-					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess);
+					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess,
+					typeFinishImmediately);
 		}
 
 		return so;
@@ -294,8 +296,7 @@ public class MySQLUtils {
 				int numberOfPages = rs.getInt("numberOfPages");
 				int numberOfVolumes = rs.getInt("numberOfVolumes");
 				boolean projectIsArchived = rs.getBoolean("projectIsArchived");
-			
-			
+
 				ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
 						dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
 						metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
@@ -306,8 +307,7 @@ public class MySQLUtils {
 			return null;
 		}
 	};
-	
-	
+
 	public static ResultSetHandler<List<ProjectFileGroup>> resultSetToProjectFilegroupListHandler = new ResultSetHandler<List<ProjectFileGroup>>() {
 		@Override
 		public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
@@ -318,7 +318,7 @@ public class MySQLUtils {
 				String path = rs.getString("path");
 				String mimetype = rs.getString("mimetype");
 				String suffix = rs.getString("suffix");
-//				int ProjekteID = rs.getInt("ProjekteID");
+				// int ProjekteID = rs.getInt("ProjekteID");
 				String folder = rs.getString("folder");
 				ProjectFileGroup pfg = new ProjectFileGroup();
 				pfg.setId(ProjectFileGroupID);
@@ -333,8 +333,7 @@ public class MySQLUtils {
 			return answer;
 		}
 	};
-	
-	
+
 	public static ResultSetHandler<List<String>> resultSetToFilterListtHandler = new ResultSetHandler<List<String>>() {
 		@Override
 		public List<String> handle(ResultSet rs) throws SQLException {
@@ -346,24 +345,23 @@ public class MySQLUtils {
 			return answer;
 		}
 	};
-	
+
 	public static ResultSetHandler<List<Integer>> resultSetToIntegerListHandler = new ResultSetHandler<List<Integer>>() {
 		@Override
 		public List<Integer> handle(ResultSet rs) throws SQLException {
 			List<Integer> answer = new ArrayList<Integer>();
-			while (rs.next()){
+			while (rs.next()) {
 				answer.add(new Integer(rs.getInt(1)));
 			}
 			return answer;
 		}
 	};
 
-	
 	public static ResultSetHandler<Integer> resultSetToIntegerHandler = new ResultSetHandler<Integer>() {
 		@Override
 		public Integer handle(ResultSet rs) throws SQLException {
 			Integer answer = null;
-			if (rs.next()){
+			if (rs.next()) {
 				answer = new Integer(rs.getInt(1));
 			}
 			return answer;

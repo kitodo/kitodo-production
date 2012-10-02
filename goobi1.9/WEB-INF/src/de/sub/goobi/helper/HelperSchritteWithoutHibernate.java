@@ -84,7 +84,7 @@ public class HelperSchritteWithoutHibernate {
 		currentStep.setBearbeitungsende(myDate);
 		StepManager.updateStep(currentStep);
 		List<StepObject> automatischeSchritte = new ArrayList<StepObject>();
-
+		List<StepObject> stepsToFinish = new ArrayList<StepObject>();
 		StepManager.addHistory(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
 				HistoryEventType.stepDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
@@ -123,6 +123,8 @@ public class HelperSchritteWithoutHibernate {
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if (myStep.isTypAutomatisch()) {
 						automatischeSchritte.add(myStep);
+					} else if (myStep.isTypeFinishImmediately()) {
+						stepsToFinish.add(myStep);
 					}
 					StepManager.updateStep(myStep);
 					matched = true;
@@ -150,6 +152,9 @@ public class HelperSchritteWithoutHibernate {
 		for (StepObject automaticStep : automatischeSchritte) {
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
 			myThread.start();
+		}
+		for (StepObject finish : stepsToFinish) {
+			CloseStepObjectAutomatic(finish);
 		}
 	}
 
