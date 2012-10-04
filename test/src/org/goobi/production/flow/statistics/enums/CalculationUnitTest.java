@@ -1,7 +1,10 @@
 package org.goobi.production.flow.statistics.enums;
 
-import static org.junit.Assert.*;
+import de.sub.goobi.helper.Messages;
+
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CalculationUnitTest{
 
@@ -14,10 +17,10 @@ public class CalculationUnitTest{
 	}
 
 	@Test
-	public final void testGetTitle() {
-		assertEquals("volumes",CalculationUnit.volumes.getTitle());
-		assertEquals("pages",CalculationUnit.pages.getTitle());
-		assertEquals("volumesAndPages",CalculationUnit.volumesAndPages.getTitle());
+	public final void shouldReturnTranslatedTitle() {
+		assertEquals(Messages.getString("volumes"), CalculationUnit.volumes.getTitle());
+		assertEquals(Messages.getString("pages"), CalculationUnit.pages.getTitle());
+		assertEquals(Messages.getString("volumesAndPages"), CalculationUnit.volumesAndPages.getTitle());
 	}
 
 	@Test
