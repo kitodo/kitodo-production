@@ -22,10 +22,11 @@
 
 package org.goobi.production.flow.statistics.enums;
 
-import static org.junit.Assert.*;
-
+import de.sub.goobi.helper.Messages;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ResultOutputTest{
 
@@ -37,10 +38,10 @@ public class ResultOutputTest{
 	}
 
 	@Test
-	public final void testGetTitle() {
-		assertEquals("chart",ResultOutput.chart.getTitle());
-		assertEquals("table",ResultOutput.table.getTitle());
-		assertEquals("chartAndTable",ResultOutput.chartAndTable.getTitle());
+	public final void shouldReturnTranslatedTitle() {
+		assertEquals(Messages.getString("chart") ,ResultOutput.chart.getTitle());
+		assertEquals(Messages.getString("table") ,ResultOutput.table.getTitle());
+		assertEquals(Messages.getString("chartAndTable") ,ResultOutput.chartAndTable.getTitle());
 	}
 
 	@Test
