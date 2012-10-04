@@ -22,6 +22,8 @@
 
 package org.goobi.production.flow.statistics.enums;
 
+import de.sub.goobi.helper.Messages;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -38,13 +40,13 @@ public class StatisticsModeTest {
 	}
 
 	@Test
-	public final void testGetTitle() {
-		assertEquals("runtimeOfSteps", StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
-		assertEquals("productionThroughput", StatisticsMode.THROUGHPUT.getTitle());
-		assertEquals("errorTracking", StatisticsMode.CORRECTIONS.getTitle());
-		assertEquals("storageCalculator", StatisticsMode.STORAGE.getTitle());
-		assertEquals("productionStatistics", StatisticsMode.PRODUCTION.getTitle());
-		assertEquals("projectAssociation", StatisticsMode.PROJECTS.getTitle());
+	public final void shouldReturnTranslatedTitle() {
+		assertEquals(Messages.getString("runtimeOfSteps"), StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
+		assertEquals(Messages.getString("productionThroughput"), StatisticsMode.THROUGHPUT.getTitle());
+		assertEquals(Messages.getString("errorTracking"), StatisticsMode.CORRECTIONS.getTitle());
+		assertEquals(Messages.getString("storageCalculator"), StatisticsMode.STORAGE.getTitle());
+		assertEquals(Messages.getString("productionStatistics"), StatisticsMode.PRODUCTION.getTitle());
+		assertEquals(Messages.getString("projectAssociation"), StatisticsMode.PROJECTS.getTitle());
 	}
 
 	@Test
