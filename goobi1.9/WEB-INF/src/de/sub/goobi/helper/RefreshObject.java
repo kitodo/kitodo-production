@@ -49,7 +49,7 @@ public class RefreshObject {
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
 			session.refresh(o);
 		} catch (Exception e) {
-			logger.error("cannot refresh process with id " + processID, e);
+			logger.error("cannot refresh process with id " + processID);
 		}
 
 	}
@@ -65,7 +65,7 @@ public class RefreshObject {
 			Schritt o = (Schritt) session.get(Schritt.class, stepID);
 			session.refresh(o);
 		} catch (Exception e) {
-			logger.error("cannot refresh step with id " + stepID, e);
+			logger.error("cannot refresh step with id " + stepID);
 		}
 
 	}

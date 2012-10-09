@@ -82,12 +82,17 @@ public class HelperSchritteWithoutHibernate {
 			}
 		}
 		currentStep.setBearbeitungsende(myDate);
+		logger.debug("saving step");
 		StepManager.updateStep(currentStep);
 		List<StepObject> automatischeSchritte = new ArrayList<StepObject>();
 		List<StepObject> stepsToFinish = new ArrayList<StepObject>();
+
+		logger.debug("create history events for step");
+
 		StepManager.addHistory(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
 				HistoryEventType.stepDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
+
 		List<StepObject> steps = StepManager.getStepsForProcess(processId);
 		List<StepObject> allehoeherenSchritte = new ArrayList<StepObject>();
 		int offeneSchritteGleicherReihenfolge = 0;
@@ -98,10 +103,9 @@ public class HelperSchritteWithoutHibernate {
 				allehoeherenSchritte.add(so);
 			}
 		}
-
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-
+			logger.debug("found " + allehoeherenSchritte.size()  + " tasks");
 			int reihenfolge = 0;
 			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {
@@ -117,15 +121,18 @@ public class HelperSchritteWithoutHibernate {
 					myStep.setBearbeitungsstatus(1);
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);
-
+					logger.debug("create history events for next step");
 					StepManager.addHistory(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
+					logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
 					if (myStep.isTypAutomatisch()) {
+						logger.debug("add step to list of automatic tasks");
 						automatischeSchritte.add(myStep);
 					} else if (myStep.isTypeFinishImmediately()) {
 						stepsToFinish.add(myStep);
 					}
+					logger.debug("");
 					StepManager.updateStep(myStep);
 					matched = true;
 
@@ -141,15 +148,18 @@ public class HelperSchritteWithoutHibernate {
 		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
 			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))), processId);
 		}
-
+		logger.debug("update process status");
 		updateProcessStatus(processId);
 		// TODO remove this later
 		try {
+			logger.debug("update hibernate cache");
 			RefreshObject.refreshProcess(processId);
 		} catch (Exception e) {
 			logger.error("Exception during update of hibernate cache", e);
 		}
+		logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
 		for (StepObject automaticStep : automatischeSchritte) {
+			logger.debug("starting scripts for step with stepId " + automaticStep.getId() + " and processId " + automaticStep.getProcessId());
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
 			myThread.start();
 		}
@@ -197,6 +207,7 @@ public class HelperSchritteWithoutHibernate {
 		int size = scriptpaths.size();
 		int returnParameter = 0;
 		for (String script : scriptpaths) {
+			logger.debug("starting script " + script);
 			if (returnParameter != 0) {
 				abortStep(step);
 				break;

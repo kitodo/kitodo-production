@@ -50,8 +50,9 @@ public class ScriptThreadWithoutHibernate extends Thread {
 	public void run() {
 
 		boolean automatic = this.step.isTypAutomatisch();
-
+		logger.debug("step is automatic: " + automatic);
 		List<String> scriptPaths = StepManager.loadScripts(this.step.getId());
+		logger.debug("found " + scriptPaths.size() + " scripts");
 		if (scriptPaths.size() > 0) {
 			this.hs.executeAllScriptsForStep(this.step, automatic);
 		}
