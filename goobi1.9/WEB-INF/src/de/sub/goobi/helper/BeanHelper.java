@@ -27,10 +27,13 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
@@ -218,8 +221,8 @@ public class BeanHelper {
 	}
 
 	public void EigenschaftenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
-		HashSet<Prozesseigenschaft> myEigenschaften = new HashSet<Prozesseigenschaft>();
-		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaften().iterator(); iterator.hasNext();) {
+		TreeSet<Prozesseigenschaft> myEigenschaften = new TreeSet<Prozesseigenschaft>();
+		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator.hasNext();) {
 			Prozesseigenschaft eig = iterator.next();
 			Prozesseigenschaft eigneu = new Prozesseigenschaft();
 			eigneu.setIstObligatorisch(eig.isIstObligatorisch());

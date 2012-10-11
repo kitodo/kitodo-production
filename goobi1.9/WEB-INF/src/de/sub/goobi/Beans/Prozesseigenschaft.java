@@ -34,7 +34,7 @@ import java.util.List;
 import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
-public class Prozesseigenschaft implements Serializable, IGoobiProperty {
+public class Prozesseigenschaft implements Serializable, IGoobiProperty, Comparable<Prozesseigenschaft> {
 	private static final long serialVersionUID = -2356566712752716107L;
 
 	private Prozess prozess;
@@ -208,5 +208,10 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty {
 	@Override
 	public String getNormalizedValue() {
 		return this.wert.replace(" ", "_").trim();
+	}
+
+	@Override
+	public int compareTo(Prozesseigenschaft o) {
+		return this.getTitel().toLowerCase().compareTo(o.getTitel().toLowerCase());
 	}
 }
