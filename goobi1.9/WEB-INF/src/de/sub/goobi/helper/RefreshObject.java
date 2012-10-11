@@ -34,20 +34,21 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.HibernateUtilOld;
 
-// FIXME remove this class, find a better way to update process status in hibernate
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
 	public static void refreshProcess(int processID) {
 		try {
-			Session session = Helper.getHibernateSession();
-			if (session == null || !session.isOpen() || !session.isConnected()) {
-				logger.debug("session is closed, creating a new session");
-				HibernateUtilOld.rebuildSessionFactory();
-				session = HibernateUtilOld.getSessionFactory().openSession();
-			}
+			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			// Session session = Helper.getHibernateSession();
+			// if (session == null || !session.isOpen() || !session.isConnected()) {
+			// logger.debug("session is closed, creating a new session");
+			// HibernateUtilOld.rebuildSessionFactory();
+			// session = HibernateUtilOld.getSessionFactory().openSession();
+			// }
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
 			session.refresh(o);
+			session.close();
 		} catch (Exception e) {
 			logger.error("cannot refresh process with id " + processID);
 		}
@@ -56,14 +57,16 @@ public class RefreshObject {
 
 	public static void refreshStep(int stepID) {
 		try {
-			Session session = Helper.getHibernateSession();
-			if (session == null || !session.isOpen() || !session.isConnected()) {
-				logger.debug("session is closed, creating a new session");
-				HibernateUtilOld.rebuildSessionFactory();
-				session = HibernateUtilOld.getSession();
-			}
+			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			// Session session = Helper.getHibernateSession();
+			// if (session == null || !session.isOpen() || !session.isConnected()) {
+			// logger.debug("session is closed, creating a new session");
+			// HibernateUtilOld.rebuildSessionFactory();
+			// session = HibernateUtilOld.getSession();
+			// }
 			Schritt o = (Schritt) session.get(Schritt.class, stepID);
 			session.refresh(o);
+			session.close();
 		} catch (Exception e) {
 			logger.error("cannot refresh step with id " + stepID);
 		}
