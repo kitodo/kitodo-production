@@ -37,7 +37,7 @@
 				<htm:tr>
 					<htm:td rendered="#{Metadaten.bildNummer != '1'}">
 						<%-- zurueck-Schaltknopf--%>
-						<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.zurueck}" immediate="true">
+						<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.previous}" immediate="true">
 							<f:param name="Anzahl" value="-1" />
 						</a4j:commandLink>
 						<%-- Trennzeichen --%>
