@@ -38,8 +38,10 @@ public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
 	public static void refreshProcess(int processID) {
+		logger.debug("refreshing process with id " + processID);
 		try {
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			logger.debug("created a new session");
 			// Session session = Helper.getHibernateSession();
 			// if (session == null || !session.isOpen() || !session.isConnected()) {
 			// logger.debug("session is closed, creating a new session");
@@ -47,9 +49,12 @@ public class RefreshObject {
 			// session = HibernateUtilOld.getSessionFactory().openSession();
 			// }
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
+			logger.debug("loaded process");
 			session.refresh(o);
+			logger.debug("refreshed process");
 			session.close();
-		} catch (Exception e) {
+			logger.debug("closed session");
+		} catch (Throwable e) {
 			logger.error("cannot refresh process with id " + processID);
 		}
 

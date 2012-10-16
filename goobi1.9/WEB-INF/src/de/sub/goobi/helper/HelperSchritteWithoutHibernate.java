@@ -150,13 +150,6 @@ public class HelperSchritteWithoutHibernate {
 		}
 		logger.debug("update process status");
 		updateProcessStatus(processId);
-		// TODO remove this later
-		try {
-			logger.debug("update hibernate cache");
-			RefreshObject.refreshProcess(processId);
-		} catch (Exception e) {
-			logger.error("Exception during update of hibernate cache", e);
-		}
 		logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
 		for (StepObject automaticStep : automatischeSchritte) {
 			logger.debug("starting scripts for step with stepId " + automaticStep.getId() + " and processId " + automaticStep.getProcessId());
@@ -164,7 +157,15 @@ public class HelperSchritteWithoutHibernate {
 			myThread.start();
 		}
 		for (StepObject finish : stepsToFinish) {
+			logger.debug("closing task " + finish.getTitle());
 			CloseStepObjectAutomatic(finish);
+		}
+		// TODO remove this later
+		try {
+			logger.debug("update hibernate cache");
+			RefreshObject.refreshProcess(processId);
+		} catch (Exception e) {
+			logger.error("Exception during update of hibernate cache", e);
 		}
 	}
 
