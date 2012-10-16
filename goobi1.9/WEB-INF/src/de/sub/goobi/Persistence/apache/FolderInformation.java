@@ -212,8 +212,7 @@ public class FolderInformation {
 	}
 
 	public String getAltoDirectory() {
-		// TODO FIXME
-		return getOcrDirectory() + this.title + "_xml" + File.separator;
+		return getOcrDirectory() + this.title + "_alto" + File.separator;
 	}
 
 	public String getImportDirectory() {
