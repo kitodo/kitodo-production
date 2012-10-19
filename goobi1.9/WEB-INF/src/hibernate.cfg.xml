@@ -8,15 +8,11 @@
 
 	<session-factory>
 		<!-- SQL - Settings -->
-		<property name="dialect">org.drizzle.hibernate.dialect.DrizzleDialect</property>
-		<property name="hibernate.connection.driver_class">org.drizzle.jdbc.DrizzleDriver</property>
-		<!-- 
-		Use the following JDBC URL to use the reconect feature of the MySQL driver.
-		BTW: This is not recommended, use the reconnect features of the connection pool insteed
-		jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true
-		 -->
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+
 		<property name="hibernate.connection.url">
-			jdbc:mysql:thin://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true
+			jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true
 		</property>
 		<property name="hibernate.connection.username">goobi</property>
 		<property name="hibernate.connection.password">goobi</property>
