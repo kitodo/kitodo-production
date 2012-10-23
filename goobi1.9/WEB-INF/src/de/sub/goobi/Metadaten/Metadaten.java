@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.production.Import.DocstructElement;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -678,6 +679,7 @@ public class Metadaten {
 			}
 		}
 		// MetadatenImLogAusgeben(logicalTopstruct);
+		createDefaultValues(this.logicalTopstruct);
 		MetadatenalsBeanSpeichern(this.logicalTopstruct);
 		MetadatenalsTree3Einlesen1();
 
@@ -686,6 +688,17 @@ public class Metadaten {
 			this.modusAnsicht = "Paginierung";
 		}
 		return "Metadaten";
+	}
+
+	private void createDefaultValues(DocStruct element) {
+		if (ConfigMain.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
+			MetadatenalsBeanSpeichern(element);
+			if (element.getAllChildren() != null && element.getAllChildren().size() > 0) {
+				for (DocStruct ds : element.getAllChildren()) {
+					createDefaultValues(ds);
+				}
+			}
+		}
 	}
 
 	/**
