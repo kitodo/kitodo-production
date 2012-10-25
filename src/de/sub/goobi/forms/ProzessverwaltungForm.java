@@ -350,12 +350,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			order = Order.desc("titel");
 
 		if (sortierung.equals("projektAsc")) {
-			inCrit.createCriteria("projekt", "proj");
 			order = Order.asc("proj.titel");
 		}
 
 		if (sortierung.equals("projektDesc")) {
-			inCrit.createCriteria("projekt", "proj");
 			order = Order.desc("proj.titel");
 		}
 

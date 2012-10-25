@@ -223,6 +223,14 @@ public class UserDefinedFilter implements IEvaluableFilter {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 
+		// TODO Remove workaround for bug fix https://bugs.launchpad.net/goobi-production/+bug/1043811
+		//
+		// When sorting the list of processes, a criteria including projekt is missing.
+		// There are basically to places, where this criteria gets added. One is in
+		// org.goobi.production.flow.statistics.hibernate.FilterHelper. The second place is
+		// this method.
+		crit.createCriteria("projekt", "proj");
+
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
