@@ -1912,7 +1912,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess.getWikifield(), "user", message));
+			this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikifield(), "user", message));
 			this.addToWikiField = "";
 			try {
 				this.dao.save(myProzess);

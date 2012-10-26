@@ -614,7 +614,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			se.setSchritt(temp);
 			String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 					+ ben.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(), "error", message));
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "error", message));
 			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
@@ -726,7 +726,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			 */
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
 					+ ben.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(), "info", message));
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
 
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -1162,7 +1162,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess().getWikifield(), "user", message));
+			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "user", message));
 			this.addToWikiField = "";
 			try {
 				this.pdao.save(this.mySchritt.getProzess());

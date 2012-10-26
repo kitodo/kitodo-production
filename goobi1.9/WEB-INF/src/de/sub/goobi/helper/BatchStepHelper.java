@@ -54,7 +54,6 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Beans.Property.IGoobiProperty;
 import de.sub.goobi.Export.dms.ExportDms;
 import de.sub.goobi.Forms.AktuelleSchritteForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
@@ -512,7 +511,7 @@ public class BatchStepHelper {
 				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess().setWikifield(
-						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "error", message));
+						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "error", message));
 
 				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
@@ -657,7 +656,7 @@ public class BatchStepHelper {
 			}
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
 					+ ben.getNachVorname() + ")";
-			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "info", message));
+			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "info", message));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
@@ -724,7 +723,7 @@ public class BatchStepHelper {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess().getWikifield(), "user", message));
+			this.currentStep.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "user", message));
 			this.addToWikiField = "";
 			try {
 				this.pdao.save(this.currentStep.getProzess());
@@ -739,7 +738,7 @@ public class BatchStepHelper {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
 			for (Schritt s : this.steps) {
-				s.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(s.getProzess().getWikifield(), "user", message));
+				s.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(s.getProzess(), s.getProzess().getWikifield(), "user", message));
 				try {
 					this.pdao.save(s.getProzess());
 				} catch (DAOException e) {
