@@ -37,7 +37,10 @@
 						<h:outputText value="#{proc.name}" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{proc.value}" />
+						<h:outputText value="#{proc.value}" rendered="#{proc.type.name !=  'link'}" />
+						<h:outputLink title="#{proc.value}" value="#{proc.value}" rendered="#{proc.type.name ==  'link'}" target="_blank">
+							<h:outputText value="#{proc.value}" />
+						</h:outputLink>
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered">
 
@@ -50,16 +53,16 @@
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
 
-						
+
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
-			
-		<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
-			<htm:td colspan="3" styleClass="standardTable_Row1">
-				<h:outputText value="&nbsp;" escape="false" />
-			</htm:td>
-		</htm:tr>
+
+			<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
+				<htm:td colspan="3" styleClass="standardTable_Row1">
+					<h:outputText value="&nbsp;" escape="false" />
+				</htm:td>
+			</htm:tr>
 
 			<x:dataList var="process_item" value="#{AktuelleSchritteForm.batchHelper.containers[container].propertyList}" rowCountVar="propCount"
 				rowIndexVar="propInd">
@@ -68,7 +71,10 @@
 						<h:outputText value="#{process_item.name}" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{process_item.value}" />					
+						<h:outputText value="#{process_item.value}" rendered="#{process_item.type.name !=  'link'}" />
+						<h:outputLink title="#{process_item.value}" value="#{process_item.value}" rendered="#{process_item.type.name ==  'link'}" target="_blank">
+							<h:outputText value="#{process_item.value}" />
+						</h:outputLink>
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 						rendered="#{propInd ==0}">
@@ -80,7 +86,7 @@
 								<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
 								<a4j:support event="onchange" reRender="editBatch" />
 							</h:commandLink>
-						
+
 						</h:panelGroup>
 					</htm:td>
 				</htm:tr>

@@ -3,9 +3,7 @@ package org.goobi.production.properties;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
- * 			- http://digiverso.com 
- * 			- http://www.intranda.com
+ * Visit the websites for more information. - http://digiverso.com - http://www.intranda.com
  * 
  * Copyright 2012, intranda GmbH, Göttingen
  * 
@@ -29,21 +27,21 @@ package org.goobi.production.properties;
  */
 
 public enum Type {
-	TEXT("text"), LIST("list"), LISTMULTISELECT("listmultiselect"), BOOLEAN("boolean"), DATE("date"), NUMBER("number");
+	TEXT("text"), LIST("list"), LISTMULTISELECT("listmultiselect"), BOOLEAN("boolean"), DATE("date"), NUMBER("number"), LINK("link");
 	private String name;
-	
+
 	private Type(String name) {
 		this.name = name;
 	}
-	
-	public static Type getTypeByName(String inName){
-		if (inName.equalsIgnoreCase("LIST")){
+
+	public static Type getTypeByName(String inName) {
+		if (inName.equalsIgnoreCase("LIST")) {
 			return LIST;
 		}
-		if (inName.equalsIgnoreCase("LISTMULTISELECT")){
+		if (inName.equalsIgnoreCase("LISTMULTISELECT")) {
 			return LISTMULTISELECT;
 		}
-		if (inName.equalsIgnoreCase("BOOLEAN")){
+		if (inName.equalsIgnoreCase("BOOLEAN")) {
 			return BOOLEAN;
 		}
 		if (inName.equalsIgnoreCase("DATE")) {
@@ -51,11 +49,14 @@ public enum Type {
 		}
 		if (inName.equalsIgnoreCase("NUMBER")) {
 			return NUMBER;
+		} 
+		if (inName.equalsIgnoreCase("LINK")) {
+			return LINK;
 		}
 		return TEXT;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
 }

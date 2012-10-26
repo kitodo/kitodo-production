@@ -73,14 +73,21 @@ public class HelperSchritteWithoutHibernate {
 		logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
+		logger.debug("set new date for edit time");
 		currentStep.setBearbeitungszeitpunkt(myDate);
-		LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (lf != null) {
-			Benutzer ben = lf.getMyBenutzer();
-			if (ben != null) {
-				currentStep.setBearbeitungsbenutzer(ben.getId());
+		try {
+			LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+			if (lf != null) {
+				Benutzer ben = lf.getMyBenutzer();
+				if (ben != null) {
+					logger.debug("set new user");
+					currentStep.setBearbeitungsbenutzer(ben.getId());
+				}
 			}
+		} catch (Exception e) {
+			logger.debug("cannot resolve LoginForm", e);
 		}
+		logger.debug("set new end date");
 		currentStep.setBearbeitungsende(myDate);
 		logger.debug("saving step");
 		StepManager.updateStep(currentStep);
@@ -105,7 +112,7 @@ public class HelperSchritteWithoutHibernate {
 		}
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			logger.debug("found " + allehoeherenSchritte.size()  + " tasks");
+			logger.debug("found " + allehoeherenSchritte.size() + " tasks");
 			int reihenfolge = 0;
 			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {

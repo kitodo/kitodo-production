@@ -71,7 +71,11 @@
 						<h:outputText value="#{proc.name}" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{proc.value}" />
+						<h:outputText value="#{proc.value}" rendered="#{proc.type.name !=  'link'}" />
+
+						<h:outputLink title="#{proc.value}" value="#{proc.value}" rendered="#{proc.type.name ==  'link'}" target="_blank">
+							<h:outputText value="#{proc.value}" />
+						</h:outputLink>
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered">
 
@@ -88,12 +92,12 @@
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
-			
-		<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
-			<htm:td colspan="3" styleClass="standardTable_Row1">
-				<h:outputText value="&nbsp;" escape="false" />
-			</htm:td>
-		</htm:tr>
+
+			<htm:tr rendered="#{rowIndex < rowCount && rowIndex != 0}">
+				<htm:td colspan="3" styleClass="standardTable_Row1">
+					<h:outputText value="&nbsp;" escape="false" />
+				</htm:td>
+			</htm:tr>
 
 			<x:dataList var="process_item" value="#{AktuelleSchritteForm.containers[container].propertyList}" rowCountVar="propCount" rowIndexVar="propInd">
 				<htm:tr styleClass="standardTable_Row1" rendered="#{container!=0 }">
@@ -101,7 +105,11 @@
 						<h:outputText value="#{process_item.name}" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{process_item.value}" />
+						<h:outputText value="#{process_item.value}" rendered="#{process_item.type.name !=  'link'}" />
+						<h:outputLink title="#{process_item.value}" value="#{process_item.value}" rendered="#{process_item.type.name ==  'link'}" target="_blank">
+							<h:outputText value="#{process_item.value}" />
+						</h:outputLink>
+						<%-- 						<h:outputText value="#{process_item.value}" /> --%>
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 						rendered="#{propInd ==0}">
@@ -116,7 +124,7 @@
 					</htm:td>
 				</htm:tr>
 			</x:dataList>
-	
+
 		</x:dataList>
 	</htm:table>
 
@@ -145,40 +153,44 @@
 							<htm:td>
 								<%-- textarea --%>
 								<h:panelGroup id="prpvw15_1" rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
-									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}" />
+									<h:inputText id="file" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}"
+										readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}" />
 								</h:panelGroup>
 
 								<%-- numbers only --%>
 								<h:panelGroup id="prpvw15_1mnk" rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
 
-									<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
+									<h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px" value="#{myprocess_item.value}"
+										readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<f:validateLongRange minimum="0" />
 									</h:inputText>
 								</h:panelGroup>
 
 								<%--  SelectOneMenu --%>
 								<h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
-									<h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px" id="prpvw15_2_1" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
+									<h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px" id="prpvw15_2_1"
+										readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<si:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 											itemValue="#{myprocess_items}" />
 									</h:selectOneMenu>
 								</h:panelGroup>
 
 								<%--  SelectManyMenu --%>
-								<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}" >
-									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
+								<h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
+									<h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px" value="#{myprocess_item.valueList}" size="5"
+										readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}">
 										<si:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}" var="myprocess_items" itemLabel="#{myprocess_items}"
 											itemValue="#{myprocess_items}" />
 									</h:selectManyListbox>
 								</h:panelGroup>
 
 								<%--  Boolean --%>
-								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}" >
+								<h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
 									<h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}" readonly="#{myprocess_item.currentStepAccessCondition == 'READ'}" />
 								</h:panelGroup>
 
 								<%--  Date  --%>
-								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}" >
+								<h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
 									<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px" datePattern="dd.MM.yyyy" value="#{myprocess_item.dateValue}"
 										enableManualInput="true">
 									</rich:calendar>
