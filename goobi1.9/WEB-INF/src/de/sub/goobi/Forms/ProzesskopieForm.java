@@ -136,6 +136,7 @@ public class ProzesskopieForm {
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	public String Prepare() {
+		Helper.getHibernateSession().refresh(this.prozessVorlage);
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			if (this.prozessVorlage.getSchritteList().size() == 0) {
 				Helper.setFehlerMeldung("noStepsInWorkflow");
