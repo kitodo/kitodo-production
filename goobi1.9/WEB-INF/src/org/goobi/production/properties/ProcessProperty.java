@@ -56,6 +56,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	private AccessCondition showProcessGroupAccessCondition;
 	private Prozesseigenschaft prozesseigenschaft;
 	private AccessCondition currentStepAccessCondition;
+	private boolean currentStepDuplicationAllowed = false;
 	
 	public ProcessProperty() {
 		this.possibleValues = new ArrayList<String>();
@@ -416,5 +417,13 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	public void setCurrentStepAccessCondition(AccessCondition currentStepAccessCondition) {
 		this.currentStepAccessCondition = currentStepAccessCondition;
+	}
+
+	public void setDuplicationAllowed(boolean duplicate) {
+		currentStepDuplicationAllowed = duplicate;
+	}
+	
+	public boolean getDuplicationAllowed() {
+		return currentStepDuplicationAllowed;
 	}
 }

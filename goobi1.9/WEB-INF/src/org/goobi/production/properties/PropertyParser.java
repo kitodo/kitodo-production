@@ -84,7 +84,9 @@ public class PropertyParser {
 				ShowStepCondition ssc = new ShowStepCondition();
 				ssc.setName(config.getString("property(" + i + ").showStep(" + j + ")[@name]"));
 				String access = config.getString("property(" + i + ").showStep(" + j + ")[@access]");
+				boolean duplicate = config.getBoolean("property(" + i + ").showStep(" + j + ")[@duplicate]", false);
 				ssc.setAccessCondition(AccessCondition.getAccessConditionByName(access));
+				ssc.setDuplication(duplicate);
 				pp.getShowStepConditions().add(ssc);
 			}
 
@@ -155,9 +157,11 @@ public class PropertyParser {
 					ShowStepCondition ssc = new ShowStepCondition();
 					ssc.setName(config.getString("property(" + i + ").showStep(" + j + ")[@name]"));
 					String access = config.getString("property(" + i + ").showStep(" + j + ")[@access]");
+					boolean duplicate = config.getBoolean("property(" + i + ").showStep(" + j + ")[@duplicate]", false);
 					ssc.setAccessCondition(AccessCondition.getAccessConditionByName(access));
 					if (ssc.getName().equals(stepTitle)) {
 						containsCurrentStepTitle = true;
+						pp.setDuplicationAllowed(duplicate);
 						pp.setCurrentStepAccessCondition(AccessCondition.getAccessConditionByName(access));
 					}
 					
