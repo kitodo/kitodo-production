@@ -1400,10 +1400,10 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public void setContainer(Integer container) {
+		this.container = container;
 		if (container != null && container > 0) {
 			this.processProperty = getContainerProperties().get(0);
 		}
-		this.container = container;
 	}
 
 	public List<ProcessProperty> getContainerProperties() {
@@ -1423,37 +1423,51 @@ public class AktuelleSchritteForm extends BasisForm {
 		return answer;
 	}
 
-	public String duplicateContainer() {
-		Integer currentContainer = this.processProperty.getContainer();
-		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
-		// search for all properties in container
-		for (ProcessProperty pt : this.processPropertyList) {
-			if (pt.getContainer() == currentContainer) {
-				plist.add(pt);
-			}
-		}
-		int newContainerNumber = 0;
-		if (currentContainer > 0) {
-			newContainerNumber++;
-			// find new unused container number
-			boolean search = true;
-			while (search) {
-				if (!this.containers.containsKey(newContainerNumber)) {
-					search = false;
-				} else {
-					newContainerNumber++;
+	
+		public String duplicateContainer() {
+			Integer currentContainer = this.processProperty.getContainer();
+			List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+			// search for all properties in container
+			for (ProcessProperty pt : this.processPropertyList) {
+				if (pt.getContainer() == currentContainer) {
+					plist.add(pt);
 				}
 			}
-		}
-		// clone properties
-		for (ProcessProperty pt : plist) {
-			ProcessProperty newProp = pt.getClone(newContainerNumber);
-			this.processPropertyList.add(newProp);
-			this.processProperty = newProp;
-			saveCurrentProperty();
-		}
-		loadProcessProperties();
+			int newContainerNumber = 0;
+			if (currentContainer > 0) {
+				newContainerNumber++;
+				// find new unused container number
+				boolean search = true;
+				while (search) {
+					if (!this.containers.containsKey(newContainerNumber)) {
+						search = false;
+					} else {
+						newContainerNumber++;
+					}
+				}
+			}
+			// clone properties
+			for (ProcessProperty pt : plist) {
+				ProcessProperty newProp = pt.getClone(newContainerNumber);
+				this.processPropertyList.add(newProp);
+				this.processProperty = newProp;
+				if (this.processProperty.getProzesseigenschaft() == null) {
+					Prozesseigenschaft pe = new Prozesseigenschaft();
+					pe.setProzess(this.mySchritt.getProzess());
+					this.processProperty.setProzesseigenschaft(pe);
+					this.mySchritt.getProzess().getEigenschaften().add(pe);
+				}
+				this.processProperty.transfer();
 
+			}
+			try {
+				this.pdao.save(this.mySchritt.getProzess());
+				Helper.setMeldung("propertySaved");
+			} catch (DAOException e) {
+				myLogger.error(e);
+				Helper.setFehlerMeldung("propertiesNotSaved");
+			}
+			loadProcessProperties();		
 		return "";
 	}
 

@@ -340,6 +340,7 @@ public class ProcessProperty implements IProperty, Serializable {
 		p.setType(this.type);
 		p.setValue(this.value);
 		p.setShowProcessGroupAccessCondition(this.showProcessGroupAccessCondition);
+		p.setDuplicationAllowed(this.getDuplicationAllowed());
 		p.setShowStepConditions(new ArrayList<ShowStepCondition>(getShowStepConditions()));
 		p.setPossibleValues(new ArrayList<String>(getPossibleValues()));
 		p.setProjects(new ArrayList<String>(getProjects()));
