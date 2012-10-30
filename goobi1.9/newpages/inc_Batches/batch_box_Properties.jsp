@@ -45,7 +45,7 @@
 					<htm:td styleClass="standardTable_ColumnCentered">
 
 						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0" />
@@ -53,6 +53,12 @@
 							<a4j:support event="onchange" reRender="editBatch" />
 						</h:commandLink>
 
+
+						<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateProperty}" title="#{msgs.duplicate}" rendered="#{proc.duplicationAllowed}">
+							<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
+							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0" />
+						</h:commandLink>
 
 					</htm:td>
 				</htm:tr>
@@ -79,13 +85,21 @@
 					<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 						rendered="#{propInd ==0}">
 						<%-- edit container --%>
-						<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+						<h:panelGroup
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
 							<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
 								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
 								<x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
 								<a4j:support event="onchange" reRender="editBatch" />
 							</h:commandLink>
+
+							<h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainer}" title="#{msgs.duplicate}"
+								rendered="#{process_item.duplicationAllowed}">
+								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
+							</h:commandLink>
+
 
 						</h:panelGroup>
 					</htm:td>
