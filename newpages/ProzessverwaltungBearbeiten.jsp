@@ -5,7 +5,6 @@
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
-<%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
 <%--
   ~ This file is part of the Goobi Application - a Workflow tool for the support of
   ~ mass digitization.
@@ -73,12 +72,10 @@
 								<%-- Prozessdetails --%>
 								<%@include file="inc_Prozessverwaltung/prozess_box_Prozessdetails.jsp"%>
 
-								<%-- Schritte --%>
-								<c:if test="${ProzessverwaltungForm.myProzess.id != null}">
-								    <%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
-								</c:if>
+								<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
+									<%-- Schritte --%>
+									<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
 
-								<f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null && not ProzessverwaltungForm.myProzess.istTemplate}">
 									<%-- Vorlagen --%>
 									<f:subview id="subVorlage" rendered="#{ProzessverwaltungForm.myProzess.vorlagenSize != 0}">
 										<%@include file="inc_Prozessverwaltung/prozess_box_Vorlagen.jsp"%>
@@ -88,12 +85,11 @@
 									<f:subview id="subWerk" rendered="#{ProzessverwaltungForm.myProzess.werkstueckeSize != 0}">
 										<%@include file="inc_Prozessverwaltung/prozess_box_Werkstuecke.jsp"%>
 									</f:subview>
-								</f:subview>
 
-								<%-- Prozesseigenschaften --%>
-								<c:if test="${ProzessverwaltungForm.myProzess.id != null}">
-								    <%@include file="inc_Prozessverwaltung/prozess_box_Prozesseigenschaften.jsp"%>
-								</c:if>
+									<%-- Prozesseigenschaften --%>
+									<%@include file="inc_Prozessverwaltung/prozess_box_Prozesseigenschaften.jsp"%>
+
+								</f:subview>
 
 							</htm:td>
 						</htm:tr>
