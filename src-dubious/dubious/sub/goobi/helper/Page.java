@@ -128,6 +128,7 @@ public class Page implements Serializable {
 			results = criteria.setFirstResult(page * pageSize).setMaxResults(pageSize + 1).list();
 			return hasNextPage() ? results.subList(0, pageSize) : results;
 		} catch (HibernateException e) {
+			logger.error(e);
 			return results;
 		}
 	}
