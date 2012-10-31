@@ -996,7 +996,7 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
 		}
-
+		this.digitalCollections = new ArrayList<String>();
 		try {
 			/* Datei einlesen und Root ermitteln */
 			SAXBuilder builder = new SAXBuilder();
@@ -1011,7 +1011,13 @@ public class ProzesskopieForm {
 				if (projekt.getName().equals("default")) {
 					List<Element> myCols = projekt.getChildren("DigitalCollection");
 					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-						defaultCollections.add(it2.next().getText());
+						Element col = it2.next();
+						
+						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+							digitalCollections.add(col.getText());
+						}
+					
+						defaultCollections.add(col.getText());
 					}
 				} else {
 					// run through the projects
@@ -1023,6 +1029,11 @@ public class ProzesskopieForm {
 							List<Element> myCols = projekt.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
+								
+								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+									digitalCollections.add(col.getText());
+								}
+							
 								this.possibleDigitalCollection.add(col.getText());
 							}
 						}
@@ -1042,7 +1053,7 @@ public class ProzesskopieForm {
 		}
 
 		// if only one collection is possible take it directly
-		this.digitalCollections = new ArrayList<String>();
+	
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}

@@ -1209,39 +1209,56 @@ public class CopyProcess extends ProzesskopieForm {
 		return this.possibleDigitalCollection;
 	}
 
-	@SuppressWarnings("rawtypes")
+	
+	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollection = new ArrayList<String>();
+		ArrayList<String> defaultCollections = new ArrayList<String>();
 		String filename = new Helper().getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
 		}
-
+		this.digitalCollections = new ArrayList<String>();
 		try {
 			/* Datei einlesen und Root ermitteln */
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = builder.build(new File(filename));
 			Element root = doc.getRootElement();
 			/* alle Projekte durchlaufen */
-			List projekte = root.getChildren();
-			for (Iterator iter = projekte.iterator(); iter.hasNext();) {
-				Element projekt = (Element) iter.next();
-				List projektnamen = projekt.getChildren("name");
-				for (Iterator iterator = projektnamen.iterator(); iterator.hasNext();) {
-					Element projektname = (Element) iterator.next();
-					// System.out.println(projektname.getText() +
-					// " - soll sein: " + prozessKopie.getProjekt().getTitel());
+			List<Element> projekte = root.getChildren();
+			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
+				Element projekt = iter.next();
 
-					/*
-					 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
-					 */
-					if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProjekt().getTitel())) {
-						List myCols = projekt.getChildren("DigitalCollection");
-						for (Iterator it2 = myCols.iterator(); it2.hasNext();) {
-							Element col = (Element) it2.next();
-							// System.out.println(col.getText());
-							this.possibleDigitalCollection.add(col.getText());
+				// collect default collections
+				if (projekt.getName().equals("default")) {
+					List<Element> myCols = projekt.getChildren("DigitalCollection");
+					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+						Element col = it2.next();
+						
+						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+							digitalCollections.add(col.getText());
+						}
+					
+						defaultCollections.add(col.getText());
+					}
+				} else {
+					// run through the projects
+					List<Element> projektnamen = projekt.getChildren("name");
+					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
+						Element projektname = iterator.next();
+						// all all collections to list
+						if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProjekt().getTitel())) {
+							List<Element> myCols = projekt.getChildren("DigitalCollection");
+							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+								Element col = it2.next();
+								
+								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+									digitalCollections.add(col.getText());
+								}
+							
+								this.possibleDigitalCollection.add(col.getText());
+							}
 						}
 					}
 				}
@@ -1254,12 +1271,17 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
 
+		if (this.possibleDigitalCollection.size() == 0) {
+			this.possibleDigitalCollection = defaultCollections;
+		}
+
 		// if only one collection is possible take it directly
-		this.digitalCollections = new ArrayList<String>();
+	
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}
 	}
+
 
 	@Override
 	public List<String> getAllOpacCatalogues() {

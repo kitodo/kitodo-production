@@ -141,29 +141,44 @@ public class MassImportForm {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
 		}
-
+		this.digitalCollections = new ArrayList<String>();
 		try {
+			/* Datei einlesen und Root ermitteln */
 			SAXBuilder builder = new SAXBuilder();
 			Document doc = builder.build(new File(filename));
 			Element root = doc.getRootElement();
+			/* alle Projekte durchlaufen */
 			List<Element> projekte = root.getChildren();
 			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
 				Element projekt = iter.next();
+
 				// collect default collections
 				if (projekt.getName().equals("default")) {
 					List<Element> myCols = projekt.getChildren("DigitalCollection");
 					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-						defaultCollections.add(it2.next().getText());
+						Element col = it2.next();
+						
+						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+							digitalCollections.add(col.getText());
+						}
+					
+						defaultCollections.add(col.getText());
 					}
 				} else {
 					// run through the projects
 					List<Element> projektnamen = projekt.getChildren("name");
 					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 						Element projektname = iterator.next();
+						// all all collections to list
 						if (projektname.getText().equalsIgnoreCase(this.template.getProjekt().getTitel())) {
 							List<Element> myCols = projekt.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
+								
+								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+									digitalCollections.add(col.getText());
+								}
+							
 								this.possibleDigitalCollections.add(col.getText());
 							}
 						}
@@ -177,6 +192,7 @@ public class MassImportForm {
 			logger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
+
 		if (this.possibleDigitalCollections.size() == 0) {
 			this.possibleDigitalCollections = defaultCollections;
 		}
