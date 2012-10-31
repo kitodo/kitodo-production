@@ -168,7 +168,12 @@ public class GoobiScript {
 				runScript(inProzesse, stepname, scriptname);
 			}
 		} else if (this.myParameters.get("action").equals("deleteProcess")) {
-			deleteProcess(inProzesse);
+			String value = myParameters.get("contentOnly");
+			boolean contentOnly = true;
+			if (value != null && value.equalsIgnoreCase("false")) {
+				contentOnly = false;
+			}
+			deleteProcess(inProzesse, contentOnly);
 		} else {
 			Helper.setFehlerMeldung(
 					"goobiScriptfield",
@@ -200,14 +205,22 @@ public class GoobiScript {
 		Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
 	}
 
-	private void deleteProcess(List<Prozess> inProzesse) {
+	private void deleteProcess(List<Prozess> inProzesse, boolean contentOnly) {
+		
 		ProzessDAO dao = new ProzessDAO();
 		for (Prozess p : inProzesse) {
+			String title = p.getTitel();
 			deleteMetadataDirectory(p);
-			try {
-				dao.remove(p);
-			} catch (DAOException e) {
-				Helper.setFehlerMeldung("could not delete process " + p.getTitel(), e);
+			if (contentOnly) {
+				Helper.setMeldung("Content deleted for " + title);
+			}
+			if (!contentOnly) {
+				try {
+					dao.remove(p);
+					Helper.setMeldung("Process " + title + " deleted.");
+				} catch (DAOException e) {
+					Helper.setFehlerMeldung("could not delete process " + p.getTitel(), e);
+				}
 			}
 		}
 	}
