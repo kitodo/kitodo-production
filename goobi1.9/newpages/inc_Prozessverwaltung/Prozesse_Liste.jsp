@@ -26,13 +26,15 @@
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen'}" id="new1">
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
+	id="new1">
 	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" />
 </h:commandLink>
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen'}" id="new2">
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
+	id="new2">
 	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}" />
 </h:commandLink>
 
@@ -83,7 +85,7 @@
 	</x:column>
 
 	<%-- +++++++++++++++++  BatchID ++++++++++++++++++++++++ --%>
-<x:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}">
+	<x:column style="text-align:center" rendered="#{ProzessverwaltungForm.anzeigeAnpassen['batchId']}">
 		<f:facet name="header">
 			<x:div>
 				<%-- Header --%>
@@ -108,13 +110,17 @@
 		</f:facet>
 		<h:outputText value="#{item.batchID}" rendered="#{item.batchID != null}" />
 	</x:column>
-	
+
 	<%-- +++++++++++++++++  alle Schritte auflisten mit Ajax ++++++++++++++++++++++++ --%>
 	<x:column rendered="true" id="ajaxcolumn" style="text-align:left">
 		<f:facet name="header">
 			<x:div>
 				<%-- Header --%>
-				<h:outputText value="#{msgs.prozessTitel}" />
+				<h:panelGroup>
+					<h:outputText value="#{msgs.prozessvorlagen}" rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}" />
+					<h:outputText value="#{msgs.prozessTitel}" rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}" />
+				</h:panelGroup>
+
 				<%-- Sortierung Asc --%>
 				<h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort1" rendered="#{ProzessverwaltungForm.sortierung=='titelAsc'}">
 					<h:graphicImage value="/newpages/images/sorting/asc.gif" style="vertical-align:middle;margin-left:5px" />
@@ -343,7 +349,7 @@
 		<h:commandLink action="#{Metadaten.XMLlesen}" id="action14" title="#{msgs.metadatenBearbeiten}123"
 			rendered="#{(LoginForm.maximaleBerechtigung != 1) && (LoginForm.maximaleBerechtigung != 2) && item.benutzerGesperrt == null && ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
 			<h:graphicImage value="/newpages/images/buttons/view1.gif" style="margin-right:10px" />
-	 		<f:param name="nurLesen" value="true" />
+			<f:param name="nurLesen" value="true" />
 			<f:param name="ProzesseID" value="#{item.id}" />
 			<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
 			<f:param name="zurueck" value="ProzessverwaltungAlle" />
@@ -441,12 +447,11 @@
 				<h:graphicImage value="/newpages/images/buttons/star_red.gif" style="margin-right:3px" rendered="#{item.containsUnreachableSteps}" />
 				<x:updateActionListener property="#{ProzesskopieForm.prozessVorlage}" value="#{item}" />
 			</h:commandLink>
-			
-						<%-- MassenImport --%>			
-			<h:commandLink action="#{MassImportForm.Prepare}" id="action222"
-				title="#{msgs.MassenImport}"
+
+			<%-- MassenImport --%>
+			<h:commandLink action="#{MassImportForm.Prepare}" id="action222" title="#{msgs.MassenImport}"
 				rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen' && HelperForm.massImportAllowed}">
-				<h:graphicImage value="/newpages/images/buttons/star_blue_multi.png" style="margin-right:3px"  rendered="#{!item.containsUnreachableSteps}" />
+				<h:graphicImage value="/newpages/images/buttons/star_blue_multi.png" style="margin-right:3px" rendered="#{!item.containsUnreachableSteps}" />
 				<h:graphicImage value="/newpages/images/buttons/star_red.gif" style="margin-right:3px" rendered="#{item.containsUnreachableSteps}" />
 				<x:updateActionListener property="#{MassImportForm.template}" value="#{item}" />
 			</h:commandLink>
@@ -458,13 +463,15 @@
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" id="new3">
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}"
+	id="new3">
 	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" />
 </h:commandLink>
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" id="new4">
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}"
+	id="new4">
 	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}" />
 </h:commandLink>
 
