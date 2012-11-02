@@ -40,6 +40,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
@@ -344,6 +345,7 @@ public class BatchForm extends BasisForm {
 				Integer batchid = new Integer(this.selectedBatches.get(0));
 				for (Prozess p : this.selectedProcesses) {
 					p.setBatchID(batchid);
+					p.setWikifield(WikiFieldHelper.getWikiMessage(p, p.getWikifield(), "debug", "added process to batch " + batchid));
 //					try {
 //						session.saveOrUpdate(p);
 //					} catch (Exception e) {
@@ -372,7 +374,9 @@ public class BatchForm extends BasisForm {
 	public void removeProcessesFromBatch() {
 //		Session session = Helper.getHibernateSession();
 		for (Prozess p : this.selectedProcesses) {
+			p.setWikifield(WikiFieldHelper.getWikiMessage(p, p.getWikifield(), "debug", "removed process from batch " + p.getBatchID()));
 			p.setBatchID(null);
+
 //			try {
 //				session.saveOrUpdate(p);
 //			} catch (Exception e) {
@@ -405,6 +409,7 @@ public class BatchForm extends BasisForm {
 
 			for (Prozess p : this.selectedProcesses) {
 				p.setBatchID(newBatchId);
+				p.setWikifield(WikiFieldHelper.getWikiMessage(p, p.getWikifield(), "debug", "added process to batch " + newBatchId));
 //				try {
 //					session.saveOrUpdate(p);
 //				} catch (Exception e) {
