@@ -106,7 +106,7 @@ public class Ldap {
 			ctx.bind(getUserDN(inBenutzer), dr);
 			ctx.close();
 			setNextUidNumber();
-
+			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + inBenutzer.getNachVorname(), "");
 			/*
 			 * -------------------------------- check if HomeDir exists, else create it --------------------------------
 			 */
@@ -119,6 +119,8 @@ public class Ldap {
 			} else {
 				myLogger.debug("HomeVerzeichnis existiert schon");
 			}
+		} else {
+			Helper.setMeldung(null, Helper.getTranslation("ldapIsReadOnly"));
 		}
 	}
 
@@ -402,6 +404,7 @@ public class Ldap {
 			ctx.close();
 		} catch (NamingException e) {
 			myLogger.error(e);
+			Helper.setFehlerMeldung(e.getMessage());
 		}
 		return rueckgabe;
 	}
