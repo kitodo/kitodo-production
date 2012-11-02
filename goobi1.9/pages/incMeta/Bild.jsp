@@ -9,23 +9,23 @@
 
 <%-- nur anzeigen, wenn es ein Bild gibt --%>
 <h:form id="formularBild">
-	<a4j:commandButton reRender="BildArea,myBild" id="imageBack" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;" immediate="true">
 		<f:param name="Anzahl" value="-1" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild" id="imageNext" style="display:none" action="#{Metadaten.BildBlaettern}" value=">" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext" style="display:none" action="#{Metadaten.BildBlaettern}" value=">" immediate="true">
 		<f:param name="Anzahl" value="1" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild" id="imageBack20" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;&lt;"
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack20" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;&lt;"
 		immediate="true">
 		<f:param name="Anzahl" value="-20" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild" id="imageNext20" style="display:none" action="#{Metadaten.BildBlaettern}" value=">>" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext20" style="display:none" action="#{Metadaten.BildBlaettern}" value=">>" immediate="true">
 		<f:param name="Anzahl" value="20" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild" id="imageFirst" style="display:none" action="#{Metadaten.BildBlaettern}" value="|&lt;" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageFirst" style="display:none" action="#{Metadaten.BildBlaettern}" value="|&lt;" immediate="true">
 		<f:param name="Anzahl" value="-#{Metadaten.bildNummer}" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild" id="imageLast" style="display:none" action="#{Metadaten.BildBlaettern}" value=">|" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageLast" style="display:none" action="#{Metadaten.BildBlaettern}" value=">|" immediate="true">
 		<f:param name="Anzahl" value="#{Metadaten.bildLetztes}" />
 	</a4j:commandButton>
 
