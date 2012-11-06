@@ -205,7 +205,7 @@ public class MetadatenVerifizierung {
 
 		MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
 		try {
-			if (!mih.checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesOrigDirectory(true))) {
+			if (!mih.checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesTifDirectory(true))) {
 				ergebnis = false;
 			}
 		} catch (Exception e) {
