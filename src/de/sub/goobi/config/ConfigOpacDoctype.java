@@ -25,8 +25,12 @@ package de.sub.goobi.config;
 //TODO: Move this into the GetOPAC Package
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.goobi.webapi.beans.Label;
 
 public class ConfigOpacDoctype {
 	private String title = "";
@@ -37,6 +41,10 @@ public class ConfigOpacDoctype {
 	private boolean containedWork = false;
 	private HashMap<String, String> labels;
 	private ArrayList<String> mappings;
+
+	public ConfigOpacDoctype() { // stupid Jersey API requires no-arg default constructor which is never used
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
 
 	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical, boolean inMultiVolume,
 			boolean inContainedWork, HashMap<String, String> inLabels, ArrayList<String> inMappings) {
@@ -50,6 +58,7 @@ public class ConfigOpacDoctype {
 		mappings = inMappings;
 	}
 
+	@XmlElement(name="id")
 	public String getTitle() {
 		return title;
 	}
@@ -58,6 +67,7 @@ public class ConfigOpacDoctype {
 		return rulesetType;
 	}
 
+	@XmlElement(name="tiffHeaderTag")
 	public String getTifHeaderType() {
 		return tifHeaderType;
 	}
@@ -78,6 +88,12 @@ public class ConfigOpacDoctype {
 		return labels;
 	}
 
+	@XmlElement(name="label")
+	public List<Label> getLabelsForJerseyApi() {
+		return Label.toListOfLabels(labels);
+	}
+	
+	@XmlElement(name="receivingValue")
 	public ArrayList<String> getMappings() {
 		return mappings;
 	}
