@@ -29,12 +29,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.*;
+
 import org.goobi.production.flow.statistics.StepInformation;
 
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 
-
+@XmlAccessorType( XmlAccessType.NONE )
 public class Projekt implements Serializable {
 	private static final long serialVersionUID = -8543713331407761617L;
 	private Integer id;
@@ -94,6 +96,7 @@ public class Projekt implements Serializable {
 	 * ####################################################
 	 */
 
+	@XmlAttribute
 	public Integer getId() {
 		return id;
 	}
@@ -118,6 +121,7 @@ public class Projekt implements Serializable {
 		this.prozesse = prozesse;
 	}
 
+	@XmlValue
 	public String getTitel() {
 		return titel;
 	}
