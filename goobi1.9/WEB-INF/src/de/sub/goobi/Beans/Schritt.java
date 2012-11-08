@@ -94,6 +94,9 @@ public class Schritt implements Serializable {
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+	
+	private String stepPlugin;
+	private String validationPlugin;
 
 	public Schritt() {
 		this.titel = "";
@@ -839,6 +842,22 @@ public class Schritt implements Serializable {
 			sess.close();
 		}
 		return current;
+	}
+
+	public String getStepPlugin() {
+		return stepPlugin;
+	}
+
+	public void setStepPlugin(String stepPlugin) {
+		this.stepPlugin = stepPlugin;
+	}
+
+	public String getValidationPlugin() {
+		return validationPlugin;
+	}
+
+	public void setValidationPlugin(String validationPlugin) {
+		this.validationPlugin = validationPlugin;
 	}
 
 }

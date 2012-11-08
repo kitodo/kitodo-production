@@ -27,11 +27,16 @@ package org.goobi.production.plugin.interfaces;
  * exception statement from your version.
  */
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Schritt;
 
 public interface IValidatorPlugin extends IPlugin {
 	
 	public void initialize(Prozess inProcess);
 
 	public boolean validate();
+	
+	public Schritt getStep();
+	
+	public void setStep(Schritt step);
 	
 }

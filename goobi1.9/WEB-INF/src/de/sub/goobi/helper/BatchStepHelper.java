@@ -41,7 +41,10 @@ import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
@@ -817,7 +820,15 @@ public class BatchStepHelper {
 		// this.processProperty = pp;
 		// saveCurrentPropertyForAll();
 		// }
+
 		for (Schritt s : this.steps) {
+			if (s.getValidationPlugin() != null && s.getValidationPlugin().length() > 0) {
+				IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, s.getValidationPlugin());
+				ivp.setStep(s);
+				if (!ivp.validate()) {
+					return "";
+				}
+			}
 
 			if (s.isTypImagesSchreiben()) {
 				try {

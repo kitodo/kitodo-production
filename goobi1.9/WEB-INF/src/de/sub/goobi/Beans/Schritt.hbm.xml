@@ -47,6 +47,8 @@
 		<property name="typModulName" column="typModulName" type="string"/>
 		<property name="batchStep" column="batchStep" type="boolean"  />
 		
+		<property name="stepPlugin" column="stepPlugin" type="string"/>
+		<property name="validationPlugin" column="validationPlugin" type="string"/>
 		
 		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.Beans.Benutzer" column="BearbeitungsBenutzerID"/>
 		<many-to-one name="prozess" class="de.sub.goobi.Beans.Prozess" column="ProzesseID"/>

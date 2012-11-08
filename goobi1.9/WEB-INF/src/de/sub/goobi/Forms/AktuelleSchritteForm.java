@@ -42,9 +42,12 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
@@ -321,16 +324,16 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
-			
-//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-//			userdefined.setFilterModes(true, false);
-//			userdefined.setFilter("");
-//			Criteria crit = userdefined.getCriteria();
-//			crit.add(Restrictions.eq("titel", steptitle));
-//
-//			// only steps with same batchid
-//			crit.add(Restrictions.eq("proc.batchID", batchNumber));
-//			crit.add(Restrictions.eq("batchStep", true));
+
+			// UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+			// userdefined.setFilterModes(true, false);
+			// userdefined.setFilter("");
+			// Criteria crit = userdefined.getCriteria();
+			// crit.add(Restrictions.eq("titel", steptitle));
+			//
+			// // only steps with same batchid
+			// crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			// crit.add(Restrictions.eq("batchStep", true));
 			currentStepsOfBatch = crit.list();
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
@@ -402,12 +405,12 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-//			userdefined.setFilterModes(false, false);
-//			userdefined.setFilter("");
-//			Criteria crit = userdefined.getCriteria();
-//			crit.add(Restrictions.eq("titel", steptitle));
-//			crit.add(Restrictions.eq("batchStep", true));
+			// UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
+			// userdefined.setFilterModes(false, false);
+			// userdefined.setFilter("");
+			// Criteria crit = userdefined.getCriteria();
+			// crit.add(Restrictions.eq("titel", steptitle));
+			// crit.add(Restrictions.eq("batchStep", true));
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
@@ -416,7 +419,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
 			// only steps with same batchid
-//			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			// crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			currentStepsOfBatch = crit.list();
 		} else {
 			return "AktuelleSchritteBearbeiten";
@@ -433,20 +436,20 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public void saveProperties() {
-//		try {
-//			/*
-//			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-//			 */
-//
-//			for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
-//				this.mySchritt.getEigenschaften().add((Schritteigenschaft) pt.getProperty());
-//				((Schritteigenschaft) pt.getProperty()).setSchritt(this.mySchritt);
-//			}
-//			new SimpleDAO().save(this.mySchritt);
-//			this.mySchritt.refreshProperties();
-//		} catch (DAOException e) {
-//			myLogger.error("stupid dao-exception occured", e);
-//		}
+		// try {
+		// /*
+		// * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
+		// */
+		//
+		// for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
+		// this.mySchritt.getEigenschaften().add((Schritteigenschaft) pt.getProperty());
+		// ((Schritteigenschaft) pt.getProperty()).setSchritt(this.mySchritt);
+		// }
+		// new SimpleDAO().save(this.mySchritt);
+		// this.mySchritt.refreshProperties();
+		// } catch (DAOException e) {
+		// myLogger.error("stupid dao-exception occured", e);
+		// }
 	}
 
 	public String SchrittDurchBenutzerZurueckgeben() {
@@ -476,6 +479,15 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	public String SchrittDurchBenutzerAbschliessen() {
+
+		if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
+			IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, mySchritt.getValidationPlugin());
+			ivp.setStep(mySchritt);
+			if (!ivp.validate()) {
+				return "";
+			}
+		}
+
 		/*
 		 * -------------------------------- if step allows writing of images, then count all images here --------------------------------
 		 */
@@ -614,7 +626,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			se.setSchritt(temp);
 			String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 					+ ben.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "error", message));
+			this.mySchritt.getProzess().setWikifield(
+					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "error", message));
 			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
@@ -726,7 +739,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			 */
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
 					+ ben.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
+			this.mySchritt.getProzess().setWikifield(
+					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
 
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -1162,7 +1176,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "user", message));
+			this.mySchritt.getProzess().setWikifield(
+					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "user", message));
 			this.addToWikiField = "";
 			try {
 				this.pdao.save(this.mySchritt.getProzess());
@@ -1423,51 +1438,50 @@ public class AktuelleSchritteForm extends BasisForm {
 		return answer;
 	}
 
-	
-		public String duplicateContainer() {
-			Integer currentContainer = this.processProperty.getContainer();
-			List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
-			// search for all properties in container
-			for (ProcessProperty pt : this.processPropertyList) {
-				if (pt.getContainer() == currentContainer) {
-					plist.add(pt);
+	public String duplicateContainer() {
+		Integer currentContainer = this.processProperty.getContainer();
+		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+		// search for all properties in container
+		for (ProcessProperty pt : this.processPropertyList) {
+			if (pt.getContainer() == currentContainer) {
+				plist.add(pt);
+			}
+		}
+		int newContainerNumber = 0;
+		if (currentContainer > 0) {
+			newContainerNumber++;
+			// find new unused container number
+			boolean search = true;
+			while (search) {
+				if (!this.containers.containsKey(newContainerNumber)) {
+					search = false;
+				} else {
+					newContainerNumber++;
 				}
 			}
-			int newContainerNumber = 0;
-			if (currentContainer > 0) {
-				newContainerNumber++;
-				// find new unused container number
-				boolean search = true;
-				while (search) {
-					if (!this.containers.containsKey(newContainerNumber)) {
-						search = false;
-					} else {
-						newContainerNumber++;
-					}
-				}
+		}
+		// clone properties
+		for (ProcessProperty pt : plist) {
+			ProcessProperty newProp = pt.getClone(newContainerNumber);
+			this.processPropertyList.add(newProp);
+			this.processProperty = newProp;
+			if (this.processProperty.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(this.mySchritt.getProzess());
+				this.processProperty.setProzesseigenschaft(pe);
+				this.mySchritt.getProzess().getEigenschaften().add(pe);
 			}
-			// clone properties
-			for (ProcessProperty pt : plist) {
-				ProcessProperty newProp = pt.getClone(newContainerNumber);
-				this.processPropertyList.add(newProp);
-				this.processProperty = newProp;
-				if (this.processProperty.getProzesseigenschaft() == null) {
-					Prozesseigenschaft pe = new Prozesseigenschaft();
-					pe.setProzess(this.mySchritt.getProzess());
-					this.processProperty.setProzesseigenschaft(pe);
-					this.mySchritt.getProzess().getEigenschaften().add(pe);
-				}
-				this.processProperty.transfer();
+			this.processProperty.transfer();
 
-			}
-			try {
-				this.pdao.save(this.mySchritt.getProzess());
-				Helper.setMeldung("propertySaved");
-			} catch (DAOException e) {
-				myLogger.error(e);
-				Helper.setFehlerMeldung("propertiesNotSaved");
-			}
-			loadProcessProperties();		
+		}
+		try {
+			this.pdao.save(this.mySchritt.getProzess());
+			Helper.setMeldung("propertySaved");
+		} catch (DAOException e) {
+			myLogger.error(e);
+			Helper.setFehlerMeldung("propertiesNotSaved");
+		}
+		loadProcessProperties();
 		return "";
 	}
 

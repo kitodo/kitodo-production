@@ -147,9 +147,12 @@ public class BeanHelper {
 			stepneu.setHomeverzeichnisNutzen(step.getHomeverzeichnisNutzen());
 			stepneu.setProzess(prozessKopie);
 			
+			stepneu.setStepPlugin(step.getStepPlugin());
+			stepneu.setValidationPlugin(step.getValidationPlugin());
+			
 			//Fixing a bug found by Holger Busse (Berlin)
 			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
-
+			
 			/* --------------------------------
 			 * Eigenschaften des Schritts
 			 * --------------------------------*/
