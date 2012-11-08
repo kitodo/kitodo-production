@@ -245,18 +245,13 @@
 				<h:outputText value="#{msgs.batchStep}" />
 				<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.batchStep}" />
 
-
-				<h:outputText value="#{msgs.stepPlugin}" />
-<%-- 				<h:selectOneMenu value="#{ProzessverwaltungForm.mySchritt.stepPlugin}"> --%>
-<%-- 					<f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}" /> --%>
-<%-- 					<f:selectItems id="" value="" /> --%>
-<%-- 				</h:selectOneMenu> --%>
-
-				<h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}" />
+			
+				<h:outputText value="#{msgs.stepPlugin}" style="display: none;"/>
+				<h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}" style="width: 300px;margin-right:15px; display: none;" />
 
 
 				<h:outputText value="#{msgs.validationPlugin}" />
-				<h:inputText value="#{ProzessverwaltungForm.mySchritt.validationPlugin}" />
+				<h:inputText value="#{ProzessverwaltungForm.mySchritt.validationPlugin}" style="width: 300px;margin-right:15px"/>
 			</h:panelGrid>
 
 		</htm:td>
