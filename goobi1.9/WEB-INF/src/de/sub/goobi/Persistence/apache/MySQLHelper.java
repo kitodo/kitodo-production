@@ -127,7 +127,7 @@ public class MySQLHelper {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = (SELECT VorlagenID FROM vorlagen WHERE ProzesseID = "
-				+ processId);
+				+ processId + ")");
 		try {
 			logger.debug(sql.toString());
 			List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToTemplatePropertyListHandler);
