@@ -22,6 +22,7 @@
 
 package de.sub.goobi.beans;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.*;
 
 import org.goobi.production.flow.statistics.StepInformation;
+import org.goobi.webapi.beans.Field;
 
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
@@ -41,12 +43,12 @@ import de.sub.goobi.helper.enums.MetadataFormat;
 // elements. Further XML elements can be added as needed by annotating with
 // @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
-@XmlType(propOrder = { "titel", "template" })
+@XmlType(propOrder = { "template", "fieldConfig" })
 // This annotation declares the desired order of XML elements generated and
 // rather serves for better legibility of the generated XML. The list must be
 // exhaustive and the properties have to be named according to their respective
-// getter function, e.g. @XmlElement(name="title") getTitel() must be referenced
-// as "titel" here, not "title" as one might expect.
+// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
+// referenced as "fieldConfig" here, not "field" as one might expect.
 public class Projekt implements Serializable {
 	private static final long serialVersionUID = -8543713331407761617L;
 	private Integer id;
@@ -114,7 +116,6 @@ public class Projekt implements Serializable {
 	 * ####################################################
 	 */
 
-	@XmlAttribute(name="recordNumber") // ‘id’ should be unique over all XML elements
 	public Integer getId() {
 		return id;
 	}
@@ -139,7 +140,7 @@ public class Projekt implements Serializable {
 		this.prozesse = prozesse;
 	}
 
-	@XmlElement(name="title")
+	@XmlAttribute(name="key")
 	public String getTitel() {
 		return titel;
 	}
@@ -458,5 +459,10 @@ public class Projekt implements Serializable {
 	 **************************************************************************************/
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	@XmlElement(name="field")
+	public List<Field> getFieldConfig() throws IOException{
+		return Field.getFieldConfigForProject(this);
 	}
 }

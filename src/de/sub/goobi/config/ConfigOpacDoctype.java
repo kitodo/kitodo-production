@@ -28,9 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.goobi.webapi.beans.Label;
+import org.goobi.webapi.beans.Label.KeyAttribute;
 
 public class ConfigOpacDoctype {
 	private String title = "";
@@ -58,7 +60,7 @@ public class ConfigOpacDoctype {
 		mappings = inMappings;
 	}
 
-	@XmlElement(name="id")
+	@XmlAttribute(name="key")
 	public String getTitle() {
 		return title;
 	}
@@ -90,7 +92,7 @@ public class ConfigOpacDoctype {
 
 	@XmlElement(name="label")
 	public List<Label> getLabelsForJerseyApi() {
-		return Label.toListOfLabels(labels);
+		return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
 	}
 	
 	@XmlElement(name="receivingValue")

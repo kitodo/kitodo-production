@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
+import com.sharkysoft.util.UnreachableCodeException;
+
 /**
  * The Label class provides serialization for Map<String,String> objects where
  * keys are language identifiers (examples include “en”, “de”, …) and values are
@@ -16,17 +18,33 @@ import javax.xml.bind.annotation.XmlValue;
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 public class Label {
+	public enum KeyAttribute {
+		LABEL, LANGUAGE
+	}
+
+	@XmlAttribute(name = "label")
+	public String label;
+
 	@XmlAttribute(name = "lang")
 	public String language;
 
 	@XmlValue
 	public String value;
 
-	public static List<Label> toListOfLabels(Map<String, String> data) {
+	public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
 		List<Label> result = new ArrayList<Label>();
 		for (String key : data.keySet()) {
 			Label entry = new Label();
-			entry.language = key;
+			switch (keyAttribute) {
+			case LABEL:
+				entry.label = key;
+				break;
+			case LANGUAGE:
+				entry.language = key;
+				break;
+			default:
+				throw new UnreachableCodeException();
+			}
 			entry.value = data.get(key);
 			result.add(entry);
 		}

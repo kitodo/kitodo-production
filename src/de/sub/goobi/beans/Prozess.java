@@ -79,12 +79,6 @@ import de.sub.goobi.persistence.ProzessDAO;
 // elements. Further XML elements can be added as needed by annotating with
 // @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
-@XmlType(propOrder = { "titel", "possibleDigitalCollections" })
-//This annotation declares the desired order of XML elements generated and
-//rather serves for better legibility of the generated XML. The list must be
-//exhaustive and the properties have to be named according to their respective
-//getter function, e.g. @XmlElement(name="title") getTitel() must be referenced
-//as "titel" here, not "title" as one might expect.
 public class Prozess implements Serializable, IGoobiEntity {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
@@ -136,7 +130,6 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * Getter und Setter
 	 */
 
-	@XmlAttribute(name="recordNumber") // ‘id’ should be unique over all XML elements
 	public Integer getId() {
 		return id;
 	}
@@ -163,7 +156,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		this.istTemplate = istTemplate;
 	}
 
-	@XmlElement(name="title")
+	@XmlAttribute(name="key")
 	public String getTitel() {
 		return titel;
 	}
