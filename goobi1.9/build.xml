@@ -10,8 +10,11 @@
 	<property name="dir.build" location="./build" />
 	<property name="dir.build.src" location="${dir.build}/src" />
 	<property name="dir.config" location="./config" />
-	<property name="dir.tests" location="./test/src" />
+	
 	<property name="dir.src" location="./src" />
+	<property name="dir.src.dubious" location="./src-dubious" />
+	<property name="dir.src.test" location="./test" />
+	
 	<available file=".git" type="dir" property="git.present"/>
 
 	<path id="classpath">
@@ -85,6 +88,8 @@
 	<target name="copySources" description="Copy the sources to the build directory">
 		<copy todir="${dir.build.src}">
 			<fileset dir="${dir.src}" />
+			<fileset dir="${dir.src.dubious}" />
+			<fileset dir="${dir.src.test}" />
 		</copy>
 	</target>
 
