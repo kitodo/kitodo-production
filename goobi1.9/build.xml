@@ -11,7 +11,7 @@
 	<property name="dir.build.src" location="${dir.build}/src" />
 	<property name="dir.config" location="./config" />
 	<property name="dir.tests" location="./test/src" />
-	<property name="dir.src" location="./WEB-INF/src" />
+	<property name="dir.src" location="./src" />
 	<available file=".git" type="dir" property="git.present"/>
 
 	<path id="classpath">
