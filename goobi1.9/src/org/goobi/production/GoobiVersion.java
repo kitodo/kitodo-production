@@ -29,6 +29,6 @@ import java.util.Date;
  */
 public class GoobiVersion {
 	public final static String VERSION = "1.10";
-	public final static String BUILDVERSION = "1.10-001";
+	public final static String BUILDVERSION = "1.10-002";
 	public final static String BUILDDATE = new Date().toString();
 }
