@@ -36,11 +36,17 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
 import org.goobi.production.api.property.xmlbasedprovider.Status;
 import org.goobi.production.export.ExportDocket;
+import org.jdom.JDOMException;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -54,6 +60,7 @@ import de.sub.goobi.beans.property.DisplayPropertyList;
 import de.sub.goobi.beans.property.IGoobiEntity;
 import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Messages;
@@ -67,6 +74,17 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 
+@XmlAccessorType(XmlAccessType.NONE)
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be added as needed by annotating with
+// @XmlElement, but their respective names should be wisely chosen according to
+// the Coding Guidelines (e.g. *english* names).
+@XmlType(propOrder = { "titel", "possibleDigitalCollections" })
+//This annotation declares the desired order of XML elements generated and
+//rather serves for better legibility of the generated XML. The list must be
+//exhaustive and the properties have to be named according to their respective
+//getter function, e.g. @XmlElement(name="title") getTitel() must be referenced
+//as "titel" here, not "title" as one might expect.
 public class Prozess implements Serializable, IGoobiEntity {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
@@ -118,6 +136,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 	 * Getter und Setter
 	 */
 
+	@XmlAttribute(name="recordNumber") // ‘id’ should be unique over all XML elements
 	public Integer getId() {
 		return id;
 	}
@@ -144,6 +163,7 @@ public class Prozess implements Serializable, IGoobiEntity {
 		this.istTemplate = istTemplate;
 	}
 
+	@XmlElement(name="title")
 	public String getTitel() {
 		return titel;
 	}
@@ -945,5 +965,10 @@ public class Prozess implements Serializable, IGoobiEntity {
 			facesContext.responseComplete();
 		}
 		return "";
+	}
+
+	@XmlElement(name = "collection")
+	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
+		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
 	}
 }

@@ -21,8 +21,11 @@
 package org.goobi.webapi.resources;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -48,16 +51,24 @@ public class Projects {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ProjectsRootNode getAllProjectsReferencedFromWithinAtLeastOneTemplate() throws IOException {
-		Set<Projekt> projects = new HashSet<Projekt>();
+	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
+		Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
+
 		@SuppressWarnings("unchecked")
 		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
 		for (Prozess process : processes) {
 			if (process.isIstTemplate()) {
-				projects.add(process.getProjekt());
+				Projekt project = process.getProjekt();
+				Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
+				templates.add(process);
+				data.put(project, templates);
 			}
 		}
-		return new ProjectsRootNode(projects);
-
+		List<Projekt> result = new ArrayList<Projekt>();
+		for(Projekt project : data.keySet()){
+			project.template = new ArrayList<Prozess>(data.get(project));
+			result.add(project);
+		}
+		return new ProjectsRootNode(result);
 	}
 }

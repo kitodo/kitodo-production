@@ -36,7 +36,17 @@ import org.goobi.production.flow.statistics.StepInformation;
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 
-@XmlAccessorType( XmlAccessType.NONE )
+@XmlAccessorType(XmlAccessType.NONE)
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be added as needed by annotating with
+// @XmlElement, but their respective names should be wisely chosen according to
+// the Coding Guidelines (e.g. *english* names).
+@XmlType(propOrder = { "titel", "template" })
+// This annotation declares the desired order of XML elements generated and
+// rather serves for better legibility of the generated XML. The list must be
+// exhaustive and the properties have to be named according to their respective
+// getter function, e.g. @XmlElement(name="title") getTitel() must be referenced
+// as "titel" here, not "title" as one might expect.
 public class Projekt implements Serializable {
 	private static final long serialVersionUID = -8543713331407761617L;
 	private Integer id;
@@ -75,6 +85,14 @@ public class Projekt implements Serializable {
 	private Integer numberOfPages;
 	private Integer numberOfVolumes;
 	
+	@XmlElement(name = "template")
+	public List<Prozess> template; // The ‘template’ variable is populated from
+									// org.goobi.webapi.resources.Projects when
+									// calling ${SERVLET_CONTEXT}/rest/projects
+									// to output the templates available within
+									// a project as XML child nodes of the
+									// respective project.
+	
 	public Projekt() {
 		prozesse = new HashSet<Prozess>();
 		benutzer = new HashSet<Benutzer>();
@@ -96,7 +114,7 @@ public class Projekt implements Serializable {
 	 * ####################################################
 	 */
 
-	@XmlAttribute
+	@XmlAttribute(name="recordNumber") // ‘id’ should be unique over all XML elements
 	public Integer getId() {
 		return id;
 	}
@@ -121,7 +139,7 @@ public class Projekt implements Serializable {
 		this.prozesse = prozesse;
 	}
 
-	@XmlValue
+	@XmlElement(name="title")
 	public String getTitel() {
 		return titel;
 	}
