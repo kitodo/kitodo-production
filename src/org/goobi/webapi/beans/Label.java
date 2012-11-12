@@ -53,6 +53,27 @@ public class Label {
 	@XmlValue
 	public String value;
 
+	/**
+	 * Default constructor is required to be explicitly coded because copy
+	 * constructor is given. Java only provides an implicit default constructor
+	 * as long as no other constructors are given.
+	 */
+	public Label() {
+		// there is nothing to do
+	}
+
+	/**
+	 * Copy Constructor to instantiate an already populated Label.
+	 * 
+	 * @param toCopy
+	 *            Field to create a copy from
+	 */
+	public Label(Label toCopy) {
+		this.label = toCopy.label;
+		this.language = toCopy.language;
+		this.value = toCopy.value;
+	}
+
 	public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
 		List<Label> result = new ArrayList<Label>();
 		for (String key : data.keySet()) {

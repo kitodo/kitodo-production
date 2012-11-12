@@ -41,16 +41,30 @@ import de.sub.goobi.beans.Projekt;
  */
 @XmlRootElement(name = "projects")
 public class ProjectsRootNode {
-	@SuppressWarnings("unused")
 	@XmlElement(name = "project")
 	private ArrayList<Projekt> projects;
 
-	public ProjectsRootNode() { // stupid Jersey API requires no-arg default constructor which is never used
-		throw new UnsupportedOperationException("Not yet implemented");
+	public ProjectsRootNode() {
+		projects = new ArrayList<Projekt>();
 	}
 
 	public ProjectsRootNode(Collection<Projekt> data) {
 		projects = new ArrayList<Projekt>(data);
+	}
+
+	/**
+	 * Copy Constructor to instantiate an already populated ProjectsRootNode.
+	 * Copying is done that way that a *new* list object is genererated, so
+	 * modifying the list (eg. removing, adding or resorting its elements) will
+	 * *not* influence the list the copy was derived from. However, no copies
+	 * are created of the list *entries*, so modifying a Projekt in the list
+	 * *will* modify the equal Projekt in the list the copy was derived from.
+	 * 
+	 * @param toCopy
+	 *            ProjectsRootNode to create a copy from
+	 */
+	public ProjectsRootNode(ProjectsRootNode toCopy) {
+		this.projects = toCopy.projects != null ? new ArrayList<Projekt>(toCopy.projects) : null;
 	}
 
 }
