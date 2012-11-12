@@ -256,9 +256,12 @@ public class MySQLUtils {
 			boolean writeAccess = rs.getBoolean("typImagesSchreiben");
 			boolean metadataAccess = rs.getBoolean("typMetadaten");
 			boolean typeFinishImmediately = rs.getBoolean("typBeimAnnehmenAbschliessen");
+			String stepPlugin = rs.getString("stepPlugin");
+			String validationPlugin = rs.getString("validationPlugin");
+			
 			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn, bearbeitungsende,
 					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess,
-					typeFinishImmediately);
+					typeFinishImmediately, stepPlugin, validationPlugin);
 		}
 
 		return so;

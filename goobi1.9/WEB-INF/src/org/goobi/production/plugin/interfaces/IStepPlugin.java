@@ -32,11 +32,15 @@ import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
 
 import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.Persistence.apache.StepObject;
 
 public interface IStepPlugin extends IPlugin {
 	
 	public void initialize(Schritt step, String returnPath);
+	
+	public void initialize(StepObject stepobject, String returnPath);
 
+	// TODO should this be a boolean method, or a method with exception thrown?
 	public void execute();
 
 	public String cancel();

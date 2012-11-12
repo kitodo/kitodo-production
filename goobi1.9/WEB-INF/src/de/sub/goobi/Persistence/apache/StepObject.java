@@ -1,4 +1,5 @@
 package de.sub.goobi.Persistence.apache;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -29,7 +30,7 @@ package de.sub.goobi.Persistence.apache;
 import java.util.Date;
 
 public class StepObject {
-	
+
 	private int id;
 	private String title;
 	private int reihenfolge;
@@ -46,10 +47,12 @@ public class StepObject {
 	private boolean typeWriteAcces = false;
 	private boolean typeMetadataAccess = false;
 	private boolean typeFinishImmediately = false;
-	
-	
+	private String stepPlugin;
+	private String validationPlugin;
+
 	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt, Date bearbeitungsbeginn,
-			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId, boolean readAccess, boolean writeAccess, boolean metadataAccess, boolean typeFinishImmediately) {
+			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId,
+			boolean readAccess, boolean writeAccess, boolean metadataAccess, boolean typeFinishImmediately, String stepPlugin, String validationPlugin) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -62,12 +65,14 @@ public class StepObject {
 		this.editType = editType;
 		this.typExport = typExport;
 		this.typAutomatisch = typAutomatisch;
-		this.processId =processId;
+		this.processId = processId;
 		this.setTypeReadAcces(readAccess);
 		this.typeWriteAcces = writeAccess;
 		this.typeMetadataAccess = metadataAccess;
 		this.setTypeFinishImmediately(typeFinishImmediately);
-		
+		this.stepPlugin = stepPlugin;
+		this.validationPlugin = validationPlugin;
+
 	}
 
 	public int getId() {
@@ -173,6 +178,7 @@ public class StepObject {
 	public void setTypeWriteAcces(boolean typeWriteAcces) {
 		this.typeWriteAcces = typeWriteAcces;
 	}
+
 	public boolean isTypeMetadataAccess() {
 		return this.typeMetadataAccess;
 	}
@@ -196,5 +202,21 @@ public class StepObject {
 	public void setTypeFinishImmediately(boolean typeFinishImmediately) {
 		this.typeFinishImmediately = typeFinishImmediately;
 	}
-	
+
+	public String getStepPlugin() {
+		return stepPlugin;
+	}
+
+	public void setStepPlugin(String stepPlugin) {
+		this.stepPlugin = stepPlugin;
+	}
+
+	public String getValidationPlugin() {
+		return validationPlugin;
+	}
+
+	public void setValidationPlugin(String validationPlugin) {
+		this.validationPlugin = validationPlugin;
+	}
+
 }
