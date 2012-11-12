@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webapi.beans;
+package org.goobi.webapi.elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.goobi.webapi.beans.Label.KeyAttribute;
+import org.goobi.webapi.elements.Label.KeyAttribute;
 
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.config.ConfigProjects;

@@ -31,8 +31,8 @@ import javax.faces.context.FacesContext;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.goobi.webapi.beans.Label;
-import org.goobi.webapi.beans.Label.KeyAttribute;
+import org.goobi.webapi.elements.Label;
+import org.goobi.webapi.elements.Label.KeyAttribute;
 
 public class ConfigOpacDoctype {
 	private String title = "";

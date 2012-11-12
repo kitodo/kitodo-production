@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.goobi.webapi.beans.ProjectsRootNode;
+import org.goobi.webapi.elements.ProjectsRootNode;
 
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
