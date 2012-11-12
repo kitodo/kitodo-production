@@ -23,9 +23,9 @@
 package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
+import org.goobi.webapi.beans.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.dao.GoobiProcessDAO;
-import org.goobi.webapi.elements.GoobiProcess;
-import org.goobi.webapi.elements.GoobiProcessStep;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

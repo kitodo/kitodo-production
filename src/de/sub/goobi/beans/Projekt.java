@@ -33,7 +33,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.*;
 
 import org.goobi.production.flow.statistics.StepInformation;
-import org.goobi.webapi.elements.Field;
+import org.goobi.webapi.beans.Field;
 
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;

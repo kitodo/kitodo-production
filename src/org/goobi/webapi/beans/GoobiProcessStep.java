@@ -20,7 +20,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.goobi.webapi.elements;
+package org.goobi.webapi.beans;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
