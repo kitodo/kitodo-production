@@ -296,7 +296,7 @@
 	<!-- Build standalone CLI jar -->
 	<target name="jar" depends="compile, copy-config">
 		<jar destfile="${build.dist.jar}">
-			<fileset dir="${build.classes}" includes="**/*.class, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
+			<fileset dir="${build.classes}" includes="**/*.class, **/*.hbm.xml, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Implementation-Title" value="${ant.project.name}"/>
