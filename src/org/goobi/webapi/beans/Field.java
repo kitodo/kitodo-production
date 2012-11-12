@@ -115,4 +115,29 @@ public class Field {
 		}
 		return fields;
 	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	public void setOption(List<Label> option) {
+		this.option = option;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public void setUghbinding(Boolean ughbinding) {
+		this.ughbinding = ughbinding;
+	}
+
+	public void setDocstruct(String docstruct) {
+		this.docstruct = docstruct;
+	}
+
 }

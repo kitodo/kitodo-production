@@ -93,4 +93,17 @@ public class Label {
 		}
 		return result;
 	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 }

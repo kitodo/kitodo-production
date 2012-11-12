@@ -67,4 +67,8 @@ public class ProjectsRootNode {
 		this.projects = toCopy.projects != null ? new ArrayList<Projekt>(toCopy.projects) : null;
 	}
 
+	public void setProjects(ArrayList<Projekt> projects) {
+		this.projects = projects;
+	}
+
 }
