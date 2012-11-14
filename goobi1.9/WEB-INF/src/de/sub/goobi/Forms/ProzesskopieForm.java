@@ -78,6 +78,7 @@ import ugh.fileformats.mets.XStream;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.Beans.Prozesseigenschaft;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Vorlage;
 import de.sub.goobi.Beans.Vorlageeigenschaft;
@@ -425,6 +426,9 @@ public class ProzesskopieForm {
 					if (field.getTitel().equals(eig.getTitel())) {
 						field.setWert(eig.getWert());
 					}
+				if (eig.getTitel().equals("DocType")) {
+					docType = eig.getWert();
+				}
 				}
 			}
 		}
@@ -441,6 +445,13 @@ public class ProzesskopieForm {
 			}
 		}
 
+		if (tempProzess.getEigenschaftenSize() > 0) {
+			for (Prozesseigenschaft pe : tempProzess.getEigenschaften()) {
+				if (pe.getTitel().equals("digitalCollection")) {
+					digitalCollections.add(pe.getWert());
+				}
+			}
+		}
 		try {
 			this.myRdf = tempProzess.readMetadataAsTemplateFile();
 		} catch (Exception e) {
@@ -907,6 +918,10 @@ public class ProzesskopieForm {
 					bh.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
 				}
 			}
+		}
+		
+		for (String col : digitalCollections) {
+			bh.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
 		}
 		/* Doctype */
 		bh.EigenschaftHinzufuegen(werk, "DocType", this.docType);
