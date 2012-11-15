@@ -1,4 +1,4 @@
-package org.goobi.production.plugin.interfaces;
+package org.goobi.production.importer;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,63 +26,74 @@ package org.goobi.production.plugin.interfaces;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.enums.ImportType;
-import org.goobi.production.importer.DocstructElement;
-import org.goobi.production.importer.ImportObject;
-import org.goobi.production.importer.Record;
-import org.goobi.production.properties.ImportProperty;
+public class Record {
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
+//	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
+//	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
+//	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
+	
+	private List<String> collections = new ArrayList<String>();
+	private String data = "";
+	private String id = "";
 
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+	/**
+	 * @param data
+	 *            the data to set
+	 */
+	public void setData(String data) {
+		this.data = data;
+	}
 
-public interface IImportPlugin extends IPlugin {
-	
-	public void setPrefs(Prefs prefs);
-	
-	public void setData(Record r);
-	
-	public Fileformat convertData() throws ImportPluginException;
-	
-	public String getImportFolder();
-	
-	public String getProcessTitle();
+	/**
+	 * @return the data
+	 */
+	public String getData() {
+		return this.data;
+	}
 
-	public List<ImportObject> generateFiles(List<Record> records);
-	
-	public void setImportFolder(String folder);
-	
-	public List<Record> splitRecords(String records);
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
 
-	public List<Record> generateRecordsFromFile();
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return this.id;
+	}
 
-	public List<Record> generateRecordsFromFilenames(List<String> filenames);
-	
-	public void setFile(File importFile);
-	
-	public List<String> splitIds(String ids);
-	
-	public List<ImportType> getImportTypes();
-	
-	public List<ImportProperty> getProperties();
-	
-	public List<String> getAllFilenames();
+	public void setCollections(List<String> collections) {
+		this.collections = collections;
+	}
 
-	public void deleteFiles(List<String> selectedFilenames);	
+	public List<String> getCollections() {
+		return this.collections;
+	}
+
+//	public List<Prozesseigenschaft> getProcessProperties() {
+//		return this.processProperties;
+//	}
+//	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
+//		this.processProperties = processProperties;
+//	}
+//	public List<Werkstueckeigenschaft> getWorkProperties() {
+//		return this.workProperties;
+//	}
+//	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
+//		this.workProperties = workProperties;
+//	}
+//	public List<Vorlageeigenschaft> getTemplateProperties() {
+//		return this.templateProperties;
+//	}
+//	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
+//		this.templateProperties = templateProperties;
+//	}
 	
-	public List<? extends DocstructElement> getCurrentDocStructs();
-	
-	public String deleteDocstruct();
-	
-	public String addDocstruct();
-	
-	public List<String> getPossibleDocstructs();
-	
-	public DocstructElement getDocstruct();
-	
-	public void setDocstruct(DocstructElement dse);
 }

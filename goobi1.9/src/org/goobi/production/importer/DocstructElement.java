@@ -1,4 +1,14 @@
-package org.goobi.production.Import;
+package org.goobi.production.importer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.goobi.production.properties.ImportProperty;
+
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,74 +36,48 @@ package org.goobi.production.Import;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-import java.util.List;
 
-public class Record {
-
-//	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
-//	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
-//	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
+public class DocstructElement {
+	private String docStruct;
+	private int order;
+//	protected List<ImportProperty> properties = new ArrayList<ImportProperty>();
 	
-	private List<String> collections = new ArrayList<String>();
-	private String data = "";
-	private String id = "";
-
-	/**
-	 * @param data
-	 *            the data to set
-	 */
-	public void setData(String data) {
-		this.data = data;
+	public DocstructElement(String docStruct,  int order) {
+		this.docStruct = docStruct;
+		this.order = order;
 	}
-
-	/**
-	 * @return the data
-	 */
-	public String getData() {
-		return this.data;
+	
+//	public DocstructElement(String docStruct,  int order, List<ImportProperty> properties) {
+//		this.docStruct = docStruct;
+//		this.order = order;
+//		this.properties = properties;
+//	}
+	
+	public String getDocStruct() {
+		return docStruct;
 	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setDocStruct(String docStruct) {
+		this.docStruct = docStruct;
 	}
-
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return this.id;
+	public int getOrder() {
+		return order;
 	}
-
-	public void setCollections(List<String> collections) {
-		this.collections = collections;
+	public void setOrder(int order) {
+		this.order = order;
 	}
+	
+//	public List<ImportProperty> getProperties() {
+//		return properties;
+//	}
+//	
+//	private ListDataModel columns = null;
+//	  public DataModel getColumnDataModel() {
+//		  if (columns == null) {
+//			columns = new ListDataModel(properties);
+//		}
+//		return columns;
+//	}
 
-	public List<String> getCollections() {
-		return this.collections;
-	}
-
-//	public List<Prozesseigenschaft> getProcessProperties() {
-//		return this.processProperties;
-//	}
-//	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
-//		this.processProperties = processProperties;
-//	}
-//	public List<Werkstueckeigenschaft> getWorkProperties() {
-//		return this.workProperties;
-//	}
-//	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
-//		this.workProperties = workProperties;
-//	}
-//	public List<Vorlageeigenschaft> getTemplateProperties() {
-//		return this.templateProperties;
-//	}
-//	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
-//		this.templateProperties = templateProperties;
-//	}
+	
 	
 }

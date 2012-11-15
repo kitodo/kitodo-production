@@ -45,8 +45,8 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.Import.ImportObject;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.importer.ImportObject;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

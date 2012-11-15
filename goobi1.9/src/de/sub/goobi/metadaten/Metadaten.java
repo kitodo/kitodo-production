@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
-import org.goobi.production.Import.DocstructElement;
+import org.goobi.production.importer.DocstructElement;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -72,7 +72,6 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.Import.ImportOpac;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
@@ -86,6 +85,7 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.importer.ImportOpac;
 import de.sub.goobi.persistence.ProzessDAO;
 
 /**

@@ -1,4 +1,4 @@
-package org.goobi.production.Import;
+package org.goobi.production.importer;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -23,49 +23,46 @@ package org.goobi.production.Import;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-public class ImportConflicts {
-	/**
-	 * simple POJO class
-	 * @author Igor Toker
-	 */
-	
-	private String storeidentifier;
-	private String property;
-	private String goobiValue;
-	private String productionValue;
-	
-	
-	public ImportConflicts(String storeidentifier, String property, String goobiValue, String productionValue) {
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+/**
+ * 
+ * @author Igor Toker
+ *
+ */
+@XStreamAlias("property")
+public class FireburnProperty {
+	@XStreamAsAttribute
+	@XStreamAlias("cdName")
+	public String cdName;
+	@XStreamAsAttribute
+	@XStreamAlias("titel")
+	public String titel;
+	@XStreamAsAttribute
+	@XStreamAlias("date")
+	public String date;
+
+	//Anzahl der Cd's
+	@XStreamAlias("cdnumber")
+	@XStreamAsAttribute
+	public int cdnumber = 1;
+	@XStreamAlias("size")
+	@XStreamAsAttribute
+	public long size;
+	@XStreamAlias("type")
+	@XStreamAsAttribute
+	public String type;
+
+	public FireburnProperty(String cdName, String titel, String date, int cdnumber, String type, long size) {
 		super();
-		this.storeidentifier = storeidentifier;
-		this.property = property;
-		this.goobiValue = goobiValue;
-		this.productionValue = productionValue;
+		this.cdName = cdName;
+		this.titel = titel;
+		this.date = date;
+
+		this.cdnumber = cdnumber;
+		this.type = type;
+		this.size = size;
 	}
-	
-	public void setStoreidentifier(String storeidentifier) {
-		this.storeidentifier = storeidentifier;
-	}
-	public String getStoreidentifier() {
-		return storeidentifier;
-	}
-	public void setProperty(String property) {
-		this.property = property;
-	}
-	public String getProperty() {
-		return property;
-	}
-	public void setGoobiValue(String goobiValue) {
-		this.goobiValue = goobiValue;
-	}
-	public String getGoobiValue() {
-		return goobiValue;
-	}
-	public void setProductionValue(String productionValue) {
-		this.productionValue = productionValue;
-	}
-	public String getProductionValue() {
-		return productionValue;
-	}
-	
+
+
 }

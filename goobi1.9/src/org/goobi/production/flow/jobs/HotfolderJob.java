@@ -35,10 +35,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.Import.GoobiHotfolder;
-import org.goobi.production.Import.ImportObject;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.flow.helper.JobCreation;
+import org.goobi.production.importer.GoobiHotfolder;
+import org.goobi.production.importer.ImportObject;
 
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
