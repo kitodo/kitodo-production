@@ -46,6 +46,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Persistence.BenutzerDAO;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -580,6 +581,9 @@ class FilterHelper {
 	protected static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
 			Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly) {
 
+		if (ConfigMain.getBooleanParameter("DatabaseAutomaticRefreshList", true)) {
+			session.clear();
+		}
 		// for ordering the lists there are some
 		// criteria, which needs to be added even no
 		// restrictions apply, to avoid multiple analysis

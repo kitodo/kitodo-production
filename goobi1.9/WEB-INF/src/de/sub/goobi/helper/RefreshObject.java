@@ -40,14 +40,9 @@ public class RefreshObject {
 	public static void refreshProcess(int processID) {
 		logger.debug("refreshing process with id " + processID);
 		try {
-			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			Session session = HibernateUtilOld.getSessionFactory()
+					.openSession();
 			logger.debug("created a new session");
-			// Session session = Helper.getHibernateSession();
-			// if (session == null || !session.isOpen() || !session.isConnected()) {
-			// logger.debug("session is closed, creating a new session");
-			// HibernateUtilOld.rebuildSessionFactory();
-			// session = HibernateUtilOld.getSessionFactory().openSession();
-			// }
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
 			logger.debug("loaded process");
 			session.refresh(o);
@@ -60,11 +55,33 @@ public class RefreshObject {
 
 	}
 
+	public static void refreshProcess_GUI(int processID) {
+		logger.debug("refreshing process with id " + processID);
+		try {
+			Session session = Helper.getHibernateSession();
+			if (session == null || !session.isOpen() || !session.isConnected()) {
+				logger.debug("session is closed, creating a new session");
+				HibernateUtilOld.rebuildSessionFactory();
+				session = HibernateUtilOld.getSessionFactory().openSession();
+			}
+			Prozess o = (Prozess) session.get(Prozess.class, processID);
+			logger.debug("loaded process");
+			session.refresh(o);
+			logger.debug("refreshed process");
+			// session.close();
+			// logger.debug("closed session");
+		} catch (Throwable e) {
+			logger.error("cannot refresh process with id " + processID);
+		}
+	}
+
 	public static void refreshStep(int stepID) {
 		try {
-			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			Session session = HibernateUtilOld.getSessionFactory()
+					.openSession();
 			// Session session = Helper.getHibernateSession();
-			// if (session == null || !session.isOpen() || !session.isConnected()) {
+			// if (session == null || !session.isOpen() ||
+			// !session.isConnected()) {
 			// logger.debug("session is closed, creating a new session");
 			// HibernateUtilOld.rebuildSessionFactory();
 			// session = HibernateUtilOld.getSession();

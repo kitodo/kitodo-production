@@ -883,7 +883,7 @@ public class BatchStepHelper {
 			this.myDav.UploadFromHome(s.getProzess());
 			StepObject so = StepManager.getStepById(s.getId());
 			so.setEditType(StepEditType.MANUAL_MULTI.getValue());
-			new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
+			new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
 		}
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();

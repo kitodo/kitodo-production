@@ -66,10 +66,14 @@ public class HelperSchritteWithoutHibernate {
 	 */
 
 	public void CloseStepObjectAutomatic(StepObject currentStep) {
-		closeStepObject(currentStep, currentStep.getProcessId());
+		closeStepObject(currentStep, currentStep.getProcessId(), false);
+	}
+	
+	public void CloseStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
+		closeStepObject(currentStep, currentStep.getProcessId(), requestFromGUI);
 	}
 
-	private void closeStepObject(StepObject currentStep, int processId) {
+	private void closeStepObject(StepObject currentStep, int processId, boolean requestFromGUI) {
 		logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
@@ -170,7 +174,11 @@ public class HelperSchritteWithoutHibernate {
 		// TODO remove this later
 		try {
 			logger.debug("update hibernate cache");
-			RefreshObject.refreshProcess(processId);
+			if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)){
+				RefreshObject.refreshProcess_GUI(processId);
+			}else{
+				RefreshObject.refreshProcess(processId);
+			}
 		} catch (Exception e) {
 			logger.error("Exception during update of hibernate cache", e);
 		}

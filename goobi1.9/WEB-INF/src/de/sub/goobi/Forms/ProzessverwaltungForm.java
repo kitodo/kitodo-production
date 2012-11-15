@@ -967,7 +967,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				so.setBearbeitungsstatus(so.getBearbeitungsstatus() + 1);
 				so.setEditType(StepEditType.ADMIN.getValue());
 				if (so.getBearbeitungsstatus() == StepStatus.DONE.getValue()) {
-					new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
+					new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
 				} else {
 					Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 					if (ben != null) {
@@ -1058,7 +1058,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			this.mySchritt.setEditTypeEnum(StepEditType.ADMIN);
 			StepObject so = StepManager.getStepById(this.mySchritt.getId());
 			if (this.mySchritt.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-				new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so);
+				new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
 			} else {
 				mySchritt.setBearbeitungszeitpunkt(new Date());
 				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
