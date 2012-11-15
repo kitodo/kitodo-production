@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ModuleDesc>
+	<Params name="TestService" url="http://localhost:1234" description="TestService">
+	</Params>
+</ModuleDesc>
