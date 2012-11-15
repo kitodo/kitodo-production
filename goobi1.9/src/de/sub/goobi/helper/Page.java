@@ -9,9 +9,9 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Forms.LoginForm;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.forms.LoginForm;
 
 /**
  * This class provides pagination for displaying results from a large result set over a number of pages (i.e. with a given number of results per

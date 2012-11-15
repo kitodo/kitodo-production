@@ -31,7 +31,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 
 public class WikiFieldHelper {
 

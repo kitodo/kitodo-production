@@ -19,7 +19,7 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.Beans.Prozess;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

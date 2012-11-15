@@ -31,9 +31,9 @@ import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
 
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Vorlageeigenschaft;
-import de.sub.goobi.Beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
 
 public class ImportObject {
 

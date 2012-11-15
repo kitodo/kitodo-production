@@ -15,20 +15,20 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Export.dms.AutomaticDmsExportWithoutHibernate;
-import de.sub.goobi.Forms.LoginForm;
-import de.sub.goobi.Persistence.apache.FolderInformation;
-import de.sub.goobi.Persistence.apache.ProcessManager;
-import de.sub.goobi.Persistence.apache.ProcessObject;
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
+import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.StepManager;
+import de.sub.goobi.persistence.apache.StepObject;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

@@ -30,9 +30,9 @@ package de.sub.goobi.helper;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.persistence.HibernateUtilOld;
 
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);

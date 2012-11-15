@@ -33,9 +33,9 @@ import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 
 public class XmlArtikelZaehlen {
 	private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);

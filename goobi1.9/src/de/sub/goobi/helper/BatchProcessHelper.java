@@ -38,10 +38,10 @@ import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 
 public class BatchProcessHelper {
 

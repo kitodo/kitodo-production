@@ -26,8 +26,8 @@ package org.goobi.production.plugin.interfaces;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
 
 public interface IValidatorPlugin extends IPlugin {
 	

@@ -44,11 +44,11 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Metadaten.MetadatenHelper;
-import de.sub.goobi.Metadaten.MetadatenVerifizierung;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 /*************************************************************************************
  * Creation of PDF-Files as long running task for GoobiContentServerServlet

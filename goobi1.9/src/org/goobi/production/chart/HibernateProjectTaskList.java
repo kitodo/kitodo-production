@@ -35,8 +35,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Projekt;
-import de.sub.goobi.Beans.Schritt;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepStatus;
 

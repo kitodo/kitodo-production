@@ -42,14 +42,14 @@ import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.Beans.Regelsatz;
-import de.sub.goobi.Persistence.apache.FolderInformation;
-import de.sub.goobi.Persistence.apache.ProcessManager;
-import de.sub.goobi.Persistence.apache.ProcessObject;
-import de.sub.goobi.Persistence.apache.Property;
-import de.sub.goobi.Persistence.apache.StepObject;
+import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.Property;
+import de.sub.goobi.persistence.apache.StepObject;
 
 public class VariableReplacerWithoutHibernate {
 

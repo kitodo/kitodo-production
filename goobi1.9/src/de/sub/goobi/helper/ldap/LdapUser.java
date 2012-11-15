@@ -57,8 +57,8 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.LdapGruppe;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.encryption.MD4;
 

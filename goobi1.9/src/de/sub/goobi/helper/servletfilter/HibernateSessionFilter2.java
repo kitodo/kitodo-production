@@ -38,8 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 
-import de.sub.goobi.Persistence.HibernateSessionLong;
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
+import de.sub.goobi.persistence.HibernateSessionLong;
 
 // TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 
 // de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work like it should

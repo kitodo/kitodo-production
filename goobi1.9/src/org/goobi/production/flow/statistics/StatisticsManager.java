@@ -45,9 +45,9 @@ import org.jfree.data.general.DefaultValueDataset;
 
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.Statistik.StatistikLaufzeitSchritte;
-import de.sub.goobi.Statistik.StatistikStatus;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
+import de.sub.goobi.statistik.StatistikStatus;
 
 /**
  * The Class StatisticsManager organizes all statistical questions by choosing

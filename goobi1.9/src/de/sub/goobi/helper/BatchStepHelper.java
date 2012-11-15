@@ -51,26 +51,26 @@ import org.goobi.production.properties.PropertyParser;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.HistoryEvent;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Export.dms.ExportDms;
-import de.sub.goobi.Forms.AktuelleSchritteForm;
-import de.sub.goobi.Metadaten.MetadatenImagesHelper;
-import de.sub.goobi.Metadaten.MetadatenVerifizierung;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.HistoryEvent;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
+import de.sub.goobi.persistence.ProzessDAO;
+import de.sub.goobi.persistence.SchrittDAO;
+import de.sub.goobi.persistence.apache.StepManager;
+import de.sub.goobi.persistence.apache.StepObject;
 
 public class BatchStepHelper {
 

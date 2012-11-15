@@ -65,12 +65,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jdom.Element;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Forms.LoginForm;
-import de.sub.goobi.Forms.SpracheForm;
-import de.sub.goobi.Persistence.HibernateSessionLong;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.SpracheForm;
+import de.sub.goobi.persistence.HibernateSessionLong;
+import de.sub.goobi.persistence.HibernateUtilOld;
 
 public class Helper implements Serializable, Observer {
 
