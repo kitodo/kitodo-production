@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~    - http://gdz.sub.uni-goettingen.de
+  ~    - http://www.goobi.org
+  ~    - http://launchpad.net/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+  ~ should have received a copy of the GNU General Public License along with this
+  ~ program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+  ~ Suite 330, Boston, MA 02111-1307 USA
+  -->
+
+<opacCatalogues>
+	<doctypes>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false"
+			rulesetType="Monograph" tifHeaderType="Monographie" title="monograph">
+			<label language="de">Monographie</label>
+			<label language="en">Monograph</label>
+			<mapping>Aa</mapping>
+			<mapping>Oa</mapping>
+		</type>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="true"
+			rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
+			<label language="de">Zeitschrift</label>
+			<label language="en">Periodical</label>
+			<mapping>Ab</mapping>
+			<mapping>Ob</mapping>
+		</type>
+<!--
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false"
+			rulesetType="Volume" tifHeaderType="Volume" title="volume">
+			<label language="de">Band</label>
+			<label language="en">Volume</label>
+			<mapping>Oc</mapping>
+			<mapping>Ac</mapping>
+		</type>
+-->
+		<type isContainedWork="false" isMultiVolume="true" isPeriodical="false"
+			rulesetType="MultivolumeWork" tifHeaderType="Band_MultivolumeWork" title="multivolume">
+			<label language="de">Mehrbändiges Werk</label>
+			<label language="en">Multivolume work</label>
+			<mapping>Of</mapping>
+			<mapping>Af</mapping>
+			<mapping>OF</mapping>
+			<mapping>AF</mapping>
+		</type>
+		<type isContainedWork="true" isMultiVolume="false" isPeriodical="false"
+			rulesetType="ContainedWork" tifHeaderType="ContainedWork" title="containedWork">
+			<label language="de">Beigefügtes Werk</label>
+			<label language="en">Contained work</label>
+			<mapping>Aj</mapping>
+			<mapping>Oj</mapping>
+		</type>
+		<!--
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false"
+			rulesetType="Handwriting" tifHeaderType="Handwriting" title="handwriting">
+			<label language="de">Handschrift</label>
+			<label language="en">Handwriting</label>
+			<mapping>Ha</mapping>
+		</type>
+		-->
+	</doctypes>
+	<catalogue title="SUB">
+		<config address="opac.sub.uni-goettingen.de" database="1"
+			description="Niedersächsische Staats- und Universitätsbibliothek Göttingen"
+			iktlist="IKTLIST-SUB.xml" port="80" />
+		<specialmapping type="containedWork">Xy</specialmapping>
+	</catalogue>
+	<catalogue title="GBV">
+		<config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund"
+			iktlist="IKTLIST-GBV.xml" port="80" />
+	</catalogue>
+	<catalogue title="JAL">
+		<config address="emdbs2.fho-emden.de" database="1"
+			description="Johannes a Lasco Bibliothek Emden" iktlist="IKTLIST-JAL.xml" port="8080" />
+	</catalogue>
+	<catalogue title="SWB">
+		<config address="pollux.bsz-bw.de" database="2.1"
+			description="Südwestdeutscher Bibliotheksverbund Baden-Württemberg, Saarland, Sachsen (SWB)"
+			iktlist="IKTLIST-SWB.xml" port="80" />
+	</catalogue>
+	<catalogue title="HEBIS">
+		<config address="cbsopac.rz.uni-frankfurt.de" database="2.1"
+			description="HeBIS-Verbundkatalog" iktlist="IKTLIST-HEBIS.xml" port="80" />
+	</catalogue>
+	<catalogue title="DNB">
+		<config address="dispatch.opac.d-nb.de" database="4.1"
+			description="Deutsche Nationalbibliothek" iktlist="IKTLIST-DNB.xml" port="80" />
+	</catalogue>
+	<catalogue title="ZDB">
+		<config address="dispatch.opac.d-nb.de" database="1.1"
+			description="Zeitschriftendatenbank (ZDB)" iktlist="IKTLIST-ZDB.xml" port="80" />
+	</catalogue>
+	<catalogue title="GEO_GUIDE">
+		<config address="gso4.gbv.de" database="8.4" description="GEO-GUIDE"
+			iktlist="IKTLIST-GEO-GUIDE.xml" port="80" />
+	</catalogue>
+	<catalogue title="VKI">
+		<config address="gso.gbv.de" database="1.85" description="VKI" iktlist="IKTLIST-VKI.xml"
+			port="80" />
+	</catalogue>
+	<catalogue title="VKI_AALG">
+		<config address="gso.gbv.de" database="8.2" description="VKI-AALG"
+			iktlist="IKTLIST-VKI_AALG.xml" port="80" />
+	</catalogue>
+	<catalogue title="OLC_MATH">
+		<config address="gso.gbv.de" database="2.77" description="OLC-MATH"
+			iktlist="IKTLIST-OLC.xml" port="80" />
+	</catalogue>
+	<catalogue title="VKI_AAC">
+		<config address="gso.gbv.de" database="2.97" description="VKI-AAC"
+			iktlist="IKTLIST-VKI_AAC.xml" port="80" />
+	</catalogue>
+	<catalogue title="VKI_AACOLC">
+		<config address="gso.gbv.de" database="2.297" description="VKI-AAC+OLC"
+			iktlist="IKTLIST-VKI_AACOLC.xml" port="80" />
+	</catalogue>
+	<catalogue title="TIB">
+		<config address="opc4.tib.uni-hannover.de" database="1"
+			description="Technische Informationsbibliothek und Universitätsbibliothek Hannover"
+			iktlist="IKTLIST-TIB.xml" port="8080" />
+	</catalogue>
+	<catalogue title="SBB">
+		<config address="stabikat.de" database="1" description="Staatsbibliothek zu Berlin"
+			iktlist="IKTLIST-SBB.xml" port="80" />
+	</catalogue>
+</opacCatalogues>

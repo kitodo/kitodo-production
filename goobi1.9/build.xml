@@ -1,178 +1,305 @@
 <?xml version="1.0"?>
-<project name="Goobi" default="dist" xmlns:artifact="urn:maven-artifact-ant">
+<!--
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~    - http://gdz.sub.uni-goettingen.de
+  ~    - http://www.goobi.org
+  ~    - http://launchpad.net/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+  ~ should have received a copy of the GNU General Public License along with this
+  ~ program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+  ~ Suite 330, Boston, MA 02111-1307 USA
+  -->
 
-	<!-- Distribution specific settings. -->
-	<property name="dist.name" value="goobi" />
-	<property name="dist.revision" value="multiple manifestations"/>
+<project name="Goobi" default="dist">
 
-	<!-- Directory settings -->
-	<property name="dir.lib" value="./WEB-INF/lib" />
-	<property name="dir.build" location="./build" />
-	<property name="dir.build.src" location="${dir.build}/src" />
-	<property name="dir.config" location="./config" />
-	
-	<property name="dir.src" location="./src" />
-	<property name="dir.src.dubious" location="./src-dubious" />
-	<property name="dir.src.test" location="./test" />
-	
-	<available file=".git" type="dir" property="git.present"/>
+    <!--==================================================
+        Property declarations
+        ==================================================-->
 
-	<path id="classpath">
-		<fileset dir="${dir.lib}" />
-		<fileset dir="/opt/digiverso/libs" />
-	</path>
+    <!-- Include build and deployment options -->
+    <property file="build.properties" prefix="build"/>
 
-	<!-- Clean up generated and compiled files. -->
-	<target name="clean" description="Clean up generated and compiled files.">
-		<delete dir="${dir.build}" />
-	</target>
+    <!-- Default build properties (applied if not overridden by build.properties file) -->
+    <property name="build.dir" value="./build"/>
+    <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
+    <property name="build.javac.target" value="1.5"/>
 
-	<!-- Create needed directories -->
-	<target name="createDirs" description="Create needed directories">
-		<mkdir dir="${dir.build}" />
-		<property name="dir.build.classes" value="${dir.build}/WEB-INF/classes" />
-		<mkdir dir="${dir.build.classes}" />
-		<mkdir dir="${dir.build.src}" />
-	</target>
+    <property name="build.dist.dir" value="${basedir}/dist"/>
+    <property name="build.dist.name" value="goobi-ce"/>
+    <property name="build.dist.version" value="1.7.0" />
+    <property name="build.dist.vendor" value="SLUB Dresden"/>
+    <property name="build.dist.url" value="http://launchpad.net/goobi-production"/>
+    <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
 
+    <property name="lib.dir" value="${basedir}/WEB-INF/lib"/>
 
-	<!-- Copy any resource or configuration files. -->
-	<target name="resources" depends="createDirs" description="Copy any resource or configuration files.">
-		<copy todir="${dir.build.classes}" includeEmptyDirs="no">
-			<fileset dir="${dir.src}">
-				<patternset>
-					<include name="**/*.txt" />
-					<include name="**/*.conf" />
-					<include name="**/*.properties" />
-					<include name="**/*.jpg" />
-					<include name="**/sRGB.icc" />
-					<include name="**/log4j.properties" />
-					<include name="**/goobi_config.properties" />
-					<include name="**/contentServerConfig.xml" />
-					<include name="**/hibernate.cfg.xml" />
-					<exclude name="**/TODO" />
-					<include name="**/*.xml" />
-					<exclude name="build.xml" />
-				</patternset>
-			</fileset>
-		</copy>
-		<copy todir="${dir.build.classes}" overwrite="true" failonerror="false" >
-			<fileset dir="${private.dir}" />
-		</copy>
-	</target>
-
-	<!-- Copy configuration files. -->
-	<target name="copyConfig" description="Copy configuration files.">
-		<fixcrlf srcdir="${dir.build.classes}" includes="**/*.properties" />
-		<fixcrlf srcdir="${dir.build.classes}" includes="**/*.xml" />
-	</target>
-
-	<!-- Warn if Servlet API isn't found -->
-	<target name="warnServletAPI" depends="checkServletAPI" if="servletAPI.warn">
-		<echo>Servlet API not found on classpath!</echo>
-		<echo>run this build file via "ant -lib /path/to/servlet-api.jar"</echo>
-		<echo>CLASSPATH = ${java.class.path}</echo>
-		<fail message="Servlet API not found!" />
-	</target>
-
-	<!-- Check if serlet API is present. -->
-	<target name="checkServletAPI" description="Check if serlet API is present.">
-		<condition property="servletAPI.warn">
-			<not>
-				<available classname="javax.servlet.http.HttpServlet" property="servletAPI.present" classpathref="classpath" />
-			</not>
-		</condition>
-	</target>
-
-	<!-- copy sources to build directory -->
-	<target name="copySources" description="Copy the sources to the build directory">
-		<copy todir="${dir.build.src}">
-			<fileset dir="${dir.src}" />
-			<fileset dir="${dir.src.dubious}" />
-			<fileset dir="${dir.src.test}" />
-		</copy>
-	</target>
-
-	<!-- Normal build of application. -->
-	<target name="compile" depends="copySources, createDirs, writeVersion" description="Normal build of application.">
-
-		<javac srcdir="${dir.build.src}" destdir="${dir.build}/WEB-INF/classes" target="1.5" encoding="UTF8" source="1.5" debug="true" debuglevel="lines,vars,source">
-			<compilerarg value="-Xlint" />
-			<classpath refid="classpath" />
-		</javac>
-	</target>
-
-	<!-- Build of war file. -->
-	<target name="war" depends="compile, resources, copyConfig" description="Build of war file.">
-
-		<war destfile="${dir.build}/${dist.name}.war" webxml="WEB-INF/web.xml">
-			<classes dir="${dir.build.classes}" />
-			<lib dir="WEB-INF/lib" />
-			<fileset dir="." includes="WEB-INF/*.*, index.jsp" excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*" />
-			<fileset dir="." includes="js/**/*.*" />
-		
-			<zipfileset dir="pages" prefix="pages">
-				<patternset>
-					<include name="**/*.jsp" />
-					<include name="**/*.png" />
-				</patternset>
-			</zipfileset>
-			<zipfileset dir="newpages" prefix="newpages">
-				<patternset>
-					<include name="**/*.jsp" />
-					<include name="**/*.gif" />
-					<include name="**/*.png" />
-					<include name="**/*.jpg" />
-					<include name="**/*.ico" />
-				</patternset>
-			</zipfileset>
-			<zipfileset dir="css" prefix="css" />
-		</war>
-	</target>
-
-	<target name="git.revision" description="Store git revision in ${repository.version}" >
-	    <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="" >
-	        <arg value="describe"/>
-	        <arg value="--tags"/>
-	        <arg value="--always"/>
-	        <arg value="HEAD"/>
-	    </exec>
-	    <condition property="repository.version" value="${git.revision}" else="unknown">
-	        <and>
-	            <isset property="git.revision"/>
-	            <length string="${git.revision}" trim="yes" length="0" when="greater"/>
-	        </and>
-	    </condition>
-	</target>
+    <property name="config.dir" value="${basedir}/config"/>
+    <property name="config.local.dir" value="${basedir}/config-local"/>
+    <property name="tests.src.dir" value="./test/src"/>
+    <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
+    <property name="test.report.dir" value="${build.dir}/test-reports/"/>
+    <property name="java.src.dir" value="${basedir}/src"/>
 
 
-	<!-- Build single war file. -->
-	<target name="dist" depends="clean, war, copyConfig" description="Build single war file.">
-		<delete dir="${dir.build.src}"/>
-	
-		<echo>Alles ist gut</echo>
-		<echo>building revision ${dist.name}-${git.revision}</echo>
-	</target>
+    <!--==================================================
+        Datatype declarations
+        ==================================================-->
 
-	<!-- Build all, not really needed yet. -->
-	<target name="all" depends="dist" description="Build all, not really needed yet." />
+    <!-- Compilation classpath -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}"/>
+        <pathelement location="${build.servlet.jar}"/>
+        <pathelement path="${java.class.path}"/>
+    </path>
 
-	<!-- rewrite the Version file with informations from the build system, not used yet-->
-	<target name="writeVersion" depends="git.revision" description="writes the build version">
-		<tstamp>
-		<format property="date" pattern="dd−MMMM−yyyy" locale="en" />
-		</tstamp>
-		<echo file="${dir.build.src}/org/goobi/production/GoobiVersion.java">
-			package org.goobi.production;
-			/*
-			DO NOT CHANGE THIS FILE, IT'S GENERATED BY ANT!
-			*/
-			public class GoobiVersion {
-				public final static String VERSION = "${dist.name}";
-				public final static String BUILDVERSION = "${git.revision}";
-				public final static String BUILDDATE = "${date}";
-			}
-		</echo>
-	</target>
+    <!-- Testing classpath -->
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${build.classes}"/>
+    </path>
+
+    <!--==================================================
+        Public build Targets
+        ==================================================-->
+
+    <target name="all" depends="test, dist, docs" description="Build and test everything; create a distribution."/>
+
+    <target name="clean" description="Delete all generated files and directories.">
+        <delete dir="${build.dir}"/>
+        <delete dir="${build.dist.dir}"/>
+        <delete dir="${doc.javadocs.dir}"/>
+        <delete file="goobi.log"/>
+        <delete file="goobi_xml.log"/>
+        <!-- TODO Determine log configuration and configure build-path for logging -->
+        <delete file="goobicontentserver.log"/>
+    </target>
+
+    <target name="debug" description="Print diagnosis information">
+        <echoproperties/>
+    </target>
+
+    <target name="dist" depends="war" description="Produce the distributable."/>
+
+    <target name="distclean" description="Clean up the distribution files only.">
+        <delete dir="${build.dist.dir}"/>
+    </target>
+
+    <target name="docs" depends="javadoc" description="Generate all documentation."/>
+
+    <target name="init" depends="check-preconditions, createDirs"
+            description="Initialize the build: check preconditions and create directories.">
+        <tstamp>
+            <format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en,UK"/>
+        </tstamp>
+    </target>
+
+    <target name="test" depends="junit" description="Run the unit tests."/>
+
+
+    <!--==================================================
+        Build Precondition Checks
+        ==================================================-->
+
+    <!-- Check all build preconditions -->
+    <target name="check-preconditions" depends="check-java-version, check-servlet-api"/>
+
+    <!-- Check if needed libraries are on the classpath and set apropriate properties -->
+    <target name="check-classpath">
+        <condition property="servletapi.present">
+            <available classname="javax.servlet.http.HttpServlet" classpathref="compile.classpath"/>
+        </condition>
+    </target>
+
+    <!-- Fail if Servlet API isn't found and print out a useful help text -->
+    <target name="check-servlet-api" depends="check-classpath" unless="servletapi.present">
+        <echo>Servlet API not found on classpath!</echo>
+        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set property tomcat.dir.lib "</echo>
+        <fail message="Servlet API is missing."/>
+    </target>
+
+    <!-- Check for Java version 1.5 -->
+    <target name="check-java-version">
+        <fail message="Build required at least version 1.5 of the Java compiler ">
+            <condition>
+                <and>
+                    <contains string="${java.version}" substring="1.0"/>
+                    <contains string="${java.version}" substring="1.1"/>
+                    <contains string="${java.version}" substring="1.2"/>
+                    <contains string="${java.version}" substring="1.3"/>
+                    <contains string="${java.version}" substring="1.4"/>
+                </and>
+            </condition>
+        </fail>
+    </target>
+
+    <!--==================================================
+        Initialization
+        ==================================================-->
+
+    <!-- Create needed directories -->
+    <target name="createDirs">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes}"/>
+        <delete dir="${doc.javadocs.dir}"/>
+        <mkdir dir="${doc.javadocs.dir}"/>
+        <delete dir="${test.report.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
+    </target>
+
+    <!--==================================================
+        Documentation
+        ==================================================-->
+
+    <!-- building javadoc for sources -->
+    <target name="javadoc" depends="init">
+        <javadoc destdir="${doc.javadocs.dir}"
+                 sourcepath="${java.src.dir}" Author="true"
+                 version="true"
+                 Use="true" noindex="true" Windowtitle="Goobi JavaDoc References" Doctitle="Goobi JavaDoc References"
+                 bottom="Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ)." encoding="UTF8">
+            <classpath>
+                <path refid="compile.classpath"/>
+                <pathelement location="${build.classes}"/>
+            </classpath>
+        </javadoc>
+    </target>
+
+
+    <!--==================================================
+        Build
+        ==================================================-->
+
+    <!-- Copy message resource bundles -->
+    <target name="copy-message-resources" depends="init">
+        <copy todir="${build.classes}/Messages">
+            <fileset dir="${java.src.dir}/Messages">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Copy hibernate configuration files -->
+    <target name="copy-hibernate-resources" depends="init">
+        <copy todir="${build.classes}">
+            <fileset dir="${java.src.dir}">
+                <include name="**/*hbm.xml"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Compile application -->
+    <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}" destdir="${build.classes}"
+               target="${build.javac.target}"
+               encoding="UTF8"
+               debug="${build.javac.debug}"
+               classpathref="compile.classpath">
+        </javac>
+    </target>
+
+    <!-- Compile unit tests -->
+    <target name="compile-tests" depends="compile">
+        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes}"
+               target="${build.javac.target}"
+               encoding="UTF8"
+               debug="${build.javac.debug}"
+               classpathref="compile.classpath">
+        </javac>
+    </target>
+
+
+    <!--==================================================
+        Distribution
+        ==================================================-->
+
+    <!-- Build of war file. -->
+    <target name="war" depends="compile, copy-config">
+
+        <war destfile="${build.dist.war}" webxml="WEB-INF/web.xml">
+
+            <classes dir="${build.classes}" excludes="**/*Test*.class"/>
+
+            <lib dir="${lib.dir}"/>
+
+            <fileset dir="." includes="WEB-INF/*.*, index.jsp, LICENSE"
+                     excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
+
+            <zipfileset dir="pages" prefix="pages">
+                <patternset>
+                    <include name="**/*.jsp"/>
+                </patternset>
+            </zipfileset>
+            <zipfileset dir="newpages" prefix="newpages">
+                <patternset>
+                    <include name="**/*.jsp"/>
+                    <include name="**/*.gif"/>
+                    <include name="**/*.png"/>
+                    <include name="**/*.jpg"/>
+                    <include name="**/*.ico"/>
+                </patternset>
+            </zipfileset>
+            <zipfileset dir="css" prefix="css"/>
+
+            <manifest>
+                <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                <attribute name="Implementation-Version" value="${build.dist.version}"/>
+                <attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
+                <attribute name="Implementation-URL" value="${build.dist.url}"/>
+                <attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
+            </manifest>
+
+        </war>
+
+    </target>
+
+
+    <!-- Copy configuration files to build directory -->
+    <target name="copy-config">
+        <copy todir="${build.classes}">
+            <fileset dir="${config.dir}" includes="*.*"/>
+        </copy>
+        
+        <condition property="config.local.available">
+            <available file="${config.local.dir}" property="config.local.available"/>
+        </condition>
+
+        <antcall target="copy-local-config" />
+    </target>
+
+    <!-- Copy local configuration files to build directory, overwriting existing files -->
+    <target name="copy-local-config" if="config.local.available">
+        <copy overwrite="true" todir="${build.classes}">
+            <fileset dir="${config.local.dir}" includes="*.*"/>
+        </copy>
+    </target>
+
+
+    <!--==================================================
+        Testing
+        ==================================================-->
+
+    <!-- JUnit tests -->
+    <target name="junit" depends="compile-tests" description="Run JUnit tests">
+
+        <junit printsummary="on">
+            <classpath refid="test.classpath"/>
+            <formatter type="xml" usefile="true"/>
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="${build.classes}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+
+    </target>
 
 </project>
