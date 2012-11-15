@@ -34,7 +34,8 @@
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
     <property name="build.javac.target" value="1.5"/>
-
+	<property name="build.javac.source" value="1.5"/>
+	
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
     <property name="build.dist.version" value="1.7.0" />
@@ -182,8 +183,8 @@
 
     <!-- Copy message resource bundles -->
     <target name="copy-message-resources" depends="init">
-        <copy todir="${build.classes}/Messages">
-            <fileset dir="${java.src.dir}/Messages">
+        <copy todir="${build.classes}/messages">
+            <fileset dir="${java.src.dir}/messages">
                 <include name="*.properties"/>
             </fileset>
         </copy>
@@ -201,7 +202,8 @@
     <!-- Compile application -->
     <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
         <javac includeAntRuntime="false" srcdir="${java.src.dir}" destdir="${build.classes}"
-               target="${build.javac.target}"
+        	   source="${build.javac.source}"   
+        	   target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
                classpathref="compile.classpath">
@@ -211,7 +213,8 @@
     <!-- Compile unit tests -->
     <target name="compile-tests" depends="compile">
         <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes}"
-               target="${build.javac.target}"
+        	   source="${build.javac.source}"
+        	   target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
                classpathref="compile.classpath">
