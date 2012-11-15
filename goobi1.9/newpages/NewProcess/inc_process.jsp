@@ -6,7 +6,7 @@
 
 <%-- ######################################## 
 				
-								Prozessdaten (für alle DocTypes)
+	Prozessdaten (für alle DocTypes)
 					
 	#########################################--%>
 
@@ -113,8 +113,8 @@
 	<h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}" value="#{ProzesskopieForm.prozessKopie.inAuswahllisteAnzeigen}" />
 
 
-	<h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
-	<h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}" styleClass="prozessKopieFeldbreite"/> 
+	<h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}" />
+	<h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}" styleClass="prozessKopieFeldbreite" />
 
 </h:panelGrid>
 

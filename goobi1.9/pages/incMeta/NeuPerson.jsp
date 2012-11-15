@@ -5,8 +5,8 @@
 
 <%-- ########################################
 
-                     			Formular für neue Person
-
+        Formular für neue Person
+        
   #########################################--%>
 <h:panelGroup rendered="#{Metadaten.modusHinzufuegenPerson}">
 	<htm:h3 style="margin-top:10px">

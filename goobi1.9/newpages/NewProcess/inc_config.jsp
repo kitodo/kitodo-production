@@ -6,7 +6,7 @@
 
 <%-- ######################################## 
 				
-								zusätzliche Daten aus der Konfiguration
+	zusätzliche Daten aus der Konfiguration
 					
 	#########################################--%>
 <h:panelGroup>

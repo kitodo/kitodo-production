@@ -11,8 +11,8 @@
 
 	<%-- ########################################
 
-                          Speichern der Metadaten und Überschrift
-
+        Speichern der Metadaten und Überschrift
+        
  		#########################################--%>
 	<htm:table width="540">
 		<htm:tr>
