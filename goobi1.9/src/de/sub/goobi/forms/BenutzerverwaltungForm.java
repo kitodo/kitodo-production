@@ -130,11 +130,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 				Disjunction ex = Restrictions.disjunction();
 				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
-				crit.createCriteria("projekte", "proj");
-				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
+//				crit.createCriteria("projekte", "proj");
+//				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
 				
-				crit.createCriteria("benutzergruppen", "group");
-				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
+//				crit.createCriteria("benutzergruppen", "group");
+//				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
