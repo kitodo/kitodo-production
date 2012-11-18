@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Benutzer" table="benutzer">
+	<class name="de.sub.goobi.beans.Benutzer" table="benutzer">
 		<id name="id" column="BenutzerID" type="integer">
 			<generator class="native"/>
 		</id>
@@ -24,31 +24,31 @@
 		<property name="confVorgangsdatumAnzeigen" column="confVorgangsdatumAnzeigen"/>
 		<property name="tabellengroesse" column="Tabellengroesse" type="integer"/>
 		<property name="sessiontimeout" column="sessiontimeout" type="integer"/>
-		<many-to-one name="ldapGruppe" class="de.sub.goobi.Beans.LdapGruppe" column="ldapgruppenID"/>
+		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID"/>
 		
 		<set name="bearbeitungsschritte" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="BearbeitungsBenutzerID"/>
-			<one-to-many class="de.sub.goobi.Beans.Schritt"/>
+			<one-to-many class="de.sub.goobi.beans.Schritt"/>
 		</set>
 		
 		<set name="benutzergruppen" table="benutzergruppenmitgliedschaft" lazy="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.Beans.Benutzergruppe"/>
+			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe"/>
 		</set>
 		
 		<set name="projekte" table="projektbenutzer" lazy="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="ProjekteID" class="de.sub.goobi.Beans.Projekt"/>
+			<many-to-many column="ProjekteID" class="de.sub.goobi.beans.Projekt"/>
 		</set>
 		
 		<set name="schritte" table="schritteberechtigtebenutzer" inverse="true">
 			<key column="BenutzerID"/>
-			<many-to-many column="schritteID" class="de.sub.goobi.Beans.Schritt"/>
+			<many-to-many column="schritteID" class="de.sub.goobi.beans.Schritt"/>
 		</set>
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel" lazy="false">
 			<key column="BenutzerID"/>
-			<one-to-many class="de.sub.goobi.Beans.Benutzereigenschaft"/>
+			<one-to-many class="de.sub.goobi.beans.Benutzereigenschaft"/>
 		</set>
 		
 	</class>

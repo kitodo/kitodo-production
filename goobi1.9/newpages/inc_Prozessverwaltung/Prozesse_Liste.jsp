@@ -17,7 +17,7 @@
 }
 </style>
 
-<a4j:loadBundle basename="Messages.messages" var="msgs" />
+<a4j:loadBundle basename="messages.messages" var="msgs" />
 
 <htm:h4>
 	<h:outputText value="#{msgs.prozessvorlagen}" rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}" />

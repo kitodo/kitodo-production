@@ -199,7 +199,7 @@ public class Helper implements Serializable, Observer {
 			}
 			return;
 		}
-		// ResourceBundle bundle = ResourceBundle.getBundle("Messages.messages",
+		// ResourceBundle bundle = ResourceBundle.getBundle("messages.messages",
 		// context.getViewRoot().getLocale());
 		String msg = "";
 		String beschr = "";
@@ -440,7 +440,7 @@ public class Helper implements Serializable, Observer {
 			Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 			while (polyglot.hasNext()) {
 				Locale language = polyglot.next();
-				commonMessages.put(language, ResourceBundle.getBundle("Messages.messages", language));
+				commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
 				File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
 				if (file.exists()) {
 					// Load local message bundle from file system only if file exists;
@@ -465,7 +465,7 @@ public class Helper implements Serializable, Observer {
 			}
 		} else {
 			Locale defaullLocale = new Locale("EN");
-			commonMessages.put(defaullLocale, ResourceBundle.getBundle("Messages.messages", defaullLocale));
+			commonMessages.put(defaullLocale, ResourceBundle.getBundle("messages.messages", defaullLocale));
 		}
 	}
 

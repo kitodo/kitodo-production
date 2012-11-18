@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Benutzereigenschaft" table="benutzereigenschaften">
+	<class name="de.sub.goobi.beans.Benutzereigenschaft" table="benutzereigenschaften">
 		<id name="id" column="benutzereigenschaftenID" type="integer">
 			<generator class="native" />
 		</id>
@@ -17,7 +17,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 				
-		<many-to-one name="benutzer" class="de.sub.goobi.Beans.Benutzer" column="BenutzerID"/>
+		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID"/>
 		
 	</class>
 

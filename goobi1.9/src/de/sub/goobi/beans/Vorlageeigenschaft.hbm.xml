@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Vorlageeigenschaft" table="vorlageneigenschaften">
+	<class name="de.sub.goobi.beans.Vorlageeigenschaft" table="vorlageneigenschaften">
 		<id name="id" column="vorlageneigenschaftenID" type="integer">
 			<generator class="native" />
 		</id>
@@ -17,7 +17,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 		<property name="container" column="container" type="integer" />			
-		<many-to-one name="vorlage" class="de.sub.goobi.Beans.Vorlage" column="vorlagenID"/>
+		<many-to-one name="vorlage" class="de.sub.goobi.beans.Vorlage" column="vorlagenID"/>
 		
 	</class>
 

@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Projekt" table="projekte">
+	<class name="de.sub.goobi.beans.Projekt" table="projekte">
 		<id name="id" column="ProjekteID" type="integer">
 			<generator class="native"/>
 		</id>
@@ -50,18 +50,18 @@
 		
 		<set name="filegroups" cascade="all,delete-orphan" inverse="true">
             <key column="ProjekteID"/>
-            <one-to-many class="de.sub.goobi.Beans.ProjectFileGroup"/>
+            <one-to-many class="de.sub.goobi.beans.ProjectFileGroup"/>
         </set>
         
         <set name="benutzer" table="projektbenutzer" inverse="true">
 			<key column="ProjekteID"/>
-			<many-to-many column="BenutzerID" class="de.sub.goobi.Beans.Benutzer"/>
+			<many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer"/>
 		</set>
 
         <set name="prozesse" cascade="all,delete-orphan" inverse="true"
         	lazy="true">
         	<key column="ProjekteID" />
-        	<one-to-many class="de.sub.goobi.Beans.Prozess" />
+        	<one-to-many class="de.sub.goobi.beans.Prozess" />
         </set>
 	</class>
 

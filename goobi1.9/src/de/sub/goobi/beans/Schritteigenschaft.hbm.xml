@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Schritteigenschaft" table="schritteeigenschaften">
+	<class name="de.sub.goobi.beans.Schritteigenschaft" table="schritteeigenschaften">
 		<id name="id" column="schritteeigenschaftenID" type="integer">
 			<generator class="native" />
 		</id>
@@ -17,7 +17,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 		<property name="container" column="container" type="integer" />	
-		<many-to-one name="schritt" class="de.sub.goobi.Beans.Schritt" column="schritteID"/>
+		<many-to-one name="schritt" class="de.sub.goobi.beans.Schritt" column="schritteID"/>
 		
 	</class>
 

@@ -130,7 +130,7 @@
     <!-- 	
     <filter>
 		<filter-name>HibernateFilter</filter-name>
-		<filter-class>de.sub.goobi.Persistence.HibernateSessionConversationFilter</filter-class> 
+		<filter-class>de.sub.goobi.persistence.HibernateSessionConversationFilter</filter-class> 
 	</filter>
 	 -->
 	
@@ -204,10 +204,11 @@
 		de.sub.goobi.Modul.ModulListener </listener-class> </listener>
 	-->
 
-	<!-- Listener for JobManager -->
+	<!-- Listener for JobManager 
 	<listener>
 		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
 	</listener>
+	-->
 	<!--  
 	<listener>
 		<listener-class>

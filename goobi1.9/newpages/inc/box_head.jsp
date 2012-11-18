@@ -12,6 +12,6 @@
 	<x:stylesheet path="/css/box_navigation.css"/>
 	<x:stylesheet path="/css/box_styles.css"/>
 
-	<f:loadBundle basename="Messages.messages" var="msgs" />
+	<f:loadBundle basename="messages.messages" var="msgs" />
 	<title><h:outputText value="#{HelperForm.applicationHeaderTitle} 1.19" /></title>
 </head>

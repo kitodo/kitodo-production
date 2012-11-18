@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.Prozess" table="prozesse">
+	<class name="de.sub.goobi.beans.Prozess" table="prozesse">
 		<id name="id" column="ProzesseID" type="integer">
 			<generator class="native"/>
 		</id>
@@ -24,35 +24,35 @@
 		<property name="batchID" column="batchID" type="integer"/>
 		<property name="wikifield" column="wikifield" type="text"/>
 		
-		<many-to-one name="projekt" class="de.sub.goobi.Beans.Projekt" column="ProjekteID"/>
+		<many-to-one name="projekt" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
 		
-		<many-to-one name="regelsatz" class="de.sub.goobi.Beans.Regelsatz" column="MetadatenKonfigurationID"/>
+		<many-to-one name="regelsatz" class="de.sub.goobi.beans.Regelsatz" column="MetadatenKonfigurationID"/>
 	
-		<many-to-one name="docket" class="de.sub.goobi.Beans.Docket" column="docketID"/>
+		<many-to-one name="docket" class="de.sub.goobi.beans.Docket" column="docketID"/>
 		
 		<set name="schritte" cascade="all,delete-orphan" inverse="true" order-by="Reihenfolge" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Schritt"/>
+			<one-to-many class="de.sub.goobi.beans.Schritt"/>
 		</set>
 		
 		<set name="vorlagen" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Vorlage"/>
+			<one-to-many class="de.sub.goobi.beans.Vorlage"/>
 		</set>
 		
 		<set name="werkstuecke" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="ProzesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Werkstueck"/>
+			<one-to-many class="de.sub.goobi.beans.Werkstueck"/>
 		</set>
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true" order-by="titel">
 			<key column="prozesseID"/>
-			<one-to-many class="de.sub.goobi.Beans.Prozesseigenschaft"/>
+			<one-to-many class="de.sub.goobi.beans.Prozesseigenschaft"/>
 		</set>
 		
 		<set name="history" cascade="all,delete-orphan" inverse="true" order-by="date">
 			<key column="processID"/>
-			<one-to-many class="de.sub.goobi.Beans.HistoryEvent"/>
+			<one-to-many class="de.sub.goobi.beans.HistoryEvent"/>
 		</set>
 		
 	</class>

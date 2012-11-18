@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.Beans.HistoryEvent" table="history">
+	<class name="de.sub.goobi.beans.HistoryEvent" table="history">
 		<id name="id" column="historyid" type="integer">
 			<generator class="native" />
 		</id>
@@ -15,7 +15,7 @@
 		<property name="type" column="type" type="integer" />
 		<property name="date" column="date" type="timestamp" />
 				
-		<many-to-one name="process" class="de.sub.goobi.Beans.Prozess" column="processID"/>
+		<many-to-one name="process" class="de.sub.goobi.beans.Prozess" column="processID"/>
 		
 	</class>
 
