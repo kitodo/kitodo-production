@@ -302,16 +302,13 @@
 	}
 
 	function paginierungWertAnzeigen(element) {
-		if (element.value == 3)
-			document.getElementById("paginierungWert").style.display = 'none';
-
+		var inputBoxElement = document.getElementById("paginierungWert");
+		inputBoxElement.style.display = (element.value == 3 ? 'none' : '');
 		if (element.value == 2 || element.value == 5) {
-			document.getElementById("paginierungWert").style.display = 'inline';
-			document.getElementById("paginierungWert").value = 'I';
+			inputBoxElement.value = 'I';
 		}
 		if (element.value == 1 || element.value == 4) {
-			document.getElementById("paginierungWert").style.display = 'inline';
-			document.getElementById("paginierungWert").value = '1';
+			inputBoxElement.value = '1';
 		}
 	}
 

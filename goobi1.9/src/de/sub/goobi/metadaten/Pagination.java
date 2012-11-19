@@ -57,7 +57,7 @@ public class Pagination {
 	 * [i], [ii], [iii], [iv],...
 	 */
 	public static final String PAGINATION_ROMAN_BRACKET = "5";
-	
+
 	public static final String PAGINATION_FREETEXT = "6";
 
 	public static final int ALL_PAGES = 1;
@@ -96,11 +96,9 @@ public class Pagination {
 	 * @param paginationScope
 	 *            scope of pagination ( all pages = 1,only selected pages = 2)
 	 * @param paginationType
-	 *            type of pagination label (arabic = 1, roman = 2, uncounted =
-	 *            3)
+	 *            type of pagination label (arabic = 1, roman = 2, uncounted = 3)
 	 * @param paginationMode
-	 *            type of pagination (pages = 1, columns = 2, foliation = 3,
-	 *            foliation rectoVerso = 4, pagination rectoVerso = 5)
+	 *            type of pagination (pages = 1, columns = 2, foliation = 3, foliation rectoVerso = 4, pagination rectoVerso = 5)
 	 * @param paginationStartValue
 	 *            start value
 	 */
@@ -157,19 +155,22 @@ public class Pagination {
 
 			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
 				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
-					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
+					// nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
+					Helper.setFehlerMeldung("pagination.error.uncountedFoliationNotAllowed");
+					return "";
 				} else {
 					nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
 				}
 			}
 			if (this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
-					nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
+					// nextPaginationLabel = getRectoVersoSuffixForPagination(currentPageNumber);
+					Helper.setFehlerMeldung("pagination.error.uncountedFoliationNotAllowed");
+					return "";
 				} else {
 					nextPaginationLabel += getRectoVersoSuffixForPagination(currentPageNumber);
 				}
 			}
-		
 
 			this.newPaginated[i].setWert(nextPaginationLabel);
 
@@ -194,7 +195,7 @@ public class Pagination {
 			RomanNumeral r = new RomanNumeral();
 			r.setValue(paginationBaseValue + (int) currentPageNumber - firstPageNumber);
 			actualPaginationLabel = "[" + r.toString() + "]";
-	
+
 		} else {
 			// free text
 			actualPaginationLabel = this.paginationStartValue;
@@ -370,7 +371,9 @@ public class Pagination {
 
 			if (this.paginationMode == COUNTING_FOLIATION_RECTOVERSO) {
 				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
-					nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
+					// nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
+					Helper.setFehlerMeldung("pagination.error.uncountedFoliationNotAllowed");
+					return;
 				} else {
 					// if (i == 1) {
 					nextPaginationLabel = getRectoVersoSuffixForFoliation(Integer.valueOf(nextPaginationLabel));
@@ -382,7 +385,9 @@ public class Pagination {
 			}
 			if (this.paginationMode == COUNTING_PAGINATION_RECTOVERSO) {
 				if (this.paginationType.equals(PAGINATION_UNCOUNTED)) {
-					nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
+					// nextPaginationLabel = getRectoVersoSuffixForSelectedPages(currentPageNumber);
+					Helper.setFehlerMeldung("pagination.error.uncountedFoliationNotAllowed");
+					return;
 				} else {
 					nextPaginationLabel += getRectoVersoSuffixForSelectedPages(currentPageNumber);
 				}
