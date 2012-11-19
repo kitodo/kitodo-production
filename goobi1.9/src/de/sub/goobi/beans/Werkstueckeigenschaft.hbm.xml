@@ -38,7 +38,7 @@
 		</id>
 
 		<property name="titel" column="Titel" type="string" />
-		<property name="wert" column="Wert" type="string" />
+		<property name="wert" column="Wert" type="text" />
 		<property name="istObligatorisch" column="IstObligatorisch" />
 		<property name="datentyp" column="DatentypenID" type="integer" />
 		<property name="auswahl" column="Auswahl" type="string" />
