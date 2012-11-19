@@ -1,13 +1,14 @@
 package de.sub.goobi.helper.ldap;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- * 			- http://digiverso.com 
+ *     		- http://www.goobi.org
+ *     		- http://launchpad.net/goobi-production
+ * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 
- * Copyright 2011, intranda GmbH, Göttingen
- * 
+ * 			- http://digiverso.com 
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -60,7 +61,7 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.encryption.MD4;
+import dubious.sub.goobi.helper.encryption.MD4;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like the LDAP system providers.

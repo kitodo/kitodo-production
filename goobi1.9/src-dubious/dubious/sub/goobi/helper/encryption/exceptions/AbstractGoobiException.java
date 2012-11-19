@@ -1,4 +1,4 @@
-package de.sub.goobi.helper.exceptions;
+package dubious.sub.goobi.helper.encryption.exceptions;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

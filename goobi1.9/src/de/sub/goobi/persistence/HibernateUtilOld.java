@@ -36,7 +36,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import de.sub.goobi.helper.exceptions.InfrastructureException;
+import dubious.sub.goobi.helper.encryption.exceptions.InfrastructureException;
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
 // the newer version follows on bottom  of this class

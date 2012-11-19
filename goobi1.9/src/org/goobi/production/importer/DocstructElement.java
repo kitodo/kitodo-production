@@ -1,23 +1,13 @@
 package org.goobi.production.importer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-
-import org.goobi.production.properties.ImportProperty;
-
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- * 			- http://digiverso.com 
+ *     		- http://www.goobi.org
+ *     		- http://launchpad.net/goobi-production
+ * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 
- * Copyright 2011, intranda GmbH, Göttingen
- * 
+ * 			- http://digiverso.com 
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -36,6 +26,14 @@ import org.goobi.production.properties.ImportProperty;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.goobi.production.properties.ImportProperty;
+
 
 public class DocstructElement {
 	private String docStruct;

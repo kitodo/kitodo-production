@@ -1,4 +1,4 @@
-package de.sub.goobi.helper.exceptions;
+package dubious.sub.goobi.helper.encryption.exceptions;
 //TODO: What's the licence of this file?
 /**
  * This exception is used to mark (fatal) failures in infrastructure and system code.
