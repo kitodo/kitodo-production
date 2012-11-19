@@ -295,10 +295,11 @@ public class ExportMets {
 		mm.setMptrAnchorUrl(pointer);
 
 		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-		List<String> images = new ArrayList<String>();
+//		List<String> images = new ArrayList<String>();
 		try {
 			// TODO andere Dateigruppen nicht mit image Namen ersetzen
-			images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+			MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
+			List<String> images = mih.getDataFiles(myProzess);
 			int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 			if (images != null) {
 				int sizeOfImages = images.size();
