@@ -282,7 +282,7 @@ public class ExportDms extends ExportMets {
 							agoraThread.rueckgabe);
 				} else {
 					Helper.setMeldung(null, myProzess.getTitel() + ": ",
-							"Export finished");
+							"ExportFinished");
 					/* Success-Ordner wieder löschen */
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
 						File successFile = new File(myProzess.getProjekt()
@@ -304,7 +304,7 @@ public class ExportDms extends ExportMets {
 			}
 
 			Helper.setMeldung(null, myProzess.getTitel() + ": ",
-					"Export finished");
+					"ExportFinished");
 		}
 		return true;
 	}

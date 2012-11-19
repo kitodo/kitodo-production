@@ -316,7 +316,7 @@ public class ExportMetsWithoutHibernate {
 				myLogger.error(e);
 			}
 			mm.write(targetFileName);
-			Helper.setMeldung(null, process.getTitle() + ": ", "Export finished");
+			Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
 		}
 		return true;
 	}

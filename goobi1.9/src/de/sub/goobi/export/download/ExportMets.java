@@ -321,7 +321,7 @@ public class ExportMets {
 			return false;
 		}
 		mm.write(targetFileName);
-		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
+		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 		return true;
 		// }
 	}
