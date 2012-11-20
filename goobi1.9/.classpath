@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-dubious"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/chartcreator-1.2.0-RC1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/clibwrapper_jiio.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-beanutils-1.7.0.jar"/>
