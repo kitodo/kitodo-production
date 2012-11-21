@@ -73,7 +73,7 @@
 
 				<h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column">
 					<h:outputText value="#{msgs.ersteSeite}: " />
-					<h:panelGroup>
+					<h:panelGroup id="pageStartGroup">
 						<x:inputText id="pagestart1" forceId="true" value="#{Metadaten.pagesStart}" />
 						<rich:suggestionbox height="200" width="145" for="pagestart1" var="startpage" id="suggestion3" suggestionAction="#{Metadaten.autocomplete}">
 							<h:column>
@@ -83,13 +83,13 @@
 					</h:panelGroup>
 				
 				
-					<a4j:commandLink action="#{Metadaten.CurrentStartpage}" reRender="pagestart1">
+					<a4j:commandLink action="#{Metadaten.CurrentStartpage}" reRender="pageStartGroup">
 						<h:graphicImage value="/newpages/images/buttons/left_20px.gif" style="border: 0px;vertical-align:middle;" />
 						<x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
 					</a4j:commandLink>
 				
 					<h:outputText value="#{msgs.letzteSeite}: " />
-					<h:panelGroup>
+					<h:panelGroup id="pageEndGroup">
 						<x:inputText id="pageend1" forceId="true" value="#{Metadaten.pagesEnd}" />
 						<rich:suggestionbox tokens=":" height="200" width="145" for="pageend1" var="endpage" id="suggestion4"
 							suggestionAction="#{Metadaten.autocomplete}">
@@ -98,7 +98,7 @@
 							</h:column>
 						</rich:suggestionbox>
 					</h:panelGroup>
-					<a4j:commandLink action="#{Metadaten.CurrentEndpage}" reRender="pageend1">
+					<a4j:commandLink action="#{Metadaten.CurrentEndpage}" reRender="pageEndGroup">
 						<h:graphicImage value="/newpages/images/buttons/left_20px.gif" style="border: 0px;vertical-align:middle;" />
 						<x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
 					</a4j:commandLink>
