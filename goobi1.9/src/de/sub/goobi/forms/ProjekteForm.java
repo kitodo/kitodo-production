@@ -209,9 +209,7 @@ public class ProjekteForm extends BasisForm {
 	public String FilterKein() {
 		try {
 			Session session = Helper.getHibernateSession();
-			// session.flush();
 			session.clear();
-			// session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Projekt.class);
 			crit.addOrder(Order.asc("titel"));
 			this.page = new Page(crit, 0);
@@ -254,8 +252,6 @@ public class ProjekteForm extends BasisForm {
 		// to be deleted fileGroups ids are listed
 		// and deleted after a commit
 		this.deletedFileGroups.add(this.myFilegroup.getId());
-		// original line
-		// myProjekt.getFilegroups().remove(myFilegroup);
 		return "ProjekteBearbeiten";
 	}
 
@@ -613,7 +609,6 @@ public class ProjekteForm extends BasisForm {
 	 *********************************************************/
 
 	public String getProjectStatImages() throws IOException, InterruptedException {
-		// return getProjectStatVolumes();
 		if (this.projectStatImages == null) {
 			this.projectStatImages = System.currentTimeMillis() + "images.png";
 			calcProjectStats(this.projectStatImages, true);
@@ -688,8 +683,7 @@ public class ProjekteForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 * -------------------------------- Vorbereiten der
-			 * Header-Informationen --------------------------------
+			 *  Vorbereiten der Header-Informationen 
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext
 					.getExternalContext().getResponse();

@@ -136,22 +136,7 @@ public final class ConfigDispayRules {
 				}
 			}
 		}
-		// for (Entry<String, HashMap<String, HashMap<String, HashMap<String,
-		// ArrayList<Item>>>>> bla : allValues.entrySet()) {
-		// System.out.println("proj:" + bla.getKey());
-		// for (Entry<String, HashMap<String, HashMap<String, ArrayList<Item>>>>
-		// blub : bla.getValue().entrySet()) {
-		// System.out.println("  bindstate: " + blub.getKey());
-		// for (Entry<String, HashMap<String, ArrayList<Item>>> qwertzu :
-		// blub.getValue().entrySet()) {
-		// System.out.println("    type: " + qwertzu.getKey());
-		// for (Entry<String, ArrayList<Item>> qwer :
-		// qwertzu.getValue().entrySet()) {
-		// System.out.println("      element: " + qwer.getKey());
-		// }
-		// }
-		// }
-		// }
+
 	}
 
 	/**

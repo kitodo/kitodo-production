@@ -72,7 +72,6 @@ public class WebInterface extends HttpServlet {
 				Map<String, String[]> map = req.getParameterMap();
 				String[] pwMap = map.get("token");
 				password = pwMap[0];
-				// password = req.getParameterMap().get("token")[0];
 			} catch (Exception e) {
 				resp.setContentType("");
 				generateAnswer(resp, 401, "Internal error", "Missing credentials");
@@ -113,19 +112,13 @@ public class WebInterface extends HttpServlet {
 				return;
 			}
 			
-			// List all plugins
-			// List<IPlugin> mycommands = PluginLoader.getPluginList(PluginType.Command);
-			// for (IPlugin iPlugin : mycommands) {
-			// System.out.println(iPlugin.getTitle() + " - " + iPlugin.getId());
-			// }
-
+			
 			// get correct plugin from list
 			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, this.command);
 			if (myCommandPlugin == null) {
 				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;
 			}
-			// System.out.println(myCommandPlugin.getTitle() + " -> " + myCommandPlugin.getId());
 
 			// hand parameters over to command
 			Map<String, String[]> map = req.getParameterMap();

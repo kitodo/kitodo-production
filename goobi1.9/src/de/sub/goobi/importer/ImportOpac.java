@@ -128,21 +128,11 @@ public class ImportOpac {
 					myParentHitlist = this.coc.executeBeautifier(myParentHitlist);
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
-
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
+					
 					/* dem Rootelement den Volume-Treffer hinzufügen */
 					myFirstHit.getParent().removeContent(myFirstHit);
 					myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
-					/* Testausgabe */
-					// output = new FileOutputStream("D:/fileFull.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
 					myJdomDoc = myJdomDocMultivolumeband;
 					myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
@@ -160,7 +150,6 @@ public class ImportOpac {
 		/*
 		 * -------------------------------- wenn der Treffer ein Contained Work ist, dann übergeordnetes Werk --------------------------------
 		 */
-		// if (isContainedWork()) {
 		if (getOpacDocType(verbose).isContainedWork()) {
 			/* PPN des übergeordneten Werkes ermitteln */
 			String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
@@ -175,12 +164,7 @@ public class ImportOpac {
 					/* Konvertierung in jdom-Elemente */
 					Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 					Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocParent.getRootElement(),
-					// output);
+
 					/*
 					 * alle Elemente des Parents übernehmen, die noch nicht selbst vorhanden sind
 					 */
@@ -205,9 +189,6 @@ public class ImportOpac {
 //		 FileOutputStream output = new
 //		 FileOutputStream("/home/robert/temp_opac.xml");
 //		 outputter.output(myJdomDoc.getRootElement(), output);
-	
-		 /* myRdf temporär in Datei schreiben */
-		// myRdf.write("D:/temp.rdf.xml");
 
 		/* zugriff auf ugh-Klassen */
 		PicaPlus pp = new PicaPlus(inPrefs);
@@ -221,7 +202,6 @@ public class ImportOpac {
 		dd.setPhysicalDocStruct(dsBoundBook);
 		/* Inhalt des RDF-Files überprüfen und ergänzen */
 		checkMyOpacResult(ff.getDigitalDocument(), inPrefs, myFirstHit, verbose);
-		// rdftemp.write("D:/PicaRdf.xml");
 		return ff;
 	}
 
@@ -237,7 +217,6 @@ public class ImportOpac {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals("002@")) {
 				return getSubelementValue(tempElement, "0");
 			}
@@ -269,7 +248,6 @@ public class ImportOpac {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals(inFeldName)) {
 				return getSubelementValue(tempElement, inSubElement);
 			}
@@ -296,7 +274,6 @@ public class ImportOpac {
 		/*
 		 * -------------------------------- bei Multivolumes noch das Child in xml und docstruct ermitteln --------------------------------
 		 */
-		// if (isMultivolume()) {
 		if (getOpacDocType(verbose).isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
@@ -366,7 +343,6 @@ public class ImportOpac {
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
 			}
 			ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
-			// sortingTitle = sortingTitleMulti;
 		}
 
 		/*

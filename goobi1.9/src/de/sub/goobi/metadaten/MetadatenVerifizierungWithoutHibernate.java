@@ -58,13 +58,10 @@ import de.sub.goobi.persistence.apache.ProjectManager;
 import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class MetadatenVerifizierungWithoutHibernate {
-	// Helper help = new Helper();
 	UghHelper ughhelp = new UghHelper();
 	List<DocStruct> docStructsOhneSeiten;
-//	Prozess myProzess;
 	boolean autoSave = false;
 
-//	private int processId;
 	private String title;
 	
 	public boolean validate(Prozess inProzess) {
@@ -86,10 +83,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
 		ProjectObject project  = ProjectManager.getProjectById(process.getProjekteID());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
-//		this.processId = processId;
 		this.title = title;
 		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
-//		this.myProzess = inProzess;
 		boolean ergebnis = true;
 
 		DigitalDocument dd = null;
@@ -250,12 +245,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 			if (alleMetadaten != null && alleMetadaten.size() > 0) {
 				@SuppressWarnings("unused")
 				Metadata mmm = alleMetadaten.get(0);
-				// TODO add a real check here, not this stupid shit...
-				// wenn der Imagepfad noch auf C:\ steht, validierung false
-				/*
-				 * if (!mmm.getValue().equals("C:\\")) return true; else { help.setFehlerMeldung("[" + title + "] " +
-				 * "Verifizierung nicht erfolgreich, Imagepfad steht auf C:\\", ""); return false; }
-				 */
+
 				return true;
 			} else {
 				Helper.setFehlerMeldung(this.title + ": " + "Can not verify, image path is not set", "");
@@ -318,7 +308,6 @@ public class MetadatenVerifizierungWithoutHibernate {
 			String number = dst.getNumberOfMetadataType(mdt);
 			List<? extends Metadata> ll = inStruct.getAllMetadataByType(mdt);
 			int real = 0;
-//			if (ll.size() > 0) {
 				real = ll.size();
 
 				if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
@@ -404,12 +393,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 							MetadataType emdete = this.ughhelp.getMetadataType(inPrefs, tok);
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
-							/*
-							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht existieren, Exception abfangen und
-							 * nicht weiter drauf eingehen
-							 */
-							// inFehlerList.add("Metadatatype does not exist: "
-							// + tok);
+	
 						}
 					}
 					if (listOfFromMdts.size() > 0) {
@@ -438,19 +422,13 @@ public class MetadatenVerifizierungWithoutHibernate {
 		if (createMetadaten == null || createMetadaten.size() == 0) {
 			try {
 				Metadata createdElement = new Metadata(mdt);
-				// createdElement.setType(mdt);
 				StringBuffer myValue = new StringBuffer();
 				/*
 				 * alle anzufügenden Metadaten durchlaufen und an das Element anh�ngen
 				 */
 				for (MetadataType mdttemp : inListOfFromMdts) {
 
-					// TODO and done: Cast without exceptionhandling - rather
-					// implement typesafe code
-					// MetadataType mdttemp = (MetadataType) iter.next();
-
-					// List fromElemente =
-					// myStruct.getAllMetadataByType(mdttemp);
+		
 					List<Person> fromElemente = myStruct.getAllPersons();
 					if (fromElemente != null && fromElemente.size() > 0) {
 						/*
@@ -458,10 +436,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 						 */
 						for (Person p : fromElemente) {
 
-							// TODO: Cast without exceptionhandling - rather
-							// implement typesafe code
-							// Person p = (Person) iter2.next();
-
+						
 							if (p.getRole() == null) {
 								Helper.setFehlerMeldung("[" + this.title + " " + myStruct.getType().getNameByLanguage(language) + "] "
 										+ Helper.getTranslation("MetadataPersonWithoutRole"));
@@ -486,9 +461,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 					myStruct.addMetadata(createdElement);
 				}
 			} catch (DocStructHasNoTypeException e) {
-				// e.printStackTrace();
 			} catch (MetadataTypeNotAllowedException e) {
-				// e.printStackTrace();
 			}
 
 		}

@@ -110,10 +110,8 @@ public class ExportDocket implements IProcessDataExport {
 		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
 		StreamSource transformSource = new StreamSource(xsltfile);
 		FopFactory fopFactory = FopFactory.newInstance();
-//		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// transform xml
-//		Transformer xslfoTransformer = getTransformer(transformSource);
 		try {
 			Transformer xslfoTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, outStream);
@@ -140,35 +138,5 @@ public class ExportDocket implements IProcessDataExport {
 		return null;
 	}
 
-//	public static void main(String[] args) throws FOPException, TransformerException, IOException {
-//		FopFactory fopFactory = FopFactory.newInstance();
-//
-//		// Step 2: Set up output stream.
-//		// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
-//		OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("/home/robert/fop.pdf")));
-//
-//		try {
-//			// Step 3: Construct fop with desired output format
-//			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
-//
-//			// Step 4: Setup JAXP using identity transformer
-//			TransformerFactory factory = TransformerFactory.newInstance();
-//			Transformer transformer = factory.newTransformer(); // identity transformer
-//
-//			// Step 5: Setup input and output for XSLT transformation
-//			// Setup input stream
-//			Source src = new StreamSource(new File("/home/robert/workspace/Goobi1.9/WEB-INF/src/test.out.xml"));
-//
-//			// Resulting SAX events (the generated FO) must be piped through to FOP
-//			Result res = new SAXResult(fop.getDefaultHandler());
-//
-//			// Step 6: Start XSLT transformation and FOP processing
-//			transformer.transform(src, res);
-//
-//		} finally {
-//			// Clean-up
-//			out.close();
-//		}
-//	}
 
 }

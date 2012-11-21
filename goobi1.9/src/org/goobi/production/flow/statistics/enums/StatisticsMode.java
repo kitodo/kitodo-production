@@ -51,9 +51,7 @@ import de.sub.goobi.helper.Helper;
 
 public enum StatisticsMode {
 
-	/*
-	 * SIMPLE_STATUS_VOLUMES("statusOfVolumes", null, false, true), SIMPLE_USERGROUPS( "statusForUsers", null, false, true),
-	 */
+	
 
 	SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false), 
 	PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false,false, false), 

@@ -291,7 +291,6 @@ public class ExportMetsWithoutHibernate {
 			pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
 
-			// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 			List<String> images = new ArrayList<String>();
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen

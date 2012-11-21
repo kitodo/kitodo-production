@@ -172,35 +172,12 @@ public class ExportXmlLog implements IProcessDataExport {
 		comment.setText(process.getWikifield());
 		processElements.add(comment);
 
-		// Batch b = process.getBatch();
 		if (process.getBatchID() != null) {
 			Element batch = new Element("batch", xmlns);
 			batch.setText(String.valueOf(process.getBatchID()));
 			processElements.add(batch);
 		}
-		// batch.setAttribute("batchIdentifier", String.valueOf(b.getId()));
-		// batch.setAttribute("batchTitle", b.getTitle());
-		//
-		// List<Element> batchProperties = new ArrayList<Element>();
-		//
-		// for (BatchProperty prop : b.getEigenschaftenList()) {
-		// Element property = new Element("property", xmlns);
-		// property.setAttribute("propertyIdentifier", prop.getTitel());
-		// if (prop.getWert() != null) {
-		// property.setAttribute("value", replacer(prop.getWert()));
-		// } else {
-		// property.setAttribute("value", "");
-		// }
-		// Element label = new Element("label", xmlns);
-		// label.setText(prop.getTitel());
-		// property.addContent(label);
-		// batchProperties.add(property);
-		// }
-		// Element properties = new Element("properties", xmlns);
-		// properties.addContent(batchProperties);
-		// batch.addContent(properties);
-		// processElements.add(batch);
-		// }
+	
 
 		ArrayList<Element> processProperties = new ArrayList<Element>();
 		for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
@@ -211,17 +188,11 @@ public class ExportXmlLog implements IProcessDataExport {
 			} else {
 				property.setAttribute("value", "");
 			}
-			// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
-			// prop.getLabelAsHashMap();
-			// Set<Locale> lang = labelMap.keySet();
-			// for (Locale l : lang) {
+		
 			Element label = new Element("label", xmlns);
-			// label.setAttribute("lang",
-			// l.getLanguage(),Namespace.XML_NAMESPACE);
-			// label.setText(labelMap.get(l));
+			
 			label.setText(prop.getTitel());
 			property.addContent(label);
-			// }
 			processProperties.add(property);
 		}
 		if (processProperties.size() != 0) {
@@ -273,17 +244,11 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
-				// prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+			
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang",
-				// l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
+				
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
 				stepProperties.add(property);
 			}
 			if (stepProperties.size() != 0) {
@@ -315,17 +280,11 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
-				// prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+				
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang",
-				// l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
+		
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
 
 				templateProperties.add(property);
 				if (prop.getTitel().equals("Signatur")) {
@@ -368,17 +327,11 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				// HashMap<Locale, String> labelMap = (HashMap<Locale, String>)
-				// prop.getLabelAsHashMap();
-				// Set<Locale> lang = labelMap.keySet();
-				// for (Locale l : lang) {
+	
 				Element label = new Element("label", xmlns);
-				// label.setAttribute("lang",
-				// l.getLanguage(),Namespace.XML_NAMESPACE);
-				// label.setText(labelMap.get(l));
+		
 				label.setText(prop.getTitel());
 				property.addContent(label);
-				// }
 				docProperties.add(property);
 			}
 			if (docProperties.size() != 0) {
@@ -550,9 +503,7 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-			// FileOutputStream fos = new FileOutputStream(new
-			// File("/opt/digiverso/goobi/users/testadmin/test.xml"));
-			// outp.output(answer, fos);
+		
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 

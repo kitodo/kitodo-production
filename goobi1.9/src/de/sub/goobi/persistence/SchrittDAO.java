@@ -40,7 +40,6 @@ public class SchrittDAO extends BaseDAO {
 
 	public Schritt save(Schritt t) throws DAOException {
 		storeObj(t);
-//		LuceneIndex.updateProcess(t.getProzess());
 		return (Schritt) retrieveObj(Schritt.class, t.getId());
 	}
 
@@ -55,7 +54,6 @@ public class SchrittDAO extends BaseDAO {
 	public void remove(Schritt t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);
-//			LuceneIndex.updateProcess(t.getProzess());
 		}
 	}
 
@@ -63,7 +61,6 @@ public class SchrittDAO extends BaseDAO {
 		@SuppressWarnings("unused")
 		Schritt t = (Schritt) retrieveObj(Schritt.class, id);
 		removeObj(Schritt.class, id);
-//		LuceneIndex.updateProcess(t.getProzess());
 	}
 
 	@SuppressWarnings("unchecked")

@@ -222,9 +222,7 @@ public class ExportMets {
 				return false;
 			}
 		}
-		// if (dd == null) {
-		// return false;
-		// } else {
+		
 		for (ContentFile cf : dd.getFileSet().getAllFiles()) {
 			String location = cf.getLocation();
 			// If the file's location string shoes no sign of any protocol,
@@ -294,8 +292,6 @@ public class ExportMets {
 		pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
-		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-//		List<String> images = new ArrayList<String>();
 		try {
 			// TODO andere Dateigruppen nicht mit image Namen ersetzen
 			MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
@@ -323,11 +319,5 @@ public class ExportMets {
 		mm.write(targetFileName);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 		return true;
-		// }
 	}
-
-	// private static String getMimetype(String filename) {
-	// FileNameMap fnm = URLConnection.getFileNameMap();
-	// return fnm.getContentTypeFor(filename);
-	// }
 }

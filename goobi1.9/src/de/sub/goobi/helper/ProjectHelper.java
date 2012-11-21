@@ -72,12 +72,7 @@ public class ProjectHelper {
 
 		Session session = Helper.getHibernateSession();
 
-		/*
-		 * The following block is representing this native query by way of critera and projection
-		 * 
-		 * SELECT count(p.prozesseid) as processCount, sum(p.sortHelperImages) as imageCount FROM prozesse p where p.isttemplate=0 and p.projekteid=2
-		 * ;
-		 */
+	
 
 		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
 		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
@@ -103,14 +98,7 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
-		/*
-		 * 
-		 * SELECT count(s.reihenfolge), s.titel, (avg(s.reihenfolge)), sum(p.sorthelperimages) FROM schritte s inner join prozesse p on
-		 * s.prozesseid=p.prozesseid inner join projekte pr on p.projekteid=pr.projekteid where pr.projekteid=18 group by s.titel order by
-		 * avg(s.reihenfolge);
-		 * 
-		 * The following block is representing this native query by way of critera and projection
-		 */
+	
 
 		Criteria critSteps = session.createCriteria(Schritt.class);
 
@@ -126,10 +114,7 @@ public class ProjectHelper {
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
 
-		// proList.add(Projections.sum("proc.sortHelperImages")); // is not really needed here but will be in the next step
-
-		// proList.add(Projections.groupProperty(("bearbeitungsstatus")));
-
+	
 		critSteps.setProjection(proList);
 
 		// now we have to discriminate the hits where the max number of hits doesn't reach numberOfProcs
@@ -235,7 +220,6 @@ public class ProjectHelper {
 		}
 	}
 
-	// synchronized public static IGoobiCollection<IGoobiCollection<IProperty>> getWorkFlow (IGoobiObject instance, Boolean notOnlyCommonFlow) {
 	@SuppressWarnings("unchecked")
 	public static List<StepInformation> getWorkFlow(Projekt inProj, Boolean notOnlyCommonFlow) {
 		Long totalNumberOfProc = 0l;
@@ -245,12 +229,7 @@ public class ProjectHelper {
 		}
 		List<StepInformation> workFlow = new ArrayList<StepInformation>();
 		Session session = Helper.getHibernateSession();
-		/*
-		 * The following block is representing this native query by way of critera and projection
-		 * 
-		 * SELECT count(p.prozesseid) as processCount, sum(p.sortHelperImages) as imageCount FROM prozesse p where p.isttemplate=0 and p.projekteid=2
-		 * ;
-		 */
+	
 
 		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
 		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
@@ -273,15 +252,7 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
-		/*
-		 * 
-		 * SELECT count(s.reihenfolge), s.titel, (avg(s.reihenfolge)), sum(p.sorthelperimages) FROM schritte s inner join prozesse p on
-		 * s.prozesseid=p.prozesseid inner join projekte pr on p.projekteid=pr.projekteid where pr.projekteid=18 group by s.titel order by
-		 * avg(s.reihenfolge);
-		 * 
-		 * The following block is representing this native query by way of critera and projection
-		 */
-
+	
 		Criteria critSteps = session.createCriteria(Schritt.class);
 
 		critSteps.createCriteria("prozess", "proc");
@@ -296,9 +267,7 @@ public class ProjectHelper {
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
 
-		// proList.add(Projections.sum("proc.sortHelperImages")); // is not really needed here but will be in the next step
-
-		// proList.add(Projections.groupProperty(("bearbeitungsstatus")));
+		
 
 		critSteps.setProjection(proList);
 

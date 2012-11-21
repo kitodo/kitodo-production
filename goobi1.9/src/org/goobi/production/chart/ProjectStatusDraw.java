@@ -121,9 +121,6 @@ public class ProjectStatusDraw {
 		// Compute width of the chart (without the borders)
 		chartWidth = width - borderLeft - BORDERRIGHT;
 
-		// Chart height not needed anymore
-		//		chartHeight = dataTable.getNumberOfTasks()*BARSPACING;
-
 		// Set background color to white
 		g2d.setColor(Color.white);
 		g2d.fillRect(0, 0, width, height);

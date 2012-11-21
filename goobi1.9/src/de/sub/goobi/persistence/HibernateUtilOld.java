@@ -49,6 +49,7 @@ import dubious.sub.goobi.helper.encryption.exceptions.InfrastructureException;
  * 
  * @author christian@hibernate.org
  */
+@SuppressWarnings("deprecation")
 public class HibernateUtilOld {
 
 	private static Log log = LogFactory.getLog(HibernateUtilOld.class);
@@ -80,11 +81,7 @@ public class HibernateUtilOld {
 	 * @return SessionFactory
 	 */
 	public static SessionFactory getSessionFactory() {
-		/*
-		 * Instead of a static variable, use JNDI: SessionFactory sessions = null; try { Context ctx = new InitialContext(); String jndiName =
-		 * "java:hibernate/HibernateFactory"; sessions = (SessionFactory)ctx.lookup(jndiName); } catch (NamingException ex) { throw new
-		 * InfrastructureException(ex); } return sessions;
-		 */
+	
 		return sessionFactory;
 	}
 
@@ -138,7 +135,6 @@ public class HibernateUtilOld {
 		Session s = threadSession.get();
 		try {
 			if (s == null) {
-				// log.debug("Opening new Session for this thread.");
 				if (getInterceptor() != null) {
 					log.debug("Using interceptor: " + getInterceptor().getClass());
 					s = getSessionFactory().openSession();
@@ -161,7 +157,6 @@ public class HibernateUtilOld {
 			Session s = threadSession.get();
 			threadSession.set(null);
 			if (s != null && s.isOpen()) {
-				// log.debug("Closing Session of this thread.");
 				s.close();
 			}
 		} catch (HibernateException ex) {
@@ -220,21 +215,6 @@ public class HibernateUtilOld {
 		}
 	}
 
-	/**
-	 * Reconnects a Hibernate Session to the current Thread.
-	 * 
-	 * @param session
-	 *            The Hibernate Session to be reconnected.
-	 */
-//	@SuppressWarnings("deprecation")
-//	public static void reconnect(Session session) throws InfrastructureException {
-//		try {
-//			session.reconnect();
-//			threadSession.set(session);
-//		} catch (HibernateException ex) {
-//			throw new InfrastructureException(ex);
-//		}
-//	}
 
 	/**
 	 * Disconnect and return Session from current Thread.

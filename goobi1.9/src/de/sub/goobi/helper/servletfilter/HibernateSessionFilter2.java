@@ -45,7 +45,6 @@ import de.sub.goobi.persistence.HibernateSessionLong;
 // TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 
 // de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work like it should
 public class HibernateSessionFilter2 implements Filter {
-	//   private static final Logger mylogger = Logger.getLogger(HibernateSessionFilter2.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,7 +54,6 @@ public class HibernateSessionFilter2 implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//      long startzeit = System.currentTimeMillis();
 		HttpServletRequest myRequest = (HttpServletRequest) request;
 		HibernateSessionLong hsl = null;
 		Session session = null;
@@ -71,7 +69,6 @@ public class HibernateSessionFilter2 implements Filter {
 			session = hsl.getSession();
 		}
 		if (session != null && !session.isConnected()) {
-//			session.reconnect();
 		}
 
 		try {
@@ -95,7 +92,6 @@ public class HibernateSessionFilter2 implements Filter {
 					session.disconnect();
 				}
 			}
-			//         mylogger.debug("Requestzeit: " + (System.currentTimeMillis() - startzeit) + " ms");
 		}
 	}
 

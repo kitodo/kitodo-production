@@ -47,7 +47,6 @@ import de.sub.goobi.beans.Benutzer;
  * @version 1.00 - 16.01.2005
  */
 public class SessionForm {
-	// private static final Logger logger = Logger.getLogger(SessionForm.class);
 	@SuppressWarnings("rawtypes")
 	private List alleSessions = new ArrayList();
 	private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
@@ -77,7 +76,6 @@ public class SessionForm {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void sessionAdd(HttpSession insession) {
-		// logger.debug("sessionAdd-start");
 		HashMap map = new HashMap();
 		map.put("id", insession.getId());
 		map.put("created", this.formatter.format(new Date()));
@@ -128,7 +126,6 @@ public class SessionForm {
 			}
 		}
 		this.alleSessions.add(map);
-		// logger.debug("sessionAdd-ende");
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -137,7 +134,6 @@ public class SessionForm {
 		for (Iterator iter = temp.iterator(); iter.hasNext();) {
 			HashMap map = (HashMap) iter.next();
 			long differenz = System.currentTimeMillis() - ((Long) map.get("last2")).longValue();
-			// logger.debug(element.get("last2") + ": " + String.valueOf(differenz / 1000));
 			if (differenz / 1000 > time || map.get("address") == null || (map.get("user").equals("- ausgeloggt - "))) {
 				this.alleSessions.remove(map);
 			}
@@ -146,7 +142,6 @@ public class SessionForm {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void sessionAktualisieren(HttpSession insession) {
-		// logger.debug("sessionAktualisieren-start");
 		boolean gefunden = false;
 		this.aktuelleZeit = this.formatter.format(new Date());
 		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
@@ -162,7 +157,6 @@ public class SessionForm {
 			sessionAdd(insession);
 		}
 		sessionsAufraeumen(insession.getMaxInactiveInterval());
-		// logger.debug("sessionAktualisieren-ende");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -183,7 +177,6 @@ public class SessionForm {
 				break;
 			}
 		}
-		// logger.debug("sessionBenutzerAktualisieren-ende");
 	}
 
 	/* prüfen, ob der Benutzer in einer anderen Session aktiv ist */

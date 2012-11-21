@@ -128,7 +128,6 @@ public void run() {
          return;
       }
       setStatusProgress(80);
-   // WELLCOME
       Helper.deleteDataInDir(new File(fileIn.getAbsolutePath()));
 
       /* ---------------------
@@ -165,7 +164,6 @@ public void run() {
       }
       setStatusMessage("done");
       setStatusProgress(100);
-      //Helper.getHibernateSession().close();
    }
 
 }

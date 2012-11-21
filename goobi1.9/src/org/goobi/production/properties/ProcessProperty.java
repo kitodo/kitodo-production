@@ -62,7 +62,6 @@ public class ProcessProperty implements IProperty, Serializable {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
-		// this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -323,18 +322,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	@Override
 	public ProcessProperty getClone(int containerNumber) {
 		ProcessProperty p = new ProcessProperty();
-		// if (this.container.intValue()==0){
 		p.setContainer(containerNumber);
-		// }else{
-		// p.setContainer(this.container.intValue()+1);
-		// }
-
-		// TODO: FIXME hier werden eigenschaften hinzugefügt, scheinbar auch leere?
-		// Prozesseigenschaft pe = new Prozesseigenschaft();
-		// pe.setProzess(getProzesseigenschaft().getProzess());
-		// p.setProzesseigenschaft(pe);
-		// getProzesseigenschaft().getProzess().getEigenschaften().add(pe);
-
 		p.setName(this.name);
 		p.setValidation(this.validation);
 		p.setType(this.type);
@@ -354,7 +342,6 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 	@Override
 	public void transfer() {
-			// if (this.value != null && this.value.length() > 0) {
 			this.prozesseigenschaft.setWert(this.value);
 			this.prozesseigenschaft.setTitel(this.name);
 			this.prozesseigenschaft.setContainer(this.container);

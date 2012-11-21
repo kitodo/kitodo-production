@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -87,9 +86,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String FilterKein() {
 		this.filter = null;
 		try {
-			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			// session.flush();
 			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
@@ -116,9 +113,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	 */
 	public String FilterAlleStart() {
 		try {
-			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			// session.flush();
 			session.clear();
 			Criteria crit = session.createCriteria(Benutzer.class);
 			crit.add(Restrictions.isNull("isVisible"));
@@ -140,7 +135,6 @@ public class BenutzerverwaltungForm extends BasisForm {
 			crit.addOrder(Order.asc("nachname"));
 			crit.addOrder(Order.asc("vorname"));
 			this.page = new Page(crit, 0);
-			// calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
 			return "";
@@ -277,8 +271,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter
 	 */
 
 	public Benutzer getMyClass() {
@@ -296,8 +289,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Ldap-Konfiguration ##
-	 * ##################################################### ####################################################
+	 * Ldap-Konfiguration
 	 */
 
 	public Integer getLdapGruppeAuswahl() {

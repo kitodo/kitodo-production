@@ -100,9 +100,7 @@ public class RegelsaetzeForm extends BasisForm {
 
 	public String FilterKein() {
 		try {
-			// HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
-			// session.flush();
 			session.clear();
 			Criteria crit = session.createCriteria(Regelsatz.class);
 			crit.addOrder(Order.asc("titel"));
@@ -120,8 +118,7 @@ public class RegelsaetzeForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter 
 	 */
 
 	public Regelsatz getMyRegelsatz() {

@@ -135,6 +135,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 *            given {@link Prozess}
 	 * @return true, if changes are made and have to be saved to database
 	 ***************************************************************************/
+	@SuppressWarnings("incomplete-switch")
 	private static Boolean updateHistoryForSteps(Prozess inProcess) {
 		Boolean isDirty = false;
 		HistoryEvent he = null;
@@ -291,7 +292,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				
 				for (Schritteigenschaft prop : step.getEigenschaftenList()) {
 					if (prop.getType().equals(PropertyType.messageError)) {
-//					if (prop.getTitel().equals(Helper.getTranslation("Korrektur notwendig"))) {
 						Date myDate = prop.getCreationDate();
 						if (myDate == null && step.getBearbeitungszeitpunkt() != null) {
 							myDate = step.getBearbeitungszeitpunkt();
@@ -387,7 +387,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 		// if storedValue is different to current value - update history
 		if (diff != 0) {
-//			inProcess.getHistory().add(new HistoryEvent(new Date(), diff, null, inType, inProcess));
 			StepManager.addHistory(new Date(), diff, null,
 					inType.getValue(), inProcess.getId());
 			return true;
@@ -444,20 +443,10 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 							session.beginTransaction().commit();
 							session.clear();
 						}
-						// } catch (IOException e) {
-						// logger.error("IOException occured while scheduled storage calculation",
-						// e);
-						// } catch (InterruptedException e) {
-						// logger.error("InterruptedException occured while scheduled storage calculation",
-						// e);
-						// } catch (SwapException e) {
-						// logger.error("SwapException occured while scheduled storage calculation",
-						// e);
+					
 					} catch (HibernateException e) {
 						logger.error("HibernateException occured while scheduled storage calculation", e);
-						// } catch (SQLException e) {
-						// logger.error("SQLException occured while scheduled storage calculation",
-						// e);
+						
 					} catch (Exception e) {
 						Helper.setFehlerMeldung("An error occured while scheduled storage calculation", e);
 						logger.error("ServletException occured while scheduled storage calculation", e);
@@ -467,7 +456,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				Helper.setFehlerMeldung("Another Exception occured while scheduled storage calculation", e);
 				logger.error("Another Exception occured while scheduled storage calculation", e);
 			}
-			// session.close();
 			logger.info("end history updating for all processes");
 	}
 

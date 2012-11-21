@@ -49,7 +49,6 @@ import de.sub.goobi.forms.SessionForm;
 
 
 public class SessionCounterFilter implements Filter {
-   //   private static final Logger mylogger = Logger.getLogger(SessionCounterFilter.class);
    ServletContext servletContext;
 
    public void init(FilterConfig filterConfig) throws ServletException {
@@ -63,24 +62,7 @@ public class SessionCounterFilter implements Filter {
    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
          throws IOException, ServletException {
 
-      //      /* --------------------------------
-      //       * den Session-Counter aktualisieren
-      //       * --------------------------------*/
-      //      HttpServletRequest httpReq = (HttpServletRequest) request;
-      //      SessionForm backingBean = (SessionForm) httpReq.getSession().getAttribute("SessionForm");
-      //      // is the backing bean already in the session?
-      //      if (backingBean != null) {
-      //         backingBean.sessionAktualisieren(httpReq.getSession());
-      //      } else {
-      //         // create the backing bean and put it in the session
-      //         backingBean = new SessionForm();
-      //         // backingBean.setOclcNum(oclcNum);
-      //         httpReq.getSession().setAttribute("SessionForm", backingBean);
-      //      }
 
-      /* --------------------------------
-       * den Session-Counter aktualisieren - 2. Versuch
-       * --------------------------------*/
       HttpServletRequest httpReq = (HttpServletRequest) request;
       FacesContext context = getFacesContext(request, response);
       SessionForm sf = (SessionForm) context.getApplication().createValueBinding("#{SessionForm}").getValue(

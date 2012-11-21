@@ -457,8 +457,7 @@ public class Prozess implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * Helper 
 	 */
 
 	public Projekt getProjekt() {
@@ -468,14 +467,6 @@ public class Prozess implements Serializable {
 	public void setProjekt(Projekt projekt) {
 		this.projekt = projekt;
 	}
-
-	// public Batch getBatch() {
-	// return this.batch;
-	// }
-	//
-	// public void setBatch(Batch batch) {
-	// this.batch = batch;
-	// }
 
 	public Integer getBatchID() {
 		return this.batchID;
@@ -818,24 +809,18 @@ public class Prozess implements Serializable {
 		if (!checkForMetadataFile()) {
 			throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath());
 		}
-		// checkForMetadataFile();
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
-		// createBackupFile(getNumberOfBackups());
 		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
-			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
 		} else if (type.equals("mets")) {
-			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.mets.xml"));
 			ff = new MetsMods(this.regelsatz.getPreferences());
 		} else if (type.equals("xstream")) {
-			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.xstream.xml"));
 			ff = new XStream(this.regelsatz.getPreferences());
 		} else {
-			// Helper.copyFile(new File(getMetadataFilePath()), new File(getProcessDataDirectory(), "meta.rdf.xml"));
 			ff = new RDFFile(this.regelsatz.getPreferences());
 		}
 		try {
@@ -905,11 +890,6 @@ public class Prozess implements Serializable {
 		boolean result = true;
 		File f = new File(getMetadataFilePath());
 		if (!f.exists()) {
-			// String errorMessage =
-			// Helper.getTranslation("metadataFileNotFound") + " " +
-			// f.getAbsolutePath();
-			// myLogger.warn(errorMessage);
-			// Helper.setFehlerMeldung(errorMessage);
 			result = false;
 		}
 

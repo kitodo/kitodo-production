@@ -53,7 +53,6 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
-import org.goobi.production.importer.DocstructElement;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -232,7 +231,6 @@ public class Metadaten {
 	}
 
 	public String Reload() {
-		// MetadatenDebuggen(gdzfile.getDigitalDocument().getLogicalDocStruct());
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
@@ -285,8 +283,6 @@ public class Metadaten {
 	}
 
 	public String ChangeCurrentDocstructType() {
-		// myStrukturelement.getType().getName()
-		// + " soll werden zu " + tempWert);
 
 		if (this.myDocStruct != null && this.tempWert != null) {
 			try {
@@ -358,20 +354,15 @@ public class Metadaten {
 			per.setLastname(this.tempPersonNachname);
 			per.setRole(this.tempPersonRolle);
 
-			// MetadataType mdt =
-			// myPrefs.getMetadataTypeByName(tempPersonRolle);
-			// per.setType(mdt);
+	
 
 			this.myDocStruct.addPerson(per);
 		} catch (IncompletePersonObjectException e) {
 			Helper.setFehlerMeldung("Incomplete data for person", "");
-			// myLogger.error("Fehler beim Hinzufügen von Personen (IncompletePersonObjectException): "
-			// + e.getMessage());
+
 			return "";
-			// e.printStackTrace();
 		} catch (MetadataTypeNotAllowedException e) {
 			Helper.setFehlerMeldung("Person is for this structure not allowed", "");
-			// myLogger.error("Fehler beim Hinzufügen von Personen(MetadataTypeNotAllowedException): + e.getMessage()");
 			return "";
 		}
 		this.modusHinzufuegenPerson = false;
@@ -495,7 +486,6 @@ public class Metadaten {
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 
 		if (types == null) {
-			// SelectItem myTypen[] = new SelectItem[0];
 			return new SelectItem[0];
 		}
 
@@ -518,8 +508,6 @@ public class Metadaten {
 		zaehler = 0;
 		for (MetadataType mdt : types) {
 
-			// myTypen[zaehler] = new SelectItem(mdt.getName(),
-			// mdt.getLanguage("rusdml"));
 			myTypen[zaehler] = new SelectItem(mdt.getName(), this.metahelper.getMetadatatypeLanguage(mdt));
 			zaehler++;
 
@@ -564,7 +552,7 @@ public class Metadaten {
 
 	private String readXmlAndBuildTree() {
 
-		// myProzesseID = Helper.getRequestParameter("ProzesseID");
+	
 
 		/*
 		 * re-reading the config for display rules
@@ -678,7 +666,6 @@ public class Metadaten {
 
 			}
 		}
-		// MetadatenImLogAusgeben(logicalTopstruct);
 		createDefaultValues(this.logicalTopstruct);
 		MetadatenalsBeanSpeichern(this.logicalTopstruct);
 		MetadatenalsTree3Einlesen1();
@@ -744,7 +731,6 @@ public class Metadaten {
 			myLogger.error(e);
 		}
 		/* xml-Datei speichern */
-		// MetadatenDebuggen(gdzfile.getDigitalDocument().getLogicalDocStruct());
 		/*
 		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
 		 */
@@ -774,16 +760,6 @@ public class Metadaten {
 		LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
 
 		/*
-		 * -------------------------------- alle Metadaten ermitteln --------------------------------
-		 */
-		// if (inStrukturelement != null &&
-		// inStrukturelement.getAllVisibleMetadata() != null
-		// && inStrukturelement.getAllMetadata().size() > 0) {
-		// for (Iterator iter = inStrukturelement.getAllMetadata().iterator();
-		// iter.hasNext();)
-		// lsMeta.add(new Metadatum((Metadata) iter.next(), 0, myPrefs));
-		// }
-		/*
 		 * -------------------------------- alle Metadaten und die DefaultDisplay-Werte anzeigen --------------------------------
 		 */
 		List<? extends Metadata> myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
@@ -796,16 +772,7 @@ public class Metadaten {
 			}
 		}
 
-		/*
-		 * -------------------------------- alle Personen ermitteln --------------------------------
-		 */
-		// if (inStrukturelement != null && inStrukturelement.getAllPersons() !=
-		// null
-		// && inStrukturelement.getAllPersons().size() > 0) {
-		// for (Iterator iter = inStrukturelement.getAllPersons().iterator();
-		// iter.hasNext();)
-		// lsPers.add(new MetaPerson((Person) iter.next(), 0, myPrefs));
-		// }
+	
 		/*
 		 * -------------------------------- alle Personen und die DefaultDisplay-Werte ermitteln --------------------------------
 		 */
@@ -910,7 +877,6 @@ public class Metadaten {
 			OberKnoten.setExpanded(true);
 		}
 
-		// int zaehler = 0;
 		/*
 		 * -------------------------------- vom aktuellen Strukturelement alle Kinder in den Tree packen --------------------------------
 		 */
@@ -923,9 +889,7 @@ public class Metadaten {
 					label = kind.getType().getName();
 				}
 				TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
-				// zaehler++;
 				OberKnoten.addChild(tns);
-				// MetadatenDebuggen(kind);
 				MetadatenalsTree3Einlesen2(kind, tns);
 			}
 		}
@@ -950,21 +914,7 @@ public class Metadaten {
 		return rueckgabe.trim();
 	}
 
-	// /**
-	// * Metadaten debuggen
-	// *
-	// * @param inStrukturelement
-	// * ================================================================
-	// */
-	// private void MetadatenDebuggen(DocStruct inStrukturelement) {
-	// myLogger.info("--------------------------- " +
-	// inStrukturelement.getType().getName() +
-	// " -------------------------------------------------");
-	// List<Metadata> allMDs = inStrukturelement.getAllMetadata();
-	// if (allMDs != null)
-	// for (Metadata md : allMDs)
-	// myLogger.info(md.getType().getName() + ": " + md.getValue());
-	// }
+
 
 	@SuppressWarnings("rawtypes")
 	public void setMyStrukturelement(DocStruct inStruct) {
@@ -1057,10 +1007,7 @@ public class Metadaten {
 	 *             ============================================================ == ==
 	 */
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-		// myLogger.warn("eingefügt wird: " + neuesElementWohin);
-		// myLogger.warn("eingefügt wird was: " + addDocStructType1 + " - " +
-		// addDocStructType2);
-
+		
 		/*
 		 * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
 		 * gewählt wird und abschliessend richtig einfügen --------------------------------
@@ -1106,7 +1053,6 @@ public class Metadaten {
 			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
 				parent.addChild(iter.next());
 			}
-			// myStrukturelement =ds;
 		}
 
 		/*
@@ -1141,7 +1087,6 @@ public class Metadaten {
 			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
 				parent.addChild(iter.next());
 			}
-			// myStrukturelement =ds;
 		}
 
 		/*
@@ -1167,7 +1112,6 @@ public class Metadaten {
 			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
 				parent.addChild(iter.next());
 			}
-			// myStrukturelement =ds;
 		}
 
 		/*
@@ -1177,7 +1121,6 @@ public class Metadaten {
 			DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
 			ds = this.mydocument.createDocStruct(dst);
 			this.myDocStruct.addChild(ds);
-			// myStrukturelement =ds;
 		}
 
 		if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
@@ -1187,8 +1130,6 @@ public class Metadaten {
 			this.ajaxSeiteEnde = this.pagesEnd;
 			AjaxSeitenStartUndEndeSetzen();
 			this.myDocStruct = temp;
-			// pagesStart = pagesEnd;
-			// pagesEnd = "";
 		}
 
 		return MetadatenalsTree3Einlesen1();
@@ -1345,7 +1286,6 @@ public class Metadaten {
 		/*
 		 * Wenn eine Verkn�pfung zwischen Strukturelement und Bildern sein soll, das richtige Bild anzeigen
 		 */
-		// myLogger.info("erste Seite ist Image " + imageNr);
 		if (this.bildZuStrukturelement) {
 			BildErmitteln(imageNr - this.myBildNummer);
 		}
@@ -1480,7 +1420,6 @@ public class Metadaten {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
-		// return myBildCounter + ".png";
 	}
 
 	public List<String> getAllTifFolders() throws IOException, InterruptedException {
@@ -1501,13 +1440,11 @@ public class Metadaten {
 			}
 		};
 
-		// String tifOrdner = "";
 		String[] verzeichnisse = dir.list(filterVerz);
 		for (int i = 0; i < verzeichnisse.length; i++) {
 			this.allTifFolders.add(verzeichnisse[i]);
 		}
 
-		// if (this.currentTifFolder == null || this.currentTifFolder.length() == 0) {
 		if (ConfigMain.getParameter("MetsEditorDefaultSuffix", null) != null) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix");
 			for (String directory : this.allTifFolders) {
@@ -1517,7 +1454,6 @@ public class Metadaten {
 				}
 			}
 		}
-		// }
 
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
 			this.currentTifFolder = new File(this.myProzess.getImagesTifDirectory(true)).getName();
@@ -1606,14 +1542,12 @@ public class Metadaten {
 					 */
 					this.myBildCounter++;
 					myLogger.trace("myBildCounter: " + this.myBildCounter);
-					// if (myBildCounter > 2) myBildCounter = 0;
 
 					/* Session ermitteln */
 					FacesContext context = FacesContext.getCurrentInstance();
 					HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 					String mySession = session.getId() + "_" + this.myBildCounter + ".png";
 					myLogger.trace("facescontext");
-					// String mySession = myBildCounter + ".png";
 
 					/* das neue Bild zuweisen */
 					try {
@@ -1628,7 +1562,6 @@ public class Metadaten {
 						myLogger.trace("scaleFile");
 					} catch (Exception e) {
 						Helper.setFehlerMeldung("could not found image folder", e);
-						// TODO: Log this.
 						myLogger.error(e);
 					}
 					break;
@@ -1748,8 +1681,7 @@ public class Metadaten {
 				MetadataType mdtIso = this.myPrefs.getMetadataTypeByName("AuthorTransliteratedISO");
 				Person mdDin = new Person(mdtDin);
 				Person mdIso = new Person(mdtIso);
-				// mdDin.setType(mdtDin);
-				// mdIso.setType(mdtIso);
+
 				mdDin.setFirstname(trans.transliterate_din(md.getFirstname()));
 				mdDin.setLastname(trans.transliterate_din(md.getLastname()));
 				mdIso.setFirstname(trans.transliterate_iso(md.getFirstname()));
@@ -1784,7 +1716,6 @@ public class Metadaten {
 	 */
 	public String AddAdditionalOpacPpns() {
 		ImportOpac iopac = new ImportOpac();
-		// Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
 		StringTokenizer tokenizer = new StringTokenizer(this.additionalOpacPpns, "\r\n");
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
@@ -1797,7 +1728,6 @@ public class Metadaten {
 					Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
 				}
 			} catch (Exception e) {
-				// Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
 			}
 		}
 		return "Metadaten3links";
@@ -1838,8 +1768,7 @@ public class Metadaten {
 					Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
 				}
 			} catch (Exception e) {
-				// myLogger.error(e);
-				// Helper.setMeldung(null, "Opac-Fehler: ", e.getMessage());
+
 			}
 		}
 		MetadatenalsBeanSpeichern(this.myDocStruct);
@@ -1965,8 +1894,6 @@ public class Metadaten {
 			SeitenStartUndEndeSetzen();
 		} else {
 			Helper.setFehlerMeldung("Selected image(s) unavailable");
-			// Helper.setFehlerMeldung("suggestFehler","",
-			// "Selected image(s) unavailable");
 		}
 	}
 
@@ -1978,15 +1905,11 @@ public class Metadaten {
 			return "SperrungAbgelaufen";
 		}
 		int anzahlAuswahl = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + 1;
-		// myLogger.debug("Anzahl der gewählten Seiten: " + anzahlAuswahl);
 		if (anzahlAuswahl > 0) {
 			/* alle bisher zugewiesenen Seiten entfernen */
 			this.myDocStruct.getAllToReferences().clear();
 			int zaehler = 0;
 			while (zaehler < anzahlAuswahl) {
-				// alleSeitenAuswahl[zaehler]=
-				// String.valueOf(Integer.parseInt(alleSeitenAuswahl_ersteSeite)
-				// + zaehler);
 				this.myDocStruct.addReferenceTo(this.alleSeitenNeu[Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + zaehler].getMd()
 						.getDocStruct(), "logical_physical");
 				zaehler++;
@@ -2073,7 +1996,6 @@ public class Metadaten {
 		/* alle markierten Seiten durchlaufen */
 		for (int i = 0; i < this.alleSeitenAuswahl.length; i++) {
 			int aktuelleID = Integer.parseInt(this.alleSeitenAuswahl[i]);
-			// myLogger.info(alleSeitenNeu[aktuelleID].getWert());
 
 			boolean schonEnthalten = false;
 
@@ -2107,9 +2029,7 @@ public class Metadaten {
 	 */
 	public String SeitenWeg() {
 		for (int i = 0; i < this.structSeitenAuswahl.length; i++) {
-			// myLogger.info(structSeitenAuswahl[i]);
 			int aktuelleID = Integer.parseInt(this.structSeitenAuswahl[i]);
-			// myLogger.info(structSeitenNeu[aktuelleID].getWert());
 			this.myDocStruct.removeReferenceTo(this.structSeitenNeu[aktuelleID].getMd().getDocStruct());
 		}
 		StructSeitenErmitteln(this.myDocStruct);
@@ -2307,12 +2227,10 @@ public class Metadaten {
 	}
 
 	public SelectItem[] getAlleSeiten() {
-		// TODO fix me
 		return this.alleSeiten;
 	}
 
 	public SelectItem[] getStructSeiten() {
-		// TODO wieder einkommentieren
 		if (this.structSeiten.length > 0 && this.structSeiten[0] == null) {
 			return new SelectItem[0];
 		} else {
@@ -2610,9 +2528,6 @@ public class Metadaten {
 		while (iterator.hasNext()) {
 			String elem = iterator.next();
 			if (elem != null && elem.contains(pref) || "".equals(pref)) {
-				// if ((elem != null &&
-				// elem.toLowerCase().indexOf(pref.toLowerCase()) == 0) ||
-				// "".equals(pref)) {
 				result.add(elem);
 			}
 		}

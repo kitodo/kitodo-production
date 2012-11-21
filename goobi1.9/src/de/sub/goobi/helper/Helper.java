@@ -198,10 +198,7 @@ public class Helper implements Serializable, Observer {
 				// myLogger.error(meldung + " " + beschreibung);
 			}
 			return;
-		}
-		// ResourceBundle bundle = ResourceBundle.getBundle("messages.messages",
-		// context.getViewRoot().getLocale());
-		String msg = "";
+		}		String msg = "";
 		String beschr = "";
 		Locale language = Locale.ENGLISH;
 		SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("#{SpracheForm}");
@@ -256,13 +253,7 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	// public static Object getManagedBean(String name) {
-	// FacesContext context = FacesContext.getCurrentInstance();
-	// Object obj =
-	// context.getApplication().getVariableResolver().resolveVariable(context,
-	// name);
-	// return obj;
-	// }
+	
 	public static Object getManagedBeanValue(String expr) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context == null) {
@@ -437,6 +428,7 @@ public class Helper implements Serializable, Observer {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
 		if (FacesContext.getCurrentInstance() != null) {
+			@SuppressWarnings("unchecked")
 			Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 			while (polyglot.hasNext()) {
 				Locale language = polyglot.next();
@@ -472,7 +464,6 @@ public class Helper implements Serializable, Observer {
 	public static String getTranslation(String dbTitel) {
 		// running instance of ResourceBundle doesn't respond on user language
 		// changes, workaround by instanciating it every time
-		// SprachbundleLaden();
 
 		Locale desiredLanguage = null;
 		try {
@@ -601,7 +592,6 @@ public class Helper implements Serializable, Observer {
 		return true;
 	}
 
-	// WELLCOME
 	/**
 	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
@@ -648,9 +638,7 @@ public class Helper implements Serializable, Observer {
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
-			// String suffix = ConfigMin.getParameter("ImageSuffix",
-			// "\\.[Tt][Ii][Ff][Ff]?");
-			// return name.matches(prefix + suffix);
+
 			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {
@@ -661,8 +649,6 @@ public class Helper implements Serializable, Observer {
 				fileOk = true;
 			} else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
 				fileOk = true;
-				// } else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
-				// fileOk = true;
 			}
 			return fileOk;
 		}

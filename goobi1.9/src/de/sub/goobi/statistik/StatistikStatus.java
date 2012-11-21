@@ -47,7 +47,6 @@ public class StatistikStatus {
 				/* prüfen, ob der Schritt schon erfasst wurde, wenn ja hochzählen */
 				String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
 					.getTitel());
-				//               if (kurztitel.length()>60) kurztitel = kurztitel.substring(0,60) + "...";
 				if (dataset.getIndex(kurztitel) != -1) {
 					dataset.setValue(kurztitel, dataset.getValue(kurztitel).intValue() + 1);
 				} else {

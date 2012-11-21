@@ -295,24 +295,14 @@ public class BatchStepHelper {
 				this.containers.put(pt.getContainer(), plo);
 			}
 		}
-		// for (ProcessProperty pt : this.processPropertyList) {
-		// if (!this.containers.keySet().contains(pt.getContainer())) {
-		// this.containers.put(pt.getContainer(), 1);
-		// } else {
-		// this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
-		// }
-		// }
+
 		for (Prozess p : pList) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 				if (!this.containers.keySet().contains(pe.getContainer())) {
 					this.containers.put(pe.getContainer(), null);
-					// } else {
-					// this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
 			}
 		}
-
-		// Collections.sort(this.containers);
 	}
 
 	public Map<Integer, PropertyListObject> getContainers() {
@@ -355,7 +345,6 @@ public class BatchStepHelper {
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-		// int currentContainer = this.processProperty.getContainer();
 
 		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
@@ -499,9 +488,7 @@ public class BatchStepHelper {
 				}
 			}
 			if (temp != null) {
-				// Schritt temp = this.stepDAO.get(this.currentStep.getId());
 				temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-				// if (temp.getPrioritaet().intValue() == 0)
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
 				Schritteigenschaft se = new Schritteigenschaft();
@@ -534,7 +521,6 @@ public class BatchStepHelper {
 				for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 					Schritt step = iter.next();
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-					// if (step.getPrioritaet().intValue() == 0)
 					step.setCorrectionStep();
 					step.setBearbeitungsende(null);
 					Schritteigenschaft seg = new Schritteigenschaft();
@@ -544,13 +530,11 @@ public class BatchStepHelper {
 					seg.setType(PropertyType.messageImportant);
 					seg.setCreationDate(new Date());
 					step.getEigenschaften().add(seg);
-					// this.stepDAO.save(step);
 				}
 			}
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			// this.pdao.save(this.currentStep.getProzess());
 		} catch (DAOException e) {
 		}
 	}
@@ -580,11 +564,8 @@ public class BatchStepHelper {
 	}
 
 	public String SolveProblemForSingle() {
-		// for (Schritt s : this.steps) {
-		// this.currentStep = s;
 		solveProblem();
 		saveStep();
-		// }
 		this.solutionMessage = "";
 		this.mySolutionStep = "";
 
@@ -624,7 +605,6 @@ public class BatchStepHelper {
 					temp = s;
 				}
 			}
-			// Schritt temp = this.stepDAO.get(this.currentStep.getId());
 			if (temp != null) {
 				/*
 				 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
@@ -643,7 +623,6 @@ public class BatchStepHelper {
 						step.setBearbeitungsstatusEnum(StepStatus.OPEN);
 						step.setCorrectionStep();
 						step.setBearbeitungsende(null);
-						// step.setBearbeitungsbeginn(null);
 						step.setBearbeitungszeitpunkt(now);
 					}
 					Schritteigenschaft seg = new Schritteigenschaft();
@@ -663,7 +642,6 @@ public class BatchStepHelper {
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			// this.pdao.save(this.currentStep.getProzess());
 		} catch (DAOException e) {
 		}
 	}
@@ -816,10 +794,6 @@ public class BatchStepHelper {
 	}
 
 	public String BatchDurchBenutzerAbschliessen() {
-		// for (ProcessProperty pp : this.processPropertyList) {
-		// this.processProperty = pp;
-		// saveCurrentPropertyForAll();
-		// }
 
 		for (Schritt s : this.steps) {
 			if (s.getValidationPlugin() != null && s.getValidationPlugin().length() > 0) {
@@ -832,7 +806,6 @@ public class BatchStepHelper {
 
 			if (s.isTypImagesSchreiben()) {
 				try {
-					// s.getProzess().setSortHelperImages(FileUtils.getNumberOfFiles(new File(s.getProzess().getImagesOrigDirectory())));
 					HistoryAnalyserJob.updateHistory(s.getProzess());
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("Error while calculation of storage and images", e);

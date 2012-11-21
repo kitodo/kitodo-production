@@ -97,7 +97,6 @@ public class SearchForm {
 			this.stepstatus.add(s);
 		}
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
-		// long start = System.currentTimeMillis();
 		Session session = Helper.getHibernateSession();
 
 		// projects
@@ -161,12 +160,7 @@ public class SearchForm {
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
 		crit.addOrder(Order.asc("vorname"));
-		// this.user.add(Helper.getTranslation("notSelected"));
 		this.user.addAll(crit.list());
-		// long end = System.currentTimeMillis();
-		// System.out.print("dauer: ");
-		// System.out.print(end-start);
-
 	}
 
 	public List<String> getProjects() {
@@ -414,10 +408,8 @@ public class SearchForm {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		SelectItem and = new SelectItem("", Helper.getTranslation("AND"));
 		SelectItem not = new SelectItem("-", Helper.getTranslation("NOT"));
-		// SelectItem or = new SelectItem("^", Helper.getTranslation("OR"));
 		answer.add(and);
 		answer.add(not);
-		// answer.add(or);
 		return answer;
 	}
 

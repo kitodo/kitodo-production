@@ -36,7 +36,6 @@ import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
 
-//TODO: Use a correct comment here
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
  * mit dessen Eigenschaften und erlaubt die Bearbeitung 
@@ -58,7 +57,6 @@ public class MetaPerson {
     * Allgemeiner Konstruktor ()
     */
    public MetaPerson(Person p, int inID, Prefs inPrefs, DocStruct inStruct) {
-      //      myLogger.debug("MetaPerson p() - Konstruktor: Start -" + inID);
       this.myPrefs = inPrefs;
       this.p = p;
       this.identifier = inID;

@@ -268,19 +268,10 @@ public class BatchProcessHelper {
 				this.containers.put(pt.getContainer(), plo);
 			}
 		}
-//		for (ProcessProperty pt : this.processPropertyList) {
-//			if (!this.containers.keySet().contains(pt.getContainer())) {
-//				this.containers.put(pt.getContainer(), 1);
-//			} else {
-//				this.containers.put(pt.getContainer(), this.containers.get(pt.getContainer()) + 1);
-//			}
-//		}
 		for (Prozess p : this.processes) {
 			for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 				if (!this.containers.keySet().contains(pe.getContainer())) {
 					this.containers.put(pe.getContainer(), null);
-//				} else {
-//					this.containers.put(pe.getContainer(), this.containers.get(pe.getContainer()) + 1);
 				}
 			}
 		}
@@ -331,7 +322,6 @@ public class BatchProcessHelper {
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-		// int currentContainer = this.processProperty.getContainer();
 
 		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {

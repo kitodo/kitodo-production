@@ -32,10 +32,7 @@ import java.util.List;
 
 public class Record {
 
-//	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
-//	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
-//	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
-	
+
 	private List<String> collections = new ArrayList<String>();
 	private String data = "";
 	private String id = "";
@@ -76,25 +73,5 @@ public class Record {
 
 	public List<String> getCollections() {
 		return this.collections;
-	}
-
-//	public List<Prozesseigenschaft> getProcessProperties() {
-//		return this.processProperties;
-//	}
-//	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
-//		this.processProperties = processProperties;
-//	}
-//	public List<Werkstueckeigenschaft> getWorkProperties() {
-//		return this.workProperties;
-//	}
-//	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
-//		this.workProperties = workProperties;
-//	}
-//	public List<Vorlageeigenschaft> getTemplateProperties() {
-//		return this.templateProperties;
-//	}
-//	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
-//		this.templateProperties = templateProperties;
-//	}
-	
+	}	
 }

@@ -42,7 +42,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 
-//TODO: Why doesn't this implemets Cloneable?
 public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	/**
@@ -63,22 +62,6 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	@Override
 	public Criteria getCriteria() {
-		// myCriteria is a WeakReference ... both cases needs to be evaluated,
-		// after gc the WeakReference
-		// object is still referenced but not the object referenced by it
-		// if (myCriteria == null) {
-		// if (this.myIds == null) {
-		// if (this.projectID != null) {
-		// myCriteria =
-		// createCriteriaFromProjectID();
-		// }
-		// } else {
-		// myCriteria =
-		// createCriteriaFromIDList();
-		// }
-		// }
-		//
-		// return myCriteria;
 
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (myIds == null) {
@@ -108,7 +91,6 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 	private PaginatingCriteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
-		// crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}

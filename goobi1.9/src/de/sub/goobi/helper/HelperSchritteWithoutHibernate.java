@@ -29,7 +29,6 @@ package de.sub.goobi.helper;
  */
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +58,6 @@ import de.sub.goobi.persistence.apache.StepObject;
 
 
 public class HelperSchritteWithoutHibernate {
-	// Helper help = new Helper();
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
 	public final static String DIRECTORY_PREFIX = "orig_";
 
@@ -332,20 +330,4 @@ public class HelperSchritteWithoutHibernate {
 
 		StepManager.updateStep(step);
 	}
-
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws SQLException {
-		Date d = new Date(System.currentTimeMillis());
-		d.setMonth(5);
-		d.setDate(4);
-		System.out.println(d.getTime());
-
-		// DbHelper helper = DbHelper.getInstance();
-		// List<StepObject> steps = DbHelper.getStepsForProcess(1165);
-		// for (StepObject so : steps) {
-		// logger.error(so.getTitle());
-		// }
-
-	}
-
 }

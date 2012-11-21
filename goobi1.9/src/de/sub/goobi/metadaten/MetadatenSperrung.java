@@ -153,11 +153,4 @@ public class MetadatenSperrung implements Serializable {
 					.get("Lebenszeichen"))) / 1000;
 		}
 	}
-
-//	/* =============================================================== */
-//
-//	public static HashMap<Integer, HashMap<String, String>> getSperrungen() {
-//		return sperrungen;
-//	}
-
 }

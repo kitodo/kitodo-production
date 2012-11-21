@@ -114,7 +114,6 @@ public class BeanHelper {
 			 * --------------------------------*/
 			Schritt stepneu = new Schritt();
 			stepneu.setTypAutomatisch(step.isTypAutomatisch());
-//			stepneu.setAllScripts(step.getAllScripts());
 			stepneu.setScriptname1(step.getScriptname1());
 			stepneu.setScriptname2(step.getScriptname2());
 			stepneu.setScriptname3(step.getScriptname3());
@@ -142,7 +141,6 @@ public class BeanHelper {
 			stepneu.setBearbeitungsstatusEnum(step.getBearbeitungsstatusEnum());
 			stepneu.setReihenfolge(step.getReihenfolge());
 			stepneu.setTitel(step.getTitel());
-			//         stepneu.setTyp(step.getTyp());
 			stepneu.setHomeverzeichnisNutzen(step.getHomeverzeichnisNutzen());
 			stepneu.setProzess(prozessKopie);
 			

@@ -49,7 +49,6 @@ public class Catalogue {
 
 	//dir of local iktLists
 	private static final String DIR = "";
-//		"/home/jens/Desktop/workspace/Search/WEB-INF/src/de/unigoettingen/sub/search/opac/";
 	
 	/** The url path part of the search item list on the server*/
     private static final String IKTLIST = "/XML=1.0/IKTLIST";
@@ -197,7 +196,6 @@ public class Catalogue {
     	String requestUrl = "http://"+ this.serverAddress + ":" + this.port + "/" + 
     		this.dataBase + IKTLIST;
             if (this.verbose){
-//                System.err.println("Loading the IKTLIST failed, requesting it from opac");            
                 System.out.println("Retrieving IKTLIST for opac " + 
                 		this.description + ": " + requestUrl);
             }

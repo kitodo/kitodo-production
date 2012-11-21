@@ -60,10 +60,7 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Getter und
-	 * Setter ## #####################################################
-	 * ####################################################
+	 * Getter und Setter
 	 */
 
 	public Integer getId() {

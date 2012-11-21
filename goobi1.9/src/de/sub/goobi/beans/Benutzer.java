@@ -166,17 +166,10 @@ public class Benutzer implements Serializable {
 		if (this.tabellengroesse == null) {
 			return Integer.valueOf(10);
 		}
-		// else if (this.tabellengroesse > 100) {
-		// return Integer.valueOf(100);
-		// }
-
 		return this.tabellengroesse;
 	}
 
 	public void setTabellengroesse(Integer tabellengroesse) {
-		// if (tabellengroesse > 100) {
-		// tabellengroesse = Integer.valueOf(100);
-		// }
 		this.tabellengroesse = tabellengroesse;
 	}
 
@@ -383,7 +376,6 @@ public class Benutzer implements Serializable {
 				Ldap myldap = new Ldap();
 				return myldap.isUserPasswordCorrect(this, inPasswort);
 			} else {
-				// return passwort.equals(inPasswort);
 				DesEncrypter encrypter = new DesEncrypter();
 				String encoded = encrypter.encrypt(inPasswort);
 				return this.passwort.equals(encoded);
@@ -522,15 +514,6 @@ public class Benutzer implements Serializable {
 	 */
 
 	public List<String> getFilters() {
-//		List<String> filters = new ArrayList<String>();
-//		if (this.getEigenschaften() != null) {
-//			for (Benutzereigenschaft hgp : this.getEigenschaftenList()) {
-//				if (hgp.getTitel().equals("_filter")) {
-//					filters.add(hgp.getWert());
-//				}
-//			}
-//		}
-//		return filters;
 		return UserManager.getFilters(this.id);
 	}
 
@@ -542,24 +525,6 @@ public class Benutzer implements Serializable {
 	 */
 
 	public void addFilter(String inFilter) {
-//		try {
-//			Hibernate.initialize(this.eigenschaften);
-//		} catch (HibernateException e) {
-//		}
-//		if (this.eigenschaften == null) {
-//			this.eigenschaften = new HashSet<Benutzereigenschaft>();
-//		}
-//		// no double entries here
-//		for (Benutzereigenschaft be : this.eigenschaften) {
-//			if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
-//				return;
-//			}
-//		}
-//		Benutzereigenschaft be = new Benutzereigenschaft();
-//		be.setBenutzer(this);
-//		be.setTitel("_filter");
-//		be.setWert(inFilter);
-//		this.eigenschaften.add(be);
 		UserManager.addFilter(this.id, inFilter);
 	}
 
@@ -570,18 +535,6 @@ public class Benutzer implements Serializable {
 	 *            the filter to remove
 	 */
 	public void removeFilter(String inFilter) {
-//		try {
-//			Hibernate.initialize(this.eigenschaften);
-//		} catch (HibernateException e) {
-//		}
-//		if (this.eigenschaften != null) {
-//			for (Benutzereigenschaft be : this.eigenschaften) {
-//				if (be.getTitel().equals("_filter") && be.getWert().equals(inFilter)) {
-//					this.eigenschaften.remove(be);
-//					return;
-//				}
-//			}
-//		}
 		UserManager.removeFilter(this.id, inFilter);
 	}
 }

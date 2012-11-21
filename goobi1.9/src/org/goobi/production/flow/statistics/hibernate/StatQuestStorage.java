@@ -132,7 +132,6 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 				//setting row name with date/time extraction based on the group
 
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
-				//dataRow.setName(new Converter(objArr[2]).getString());
 
 				dataRow.addValue(Helper.getTranslation("storageDifference"),
 						(new Converter(objArr[0]).getGB()));

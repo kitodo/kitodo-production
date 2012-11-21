@@ -334,10 +334,7 @@ public class ExportDms extends ExportMets {
 	public void fulltextDownload(Prozess myProzess, File benutzerHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
-	
-//		Helper help = new Helper();
-//		File tifOrdner = new File(myProzess.getImagesTifDirectory());
-
+		
 		// download sources
 		File sources = new File(myProzess.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
@@ -377,15 +374,6 @@ public class ExportDms extends ExportMets {
 	public void imageDownload(Prozess myProzess, File benutzerHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
-		/*
-		 * -------------------------------- erstmal alle Filter
-		 * --------------------------------
-		 */
-		// FilenameFilter filterTifDateien = new FilenameFilter() {
-		// public boolean accept(File dir, String name) {
-		// return name.endsWith(".tif");
-		// }
-		// };
 
 		/*
 		 * -------------------------------- dann den Ausgangspfad ermitteln

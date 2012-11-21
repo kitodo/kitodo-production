@@ -103,7 +103,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 */
 
 	public Boolean isDataComplete() {
-		// this.resetErrorList();
 		Boolean error = false;
 		if (this.timeFilterFrom == null) {
 			logger.debug("time from is not set");
@@ -126,7 +125,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 			error = true;
 		}
 		return !error;
-		// return !this.getHasErrors();
 	}
 
 	public void setReferenceCurve(Boolean flagIn) {
@@ -174,8 +172,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * generate referenceCurve
 	 */
 	private DataRow referenceCurve(DataRow referenceRow) {
-		DataRow orientationRow = requiredOutput(); // new
-													// DataRow(Helper.getTranslation("ReferenceCurve"));
+		DataRow orientationRow = requiredOutput(); 
 		DataRow dataRow = new DataRow(Helper.getTranslation("ReferenceCurve"));
 		dataRow.setShowPoint(false);
 		// may have to be calculated differently
@@ -185,10 +182,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		Double remainingOutput = this.requiredDailyOutput * this.timeGrouping.getDayFactor() * count;
 		Double remainingAverageOutput = remainingOutput / count;
 
-		// DateTime from = new DateTime(this.timeFilterFrom);
-		// DateTime today = new DateTime(new Date());
-		//
-		// Days.daysBetween(from, today);
+	
 
 		// the way this is calculated is by subtracting each value from the
 		// total remaining output
@@ -441,11 +435,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		// now removing headerRow
 		if (headerRow != null) {
 			dtbl.removeDataRow(headerRow);
-			// if a row showing the total count over all intervalls should be
-			// added to the grid
-			// the folloing line can be commented in (adding the header to the
-			// bottom)
-			// dtbl.addDataRow(headerRow);
 		}
 
 		return dtbl;

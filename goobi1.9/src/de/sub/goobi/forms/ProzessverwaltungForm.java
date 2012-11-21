@@ -136,7 +136,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	private Werkstueckeigenschaft myWerkstueckEigenschaft;
 	private Benutzergruppe myBenutzergruppe;
 	private ProzessDAO dao = new ProzessDAO();
-	// private SchrittDAO stepdao = new SchrittDAO();
 	private String modusAnzeige = "aktuell";
 	private String modusBearbeiten = "";
 	private String goobiScript;
@@ -304,13 +303,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String Loeschen() {
 		deleteMetadataDirectory();
 		try {
-			// Batch b = this.myProzess.getBatch();
-			// if (b != null) {
-			// b.removeProcessFromBatch(this.myProzess);
-			// if (b.getBatchList().isEmpty()) {
-			// new BatchDAO().remove(b);
-			// }
-			// }
 			this.dao.remove(this.myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete ", e);
@@ -350,20 +342,11 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public String FilterAktuelleProzesse() {
-		// Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 
 		try {
-			// if (filter.toLowerCase().startsWith("lucene")) {
-			// myFilteredDataSource = new LuceneStepFilter();
-			// myFilteredDataSource.setFilter(filter.substring("lucene".length()));
-			// } else {
-			// this filter was implemented in its own class now as
-			// IEvaluableFilter
-
 			this.myFilteredDataSource = new UserProcessesFilter();
-			// }
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			if (!this.showClosedProcesses) {
 				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
@@ -388,11 +371,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			this.myFilteredDataSource = new UserTemplatesFilter();
 			Criteria crit = this.myFilteredDataSource.getCriteria();
-			// if (!this.showClosedProcesses) {
-			// crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus",
-			// "100000000")));
-			// }
-
 			if (!this.showArchivedProjects) {
 				crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
 			}
@@ -422,7 +400,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * Anzeige der Sammelbände filtern
 	 */
 	public String FilterAlleStart() {
-		// Helper.createNewHibernateSession();
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		/*
@@ -437,27 +414,15 @@ public class ProzessverwaltungForm extends BasisForm {
 			// for statistics, we will have to hold a reference to the instance
 			// of
 			// UserDefinedFilter
-			// if (filter.toLowerCase().startsWith("lucene")) {
-			// myFilteredDataSource = new
-			// LuceneFilter(filter.substring("lucene".length()));
-			// } else {
+		
 			this.myFilteredDataSource = new UserDefinedFilter(this.filter);
-			// myFilteredDataSource = new UserProjectFilter(14);
-			// }
-
+		
 			// set observable to replace helper.setMessage
 			this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
 
 			// // calling the criteria as the result of the filter
 			Criteria crit = this.myFilteredDataSource.getCriteria();
-			// myFilteredDataSource = new UserDefinedFilter(getFilter());
-			// // set observable to replace helper.setMessage
-			// myFilteredDataSource.getObservable().addObserver(
-			// new Helper().createObserver());
-			//
-			// // calling the criteria as the result of the filter
-			// Criteria crit = myFilteredDataSource.getCriteria();
-
+			
 			// first manipulation of the created criteria
 
 			/* nur die Vorlagen oder alles */
@@ -479,10 +444,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				/* noch sortieren */
 				sortList(crit, true);
 			}
-			/* Debugging */
-			// for (Iterator it = crit.list().iterator(); it.hasNext();) {
-			// Prozess p = (Prozess) it.next();
-			// }
+
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
@@ -767,9 +729,6 @@ public class ProzessverwaltungForm extends BasisForm {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("An error occured while trying to export METS file for: " + this.myProzess.getTitel(), e);
-			// Helper.setFehlerMeldung(
-			// "An error occured while trying to export METS file for: "
-			// + myProzess.getTitel(), e);
 			logger.error("ExportMETS error", e);
 		}
 	}
@@ -977,23 +936,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				}
 				break;
 			}
-			// new HelperSchritte().updateProcessStatus(proz.getId());
 		}
-
-		// for (Schritt step : proz.getSchritteList()) {
-		//
-		// if (step.getBearbeitungsstatusEnum() != StepStatus.DONE) {
-		// step.setBearbeitungsstatusUp();
-		// step.setEditTypeEnum(StepEditType.ADMIN);
-		// if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-		// new HelperSchritte().SchrittAbschliessen(step, false);
-		// } else {
-		// HelperSchritte.updateEditing(step);
-		// }
-		// break;
-		// }
-		// }
-		// this.dao.save(proz);
 	}
 
 	private void debug(String message, List<Schritt> bla) {
@@ -1003,8 +946,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void stepStatusDown(Prozess proz) throws DAOException {
-		// debug("proz.getSchritteList: ", proz.getSchritteList());
-
 		List<Schritt> tempList = new ArrayList<Schritt>(proz.getSchritteList());
 		debug("templist: ", tempList);
 
@@ -1012,10 +953,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		debug("reverse: ", tempList);
 
 		for (Schritt step : tempList) {
-			// logger.warn(step.getTitel());
 			if (proz.getSchritteList().get(0) != step && step.getBearbeitungsstatusEnum() != StepStatus.LOCKED) {
-				// logger.error("passt: " + step.getTitel() + "   " +
-				// step.getReihenfolge());
 				step.setEditTypeEnum(StepEditType.ADMIN);
 				mySchritt.setBearbeitungszeitpunkt(new Date());
 				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -1137,7 +1075,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMySchrittReload(Schritt mySchritt) {
-		// Helper.getHibernateSession();
 		this.mySchritt = mySchritt;
 	}
 
@@ -1146,7 +1083,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		// Helper.getHibernateSession();
 		this.mySchrittEigenschaft = mySchrittEigenschaft;
 	}
 
@@ -1159,7 +1095,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyVorlageReload(Vorlage myVorlage) {
-		// Helper.getHibernateSession();
 		this.myVorlage = myVorlage;
 	}
 
@@ -1168,7 +1103,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyVorlageEigenschaft(Vorlageeigenschaft myVorlageEigenschaft) {
-		// Helper.getHibernateSession();
 		this.myVorlageEigenschaft = myVorlageEigenschaft;
 	}
 
@@ -1181,7 +1115,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyWerkstueckReload(Werkstueck myWerkstueck) {
-		// Helper.getHibernateSession();
 		this.myWerkstueck = myWerkstueck;
 	}
 
@@ -1190,7 +1123,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public void setMyWerkstueckEigenschaft(Werkstueckeigenschaft myWerkstueckEigenschaft) {
-		// Helper.getHibernateSession();
 		this.myWerkstueckEigenschaft = myWerkstueckEigenschaft;
 	}
 
@@ -1223,15 +1155,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		return Reload();
 	}
 
-	public void setReload(String bla) {
-		// Reload();
-	}
-
 	public String Reload() {
-		// Helper.createNewHibernateSession();
 		if (this.mySchritt != null && this.mySchritt.getId() != null) {
 			try {
-				// this.mySchritt = this.stepdao.load(this.mySchritt.getId());
 				Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
 				logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
@@ -1239,8 +1165,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
 			try {
-				// this.myProzess = this.dao.load(this.myProzess.getId());
-
 				Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
 				logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
@@ -1503,9 +1427,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	 * @author Wulf
 	 */
 	public String getResetStatistic() {
-		// if (!showStatistics) {
-		// statisticsManager = null;
-		// }
 		this.showStatistics = false;
 		return "";
 	}
@@ -1672,7 +1593,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (!facesContext.getResponseComplete()) {
 			String OutputFileName = "export.xml";
 			/*
-			 * -------------------------------- Vorbereiten der Header-Informationen --------------------------------
+			 * Vorbereiten der Header-Informationen
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
@@ -1817,7 +1738,6 @@ public class ProzessverwaltungForm extends BasisForm {
 					table.setSpacingBefore(20);
 					for (int i = 1; i < rowList.size(); i++) {
 
-						// StringBuffer sb = new StringBuffer();
 						List<HSSFCell> row = rowList.get(i);
 						for (int j = 0; j < row.size(); j++) {
 							HSSFCell myCell = row.get(j);
@@ -1825,7 +1745,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
 							String stringCellValue = myCell.toString();
 							table.addCell(stringCellValue);
-							// sb.append(stringCellValue);
 						}
 
 					}
@@ -1940,15 +1859,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		} catch (Exception e) {
 			logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
 		}
-		// this.dao.refresh(this.myProzess);
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
-		// for (ProcessProperty pt : this.processPropertyList) {
-		// if (!this.containers.contains(pt.getContainer())) {
-		// this.containers.add(pt.getContainer());
-		// }
-		// }
-		// Collections.sort(this.containers);
+
 		for (ProcessProperty pt : this.processPropertyList) {
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
@@ -2116,7 +2029,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
-		// int currentContainer = this.processProperty.getContainer();
 
 		if (this.container != null && this.container > 0) {
 			for (ProcessProperty pp : this.processPropertyList) {
@@ -2177,49 +2089,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		loadProcessProperties();
 
 		return "";
-
-		// Integer currentContainer = this.processProperty.getContainer();
-		// List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
-		// // search for all properties in container
-		// if (currentContainer != 0) {
-		// for (ProcessProperty pt : this.processPropertyList) {
-		// if (pt.getContainer() == currentContainer) {
-		// plist.add(pt);
-		// }
-		// }
-		// } else {
-		// plist.add(this.processProperty);
-		// }
-		// int newContainerNumber = 0;
-		// if (currentContainer > 0) {
-		// newContainerNumber++;
-		// // find new unused container number
-		// boolean search = true;
-		// while (search) {
-		// if (!this.containers.contains(newContainerNumber)) {
-		// search = false;
-		// } else {
-		// newContainerNumber++;
-		// }
-		// }
-		// }
-		// // clone properties
-		// for (ProcessProperty pt : plist) {
-		// ProcessProperty newProp = pt.getClone(newContainerNumber);
-		// if (newProp.getProzesseigenschaft() == null) {
-		// Prozesseigenschaft pe = new Prozesseigenschaft();
-		// pe.setProzess(this.myProzess);
-		// newProp.setProzesseigenschaft(pe);
-		// this.myProzess.getEigenschaften().add(pe);
-		// }
-		//
-		// this.processPropertyList.add(newProp);
-		// this.processProperty = newProp;
-		// saveCurrentProperty();
-		// }
-		// loadProcessProperties();
-		//
-		// return "";
 	}
 
 	public List<ProcessProperty> getContainerlessProperties() {
@@ -2239,13 +2108,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		ProcessProperty pp = new ProcessProperty();
 		pp.setType(Type.TEXT);
 		pp.setContainer(0);
-		// Prozesseigenschaft pe = new Prozesseigenschaft();
-		// pe.setProzess(this.myProzess);
-		// this.myProzess.getEigenschaften().add(pe);
-		// pp.setProzesseigenschaft(pe);
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
-		// saveProcessProperties();
 	}
 
 }

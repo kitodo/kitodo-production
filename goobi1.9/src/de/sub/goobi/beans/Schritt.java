@@ -59,7 +59,6 @@ public class Schritt implements Serializable {
 	private Date bearbeitungsende;
 	private Integer editType;
 	private Benutzer bearbeitungsbenutzer;
-	// private Integer typ;
 	private short homeverzeichnisNutzen;
 
 	private boolean typMetadaten = false;
@@ -109,8 +108,7 @@ public class Schritt implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter
 	 */
 
 	public Date getBearbeitungsbeginn() {
@@ -325,14 +323,6 @@ public class Schritt implements Serializable {
 		this.titel = titel;
 	}
 
-	// public Integer getTyp() {
-	// return typ;
-	// }
-	//
-	// public void setTyp(Integer typ) {
-	// this.typ = typ;
-	// }
-
 	public boolean isPanelAusgeklappt() {
 		return this.panelAusgeklappt;
 	}
@@ -369,8 +359,7 @@ public class Schritt implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 *  Helper
 	 */
 
 	public int getEigenschaftenSize() {
@@ -570,8 +559,7 @@ public class Schritt implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * Helper
 	 */
 
 	/**
@@ -804,13 +792,9 @@ public class Schritt implements Serializable {
 		Integer batchNumber = this.prozess.getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-//			UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-//			userdefined.setFilterModes(false, false);
-//			userdefined.setFilter("");
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", this.titel));
-
 			// only steps with same batchid
 			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));

@@ -224,7 +224,6 @@ public class JobCreation {
 								for (File file : imagedir.listFiles()) {
 									FileUtils.moveFile(file, new File(p.getImagesDirectory() + imagedir.getName(), file.getName()));
 								}
-								// FileUtils.moveDirectory(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							} else {
 								FileUtils.moveFile(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
 							}

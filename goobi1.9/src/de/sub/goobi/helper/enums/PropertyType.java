@@ -95,7 +95,7 @@ public enum PropertyType {
 
 	@Override
 	public java.lang.String toString() {
-		return this.name(); //.toLowerCase();
+		return this.name(); 
 	}
 
 	public static PropertyType getByName(String inName) {

@@ -127,7 +127,6 @@ public class MetadatenImagesHelper {
 					.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
-				// mdForPath.setType(MDTypeForPath);
 				// TODO: add the possibilty for using other image formats
 				if (SystemUtils.IS_OS_WINDOWS) {
 					mdForPath.setValue("file:/"
@@ -184,7 +183,6 @@ public class MetadatenImagesHelper {
 					MetadataType mdt = this.myPrefs
 							.getMetadataTypeByName("physPageNumber");
 					Metadata mdTemp = new Metadata(mdt);
-					// mdTemp.setType(mdt);
 					mdTemp.setValue(String.valueOf(i + 1));
 					dsPage.addMetadata(mdTemp);
 
@@ -196,7 +194,6 @@ public class MetadatenImagesHelper {
 					mdt = this.myPrefs
 							.getMetadataTypeByName("logicalPageNumber");
 					mdTemp = new Metadata(mdt);
-					// mdTemp.setType(mdt);
 
 					if (defaultPagination.equalsIgnoreCase("arabic")) {
 						mdTemp.setValue(String.valueOf(i + 1));
@@ -211,8 +208,7 @@ public class MetadatenImagesHelper {
 					dsPage.addMetadata(mdTemp);
 					log.addReferenceTo(dsPage, "logical_physical");
 
-					// myLogger.debug("fertig mit Paginierung für Nr. " + i +
-					// " von " + myBildLetztes);
+			
 				} catch (TypeNotAllowedAsChildException e) {
 					logger.error(e);
 				} catch (MetadataTypeNotAllowedException e) {
@@ -229,7 +225,6 @@ public class MetadatenImagesHelper {
 				if (mdts.size() != 1) {
 					throw new SwapException(
 							"found page DocStruct with more or less than 1 pysical pagination");
-					// return myLastImage;
 				}
 				/*
 				 * delete page DocStruct, if physical pagenumber higher than
@@ -351,7 +346,6 @@ public class MetadatenImagesHelper {
 				return false;
 			}
 
-			// ArrayList<String> images = getImageFiles(inProzess);
 			this.myLastImage = dateien.length;
 			if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals(
 					"\\d{8}")) {
@@ -428,7 +422,6 @@ public class MetadatenImagesHelper {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesTifDirectory(true));
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}
@@ -455,7 +448,6 @@ public class MetadatenImagesHelper {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesTifDirectory(true));
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}
@@ -492,7 +484,6 @@ public class MetadatenImagesHelper {
 		File dir;
 		try {
 			dir = new File(myProzess.getImagesDirectory() + directory);
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}
@@ -513,38 +504,4 @@ public class MetadatenImagesHelper {
 			return null;
 		}
 	}
-
-	// /**
-	// * {@link FilenameFilter} for all sort of images
-	// */
-	//
-	// public static FilenameFilter filter = new FilenameFilter() {
-	// @Override
-	// public boolean accept(File dir, String name) {
-	// boolean validImage = false;
-	// // jpeg
-	// if (name.endsWith("jpg") || name.endsWith("JPG") || name.endsWith("jpeg")
-	// || name.endsWith("JPEG")) {
-	// validImage = true;
-	// }
-	// if (name.endsWith(".tif") || name.endsWith(".TIF")) {
-	// validImage = true;
-	// }
-	// // png
-	// if (name.endsWith(".png") || name.endsWith(".PNG")) {
-	// validImage = true;
-	// }
-	// // gif
-	// if (name.endsWith(".gif") || name.endsWith(".GIF")) {
-	// validImage = true;
-	// }
-	// // jpeg2000
-	// if (name.endsWith(".jp2") || name.endsWith(".JP2")) {
-	// validImage = true;
-	// }
-	//
-	// return validImage;
-	// }
-	// };
-
 }

@@ -44,13 +44,6 @@ public class LongRunningTasksForm {
 		return LongRunningTaskManager.getInstance().getTasks();
 	}
 
-	/*
-	 * public void addNewSwapOutTask() throws DAOException { Prozess p = new ProzessDAO().get(118); task = new ProcessSwapOutTask();
-	 * task.initialize(p); LongRunningTaskManager.getInstance().addTask(task); }
-	 * 
-	 * public void addNewSwapInTask() throws DAOException { Prozess p = new ProzessDAO().get(118); task = new ProcessSwapInTask(); task.initialize(p);
-	 * LongRunningTaskManager.getInstance().addTask(task); }
-	 */
 
 	public void addNewMasterTask() {
 		Prozess p = new Prozess();

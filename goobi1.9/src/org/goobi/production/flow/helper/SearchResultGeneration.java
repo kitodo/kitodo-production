@@ -1,4 +1,5 @@
 package org.goobi.production.flow.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -56,7 +57,6 @@ public class SearchResultGeneration {
 
 	@SuppressWarnings("deprecation")
 	public HSSFWorkbook getResult() {
-//		 long start = System.currentTimeMillis();
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
 		Criteria crit = myFilteredDataSource.getCriteria();
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -71,15 +71,12 @@ public class SearchResultGeneration {
 		}
 		Order order = Order.asc("titel");
 		crit.addOrder(order);
-		// 500 results for testing
 		@SuppressWarnings("unchecked")
 		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-//		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(500).list();
 
-		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Search results");
-		
+
 		HSSFRow title = sheet.createRow(0);
 		HSSFCell titleCell1 = title.createCell(0);
 		titleCell1.setCellValue(this.filter);
@@ -93,15 +90,15 @@ public class SearchResultGeneration {
 		titleCell5.setCellValue("");
 		HSSFCell titleCell6 = title.createCell(5);
 		titleCell6.setCellValue("");
-		
+
 		HSSFCell titleCell7 = title.createCell(6);
 		titleCell7.setCellValue("");
 		HSSFCell titleCell8 = title.createCell(7);
 		titleCell8.setCellValue("");
-		
+
 		HSSFCell titleCell9 = title.createCell(8);
 		titleCell9.setCellValue("");
-		
+
 		HSSFRow row0 = sheet.createRow(1);
 		HSSFCell headercell0 = row0.createCell(0);
 		headercell0.setCellValue(Helper.getTranslation("title"));
@@ -120,11 +117,10 @@ public class SearchResultGeneration {
 
 		HSSFCell headercell7 = row0.createCell(7);
 		headercell7.setCellValue(Helper.getTranslation("AltRefNo"));
-	
+
 		HSSFCell headercell8 = row0.createCell(8);
 		headercell8.setCellValue(Helper.getTranslation("b-number"));
-		
-		
+
 		int rowcounter = 2;
 		for (Prozess p : pl) {
 			HSSFRow row = sheet.createRow(rowcounter);
@@ -149,22 +145,19 @@ public class SearchResultGeneration {
 			cell7.setCellValue("");
 			HSSFCell cell8 = row.createCell(8);
 			cell8.setCellValue("");
-			if (p.getEigenschaftenList().size()> 0) {
+			if (p.getEigenschaftenList().size() > 0) {
 				for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
 					if (pe.getTitel().equals("AltRefNo")) {
 						cell7.setCellValue(pe.getWert());
-					}
-					else if (pe.getTitel().equals("b-number")) {
+					} else if (pe.getTitel().equals("b-number")) {
 						cell8.setCellValue(pe.getWert());
 					}
 				}
 			}
 
-
 			rowcounter++;
 		}
-//		 long end = System.currentTimeMillis();
-//		 System.out.println(end - start);
+
 		return wb;
 	}
 }

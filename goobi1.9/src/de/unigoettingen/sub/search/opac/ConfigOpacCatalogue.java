@@ -117,9 +117,7 @@ public class ConfigOpacCatalogue {
 		 * --------------------- aus dem Dom-Node ein JDom-Object machen -------------------
 		 */
 		Document doc = new DOMBuilder().build(myHitlist.getOwnerDocument());
-		// myLogger.debug("executeBeautifier(Node)" + doc.getRootElement().getName()
-		// + doc.getRootElement().getChildren().size());
-
+	
 		/*
 		 * --------------------- Im JDom-Object alle Felder durchlaufen und die notwendigen Ersetzungen vornehmen -------------------
 		 */
@@ -143,7 +141,6 @@ public class ConfigOpacCatalogue {
 		}
 
 		/* Ausgabe des überarbeiteten Opac-Ergebnisses */
-		// debugMyNode(myHitlist, "D:/temp_opac2.xml");
 		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite()) {
 			debugMyNode(myHitlist, ConfigMain.getParameter("debugFolder") + "/opacBeautifyAfter.xml");
 		}
@@ -155,7 +152,6 @@ public class ConfigOpacCatalogue {
 	 */
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
-		// myLogger.debug("executeBeautifier(Node) - ----------------- " + el.getName());
 		for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
 			Element elementToChange = null;
 			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
@@ -164,13 +160,10 @@ public class ConfigOpacCatalogue {
 			/* von jedem Record jedes Field durchlaufen */
 			List<Element> elements = el.getChildren("field");
 			for (Element field : elements) {
-				// Element field = itField.next();
 				String tag = field.getAttributeValue("tag");
 				/* von jedem Field alle Subfelder durchlaufen */
 				List<Element> subelements = field.getChildren("subfield");
 				for (Element subfield : subelements) {
-					// for (Iterator<Element> itSub = field.getChildren("subfield").iterator(); itSub.hasNext();) {
-					// Element subfield = itSub.next();
 					String subtag = subfield.getAttributeValue("code");
 					String value = subfield.getText();
 

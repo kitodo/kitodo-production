@@ -191,6 +191,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 * @return Criteria
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String, int)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Criteria createAlias(String arg0, String arg1, int arg2) throws HibernateException {
 		return new PaginatingCriteria(this.criteria.createAlias(arg0, arg1, arg2), this.clone.createAlias(arg0, arg1, arg2));
@@ -212,6 +213,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, int)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Criteria createCriteria(String arg0, int arg1) throws HibernateException {
 		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1), this.clone.createCriteria(arg0, arg1));
@@ -235,6 +237,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, java.lang.String, int)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Criteria createCriteria(String arg0, String arg1, int arg2) throws HibernateException {
 		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1, arg2), this.clone.createCriteria(arg0, arg1, arg2));
@@ -393,7 +396,6 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	public Integer count() throws HibernateException {
 		Long ur = (Long) this.clone.uniqueResult();
 		return new Integer(ur.intValue());
-		// return ((Long) this.clone.uniqueResult()).intValue();
 	}
 
 	/**
@@ -407,13 +409,11 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	@Override
 	public Criteria createAlias(String arg0, String arg1, JoinType arg2) throws HibernateException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Criteria createAlias(String arg0, String arg1, JoinType arg2, Criterion arg3) throws HibernateException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

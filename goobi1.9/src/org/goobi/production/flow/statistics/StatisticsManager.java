@@ -241,6 +241,7 @@ public class StatisticsManager implements Serializable {
 	 *            set, if it is an implementation of
 	 *            {@link IStatisticalQuestionLimitedTimeframe}
 	 *************************************************************************************/
+	@SuppressWarnings("incomplete-switch")
 	private void setTimeFrameToStatisticalQuestion(IStatisticalQuestion question) {
 		/* only add a date, if correct interface is implemented here */
 		if (question instanceof IStatisticalQuestionLimitedTimeframe) {
@@ -516,53 +517,4 @@ public class StatisticsManager implements Serializable {
 			return new Locale("de");
 		}
 	}
-
-	// /**
-	// * get List of String for iterating over indizes, which can be used to
-	// * create html-tables, charts or csv-data
-	// *
-	// * @return List of {@link String} of calculated results
-	// *************************************************************************************/
-	// public List<String> getMyDataTableNames() {
-	// return myDataTableNames;
-	// }
-	//
-	// /**
-	// * get List of HtmlTableRenderer for the calculated Datatables
-	// *
-	// * @return List of {@link HtmlTableRenderer} of calculated
-	// HtmlTableRenderer
-	// *************************************************************************************/
-	// public List<HtmlTableRenderer> getMyHtmlRenderer() {
-	// return myHtmlRenderer;
-	// }
-	//
-	// /**
-	// * render given {@link DataTable} as Chart and write it to response stream
-	// *
-	// * @param out
-	// * the {@link OutputStream} where to write
-	// * @param data
-	// * the {@link DataTable} to use for chart generation
-	// * @throws IOException
-	// * if an error occurs while imageIO is writing
-	// *************************************************************************************/
-	// public void renderAsChart(OutputStream out, Object data) throws
-	// IOException {
-	// if (data instanceof Integer) {
-	// ChartRenderer ir = new ChartRenderer();
-	//
-	// if (question.isRendererInverted(ir)) {
-	// ir.setDataTable(myDataTables.get((Integer) data).getDataTableInverted());
-	// } else {
-	// ir.setDataTable(myDataTables.get((Integer) data));
-	// }
-	// ir.setSize(800, 600);
-	// ir.setShowMeanValues(showAverage);
-	// BufferedImage image = (BufferedImage) ir.getRendering();
-	// ImageIO.write(image, "png", out);
-	// }
-	//
-	// }
-
 }

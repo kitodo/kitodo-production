@@ -62,11 +62,9 @@ public class VariableReplacerWithoutHibernate {
 	DigitalDocument dd;
 	Prefs prefs;
 	UghHelper uhelp;
-	// Helper help;
 	// $(meta.abc)
 	private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 	// $(abc)
-	// private final String namespaceOther = "\\$\\([\\w.-]*\\)";
 
 	private ProcessObject process;
 	private StepObject step;
@@ -79,7 +77,6 @@ public class VariableReplacerWithoutHibernate {
 		this.dd = inDigitalDocument;
 		this.prefs = inPrefs;
 		this.uhelp = new UghHelper();
-		// help = new Helper();
 		this.process = p;
 		this.step = s;
 	}
@@ -295,7 +292,6 @@ public class VariableReplacerWithoutHibernate {
 				if (resultFirst == null) {
 					logger.info("Can not replace firstChild-variable for METS: " + metadata);
 					result = "";
-					// help.setFehlerMeldung("Can not replace firstChild-variable for METS: " + metadata);
 				} else {
 					result = resultFirst;
 				}
@@ -305,7 +301,6 @@ public class VariableReplacerWithoutHibernate {
 				if (resultTop == null) {
 					result = "";
 					logger.warn("Can not replace topStruct-variable for METS: " + metadata);
-					// help.setFehlerMeldung("Can not replace topStruct-variable for METS: " + metadata);
 				} else {
 					result = resultTop;
 				}
@@ -319,7 +314,6 @@ public class VariableReplacerWithoutHibernate {
 				} else {
 					result = "";
 					logger.warn("Can not replace variable for METS: " + metadata);
-					// help.setFehlerMeldung("Can not replace variable for METS: " + metadata);
 				}
 				break;
 

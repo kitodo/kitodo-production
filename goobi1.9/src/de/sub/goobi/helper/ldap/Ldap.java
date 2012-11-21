@@ -138,8 +138,6 @@ public class Ldap {
 		// Start TLS
 		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
 			myLogger.debug("use TLS for auth");
-			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
-			// System.setProperty("javax.net.ssl.trustStore", keystore);
 			env = new Hashtable<String, String>();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
@@ -241,8 +239,6 @@ public class Ldap {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (ConfigMain.getBooleanParameter("ldap_useTLS", false)) {
 
-			// String keystore = "/opt/java/64/jre1.6.0_31/lib/security/cacerts";
-			// System.setProperty("javax.net.ssl.trustStore", keystore);
 			env = new Hashtable<String, String>();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, ConfigMain.getParameter("ldap_url"));
@@ -331,7 +327,6 @@ public class Ldap {
 		try {
 			ctx = new InitialDirContext(env);
 			Attributes matchAttrs = new BasicAttributes(true);
-			// matchAttrs.put(new BasicAttribute("uid", inLogin));
 			NamingEnumeration<SearchResult> answer = ctx.search("ou=users,dc=gdz,dc=sub,dc=uni-goettingen,dc=de", matchAttrs);
 			rueckgabe = answer.hasMoreElements();
 
@@ -454,16 +449,10 @@ public class Ldap {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
 			env.put(Context.SECURITY_CREDENTIALS, ConfigMain.getParameter("ldap_adminPassword"));
 
-			// env.put(Context.SECURITY_PRINCIPAL, getUserDN(inBenutzer));
-			// env.put(Context.SECURITY_CREDENTIALS, inOldPassword);
 			try {
 				DirContext ctx = new InitialDirContext(env);
 
-				// /* vorher ausgeben */
-				// Attributes attrs = ctx.getAttributes(ldapUserName);
-				// Attribute la = (Attribute) attrs.get("userPassword");
-				// byte[] passwdhash = (byte[]) la.get(0);
-
+		
 				/*
 				 * -------------------------------- Encryption of password and Base64-Encoding --------------------------------
 				 */
@@ -560,7 +549,6 @@ public class Ldap {
 				// TODO: Let this method really load a keystore if configured
 				// initalize the keystore, if file is available, load the keystore
 				ks.load(null);
-				// ks.load(ksis,password);
 
 				ks.setCertificateEntry("ROOTCERT", cacert);
 				ks.setCertificateEntry("PDC", servercert);

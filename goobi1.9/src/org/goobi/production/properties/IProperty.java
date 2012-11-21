@@ -72,11 +72,6 @@ public interface IProperty {
 	public void setDateValue(Date inDate);
 	
 	public Date getDateValue();
-//	public abstract void save(Schritt step);
-
-//	public abstract Prozesseigenschaft getProzesseigenschaft();
-
-//	public abstract void setProzesseigenschaft(Prozesseigenschaft prozesseigenschaft);
 
 	public abstract IProperty getClone(int containerNumber);
 

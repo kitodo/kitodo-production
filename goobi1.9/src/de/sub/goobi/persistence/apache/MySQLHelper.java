@@ -182,7 +182,6 @@ public class MySQLHelper {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM schritte WHERE SchritteID = " + stepId);
-		// sql.append(" ORDER BY Reihenfolge ASC");
 		try {
 			logger.debug(sql.toString());
 			StepObject ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectHandler);
@@ -243,7 +242,6 @@ public class MySQLHelper {
 			sql.append(" WHERE SchritteID = " + step.getId() + ";");
 			logger.debug("saving step: " + sql.toString());
 			run.update(connection, sql.toString());
-			// logger.debug(sql);
 			ret = step.getId();
 			return ret;
 		} finally {

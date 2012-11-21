@@ -73,7 +73,6 @@ public class HibernateSessionConversationFilter implements Filter {
 				currentSession = this.sf.openSession();
 				currentSession.setFlushMode(FlushMode.MANUAL);
 			} else {
-				// log.debug("< Continuing conversation");
 				currentSession = disconnectedSession;
 			}
 
@@ -82,8 +81,6 @@ public class HibernateSessionConversationFilter implements Filter {
 		}
 
 		try {
-			// log.debug("Starting a database transaction");
-			// log.debug("Binding the current Session");
 			ManagedSessionContext.bind(currentSession);
 		} catch (Exception e) {
 			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " ManagedSessionContext", e));
@@ -113,10 +110,8 @@ public class HibernateSessionConversationFilter implements Filter {
 
 			// cleanup after unhandled exception in program flow
 		} catch (Exception e) {
-			// log.debug("Storing Session in the HttpSession");
 			try {
 				currentSession = ManagedSessionContext.unbind(this.sf);
-				//				currentSession.flush();
 				currentSession.getTransaction().commit();
 
 			} catch (Exception e2) {
@@ -136,7 +131,6 @@ public class HibernateSessionConversationFilter implements Filter {
 		try {
 
 			currentSession = ManagedSessionContext.unbind(this.sf);
-			//			currentSession.flush();
 
 			// for the purpose of rollback we catch exception here and notify
 			// gui of error

@@ -157,19 +157,6 @@ public class MetadatenHelper implements Comparator<Object> {
 		if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
 			for (DocStruct old : inOldDocstruct.getAllChildren()) {
 				if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
-					// boolean match = false;
-					// if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size()
-					// > 0) {
-					// for (String ds : newDocstruct.getType().getAllAllowedDocStructTypes()) {
-					// if (ds.equals(old.getType().getName())) {
-					// match = true;
-					// break;
-					// }
-					// }
-					// if (!match) {
-					// Helper.setFehlerMeldung("Person " + old.getType().getName() + " is not allowed in new element "
-					// + newDocstruct.getType().getName());
-					// }
 
 					if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType().getName())) {
 						Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
@@ -449,7 +436,6 @@ public class MetadatenHelper implements Comparator<Object> {
 					try {
 						if (mdt.getIsPerson()) {
 							Person p = new Person(mdt);
-							// p.setType(mdt);
 							p.setRole(mdt.getName());
 							inStruct.addPerson(p);
 						} else {
@@ -466,9 +452,6 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 
-		/*
-		 * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch sortieren
-		 */
 		/*
 		 * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch sortieren
 		 */
@@ -659,14 +642,6 @@ public class MetadatenHelper implements Comparator<Object> {
 		return myList;
 	}
 
-	// FilenameFilter filter = new FilenameFilter() {
-	// public boolean accept(File dir, String name) {
-	// String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
-	// String suffix = ConfigMain.getParameter("ImageSuffix",
-	// "\\.[Tt][Ii][Ff][Ff]?");
-	// return name.matches(prefix + suffix);
-	// }
-	// };
 
 	@Override
 	public int compare(Object o1, Object o2) {

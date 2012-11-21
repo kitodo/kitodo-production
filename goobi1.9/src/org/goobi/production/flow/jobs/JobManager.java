@@ -85,7 +85,6 @@ public class JobManager implements ServletContextListener {
 		sched.start();
 		
 		initializeJob(new HistoryAnalyserJob(), "dailyHistoryAnalyser", sched);
-//		initializeJob(new LuceneIndexJob(), "dailyLuceneIndex", sched);
 		initializeJobNonConfigured(new HotfolderJob(), 5, sched);
 	}
 

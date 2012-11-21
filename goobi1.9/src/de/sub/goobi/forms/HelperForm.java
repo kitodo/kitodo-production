@@ -54,7 +54,6 @@ import de.sub.goobi.persistence.DocketDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 
 public class HelperForm {
-	// Helper help = new Helper();
 
 	public static final String MAIN_JSF_PATH = "/newpages";
 	public static final String IMAGE_PATH = "/newpages/images";
@@ -81,23 +80,6 @@ public class HelperForm {
 	}
 
 	public String getApplicationLogo() {
-		// GetMethod method = null;
-		// try {
-		// HttpClient httpclient = new HttpClient();
-		// method = new GetMethod("http://is.gd/feWO5");
-		// int statusCode = httpclient.executeMethod(method);
-		// if (statusCode == HttpStatus.SC_OK) {
-		// return method.getURI().getURI();
-		// }
-		// } catch (URIException e) {
-		// // do nothing, no internet connection found, using local image
-		// } catch (HttpException e) {
-		// // do nothing, no internet connection found, using local image
-		// } catch (IOException e) {
-		// // do nothing, no internet connection found, using local image
-		// } finally {
-		// method.releaseConnection();
-		// }
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
 		logo += ConfigMain.getParameter("ApplicationLogo", "goobi_meta_klein.jpg");
 
@@ -223,7 +205,6 @@ public class HelperForm {
 		int serverPort = request.getServerPort(); // 80
 		String contextPath = request.getContextPath(); // /mywebapp
 		String reqUrl = scheme + "://" + serverName + ":" + serverPort + contextPath;
-		// String reqUrl = request.getRequestURL().toString();
 		return reqUrl;
 	}
 
@@ -298,23 +279,6 @@ public class HelperForm {
 	}
 
 	public String getLogoUrl() {
-		// GetMethod method = null;
-		// try {
-		// HttpClient httpclient = new HttpClient();
-		// method = new GetMethod("http://is.gd/feWHt");
-		// int statusCode = httpclient.executeMethod(method);
-		// if (statusCode == HttpStatus.SC_OK) {
-		// return method.getURI().getURI();
-		// }
-		// } catch (URIException e) {
-		// // do nothing, no internet connection found, using local image
-		// } catch (HttpException e) {
-		// // do nothing, no internet connection found, using local image
-		// } catch (IOException e) {
-		// // do nothing, no internet connection found, using local image
-		// } finally {
-		// method.releaseConnection();
-		// }
 		return getServletPathWithHostAsUrl() + "/newpages/images/template/goobiVersionLogoBig.jpg";
 	}
 
@@ -329,8 +293,6 @@ public class HelperForm {
 	public boolean getIsIE() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		// System.out.println(request.getHeader("User-Agent"));
-
 		if (request.getHeader("User-Agent").contains("MSIE")) {
 			return true;
 		} else {

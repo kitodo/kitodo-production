@@ -72,7 +72,6 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 				currentSession = this.sf.openSession();
 				currentSession.setFlushMode(FlushMode.MANUAL);
 			} else {
-				// log.debug("< Continuing conversation");
 				currentSession = disconnectedSession;
 			}
 
@@ -81,48 +80,20 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 		}
 
 		try {
-			// log.debug("Starting a database transaction");
-			// log.debug("Binding the current Session");
 			ManagedSessionContext.bind(currentSession);
 		} catch (Exception e) {
 			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " ManagedSessionContext", e));
 		}
 
-		/* ############################ UNCOMMENTED TRANSACTIONS IN FILTER - START ###################################
-		try {
-			currentSession.beginTransaction();
-		} catch (HibernateException e) {
-			log.error("no database connection available", e);
-			ManagedSessionContext.unbind(sf);
-			throw new ServletException(new GUIExceptionWrapper(Helper.getTranslation("err_noConnectionEstablished") + " BeginTransaction", e));
-		}
-		############################ UNCOMMENTED TRANSACTIONS IN FILTER - END ################################### */
-
-		// #################################
-		// #################################
-		// #################################
-		// #################################
-		// #### entering next filter ####
-
+	
 		try {
 			chain.doFilter(request, response);
 
-			// #################################
-			// #################################
-			// #################################
-			// #################################
-
 			// cleanup after unhandled exception in program flow
 		} catch (Exception e) {
-			// log.debug("Storing Session in the HttpSession");
 			try {
 				currentSession = ManagedSessionContext.unbind(this.sf);
-				//				currentSession.flush();
-
-				/* ############################ UNCOMMENTED TRANSACTIONS IN FILTER - START ###################################
-				currentSession.getTransaction().commit();
-				############################ UNCOMMENTED TRANSACTIONS IN FILTER - END ################################### */
-
+			
 			} catch (Exception e2) {
 				e.setStackTrace(e2.getStackTrace());
 				currentSession.disconnect();
@@ -140,31 +111,6 @@ public class HibernateSessionConversationFilterWithoutTransaction implements Fil
 		try {
 
 			currentSession = ManagedSessionContext.unbind(this.sf);
-			//			currentSession.flush();
-
-			// for the purpose of rollback we catch exception here and notify gui of error
-			/* ############################## UNCOMMENTED TRANSACTIONS IN FILTER - START ################
-			try {
-				currentSession.getTransaction().commit();
-			} catch (Exception e) {
-				try {
-					log.error("error while commiting", e);
-					if (currentSession.getTransaction().isActive()) {
-						currentSession.getTransaction().rollback();
-						currentSession.close();
-						throw new ServletException(new GUIExceptionWrapper("Unexpected Error while trying to commit and rollback active transaction."
-								+ "Data is probably not saved", e));
-					}
-				} catch (Throwable thrbl) {
-					if (currentSession != null) {
-						currentSession.close();
-					}
-					throw new ServletException(new GUIExceptionWrapper("Unexpected Error while trying to commit inactive transaction."
-							+ "Data is probably not saved", e));
-				}
-			}
-			 ############################## UNCOMMENTED TRANSACTIONS IN FILTER - END ################ */
-
 			// now we update the hibernate session in the http session
 			// or delete it in there
 			// end or continue the long-running conversation?

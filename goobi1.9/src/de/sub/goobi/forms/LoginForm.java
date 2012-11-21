@@ -105,10 +105,8 @@ public class LoginForm {
 					} else {
 						this.schonEingeloggt = true;
 						this.tempBenutzer = b;
-						// Helper.setMeldung("formLogin:login", "", "Benutzer in anderer Session aktiv", false);
 					}
 				} else {
-					// schonEingeloggt = false;
 					Helper.setFehlerMeldung("passwort", "", Helper.getTranslation("wrongPassword"));
 				}
 			} else {
@@ -166,8 +164,7 @@ public class LoginForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## änderung des Passworts ##
-	 * ##################################################### ####################################################
+	 * änderung des Passworts
 	 */
 
 	/**
@@ -182,15 +179,10 @@ public class LoginForm {
 	 */
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
-		// if (!passwortAendernAlt.equals(myBenutzer.getPasswort())) {
-//		if (!this.myBenutzer.istPasswortKorrekt(this.passwortAendernAlt)) {
-//			Helper.setFehlerMeldung(Helper.getTranslation("aktuellesPasswortFalsch"));
-//		} else {
 			/* ist das neue Passwort beide Male gleich angegeben? */
 			if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
 				Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
 			} else {
-				// myBenutzer.setPasswortCrypt(passwortAendernNeu1);
 				try {
 					/* wenn alles korrekt, dann jetzt speichern */
 					Ldap myLdap = new Ldap();
@@ -207,7 +199,6 @@ public class LoginForm {
 					Helper.setFehlerMeldung("ldap errror", e.getMessage());
 				}
 			}
-//		}
 		return "";
 	}
 
@@ -255,8 +246,7 @@ public class LoginForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter
 	 */
 
 	public String getLogin() {

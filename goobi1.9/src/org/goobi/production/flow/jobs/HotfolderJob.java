@@ -63,12 +63,6 @@ import de.sub.goobi.persistence.apache.StepObject;
 public class HotfolderJob extends AbstractGoobiJob {
 	private static final Logger logger = Logger.getLogger(HotfolderJob.class);
 
-	// private int templateId = 944;
-
-	// public HotfolderJob(int templateId) {
-	// this.templateId = templateId;
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -251,7 +245,6 @@ public class HotfolderJob extends AbstractGoobiJob {
 			if (form.testTitle()) {
 				if (digitalCollection == null) {
 					List<String> collections = new ArrayList<String>();
-					// collections.add("varia");
 					form.setDigitalCollections(collections);
 				} else {
 					List<String> col = new ArrayList<String>();
@@ -285,18 +278,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 						File fulltext = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
 								+ "_txt" + File.separator);
-						// List<String> fulltextDir = new ArrayList<String>();
 						if (fulltext.isDirectory()) {
-							// String[] files = fulltext.list();
-							// for (int i = 0; i < files.length; i++) {
-							// fulltextDir.add(files[i]);
-							// }
-							// for (String file : fulltextDir) {
-							// File txtFile = new File(fulltext, file);
-							// File dest = new File(p.getTxtDirectory() + File.separator + txtFile.getName());
-							// FileUtils.moveFile(txtFile, dest);
-							// }
-							// FileUtils.deleteDirectory(fulltext);
+					
 							FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
 						}
 

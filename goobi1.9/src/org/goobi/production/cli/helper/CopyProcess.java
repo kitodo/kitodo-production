@@ -119,7 +119,6 @@ public class CopyProcess extends ProzesskopieForm {
 	private String docType;
 	private String atstsl = "";
 	private List<String> possibleDigitalCollection;
-	// TODO
 	private boolean updateData = false;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
@@ -139,17 +138,14 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("Error while reading von opac-config", e);
 			return null;
 		}
-		// readProjectConfigs();
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		} catch (ReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 		;
 		this.prozessKopie = new Prozess();
@@ -169,7 +165,6 @@ public class CopyProcess extends ProzesskopieForm {
 		this.bhelp.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
 		this.bhelp.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
 
-		// initializePossibleDigitalCollections();
 
 		return this.naviFirstPage;
 	}
@@ -193,17 +188,14 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("Error while reading von opac-config", e);
 			return null;
 		}
-		// readProjectConfigs();
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		} catch (ReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 		;
 		this.prozessKopie = new Prozess();
@@ -308,23 +300,9 @@ public class CopyProcess extends ProzesskopieForm {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
-			// System.out.println(metadataFile);
-			// System.out.println(myRdf.read(metadataFile));
-			// System.out.println(myRdf.getDigitalDocument());
-			//
-			// if (myImportOpac.getOpacDocType() != null)
-			// docType = myImportOpac.getOpacDocType().getTitle();
-
-			// if (myImportOpac.isMonograph())
+		
 			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-			// if (myImportOpac.isContainedWork())
-			// docType = "containedwork";
-			// if (myImportOpac.isPeriodical())
-			// docType = "periodical";
-			// if (myImportOpac.isMultivolume())
-			// docType = "multivolume";
-
-			// atstsl = myImportOpac.getAtstsl();
+		
 			fillFieldsFromMetadataFile(this.myRdf);
 
 			fillFieldsFromConfig();
@@ -348,23 +326,9 @@ public class CopyProcess extends ProzesskopieForm {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
-			// System.out.println(metadataFile);
-			// System.out.println(myRdf.read(metadataFile));
-			// System.out.println(myRdf.getDigitalDocument());
-			//
-			// if (myImportOpac.getOpacDocType() != null)
-			// docType = myImportOpac.getOpacDocType().getTitle();
-
-			// if (myImportOpac.isMonograph())
+			
 			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-			// if (myImportOpac.isContainedWork())
-			// docType = "containedwork";
-			// if (myImportOpac.isPeriodical())
-			// docType = "periodical";
-			// if (myImportOpac.isMultivolume())
-			// docType = "multivolume";
-
-			// atstsl = myImportOpac.getAtstsl();
+			
 			fillFieldsFromMetadataFile(this.myRdf);
 
 			fillFieldsFromConfig();
@@ -544,7 +508,6 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 		}
 
-		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!this.prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
@@ -618,7 +581,6 @@ public class CopyProcess extends ProzesskopieForm {
 				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 			}
 
-			// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 			String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 			if (!this.prozessKopie.getTitel().matches(validateRegEx)) {
 				valide = false;
@@ -656,26 +618,10 @@ public class CopyProcess extends ProzesskopieForm {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
-		// if (!isContentValid())
-		// return null;
+		
 		EigenschaftenHinzufuegen(null);
 
-		/*
-		 * -------------------------------- jetzt in der Prozesskopie für alle bereits abgeschlossenen Schritte ein Bearbeitungsdatum und einen
-		 * Benutzer eintragen --------------------------------
-		 */
-		// for (Iterator iter = prozessKopie.getSchritteList().iterator();
-		// iter.hasNext();) {
-		// Schritt step = (Schritt) iter.next();
-		// if (step.getBearbeitungsstatus().intValue() == 3) {
-		// step.setBearbeitungsbeginn(new Date());
-		// step.setBearbeitungszeitpunkt(new Date());
-		// step.setBearbeitungsende(new Date());
-		// LoginForm loginForm = (LoginForm)
-		// Helper.getManagedBeanValue("#{LoginForm}");
-		// step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
-		// }
-		// }
+	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
 			 * -------------------------------- always save date and user for each step --------------------------------
@@ -776,21 +722,14 @@ public class CopyProcess extends ProzesskopieForm {
 								 */
 								if (myTempChild != null) {
 									md = this.ughHelp.getMetadata(myTempChild, mdt);
-									// if (md.getType() == null) {
-									// md = new Metadata(mdt);
-									// md.setDocStruct(myTempChild);
-									// myTempChild.addMetadata(md);
-									// }
+
 									md.setValue(field.getWert());
 								}
 							}
 						} catch (NullPointerException e) {
-							// Helper.setFehlerMeldung(e);
 						} catch (UghHelperException e) {
-							// Helper.setFehlerMeldung(e);
 
 						} catch (MetadataTypeNotAllowedException e) {
-							// Helper.setFehlerMeldung(e);
 
 						}
 					} // end if ughbinding
@@ -857,8 +796,7 @@ public class CopyProcess extends ProzesskopieForm {
 					Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
 					myLogger.error("creation of new process throws an error: ", e);
 				} catch (TypeNotAllowedForParentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					myLogger.error(e);
 				}
 			}
 		} else {
@@ -892,26 +830,9 @@ public class CopyProcess extends ProzesskopieForm {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
-		// if (!isContentValid())
-		// return null;
 		EigenschaftenHinzufuegen(io);
 
-		/*
-		 * -------------------------------- jetzt in der Prozesskopie für alle bereits abgeschlossenen Schritte ein Bearbeitungsdatum und einen
-		 * Benutzer eintragen --------------------------------
-		 */
-		// for (Iterator iter = prozessKopie.getSchritteList().iterator();
-		// iter.hasNext();) {
-		// Schritt step = (Schritt) iter.next();
-		// if (step.getBearbeitungsstatus().intValue() == 3) {
-		// step.setBearbeitungsbeginn(new Date());
-		// step.setBearbeitungszeitpunkt(new Date());
-		// step.setBearbeitungsende(new Date());
-		// LoginForm loginForm = (LoginForm)
-		// Helper.getManagedBeanValue("#{LoginForm}");
-		// step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
-		// }
-		// }
+	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
 			 * -------------------------------- always save date and user for each step --------------------------------
@@ -1044,11 +965,9 @@ public class CopyProcess extends ProzesskopieForm {
 			ff = new MetsMods(myPrefs);
 			ff.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		} catch (ReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 
 	}
@@ -1528,16 +1447,7 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		// if (docType.equals("monograph"))
-		// tif_definition = cp.getParamString("tifheader.monograph");
-		// if (docType.equals("containedwork"))
-		// tif_definition = cp.getParamString("tifheader.containedwork");
-		// if (docType.equals("multivolume"))
-		// tif_definition = cp.getParamString("tifheader.multivolume");
-		// if (docType.equals("periodical"))
-		// tif_definition = cp.getParamString("tifheader.periodical");
-		// if (docType.equals("volume"))
-		// tif_definition = cp.getParamString("tifheader.volume");
+		
 		tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
 		/*
@@ -1549,35 +1459,22 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
 		 */
-		// if (tifHeader_documentname.equals(""))
 		this.tifHeader_documentname = this.prozessKopie.getTitel();
 		this.tifHeader_imagedescription = "";
 		/*
 		 * -------------------------------- Imagedescription --------------------------------
 		 */
-		// if (tifHeader_imagedescription.equals("")) {
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
-			// System.out.println(myString);
 			/*
 			 * wenn der String mit ' anf�ngt und mit ' endet, dann den Inhalt so übernehmen
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
-				/* wenn der Doctype angegeben werden soll */
-				// if (docType.equals("monograph"))
-				// tifHeader_imagedescription += "Monographie";
-				// if (docType.equals("volume"))
-				// tifHeader_imagedescription += "Volume";
-				// if (docType.equals("containedwork"))
-				// tifHeader_imagedescription += "ContainedWork";
-				// if (docType.equals("multivolume"))
-				// tifHeader_imagedescription += "Band_MultivolumeWork";
-				// if (docType.equals("periodical"))
-				// tifHeader_imagedescription += "Band_Zeitschrift";
+			
 				this.tifHeader_imagedescription += this.docType;
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */

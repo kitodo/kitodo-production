@@ -42,12 +42,6 @@ public class RefreshObject {
 		try {
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
 			logger.debug("created a new session");
-			// Session session = Helper.getHibernateSession();
-			// if (session == null || !session.isOpen() || !session.isConnected()) {
-			// logger.debug("session is closed, creating a new session");
-			// HibernateUtilOld.rebuildSessionFactory();
-			// session = HibernateUtilOld.getSessionFactory().openSession();
-			// }
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
 			logger.debug("loaded process");
 			session.refresh(o);
@@ -63,12 +57,6 @@ public class RefreshObject {
 	public static void refreshStep(int stepID) {
 		try {
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
-			// Session session = Helper.getHibernateSession();
-			// if (session == null || !session.isOpen() || !session.isConnected()) {
-			// logger.debug("session is closed, creating a new session");
-			// HibernateUtilOld.rebuildSessionFactory();
-			// session = HibernateUtilOld.getSession();
-			// }
 			Schritt o = (Schritt) session.get(Schritt.class, stepID);
 			session.refresh(o);
 			session.close();

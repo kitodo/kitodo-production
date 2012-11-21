@@ -86,12 +86,6 @@ public class GetOpac {
 
 	private static final String PICA_SUBFIELD_NAME = "code";
 
-	// public static final String PICA_SUBFIELD_NAME = "subfield";
-	// public static final String PICA_SUBFIELD = "value";
-	// public static final String PICA_FIELD = "picaplus";
-	// public static final String PICA_FIELD_NAME = "field";
-	// public static final String PICA_RECORD = "picaplusrecord";
-
 	// the opac url parts
 	private static final String SET_ID_URL = "/SET=";
 
@@ -137,9 +131,6 @@ public class GetOpac {
 	// shortlist so that caching is in principal only used for sessionid and
 	// searchopac. is it reasonable?
 	private String lastQuery = "";
-	// private String sessionID = "";
-	// //set id can differ although session id stays the same
-	// private String setID = "";
 
 	private OpacResponseHandler lastOpacResult = null;
 
@@ -341,29 +332,14 @@ public class GetOpac {
 		xmlResult.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		xmlResult.append("  <" + PICA_COLLECTION_RECORDS + ">\n");
 
-		// String xmlPicaPlusLong = null;
 		// retrieve and append the requested hits
 		for (int i = start; i < end; i++) {
 
 			xmlResult.append(xmlFormatPica(retrievePicaTitle(i)));
-
-			// if (xmlPicaPlusLong != null){
-			// xmlResult.append(xmlPicaPlusLong);
-			// }else{
-			// System.err.println("Could not retrieve data for hit nr:" + i);
-			// }
 		}
 		xmlResult.append("  </" + PICA_COLLECTION_RECORDS + ">\n");
 
-		// //check if we got an result
-		// if (((Element)result).hasAttribute("error")){
-		// //if it was not an error because of no hits getNumberOfHits
-		// //throws an exception
-		// if (getNumberOfHits(query) == 0){
-		// throw new Exception("No Hits");
-		// }
-		//
-		// }
+
 
 		return xmlResult.toString();
 	}
@@ -544,54 +520,7 @@ public class GetOpac {
 		return opacResult;
 	}
 
-	// INTERNAL (Internal - implementation details, local classes, ...)
-
-	// private String xmlFormatPica(String picaXmlRecord) {
-	// System.out.println(picaXmlRecord);
-	// StringBuffer result = new StringBuffer("  <" + PICA_RECORD + ">\n");
-	// int startField = 0;
-	// int nextField = 0;
-	// int endField = picaXmlRecord.indexOf("</LONGTITLE>");
-	// String field = null;
-	// String[] fieldComponents = null;
-	// String fieldName = null;
-	// String fieldOccurence = null;
-	// int indexOfFieldOccurence = -1;
-	//
-	// while (nextField != endField) {
-	// startField = picaXmlRecord.indexOf("<br />", startField) + 6;
-	// nextField = picaXmlRecord.indexOf("<br />", startField);
-	// if (nextField == -1) {
-	// nextField = endField;
-	// }
-	// field = picaXmlRecord.substring(startField, nextField).trim();
-	// fieldComponents = field.split("\\$");
-	// indexOfFieldOccurence = fieldComponents[0].indexOf("/");
-	//
-	// if (indexOfFieldOccurence != -1) {
-	// fieldName = fieldComponents[0].substring(0, indexOfFieldOccurence);
-	// fieldOccurence = fieldComponents[0].substring(indexOfFieldOccurence + 1);
-	// result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldName + "\" "
-	// + PICA_FIELD_OCCURENCES + "=\"" + fieldOccurence + "\">\n");
-	// } else {
-	// result
-	// .append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldComponents[0] + "\">\n");
-	// }
-	//
-	// for (int i = 1; i < fieldComponents.length; i++) {
-	// result.append("      <" + PICA_SUBFIELD + " " + PICA_SUBFIELD_NAME + "=\""
-	// + fieldComponents[i].charAt(0) + "\">" + fieldComponents[i].substring(1) + "</"
-	// + PICA_SUBFIELD + ">\n");
-	// }
-	//
-	// result.append("    </" + PICA_FIELD + ">\n");
-	// }
-	//
-	// result.append("  </" + PICA_RECORD + ">\n");
-	// System.out.println("--------------------------------\n\n"+ result.toString());
-	// return result.toString();
-	// }
-
+	
 	private String xmlFormatPica(String picaXmlRecord) {
 		StringBuffer result = new StringBuffer("  <" + PICA_RECORD + ">\n");
 		try {
@@ -669,7 +598,6 @@ public class GetOpac {
 			System.out.println("Dokument?");
 
 			InputStream bs = source.getByteStream();
-//			StreamResult output = new StreamResult(System.out);
 
 			System.out.println(bs.toString());
 			e.printStackTrace();
@@ -688,7 +616,6 @@ public class GetOpac {
 	private Document getNewDocument() {
 
 		return this.docBuilder.newDocument();
-		// return null;
 	}
 
 	/***********************************************************************
@@ -721,9 +648,9 @@ public class GetOpac {
 	 **********************************************************************/
 	private String retrieveDataFromOPAC(String url) throws IOException {
 
-		// if (verbose){
+		 if (verbose){
 		System.out.println("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
-		// }
+		 }
 		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
 
 		try {

@@ -34,8 +34,6 @@ import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
 public class ScriptThreadWithoutHibernate extends Thread {
-	// private static final Logger myLogger =
-	// Logger.getLogger(AgoraImportThread.class);
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private StepObject step;
 	public String rueckgabe = "";

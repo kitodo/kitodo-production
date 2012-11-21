@@ -171,7 +171,7 @@ public class ProzesskopieForm {
 		this.digitalCollections = new ArrayList<String>();
 
 		/*
-		 * -------------------------------- Kopie der Prozessvorlage anlegen --------------------------------
+		 *  Kopie der Prozessvorlage anlegen
 		 */
 		this.bHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
 		this.bHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
@@ -260,7 +260,6 @@ public class ProzesskopieForm {
 
 	public List<SelectItem> getProzessTemplates() throws DAOException {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
-		// HibernateUtil.clearSession();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -321,7 +320,6 @@ public class ProzesskopieForm {
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
-			// myLogger.error(e);
 		}
 		return "";
 	}
@@ -335,7 +333,6 @@ public class ProzesskopieForm {
 	 */
 	private void fillFieldsFromMetadataFile() throws PreferencesException {
 		if (this.myRdf != null) {
-			// UghHelper ughHelp = new UghHelper();
 
 			for (AdditionalField field : this.additionalFields) {
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
@@ -485,7 +482,6 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 		}
 
-		// if (!prozessKopie.getTitel().matches("[\\w-]*")) {
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
 		if (!this.prozessKopie.getTitel().matches(validateRegEx)) {
 			valide = false;
@@ -687,7 +683,6 @@ public class ProzesskopieForm {
 			 * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
 			 */
 			try {
-				// UghHelper ughhelp = new UghHelper();
 				MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
 				List<? extends Metadata> alleImagepfade = this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 				if (alleImagepfade != null && alleImagepfade.size() > 0) {
@@ -1151,8 +1146,7 @@ public class ProzesskopieForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * Helper
 	 */
 
 	/**
@@ -1305,16 +1299,6 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		// if (docType.equals("monograph"))
-		// tif_definition = cp.getParamString("tifheader.monograph");
-		// if (docType.equals("containedwork"))
-		// tif_definition = cp.getParamString("tifheader.containedwork");
-		// if (docType.equals("multivolume"))
-		// tif_definition = cp.getParamString("tifheader.multivolume");
-		// if (docType.equals("periodical"))
-		// tif_definition = cp.getParamString("tifheader.periodical");
-		// if (docType.equals("volume"))
-		// tif_definition = cp.getParamString("tifheader.volume");
 		tif_definition = cp.getParamString("tifheader." + this.docType, "intranda");
 
 		/*
@@ -1326,13 +1310,11 @@ public class ProzesskopieForm {
 		/*
 		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
 		 */
-		// if (tifHeader_documentname.equals(""))
 		this.tifHeader_documentname = this.prozessKopie.getTitel();
 		this.tifHeader_imagedescription = "";
 		/*
 		 * -------------------------------- Imagedescription --------------------------------
 		 */
-		// if (tifHeader_imagedescription.equals("")) {
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
 		String title = "";
@@ -1345,16 +1327,6 @@ public class ProzesskopieForm {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
 				/* wenn der Doctype angegeben werden soll */
-				// if (docType.equals("monograph"))
-				// tifHeader_imagedescription += "Monographie";
-				// if (docType.equals("volume"))
-				// tifHeader_imagedescription += "Volume";
-				// if (docType.equals("containedwork"))
-				// tifHeader_imagedescription += "ContainedWork";
-				// if (docType.equals("multivolume"))
-				// tifHeader_imagedescription += "Band_MultivolumeWork";
-				// if (docType.equals("periodical"))
-				// tifHeader_imagedescription += "Band_Zeitschrift";
 				this.tifHeader_imagedescription += this.co.getDoctypeByName(this.docType).getTifHeaderType();
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */

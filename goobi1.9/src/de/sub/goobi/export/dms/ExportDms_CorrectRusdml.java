@@ -107,8 +107,6 @@ public class ExportDms_CorrectRusdml {
 	 * @throws DocStructHasNoTypeException
 	 */
 	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
-		// myLogger.info("Typ: " + inStruct.getType().getName());
-		// DropUnusedMetadata(inStruct);
 		RusdmlDropMetadata(inStruct);
 		RusdmlDropPersons(inStruct);
 		RusdmlUmlauteDemaskieren(inStruct);
@@ -124,8 +122,6 @@ public class ExportDms_CorrectRusdml {
 			for (Iterator<DocStruct> iter = inStruct.getAllChildren().iterator(); iter.hasNext();) {
 				DocStruct child = iter.next();
 				RusdmlDocStructPagesAuswerten(child);
-				/* dem DocStruct alle Seiten der Kinder zuweisen */
-				// inStruct.getAllReferences("to").addAll(child.getAllReferences("to"));
 			}
 		}
 	}
@@ -178,8 +174,6 @@ public class ExportDms_CorrectRusdml {
 				}
 				if (meta.getType().getName().equals("RUSPublicationHouse")) {
 					inStruct.getAllMetadata().remove(meta);
-					// if (meta.getType().getName().equals("RUSKeyword"))
-					// inStruct.getAllMetadata().remove(meta);
 				}
 
 				if (meta.getType().getName().equals("ZBLSource")) {
@@ -287,7 +281,6 @@ public class ExportDms_CorrectRusdml {
 		List<? extends Metadata> alleMetadaten = phys.getAllMetadataByType(MDTypeForPath);
 		if (alleMetadaten.size() > 0) {
 			for (Metadata meta : alleMetadaten) {
-				// Metadata meta = (Metadata) iter.next();
 				meta.setValue(inNeuerWert);
 			}
 		} else {
@@ -318,205 +311,7 @@ public class ExportDms_CorrectRusdml {
 			throw new ExportFileException("Exportfehler: Keine PPN digital vorhanden");
 		}
 		RusdmlAddMissingMetadata(inTopStruct, myProzess, PPN);
-
-		// /* --------------------------------
-		// * jetzt die fehlenden projektspezifischen Metadaten erg�nzen
-		// * --------------------------------*/
-		// List alleMissingDaten = cp.getParamList("dmsImport.add");
-		// /* standard */
-		// if (alleMissingDaten.contains("standard")) {
-		// addMissingMetadata_standard(inTopStruct, myProzess);
-		// }
-		// /* rusdml */
-		// if (alleMissingDaten.contains("rusdml")) {
-		// addMissingMetadata_Rusdml(inTopStruct, myProzess, PPN);
-		// }
-		// /* creatorsAll */
-		// if (alleMissingDaten.contains("creatorsAll")) {
-		// addMissingMetadata_creatorsAll(inTopStruct, myProzess);
-		// }
-
 	}
-
-	/* =============================================================== */
-
-	// /**
-	// * Metadaten über alle Autoren für oberstes Strukturelement
-	// * @param inTopStruct
-	// * @param myProzess
-	// * @throws ExportFileException
-	// * @throws UghHelperException
-	// */
-	// private void addMissingMetadata_creatorsAll(DocStruct inTopStruct,
-	// Prozess myProzess)
-	// throws ExportFileException, UghHelperException {
-	// MetadataType mdt = ughHelp.getMetadataType(myPrefs, "CreatorsAllOrigin");
-	//
-	// /* --------------------------------
-	// * wenn das Feld CreatorsAllOrigin schon existiert, sofort raus
-	// * --------------------------------*/
-	// if (inTopStruct.getAllMetadataByType(mdt) != null)
-	// return;
-	//
-	// /* --------------------------------
-	// * Metadaten erzeugen
-	// * --------------------------------*/
-	// Metadata mdCreators = new Metadata();
-	// mdCreators.setType(mdt);
-	// mdCreators.setValue("");
-	//
-	// /* --------------------------------
-	// * alle beteiligten Personen durchlaufen und in das Feld übernehmen
-	// * --------------------------------*/
-	// if (inTopStruct.getAllPersons() != null) {
-	// for (Iterator iter = inTopStruct.getAllPersons().iterator();
-	// iter.hasNext();) {
-	// Person p = (Person) iter.next();
-	// String tempname = (mdCreators.getValue().length() > 0 ? "; " : "");
-	// tempname += p.getLastname() + ", " + p.getFirstname();
-	// mdCreators.setValue(mdCreators.getValue() + tempname);
-	// }
-	// }
-	//
-	// /* --------------------------------
-	// * das Metadatum dem TopStruct zuweisen
-	// * --------------------------------*/
-	// try {
-	// inTopStruct.addMetadata(mdCreators);
-	// } catch (Exception e) {
-	// throw new ExportFileException(e.getMessage());
-	// }
-	// }
-	/* =============================================================== */
-
-	// /**
-	// * Metadaten über alle Autoren für oberstes Strukturelement
-	// * @param inTopStruct
-	// * @param myProzess
-	// * @throws ExportFileException
-	// * @throws UghHelperException
-	// */
-	// private void addMissingMetadata_standard(DocStruct inTopStruct, Prozess
-	// myProzess)
-	// throws ExportFileException, UghHelperException {
-	//
-	// /* --------------------------------
-	// * Metadatentypen ermitteln
-	// * --------------------------------*/
-	// MetadataType mdt_PublicationYear = ughHelp.getMetadataType(myPrefs,
-	// "PublicationYear");
-	// MetadataType mdt_PublisherName = ughHelp.getMetadataType(myPrefs,
-	// "PublisherName");
-	// MetadataType mdt_PlaceOfPublication = ughHelp.getMetadataType(myPrefs,
-	// "PlaceOfPublication");
-	// MetadataType mdt_CatalogIDSource = ughHelp.getMetadataType(myPrefs,
-	// "CatalogIDSource");
-	// MetadataType mdt_copyrightimageset = ughHelp.getMetadataType(myPrefs,
-	// "copyrightimageset");
-	// MetadataType mdt_imagedescr = ughHelp.getMetadataType(myPrefs,
-	// "imagedescr");
-	// MetadataType mdt_shelfmarkarchiveimageset = ughHelp
-	// .getMetadataType(myPrefs, "shelfmarkarchiveimageset");
-	// MetadataType mdt_mediumsource = ughHelp.getMetadataType(myPrefs,
-	// "mediumsource");
-	//
-	// /* --------------------------------
-	// * Metadaten erzeugen für logical Topstruct
-	// * --------------------------------*/
-	// Metadata md_PublicationYear = new Metadata();
-	// md_PublicationYear.setType(mdt_PublicationYear);
-	// md_PublicationYear.setValue(WerkstueckEigenschaftErmitteln(myProzess,
-	// "Erscheinungsjahr"));
-	// Metadata md_PublisherName = new Metadata();
-	// md_PublisherName.setType(mdt_PublisherName);
-	// md_PublisherName.setValue(WerkstueckEigenschaftErmitteln(myProzess,
-	// "Verlag"));
-	// Metadata md_PlaceOfPublication = new Metadata();
-	// md_PlaceOfPublication.setType(mdt_PlaceOfPublication);
-	// md_PlaceOfPublication.setValue(WerkstueckEigenschaftErmitteln(myProzess,
-	// "Erscheinungsort"));
-	// Metadata md_CatalogIDSource = new Metadata();
-	// md_CatalogIDSource.setType(mdt_CatalogIDSource);
-	// md_CatalogIDSource.setValue(ScanvorlagenEigenschaftErmitteln(myProzess,
-	// "PPN analog"));
-	// if (!md_CatalogIDSource.getValue().startsWith("PPN"))
-	// md_CatalogIDSource.setValue("PPN" + md_CatalogIDSource.getValue());
-	//
-	// /* --------------------------------
-	// * Metadaten erzeugen für physical Topstruct
-	// * --------------------------------*/
-	// Metadata md_copyrightimageset = new Metadata();
-	// md_copyrightimageset.setType(mdt_copyrightimageset);
-	// md_copyrightimageset.setValue(WerkstueckEigenschaftErmitteln(myProzess,
-	// "Artist"));
-	// Metadata md_imagedescr = new Metadata();
-	// md_imagedescr.setType(mdt_imagedescr);
-	// TiffHeader tiff = new TiffHeader(myProzess);
-	// md_imagedescr.setValue(tiff.getImageDescription());
-	// Metadata md_shelfmarkarchiveimageset = new Metadata();
-	// md_shelfmarkarchiveimageset.setType(mdt_shelfmarkarchiveimageset);
-	// md_shelfmarkarchiveimageset.setValue(ScanvorlagenEigenschaftErmitteln(myProzess,
-	// "Signatur"));
-	// Metadata md_mediumsource = new Metadata();
-	// md_mediumsource.setType(mdt_mediumsource);
-	// md_mediumsource.setValue("Book");
-	//
-	// /* --------------------------------
-	// * die Metadaten dem TopStruct zuweisen
-	// * --------------------------------*/
-	// try {
-	// if (inTopStruct.getAllMetadataByType(mdt_PublicationYear) == null)
-	// inTopStruct.addMetadata(md_PublicationYear);
-	// if (inTopStruct.getAllMetadataByType(mdt_PublisherName) == null)
-	// inTopStruct.addMetadata(md_PublisherName);
-	// if (inTopStruct.getAllMetadataByType(mdt_PlaceOfPublication) == null)
-	// inTopStruct.addMetadata(md_PlaceOfPublication);
-	// if (inTopStruct.getAllMetadataByType(mdt_CatalogIDSource) == null)
-	// inTopStruct.addMetadata(md_CatalogIDSource);
-	// } catch (Exception e) {
-	// throw new ExportFileException(e.getMessage());
-	// }
-	//
-	// /* --------------------------------
-	// * die Metadaten dem BoundBook zuweisen
-	// * --------------------------------*/
-	// DocStruct boundBook = mydocument.getPhysicalDocStruct();
-	// try {
-	// if (boundBook.getAllMetadataByType(mdt_copyrightimageset) == null)
-	// boundBook.addMetadata(md_copyrightimageset);
-	// if (boundBook.getAllMetadataByType(mdt_imagedescr) == null)
-	// boundBook.addMetadata(md_imagedescr);
-	// if (boundBook.getAllMetadataByType(mdt_shelfmarkarchiveimageset) == null)
-	// boundBook.addMetadata(md_shelfmarkarchiveimageset);
-	// if (boundBook.getAllMetadataByType(mdt_mediumsource) == null)
-	// boundBook.addMetadata(md_mediumsource);
-	// } catch (Exception e) {
-	// throw new ExportFileException(e.getMessage());
-	// }
-	// }
-	/* =============================================================== */
-
-	// /**
-	// * alle nicht benötigten Metadaten rauswerfen
-	// * @param inStruct
-	// * @throws MetadataTypeNotAllowedException
-	// * @throws DocStructHasNoTypeException
-	// */
-	// @SuppressWarnings("unchecked")
-	// private void DropUnusedMetadata(DocStruct inStruct) throws
-	// DocStructHasNoTypeException,
-	// MetadataTypeNotAllowedException {
-	//
-	//
-	// if (inStruct.getAllVisibleMetadata() != null) {
-	// List alleDropDaten = cp.getParamList("dmsImport.drop");
-	// if (alleDropDaten.contains("rusdml")) {
-	// DropMetadata_Rusdml(inStruct);
-	// DropPersons_Rusdml(inStruct);
-	// }
-	// }
-	// }
-	/* =============================================================== */
 
 	/**
 	 * Fehlende Metadaten für Rusdml erg�nzen
@@ -617,7 +412,6 @@ public class ExportDms_CorrectRusdml {
 		List<Metadata> kopie = inStruct.getAllMetadata();
 		if (kopie != null) {
 			for (Metadata meta : kopie) {
-				// Metadata meta = (Metadata) iter.next();
 				/* in den Metadaten die Umlaute entfernen */
 				RusdmlUmlauteDemaskieren1(meta);
 			}

@@ -44,7 +44,6 @@ import ugh.dl.Prefs;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-//TODO: Use a correct comment here
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
  * 
@@ -175,7 +174,6 @@ public class Metadatum {
 					for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 						if (i.getValue().equals(value)) {
 							this.selectedItems.add(i.getLabel());
-//							i.setIsSelected(true);
 						}
 					}
 					int length = values.length();
@@ -184,7 +182,6 @@ public class Metadatum {
 					for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 						if (i.getValue().equals(values)) {
 							this.selectedItems.add(i.getLabel());
-//							i.setIsSelected(true);
 						}
 					}
 					values = "";
@@ -203,9 +200,7 @@ public class Metadatum {
 	}
 
 	public void setSelectedItems(List<String> selectedItems) {
-//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-//			i.setIsSelected(false);
-//		}
+
 		String val = "";
 		for (String sel : selectedItems) {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
@@ -214,11 +209,7 @@ public class Metadatum {
 				}
 			}
 		}
-//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-//			if (i.getIsSelected()) {
-//				val += i.getValue() + ";";
-//			}
-//		}
+
 		setWert(val);
 	}
 
@@ -227,7 +218,6 @@ public class Metadatum {
 		if (value!=null && value.length() != 0) {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getValue().equals(value)) {
-//					i.setIsSelected(true);
 					return i.getLabel();
 				}
 			}
@@ -244,9 +234,7 @@ public class Metadatum {
 	}
 
 	public void setSelectedItem(String selectedItem) {
-//		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-//			i.setIsSelected(false);
-//		}
+
 		for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 			if (i.getLabel().equals(selectedItem)) {
 				setWert(i.getValue());

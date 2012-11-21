@@ -43,8 +43,7 @@ public class ConfigOpac {
    private static String configPfad;
 
    public ConfigOpac() throws IOException {
-//      AbstractConfiguration.setDefaultListDelimiter('&');
-      configPfad = new Helper().getGoobiConfigDirectory() + "goobi_opac.xml";
+	   configPfad = new Helper().getGoobiConfigDirectory() + "goobi_opac.xml";
 
       if (!(new File(configPfad)).exists()) {
 		throw new IOException("File not found: " + configPfad);

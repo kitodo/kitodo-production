@@ -53,7 +53,6 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierung {
-	// Helper help = new Helper();
 	UghHelper ughhelp = new UghHelper();
 	List<DocStruct> docStructsOhneSeiten;
 	Prozess myProzess;
@@ -98,9 +97,6 @@ public class MetadatenVerifizierung {
 					
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
 					
-//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
-//							+ identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
-//							+ logical.getType().getNameByLanguage(metadataLanguage) + Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
@@ -112,9 +108,6 @@ public class MetadatenVerifizierung {
 					parameter.add(logical.getType().getName());
 					parameter.add(firstChild.getType().getName());
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierSame", parameter));
-//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
-//							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
-//							+ firstChild.getType().getName());
 					ergebnis = false;
 				}
 				if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
@@ -122,8 +115,6 @@ public class MetadatenVerifizierung {
 					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
-//					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierFirstChild.getType().getName()
-//							+ " in DocStruct " + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 			} catch (Exception e) {
@@ -252,12 +243,7 @@ public class MetadatenVerifizierung {
 			if (alleMetadaten != null && alleMetadaten.size() > 0) {
 				@SuppressWarnings("unused")
 				Metadata mmm = alleMetadaten.get(0);
-				// TODO add a real check here, not this stupid shit...
-				// wenn der Imagepfad noch auf C:\ steht, validierung false
-				/*
-				 * if (!mmm.getValue().equals("C:\\")) return true; else { help.setFehlerMeldung("[" + myProzess.getTitel() + "] " +
-				 * "Verifizierung nicht erfolgreich, Imagepfad steht auf C:\\", ""); return false; }
-				 */
+
 				return true;
 			} else {
 				Helper.setFehlerMeldung(this.myProzess.getTitel() + ": " + "Can not verify, image path is not set", "");
@@ -411,8 +397,6 @@ public class MetadatenVerifizierung {
 							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht existieren, Exception abfangen und
 							 * nicht weiter drauf eingehen
 							 */
-							// inFehlerList.add("Metadatatype does not exist: "
-							// + tok);
 						}
 					}
 					if (listOfFromMdts.size() > 0) {
@@ -441,19 +425,13 @@ public class MetadatenVerifizierung {
 		if (createMetadaten == null || createMetadaten.size() == 0) {
 			try {
 				Metadata createdElement = new Metadata(mdt);
-				// createdElement.setType(mdt);
 				StringBuffer myValue = new StringBuffer();
 				/*
 				 * alle anzufügenden Metadaten durchlaufen und an das Element anh�ngen
 				 */
 				for (MetadataType mdttemp : inListOfFromMdts) {
 
-					// TODO and done: Cast without exceptionhandling - rather
-					// implement typesafe code
-					// MetadataType mdttemp = (MetadataType) iter.next();
 
-					// List fromElemente =
-					// myStruct.getAllMetadataByType(mdttemp);
 					List<Person> fromElemente = myStruct.getAllPersons();
 					if (fromElemente != null && fromElemente.size() > 0) {
 						/*
@@ -461,10 +439,7 @@ public class MetadatenVerifizierung {
 						 */
 						for (Person p : fromElemente) {
 
-							// TODO: Cast without exceptionhandling - rather
-							// implement typesafe code
-							// Person p = (Person) iter2.next();
-
+					
 							if (p.getRole() == null) {
 								Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + " " + myStruct.getType().getNameByLanguage(language) + "] "
 										+ Helper.getTranslation("MetadataPersonWithoutRole"));
@@ -489,9 +464,7 @@ public class MetadatenVerifizierung {
 					myStruct.addMetadata(createdElement);
 				}
 			} catch (DocStructHasNoTypeException e) {
-				// e.printStackTrace();
 			} catch (MetadataTypeNotAllowedException e) {
-				// e.printStackTrace();
 			}
 
 		}

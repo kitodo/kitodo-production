@@ -207,16 +207,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 		setStatusProgress(100);
 	}
 
-	/**************************************************************************************
-	 * Setter for tempFolder
-	 * 
-	 * @param tempFolder
-	 *            the tempFolder to set
-	 **************************************************************************************/
-/*	public void setTempFolder(File tempFolder) {
-		this.tempFolder = tempFolder;
-	}
-*/
+
 	/**************************************************************************************
 	 * Setter for targetFolder
 	 * 

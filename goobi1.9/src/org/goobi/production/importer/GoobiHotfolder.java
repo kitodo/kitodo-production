@@ -54,10 +54,6 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	private String updateStrategy;
 	private String collection;
 
-	// public GoobiHotfolder(File folder) {
-	// this.folder = folder;
-	// }
-
 	public GoobiHotfolder(String name, File folder, Integer template, String updateStrategy, String collection) {
 		this.setName(name);
 		this.folder = folder;
@@ -158,7 +154,6 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 		try {
 			 XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
-//			XMLConfiguration config = new XMLConfiguration("config_hotfolder.xml");
 
 			logger.trace("config 3");
 

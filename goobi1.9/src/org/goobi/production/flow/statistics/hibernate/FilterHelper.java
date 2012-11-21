@@ -141,11 +141,7 @@ class FilterHelper {
 		for (Object o : critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
 			idList.add((Integer) o);
 		}
-		// for (Iterator<Object> it =
-		// critGroups.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator();
-		// it.hasNext();) {
-		// idList.add((Integer) it.next());
-		// }
+	
 
 		/*
 		 * -------------------------------- Users only --------------------------------
@@ -180,11 +176,7 @@ class FilterHelper {
 		for (Object o : critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
 			idList.add((Integer) o);
 		}
-		// for (Iterator<Object> it =
-		// critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator();
-		// it.hasNext();) {
-		// idList.add((Integer) it.next());
-		// }
+	
 
 		/*
 		 * -------------------------------- only taking the hits by restricting to the ids --------------------------------
@@ -449,7 +441,6 @@ class FilterHelper {
 			if (ts.length > 1) {
 				con.add(Restrictions.and(Restrictions.like("vorleig.wert", "%" + ts[1] + "%"), Restrictions.like("vorleig.titel", "%" + ts[0] + "%")));
 			} else {
-				// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 				con.add(Restrictions.like("vorleig.wert", "%" + ts[0] + "%"));
 			}
 		} else {
@@ -457,7 +448,6 @@ class FilterHelper {
 				con.add(Restrictions.not(Restrictions.and(Restrictions.like("vorleig.wert", "%" + ts[1] + "%"),
 						Restrictions.like("vorleig.titel", "%" + ts[0] + "%"))));
 			} else {
-				// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 				con.add(Restrictions.not(Restrictions.like("vorleig.wert", "%" + ts[0] + "%")));
 			}
 		}
@@ -466,7 +456,6 @@ class FilterHelper {
 	protected static void filterStepProperty(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 		if (!negate) {
 			if (ts.length > 1) {
 				con.add(Restrictions.and(Restrictions.like("schritteig.wert", "%" + ts[1] + "%"),
@@ -486,10 +475,8 @@ class FilterHelper {
 
 	protected static void filterProcessProperty(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 		/* Filtering by signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 		if (!negate) {
 			if (ts.length > 1) {
 				con.add(Restrictions.and(Restrictions.like("prozesseig.wert", "%" + ts[1] + "%"),
@@ -517,10 +504,8 @@ class FilterHelper {
 	 ****************************************************************************/
 	protected static void filterIds(Conjunction con, String tok) {
 		/* filtering by ids */
-		// Disjunction dis = Restrictions.disjunction();
 		List<Integer> listIds = new ArrayList<Integer>();
 		if (tok.substring(tok.indexOf(":") + 1).length() > 0) {
-			// tok.substring(5).split(" ")
 			String[] tempids = tok.substring(tok.indexOf(":") + 1).split(" ");
 			for (int i = 0; i < tempids.length; i++) {
 				try {
@@ -547,7 +532,6 @@ class FilterHelper {
 	protected static void filterWorkpiece(Conjunction con, String tok, boolean negate) {
 		/* filter according signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
-		// crit.add(Restrictions.like("vorleig.titel", "%Signatur%"));
 		if (!negate) {
 			if (ts.length > 1) {
 				con.add(Restrictions.and(Restrictions.like("werkeig.wert", "%" + ts[1] + "%"), Restrictions.like("werkeig.titel", "%" + ts[0] + "%")));
@@ -658,7 +642,7 @@ class FilterHelper {
 				conjProcesses.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
 			}
 		}
-		// List<String> aliases = new ArrayList<String>();
+		
 		// this is needed for evaluating a filter string
 		while (tokenizer.hasNext()) {
 			String tok = tokenizer.nextToken().trim();
@@ -861,10 +845,8 @@ class FilterHelper {
 			if (!flagProcesses) {
 
 				critProcess = crit.createCriteria("prozess", "proc");
-				// crit.createAlias("proc.ProjekteID", "projID");
 
 				if (conjProcesses != null) {
-					// inCrit.add(conjProcesses);
 					critProcess.add(conjProcesses);
 				}
 			} else {
@@ -893,7 +875,6 @@ class FilterHelper {
 				crit.createCriteria("schritte", "steps");
 				crit.add(conjSteps);
 			} else {
-				// inCrit.createAlias("schritte", "steps");
 				inCrit.add(conjSteps);
 			}
 		}
@@ -912,7 +893,6 @@ class FilterHelper {
 
 		if (conjProcessProperties != null) {
 			if (flagSteps) {
-				// critProcess.createCriteria("prozesse", "proc");
 				critProcess.createAlias("proc.eigenschaften", "prozesseig");
 				critProcess.add(conjProcessProperties);
 			} else {
@@ -959,7 +939,6 @@ class FilterHelper {
 				critProcess.createCriteria("bearbeitungsbenutzer", "user");
 				critProcess.add(conjUsers);
 			} else {
-				// critProcess.createCriteria("schritte", "steps");
 				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
 				inCrit.add(conjUsers);
 			}

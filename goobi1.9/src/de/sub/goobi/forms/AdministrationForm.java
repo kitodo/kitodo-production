@@ -142,142 +142,13 @@ public class AdministrationForm implements Serializable {
 	}
 	
 	public void createIndex () {
-//		LuceneIndexJob job = new LuceneIndexJob();
-//		if (job.getIsRunning() == false) {
-//			job.execute();
-//			Helper.setMeldung("lucene indexer executed");
-//		} else {
-//			Helper.setMeldung("lucene indexer is already running, try again in a few minutes");
-//		}
 	}
 
-	/*
-	 * #####################################################
-	 * ##################################################### ## ## Scripte über
-	 * separaten Classloader laden ##
-	 * #####################################################
-	 * ####################################################
-	 */
-
-	/*
-	public void startPlugin() {
-		ConfigMain conf = new ConfigMain();
-		File file = new File(conf.getParameter("pluginFolder", File.separator));
-		try {
-			URL url = file.toURL();
-			URL[] urls = new URL[] { url };
-
-			ClassLoader servletClassLoader = Thread.currentThread().getContextClassLoader();
-			ClassLoader cl = new URLClassLoader(urls, servletClassLoader);
-			// cl.clearAssertionStatus();
-			// cl.setClassAssertionStatus("de.sub.goobi.Plugins." + myPlugin,
-			// true);
-			Class cls = cl.loadClass("de.sub.goobi.Plugins." + myPlugin);
-
-			// run it
-			Object objectParameters[] = { new String[] {} };
-			Class classParameters[] = { objectParameters[0].getClass() };
-			try {
-				Method theMethod = cls.getDeclaredMethod("main", classParameters);
-				theMethod.invoke(null, objectParameters);
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			}
-			// Static method, no instance needed
-			catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			cl = null;
-			// GoobiAdminScriptPlugin p = (GoobiAdminScriptPlugin)
-			// cls.newInstance();
-			// p.start();
-			// cl.setClassAssertionStatus("de.sub.goobi.Plugins." + myPlugin,
-			// true);
-		} catch (MalformedURLException e) {
-			Helper.setFehlerMeldung("MalformedURLException: ", e.getMessage());
-		} catch (ClassNotFoundException e) {
-			Helper.setFehlerMeldung("ClassNotFoundException: ", e.getMessage());
-			// } catch (InstantiationException e) {
-			// Helper.setFehlerMeldung("InstantiationException: ",
-			// e.getMessage());
-		} catch (IllegalAccessException e) {
-			Helper.setFehlerMeldung("IllegalAccessException: ", e.getMessage());
-		}
-		Helper.setMeldung("------------------------------------------------------------------");
-		Helper.setMeldung("Plugin ausgeführt");
-	}
-	*/
-
-	/**
-	 * Liste der Plugins aus
-	 * ================================================================
-	 */
-	/*
-	public List getMyPluginList() {
-		ConfigMain conf = new ConfigMain();
-		File dir = new File(conf.getParameter("pluginFolder", File.separator));
-		// alle Plugins durchlaufen 
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return (name.endsWith(".class"));
-			}
-		};
-		String[] dateien = dir.list(filter);
-		if (dateien == null || dateien.length == 0)
-			return new ArrayList();
-
-		// Klassen nach Namen sortieren und zurückgeben
-		List<String> filesDirs = new ArrayList<String>();
-		for (String string : dateien)
-			filesDirs.add(string.substring(0, string.indexOf(".class")));
-		Collections.sort(filesDirs);
-		return filesDirs;
-	}
-	 */
-
-	/**
-	 * Getter und Setter für Plugin
-	 * ================================================================
-	 */
-	/*
-	public String getMyPlugin() {
-		return myPlugin;
-	}
-
-	public void setMyPlugin(String myPlugin) {
-		this.myPlugin = myPlugin;
-	}
-	*/
-
-	/*
-	public void GroovyTest() {
-		Binding binding = new Binding();
-		binding.setVariable("foo", new Integer(2));
-		GroovyShell shell = new GroovyShell(binding);
-
-		Object value = shell.evaluate("println 'Hello World!'; x = 123; return foo * 10");
-		assert value.equals(new Integer(20));
-		assert binding.getVariable("x").equals(new Integer(123));
-	}
-	*/
-
-	/*
-	 * #####################################################
-	 * ##################################################### ## ##
-	 * ProzesseDurchlaufen ##
-	 * #####################################################
-	 * ####################################################
-	 */
 
 	public void ProzesseDurchlaufen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
 		for (Prozess auf : auftraege) {
-//			Prozess auf = (Prozess) iter.next();
 			dao.save(auf);
 		}
 		Helper.setMeldung(null, "", "Elements successful counted");
@@ -288,7 +159,6 @@ public class AdministrationForm implements Serializable {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
 		for (Prozess auf : auftraege) {
-//			Prozess auf = (Prozess) iter.next();
 
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
@@ -314,7 +184,6 @@ public class AdministrationForm implements Serializable {
 		//TODO: Try to avoid SQL
 		List<Schritt> schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
 		for (Schritt auf : schritte) {
-//			Schritt auf = (Schritt) iter.next();
 			auf.setBenutzergruppen(neueGruppen);
 			dao.save(auf);
 		}
@@ -343,7 +212,6 @@ public class AdministrationForm implements Serializable {
 			BenutzerDAO dao = new BenutzerDAO();
 			List<Benutzer> myBenutzer = dao.search("from Benutzer");
 			for (Benutzer ben : myBenutzer) {
-//				Benutzer ben = (Benutzer) iter.next();
 				String passencrypted = encrypter.encrypt(ben.getPasswort());
 				ben.setPasswort(passencrypted);
 				dao.save(ben);
@@ -378,7 +246,6 @@ public class AdministrationForm implements Serializable {
 	@SuppressWarnings("unchecked")
 	public void ImagepfadKorrigieren() throws DAOException {
 		UghHelper ughhelp = new UghHelper();
-		//	HibernateUtil.clearSession();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 
@@ -570,7 +437,6 @@ public class AdministrationForm implements Serializable {
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
 		crit.add(Restrictions.like("titel", "statjafud%"));
-		// crit.add(Expression.like("titel", "statjafud_PPN514401303_1880"));
 		/* alle Prozesse durchlaufen */
 		List<Prozess> pl = crit.list();
 		for (Prozess p : pl) {

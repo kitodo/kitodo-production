@@ -68,6 +68,7 @@ public class SqlConfiguration {
 			logger.debug("found root element");
 			Element sessionFactory = root.getChild("session-factory");
 			logger.debug("found session-factory element");
+			@SuppressWarnings("unchecked")
 			List<Element> properties = sessionFactory.getChildren("property");
 			logger.debug("found " + properties.size() + " property elements");
 			for (Element property : properties) {

@@ -1,4 +1,5 @@
 package org.goobi.production.chart;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -61,12 +62,9 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 
-//		int count = 0;
 		while (list.next()) {
-//			count++;
 			Schritt step = (Schritt) list.get(0);
 			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
-			//			shorttitle += " (" + step.getReihenfolge() + ")";
 
 			IProjectTask pt = null;
 			for (IProjectTask task : myTaskList) {
@@ -87,19 +85,12 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 					pt.setStepsCompleted(pt.getStepsCompleted() + 1);
 				}
 			}
-			
+
 			if (countImages) {
 				pt.setStepsMax(pt.getStepsMax() + step.getProzess().getSortHelperImages());
 			} else {
 				pt.setStepsMax(pt.getStepsMax() + 1);
 			}
-			
-			/*if (count % 20 == 0) {
-				//flush a batch of updates and release memory:
-				session.flush();
-				session.clear();
-			}*/
-
 		}
 	}
 

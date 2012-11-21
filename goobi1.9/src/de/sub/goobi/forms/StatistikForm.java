@@ -187,7 +187,6 @@ public class StatistikForm {
 		}
 
 		try {
-			//	  HibernateUtil.clearSession();
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 

@@ -64,7 +64,6 @@ import de.sub.goobi.helper.PaginatingCriteria;
  ****************************************************************************/
 public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 4715772407607416975L;
-	// private Criteria myCriteria = null;
 	private WeakReference<Criteria> myCriteria = null;
 	private String myName = null;
 	private String myFilterExpression = null;
@@ -98,23 +97,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	@Override
 	public Criteria getCriteria() {
 
-		// myCriteria is a WeakReference ... both cases needs to be evaluated,
-		// after gc the WeakReference
-		// object is still referenced but not the object referenced by it
-		// if (myCriteria == null ) {
-		// if (this.myIds == null) {
-		// if (this.getFilter() != null) {
-		// myCriteria =
-		// createCriteriaFromFilterString(this.getFilter());
-		// }
-		// } else {
-		// myCriteria =
-		// createCriteriaFromIDList();
-		// }
-		// }
-		//
-		// return myCriteria;
-		//
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (myIds == null) {
 				if (getFilter() != null) {
@@ -201,9 +183,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		// crit.createCriteria("projekt", "proj");
-		// FilterHelper.limitToUserAccessRights(crit);
-
 		/*
 		 * -------------------------------- combine all parameters together this
 		 * part was exported to FilterHelper so that other Filters could access
@@ -219,14 +198,11 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 		 * by using a range the Criteria produces more than one item per
 		 * process, for each step it involves
 		 **/
-		// if (myParameter.getCriticalQuery()) {
 
 		createIDListFromCriteria(crit);
 		crit = null;
 		crit = createCriteriaFromIDList();
-		// }
-
-		// crit.add(Restrictions.in("id", crit.getIds()));
+	
 
 		return crit;
 	}
@@ -252,7 +228,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	private PaginatingCriteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
-		// crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}

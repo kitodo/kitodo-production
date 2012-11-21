@@ -212,6 +212,8 @@
         <copy todir="${build.classes}">
             <fileset dir="${java.src.dir}">
                 <include name="**/*hbm.xml"/>
+            	<include name="**/messages_de.properties"/>
+            	<include name="**/messages_en.properties"/>
             </fileset>
         </copy>
     </target>

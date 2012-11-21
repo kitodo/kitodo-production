@@ -141,31 +141,18 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Filter ##
-	 * ##################################################### ####################################################
+	 * Filter
 	 */
 
 	/**
 	 * Anzeige der Schritte
 	 */
 	public String FilterAlleStart() {
-		// Helper.createNewHibernateSession();
 		try {
-			// if (this.filter.toLowerCase().startsWith("lucene")) {
-			// this.myFilteredDataSource = new LuceneStepFilter();
-			// this.myFilteredDataSource.getObservable().addObserver(new
-			// Helper().createObserver());
-			// ((UserDefinedStepFilter)
-			// this.myFilteredDataSource).setFilterModes(this.nurOffeneSchritte,
-			// this.nurEigeneSchritte);
-			// this.myFilteredDataSource.setFilter(this.filter.substring("lucene".length()));
-			// } else {
-			// HibernateUtil.clearSession();
 			this.myFilteredDataSource = new UserDefinedStepFilter();
 			this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
 			((UserDefinedStepFilter) this.myFilteredDataSource).setFilterModes(this.nurOffeneSchritte, this.nurEigeneSchritte);
 			this.myFilteredDataSource.setFilter(this.filter);
-			// }
 
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			if (!this.showAutomaticTasks) {
@@ -177,7 +164,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			sortList(crit);
 			this.page = new Page(crit, 0);
-			// calcHomeImages();
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("error on reading database", he.getMessage());
 			return "";
@@ -236,8 +222,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Bearbeitung des Schritts
-	 * übernehmen oder abschliessen ## ##################################################### ####################################################
+	 * Bearbeitung des Schritts übernehmen oder abschliessen
 	 */
 
 	public String SchrittDurchBenutzerUebernehmen() {
@@ -291,7 +276,6 @@ public class AktuelleSchritteForm extends BasisForm {
 						DownloadToHome();
 					}
 				}
-				// calcHomeImages();
 			} else {
 				Helper.setFehlerMeldung("stepInWorkError");
 				return "";
@@ -324,16 +308,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
-
-			// UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			// userdefined.setFilterModes(true, false);
-			// userdefined.setFilter("");
-			// Criteria crit = userdefined.getCriteria();
-			// crit.add(Restrictions.eq("titel", steptitle));
-			//
-			// // only steps with same batchid
-			// crit.add(Restrictions.eq("proc.batchID", batchNumber));
-			// crit.add(Restrictions.eq("batchStep", true));
+			
 			currentStepsOfBatch = crit.list();
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
@@ -405,12 +380,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
 		if (batchNumber != null) {
 			// only steps with same title
-			// UserDefinedStepFilter userdefined = new UserDefinedStepFilter();
-			// userdefined.setFilterModes(false, false);
-			// userdefined.setFilter("");
-			// Criteria crit = userdefined.getCriteria();
-			// crit.add(Restrictions.eq("titel", steptitle));
-			// crit.add(Restrictions.eq("batchStep", true));
+		
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
@@ -418,8 +388,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
-			// only steps with same batchid
-			// crit.add(Restrictions.eq("proc.batchID", batchNumber));
+
 			currentStepsOfBatch = crit.list();
 		} else {
 			return "AktuelleSchritteBearbeiten";
@@ -435,21 +404,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		return "BatchesEdit";
 	}
 
+	@Deprecated
 	public void saveProperties() {
-		// try {
-		// /*
-		// * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
-		// */
-		//
-		// for (PropertyTemplate pt : this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList()) {
-		// this.mySchritt.getEigenschaften().add((Schritteigenschaft) pt.getProperty());
-		// ((Schritteigenschaft) pt.getProperty()).setSchritt(this.mySchritt);
-		// }
-		// new SimpleDAO().save(this.mySchritt);
-		// this.mySchritt.refreshProperties();
-		// } catch (DAOException e) {
-		// myLogger.error("stupid dao-exception occured", e);
-		// }
 	}
 
 	public String SchrittDurchBenutzerZurueckgeben() {
@@ -540,17 +496,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			}
 		}
 
-		// List<PropertyTemplate> propList = this.mySchritt.getDisplayProperties().getPropertyTemplatesAsList();
-		// if (propList.size() > 0) {
-		// for (PropertyTemplate prop : propList) {
-		// if (prop.isIstObligatorisch() && (prop.getWert() == null || prop.getWert().equals(""))) {
-		// Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getTitel() + " "
-		// + Helper.getTranslation("requiredValue"));
-		// return "";
-		// }
-		// }
-		// }
-
 		/*
 		 * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten schon vorher draussen
 		 */
@@ -563,8 +508,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Eigenschaften bearbeiten ##
-	 * ##################################################### ####################################################
+	 *  Eigenschaften bearbeiten
 	 */
 
 	public String SchrittEigenschaftNeu() {
@@ -579,8 +523,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Korrekturmeldung an vorherige
-	 * Schritte ## ##################################################### ####################################################
+	 * Korrekturmeldung an vorherige Schritte 
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -669,8 +612,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Problem-behoben-Meldung an
-	 * nachfolgende Schritte ## ##################################################### ####################################################
+	 *  Problem-behoben-Meldung an nachfolgende Schritte
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -752,8 +694,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Upload und Download der
-	 * Images ## ##################################################### ####################################################
+	 * Upload und Download der Images
 	 */
 
 	public String UploadFromHome() {
@@ -894,39 +835,12 @@ public class AktuelleSchritteForm extends BasisForm {
 	 * 
 	 * @throws IOException
 	 */
+	@Deprecated
 	public void executeModule() {
-		// Helper.setMeldung("call module");
-		// ModuleServerForm msf = (ModuleServerForm)
-		// Helper.getManagedBeanValue("#{ModuleServerForm}");
-		// String url = null;
-		// try {
-		// url = msf.startShortSession(mySchritt);
-		// Helper.setMeldung(url);
-		// } catch (GoobiException e) {
-		// Helper.setFehlerMeldung("GoobiException: " + e.getMessage());
-		// return;
-		// } catch (XmlRpcException e) {
-		// Helper.setMeldung("XmlRpcException: " + e.getMessage());
-		// return;
-		// }
-		// Helper.setMeldung("module called");
-		// if (url != null && url.length() > 0) {
-		// FacesContext facesContext = FacesContext.getCurrentInstance();
-		// if (!facesContext.getResponseComplete()) {
-		// HttpServletResponse response = (HttpServletResponse)
-		// facesContext.getExternalContext().getResponse();
-		// try {
-		// response.sendRedirect(url);
-		// } catch (IOException e) {
-		// Helper.setFehlerMeldung("IOException: " + e.getMessage());
-		// }
-		// facesContext.responseComplete();
-		// }
-		// }
 	}
 
+	@Deprecated
 	public int getHomeBaende() {
-		// return myDav.getAnzahlBaende("");
 		return 0;
 	}
 
@@ -960,8 +874,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 *  Getter und Setter
 	 */
 
 	public Prozess getMyProzess() {
@@ -1047,9 +960,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Parameter per Get Ã¼bergeben
-	 * bekommen und entsprechen den passenden Schritt laden ## #####################################################
-	 * ####################################################
+	 * Parameter per Get Ã¼bergeben bekommen und entsprechen den passenden Schritt laden 
 	 */
 
 	/**
@@ -1074,12 +985,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
-	/*
-	 * ========================================================
-	 * 
+	/* 
 	 * Auswahl mittels Selectboxen
-	 * 
-	 * ========================================================
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -1099,8 +1006,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Downloads ##
-	 * ##################################################### ####################################################
+	 * Downloads
 	 */
 
 	public void DownloadTiffHeader() throws IOException {
@@ -1108,10 +1014,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		tiff.ExportStart();
 	}
 
-	/*
-	 * public void DownloadRusExport() throws IOException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException,
-	 * WriteException { RusslandExport rus = new RusslandExport(mySchritt.getProzess()); rus.ExportStart(); }
-	 */
 
 	public void ExportDMS() {
 		ExportDms export = new ExportDms();
@@ -1204,12 +1106,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private void loadProcessProperties() {
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
-		// for (ProcessProperty pt : this.processPropertyList) {
-		// if (!this.containers.contains(pt.getContainer())) {
-		// this.containers.add(pt.getContainer());
-		// }
-		// }
-		// Collections.sort(this.containers);
+
 		for (ProcessProperty pt : this.processPropertyList) {
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
@@ -1223,7 +1120,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
-	// TODO validierung nur bei Schritt abgeben, nicht bei normalen speichern
 	public void saveProcessProperties() {
 		boolean valid = true;
 		for (IProperty p : this.processPropertyList) {
@@ -1307,38 +1203,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 		loadProcessProperties();
 	}
-
-	// public void saveCurrentProperty() {
-	// if (!this.processProperty.isValid()) {
-	// Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
-	// return;
-	// }
-	// if (this.processProperty.getProzesseigenschaft() == null) {
-	// Prozesseigenschaft pe = new Prozesseigenschaft();
-	// pe.setProzess(this.myProzess);
-	// this.processProperty.setProzesseigenschaft(pe);
-	// this.myProzess.getEigenschaften().add(pe);
-	// }
-	// this.processProperty.transfer();
-	//
-	// Prozess p = this.mySchritt.getProzess();
-	// List<Prozesseigenschaft> props = p.getEigenschaftenList();
-	// for (Prozesseigenschaft pe : props) {
-	// if (pe.getTitel() == null) {
-	// p.getEigenschaften().remove(pe);
-	// }
-	// }
-	// if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-	// this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
-	// }
-	// try {
-	// this.pdao.save(this.mySchritt.getProzess());
-	// Helper.setMeldung("Properties saved");
-	// } catch (DAOException e) {
-	// myLogger.error(e);
-	// Helper.setFehlerMeldung("Properties could not be saved");
-	// }
-	// }
 
 	public Map<Integer, PropertyListObject> getContainers() {
 		return this.containers;

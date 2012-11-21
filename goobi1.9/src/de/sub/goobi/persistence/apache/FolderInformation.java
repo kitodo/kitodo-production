@@ -56,20 +56,7 @@ public class FolderInformation {
 		this.title = goobititle;
 	}
 
-	// String mainPath = metadataPath + this.id + File.separator;
-	// mainPath = mainPath.replaceAll(" ", "__");
-	// String processpath = this.mainPath.replace("\\", "/");
-	// String imagepath = this.mainPath + "images" + File.separator;
-	//
-	// this.process.getImagesDirectory().replace("\\", "/");
-	// String tifpath = this.process.getImagesTifDirectory().replace("\\", "/");
-	// String origpath = this.process.getImagesOrigDirectory().replace("\\", "/");
-	// String metaFile = this.process.getMetadataFilePath().replace("\\", "/");
-	// String ocrBasisPath = this.process.getOcrDirectory().replace("\\", "/");
-	// String ocrPlaintextPath = this.process.getTxtDirectory().replace("\\", "/");
-	// String sourcepath = this.process.getSourceDirectory().replace("\\", "/");
-	// String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRegelsatz().getDatei();
-
+	
 	public String getImagesTifDirectory(boolean useFallBack) {
 		File dir = new File(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -112,11 +99,7 @@ public class FolderInformation {
 		if (!rueckgabe.endsWith(File.separator)) {
 			rueckgabe += File.separator;
 		}
-		// if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-		// if (!new File(rueckgabe).exists()) {
-		// new Helper().createMetaDirectory(rueckgabe);
-		// }
-		// }
+		
 		return rueckgabe;
 	}
 
@@ -174,9 +157,7 @@ public class FolderInformation {
 			}
 
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
-			// if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-			// new Helper().createMetaDirectory(rueckgabe);
-			// }
+
 			return rueckgabe;
 		} else {
 			return getImagesTifDirectory(useFallBack);
@@ -331,7 +312,6 @@ public class FolderInformation {
 		File dir;
 		try {
 			dir = new File(getImagesTifDirectory(true));
-			// throw new NullPointerException("wer das liest ist doof");
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}

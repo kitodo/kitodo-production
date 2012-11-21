@@ -164,17 +164,6 @@ public class PropertyParser {
 				}
 			}
 		}
-
-		// // add 'eigenschaft' to all ProcessProperties
-		// for (ProcessProperty pp : properties) {
-		// if (pp.getProzesseigenschaft() == null) {
-		// Prozesseigenschaft pe = new Prozesseigenschaft();
-		// pe.setProzess(mySchritt.getProzess());
-		// mySchritt.getProzess().getEigenschaften().add(pe);
-		// pp.setProzesseigenschaft(pe);
-		// }
-		// }
-
 		return properties;
 	}
 
@@ -273,10 +262,6 @@ public class PropertyParser {
 		// add 'eigenschaft' to all ProcessProperties
 		for (ProcessProperty pp : properties) {
 			if (pp.getProzesseigenschaft() == null) {
-				// Prozesseigenschaft pe = new Prozesseigenschaft();
-				// pe.setProzess(process);
-				// process.getEigenschaften().add(pe);
-				// pp.setProzesseigenschaft(pe);
 			} else {
 				plist.remove(pp.getProzesseigenschaft());
 			}
