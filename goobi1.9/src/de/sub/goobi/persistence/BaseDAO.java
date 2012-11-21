@@ -1,31 +1,19 @@
 package de.sub.goobi.persistence;
 
 /**
- * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- * 			- http://digiverso.com 
- * 			- http://www.intranda.com
- * 
- * Copyright 2011, intranda GmbH, Göttingen
- * 
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
- * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
- * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
- * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
- * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
- * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
- * exception statement from your version.
+ * Copyright 2005 Nick Heudecker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import java.io.Serializable;
@@ -40,7 +28,12 @@ import de.sub.goobi.helper.Util;
 import de.sub.goobi.helper.exceptions.DAOException;
 
 /**
- * Base class for DAOs. This class defines common CRUD methods.
+ * Base class for DAOs. This class defines common CRUD methods. 
+ * 
+ * Changes have been made by Steffen Hankiewicz.
+ * 
+ * @author Nick Heudecker <nick@systemmobile.com>
+ * @author Steffen Hankiewicz <steffen.hankiewicz@intranda.com>
  */
 
 public abstract class BaseDAO implements Serializable {
@@ -77,7 +70,7 @@ public abstract class BaseDAO implements Serializable {
 	 *            the id of the class type
 	 * @throws DAOException
 	 */
-	@SuppressWarnings( "rawtypes" )
+	@SuppressWarnings("rawtypes")
 	protected void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -179,7 +172,7 @@ public abstract class BaseDAO implements Serializable {
 			rollback();
 			throw new DAOException(he);
 		}
-		
+
 	}
 
 	protected void storeList(List<Object> list) throws DAOException {
@@ -193,7 +186,7 @@ public abstract class BaseDAO implements Serializable {
 		} catch (HibernateException he) {
 			rollback();
 			throw new DAOException(he);
-	
+
 		}
 	}
 
@@ -250,7 +243,6 @@ public abstract class BaseDAO implements Serializable {
 		}
 	}
 
-	
 	protected void updateObj(Object o) {
 		Session session = Helper.getHibernateSession();
 		if (session == null) {
