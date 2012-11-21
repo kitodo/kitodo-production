@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.goobi.io.FileListFilter;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.DocStructHasNoTypeException;
@@ -53,7 +54,6 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -136,7 +136,7 @@ public class ExportPdf extends ExportMets {
 						contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
 					}
 					String url = "";
-					FilenameFilter filter = new FileUtils.FileListFilter("\\d*\\.tif");
+					FilenameFilter filter = new FileListFilter("\\d*\\.tif");
 					File imagesDir = new File(myProzess.getImagesTifDirectory(true));
 					File[] meta = imagesDir.listFiles(filter);
 					ArrayList<String> filenames = new ArrayList<String>();

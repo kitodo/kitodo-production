@@ -26,42 +26,23 @@
  * exception statement from your version.
  */
 
-package org.goobi.production;
+package org.goobi.io;
 
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.io.File;
+import java.io.FilenameFilter;
 
-public class GoobiVersion {
+public class FileListFilter implements FilenameFilter {
 
-    private static String version = "N/A";
-    private static String buildversion = "N/A";
-    private static String builddate = "N/A";
+	private String name;
 
-    public static void setupFromManifest(Manifest manifest) throws IllegalArgumentException {
-        Attributes mainAttributes = manifest.getMainAttributes();
+	public FileListFilter(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException("No filter name given.");
+		}
+		this.name = name;
+	}
 
-        version = getValueOrThrowException(mainAttributes, "Implementation-Version");
-        buildversion = version;
-        builddate = getValueOrThrowException(mainAttributes, "Implementation-Build-Date");
-    }
-
-    private static String getValueOrThrowException(Attributes attributes, String attributeName) throws IllegalArgumentException {
-        String result = attributes.getValue(attributeName);
-        if (null == result) {
-            throw new IllegalArgumentException("Manifest does not contain " + attributeName + ". The build may be corrupted.");
-        }
-        return result;
-    }
-
-    public static String getVersion() {
-        return version;
-    }
-
-    public static String getBuildversion() {
-        return buildversion;
-    }
-
-    public static String getBuilddate() {
-        return builddate;
-    }
+	public boolean accept(File directory, String filename) {
+		return filename.matches(name);
+	}
 }

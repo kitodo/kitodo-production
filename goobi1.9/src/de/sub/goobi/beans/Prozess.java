@@ -46,6 +46,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.goobi.io.BackupFileRotation;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -837,63 +838,77 @@ public class Prozess implements Serializable {
 	// backup of meta.xml
 
 	private void createBackupFile() throws IOException, InterruptedException, SwapException, DAOException {
+		int numberOfBackups = 0;
+		String format = "";
 		if (ConfigMain.getIntParameter("numberOfMetaBackups") != 0) {
 			numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
-			FORMAT = ConfigMain.getParameter("formatOfMetaBackups");
+			// FORMAT = ConfigMain.getParameter("formatOfMetaBackups");
+			// }
+			// if (numberOfBackups != 0 && FORMAT != null) {
+			// FilenameFilter filter = new FileUtils.FileListFilter(FORMAT);
+			// File metaFilePath = new File(getProcessDataDirectory());
+			// File[] meta = metaFilePath.listFiles(filter);
+			// if (meta != null) {
+			// List<File> files = Arrays.asList(meta);
+			// Collections.reverse(files);
+			//
+			// int count;
+			// if (meta != null) {
+			// if (files.size() > numberOfBackups) {
+			// count = numberOfBackups;
+			// } else {
+			// count = meta.length;
+			// }
+			// while (count > 0) {
+			// for (File data : files) {
+			// if (data.length() != 0) {
+			// if (data.getName().endsWith("xml." + (count - 1))) {
+			// Long lastModified = data.lastModified();
+			// File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
+			// data.renameTo(newFile);
+			// if (lastModified > 0L) {
+			// newFile.setLastModified(lastModified);
+			// }
+			// }
+			// if (data.getName().endsWith(".xml") && count == 1) {
+			// Long lastModified = data.lastModified();
+			// File newFile = new File(data.toString() + ".1");
+			// data.renameTo(newFile);
+			// if (lastModified > 0L) {
+			// newFile.setLastModified(lastModified);
+			// }
+			// }
+			// }
+			// }
+			// count--;
+			// }
+			// }
+			format = ConfigMain.getParameter("formatOfMetaBackups");
 		}
-		if (numberOfBackups != 0 && FORMAT != null) {
-			FilenameFilter filter = new FileUtils.FileListFilter(FORMAT);
-			File metaFilePath = new File(getProcessDataDirectory());
-			File[] meta = metaFilePath.listFiles(filter);
-			if (meta != null) {
-				List<File> files = Arrays.asList(meta);
-				Collections.reverse(files);
-
-				int count;
-				if (meta != null) {
-					if (files.size() > numberOfBackups) {
-						count = numberOfBackups;
-					} else {
-						count = meta.length;
-					}
-					while (count > 0) {
-						for (File data : files) {
-							if (data.length() != 0) {
-								if (data.getName().endsWith("xml." + (count - 1))) {
-									Long lastModified = data.lastModified();
-									File newFile = new File(data.toString().substring(0, data.toString().lastIndexOf(".")) + "." + (count));
-									data.renameTo(newFile);
-									if (lastModified > 0L) {
-										newFile.setLastModified(lastModified);
-									}
-								}
-								if (data.getName().endsWith(".xml") && count == 1) {
-									Long lastModified = data.lastModified();
-									File newFile = new File(data.toString() + ".1");
-									data.renameTo(newFile);
-									if (lastModified > 0L) {
-										newFile.setLastModified(lastModified);
-									}
-								}
-							}
-						}
-						count--;
-					}
-				}
-			}
+		if (format != null) {
+			myLogger.info("Option 'formatOfMetaBackups' is deprecated and will be ignored.");
+		}
+		if (numberOfBackups != 0) {
+			BackupFileRotation bfr = new BackupFileRotation();
+			bfr.setNumberOfBackups(numberOfBackups);
+			bfr.setFormat("meta.*\\.xml");
+			bfr.setProcessDataDirectory(getProcessDataDirectory());
+			bfr.performBackup();
+		} else {
+			myLogger.warn("No backup configured for meta data files.");
 		}
 	}
 
 	private void renameMetadataFile(String oldFileName, String newFileName) {
 		File oldFile;
 		File newFile;
-		Long lastModified;
+//		Long lastModified;
 		if (oldFileName != null && newFileName != null) {
 			oldFile = new File(oldFileName);
-			lastModified = oldFile.lastModified();
+			// lastModified = oldFile.lastModified();
 			newFile = new File(newFileName);
 			oldFile.renameTo(newFile);
-			newFile.setLastModified(lastModified);
+			// newFile.setLastModified(lastModified);
 		}
 	}
 
