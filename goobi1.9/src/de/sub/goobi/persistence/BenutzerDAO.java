@@ -52,14 +52,20 @@ public class BenutzerDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
-	public void remove(Benutzer t) throws DAOException {
-		if (t.getId() != null) {
-			removeObj(t);
-		}
-	}
+	/**
+	 * 
+	 * The function remove() removes a user from the environment. Since the user ID may still be referenced somewhere, the user account is invalidated
+	 * instead.
+	 * 
+	 * @param user
+	 *            User to be removed
+	 * @throws DAOException
+	 *             An exception that can be thrown from the underlying save() procedure upon database failure.
+	 */
 
-	public void remove(Integer id) throws DAOException {
-		removeObj(Benutzer.class, id);
+	public void remove(Benutzer user) throws DAOException {
+		user.selfDestruct();
+		save(user);
 	}
 
 	@SuppressWarnings("unchecked")

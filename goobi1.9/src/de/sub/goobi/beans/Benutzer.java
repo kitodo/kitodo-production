@@ -220,7 +220,7 @@ public class Benutzer implements Serializable {
 			List<Benutzergruppe> answer = new ArrayList<Benutzergruppe>(this.benutzergruppen);
 			Collections.sort(answer);
 			return answer;
-			
+
 		}
 	}
 
@@ -332,7 +332,7 @@ public class Benutzer implements Serializable {
 			List<Projekt> answer = new ArrayList<Projekt>(this.projekte);
 			Collections.sort(answer);
 			return answer;
-			
+
 		}
 	}
 
@@ -355,11 +355,11 @@ public class Benutzer implements Serializable {
 	public String getLdaplogin() {
 		return this.ldaplogin;
 	}
-	
+
 	public void setLdaplogin(String ldaplogin) {
 		this.ldaplogin = ldaplogin;
 	}
-	
+
 	/*
 	 * ## Helper ##
 	 */
@@ -537,6 +537,25 @@ public class Benutzer implements Serializable {
 	public void removeFilter(String inFilter) {
 		UserManager.removeFilter(this.id, inFilter);
 	}
+
+	/**
+	 * The function selfDestruct() removes a user from the environment. Since the user ID may still be referenced somewhere, the user is not hard
+	 * deleted from the database, instead the account is set inactive and invisible.
+	 * 
+	 * To allow recreation of an account with the same login the login is cleaned - otherwise it would be blocked eternally by the login existence
+	 * test performed in the BenutzerverwaltungForm.Speichern() function. In addition, all personally identifiable information is removed from the
+	 * database as well.
+	 */
+
+	public Benutzer selfDestruct() {
+		this.isVisible = "deleted";
+		this.login = null;
+		this.istAktiv = false;
+		this.vorname = null;
+		this.nachname = null;
+		this.standort = null;
+		this.benutzergruppen = new HashSet<Benutzergruppe>();
+		this.projekte = new HashSet<Projekt>();
+		return this;
+	}
 }
-
-

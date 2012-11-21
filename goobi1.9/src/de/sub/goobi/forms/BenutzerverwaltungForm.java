@@ -125,11 +125,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 				Disjunction ex = Restrictions.disjunction();
 				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
-//				crit.createCriteria("projekte", "proj");
-//				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
-				
-//				crit.createCriteria("benutzergruppen", "group");
-//				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
+				// crit.createCriteria("projekte", "proj");
+				// ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
+
+				// crit.createCriteria("benutzergruppen", "group");
+				// ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
@@ -201,11 +201,21 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return valide;
 	}
 
+	/**
+	 * The function Loeschen() deletes a user account.
+	 * 
+	 * Please note that deleting a user in goobi.production will not delete the user from a connected LDAP service.
+	 * 
+	 * @return a string indicating the screen showing up after the command has been performed.
+	 */
 	public String Loeschen() {
-		this.myClass.setBenutzergruppen(new HashSet<Benutzergruppe>());
-		this.myClass.setProjekte(new HashSet<Projekt>());
-		this.myClass.setIstAktiv(false);
-		this.myClass.setIsVisible("deleted");
+		try {
+			dao.remove(myClass);
+		} catch (DAOException e) {
+			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+			logger.error(e);
+			return "";
+		}
 		return "BenutzerAlle";
 	}
 
@@ -328,7 +338,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	public String LdapKonfigurationSchreiben() {
 		Ldap myLdap = new Ldap();
 		try {
-			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());	
+			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());
 		} catch (Exception e) {
 			logger.warn("Could not generate ldap entry: " + e.getMessage());
 			Helper.setFehlerMeldung(e.getMessage());
