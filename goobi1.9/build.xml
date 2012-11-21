@@ -49,7 +49,7 @@
     <property name="build.tomcat.compile.jsp" value="false"/>
     <property name="build.tomcat.dir.lib" value="${basedir}"/>
 
-    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="lib.dir" value="${basedir}/WEB-INF/lib"/>
 
     <property name="config.dir" value="${basedir}/config"/>
     <property name="config.local.dir" value="${basedir}/config-local"/>
