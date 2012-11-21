@@ -1,31 +1,25 @@
 <?xml version="1.0"?>
 <!--
- * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
- * 		    - http://gdz.sub.uni-goettingen.de
- * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
- * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
- * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
- * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
- * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
- * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
- * exception statement from your version.
- -->
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~     - http://gdz.sub.uni-goettingen.de
+  ~     - http://www.goobi.org
+  ~     - http://launchpad.net/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+  ~ should have received a copy of the GNU General Public License along with this
+  ~ program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+  ~ Suite 330, Boston, MA 02111-1307 USA
+  -->
 
 <project name="Goobi" default="dist">
 
@@ -39,17 +33,23 @@
     <!-- Default build properties (applied if not overridden by build.properties file) -->
     <property name="build.dir" value="./build"/>
     <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
+    <property name="build.classes.test" value="${build.dir}/test-classes"/>
+    <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
-	<property name="build.javac.source" value="1.5"/>
-	
+    <property name="build.javac.source" value="1.5"/>
+
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
-    <property name="build.dist.version" value="1.7.0" />
+    <property name="build.dist.version" value="1.8.0" />
     <property name="build.dist.vendor" value="SLUB Dresden"/>
     <property name="build.dist.url" value="http://launchpad.net/goobi-production"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
+    <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
 
-    <property name="lib.dir" value="${basedir}/WEB-INF/lib"/>
+    <property name="build.tomcat.compile.jsp" value="false"/>
+    <property name="build.tomcat.dir.lib" value="${basedir}"/>
+
+    <property name="lib.dir" value="${basedir}/lib"/>
 
     <property name="config.dir" value="${basedir}/config"/>
     <property name="config.local.dir" value="${basedir}/config-local"/>
@@ -57,7 +57,7 @@
     <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
     <property name="test.report.dir" value="${build.dir}/test-reports/"/>
     <property name="java.src.dir" value="${basedir}/src"/>
-
+    <property name="java.src.dubious.dir" value="${basedir}/src-dubious"/>
 
     <!--==================================================
         Datatype declarations
@@ -66,6 +66,7 @@
     <!-- Compilation classpath -->
     <path id="compile.classpath">
         <fileset dir="${lib.dir}"/>
+        <fileset dir="${build.tomcat.dir.lib}"/>
         <pathelement location="${build.servlet.jar}"/>
         <pathelement path="${java.class.path}"/>
     </path>
@@ -74,6 +75,7 @@
     <path id="test.classpath">
         <path refid="compile.classpath"/>
         <pathelement location="${build.classes}"/>
+        <pathelement location="${build.classes.test}"/>
     </path>
 
     <!--==================================================
@@ -96,7 +98,7 @@
         <echoproperties/>
     </target>
 
-    <target name="dist" depends="war" description="Produce the distributable."/>
+    <target name="dist" depends="war, jar" description="Produce the distributables."/>
 
     <target name="distclean" description="Clean up the distribution files only.">
         <delete dir="${build.dist.dir}"/>
@@ -119,19 +121,30 @@
         ==================================================-->
 
     <!-- Check all build preconditions -->
-    <target name="check-preconditions" depends="check-java-version, check-servlet-api"/>
+    <target name="check-preconditions" depends="check-java-version, check-servlet-api, check-jsp-compilation"/>
 
     <!-- Check if needed libraries are on the classpath and set apropriate properties -->
     <target name="check-classpath">
         <condition property="servletapi.present">
             <available classname="javax.servlet.http.HttpServlet" classpathref="compile.classpath"/>
         </condition>
+		<condition property="jsp.compilation.requested">
+			<equals arg1="${build.tomcat.compile.jsp}" arg2="true"/>
+		</condition>
+		<condition property="jspapi.present">
+			<and>
+				<available classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+				<available classname="org.apache.el.ExpressionFactoryImpl" classpathref="compile.classpath"/>
+				<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath"/>
+				<available classname="javax.el.ExpressionFactory" classpathref="compile.classpath"/>
+			</and>
+		</condition>
     </target>
 
     <!-- Fail if Servlet API isn't found and print out a useful help text -->
     <target name="check-servlet-api" depends="check-classpath" unless="servletapi.present">
         <echo>Servlet API not found on classpath!</echo>
-        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set property tomcat.dir.lib "</echo>
+        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set build.tomcat.dir.lib property"</echo>
         <fail message="Servlet API is missing."/>
     </target>
 
@@ -150,6 +163,11 @@
         </fail>
     </target>
 
+	<!-- Fail if JSP compiler is requested but not configured on the classpath-->
+	<target name="check-jsp-compilation" if="jsp.compilation.requested">
+		<fail message="JSP compile libraries missing. Add tomcat libraries to the classpath or set the build.tomcat.dir.lib property." unless="jspapi.present"/>
+	</target>
+
     <!--==================================================
         Initialization
         ==================================================-->
@@ -157,7 +175,10 @@
     <!-- Create needed directories -->
     <target name="createDirs">
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dist.dir}"/>
         <mkdir dir="${build.classes}"/>
+        <mkdir dir="${build.classes.test}"/>
+        <mkdir dir="${build.jsp.src}"/>
         <delete dir="${doc.javadocs.dir}"/>
         <mkdir dir="${doc.javadocs.dir}"/>
         <delete dir="${test.report.dir}"/>
@@ -182,19 +203,9 @@
         </javadoc>
     </target>
 
-
     <!--==================================================
         Build
         ==================================================-->
-
-    <!-- Copy message resource bundles -->
-    <target name="copy-message-resources" depends="init">
-        <copy todir="${build.classes}/messages">
-            <fileset dir="${java.src.dir}/messages">
-                <include name="*.properties"/>
-            </fileset>
-        </copy>
-    </target>
 
     <!-- Copy hibernate configuration files -->
     <target name="copy-hibernate-resources" depends="init">
@@ -206,27 +217,36 @@
     </target>
 
     <!-- Compile application -->
-    <target name="compile" depends="init, copy-message-resources, copy-hibernate-resources">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}" destdir="${build.classes}"
-        	   source="${build.javac.source}"   
-        	   target="${build.javac.target}"
-               encoding="UTF8"
-               debug="${build.javac.debug}"
-               classpathref="compile.classpath">
+    <target name="compile" depends="init, copy-hibernate-resources, compile-jsp">
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
+			destdir="${build.classes}"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="${build.javac.debug}"
+			classpathref="compile.classpath">
         </javac>
     </target>
 
     <!-- Compile unit tests -->
     <target name="compile-tests" depends="compile">
-        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes}"
-        	   source="${build.javac.source}"
-        	   target="${build.javac.target}"
+        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes.test}"
+               source="${build.javac.source}"
+               target="${build.javac.target}"
                encoding="UTF8"
                debug="${build.javac.debug}"
-               classpathref="compile.classpath">
+               classpathref="test.classpath">
         </javac>
     </target>
 
+	<target name="compile-jsp" if="jsp.compilation.requested">
+		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+		<jasper
+			validateXml="false" 
+			uriroot="${basedir}" 
+			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
+			outputDir="${build.jsp.src}" />
+	</target>
 
     <!--==================================================
         Distribution
@@ -237,7 +257,7 @@
 
         <war destfile="${build.dist.war}" webxml="WEB-INF/web.xml">
 
-            <classes dir="${build.classes}" excludes="**/*Test*.class"/>
+            <classes dir="${build.classes}"/>
 
             <lib dir="${lib.dir}"/>
 
@@ -259,6 +279,7 @@
                 </patternset>
             </zipfileset>
             <zipfileset dir="css" prefix="css"/>
+        	<zipfileset dir="js" prefix="js" />
 
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
@@ -272,6 +293,21 @@
 
     </target>
 
+	<!-- Build standalone CLI jar -->
+	<target name="jar" depends="compile, copy-config">
+		<jar destfile="${build.dist.jar}">
+			<fileset dir="${build.classes}" includes="**/*.class, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+			<manifest>
+				<attribute name="Implementation-Title" value="${ant.project.name}"/>
+				<attribute name="Implementation-Version" value="${build.dist.version}"/>
+				<attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
+				<attribute name="Implementation-URL" value="${build.dist.url}"/>
+				<attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
+				<attribute name="Main-Class" value="org.goobi.production.cli.CommandLineInterface"/>
+			</manifest>
+		</jar>
+	</target>
 
     <!-- Copy configuration files to build directory -->
     <target name="copy-config">
@@ -300,15 +336,24 @@
 
     <!-- JUnit tests -->
     <target name="junit" depends="compile-tests" description="Run JUnit tests">
-
         <junit printsummary="on">
             <classpath refid="test.classpath"/>
             <formatter type="xml" usefile="true"/>
             <batchtest todir="${test.report.dir}">
-                <fileset dir="${build.classes}" includes="**/*Test.class"/>
+                <fileset dir="${build.classes.test}" includes="**/*Test.class"/>
             </batchtest>
         </junit>
+    </target>
 
+    <target name="run-test" depends="compile-tests" description="Run specific JUnit test">
+		<fail unless="junit.test.name" message="Property not set: junit.test.name"/>
+        <junit>
+            <classpath refid="test.classpath"/>
+            <formatter type="plain" usefile="false"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" unless="junit.test.methods"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" methods="${junit.test.methods}" if="junit.test.methods"/>
+	    <sysproperty key="log4j.configuration" value=""/>
+        </junit>
     </target>
 
 </project>
