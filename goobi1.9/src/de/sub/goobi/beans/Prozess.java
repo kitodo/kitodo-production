@@ -127,7 +127,6 @@ public class Prozess implements Serializable {
 	 * Getter und Setter
 	 */
 
-	
 	public Integer getId() {
 		return this.id;
 	}
@@ -457,7 +456,7 @@ public class Prozess implements Serializable {
 	}
 
 	/*
-	 * Helper 
+	 * Helper
 	 */
 
 	public Projekt getProjekt() {
@@ -885,6 +884,19 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	private void renameMetadataFile(String oldFileName, String newFileName) {
+		File oldFile;
+		File newFile;
+		Long lastModified;
+		if (oldFileName != null && newFileName != null) {
+			oldFile = new File(oldFileName);
+			lastModified = oldFile.lastModified();
+			newFile = new File(newFileName);
+			oldFile.renameTo(newFile);
+			newFile.setLastModified(lastModified);
+		}
+	}
+
 	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		boolean result = true;
@@ -903,6 +915,10 @@ public class Prozess implements Serializable {
 				this.synchronizeWrite = true;
 				try {
 					Fileformat ff;
+					String metadataFileName;
+					String metadataFileNameNew;
+					boolean writeResult;
+
 					Hibernate.initialize(getRegelsatz());
 					switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
 					case METS:
@@ -917,9 +933,17 @@ public class Prozess implements Serializable {
 						ff = new XStream(this.regelsatz.getPreferences());
 						break;
 					}
-					createBackupFile();
+					// createBackupFile();
+					metadataFileName = getMetadataFilePath();
+					metadataFileNameNew = metadataFileName + ".new";
+
 					ff.setDigitalDocument(gdzfile.getDigitalDocument());
-					ff.write(getMetadataFilePath());
+					// ff.write(getMetadataFilePath());
+					writeResult = ff.write(metadataFileNameNew);
+					if (writeResult) {
+						createBackupFile();
+						renameMetadataFile(metadataFileNameNew, metadataFileName);
+					}
 				} finally {
 					this.synchronizeWrite = false;
 				}
