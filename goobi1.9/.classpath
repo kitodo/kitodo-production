@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/EasySI-0.9.0.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/ehcache-1.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/goobi-api.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/help.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/htmLib.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jai_codec-1.1.2_01.jar"/>
