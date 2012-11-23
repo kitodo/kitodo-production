@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Prefs;
@@ -270,7 +273,19 @@ public class HelperSchritteWithoutHibernate {
 				if (rueckgabe == 0) {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
 					step.setBearbeitungsstatus(StepStatus.DONE.getValue());
-					CloseStepObjectAutomatic(step);
+					if (step.getValidationPlugin() != null && step.getValidationPlugin().length() >0) {
+						IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, step.getValidationPlugin());
+						ivp.setStepObject(step);
+						if (!ivp.validate()) {
+							step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
+							StepManager.updateStep(step);
+						} else {
+							CloseStepObjectAutomatic(step);							
+						}
+					} else {
+						CloseStepObjectAutomatic(step);
+					}
+					
 				} else {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
 					step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
