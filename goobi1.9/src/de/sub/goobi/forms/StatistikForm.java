@@ -1,4 +1,5 @@
 package de.sub.goobi.forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -47,39 +48,37 @@ import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 
-
 public class StatistikForm {
 	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
 	Calendar cal = new GregorianCalendar();
 	int n = 200;
 
-	
-
 	/**
-	 * @return Anzahl aller Literatureintr�ge
+	 * @return Anzahl aller Literatureinträge
 	 * @throws DAOException
 	 */
 	public Integer getAnzahlLiteraturGesamt() {
 		return Integer.valueOf(0);
 	}
 
-	
-
 	/**
-	 * @return Anzahl der Benutzer
+	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment. Since user accounts are not hard
+	 * deleted from the database when the delete button is pressed a where clause is used in the SQL statement to exclude the deleted accounts from
+	 * the sum.
+	 * 
+	 * @return the count of valid user accounts
 	 * @throws DAOException
+	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
 	 */
+
 	public Long getAnzahlBenutzer() {
 		try {
 			return new BenutzerDAO().count("from Benutzer where isVisible is null");
 		} catch (DAOException e) {
-
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
 		}
 	}
-
-	
 
 	/**
 	 * @return Anzahl der Benutzer
@@ -94,8 +93,6 @@ public class StatistikForm {
 		}
 	}
 
-	
-
 	/**
 	 * @return Anzahl der Benutzer
 	 * @throws DAOException
@@ -108,8 +105,6 @@ public class StatistikForm {
 			return null;
 		}
 	}
-
-	
 
 	/**
 	 * @return Anzahl der Benutzer
@@ -125,8 +120,6 @@ public class StatistikForm {
 		}
 	}
 
-	
-
 	/**
 	 * @return Anzahl der Benutzer
 	 * @throws DAOException
@@ -135,8 +128,6 @@ public class StatistikForm {
 		Session session = Helper.getHibernateSession();
 		return (Long) session.createQuery("select count(*) " + "from Vorlage").uniqueResult();
 	}
-
-	
 
 	/**
 	 * @return Anzahl der Benutzer
@@ -147,8 +138,6 @@ public class StatistikForm {
 		return (Long) session.createQuery("select count(*) " + "from Werkstueck").uniqueResult();
 	}
 
-	
-
 	/**
 	 * @return Dummy-Rückgabe
 	 * @throws DAOException
@@ -158,25 +147,17 @@ public class StatistikForm {
 		return new Random().nextInt(this.n);
 	}
 
-	
-
 	public int getAnzahlAktuelleSchritte() {
 		return getAnzahlAktuelleSchritte(false, false);
 	}
-
-	
 
 	public int getAnzahlAktuelleSchritteOffen() {
 		return getAnzahlAktuelleSchritte(true, false);
 	}
 
-	
-
 	public int getAnzahlAktuelleSchritteBearbeitung() {
 		return getAnzahlAktuelleSchritte(false, true);
 	}
-
-	
 
 	@SuppressWarnings("unchecked")
 	private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
@@ -193,13 +174,13 @@ public class StatistikForm {
 			/* Liste der IDs */
 			List<Integer> trefferListe = new ArrayList<Integer>();
 
-			/* --------------------------------
-			 * die Treffer der Benutzergruppen
-			 * --------------------------------*/
+			/*
+			 * -------------------------------- die Treffer der Benutzergruppen --------------------------------
+			 */
 			Criteria critGruppen = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {
-				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
-						.valueOf(2))));
+				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
 				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
@@ -222,13 +203,13 @@ public class StatistikForm {
 				trefferListe.add(step.getId());
 			}
 
-			/* --------------------------------
-			 * Treffer der Benutzer
-			 * --------------------------------*/
+			/*
+			 * -------------------------------- Treffer der Benutzer --------------------------------
+			 */
 			Criteria critBenutzer = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {
-				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer
-						.valueOf(2))));
+				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
 				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
@@ -251,9 +232,9 @@ public class StatistikForm {
 				trefferListe.add(step.getId());
 			}
 
-			/* --------------------------------
-			 * nun nur die Treffer übernehmen, die in der Liste sind
-			 * --------------------------------*/
+			/*
+			 * -------------------------------- nun nur die Treffer übernehmen, die in der Liste sind --------------------------------
+			 */
 			crit.add(Restrictions.in("id", trefferListe));
 			return crit.list().size();
 
@@ -262,7 +243,7 @@ public class StatistikForm {
 			return 0;
 		}
 	}
-	
+
 	public boolean getShowStatistics() {
 		return ConfigMain.getBooleanParameter("showStatisticsOnStartPage", true);
 	}
