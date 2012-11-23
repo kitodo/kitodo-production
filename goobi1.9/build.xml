@@ -98,7 +98,7 @@
         <echoproperties/>
     </target>
 
-    <target name="dist" depends="war, jar" description="Produce the distributables."/>
+    <target name="dist" depends="war" description="Produce the distributables."/>
 
     <target name="distclean" description="Clean up the distribution files only.">
         <delete dir="${build.dist.dir}"/>
@@ -295,21 +295,7 @@
 
     </target>
 
-	<!-- Build standalone CLI jar -->
-	<target name="jar" depends="compile, copy-config">
-		<jar destfile="${build.dist.jar}">
-			<fileset dir="${build.classes}" includes="**/*.class, log4j.properties, GoobiConfig.properties, hibernate.cfg.xml"/>
-			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
-			<manifest>
-				<attribute name="Implementation-Title" value="${ant.project.name}"/>
-				<attribute name="Implementation-Version" value="${build.dist.version}"/>
-				<attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
-				<attribute name="Implementation-URL" value="${build.dist.url}"/>
-				<attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
-				<attribute name="Main-Class" value="org.goobi.production.cli.CommandLineInterface"/>
-			</manifest>
-		</jar>
-	</target>
+	
 
     <!-- Copy configuration files to build directory -->
     <target name="copy-config">
