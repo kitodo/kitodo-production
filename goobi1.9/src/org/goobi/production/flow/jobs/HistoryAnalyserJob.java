@@ -1,4 +1,5 @@
 package org.goobi.production.flow.jobs;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -51,8 +52,7 @@ import de.sub.goobi.persistence.apache.StepManager;
 import de.unigoettingen.sub.commons.util.file.FileUtils;
 
 /**
- * HistoryJob proofs History of {@link Prozess} and creates missing
- * {@link HistoryEvent}s
+ * HistoryJob proofs History of {@link Prozess} and creates missing {@link HistoryEvent}s
  * 
  * @author Steffen Hankiewicz
  * @author Igor Toker
@@ -61,7 +61,9 @@ import de.unigoettingen.sub.commons.util.file.FileUtils;
 public class HistoryAnalyserJob extends AbstractGoobiJob {
 	private static final Logger logger = Logger.getLogger(HistoryAnalyserJob.class);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#initialize()
 	 */
 	@Override
@@ -69,7 +71,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return "HistoryAnalyserJob";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#execute()
 	 */
 	@Override
@@ -89,15 +93,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @param inProcess
 	 *            the {@link Prozess} to use
 	 * 
-	 * @return true, if any history event is updated, so the process has to to
-	 *         saved to database
+	 * @return true, if any history event is updated, so the process has to to saved to database
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws InterruptedException
 	 * @throws IOException
 	 *****************************************************************************/
-	public static Boolean updateHistory(Prozess inProcess) throws IOException, InterruptedException, SwapException,
-			DAOException {
+	public static Boolean updateHistory(Prozess inProcess) throws IOException, InterruptedException, SwapException, DAOException {
 		boolean updated = false;
 		/* storage */
 		if (updateHistoryEvent(inProcess, HistoryEventType.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -141,14 +143,17 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		HistoryEvent he = null;
 
 		/**
-		 * These are the patterns, which must be set, if a pattern differs from
-		 * these something is wrong, timestamp pattern overrules status, in that
+		 * These are the patterns, which must be set, if a pattern differs from these something is wrong, timestamp pattern overrules status, in that
 		 * case status gets changed to match one of these pattern
 		 * 
-		 * status begin in work work done 0 null null null 1 null null null 2
-		 * set set null 3 set set set
-		 * 
-		 * 
+		 * <pre>
+		 *         status |  begin    in work    work done
+		 *         -------+-------------------------------  
+		 *           0    |  null     null       null
+		 *           1    |  null     null       null
+		 *           2    |  set      set        null
+		 *           3    |  set      set        set
+		 * </pre>
 		 */
 
 		for (Schritt step : inProcess.getSchritteList()) {
@@ -156,7 +161,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			switch (step.getBearbeitungsstatusEnum()) {
 
 			case DONE:
-				// fix missing start date 
+				// fix missing start date
 				if (step.getBearbeitungsbeginn() == null) {
 					isDirty = true;
 					if (step.getBearbeitungszeitpunkt() == null) {
@@ -166,7 +171,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 					}
 				}
 
-				// fix missing editing date 
+				// fix missing editing date
 				if (step.getBearbeitungszeitpunkt() == null) {
 					isDirty = true;
 					if (step.getBearbeitungsende() == null) {
@@ -176,7 +181,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 					}
 				}
 
-				// fix missing end date 
+				// fix missing end date
 				if (step.getBearbeitungsende() == null) {
 					isDirty = true;
 					step.setBearbeitungsende(step.getBearbeitungszeitpunkt());
@@ -185,24 +190,24 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				// attempts to add a history event,
 				// exists method returns null if event already exists
 				he = addHistoryEvent(step.getBearbeitungsende(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepDone, inProcess);
-				
+
 				if (he != null) {
 					isDirty = true;
 				}
 
-				
 				// for each step done we need to create a step open event on that step based on the latest timestamp for the previous step
-				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepOpen, inProcess);
-				
+				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(),
+						HistoryEventType.stepOpen, inProcess);
+
 				if (he != null) {
 					isDirty = true;
 				}
-				
+
 				break;
 
 			case INWORK:
 
-				// fix missing start date 
+				// fix missing start date
 				if (step.getBearbeitungsbeginn() == null) {
 					isDirty = true;
 					if (step.getBearbeitungszeitpunkt() == null) {
@@ -212,7 +217,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 					}
 				}
 
-				// fix missing editing date 
+				// fix missing editing date
 				if (step.getBearbeitungszeitpunkt() == null) {
 					isDirty = true;
 					step.setBearbeitungszeitpunkt(step.getBearbeitungsbeginn());
@@ -230,10 +235,11 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 					isDirty = true;
 				}
 
-				// 
+				//
 				// for each step inwork we need to create a step open event on that step based on the latest timestamp from the previous step
-				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepOpen, inProcess);
-				
+				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(),
+						HistoryEventType.stepOpen, inProcess);
+
 				if (he != null) {
 					isDirty = true;
 				}
@@ -243,19 +249,17 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			case OPEN:
 
 				// fix set start date - decision is that reopened (and therfore with timestamp for begin) shouldn't be reset
-				/*				if (step.getBearbeitungsbeginn() != null) {
-									step.setBearbeitungsbeginn(null);
-									isDirty = true;
-								}
-				*/
+				/*
+				 * if (step.getBearbeitungsbeginn() != null) { step.setBearbeitungsbeginn(null); isDirty = true; }
+				 */
 
-				// fix missing editing date 
+				// fix missing editing date
 				if (step.getBearbeitungszeitpunkt() == null) {
 					isDirty = true;
 					if (step.getBearbeitungsende() != null) {
 						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
 					} else {
-						//step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
+						// step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
 						step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
 					}
 				}
@@ -279,17 +283,15 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			// correction events done in the german language current corrections
 			// directly adds to the history
 
-			
-			//adds for each step a step locked on the basis of the process creation timestamp (new in 1.6)			
+			// adds for each step a step locked on the basis of the process creation timestamp (new in 1.6)
 			he = addHistoryEvent(inProcess.getErstellungsdatum(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepLocked, inProcess);
 
 			if (he != null) {
 				isDirty = true;
 			}
-			
 
 			if (step.getEigenschaftenSize() > 0) {
-				
+
 				for (Schritteigenschaft prop : step.getEigenschaftenList()) {
 					if (prop.getType().equals(PropertyType.messageError)) {
 						Date myDate = prop.getCreationDate();
@@ -313,10 +315,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			isDirty = true;
 		}
 
-
 		return isDirty;
 	}
-
 
 	/**
 	 * 
@@ -325,11 +325,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @param stepName
 	 * @param type
 	 * @param inProcess
-	 * @return History event if event needs to be added, null if event(same
-	 *         kind, same time, same process ) already exists
+	 * @return History event if event needs to be added, null if event(same kind, same time, same process ) already exists
 	 */
-	private static HistoryEvent addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName,
-			HistoryEventType type, Prozess inProcess) {
+	private static HistoryEvent addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryEventType type, Prozess inProcess) {
 		HistoryEvent he = new HistoryEvent(timeStamp, stepOrder, stepName, type, inProcess);
 
 		if (!getHistoryContainsEventAlready(he, inProcess)) {
@@ -387,8 +385,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 		// if storedValue is different to current value - update history
 		if (diff != 0) {
-			StepManager.addHistory(new Date(), diff, null,
-					inType.getValue(), inProcess.getId());
+			StepManager.addHistory(new Date(), diff, null, inType.getValue(), inProcess.getId());
 			return true;
 		} else {
 			return false;
@@ -404,8 +401,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 ***************************************************************************/
-	private static long getCurrentStorageSize(Prozess inProcess) throws IOException, InterruptedException, SwapException,
-			DAOException {
+	private static long getCurrentStorageSize(Prozess inProcess) throws IOException, InterruptedException, SwapException, DAOException {
 		String dirAsString = inProcess.getProcessDataDirectory();
 		File directory = new File(dirAsString);
 		if (!directory.isDirectory()) {
@@ -418,50 +414,49 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * updateHistoryForAllProcesses
 	 **************************************************************************/
 	public void updateHistoryForAllProcesses() {
-			logger.info("start history updating for all processes");
-			try {
-				Session session = Helper.getHibernateSession();
-				Query query = session.createQuery("from Prozess order by id desc");
-				@SuppressWarnings("unchecked")
-				Iterator<Prozess> it = query.iterate();
-				int i = 0;
-				while (it.hasNext()) {
-					i++;
-					Prozess proc = it.next();
-					logger.debug("updating history entries for " + proc.getTitel());
-					try {
-						if (!proc.isSwappedOutGui()) {
-							if (true == updateHistory(proc) | updateHistoryForSteps(proc)) {
-								session.saveOrUpdate(proc);
-								logger.debug("history updated for process " + proc.getId());
-							}
+		logger.info("start history updating for all processes");
+		try {
+			Session session = Helper.getHibernateSession();
+			Query query = session.createQuery("from Prozess order by id desc");
+			@SuppressWarnings("unchecked")
+			Iterator<Prozess> it = query.iterate();
+			int i = 0;
+			while (it.hasNext()) {
+				i++;
+				Prozess proc = it.next();
+				logger.debug("updating history entries for " + proc.getTitel());
+				try {
+					if (!proc.isSwappedOutGui()) {
+						if (true == updateHistory(proc) | updateHistoryForSteps(proc)) {
+							session.saveOrUpdate(proc);
+							logger.debug("history updated for process " + proc.getId());
 						}
-
-						// commit transaction every 50 items
-						if (!it.hasNext() || i % 50 == 0) {
-							session.flush();
-							session.beginTransaction().commit();
-							session.clear();
-						}
-					
-					} catch (HibernateException e) {
-						logger.error("HibernateException occured while scheduled storage calculation", e);
-						
-					} catch (Exception e) {
-						Helper.setFehlerMeldung("An error occured while scheduled storage calculation", e);
-						logger.error("ServletException occured while scheduled storage calculation", e);
 					}
+
+					// commit transaction every 50 items
+					if (!it.hasNext() || i % 50 == 0) {
+						session.flush();
+						session.beginTransaction().commit();
+						session.clear();
+					}
+
+				} catch (HibernateException e) {
+					logger.error("HibernateException occured while scheduled storage calculation", e);
+
+				} catch (Exception e) {
+					Helper.setFehlerMeldung("An error occured while scheduled storage calculation", e);
+					logger.error("ServletException occured while scheduled storage calculation", e);
 				}
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("Another Exception occured while scheduled storage calculation", e);
-				logger.error("Another Exception occured while scheduled storage calculation", e);
 			}
-			logger.info("end history updating for all processes");
+		} catch (Exception e) {
+			Helper.setFehlerMeldung("Another Exception occured while scheduled storage calculation", e);
+			logger.error("Another Exception occured while scheduled storage calculation", e);
+		}
+		logger.info("end history updating for all processes");
 	}
 
 	/**
-	 * method returns a timestamp from a previous step, iterates through the
-	 * steps if necessary
+	 * method returns a timestamp from a previous step, iterates through the steps if necessary
 	 * 
 	 * @param stepOrder
 	 */
@@ -507,11 +502,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		}
 		return eventTimestamp;
 	}
-	
 
 	/**
-	 * method iterates through the event list and checks if there are duplicate
-	 * entries, if so it will remove the entry and return a true
+	 * method iterates through the event list and checks if there are duplicate entries, if so it will remove the entry and return a true
 	 * 
 	 * @param inProcess
 	 * @return
@@ -527,19 +520,17 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return duplicateEventRemoved;
 	}
 
-	public static Boolean updateHistoryForProcess(Prozess inProc){
-		Boolean updated;
+	public static Boolean updateHistoryForProcess(Prozess inProc) {
+		Boolean updated = false;
 		try {
 			updated = updateHistory(inProc);
-		} catch (IOException e) {
-		} catch (InterruptedException e) {
-		} catch (SwapException e) {
-		} catch (DAOException e) {
+			updated = updateHistoryForSteps(inProc);
+		} catch (Exception ex) {
+			logger.warn("Updating history failed.", ex);
+			updated = false;
 		}
-		updated = updateHistoryForSteps(inProc);
-		
 		return updated;
-		
+
 	}
 
 }
