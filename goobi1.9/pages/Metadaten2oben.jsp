@@ -94,6 +94,7 @@
 									<h:outputText />
 								</h:panelGrid>
 							</htm:td>
+<%--							
 							<htm:td width="105px" align="right" valign="middle"
 								style="padding:3px">
 								<x:inputText rendered="false" id="treeReload" forceId="true" />
@@ -124,6 +125,7 @@
 									<f:param name="ziel" value="Metadaten2rechts" />
 								</h:commandLink>
 							</htm:td>
+--%>													
 						</htm:tr>
 					</htm:table>
 				</htm:td>
