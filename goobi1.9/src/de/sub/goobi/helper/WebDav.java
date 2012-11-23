@@ -121,20 +121,7 @@ public class WebDav implements Serializable {
 
 		for (Iterator<String> it = inList.iterator(); it.hasNext();) {
 			String myname = it.next();
-			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-			command += VerzeichnisAlle + myname;
-			try {
-				
-				Helper.callShell(command);
-			} catch (java.io.IOException ioe) {
-				myLogger.error("IOException UploadFromHomeAlle()", ioe);
-				Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
-				return;
-			} catch (InterruptedException e) {
-				myLogger.error("IOException UploadFromHomeAlle()", e);
-				Helper.setFehlerMeldung("Aborted upload from home, error", e.getMessage());
-				return;
-			}
+            FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
 		}
 	}
 
@@ -172,20 +159,7 @@ public class WebDav implements Serializable {
 		nach = nach.replaceAll(" ", "__");
 		File benutzerHome = new File(nach);
 
-		String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
-		command += benutzerHome;
-
-		try {
-			// TODO: Use ProcessBuilder
-			Helper.callShell(command);
-		} catch (java.io.IOException ioe) {
-			myLogger.error("IOException UploadFromHome", ioe);
-			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
-		} catch (InterruptedException e) {
-			myLogger.error("IOException UploadFromHome", e);
-			Helper.setFehlerMeldung("Aborted upload from home, error", e.getMessage());
-
-		}
+        FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
@@ -206,13 +180,10 @@ public class WebDav implements Serializable {
 			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
 				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
-				if (!projekt.exists()) {
-					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
-				}
+                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+                
 				projekt = new File(userHome + DONEDIRECTORYNAME);
-				if (!projekt.exists()) {
-					help.createUserDirectory(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
-				}
+                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
 		} catch (Exception ioe) {
@@ -255,9 +226,8 @@ public class WebDav implements Serializable {
 			command += aktuellerBenutzer.getLogin();
 		}
 		try {
-
-			Helper.callShell2(command);
-		} catch (java.io.IOException ioe) {
+            	ShellScript.legacyCallShell2(command);
+            } catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
 		} catch (InterruptedException e) {

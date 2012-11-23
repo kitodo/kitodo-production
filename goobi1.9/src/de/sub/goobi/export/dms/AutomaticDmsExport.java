@@ -47,6 +47,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMets;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -377,7 +378,6 @@ public class AutomaticDmsExport extends ExportMets {
 		/*
 		 * -------------------------------- dann den Ausgangspfad ermitteln --------------------------------
 		 */
-		Helper help = new Helper();
 		File tifOrdner = new File(myProzess.getImagesTifDirectory(true));
 
 		/*
@@ -397,8 +397,7 @@ public class AutomaticDmsExport extends ExportMets {
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-					help.createUserDirectory(zielTif.getAbsolutePath(), myBenutzer.getLogin());
-				} catch (Exception e) {
+                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);
 				}

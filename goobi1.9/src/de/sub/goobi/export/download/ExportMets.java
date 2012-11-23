@@ -55,6 +55,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -151,8 +152,7 @@ public class ExportMets {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
-			this.help.createUserDirectory(target, myBenutzer.getLogin());
-		} catch (Exception e) {
+            FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
 		return target;

@@ -293,9 +293,7 @@ public class Prozess implements Serializable {
 			rueckgabe += File.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-			if (!new File(rueckgabe).exists()) {
-				new Helper().createMetaDirectory(rueckgabe);
-			}
+            FilesystemHelper.createDirectory(rueckgabe);
 		}
 		return rueckgabe;
 	}
@@ -361,8 +359,8 @@ public class Prozess implements Serializable {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
 			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
-			if (!new File(rueckgabe).exists() && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-				new Helper().createMetaDirectory(rueckgabe);
+			if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+				FilesystemHelper.createDirectory(rueckgabe);
 			}
 			return rueckgabe;
 		} else {
@@ -372,9 +370,7 @@ public class Prozess implements Serializable {
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
-		if (!new File(pfad).exists()) {
-			new Helper().createMetaDirectory(pfad);
-		}
+        FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -446,9 +442,7 @@ public class Prozess implements Serializable {
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
-		if (!new File(pfad).exists()) {
-			new Helper().createMetaDirectory(pfad);
-		}
+        FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 

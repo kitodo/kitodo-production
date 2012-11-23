@@ -51,6 +51,7 @@ import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -149,8 +150,8 @@ public class ExportMetsWithoutHibernate {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
-			this.help.createUserDirectory(target, myBenutzer.getLogin());
-		} catch (Exception e) {
+            	FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+            } catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
 		return target;

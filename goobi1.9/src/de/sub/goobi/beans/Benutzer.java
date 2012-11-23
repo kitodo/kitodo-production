@@ -40,6 +40,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
@@ -413,10 +414,7 @@ public class Benutzer implements Serializable {
 			rueckgabe += File.separator;
 		}
 		/* wenn das Verzeichnis nicht "" ist, aber noch nicht existiert, dann jetzt anlegen */
-		File homePath = new File(rueckgabe);
-		if (!homePath.exists()) {
-			new Helper().createUserDirectory(rueckgabe, this.login);
-		}
+        FilesystemHelper.createDirectoryForUser(rueckgabe, login);
 		return rueckgabe;
 	}
 

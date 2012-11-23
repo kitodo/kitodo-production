@@ -257,8 +257,8 @@ public class HelperSchritteWithoutHibernate {
 		int rueckgabe = -1;
 		try {
 			logger.info("Calling the shell: " + script);
-			rueckgabe = Helper.callShell2(script);
-			if (automatic) {
+            rueckgabe = ShellScript.legacyCallShell2(script);
+            if (automatic) {
 				if (rueckgabe == 0) {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
 					step.setBearbeitungsstatus(StepStatus.DONE.getValue());
