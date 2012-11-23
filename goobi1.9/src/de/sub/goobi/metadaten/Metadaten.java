@@ -234,12 +234,11 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
-			try {
-				this.myProzess.writeMetadataFile(this.gdzfile);
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
-				myLogger.error(e);
-			}
+            boolean successfulStore;
+            calculateMetadataAndImages();
+            cleanupMetadata();
+            // ignoring result of store operation
+            successfulStore = storeMetadata();
 			return "";
 		}
 	}
@@ -688,31 +687,9 @@ public class Metadaten {
 		}
 	}
 
-	/**
-	 * Metadaten Einlesen
-	 * 
-	 * @throws ReadException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws PreferencesException
-	 *             ============================================================ == ==
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
-	 */
 
-	/**
-	 * Metadaten Schreiben
-	 * 
-	 * @throws InterruptedException
-	 * @throws IOException
-	 *             ============================================================ == ==
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
-	 * @throws PreferencesException
-	 */
-	public String XMLschreiben() {
+
+	private void calculateMetadataAndImages() {
 		/*
 		 * für den Prozess nochmal die Metadaten durchlaufen und die Daten speichern
 		 */
@@ -730,19 +707,51 @@ public class Metadaten {
 			Helper.setFehlerMeldung("error while counting current images", e);
 			myLogger.error(e);
 		}
-		/* xml-Datei speichern */
+	}
+	
+    private void cleanupMetadata() {
 		/*
 		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
 		 */
 		this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
+    }
+	
 
+	private boolean storeMetadata() {
+		boolean result = true;
 		try {
 			this.myProzess.writeMetadataFile(this.gdzfile);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
 			myLogger.error(e);
+			result = false;
+
+		}
+		return result;
+	}
+		
+		
+	/**
+	 * Metadaten Schreiben
+	 * 
+	 * @throws InterruptedException
+	 * @throws IOException
+	 *             ============================================================ == ==
+	 * @throws DAOException
+	 * @throws SwapException
+	 * @throws WriteException
+	 * @throws PreferencesException
+	 */
+	public String XMLschreiben() {
+
+		calculateMetadataAndImages();
+
+		cleanupMetadata();
+
+		if (!storeMetadata()) {
 			return "Metadaten";
 		}
+
 		SperrungAufheben();
 		return this.zurueck;
 	}
