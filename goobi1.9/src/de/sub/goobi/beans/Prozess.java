@@ -98,7 +98,6 @@ public class Prozess implements Serializable {
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
 	private Docket docket;
-	private Boolean synchronizeWrite = false;
 
 	private final MetadatenSperrung msp = new MetadatenSperrung();
 	Helper help = new Helper();
@@ -293,7 +292,7 @@ public class Prozess implements Serializable {
 			rueckgabe += File.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            FilesystemHelper.createDirectory(rueckgabe);
+			FilesystemHelper.createDirectory(rueckgabe);
 		}
 		return rueckgabe;
 	}
@@ -370,7 +369,7 @@ public class Prozess implements Serializable {
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
-        FilesystemHelper.createDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -442,7 +441,7 @@ public class Prozess implements Serializable {
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
-        FilesystemHelper.createDirectory(pfad);
+		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
@@ -889,18 +888,18 @@ public class Prozess implements Serializable {
 		}
 	}
 
-//	private void renameMetadataFile(String oldFileName, String newFileName) {
-//		File oldFile;
-//		File newFile;
-//		// Long lastModified;
-//		if (oldFileName != null && newFileName != null) {
-//			oldFile = new File(oldFileName);
-//			// lastModified = oldFile.lastModified();
-//			newFile = new File(newFileName);
-//			oldFile.renameTo(newFile);
-//			// newFile.setLastModified(lastModified);
-//		}
-//	}
+	// private void renameMetadataFile(String oldFileName, String newFileName) {
+	// File oldFile;
+	// File newFile;
+	// // Long lastModified;
+	// if (oldFileName != null && newFileName != null) {
+	// oldFile = new File(oldFileName);
+	// // lastModified = oldFile.lastModified();
+	// newFile = new File(newFileName);
+	// oldFile.renameTo(newFile);
+	// // newFile.setLastModified(lastModified);
+	// }
+	// }
 
 	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
@@ -937,54 +936,50 @@ public class Prozess implements Serializable {
 			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
 			anchorFileName = directoryPath + File.separator + anchorFileName;
 
-            FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
-         }
+			FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+		}
 	}
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
-		synchronized (synchronizeWrite) {
-			if (!this.synchronizeWrite) {
-				this.synchronizeWrite = true;
-				try {
-					Fileformat ff;
-					String metadataFileName;
-					String temporaryMetadataFileName;
-					boolean writeResult;
+		boolean backupCondition;
+		boolean writeResult;
+		File temporaryMetadataFile;
 
-					Hibernate.initialize(getRegelsatz());
-					switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
-					case METS:
-						ff = new MetsMods(this.regelsatz.getPreferences());
-						break;
+		Fileformat ff;
+		String metadataFileName;
+		String temporaryMetadataFileName;
 
-					case RDF:
-						ff = new RDFFile(this.regelsatz.getPreferences());
-						break;
+		Hibernate.initialize(getRegelsatz());
+		switch (MetadataFormat.findFileFormatsHelperByName(this.projekt.getFileFormatInternal())) {
+		case METS:
+			ff = new MetsMods(this.regelsatz.getPreferences());
+			break;
 
-					default:
-						ff = new XStream(this.regelsatz.getPreferences());
-						break;
-					}
-					// createBackupFile();
-					metadataFileName = getMetadataFilePath();
-					temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
+		case RDF:
+			ff = new RDFFile(this.regelsatz.getPreferences());
+			break;
 
-					ff.setDigitalDocument(gdzfile.getDigitalDocument());
-					// ff.write(getMetadataFilePath());
-					writeResult = ff.write(temporaryMetadataFileName);
-					if (writeResult) {
-						createBackupFile();
-                        FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
-                        removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
-					}
-				} finally {
-					this.synchronizeWrite = false;
-				}
-			}
+		default:
+			ff = new XStream(this.regelsatz.getPreferences());
+			break;
 		}
-		synchronizeWrite = false;
+		// createBackupFile();
+		metadataFileName = getMetadataFilePath();
+		temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
+
+		ff.setDigitalDocument(gdzfile.getDigitalDocument());
+		// ff.write(getMetadataFilePath());
+		writeResult = ff.write(temporaryMetadataFileName);
+		temporaryMetadataFile = new File(temporaryMetadataFileName);
+		backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+		if (backupCondition) {
+			createBackupFile();
+			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
+			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
+		}
 	}
+	
 
 	public void writeMetadataAsTemplateFile(Fileformat inFile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
