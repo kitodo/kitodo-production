@@ -59,6 +59,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -894,18 +895,18 @@ public class Prozess implements Serializable {
 		}
 	}
 
-	private void renameMetadataFile(String oldFileName, String newFileName) {
-		File oldFile;
-		File newFile;
-		// Long lastModified;
-		if (oldFileName != null && newFileName != null) {
-			oldFile = new File(oldFileName);
-			// lastModified = oldFile.lastModified();
-			newFile = new File(newFileName);
-			oldFile.renameTo(newFile);
-			// newFile.setLastModified(lastModified);
-		}
-	}
+//	private void renameMetadataFile(String oldFileName, String newFileName) {
+//		File oldFile;
+//		File newFile;
+//		// Long lastModified;
+//		if (oldFileName != null && newFileName != null) {
+//			oldFile = new File(oldFileName);
+//			// lastModified = oldFile.lastModified();
+//			newFile = new File(newFileName);
+//			oldFile.renameTo(newFile);
+//			// newFile.setLastModified(lastModified);
+//		}
+//	}
 
 	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
@@ -927,7 +928,7 @@ public class Prozess implements Serializable {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
 		File temporaryAnchorFile;
 
@@ -942,8 +943,8 @@ public class Prozess implements Serializable {
 			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
 			anchorFileName = directoryPath + File.separator + anchorFileName;
 
-			renameMetadataFile(temporaryAnchorFileName, anchorFileName);
-		}
+            FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+         }
 	}
 
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
@@ -980,8 +981,8 @@ public class Prozess implements Serializable {
 					writeResult = ff.write(temporaryMetadataFileName);
 					if (writeResult) {
 						createBackupFile();
-						renameMetadataFile(temporaryMetadataFileName, metadataFileName);
-						removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
+                        FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
+                        removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 					}
 				} finally {
 					this.synchronizeWrite = false;

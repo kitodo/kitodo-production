@@ -30,15 +30,18 @@ package org.goobi.io;
 
 import org.apache.log4j.Logger;
 
+import de.sub.goobi.helper.FilesystemHelper;
+
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * Creates backup for files in a given directory that match a regular expression.
- *
- * All backup files are named by the original file with a number appended. The bigger the
- * number, the older the backup. A specified maximum number of backup files are generated:
- *
+ * 
+ * All backup files are named by the original file with a number appended. The bigger the number, the older the backup. A specified maximum number of
+ * backup files are generated:
+ * 
  * <pre>
  * file.xml	// would be the original
  * file.xml.1	// the latest backup
@@ -57,7 +60,7 @@ public class BackupFileRotation {
 
 	/**
 	 * Start the configured backup.
-	 *
+	 * 
 	 * If the maximum backup count is less then 1, nothing happens.
 	 */
 	public void performBackup() {
@@ -70,7 +73,7 @@ public class BackupFileRotation {
 		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
 		if (metaFiles.length < 1) {
-			myLogger.info("No files matching format '" + format + "' in directory " +  processDataDirectory + " found.");
+			myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
 			return;
 		}
 
@@ -81,8 +84,9 @@ public class BackupFileRotation {
 
 	/**
 	 * Set the number of backup files to create for each individual original file.
-	 *
-	 * @param numberOfBackups   Maximum number of backup files
+	 * 
+	 * @param numberOfBackups
+	 *            Maximum number of backup files
 	 */
 	public void setNumberOfBackups(int numberOfBackups) {
 		this.numberOfBackups = numberOfBackups;
@@ -90,33 +94,31 @@ public class BackupFileRotation {
 
 	/**
 	 * Set file name matching pattern for original files to create backup files for.
-	 *
-	 * @param format    Java regular expression string.
-	 */ 
+	 * 
+	 * @param format
+	 *            Java regular expression string.
+	 */
 	public void setFormat(String format) {
 		this.format = format;
 	}
 
 	/**
 	 * Set the directory to find the original files and to place the backup files.
-	 *
-	 * @param processDataDirectory	A platform specfic filesystem path
+	 * 
+	 * @param processDataDirectory
+	 *            A platform specfic filesystem path
 	 */
 	public void setProcessDataDirectory(String processDataDirectory) {
 		this.processDataDirectory = processDataDirectory;
 	}
 
 	private void rename(String oldFileName, String newFileName) {
-		File oldFile = new File(oldFileName);
-		File newFile = new File(newFileName);
-
-		if (oldFile.exists()) {
-			boolean renameSuccessful = oldFile.renameTo(newFile);
-
-			if (!renameSuccessful) {
-				myLogger.warn("Renaming file from " + oldFileName + " to " +  newFileName + " failed.");
-			}
+		try {
+			FilesystemHelper.renameFile(oldFileName, newFileName);
+		} catch (IOException ioe) {
+			myLogger.warn("Renaming file from " + oldFileName + " to " + newFileName + " failed. Reason: " + ioe.getMessage());
 		}
+
 	}
 
 	private void createBackupForFile(String fileName) {
