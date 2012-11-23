@@ -127,7 +127,9 @@ public class WebDav implements Serializable {
 
 	public void UploadFromHome(Prozess myProzess) {
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
-		UploadFromHome(aktuellerBenutzer, myProzess);
+        if (aktuellerBenutzer != null) {
+        	UploadFromHome(aktuellerBenutzer, myProzess);
+        }
 	}
 
 	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {

@@ -91,7 +91,7 @@ public class ConfigMain implements Serializable {
 
 			/* den Ordner neu anlegen, wenn er nicht existiert */
 			try {
-                FilesystemHelper.createDirectory(filename);
+				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
 				myLogger.error("IO error: " + ioe);
 				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
@@ -155,13 +155,8 @@ public class ConfigMain implements Serializable {
 	 * 
 	 * @return Paramter als Long
 	 */
-	public static long getLongParameter(String inParameter, int inDefault) {
-		try {
-			return config.getLong(inParameter, inDefault);
-		} catch (RuntimeException e) {
-			myLogger.error(e);
-			return 0;
-		}
+	public static long getLongParameter(String inParameter, long inDefault) {
+		return config.getLong(inParameter, inDefault);
 	}
 
 	/**

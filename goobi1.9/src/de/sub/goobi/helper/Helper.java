@@ -60,7 +60,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.goobi.mq.WebServiceResult;
 import org.hibernate.Session;
 import org.jdom.Element;
 
@@ -68,6 +70,7 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
+import de.sub.goobi.helper.enums.ReportLevel;
 import de.sub.goobi.persistence.HibernateSessionLong;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
@@ -94,6 +97,8 @@ public class Helper implements Serializable, Observer {
 	private String myConfigVerzeichnis;
 	private static Map<Locale, ResourceBundle> commonMessages = null;
 	private static Map<Locale, ResourceBundle> localMessages = null;
+
+	public static Map<String, String> activeMQReporting = null;
 
 	/**
 	 * Ermitteln eines bestimmten Paramters des Requests
@@ -189,15 +194,8 @@ public class Helper implements Serializable, Observer {
 		meldung = meldung.replaceAll(">", "&gt;");
 		beschreibung = beschreibung.replaceAll("<", "&lt;");
 		beschreibung = beschreibung.replaceAll(">", "&gt;");
-		/* wenn kein Kontext da ist, dann die Meldungen in Log */
-		if (context == null) {
-			if (nurInfo) {
-				myLogger.info(meldung + " " + beschreibung);
-			} else {
-				// myLogger.error(meldung + " " + beschreibung);
-			}
-			return;
-		}		String msg = "";
+		
+		String msg = "";
 		String beschr = "";
 		Locale language = Locale.ENGLISH;
 		SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("#{SpracheForm}");
@@ -216,10 +214,17 @@ public class Helper implements Serializable, Observer {
 			beschr = beschreibung;
 		}
 
-		if (nurInfo) {
-			context.addMessage(control, new FacesMessage(FacesMessage.SEVERITY_INFO, msg, beschr));
-		} else {
-			context.addMessage(control, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, beschr));
+		String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
+		if (activeMQReporting != null) {
+			new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"), nurInfo ? ReportLevel.INFO : ReportLevel.ERROR,
+					compoundMessage).send();
+		}
+		if (context != null) {
+			context.addMessage(control, new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
+		} else { 
+			// wenn kein Kontext da ist, dann die Meldungen in Log
+			myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
+
 		}
 	}
 
@@ -252,7 +257,6 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	
 	public static Object getManagedBeanValue(String expr) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context == null) {
@@ -291,74 +295,72 @@ public class Helper implements Serializable, Observer {
 		hsl.getNewSession();
 	}
 
-	
-//	/**
-//	 * Call scripts from console and give back error messages and return value of the called script
-//	 * 
-//	 * @throws IOException
-//	 * @throws InterruptedException
-//	 * 
-//	 */
-//	public static Integer callShell2(String command) throws IOException, InterruptedException {
-//		InputStream is = null;
-//		InputStream es = null;
-//		OutputStream out = null;
-//
-//		try {
-//			myLogger.debug("execute Shellcommand callShell2: " + command);
-//			boolean errorsExist = false;
-//			if (command == null || command.length() == 0) {
-//				return 1;
-//			}
-//			Process process = Runtime.getRuntime().exec(command);
-//			is = process.getInputStream();
-//			es = process.getErrorStream();
-//			out = process.getOutputStream();
-//			Scanner scanner = new Scanner(is);
-//			while (scanner.hasNextLine()) {
-//				String myLine = scanner.nextLine();
-//				setMeldung(myLine);
-//			}
-//
-//			scanner.close();
-//			scanner = new Scanner(es);
-//			while (scanner.hasNextLine()) {
-//				errorsExist = true;
-//				setFehlerMeldung(scanner.nextLine());
-//			}
-//			scanner.close();
-//			int rueckgabe = process.waitFor();
-//			if (errorsExist) {
-//				return 1;
-//			} else {
-//				return rueckgabe;
-//			}
-//		} finally {
-//			if (is != null) {
-//				try {
-//					is.close();
-//				} catch (IOException e) {
-//					is = null;
-//				}
-//			}
-//			if (es != null) {
-//				try {
-//					es.close();
-//				} catch (IOException e) {
-//					es = null;
-//				}
-//
-//			}
-//			if (out != null) {
-//				try {
-//					out.close();
-//				} catch (IOException e) {
-//					out = null;
-//				}
-//			}
-//		}
-//	}
-	
+	// /**
+	// * Call scripts from console and give back error messages and return value of the called script
+	// *
+	// * @throws IOException
+	// * @throws InterruptedException
+	// *
+	// */
+	// public static Integer callShell2(String command) throws IOException, InterruptedException {
+	// InputStream is = null;
+	// InputStream es = null;
+	// OutputStream out = null;
+	//
+	// try {
+	// myLogger.debug("execute Shellcommand callShell2: " + command);
+	// boolean errorsExist = false;
+	// if (command == null || command.length() == 0) {
+	// return 1;
+	// }
+	// Process process = Runtime.getRuntime().exec(command);
+	// is = process.getInputStream();
+	// es = process.getErrorStream();
+	// out = process.getOutputStream();
+	// Scanner scanner = new Scanner(is);
+	// while (scanner.hasNextLine()) {
+	// String myLine = scanner.nextLine();
+	// setMeldung(myLine);
+	// }
+	//
+	// scanner.close();
+	// scanner = new Scanner(es);
+	// while (scanner.hasNextLine()) {
+	// errorsExist = true;
+	// setFehlerMeldung(scanner.nextLine());
+	// }
+	// scanner.close();
+	// int rueckgabe = process.waitFor();
+	// if (errorsExist) {
+	// return 1;
+	// } else {
+	// return rueckgabe;
+	// }
+	// } finally {
+	// if (is != null) {
+	// try {
+	// is.close();
+	// } catch (IOException e) {
+	// is = null;
+	// }
+	// }
+	// if (es != null) {
+	// try {
+	// es.close();
+	// } catch (IOException e) {
+	// es = null;
+	// }
+	//
+	// }
+	// if (out != null) {
+	// try {
+	// out.close();
+	// } catch (IOException e) {
+	// out = null;
+	// }
+	// }
+	// }
+	// }
 
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();

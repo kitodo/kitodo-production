@@ -132,7 +132,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		 * --------------------- Vorgangsdatum generell anzeigen? -------------------
 		 */
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() != null) {
+		if (login != null && login.getMyBenutzer() != null) {
 			this.anzeigeAnpassen.put("processDate", login.getMyBenutzer().isConfVorgangsdatumAnzeigen());
 		} else {
 			this.anzeigeAnpassen.put("processDate", false);

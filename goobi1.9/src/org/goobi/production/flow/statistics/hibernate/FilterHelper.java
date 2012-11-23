@@ -75,7 +75,7 @@ class FilterHelper {
 		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		Benutzer aktuellerNutzer = null;
 		try {
-			if (loginForm != null) {
+			if (loginForm != null && loginForm.getMyBenutzer() != null) {
 				aktuellerNutzer = new BenutzerDAO().get(loginForm.getMyBenutzer().getId());
 			}
 		} catch (DAOException e) {

@@ -47,6 +47,7 @@ import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class UghHelper {
@@ -89,25 +90,25 @@ public class UghHelper {
 	 * @return Metadata
 	 */
 	public Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
-		if (inStruct!= null && inMetadataType!= null) {
-		List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
-		if (all.size() == 0) {
-			try {
-				Metadata md = new Metadata(inMetadataType);
-				md.setDocStruct(inStruct);
-				inStruct.addMetadata(md);
+		if (inStruct != null && inMetadataType != null) {
+			List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
+			if (all.size() == 0) {
+				try {
+					Metadata md = new Metadata(inMetadataType);
+					md.setDocStruct(inStruct);
+					inStruct.addMetadata(md);
 
-				return md;
-			} catch (MetadataTypeNotAllowedException e) {
-				myLogger.debug(e.getMessage());
+					return md;
+				} catch (MetadataTypeNotAllowedException e) {
+					myLogger.debug(e.getMessage());
+					return null;
+				}
+			}
+			if (all.size() != 0) {
+				return all.get(0);
+			} else {
 				return null;
 			}
-		}
-		if (all.size() != 0) {
-			return all.get(0);
-		} else {
-			return null;
-		}
 		}
 		return null;
 	}
@@ -175,12 +176,12 @@ public class UghHelper {
 			md.setValue(inValue);
 			inStruct.addMetadata(md);
 		} catch (DocStructHasNoTypeException e) {
-			Helper.setMeldung(null, "DocStructHasNoTypeException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e
-					.getMessage());
+			Helper.setMeldung(null, "DocStructHasNoTypeException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue,
+					e.getMessage());
 			myLogger.error(e);
 		} catch (MetadataTypeNotAllowedException e) {
-			Helper.setMeldung(null, "MetadataTypeNotAllowedException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e
-					.getMessage());
+			Helper.setMeldung(null, "MetadataTypeNotAllowedException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue,
+					e.getMessage());
 			myLogger.error(e);
 		} catch (Exception e) {
 			Helper.setMeldung(null, "Exception: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e.getMessage());
@@ -213,25 +214,28 @@ public class UghHelper {
 	public String convertLanguage(String inLanguage) {
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		FacesContext context = FacesContext.getCurrentInstance();
-		if (context != null) {
-			try {
+		String filename;
+		try {
+			if (context != null) {
 				HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-				String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
+				filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
 						+ "goobi_opacLanguages.txt";
-				FileInputStream fis = new FileInputStream(filename);
-				InputStreamReader isr = new InputStreamReader(fis, "UTF8");
-				BufferedReader in = new BufferedReader(isr);
-				String str;
-				while ((str = in.readLine()) != null) {
-					if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
-						in.close();
-						return str.split(" ")[0];
-					}
-				}
-				in.close();
-
-			} catch (IOException e) {
+			} else {
+				filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_opacLanguages.txt";
 			}
+			FileInputStream fis = new FileInputStream(filename);
+			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+			BufferedReader in = new BufferedReader(isr);
+			String str;
+			while ((str = in.readLine()) != null) {
+				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
+					in.close();
+					return str.split(" ")[0];
+				}
+			}
+			in.close();
+
+		} catch (IOException e) {
 		}
 		return inLanguage;
 	}
@@ -244,9 +248,14 @@ public class UghHelper {
 		String temp = inString;
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
-		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "goobi_opacUmlaut.txt";
+		String filename;
 
+		if (context != null) {
+			HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+			filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "goobi_opacUmlaut.txt";
+		} else {
+			filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_opacUmlaut.txt";
+		}
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		try {
 			FileInputStream fis = new FileInputStream(filename);

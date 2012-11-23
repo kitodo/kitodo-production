@@ -198,7 +198,10 @@
 	<listener>
 		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
 	</listener>
- 
+
+	<listener>
+		<listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
+	</listener>
 
 	<!--
 		xml-Rpc-Server starten <listener> <listener-class>
