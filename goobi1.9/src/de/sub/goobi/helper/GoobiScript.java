@@ -957,7 +957,7 @@ public class GoobiScript {
 
 	private void exportDms(List<Prozess> processes, String exportImages, boolean exportFulltext) {
 		ExportDms dms;
-		if (exportImages.equals("false")) {
+		if (exportImages != null && exportImages.equals("false")) {
 			dms = new ExportDms(false);
 			dms.setExportFulltext(exportFulltext);
 		} else {
