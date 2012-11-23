@@ -89,6 +89,15 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/geronimo-jms_1.1_spec-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/activemq-core-5.5.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-bundle-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-client-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-core-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-json-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-multipart-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-server-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jersey-servlet-1.12.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jsr311-api-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/avalon-framework-4.2.0.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/barcode4j-fop-ext-complete.jar"/>
