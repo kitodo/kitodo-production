@@ -41,7 +41,6 @@ import org.hibernate.HibernateException;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
 import dubious.sub.goobi.helper.encryption.DesEncrypter;

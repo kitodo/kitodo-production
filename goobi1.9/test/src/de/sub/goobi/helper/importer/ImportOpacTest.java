@@ -9,8 +9,7 @@ import de.sub.goobi.helper.Helper;
 @Ignore("Test defintion incorrect.")
 public class ImportOpacTest {
    public static void main(String[] args) {
-      Helper help = new Helper();
-      String docType = "monograph";
+  
       String atstsl = "";
       try {
          ImportOpac myImportOpac = new ImportOpac();
@@ -31,7 +30,7 @@ public class ImportOpacTest {
          System.out.println(atstsl);
          myRdf.write(args[1]);
       } catch (Exception e) {
-         help.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
+         Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
          e.printStackTrace();
       }
 

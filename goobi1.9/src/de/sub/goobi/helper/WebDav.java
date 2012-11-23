@@ -163,7 +163,6 @@ public class WebDav implements Serializable {
 	}
 
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
-		Helper help = new Helper();
 		saveTiffHeader(myProzess);
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		String von = "";

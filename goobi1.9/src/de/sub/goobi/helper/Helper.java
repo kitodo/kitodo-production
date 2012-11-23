@@ -53,7 +53,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;

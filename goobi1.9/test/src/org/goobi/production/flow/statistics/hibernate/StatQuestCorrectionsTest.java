@@ -10,18 +10,14 @@ import java.util.List;
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.cfg.Configuration;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.lowagie.text.pdf.hyphenation.TernaryTree.Iterator;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.persistence.HibernateUtil;
 
 public class StatQuestCorrectionsTest {
 	static StatQuestCorrections test;

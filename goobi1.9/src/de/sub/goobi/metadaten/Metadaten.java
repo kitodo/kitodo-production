@@ -234,11 +234,10 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
-            boolean successfulStore;
             calculateMetadataAndImages();
             cleanupMetadata();
             // ignoring result of store operation
-            successfulStore = storeMetadata();
+            storeMetadata();
 			return "";
 		}
 	}

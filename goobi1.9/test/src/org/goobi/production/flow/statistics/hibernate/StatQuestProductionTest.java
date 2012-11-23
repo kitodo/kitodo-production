@@ -13,7 +13,6 @@ import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.hibernate.cfg.Configuration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -23,7 +22,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.persistence.HibernateUtil;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 
