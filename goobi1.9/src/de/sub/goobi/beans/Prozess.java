@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +59,6 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -108,10 +105,8 @@ public class Prozess implements Serializable {
 	public static String DIRECTORY_PREFIX = "orig";
 	public static String DIRECTORY_SUFFIX = "images";
 
-	private static int numberOfBackups = 0;
-	private static String FORMAT = "";
-
 	private String wikifield = "";
+	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
 	public Prozess() {
 		this.swappedOut = false;
@@ -902,7 +897,7 @@ public class Prozess implements Serializable {
 	private void renameMetadataFile(String oldFileName, String newFileName) {
 		File oldFile;
 		File newFile;
-//		Long lastModified;
+		// Long lastModified;
 		if (oldFileName != null && newFileName != null) {
 			oldFile = new File(oldFileName);
 			// lastModified = oldFile.lastModified();
@@ -923,6 +918,34 @@ public class Prozess implements Serializable {
 		return result;
 	}
 
+	private String getTemporaryMetadataFileName(String fileName) {
+
+		File temporaryFile = new File(fileName);
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
+
+		return directoryPath + File.separator + temporaryFileName;
+	}
+
+	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) {
+		File temporaryFile = new File(temporaryMetadataFilename);
+		File temporaryAnchorFile;
+
+		String directoryPath = temporaryFile.getParentFile().getPath();
+		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
+
+		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
+
+		if (temporaryAnchorFile.exists()) {
+			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
+
+			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
+			anchorFileName = directoryPath + File.separator + anchorFileName;
+
+			renameMetadataFile(temporaryAnchorFileName, anchorFileName);
+		}
+	}
+
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		synchronized (synchronizeWrite) {
@@ -931,7 +954,7 @@ public class Prozess implements Serializable {
 				try {
 					Fileformat ff;
 					String metadataFileName;
-					String metadataFileNameNew;
+					String temporaryMetadataFileName;
 					boolean writeResult;
 
 					Hibernate.initialize(getRegelsatz());
@@ -950,14 +973,15 @@ public class Prozess implements Serializable {
 					}
 					// createBackupFile();
 					metadataFileName = getMetadataFilePath();
-					metadataFileNameNew = metadataFileName + ".new";
+					temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
 
 					ff.setDigitalDocument(gdzfile.getDigitalDocument());
 					// ff.write(getMetadataFilePath());
-					writeResult = ff.write(metadataFileNameNew);
+					writeResult = ff.write(temporaryMetadataFileName);
 					if (writeResult) {
 						createBackupFile();
-						renameMetadataFile(metadataFileNameNew, metadataFileName);
+						renameMetadataFile(temporaryMetadataFileName, metadataFileName);
+						removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
 					}
 				} finally {
 					this.synchronizeWrite = false;
