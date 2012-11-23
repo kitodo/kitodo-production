@@ -1,4 +1,3 @@
-package de.sub.goobi.forms;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,42 +25,28 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import de.sub.goobi.config.ConfigMain;
 
-public class NavigationForm {
-	private String aktuell = "0";
+package de.sub.goobi.modul;
 
-	public String getAktuell() {
-		return this.aktuell;
-	}
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
-	public void setAktuell(String aktuell) {
-		this.aktuell = aktuell;
-	}	
-	
-	public String Reload(){
-		return "";
-	}
-	
-	public String JeniaPopupCloseAction(){       
-       return "jeniaClosePopupFrameWithAction";
-	}    
-    
-    public String BenutzerBearbeiten(){
-        return "BenutzerBearbeiten";
-    }
-    
+import org.apache.log4j.Logger;
 
-    /**
-     * 
-     * @return true if show_taskmanager in file GoobiConfig.properties is =true
-     */
-    public Boolean getShowTaskManager(){
-    	return ConfigMain.getBooleanParameter("show_taskmanager", false);	
-    }
-    
-    public Boolean getShowModuleManager(){
-    	return ConfigMain.getBooleanParameter("show_modulmanager", false);	
-    }
-    
+import de.sub.goobi.forms.ModuleServerForm;
+
+public class ModulListener implements ServletContextListener {
+   private static final Logger myLogger = Logger.getLogger(ModulListener.class);
+
+   public void contextInitialized(ServletContextEvent event) {
+      myLogger.debug("Starte Modularisierung-Server", null);
+      new ModuleServerForm().startAllModules();
+      myLogger.debug("Gestartet: Modularisierung-Server", null);
+   }
+
+   public void contextDestroyed(ServletContextEvent event) {
+      myLogger.debug("Stoppe Modularisierung-Server", null);
+      new ModuleServerForm().stopAllModules();
+      myLogger.debug("Gestoppt: Modularisierung-Server", null);
+   }
 }
