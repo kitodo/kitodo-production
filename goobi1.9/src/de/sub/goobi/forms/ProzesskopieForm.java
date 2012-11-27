@@ -1394,9 +1394,7 @@ public class ProzesskopieForm {
 	}
 
 	public void setAddToWikiField(String addToWikiField) {
-		if (prozessVorlage.getWikifield() != null && prozessVorlage.getWikifield().length() > 0 ) {
-			this.prozessKopie.setWikifield(prozessVorlage.getWikifield());
-		}
+		this.prozessKopie.setWikifield(prozessVorlage.getWikifield());
 		this.addToWikiField = addToWikiField;
 		if (addToWikiField != null && !addToWikiField.equals("")) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -1404,5 +1402,4 @@ public class ProzesskopieForm {
 			this.prozessKopie.setWikifield(WikiFieldHelper.getWikiMessage(prozessKopie.getWikifield(), "info", message));
 		}
 	}
-
 }
