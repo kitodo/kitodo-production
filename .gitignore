@@ -1,0 +1,5 @@
+/build
+/config-local
+/dist
+build.properties
+deploy.properties
