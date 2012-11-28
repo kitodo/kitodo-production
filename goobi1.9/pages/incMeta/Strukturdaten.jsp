@@ -276,7 +276,7 @@
 				<htm:td styleClass="eingabeBoxen_row2">
 					<h:panelGrid id="mygrid5" columns="2" width="100%" columnClasses="standardTable_Column,standardTable_ColumnRight">
 
-						<a4j:commandLink action="#{Metadaten.BildErsteSeiteAnzeigen}" reRender="BildArea">
+						<a4j:commandLink action="#{Metadaten.BildErsteSeiteAnzeigen}" reRender="BildArea,myBild">
 							<h:outputText value="#{msgs.ersteSeite}" />
 						</a4j:commandLink>
 						<h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
@@ -302,7 +302,7 @@
 
 
 
-						<a4j:commandLink action="#{Metadaten.BildLetzteSeiteAnzeigen}" reRender="BildArea">
+						<a4j:commandLink action="#{Metadaten.BildLetzteSeiteAnzeigen}" reRender="BildArea,myBild">
 							<h:outputText value="#{msgs.letzteSeite}" />
 						</a4j:commandLink>
 						<h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
@@ -329,11 +329,11 @@
 						<a4j:commandLink action="#{Metadaten.SeitenVonChildrenUebernehmen}" reRender="menuZugehoerigeSeiten">
 							<h:outputText value="#{msgs.seitenVonUnterelementenZuweisen}" />
 						</a4j:commandLink>
-						<a4j:commandLink action="#{Metadaten.SeitenStartUndEndeSetzen}" reRender="menuZugehoerigeSeiten,BildArea"
+						<a4j:commandLink action="#{Metadaten.SeitenStartUndEndeSetzen}" reRender="menuZugehoerigeSeiten,BildArea,myBild"
 							rendered="#{Metadaten.treeProperties.showpagesasajax==false}">
 							<h:outputText value="#{msgs.seitenZuweisen}" />
 						</a4j:commandLink>
-						<a4j:commandLink action="#{Metadaten.AjaxSeitenStartUndEndeSetzen}" reRender="menuZugehoerigeSeiten,BildArea"
+						<a4j:commandLink action="#{Metadaten.AjaxSeitenStartUndEndeSetzen}" reRender="menuZugehoerigeSeiten,BildArea,myBild"
 							rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
 							<h:outputText value="#{msgs.seitenZuweisen}" />
 						</a4j:commandLink>
@@ -361,12 +361,12 @@
 			<%-- Pfeile zum Verschieben der Seiten --%>
 			<h:panelGroup>
 				<%-- nach rechts --%>
-				<a4j:commandLink id="s1" action="#{Metadaten.SeitenHinzu}" reRender="menuZugehoerigeSeiten,BildArea"
+				<a4j:commandLink id="s1" action="#{Metadaten.SeitenHinzu}" reRender="menuZugehoerigeSeiten,BildArea,myBild"
 					style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
 					<h:graphicImage value="/newpages/images/buttons/order_right.gif" />
 				</a4j:commandLink>
 				<%-- nach links --%>
-				<a4j:commandLink id="s2" action="#{Metadaten.SeitenWeg}" reRender="menuZugehoerigeSeiten,BildArea"
+				<a4j:commandLink id="s2" action="#{Metadaten.SeitenWeg}" reRender="menuZugehoerigeSeiten,BildArea,myBild"
 					style="margin-top:7px;margin-left:10px;margin-right:10px;display:block">
 					<h:graphicImage value="/newpages/images/buttons/order_left.gif" />
 				</a4j:commandLink>
