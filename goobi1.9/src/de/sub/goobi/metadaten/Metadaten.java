@@ -1975,7 +1975,12 @@ public class Metadaten {
 				}
 			}
 		}
-		BildErmitteln(Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1);
+		try {
+			int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1;
+			BildErmitteln(pageNumber);
+		} catch (Exception e) {
+			
+		}
 		return "";
 	}
 
@@ -1993,7 +1998,12 @@ public class Metadaten {
 				}
 			}
 		}
-		BildErmitteln(Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - this.myBildNummer + 1);
+		try {
+			int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - this.myBildNummer + 1;
+			BildErmitteln(pageNumber);
+		} catch (Exception e) {
+			
+		}
 		return "";
 	}
 
