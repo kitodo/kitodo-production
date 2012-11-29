@@ -482,9 +482,13 @@ public class AktuelleSchritteForm extends BasisForm {
 
 		if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
 			IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, mySchritt.getValidationPlugin());
-			ivp.setStep(mySchritt);
-			if (!ivp.validate()) {
-				return "";
+			if (ivp != null) {
+				ivp.setStep(mySchritt);
+				if (!ivp.validate()) {
+					return "";
+				}
+			} else {
+				Helper.setFehlerMeldung("ErrorLoadingValidationPlugin");
 			}
 		}
 
