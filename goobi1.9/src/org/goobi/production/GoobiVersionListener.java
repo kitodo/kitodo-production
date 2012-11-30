@@ -42,44 +42,43 @@ import java.util.jar.Manifest;
 /**
  * Listener to set up Goobi versioning information from Manifest on application startup.
  */
-public class GoobiVersionListener implements ServletContextListener,
-        HttpSessionListener, HttpSessionAttributeListener {
+public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
-    public GoobiVersionListener() {
-    }
+	public GoobiVersionListener() {
+	}
 
-    public void contextInitialized(ServletContextEvent sce) {
+	public void contextInitialized(ServletContextEvent sce) {
 
-        // Retrieve Manifest file as Stream
-        ServletContext context = sce.getServletContext();
-        InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
+		// Retrieve Manifest file as Stream
+		ServletContext context = sce.getServletContext();
+		InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
+		// Use Manifest to setup version information
+		if (rs != null) {
+			try {
+				Manifest m = new Manifest(rs);
+				GoobiVersion.setupFromManifest(m);
+			} catch (IOException e) {
+				context.log(e.getMessage());
+			}
+		} 		
+	}
 
-        // Use Manifest to setup version information
-        try {
-            Manifest m = new Manifest(rs);
-            GoobiVersion.setupFromManifest(m);
-        } catch (IOException e) {
-            context.log(e.getMessage());
-        }
+	public void contextDestroyed(ServletContextEvent sce) {
+	}
 
-    }
+	public void sessionCreated(HttpSessionEvent se) {
+	}
 
-    public void contextDestroyed(ServletContextEvent sce) {
-    }
+	public void sessionDestroyed(HttpSessionEvent se) {
+	}
 
-    public void sessionCreated(HttpSessionEvent se) {
-    }
+	public void attributeAdded(HttpSessionBindingEvent sbe) {
+	}
 
-    public void sessionDestroyed(HttpSessionEvent se) {
-    }
+	public void attributeRemoved(HttpSessionBindingEvent sbe) {
+	}
 
-    public void attributeAdded(HttpSessionBindingEvent sbe) {
-    }
-
-    public void attributeRemoved(HttpSessionBindingEvent sbe) {
-    }
-
-    public void attributeReplaced(HttpSessionBindingEvent sbe) {
-    }
+	public void attributeReplaced(HttpSessionBindingEvent sbe) {
+	}
 
 }
