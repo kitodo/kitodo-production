@@ -76,7 +76,7 @@ public class Pagination {
 
 	private String[] allSelectedPages;
 
-	private Metadatum[] newPaginated;
+	private MetadatumImpl[] newPaginated;
 
 	private int paginationMode;
 
@@ -103,7 +103,7 @@ public class Pagination {
 	 *            start value
 	 */
 
-	public Pagination(String[] allSelectedPages, Metadatum[] newPaginated, int paginationScope, String paginationType, int paginationMode,
+	public Pagination(String[] allSelectedPages, MetadatumImpl[] newPaginated, int paginationScope, String paginationType, int paginationMode,
 			String paginationStartValue) {
 		this.allSelectedPages = allSelectedPages;
 		this.newPaginated = newPaginated;
@@ -259,7 +259,7 @@ public class Pagination {
 		return this.allSelectedPages;
 	}
 
-	public Metadatum[] getNewPaginated() {
+	public MetadatumImpl[] getNewPaginated() {
 		return this.newPaginated;
 	}
 
@@ -324,7 +324,7 @@ public class Pagination {
 
 	}
 
-	public void setNewPaginated(Metadatum[] newPaginated) {
+	public void setNewPaginated(MetadatumImpl[] newPaginated) {
 		this.newPaginated = newPaginated;
 
 	}

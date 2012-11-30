@@ -102,9 +102,9 @@ public class Metadaten {
 	private Fileformat gdzfile;
 	private DocStruct myDocStruct;
 	private DocStruct tempStrukturelement;
-	private List<Metadatum> myMetadaten = new LinkedList<Metadatum>();
+	private List<MetadatumImpl> myMetadaten = new LinkedList<MetadatumImpl>();
 	private List<MetaPerson> myPersonen = new LinkedList<MetaPerson>();
-	private Metadatum curMetadatum;
+	private MetadatumImpl curMetadatum;
 	private MetaPerson curPerson;
 	private DigitalDocument mydocument;
 	private Prozess myProzess;
@@ -125,9 +125,9 @@ public class Metadaten {
 	private String[] alleSeitenAuswahl;
 	private String[] structSeitenAuswahl;
 	private SelectItem alleSeiten[];
-	private Metadatum alleSeitenNeu[];
-	private ArrayList<Metadatum> tempMetadatumList = new ArrayList<Metadatum>();
-	private Metadatum selectedMetadatum;
+	private MetadatumImpl alleSeitenNeu[];
+	private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<MetadatumImpl>();
+	private MetadatumImpl selectedMetadatum;
 
 	private String paginierungWert;
 	private int paginierungAbSeiteOderMarkierung;
@@ -136,9 +136,10 @@ public class Metadaten {
 	// Spalten auf einem Image,
 	// 3=nur jede zweite Seite hat
 	// Seitennummer
+    private boolean fictitious = false;
 
 	private SelectItem structSeiten[];
-	private Metadatum structSeitenNeu[];
+	private MetadatumImpl structSeitenNeu[];
 	private DocStruct logicalTopstruct;
 
 	private boolean modusHinzufuegen = false;
@@ -455,7 +456,7 @@ public class Metadaten {
 			myList.add(new SelectItem(mdt.getName(), this.metahelper.getMetadatatypeLanguage(mdt)));
 			try {
 				Metadata md = new Metadata(mdt);
-				Metadatum mdum = new Metadatum(md, counter, this.myPrefs, this.myProzess);
+				MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.myProzess);
 				counter++;
 				this.tempMetadatumList.add(mdum);
 
@@ -466,11 +467,11 @@ public class Metadaten {
 		return myList;
 	}
 
-	public ArrayList<Metadatum> getTempMetadatumList() {
+	public ArrayList<MetadatumImpl> getTempMetadatumList() {
 		return this.tempMetadatumList;
 	}
 
-	public void setTempMetadatumList(ArrayList<Metadatum> tempMetadatumList) {
+	public void setTempMetadatumList(ArrayList<MetadatumImpl> tempMetadatumList) {
 		this.tempMetadatumList = tempMetadatumList;
 	}
 
@@ -764,7 +765,7 @@ public class Metadaten {
 
 	private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
 		this.myDocStruct = inStrukturelement;
-		LinkedList<Metadatum> lsMeta = new LinkedList<Metadatum>();
+		LinkedList<MetadatumImpl> lsMeta = new LinkedList<MetadatumImpl>();
 		LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
 
 		/*
@@ -774,7 +775,7 @@ public class Metadaten {
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, this.myProzess);
 		if (myTempMetadata != null) {
 			for (Metadata metadata : myTempMetadata) {
-				Metadatum meta = new Metadatum(metadata, 0, this.myPrefs, this.myProzess);
+				MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.myProzess);
 				meta.getSelectedItem();
 				lsMeta.add(meta);
 			}
@@ -1222,14 +1223,14 @@ public class Metadaten {
 		}
 		int zaehler = meineListe.size();
 		this.alleSeiten = new SelectItem[zaehler];
-		this.alleSeitenNeu = new Metadatum[zaehler];
+		this.alleSeitenNeu = new MetadatumImpl[zaehler];
 		zaehler = 0;
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
 		if (meineListe != null && meineListe.size() > 0) {
 			for (DocStruct mySeitenDocStruct : meineListe) {
 				List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
 				for (Metadata meineSeite : mySeitenDocStructMetadaten) {
-					this.alleSeitenNeu[zaehler] = new Metadatum(meineSeite, zaehler, this.myPrefs, this.myProzess);
+					this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
 					this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
 							MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue());
 				}
@@ -1277,7 +1278,7 @@ public class Metadaten {
 
 			/* die Größe der Arrays festlegen */
 			this.structSeiten = new SelectItem[listReferenzen.size()];
-			this.structSeitenNeu = new Metadatum[listReferenzen.size()];
+			this.structSeitenNeu = new MetadatumImpl[listReferenzen.size()];
 
 			/* alle Referenzen durchlaufen und deren Metadaten ermitteln */
 			for (Reference ref : listReferenzen) {
@@ -1309,7 +1310,7 @@ public class Metadaten {
 			return;
 		}
 		for (Metadata meineSeite : listMetadaten) {
-			this.structSeitenNeu[inZaehler] = new Metadatum(meineSeite, inZaehler, this.myPrefs, this.myProzess);
+			this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.myProzess);
 			this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
 					.trim() + ": " + meineSeite.getValue());
 		}
@@ -1336,19 +1337,92 @@ public class Metadaten {
 	 */
 
 	public String Paginierung() {
-		Pagination p = new Pagination(this.alleSeitenAuswahl, this.alleSeitenNeu, this.paginierungAbSeiteOderMarkierung, this.paginierungArt,
-				this.paginierungSeitenProImage, this.paginierungWert);
-		String result = p.doPagination();
+
+		int[] pageSelection = new int[alleSeitenAuswahl.length];
+		for (int i = 0; i < alleSeitenAuswahl.length; i++) {
+			pageSelection[i] = Integer.parseInt(alleSeitenAuswahl[i]);
+		}
+
+		Paginator.Mode mode;
+		switch (paginierungSeitenProImage) {
+		case 2:
+			mode = Paginator.Mode.COLUMNS;
+			break;
+		case 3:
+			mode = Paginator.Mode.FOLIATION;
+			break;
+		case 4:
+			mode = Paginator.Mode.RECTOVERSO;
+			break;
+		case 5:
+			mode = Paginator.Mode.RECTOVERSO_FOLIATION;
+			break;
+		default:
+			mode = Paginator.Mode.PAGES;
+		}
+
+		Paginator.Type type;
+		switch (Integer.parseInt(paginierungArt)) {
+		case 1:
+			type = Paginator.Type.ARABIC;
+			break;
+		case 2:
+			type = Paginator.Type.ROMAN;
+			break;
+		case 6:
+			type = Paginator.Type.FREETEXT;
+			break;
+		default:
+			type = Paginator.Type.UNCOUNTED;
+			break;
+		}
+
+		Paginator.Scope scope;
+		switch (paginierungAbSeiteOderMarkierung) {
+		case 1:
+			scope = Paginator.Scope.FROMFIRST;
+			break;
+		default:
+			scope = Paginator.Scope.SELECTED;
+			break;
+
+		}
+
+		try {
+			Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(alleSeitenNeu).setPaginationScope(scope)
+					.setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious).setPaginationStartValue(paginierungWert);
+			p.run();
+		} catch (IllegalArgumentException iae) {
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
+		}
+
 		/*
-		 * zum Schluss nochmal alle Seiten neu einlesen
+		 * -------------------------------- zum Schluss nochmal alle Seiten neu einlesen --------------------------------
 		 */
-		this.alleSeitenAuswahl = null;
+		alleSeitenAuswahl = null;
 		retrieveAllImages();
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		}
-		return result;
+
+		return null;
 	}
+	
+	
+//	public String Paginierung() {
+//		Pagination p = new Pagination(this.alleSeitenAuswahl, this.alleSeitenNeu, this.paginierungAbSeiteOderMarkierung, this.paginierungArt,
+//				this.paginierungSeitenProImage, this.paginierungWert);
+//		String result = p.doPagination();
+//		/*
+//		 * zum Schluss nochmal alle Seiten neu einlesen
+//		 */
+//		this.alleSeitenAuswahl = null;
+//		retrieveAllImages();
+//		if (!SperrungAktualisieren()) {
+//			return "SperrungAbgelaufen";
+//		}
+//		return result;
+//	}
 
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
@@ -2152,11 +2226,11 @@ public class Metadaten {
 		return this.selectedMetadatum.getMd().getType().getName();
 	}
 
-	public Metadatum getSelectedMetadatum() {
+	public MetadatumImpl getSelectedMetadatum() {
 		return this.selectedMetadatum;
 	}
 
-	public void setSelectedMetadatum(Metadatum newMeta) {
+	public void setSelectedMetadatum(MetadatumImpl newMeta) {
 		this.selectedMetadatum = newMeta;
 	}
 
@@ -2164,14 +2238,14 @@ public class Metadaten {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName(tempTyp);
 		try {
 			Metadata md = new Metadata(mdt);
-			this.selectedMetadatum = new Metadatum(md, this.myMetadaten.size() + 1, this.myPrefs, this.myProzess);
+			this.selectedMetadatum = new MetadatumImpl(md, this.myMetadaten.size() + 1, this.myPrefs, this.myProzess);
 		} catch (MetadataTypeNotAllowedException e) {
 			myLogger.error(e.getMessage());
 		}
 		this.tempTyp = tempTyp;
 	}
 
-	public Metadatum getMetadatum() {
+	public MetadatumImpl getMetadatum() {
 
 		if (this.selectedMetadatum == null) {
 			getAddableMetadataTypes();
@@ -2180,7 +2254,7 @@ public class Metadaten {
 		return this.selectedMetadatum;
 	}
 
-	public void setMetadatum(Metadatum meta) {
+	public void setMetadatum(MetadatumImpl meta) {
 		this.selectedMetadatum = meta;
 	}
 
@@ -2446,11 +2520,11 @@ public class Metadaten {
 		this.tempStrukturelement = tempStrukturelement;
 	}
 
-	public List<Metadatum> getMyMetadaten() {
+	public List<MetadatumImpl> getMyMetadaten() {
 		return this.myMetadaten;
 	}
 
-	public void setMyMetadaten(List<Metadatum> myMetadaten) {
+	public void setMyMetadaten(List<MetadatumImpl> myMetadaten) {
 		this.myMetadaten = myMetadaten;
 	}
 
@@ -2462,11 +2536,11 @@ public class Metadaten {
 		this.myPersonen = myPersonen;
 	}
 
-	public Metadatum getCurMetadatum() {
+	public MetadatumImpl getCurMetadatum() {
 		return this.curMetadatum;
 	}
 
-	public void setCurMetadatum(Metadatum curMetadatum) {
+	public void setCurMetadatum(MetadatumImpl curMetadatum) {
 		this.curMetadatum = curMetadatum;
 	}
 
@@ -2559,6 +2633,14 @@ public class Metadaten {
 			}
 		}
 		return true;
+	}
+	
+	public boolean getFictitious() {
+		return fictitious;
+	}
+
+	public void setFictitious(boolean fictitious) {
+		this.fictitious = fictitious;
 	}
 
 }
