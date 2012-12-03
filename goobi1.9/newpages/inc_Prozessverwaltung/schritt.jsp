@@ -60,9 +60,6 @@
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
 							<h:commandLink value="#{msgs.prozessDetails}"
 								action="ProzessverwaltungBearbeiten">
-								<x:updateActionListener
-									property="#{ProzessverwaltungForm.reload}" value="" />
-
 							</h:commandLink>
 							<f:verbatim> &#8250;&#8250; </f:verbatim>
 							<h:outputText value="#{msgs.schrittDetails}" />
