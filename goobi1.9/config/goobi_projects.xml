@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<goobiProjects>
+  <project name="default">
+    <createNewProcess>
+      <itemlist>
+        <item from="werk" multiselect="true"> Artist
+		      <select label="CHANGEME"> CHANGEME BIBLIOTHEKSLABEL </select>
+	</item>
+        <item from="werk" multiselect="false"> Schrifttyp
+		<select label="Antiqua">Antiqua</select>
+		<select label="Fraktur">Fraktur</select>
+		<select label="anderes">anderes</select>
+	</item>
+        <!-- title for monograph and periodical -->
+        <item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMain"> Titel </item>
+        <item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMainShort"> Titel (Sortierung)</item>
+        <!-- title  just for the multivolume -->
+        <item from="vorlage" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMain"> Titel </item>
+        <item from="vorlage" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMainShort"> Titel (Sortierung)</item>
+        <!-- authors and creators-->
+        <item from="vorlage" isdoctype="monograph|multivolume|periodical" ughbinding="true" docstruct="topstruct" metadata="ListOfCreators"> Autoren </item>
+        <!-- identifer -->
+        <item from="werk" isnotdoctype="periodical" ughbinding="true" metadata="TSL_ATS" docstruct="topstruct">ATS</item>
+        <item from="werk" isdoctype="periodical" ughbinding="true" metadata="TSL_ATS" docstruct="topstruct">TSL</item>
+        <item from="vorlage" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDSource"> PPN analog c-Satz </item>
+        <item from="werk" isdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDDigital"> PPN digital c-Satz</item>
+        <item from="vorlage" isdoctype="monograph" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDSource"> PPN analog a-Satz </item>
+        <item from="werk" isdoctype="monograph" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDDigital"> PPN digital a-Satz</item>
+        <item from="vorlage" isdoctype="periodical" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDSource"> PPN analog b-Satz </item>
+        <item from="werk" isdoctype="periodical" required="true" ughbinding="true" docstruct="topstruct" metadata="CatalogIDDigital"> PPN digital b-Satz</item>
+        <item from="werk" isdoctype="periodical" required="true" ughbinding="true" docstruct="topstruct" metadata="ISSN"> ISSN </item>
+        <item from="vorlage" required="true" isdoctype="periodical" ughbinding="true" docstruct="firstchild" metadata="CatalogIDSource"> PPN analog Band </item>
+        <item from="werk" required="true" isdoctype="periodical" ughbinding="true" docstruct="firstchild" metadata="CatalogIDDigital"> PPN digital Band </item>
+        <!--title, number and authors for multivolumes and periodicals -->
+        <item from="vorlage" isdoctype="multivolume|periodical" required="true" ughbinding="true" docstruct="firstchild" metadata="TitleDocMain"> Titel (Band)</item>
+        <item from="vorlage" isdoctype="multivolume|periodical" required="true" ughbinding="true" docstruct="firstchild" metadata="TitleDocMainShort"> Titel (Band) (Sortierung)</item>
+        <item from="vorlage" isdoctype="multivolume" ughbinding="true" docstruct="firstchild" metadata="ListOfCreators"> Autoren (Band)</item>
+        <item from="vorlage" isnotdoctype="monograph" ughbinding="true" docstruct="firstchild" metadata="CurrentNo"> Bandnummer </item>
+        <item from="vorlage" isnotdoctype="monograph" ughbinding="true" docstruct="firstchild" metadata="CurrentNoSorting"> Nummer (Sortierung) </item>
+        <item from="vorlage" isdoctype="multivolume|periodical" required="true"> Nummer (Benennung) </item>
+        <item from="vorlage" required="true" isdoctype="multivolume" ughbinding="true" docstruct="firstchild" metadata="CatalogIDSource"> PPN analog f-Satz </item>
+        <item from="werk" required="true" isdoctype="multivolume" ughbinding="true" docstruct="firstchild" metadata="CatalogIDDigital"> PPN digital f-Satz </item>
+        <!-- other metadata for all -->
+        <item from="vorlage" isdoctype="monograph|multivolume|periodical" ughbinding="true" docstruct="topstruct" metadata="PlaceOfPublication"> Erscheinungsort </item>
+        <item from="vorlage" isdoctype="monograph" ughbinding="true" docstruct="topstruct" metadata="PublicationYear"> Erscheinungsjahr </item>
+        <item from="vorlage" isdoctype="periodical|multivolume" ughbinding="true" docstruct="firstchild" metadata="PublicationYear"> Erscheinungsjahr </item>
+        <item from="vorlage" isdoctype="multivolume|periodical" ughbinding="true" docstruct="firstchild" metadata="PublisherName"> Verlag </item>
+        <item from="vorlage" isdoctype="monograph" ughbinding="true" docstruct="topstruct" metadata="PublisherName"> Verlag </item>
+        <item from="vorlage" ughbinding="true" docstruct="boundbook" metadata="shelfmarksource"> Signatur </item>
+        <processtitle isdoctype="multivolume">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)</processtitle>
+        <processtitle isdoctype="monograph">ATS+TSL+'_'+PPN digital a-Satz</processtitle>
+        <processtitle isdoctype="periodical">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>
+        <!-- <processtitle isnotdoctype="multivolume">ATS+TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer</processtitle> -->
+        <hide/>
+      </itemlist>
+      <opac use="true">
+        <catalogue>GBV</catalogue>
+      </opac>
+      <templates use="true"/>
+      <defaultdoctype>monograph</defaultdoctype>
+      <metadatageneration use="true"/>
+    </createNewProcess>
+    <tifheader>
+      <monograph>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital a-Satz+'|'</monograph>
+      <multivolume>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+ATS+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)+'|'</multivolume>
+      <periodical>'|[[DOC_TYPE]]'+$Doctype+'|[[HAUPTTITEL]]'+Titel+'|[[AUTOREN/HERAUSGEBER]]'+Autoren+'|[[JAHR]]'+Erscheinungsjahr+'|[[ERSCHEINUNGSORT]]'+Erscheinungsort+'|[[VERZ_STRCT]]'+TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)+'|'</periodical>
+    </tifheader>
+    <dmsImport/>
+  </project>
+</goobiProjects>
