@@ -246,7 +246,7 @@
 				<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.batchStep}" />
 
 			
-				<h:outputText value="#{msgs.stepPlugin}" style="display: none;"/>
+				<h:outputText value="#{msgs.stepPlugin}"/>
 				<h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}" style="width: 300px;margin-right:15px;" />
 
 
