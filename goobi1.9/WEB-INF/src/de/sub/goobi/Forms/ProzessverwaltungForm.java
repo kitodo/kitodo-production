@@ -324,7 +324,20 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String ContentLoeschen() {
-		deleteMetadataDirectory();
+		// deleteMetadataDirectory();
+		try {
+			File ocr = new File(this.myProzess.getOcrDirectory());
+			if (ocr.exists()) {
+				Helper.deleteDir(ocr);
+			}
+			File images = new File(this.myProzess.getImagesDirectory());
+			if (images.exists()) {
+				Helper.deleteDir(images);
+			}
+		} catch (Exception e) {
+			Helper.setFehlerMeldung("Can not delete metadata directory", e);
+		}
+
 		Helper.setMeldung("Content deleted");
 		return "";
 	}
@@ -1970,7 +1983,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				List<String> param = new ArrayList<String>();
 				param.add(p.getName());
 				String value = Helper.getTranslation("propertyNotValid", param);
-				Helper.setFehlerMeldung(value);	
+				Helper.setFehlerMeldung(value);
 				valid = false;
 			}
 		}
@@ -2014,7 +2027,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				List<String> param = new ArrayList<String>();
 				param.add(processProperty.getName());
 				String value = Helper.getTranslation("propertyNotValid", param);
-				Helper.setFehlerMeldung(value);		
+				Helper.setFehlerMeldung(value);
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
