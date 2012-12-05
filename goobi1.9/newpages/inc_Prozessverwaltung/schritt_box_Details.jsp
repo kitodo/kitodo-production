@@ -214,6 +214,15 @@
 				<x:selectBooleanCheckbox forceId="true" id="chkmanuell1" onclick="chkManuellAutomatischSetzen(this)"
 					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenAbschliessen}" />
 
+				<h:outputText value="#{msgs.beimAnnehmenModulStarten}" rendered="#{NavigationForm.showModuleManager}" />
+				<x:selectBooleanCheckbox forceId="true" id="chkmanuell2" onclick="chkManuellAutomatischSetzen(this)"
+					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenModul}" rendered="#{NavigationForm.showModuleManager}" />
+
+				<h:outputText value="#{msgs.beimAnnehmenModulStartenUndSchrittAbschliessen}" rendered="#{NavigationForm.showModuleManager}" />
+				<x:selectBooleanCheckbox forceId="true" id="chkmanuell3" onclick="chkManuellAutomatischSetzen(this)"
+					value="#{ProzessverwaltungForm.mySchritt.typBeimAnnehmenModulUndAbschliessen}" rendered="#{NavigationForm.showModuleManager}" />
+
+
 				<h:outputText value="#{msgs.automatischerSchritt}" />
 				<x:selectBooleanCheckbox forceId="true" id="chkmanuell4" onclick="chkManuellAutomatischSetzen(this)"
 					value="#{ProzessverwaltungForm.mySchritt.typAutomatisch}" />
@@ -255,6 +264,9 @@
 					<x:message for="chkautomatisch" style="color: red" replaceIdWithLabel="true" />
 				</h:panelGroup>
 
+				<h:outputText value="#{msgs.modul}" rendered="#{NavigationForm.showModuleManager}" />
+				<h:inputText value="#{ProzessverwaltungForm.mySchritt.typModulName}" rendered="#{NavigationForm.showModuleManager}" />
+
 				<h:outputLabel for="status" value="#{msgs.status}" />
 				<h:panelGroup>
 					<h:selectOneMenu id="status" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.mySchritt.bearbeitungsstatusAsString}"
@@ -271,13 +283,13 @@
 				<h:outputText value="#{msgs.batchStep}" />
 				<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.mySchritt.batchStep}" />
 
-			
-				<h:outputText value="#{msgs.stepPlugin}" style="display: none;"/>
-				<h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}" style="width: 300px;margin-right:15px; display: none;" />
+
+				<h:outputText value="#{msgs.stepPlugin}" />
+				<h:inputText value="#{ProzessverwaltungForm.mySchritt.stepPlugin}" style="width: 300px;margin-right:15px;" />
 
 
 				<h:outputText value="#{msgs.validationPlugin}" />
-				<h:inputText value="#{ProzessverwaltungForm.mySchritt.validationPlugin}" style="width: 300px;margin-right:15px"/>
+				<h:inputText value="#{ProzessverwaltungForm.mySchritt.validationPlugin}" style="width: 300px;margin-right:15px" />
 			</h:panelGrid>
 
 		</htm:td>
