@@ -63,7 +63,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	boolean autoSave = false;
 
 	private String title;
-	
+
 	public boolean validate(Prozess inProzess) {
 		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
 		/*
@@ -81,7 +81,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
-		ProjectObject project  = ProjectManager.getProjectById(process.getProjekteID());
+		ProjectObject project = ProjectManager.getProjectById(process.getProjekteID());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
 		this.title = title;
 		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
@@ -187,7 +187,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 		 * -------------------------------- auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
 		 * --------------------------------
 		 */
-		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(), inPrefs, metadataLanguage, project);
+		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(), inPrefs, metadataLanguage,
+				project);
 		if (configuredList.size() != 0) {
 			for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
 				String temp = iter.next();
@@ -209,7 +210,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		/*
 		 * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
 		 */
-		
+
 		try {
 			List<String> images = fi.getDataFiles();
 			if (images != null) {
@@ -222,15 +223,15 @@ public class MetadatenVerifizierungWithoutHibernate {
 					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
 					return false;
 				}
-			} 
+			}
 		} catch (InvalidImagesException e1) {
 			Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
 			ergebnis = false;
 		}
-		
+
 		try {
 			if (this.autoSave) {
-				process.writeMetadataFile(gdzfile,fi.getMetadataFilePath(), inPrefs , project.getFileFormatInternal());
+				process.writeMetadataFile(gdzfile, fi.getMetadataFilePath(), inPrefs, project.getFileFormatInternal());
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error while writing metadata: " + title, e);
@@ -308,27 +309,27 @@ public class MetadatenVerifizierungWithoutHibernate {
 			String number = dst.getNumberOfMetadataType(mdt);
 			List<? extends Metadata> ll = inStruct.getAllMetadataByType(mdt);
 			int real = 0;
-				real = ll.size();
+			real = ll.size();
 
-				if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataIsEmpty"));
-				}
-				/* jetzt die Typen prüfen */
-				if (number.equals("1m") && real != 1) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataNotOneElement") + " " + real + Helper.getTranslation("MetadataTimes"));
-				}
-				if (number.equals("1o") && real > 1) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataToManyElements") + " " + real + " " + Helper.getTranslation("MetadataTimes"));
-				}
-				if (number.equals("+") && real == 0) {
-					inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-							+ Helper.getTranslation("MetadataNotEnoughElements"));
-				}
+			if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataIsEmpty"));
 			}
-//		}
+			/* jetzt die Typen prüfen */
+			if (number.equals("1m") && real != 1) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataNotOneElement") + " " + real + Helper.getTranslation("MetadataTimes"));
+			}
+			if (number.equals("1o") && real > 1) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataToManyElements") + " " + real + " " + Helper.getTranslation("MetadataTimes"));
+			}
+			if (number.equals("+") && real == 0) {
+				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
+						+ Helper.getTranslation("MetadataNotEnoughElements"));
+			}
+		}
+		// }
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
 		if (inStruct.getAllChildren() != null) {
 			for (DocStruct child : inStruct.getAllChildren()) {
@@ -341,7 +342,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 	/**
 	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
 	 */
-	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language, ProjectObject project) {
+	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language,
+			ProjectObject project) {
 		/*
 		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
 		 */
@@ -393,7 +395,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 							MetadataType emdete = this.ughhelp.getMetadataType(inPrefs, tok);
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
-	
+
 						}
 					}
 					if (listOfFromMdts.size() > 0) {
@@ -428,7 +430,6 @@ public class MetadatenVerifizierungWithoutHibernate {
 				 */
 				for (MetadataType mdttemp : inListOfFromMdts) {
 
-		
 					List<Person> fromElemente = myStruct.getAllPersons();
 					if (fromElemente != null && fromElemente.size() > 0) {
 						/*
@@ -436,7 +437,6 @@ public class MetadatenVerifizierungWithoutHibernate {
 						 */
 						for (Person p : fromElemente) {
 
-						
 							if (p.getRole() == null) {
 								Helper.setFehlerMeldung("[" + this.title + " " + myStruct.getType().getNameByLanguage(language) + "] "
 										+ Helper.getTranslation("MetadataPersonWithoutRole"));
@@ -517,8 +517,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 						}
 					}
 					if (!isOk && !this.autoSave) {
-						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "+  md.getValue() + " "
-								+ Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
+						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "
+								+ md.getValue() + " " + Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
 					}
 					if (!isOk && this.autoSave) {
 						md.setValue(md.getValue() + new StringTokenizer(prop_endswith, "|").nextToken());
@@ -538,5 +538,52 @@ public class MetadatenVerifizierungWithoutHibernate {
 	public void setAutoSave(boolean autoSave) {
 		this.autoSave = autoSave;
 	}
+
+	public boolean validateIdentifier(DocStruct uppermostStruct) {
+		
+		if (uppermostStruct.getType().isAnchor()) {
+			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+
+			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {
+				Metadata identifierTopStruct = uppermostStruct.getAllIdentifierMetadata().get(0);
+				try {
+					if (identifierTopStruct.getValue() == null || identifierTopStruct.getValue().length() == 0) {
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataIsEmpty"));
+						return false;
+					}
+					if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
+						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+								+ identifierTopStruct.getType().getNameByLanguage(language) + " in DocStruct "
+								+ uppermostStruct.getType().getNameByLanguage(language) + Helper.getTranslation("MetadataInvalidCharacter"));
+						return false;
+					}
+					DocStruct firstChild = uppermostStruct.getAllChildren().get(0);
+					Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
+					if (identifierFirstChild.getValue() == null || identifierFirstChild.getValue().length() == 0) {
+						return false;
+					}
+					if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataIsEmpty"));
+						return false;
+					}
+					if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+							&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
+						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
+								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName() + " and "
+								+ firstChild.getType().getName());
+						return false;
+					}
+				} catch (Exception e) {
+					return false;
+				}
+			}
+
+		}
+		return true;	
+	}
+	
+
 
 }

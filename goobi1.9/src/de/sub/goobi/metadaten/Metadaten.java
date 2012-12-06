@@ -720,6 +720,9 @@ public class Metadaten {
 	private boolean storeMetadata() {
 		boolean result = true;
 		try {
+//			if (!new MetadatenVerifizierungWithoutHibernate().validateIdentifier(gdzfile.getDigitalDocument().getLogicalDocStruct())) {
+//				return false;
+//			}
 			this.myProzess.writeMetadataFile(this.gdzfile);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
