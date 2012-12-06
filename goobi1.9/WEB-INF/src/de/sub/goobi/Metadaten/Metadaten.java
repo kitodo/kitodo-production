@@ -237,6 +237,10 @@ public class Metadaten {
 			return "SperrungAbgelaufen";
 		} else {
 			try {
+//				if (!new MetadatenVerifizierungWithoutHibernate().validateIdentifier(gdzfile.getDigitalDocument().getLogicalDocStruct())) {
+//				return false;
+//			}
+
 				this.myProzess.writeMetadataFile(this.gdzfile);
 			} catch (Exception e) {
 				Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
@@ -751,6 +755,9 @@ public class Metadaten {
 		this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
 
 		try {
+//			if (!new MetadatenVerifizierungWithoutHibernate().validateIdentifier(gdzfile.getDigitalDocument().getLogicalDocStruct())) {
+//			return false;
+//		}
 			this.myProzess.writeMetadataFile(this.gdzfile);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);

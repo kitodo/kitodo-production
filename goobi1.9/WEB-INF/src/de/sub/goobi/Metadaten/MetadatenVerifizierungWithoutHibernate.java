@@ -565,5 +565,50 @@ public class MetadatenVerifizierungWithoutHibernate {
 	public void setAutoSave(boolean autoSave) {
 		this.autoSave = autoSave;
 	}
+	
+	
+	public boolean validateIdentifier(DocStruct uppermostStruct) {
+		
+		if (uppermostStruct.getType().isAnchor()) {
+			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 
+			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {
+				Metadata identifierTopStruct = uppermostStruct.getAllIdentifierMetadata().get(0);
+				try {
+					if (identifierTopStruct.getValue() == null || identifierTopStruct.getValue().length() == 0) {
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataIsEmpty"));
+						return false;
+					}
+					if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
+						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+								+ identifierTopStruct.getType().getNameByLanguage(language) + " in DocStruct "
+								+ uppermostStruct.getType().getNameByLanguage(language) + Helper.getTranslation("MetadataInvalidCharacter"));
+						return false;
+					}
+					DocStruct firstChild = uppermostStruct.getAllChildren().get(0);
+					Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
+					if (identifierFirstChild.getValue() == null || identifierFirstChild.getValue().length() == 0) {
+						return false;
+					}
+					if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataIsEmpty"));
+						return false;
+					}
+					if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+							&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
+						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
+								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName() + " and "
+								+ firstChild.getType().getName());
+						return false;
+					}
+				} catch (Exception e) {
+					return false;
+				}
+			}
+
+		}
+		return true;	
+	}
 }
