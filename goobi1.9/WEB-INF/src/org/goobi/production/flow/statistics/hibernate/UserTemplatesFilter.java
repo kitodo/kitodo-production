@@ -41,7 +41,13 @@ import de.sub.goobi.helper.PaginatingCriteria;
  ****************************************************************************/
 public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = -4062754600698521285L;
-
+	private boolean clearSession = false;
+	
+	public UserTemplatesFilter (boolean clearSession) {
+		this.clearSession = clearSession;
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -54,7 +60,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
-		FilterHelper.criteriaBuilder(session, null, crit, true, null, null, null);
+		FilterHelper.criteriaBuilder(session, null, crit, true, null, null, null, clearSession);
 
 		// FilterHelper.limitToUserAccessRights(crit);
 		// crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
@@ -117,7 +123,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public IEvaluableFilter clone() {
-		return new UserProcessesFilter();
+		return new UserProcessesFilter(clearSession);
 	}
 
 	/*

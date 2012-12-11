@@ -377,6 +377,7 @@ public class Schritt implements Serializable {
 		try {
 			Hibernate.initialize(this.eigenschaften);
 		} catch (HibernateException e) {
+			return 0;
 		}
 		if (this.eigenschaften == null) {
 			return 0;
@@ -810,7 +811,6 @@ public class Schritt implements Serializable {
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", this.titel));
-
 			// only steps with same batchid
 			crit.createCriteria("prozess", "proc");
 			crit.add(Restrictions.eq("proc.batchID", batchNumber));

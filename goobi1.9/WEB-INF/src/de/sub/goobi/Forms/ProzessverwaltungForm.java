@@ -375,7 +375,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			// this filter was implemented in its own class now as
 			// IEvaluableFilter
 
-			this.myFilteredDataSource = new UserProcessesFilter();
+			this.myFilteredDataSource = new UserProcessesFilter(true);
 			// }
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			if (!this.showClosedProcesses) {
@@ -399,7 +399,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.statisticsManager = null;
 		this.myAnzahlList = null;
 		try {
-			this.myFilteredDataSource = new UserTemplatesFilter();
+			this.myFilteredDataSource = new UserTemplatesFilter(true);
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			// if (!this.showClosedProcesses) {
 			// crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus",

@@ -161,7 +161,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			// this.myFilteredDataSource.setFilter(this.filter.substring("lucene".length()));
 			// } else {
 			// HibernateUtil.clearSession();
-			this.myFilteredDataSource = new UserDefinedStepFilter();
+			this.myFilteredDataSource = new UserDefinedStepFilter(true);
 			this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
 			((UserDefinedStepFilter) this.myFilteredDataSource).setFilterModes(this.nurOffeneSchritte, this.nurEigeneSchritte);
 			this.myFilteredDataSource.setFilter(this.filter);
