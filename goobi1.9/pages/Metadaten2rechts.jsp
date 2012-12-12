@@ -267,17 +267,17 @@
 		}
 	}
 
-	function paginierungWertAnzeigen(element){
-		if(element.value==3)
-			document.getElementById("paginierungWert").style.display='none';
-		
-		if(element.value==2 || element.value==5){
-			document.getElementById("paginierungWert").style.display='inline';
-			document.getElementById("paginierungWert").value='I';
+	function paginierungWertAnzeigen(element) {
+		var inputBoxElement = document.getElementById("paginierungWert");
+		inputBoxElement.style.display = (element.value == 3 ? 'none' : '');
+		if (element.value == 2 || element.value == 5) {
+			inputBoxElement.value = 'I';
 		}
-		if(element.value==1 || element.value==4){
-			document.getElementById("paginierungWert").style.display='inline';
-			document.getElementById("paginierungWert").value='1';
+		if (element.value == 1 || element.value == 4) {
+			inputBoxElement.value = '1';
+		}
+		if (element.value == 6) {
+			inputBoxElement.value = '';
 		}
 	}
 
