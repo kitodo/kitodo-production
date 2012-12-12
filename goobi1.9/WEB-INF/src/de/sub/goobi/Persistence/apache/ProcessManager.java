@@ -132,4 +132,14 @@ public class ProcessManager {
 		return answer;
 	}
 	
+	public static int getNumberOfProcessesWithTitle(String title) {
+		int answer = 0;	
+		try {
+			answer = MySQLHelper.getCountOfProcessesWithTitle(title);
+		} catch (SQLException e) {
+			logger.error("Cannot not load information about processes with title " + title, e);
+		}
+		return answer;
+	}
+	
 }

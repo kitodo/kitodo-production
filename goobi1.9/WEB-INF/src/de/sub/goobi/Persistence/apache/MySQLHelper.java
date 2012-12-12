@@ -402,6 +402,16 @@ public class MySQLHelper {
 		}
 	}
 	
+	
+	public static int getCountOfProcessesWithTitle(String title) throws SQLException {
+		Connection connection = helper.getConnection();
+		String query = "select count(ProzesseID) from prozesse where  titel = '" + title + "'";
+		try {
+			return new QueryRunner().query(connection, query, MySQLUtils.resultSetToIntegerHandler);
+		} finally {
+			closeConnection(connection);
+		}
+	}
 	public static void main(String[] args) throws SQLException {
 		MySQLHelper helper = MySQLHelper.getInstance();
 		int start = 10000;
