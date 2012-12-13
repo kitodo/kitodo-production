@@ -40,8 +40,7 @@ public interface IStepPlugin extends IPlugin {
 	
 	public void initialize(StepObject stepobject, String returnPath);
 
-	// TODO should this be a boolean method, or a method with exception thrown?
-	public void execute();
+	public boolean execute();
 
 	public String cancel();
 

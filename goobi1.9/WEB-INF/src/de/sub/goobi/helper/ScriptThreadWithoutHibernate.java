@@ -59,14 +59,15 @@ public class ScriptThreadWithoutHibernate extends Thread {
 		logger.debug("found " + scriptPaths.size() + " scripts");
 		if (scriptPaths.size() > 0) {
 			this.hs.executeAllScriptsForStep(this.step, automatic);
-		} else 	if (this.step.isTypExport()) {
+		} else if (this.step.isTypExport()) {
 			this.hs.executeDmsExport(this.step, automatic);
 		} else if (this.step.getStepPlugin() != null && this.step.getStepPlugin().length() > 0) {
 			IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, step.getStepPlugin());
 			isp.initialize(step, "");
-			isp.execute();
+			if (isp.execute()) {
+				hs.CloseStepObjectAutomatic(step);
+			}
 		}
-
 	}
 
 	public void stopThread() {
