@@ -26,12 +26,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
 import de.sub.goobi.helper.Helper;
 
+@XmlRootElement(name="catalogueConfiguration")
 public class ConfigOpac {
    private XMLConfiguration config;
    private static String configPfad;
@@ -107,6 +111,7 @@ public class ConfigOpac {
    /**
     * return all configured Catalogue-Titles from Configfile
     * ================================================================*/
+   @XmlElement(name="interface")
    public ArrayList<String> getAllCatalogueTitles() {
       ArrayList<String> myList = new ArrayList<String>();
       int countCatalogues = config.getMaxIndex("catalogue");
@@ -133,6 +138,7 @@ public class ConfigOpac {
    /**
     * return all configured Doctype-Titles from Configfile
     * ================================================================*/
+   @XmlElement(name="mediaType")
    public ArrayList<ConfigOpacDoctype> getAllDoctypes() {
       ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
       for (String title : getAllDoctypeTitles()) {
