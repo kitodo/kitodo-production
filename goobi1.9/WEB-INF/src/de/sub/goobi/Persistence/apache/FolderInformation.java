@@ -103,6 +103,23 @@ public class FolderInformation {
 				}
 			}
 		}
+		if (!tifOrdner.equals("") && useFallBack) {
+			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+			if (!suffix.equals("")) {
+				File tif = new File(tifOrdner);
+				String[] files = tif.list();
+				if (files == null || files.length == 0) {
+					String[] folderList = dir.list();
+					for (String folder : folderList) {
+						if (folder.endsWith(suffix)) {
+							tifOrdner = folder;
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		if (tifOrdner.equals("")) {
 			tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
 		}
@@ -169,6 +186,23 @@ public class FolderInformation {
 					}
 				}
 			}
+			if (!origOrdner.equals("") && useFallBack) {
+				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+				if (!suffix.equals("")) {
+					File tif = new File(origOrdner);
+					String[] files = tif.list();
+					if (files == null || files.length == 0) {
+						String[] folderList = dir.list();
+						for (String folder : folderList) {
+							if (folder.endsWith(suffix)) {
+								origOrdner = folder;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
 			if (origOrdner.equals("")) {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
 			}
