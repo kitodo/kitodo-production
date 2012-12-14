@@ -203,6 +203,10 @@
 		Listener für die Modularisierung <listener> <listener-class>
 		de.sub.goobi.Modul.ModulListener </listener-class> </listener>
 	-->
+<!-- Listener for ImageIO -->
+	<listener>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+	</listener>
 
 	<!-- Listener for JobManager -->
 	<listener>
