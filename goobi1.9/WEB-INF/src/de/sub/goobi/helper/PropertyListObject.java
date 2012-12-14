@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,16 +27,23 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.properties.ProcessProperty;
 
-public class PropertyListObject {
+public class PropertyListObject implements Serializable {
+
+	private static final long serialVersionUID = 1119130003588038047L;
 
 	private List<ProcessProperty> propertyList = new ArrayList<ProcessProperty>();
 	private int containerNumber = 0;
 
+	
+	public PropertyListObject() {}
+	
+	
 	public PropertyListObject(int container) {
 		this.containerNumber = container;
 	}
@@ -55,8 +63,8 @@ public class PropertyListObject {
 	public int getPropertyListSize() {
 		return this.propertyList.size();
 	}
-	
+
 	public String getPropertyListSizeString() {
-		return ""+this.propertyList.size();
+		return "" + this.propertyList.size();
 	}
 }
