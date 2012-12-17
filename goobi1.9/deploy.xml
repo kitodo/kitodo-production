@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!--
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ *     		- http://www.goobi.org
+ *     		- http://launchpad.net/goobi-production
+ * 		    - http://gdz.sub.uni-goettingen.de
+ * 			- http://www.intranda.com
+ * 			- http://digiverso.com 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ -->
+
+<project name="Goobi Deploy Targets" default="deploy">
+
+	<!--==================================================
+        Property declarations
+        ==================================================-->
+
+	<!-- Include build and deployment options -->
+	<property file="build.properties" prefix="build" />
+	<property file="deploy.properties" prefix="deploy" />
+
+	<!-- Default build properties (applied if not overridden by build.properties file) -->
+	<property name="build.dist.name" value="goobi-ce" />
+	<property name="build.dist.version" value="1.8.0" />
+	<property name="build.dir" value="./build" />
+	<property name="build.dist.dir" value="${basedir}/dist" />
+	<property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war" />
+	<property name="deploy.tomcat.webpath" value="/${build.dist.name}-${build.dist.version}" />
+
+	<!--==================================================
+        Datatype declarations
+        ==================================================-->
+
+	<taskdef name="catalina-deploy" classname="org.apache.catalina.ant.DeployTask">
+		<classpath>
+			<fileset dir="${build.tomcat.dir.lib}" />
+		</classpath>
+	</taskdef>
+
+	<!--==================================================
+        Public build Targets
+        ==================================================-->
+
+	<target name="debug" description="Print diagnosis information">
+		<echoproperties />
+	</target>
+
+	<target name="init" depends="check-preconditions, manager-password" description="Initialize the build: check preconditions.">
+		<tstamp>
+			<format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en,UK" />
+		</tstamp>
+	</target>
+
+	<target name="deploy" depends="init" description="Deploy to Catalina Server via Tomcat Manager.">
+		<catalina-deploy url="${deploy.tomcat.manager.url}" username="${deploy.tomcat.username}" password="${deploy.tomcat.password}" path="${deploy.tomcat.webpath}" update="true" war="${build.dist.war}">
+		</catalina-deploy>
+	</target>
+
+	<!--==================================================
+        Deployment Precondition Checks
+        ==================================================-->
+
+	<!-- Check all deployment preconditions -->
+	<target name="check-preconditions" depends="check-distributable, check-tomcat-properties" />
+
+	<!-- Check is all necessary deployment properties are given -->
+	<target name="check-tomcat-properties">
+		<fail message="No Tomcat Manager URL configured in deploy.tomcat.manager." unless="deploy.tomcat.manager.url" />
+		<fail message="No Tomcat Manager username configured in deploy.tomcat.username." unless="deploy.tomcat.username" />
+	</target>
+
+	<target name="check-distributable">
+		<fail message="Distributable war file not to be found at ${build.dist.war}">
+			<condition>
+				<not>
+					<available file="${build.dist.war}" />
+				</not>
+			</condition>
+		</fail>
+	</target>
+
+	<!-- Prompt for Tomcat User password if not set -->
+	<target name="manager-password" unless="deploy.tomcat.password">
+		<input message="To deploy, please provide password Tomcat User ${deploy.tomcat.username} >" addproperty="deploy.tomcat.password">
+			<handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+		</input>
+	</target>
+
+</project>

@@ -30,7 +30,7 @@
 		<link>
 			<name>private</name>
 			<type>2</type>
-			<location>/opt/digiverso/git/goobi-private/Goobi-Configuration/src</location>
+			<location>/opt/digiverso/git/goobi-private/Goobi-Configuration/src_merge</location>
 		</link>
 	</linkedResources>
 </projectDescription>

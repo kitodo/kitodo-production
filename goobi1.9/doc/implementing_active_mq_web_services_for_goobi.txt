@@ -1,0 +1,80 @@
+                 Implementing Active MQ web services for Goobi
+
+Active Message Queue is an open source Java Messaging (JMS) implementation
+provided by the Apache Software Foundation. It is intended to be used to
+to connect software components in a flexible way. The core is the Active MQ
+server which can be pictured like a post office. The mail boxes are named
+“queue” or “topic”. Queues work as expected: A producer sends a message where
+a consumer can pick it up. Topics can be pictured as black boards: The main
+difference is: A message read from a queue is removed from the queue. A message
+read from a topic is still available to others. Consumer clients can actively
+check the server or may register listeners with the server to be notified of
+new messages.
+
+This behaviour has already been implemented to Goobi: The org.goobi.mq.
+ActiveMQDirector is a ServletContextListener which is registered in web.xml.
+On application startup, it registers all consumers from its “services” variable
+to the server configured in “activeMQ.hostURL”. 
+
+The elements of this variable are classes extending the abstract class
+ActiveMQProcessor. This class implements the MessageListener and provides
+facilities to handle exceptions and to store the consumer which is required on
+shutdown to disconnect.
+
+To implement another web service processor, you have to implement a class which
+extends ActiveMQProcessor and implements its abstract void process(MapMessage).
+Here is the right place to do whatever your processor is intended to do. There
+is a class MapMessageObjectReader which shall be used to type safe retrieve
+complex objects from MapMessages. You must add your new class to the “services”
+variable of ActiveMQDirector then.
+
+The Goobi server administrator shall be in control which processors are being
+started, and which queue names they listen on. Implementation of this
+configurability is designed this way: The implementing class must pass its
+queue name to the constructor of the parent class. This is done by implementing
+the constructor like in the following skeleton. If the queue name is not
+configured, it will return null which will prevent the ActiveMQDirector from
+registering it to the server. Inside the class, the queue name is available in
+the global variable “queueName” which is set by the parent class.  The
+implementation may use arbitrary “activeMQ.myService.*” entries in
+GoobiConfig.properties for configuration.
+
+---------------------[ Service processor skeleton sample ]---------------------
+package org.goobi.mq.processores;
+
+import org.goobi.mq.*;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.enums.ReportLevel;
+
+public class MyServiceProcessor extends ActiveMQProcessor {
+
+	public MyServiceProcessor() {
+		super(ConfigMain.getParameter("activeMQ.myService.queue", null));
+	}
+
+	@Override
+	protected void process(MapMessageObjectReader args) throws Exception {
+		// TODO Auto-generated method stub
+	}
+}
+-------------------------------------------------------------------------------
+
+Responses from processors are designed to be handled as WebServiceResult
+objects. Those objects are MapMessages which send themselves to a topic
+configured in “activeMQ.results.topic”. They consist of the Strings “queue”
+(the name of the queue the job ticket was sent to), “id” (a String “id” in
+the MapMessage which is mandatory), “level” and an optional “message”. When
+designing the MapMessage layout to parameterise your web service processor,
+please keep in mind that a String element “id” is mandatory. 
+
+If process() terminates without error, it is meant to have done its job
+successfully and a WebServiceResult with level “success” will be sent. If
+process() returns an exception, a WebServiceResult with level “fatal” will be
+sent. The exception will be returned as the “message” String. You may also use
+the WebServiceResult class to send messages with the levels “error”, “warn”,
+“info”, “debug”, “verbose” and “ludicrous” which are meant to be informative
+only:
+        new WebServiceResult(queueName, args.getMandatoryString("id"),
+                ReportLevel.INFO, "Remote host is down, trying again later.")
+                .send();
+

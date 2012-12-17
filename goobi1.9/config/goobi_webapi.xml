@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config_webapi>
+  <credentials ip="0:0:0:0:0:0:0:1" password="CHANGEME">
+    <command name="closeStep"/>
+    <command name="addToProcessLog"/>
+  </credentials>
+  <credentials ip="127.0.0.1" password="CHANGEME">
+    <command name="closeStep"/>
+    <command name="addToProcessLog"/>
+  </credentials>
+</config_webapi>

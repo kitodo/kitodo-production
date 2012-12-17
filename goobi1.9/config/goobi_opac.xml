@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opacCatalogues>
+	<doctypes>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" rulesetType="Monograph" tifHeaderType="Monographie" title="monograph">
+			<label language="de">Monographie</label>
+			<label language="en">Monograph</label>
+			<mapping>Aa</mapping>
+			<mapping>Oa</mapping>
+		</type>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="true" rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
+			<label language="de">Zeitschrift</label>
+			<label language="en">Periodical</label>
+			<mapping>Ab</mapping>
+			<mapping>Ob</mapping>
+		</type>
+		<type isContainedWork="false" isMultiVolume="true" isPeriodical="false" rulesetType="MultivolumeWork" tifHeaderType="Band_MultivolumeWork"
+			title="multivolume">
+			<label language="de">Mehrbändiges Werk</label>
+			<label language="en">Multivolume work</label>
+			<mapping>Of</mapping>
+			<mapping>Af</mapping>
+			<mapping>OF</mapping>
+			<mapping>AF</mapping>
+		</type>
+		<type isContainedWork="true" isMultiVolume="false" isPeriodical="false" rulesetType="ContainedWork" tifHeaderType="ContainedWork" title="containedWork">
+			<label language="de">Beigefügtes Werk</label>
+			<label language="en">Contained work</label>
+			<mapping>Aj</mapping>
+			<mapping>Oj</mapping>
+		</type>
+	</doctypes>
+	<catalogue title="GBV">
+		<config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" iktlist="IKTLIST-GBV.xml" port="80" ucnf="UCNF=NFC" />
+	</catalogue>
+</opacCatalogues>

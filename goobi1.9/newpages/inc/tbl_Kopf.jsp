@@ -4,7 +4,33 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
-
+<%-- 
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ *     		- http://www.goobi.org
+ *     		- http://launchpad.net/goobi-production
+ * 		    - http://gdz.sub.uni-goettingen.de
+ * 			- http://www.intranda.com
+ * 			- http://digiverso.com 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+--%>
 <htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
 	<htm:td>
 		<x:div
@@ -51,8 +77,9 @@
 				</htm:td>
 
 
-				<htm:td valign="top" align="right" style="padding:3px">
+				   <htm:td valign="middle" align="right" style="padding-right: 3px">
 					<h:form style="margin:0px" id="headform">
+					<%-- 
 						<h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
 							title="deutsche Version">
 							<h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
@@ -72,8 +99,28 @@
 							rendered="false" title="russian version">
 							<h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
 							<f:param name="locale" value="ru" />
-						</h:commandLink>
+						</h:commandLink>						
 						<htm:br/>
+					--%>
+
+						<%-- First call to h:commandLink renders an <input type="hidden" name="autoScroll" />
+                                                 element surrounded by new line characters which would result in additional white
+                                                 space after the first link. This empty link will fix that problem: --%>
+						<h:commandLink />
+
+						<htm:div styleClass="languageSwitch">
+							<x:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
+								<htm:span styleClass="alterLanguage" rendered="#{not availableLanguage.selected}">
+									<h:commandLink action="#{SpracheForm.SpracheUmschalten}" title="#{availableLanguage.displayLanguageTranslated}">
+										<f:param name="locale" value="#{availableLanguage.id}" />
+										<h:outputText value="#{availableLanguage.displayLanguageSelf}" />
+									</h:commandLink>
+								</htm:span>
+								<htm:span styleClass="currentLanguage" rendered="#{availableLanguage.selected}" title="#{availableLanguage.displayLanguageTranslated}">
+									<h:outputText value="#{availableLanguage.displayLanguageSelf}" />
+								</htm:span>
+							</x:dataList>
+						</htm:div>
 						<%-- logout --%>
 							<h:commandLink action="#{LoginForm.Ausloggen}" id="logout2"
     							rendered="#{LoginForm.myBenutzer != null}"

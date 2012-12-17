@@ -1,0 +1,2489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~     - http://gdz.sub.uni-goettingen.de
+  ~     - http://www.goobi.org
+  ~     - http://launchpad.net/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+  ~ should have received a copy of the GNU General Public License along with this
+  ~ program; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+  ~ Suite 330, Boston, MA 02111-1307 USA
+  -->
+
+<!--<displayRules xmlns="http://meta.goobi.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://meta.goobi.org/displayRules http://meta.goobi.org/displayRules.xsd">-->
+    <displayRules xmlns="http://meta.goobi.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules" >
+	<ruleSet>
+        <!--#########################################################-->
+        <!--#### LIZENZEN START #####################################-->
+        <!--#########################################################-->
+        <context projectName="DigiZeitschriften">
+			<bind>edit</bind>
+			<select1 tns:ref="NotePreImport">
+                <item tns:selected="false">
+                    <label>Hinweistext einfügen</label>
+                    <value>Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenbandes, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird nachträglich erfolgen.</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Hinweistext ausblenden</label>
+                    <value></value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicenseGlobal">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicensePublisher">
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select1>
+
+			<select1 tns:ref="AccessLicenseMainCollection">
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicense">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mohr Siebeck Schnupper</label>
+                    <value>MohrSiebeckSchnupper</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Histan und Homm</label>
+                    <value>HistanHomm</value>
+                </item>
+			</select1>
+		</context>
+
+        <context projectName="DigiZeitschriften">
+			<bind>create</bind>
+			<select1 tns:ref="NotePreImport">
+                <item tns:selected="false">
+                    <label>Hinweistext einfügen</label>
+                    <value>Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenbandes, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird nachträglich erfolgen.</value>
+                </item>
+                <item tns:selected="true">
+                    <label>Hinweistext ausblenden</label>
+                    <value></value>
+                </item>
+			</select1>
+			<select1 tns:ref="AccessLicenseGlobal">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicensePublisher">
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select1>
+
+			<select1 tns:ref="AccessLicenseMainCollection">
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+			</select1>
+
+
+			<select1 tns:ref="AccessLicense">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mohr Siebeck Schnupper</label>
+                    <value>MohrSiebeckSchnupper</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Histan und Homm</label>
+                    <value>HistanHomm</value>
+                </item>
+			</select1>
+		</context>
+        <!--#########################################################-->
+        <!--#### LIZENZEN DIGIZEIT END ##############################-->
+        <!--#########################################################-->
+
+
+        <!--#########################################################-->
+        <!--#### LIZENZEN PREVIEW IMPORT START ######################-->
+        <!--#########################################################-->
+        <context projectName="DigiZeitschriften_preview_import">
+			<bind>edit</bind>
+			<select1 tns:ref="NotePreImport">
+                <item tns:selected="false">
+                    <label>Hinweistext einfügen</label>
+                    <value>Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenbandes, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird nachträglich erfolgen.</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Hinweistext ausblenden</label>
+                    <value></value>
+                </item>
+			</select1>
+			<select1 tns:ref="AccessLicenseGlobal">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicensePublisher">
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select1>
+
+			<select1 tns:ref="AccessLicenseMainCollection">
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+			</select1>
+
+
+			<select1 tns:ref="AccessLicense">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mohr Siebeck Schnupper</label>
+                    <value>MohrSiebeckSchnupper</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Histan und Homm</label>
+                    <value>HistanHomm</value>
+                </item>
+			</select1>
+		</context>
+
+        <context projectName="DigiZeitschriften_preview_import">
+			<bind>create</bind>
+			<select1 tns:ref="NotePreImport">
+                <item tns:selected="false">
+                    <label>Hinweistext einfügen</label>
+                    <value>Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenbandes, jedoch ohne verlinktes Inhaltsverzeichnis. Die Verlinkung wird nachträglich erfolgen.</value>
+                </item>
+                <item tns:selected="true">
+                    <label>Hinweistext ausblenden</label>
+                    <value></value>
+                </item>
+			</select1>
+			<select1 tns:ref="AccessLicenseGlobal">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+			</select1>
+
+			<select1 tns:ref="AccessLicensePublisher">
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+			</select1>
+
+			<select1 tns:ref="AccessLicenseMainCollection">
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+			</select1>
+
+
+			<select1 tns:ref="AccessLicense">
+                <item tns:selected="false">
+                    <label>DigiZeitschriften Abo</label>
+                    <value>Gesamtabo</value>
+                </item>
+				<item tns:selected="false">
+					<label>Open Access</label>
+					<value>free</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Gesperrt</label>
+                    <value>gesperrt</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+				<item tns:selected="false">
+					<label>Abt Herwegen Institut Maria Laach</label>
+					<value>AbtHerwegenInstitutMariaLaach</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Altägypthisches Seminar GAU</label>
+                    <value>GAU</value>
+                </item>
+				<item tns:selected="false">
+					<label>Alber</label>
+					<value>Alber</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Archiv für Liturgiewissenschaften</label>
+                    <value>ArchivfuerLiturgiewissenschaften</value>
+                </item>
+				<item tns:selected="false">
+					<label>Bayerisches Nationalmuseum</label>
+					<value>BayNM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Birkhäuser</label>
+					<value>Birkhäuser</value>
+				</item>
+				<item tns:selected="false">
+					<label>Böhlau</label>
+					<value>Böhlau</value>
+				</item>
+                <item tns:selected="false">
+                    <label>Dr. Peter Rauch GmbH-Böhlau, Wien</label>
+                    <value>BöhlauWien</value>
+                </item>
+				<item tns:selected="false">
+					<label>Buske</label>
+					<value>Buske</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hans Carl Verlag</label>
+					<value>Carl</value>
+				</item>
+				<item tns:selected="false">
+					<label>Deutscher Kunstverlag</label>
+					<value>DeutscherKunstverlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>edition sigma</label>
+					<value>editionsigma</value>
+				</item>
+				<item tns:selected="false">
+					<label>Finanzarchiv</label>
+					<value>Finanzarchiv</value>
+				</item>
+				<item tns:selected="false">
+					<label>Fink</label>
+					<value>Fink</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gesellschaft Für Erdkunde Zu Berlin</label>
+					<value>GesellschaftfürErdkundeZuBerlin</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg Gesellschaft</label>
+					<value>GutenbergGesellschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gutenberg-Jahrbuch</label>
+					<value>GutenbergJahrbuch</value>
+				</item>
+				<item tns:selected="false">
+					<label>Harrassowitz</label>
+					<value>Harrassowitz</value>
+				</item>
+				<item tns:selected="false">
+					<label>Hirzel</label>
+					<value>Hirzel</value>
+				</item>
+				<item tns:selected="false">
+					<label>Institut Für Weltwirtschaft</label>
+					<value>InstitutFürWeltwirtschaft</value>
+				</item>
+				<item tns:selected="false">
+					<label>Juventa</label>
+					<value>Juventa</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kamp</label>
+					<value>Kamp</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klartext-Verlag</label>
+					<value>KlartextVerlag</value>
+				</item>
+				<item tns:selected="false">
+					<label>Kunstgeschichtlichen Instituts der Philipps-Universität Marburg</label>
+					<value>KGInstPUM</value>
+				</item>
+				<item tns:selected="false">
+					<label>Klostermann</label>
+					<value>Klostermann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Liber</label>
+					<value>Liber</value>
+				</item>
+				<item tns:selected="false">
+					<label>Lucius &amp;Lucius</label>
+					<value>LuciusLucius</value>
+				</item>
+				<item tns:selected="false">
+					<label>Gebr. Mann Verlag</label>
+					<value>Mann</value>
+				</item>
+				<item tns:selected="false">
+					<label>Meiner</label>
+					<value>Meiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Metzler</label>
+					<value>Metzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Monumenta Germaniae Historica</label>
+					<value>MGH</value>
+				</item>
+				<item tns:selected="false">
+					<label>Mohr Siebeck</label>
+					<value>MohrSiebeck</value>
+				</item>
+				<item tns:selected="false">
+					<label>Niemeyer</label>
+					<value>Niemeyer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Oldenbourg Verlag</label>
+					<value>Oldenbourg</value>
+				</item>
+				<item tns:selected="false">
+					<label>Saur</label>
+					<value>Saur</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schäffer-Poeschel, Metzler</label>
+					<value>SchäfferPoeschelMetzler</value>
+				</item>
+				<item tns:selected="false">
+					<label>Schott</label>
+					<value>Schott</value>
+				</item>
+				<item tns:selected="false">
+					<label>Springer</label>
+					<value>Springer</value>
+				</item>
+				<item tns:selected="false">
+					<label>Statistisches Bundesamt Wiesbaden</label>
+					<value>StatistischesBundesamtWiesbaden</value>
+				</item>
+				<item tns:selected="false">
+					<label>Steiner</label>
+					<value>Steiner</value>
+				</item>
+				<item tns:selected="false">
+					<label>Vandenhoeck &amp; Ruprecht</label>
+					<value>VandenhoeckRuprecht</value>
+				</item>
+				<item tns:selected="false">
+					<label>Verband Sonderpädagogik e.V.</label>
+					<value>VSeV</value>
+				</item>
+				<item tns:selected="false">
+					<label>Winter</label>
+					<value>Winter</value>
+				</item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Aegyptologie und Koptologie</label>
+                    <value>Egyptology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Anglistik</label>
+                    <value>Anglistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Buch- / Bibliothekswesen</label>
+                    <value>Librarianship</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Erziehungswissenschaften</label>
+                    <value>Education</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geowissenschaften</label>
+                    <value>Geology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Germanistik</label>
+                    <value>Germanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Geschichte</label>
+                    <value>History</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Judaistik</label>
+                    <value>Jewish Studies</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Kunst</label>
+                    <value>Arts</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mathematik</label>
+                    <value>Mathematics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Musikwissenschaft</label>
+                    <value>Musicology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Naturwissenschaften</label>
+                    <value>Sciences</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Orientalistik</label>
+                    <value>Orientalistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philologie</label>
+                    <value>Philology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Philosophie</label>
+                    <value>Philosophy</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Rechtswissenschaften</label>
+                    <value>Law</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Religion</label>
+                    <value>Religion</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Romanistik</label>
+                    <value>Romanistik</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Soziologie</label>
+                    <value>Sociology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Technikgeschichte</label>
+                    <value>History of Technology</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Wirtschaftswissenschaften</label>
+                    <value>Economics</value>
+                </item>
+                <item tns:selected="false">
+                    <label>---------------------------------------</label>
+                    <value></value>
+                </item>
+                <item tns:selected="false">
+                    <label>Mohr Siebeck Schnupper</label>
+                    <value>MohrSiebeckSchnupper</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Histan und Homm</label>
+                    <value>HistanHomm</value>
+                </item>
+			</select1>
+		</context>
+        <!--#########################################################-->
+        <!--#### LIZENZEN DIGIZEIT PREVIEW IMPORT END ###############-->
+        <!--#########################################################-->
+	
+        
+        
+        <!--#########################################################-->
+        <!---######### JOCHEN TESTING ##############################-->
+        <!--#########################################################-->
+        <!--        
+        <context projectName="SIMPLE">
+            <bind>create</bind>
+            <select1 tns:ref="datedigit">
+                <item tns:selected="false">
+                    <label>heute</label>
+                    <value>20100722</value>
+                </item>
+                <item tns:selected="false">
+                    <label>morgen</label>
+                    <value>20100723</value>
+                </item>
+                <item tns:selected="false">
+                    <label>gestern</label>
+                    <value>20100721</value>
+                </item>
+            </select1>
+        </context> 
+        <context projectName="SIMPLE">
+            <bind>edit</bind>
+            <select1 tns:ref="datedigit">
+                <item tns:selected="false">
+                    <label>heute</label>
+                    <value>20100722</value>
+                </item>
+                <item tns:selected="false">
+                    <label>morgen</label>
+                    <value>20100723</value>
+                </item>
+                <item tns:selected="false">
+                    <label>gestern</label>
+                    <value>20100721</value>
+                </item>
+            </select1>
+        </context> 
+//-->
+<!--
+        <context projectName="SIMPLE">
+            <bind>create</bind>
+            
+            <input tns:ref="CatalogIDDigital"/>
+
+            <select1 tns:ref="singleDigCollection">
+                <item tns:selected="false">
+                    <label>Sammlung 1</label>
+                    <value>eins</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Sammlung 2</label>
+                    <value>zwei</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Sammlung 3</label>
+                    <value>drei</value>
+                </item>
+            </select1>
+            
+            <select1 tns:ref="datedigit">
+                <item tns:selected="false">
+                    <label>gestern</label>
+                    <value>20100722</value>
+                </item>
+                <item tns:selected="false">
+                    <label>heute</label>
+                    <value>20100723</value>
+                </item>
+                <item tns:selected="false">
+                    <label>morgen</label>
+                    <value>20100724</value>
+                </item>
+            </select1>
+
+        </context> 
+        <context projectName="SIMPLE">
+            <bind>edit</bind>
+            
+            <input tns:ref="CatalogIDDigital"/>
+            
+            <select1 tns:ref="singleDigCollection">
+                <item tns:selected="false">
+                    <label>Sammlung 1</label>
+                    <value>eins</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Sammlung 2</label>
+                    <value>zwei</value>
+                </item>
+                <item tns:selected="false">
+                    <label>Sammlung 3</label>
+                    <value>drei</value>
+                </item>
+            </select1>
+            
+            <select1 tns:ref="datedigit">
+                <item tns:selected="false">
+                    <label>gestern</label>
+                    <value>20100722</value>
+                </item>
+                <item tns:selected="false">
+                    <label>heute</label>
+                    <value>20100723</value>
+                </item>
+                <item tns:selected="false">
+                    <label>morgen</label>
+                    <value>20100724</value>
+                </item>
+            </select1>
+
+    </context> 
+//-->
+   
+        <!--#########################################################-->
+        <!---######### JOCHEN TESTING END ###########################-->
+        <!--#########################################################-->
+    
+    </ruleSet>
+</displayRules>

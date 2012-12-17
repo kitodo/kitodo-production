@@ -130,7 +130,7 @@
     <!-- 	
     <filter>
 		<filter-name>HibernateFilter</filter-name>
-		<filter-class>de.sub.goobi.Persistence.HibernateSessionConversationFilter</filter-class> 
+		<filter-class>de.sub.goobi.persistence.HibernateSessionConversationFilter</filter-class> 
 	</filter>
 	 -->
 	
@@ -194,6 +194,15 @@
 		<url-pattern>*.jsf</url-pattern>
 	</filter-mapping>
 
+    <!-- Listener for ImageIO initialization (Tomcat workaround) -->
+	<listener>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
+	</listener>
+
 	<!--
 		xml-Rpc-Server starten <listener> <listener-class>
 		de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
@@ -208,16 +217,21 @@
 		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
 	</listener>
 
-	<!-- Listener for JobManager -->
+	<!-- Listener for JobManager 
 	<listener>
 		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
 	</listener>
+	-->
 	<!--  
 	<listener>
 		<listener-class>
 			org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
 	</listener>
 -->
+
+	<listener>
+		<listener-class>org.goobi.production.GoobiVersionListener</listener-class>
+	</listener>
 
 	<!-- Faces Servlet -->
 	<servlet>
@@ -303,4 +317,19 @@
 		<location>/newpages/error.jsf</location>
 	</error-page>
 
+ 	<servlet>
+        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.goobi.webapi.resources; org.goobi.webapi.provider</param-value>
+        </init-param>
+        <!-- explanation of load-on-startup: http://stackoverflow.com/a/1298984 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
 </web-app>

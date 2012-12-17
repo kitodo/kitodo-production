@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config_processProperties>
+	<property name="Text example" container="0">
+		<project>Projekt 1</project>
+		<project>Projekt 2</project>
+		<showStep name="Step A" access="write" />
+		<showStep name="Step B" access="writeRequired" />
+		<showStep name="Step C" access="read" />
+		<validation>\\w</validation>
+		<type>Text</type>
+		<defaultvalue>default value</defaultvalue>
+	</property>
+</config_processProperties>
