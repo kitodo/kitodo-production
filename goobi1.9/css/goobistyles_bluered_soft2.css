@@ -76,6 +76,10 @@ table {
 	font-size: 11px;
 	font-family: verdana, arial;
 }
+.headTable {
+	width:100%;
+	border:0px !important;
+}
 
 .layoutTable {
 	width: 100%;
