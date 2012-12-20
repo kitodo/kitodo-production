@@ -44,8 +44,11 @@
 	<%@include file="inc/head.jsp"%>
 	<body>
 
-		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable" align="center">
+		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
 			<%@include file="inc/tbl_Kopf.jsp"%>
+			</htm:table>
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+			align="center">
 			<htm:tr>
 				<%@include file="inc/tbl_Navigation.jsp"%>
 				<htm:td valign="top" styleClass="layoutInhalt">
