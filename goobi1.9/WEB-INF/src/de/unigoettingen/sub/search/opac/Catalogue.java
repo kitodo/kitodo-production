@@ -39,13 +39,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class Catalogue {
-
+	private static final Logger logger = Logger.getLogger(Catalogue.class);
 	//dir of local iktLists
 	private static final String DIR = "";
 //		"/home/jens/Desktop/workspace/Search/WEB-INF/src/de/unigoettingen/sub/search/opac/";
@@ -173,7 +174,7 @@ public class Catalogue {
         try {
         		File iktlistFile = new File(DIR + this.iktList);
             if (this.verbose){
-                System.out.println("Trying to load the IKTLIST from the file: "+
+                logger.info("Trying to load the IKTLIST from the file: "+
                 		iktlistFile.getAbsolutePath());            
             }
             BufferedInputStream listStream = 
@@ -197,7 +198,7 @@ public class Catalogue {
     		this.dataBase + IKTLIST;
             if (this.verbose){
 //                System.err.println("Loading the IKTLIST failed, requesting it from opac");            
-                System.out.println("Retrieving IKTLIST for opac " + 
+                logger.info("Retrieving IKTLIST for opac " + 
                 		this.description + ": " + requestUrl);
             }
             HttpClient opacClient = new HttpClient();
@@ -216,7 +217,7 @@ public class Catalogue {
      **********************************************************************/
     private void parseIktList(String iktList){
         if (this.verbose){
-            System.out.println("Parsing the IKTLIST: " + iktList);
+            logger.info("Parsing the IKTLIST: " + iktList);
         }
         
         InputSource iktSource = new InputSource(new StringReader(iktList));

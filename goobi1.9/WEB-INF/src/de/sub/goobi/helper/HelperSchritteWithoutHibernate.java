@@ -359,7 +359,7 @@ public class HelperSchritteWithoutHibernate {
 		Date d = new Date(System.currentTimeMillis());
 		d.setMonth(5);
 		d.setDate(4);
-		System.out.println(d.getTime());
+//		System.out.println(d.getTime());
 
 		// DbHelper helper = DbHelper.getInstance();
 		// List<StepObject> steps = DbHelper.getStepsForProcess(1165);
