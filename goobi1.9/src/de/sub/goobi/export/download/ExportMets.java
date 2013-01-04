@@ -151,9 +151,12 @@ public class ExportMets {
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		try {
-            FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());		} catch (Exception e) {
-			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
+		if (myBenutzer != null) {
+			try {
+				FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
+			}
 		}
 		return target;
 	}
@@ -222,7 +225,7 @@ public class ExportMets {
 				return false;
 			}
 		}
-		
+
 		for (ContentFile cf : dd.getFileSet().getAllFiles()) {
 			String location = cf.getLocation();
 			// If the file's location string shoes no sign of any protocol,
