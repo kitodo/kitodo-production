@@ -46,6 +46,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,6 +72,8 @@ import org.xml.sax.XMLReader;
  *************************************************************************/
 
 public class GetOpac {
+	private static final Logger logger = Logger.getLogger(GetOpac.class);
+	
 	// the output xml
 	public static final String PICA_COLLECTION_RECORDS = "collection";
 
@@ -499,12 +502,12 @@ public class GetOpac {
 		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress() + this.cat.getPort()+ this.cat.getCbs();
 
 		if (this.verbose) {
-			System.out.println("Searching the opac for " + query.getQueryUrl());
+			logger.info("Searching the opac for " + query.getQueryUrl());
 		}
 
 		if (this.lastQuery.equals(querySummary)) {
 			if (this.verbose) {
-				System.out.println("Using cached result because last query was: " + querySummary);
+				logger.info("Using cached result because last query was: " + querySummary);
 			}
 			return this.lastOpacResult;
 		}
@@ -595,11 +598,11 @@ public class GetOpac {
 		try {
 			return this.docBuilder.parse(source);
 		} catch (SAXException e) {
-			System.out.println("Dokument?");
+			logger.info("Dokument?");
 
 			InputStream bs = source.getByteStream();
 
-			System.out.println(bs.toString());
+			logger.info(bs.toString());
 			e.printStackTrace();
 
 		} catch (IOException e) {
@@ -649,7 +652,7 @@ public class GetOpac {
 	private String retrieveDataFromOPAC(String url) throws IOException {
 
 		 if (verbose){
-		System.out.println("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
+			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
 		 }
 		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
 
