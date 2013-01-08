@@ -43,9 +43,9 @@ public class ResultOutputTest{
 
 	@Test
 	public final void testGetTitle() {
-		assertEquals("chart",ResultOutput.chart.getTitle());
-		assertEquals("table",ResultOutput.table.getTitle());
-		assertEquals("chartAndTable",ResultOutput.chartAndTable.getTitle());
+		assertEquals("Chart",ResultOutput.chart.getTitle());
+		assertEquals("Table",ResultOutput.table.getTitle());
+		assertEquals("Chart & table",ResultOutput.chartAndTable.getTitle());
 	}
 
 	@Test
