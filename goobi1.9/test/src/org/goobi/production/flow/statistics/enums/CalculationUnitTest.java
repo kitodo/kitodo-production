@@ -42,9 +42,9 @@ public class CalculationUnitTest{
 
 	@Test
 	public final void testGetTitle() {
-		assertEquals("volumes",CalculationUnit.volumes.getTitle());
-		assertEquals("pages",CalculationUnit.pages.getTitle());
-		assertEquals("volumesAndPages",CalculationUnit.volumesAndPages.getTitle());
+		assertEquals("Volumes",CalculationUnit.volumes.getTitle());
+		assertEquals("Pages",CalculationUnit.pages.getTitle());
+		assertEquals("Volumes & pages",CalculationUnit.volumesAndPages.getTitle());
 	}
 
 	@Test

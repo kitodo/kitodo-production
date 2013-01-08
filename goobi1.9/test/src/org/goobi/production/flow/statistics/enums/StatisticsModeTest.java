@@ -44,12 +44,12 @@ public class StatisticsModeTest {
 
 	@Test
 	public final void testGetTitle() {
-		assertEquals("runtimeOfSteps", StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
-		assertEquals("productionThroughput", StatisticsMode.THROUGHPUT.getTitle());
-		assertEquals("errorTracking", StatisticsMode.CORRECTIONS.getTitle());
-		assertEquals("storageCalculator", StatisticsMode.STORAGE.getTitle());
-		assertEquals("productionStatistics", StatisticsMode.PRODUCTION.getTitle());
-		assertEquals("projectAssociation", StatisticsMode.PROJECTS.getTitle());
+		assertEquals("Duration of the steps", StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
+		assertEquals("Production throughput", StatisticsMode.THROUGHPUT.getTitle());
+		assertEquals("Error tracking", StatisticsMode.CORRECTIONS.getTitle());
+		assertEquals("Storage calculator", StatisticsMode.STORAGE.getTitle());
+		assertEquals("Production statistics", StatisticsMode.PRODUCTION.getTitle());
+		assertEquals("Project association", StatisticsMode.PROJECTS.getTitle());
 	}
 
 	@Test
