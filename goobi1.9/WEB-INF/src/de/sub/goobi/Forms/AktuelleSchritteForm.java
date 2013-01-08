@@ -47,6 +47,7 @@ import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedStepFilter;
 import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.IProperty;
@@ -1503,6 +1504,15 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
 		this.hideCorrectionTasks = hideCorrectionTasks;
+	}
+
+	public String callStepPlugin() {
+		if (mySchritt.getStepPlugin() != null && mySchritt.getStepPlugin().length() > 0) {
+			IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, mySchritt.getStepPlugin());
+			isp.initialize(mySchritt, "");
+			isp.execute();
+		}
+		return "";
 	}
 
 }
