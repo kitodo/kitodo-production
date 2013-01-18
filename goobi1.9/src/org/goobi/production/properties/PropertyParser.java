@@ -46,7 +46,7 @@ public class PropertyParser {
 	public static void main(String[] args) {
 		PropertyParser parser = new PropertyParser();
 		parser.readConfigAsSample();
-		System.out.println("finish");
+//		System.out.println("finish");
 	}
 
 	

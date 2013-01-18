@@ -198,6 +198,7 @@ public class Catalogue {
     		this.dataBase + IKTLIST;
             if (this.verbose){
             	logger.info("Retrieving IKTLIST for opac " + 
+
                 		this.description + ": " + requestUrl);
             }
             HttpClient opacClient = new HttpClient();

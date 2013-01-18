@@ -314,7 +314,7 @@ public class GetOpac {
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
 		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress()
-				 + this.cat.getPort()+ this.cat.getCbs();
+				+ this.cat.getPort() + this.cat.getCbs();
 
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
@@ -369,7 +369,8 @@ public class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress() + this.cat.getPort()+ this.cat.getCbs();
+		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress()
+				+ this.cat.getPort() + this.cat.getCbs();
 
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
@@ -499,7 +500,8 @@ public class GetOpac {
 	public OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress() + this.cat.getPort()+ this.cat.getCbs();
+		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress()
+				+ this.cat.getPort() + this.cat.getCbs();
 
 		if (this.verbose) {
 			logger.info("Searching the opac for " + query.getQueryUrl());
@@ -523,7 +525,6 @@ public class GetOpac {
 		return opacResult;
 	}
 
-	
 	private String xmlFormatPica(String picaXmlRecord) {
 		StringBuffer result = new StringBuffer("  <" + PICA_RECORD + ">\n");
 		try {
@@ -601,7 +602,7 @@ public class GetOpac {
 			logger.info("Dokument?");
 
 			InputStream bs = source.getByteStream();
-
+			
 			logger.info(bs.toString());
 			e.printStackTrace();
 
@@ -622,7 +623,7 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Helper method that prints a DOM Tree to System.out.
+	 * Helper method that prints a DOM Tree to .
 	 * 
 	 * @param source
 	 *            The DOMSource to print
@@ -631,7 +632,7 @@ public class GetOpac {
 		try {
 			TransformerFactory tFac = TransformerFactory.newInstance();
 			Transformer transformer = tFac.newTransformer();
-			StreamResult output = new StreamResult(System.out);
+			StreamResult output = new StreamResult();
 
 			transformer.setOutputProperty(OutputKeys.ENCODING, this.data_character_encoding);
 			transformer.transform(source, output);
@@ -654,6 +655,7 @@ public class GetOpac {
 		 if (verbose){
 			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
 		 }
+
 		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
 
 		try {
@@ -666,8 +668,9 @@ public class GetOpac {
 	}
 
 	public OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException, ParserConfigurationException {
-		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;").replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
-		
+		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;").replace("&amp;lt;", "&lt;")
+				.replace("&amp;gt;", "&gt;");
+
 		XMLReader parser = null;
 		OpacResponseHandler ids = new OpacResponseHandler();
 		/* Use Java 1.4 methods to create default parser. */
@@ -702,10 +705,10 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Set verbose to true to get debug messages printed to System.out.
+	 * Set verbose to true to get debug messages printed to .
 	 * 
 	 * @param verbose
-	 *            True will deliver debug messages to System.out.
+	 *            True will deliver debug messages to .
 	 **********************************************************************/
 
 	public void setVerbose(boolean verbose) {
