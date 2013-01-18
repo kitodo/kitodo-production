@@ -506,7 +506,7 @@ public class Helper implements Serializable, Observer {
 		} else {
 			value = getString(Locale.ENGLISH, dbTitel);
 		}
-		if (parameterList != null && parameterList.size() > 0) {
+		if (value != null && parameterList != null && parameterList.size() > 0) {
 			int parameterCount = 0;
 			for (String parameter : parameterList) {
 				value = value.replace("{" + parameterCount + "}", parameter);
