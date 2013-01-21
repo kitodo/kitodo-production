@@ -362,14 +362,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 */
 	protected void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
 
+		boolean unknownField = true;
 		for (AdditionalField field : inputForm.getAdditionalFields()) {
 			if (key.equals(field.getTitel())) {
 				field.setWert(value);
-				return;
+				unknownField = false;
 			}
 		}
 
-		throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+		if (unknownField)
+			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
 	}
 
 }
