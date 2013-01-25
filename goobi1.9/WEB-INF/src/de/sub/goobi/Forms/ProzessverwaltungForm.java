@@ -104,15 +104,12 @@ import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -1336,7 +1333,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void CalcMetadataAndImages(List<Prozess> inListe) throws IOException, InterruptedException, SwapException, DAOException {
-		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
+//		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 		this.myAnzahlList = new ArrayList<ProcessCounterObject>();
 		int allMetadata = 0;
 		int allDocstructs = 0;
@@ -1346,39 +1343,14 @@ public class ProzessverwaltungForm extends BasisForm {
 		int maxDocstructs = 1;
 		int maxMetadata = 1;
 
+		int countOfProcessesWithImages = 0;
+		int countOfProcessesWithMetadata = 0;
+		int countOfProcessesWithDocstructs = 0;
+		
 		for (Prozess proz : inListe) {
 			int tempImg = proz.getSortHelperImages();
 			int tempMetadata = proz.getSortHelperMetadata();
 			int tempDocstructs = proz.getSortHelperDocstructs();
-
-			boolean changed = false;
-
-			if (tempMetadata == 0) {
-				tempMetadata = zaehlen.getNumberOfUghElements(proz, CountType.METADATA);
-				if (tempMetadata > 0) {
-					changed = true;
-				}
-			}
-			if (tempDocstructs == 0) {
-				tempDocstructs = zaehlen.getNumberOfUghElements(proz, CountType.DOCSTRUCT);
-				if (tempDocstructs > 0) {
-					changed = true;
-				}
-			}
-			if (tempImg == 0) {
-				tempImg = FileUtils.getNumberOfFiles(new File(proz.getImagesOrigDirectory(true)));
-				if (tempImg > 0) {
-					changed = true;
-				}
-			}
-
-			// if there are new values, write them to database
-			if (changed) {
-				proz.setSortHelperDocstructs(tempDocstructs);
-				proz.setSortHelperMetadata(tempMetadata);
-				proz.setSortHelperImages(tempImg);
-				this.dao.save(proz);
-			}
 
 			ProcessCounterObject pco = new ProcessCounterObject(proz.getTitel(), tempMetadata, tempDocstructs, tempImg);
 			this.myAnzahlList.add(pco);
@@ -1391,6 +1363,15 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 			if (tempDocstructs > maxDocstructs) {
 				maxDocstructs = tempDocstructs;
+			}
+			if (tempImg > 0) {
+				countOfProcessesWithImages++;
+			} 
+			if (tempMetadata > 0) {
+				countOfProcessesWithMetadata++;
+			} 
+			if (tempDocstructs > 0) {
+				countOfProcessesWithDocstructs++;
 			}
 
 			/* Werte für die Gesamt- und Durchschnittsberechnung festhalten */
@@ -1407,18 +1388,18 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 
 		/* die Durchschnittsberechnung durchführen */
-		int faktor = 1;
-		if (this.myAnzahlList != null && this.myAnzahlList.size() > 0) {
-			faktor = this.myAnzahlList.size();
-		}
+//		int faktor = 1;
+//		if (this.myAnzahlList != null && this.myAnzahlList.size() > 0) {
+//			faktor = this.myAnzahlList.size();
+//		}
 		this.myAnzahlSummary = new HashMap<String, Integer>();
-		this.myAnzahlSummary.put("sumProcesses", faktor);
+		this.myAnzahlSummary.put("sumProcesses", this.myAnzahlList.size());
 		this.myAnzahlSummary.put("sumMetadata", allMetadata);
 		this.myAnzahlSummary.put("sumDocstructs", allDocstructs);
 		this.myAnzahlSummary.put("sumImages", allImages);
-		this.myAnzahlSummary.put("averageImages", allImages / faktor);
-		this.myAnzahlSummary.put("averageMetadata", allMetadata / faktor);
-		this.myAnzahlSummary.put("averageDocstructs", allDocstructs / faktor);
+		this.myAnzahlSummary.put("averageImages", allImages / countOfProcessesWithImages);
+		this.myAnzahlSummary.put("averageMetadata", allMetadata / countOfProcessesWithMetadata);
+		this.myAnzahlSummary.put("averageDocstructs", allDocstructs / countOfProcessesWithDocstructs);
 	}
 
 	public HashMap<String, Integer> getMyAnzahlSummary() {
