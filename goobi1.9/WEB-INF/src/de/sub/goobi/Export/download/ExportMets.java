@@ -55,6 +55,7 @@ import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.Forms.LoginForm;
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -144,8 +145,7 @@ public class ExportMets {
 	/**
 	 * prepare user directory
 	 * 
-	 * @param inTargetFolder
-	 *            the folder to proove and maybe create it
+	 * @param inTargetFolder the folder to proove and maybe create it
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
@@ -161,12 +161,9 @@ public class ExportMets {
 	/**
 	 * write MetsFile to given Path
 	 * 
-	 * @param myProzess
-	 *            the Process to use
-	 * @param targetFileName
-	 *            the filename where the metsfile should be written
-	 * @param gdzfile
-	 *            the FileFormat-Object to use for Mets-Writing
+	 * @param myProzess the Process to use
+	 * @param targetFileName the filename where the metsfile should be written
+	 * @param gdzfile the FileFormat-Object to use for Mets-Writing
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws InterruptedException
@@ -296,28 +293,34 @@ public class ExportMets {
 
 		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
 		List<String> images = new ArrayList<String>();
-		try {
-			// TODO andere Dateigruppen nicht mit image Namen ersetzen
-			images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
-			int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-			if (images != null) {
-				int sizeOfImages = images.size();
-				if (sizeOfPagination == sizeOfImages) {
-					dd.overrideContentFiles(images);
-				} else {
-					List<String> param = new ArrayList<String>();
-					param.add(String.valueOf(sizeOfPagination));
-					param.add(String.valueOf(sizeOfImages));
-					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-					return false;
+		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
+			try {
+				// TODO andere Dateigruppen nicht mit image Namen ersetzen
+				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+				if (images != null) {
+					int sizeOfImages = images.size();
+					if (sizeOfPagination == sizeOfImages) {
+						dd.overrideContentFiles(images);
+					} else {
+						List<String> param = new ArrayList<String>();
+						param.add(String.valueOf(sizeOfPagination));
+						param.add(String.valueOf(sizeOfImages));
+						Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+						return false;
+					}
 				}
+			} catch (IndexOutOfBoundsException e) {
+				myLogger.error(e);
+				return false;
+			} catch (InvalidImagesException e) {
+				myLogger.error(e);
+				return false;
 			}
-		} catch (IndexOutOfBoundsException e) {
-			myLogger.error(e);
-			return false;
-		} catch (InvalidImagesException e) {
-			myLogger.error(e);
-			return false;
+		} else {
+			// create pagination out of virtual file names
+			dd.addAllContentFiles();
+			
 		}
 		mm.write(targetFileName);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "Export finished");
