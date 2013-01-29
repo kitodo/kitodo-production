@@ -751,6 +751,15 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	*
+	* @return returns created internal used fiel format object
+	*/
+	public Fileformat createAndReturnNewFileformatObject() {
+		createNewFileformat();
+		return myRdf;
+	}
+
 	private void createNewFileformat() {
 		Prefs myPrefs = prozessKopie.getRegelsatz().getPreferences();
 		try {
