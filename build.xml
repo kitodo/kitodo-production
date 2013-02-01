@@ -39,8 +39,8 @@
     <property name="build.javac.source" value="1.5"/>
 
     <property name="build.dist.dir" value="${basedir}/dist"/>
-    <property name="build.dist.name" value="goobi"/>
-    <property name="build.dist.version" value="1.10" />
+    <property name="build.dist.name" value="goobi-ce"/>
+    <property name="build.dist.version" value="1.10.0" />
     <property name="build.dist.vendor" value="intranda GmbH"/>
     <property name="build.dist.url" value="http://repository.digiverso.com/gitweb"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
