@@ -40,10 +40,24 @@ public class RefreshObject {
 	public static void refreshProcess(int processID) {
 		logger.debug("refreshing process with id " + processID);
 		try {
-			Session session = HibernateUtilOld.getSessionFactory()
-					.openSession();
+			Session session = HibernateUtilOld.getSessionFactory().openSession();
+			if (session != null) {
+				logger.debug("session is connected: " + session.isConnected());
+				logger.debug("session is open: " + session.isOpen());
+			} else {
+				logger.debug("session is null");
+			}
+			if ((session == null) || (!session.isOpen()) || (!session.isConnected())) {
+				logger.debug("found no open session, don't refresh the process");
+				if (session != null) {
+					session.close();
+					logger.debug("closed session");
+				}
+				return;
+			}
+
 			logger.debug("created a new session");
-			Prozess o = (Prozess) session.get(Prozess.class, processID);
+			Prozess o = (Prozess) session.get(Prozess.class, Integer.valueOf(processID));
 			logger.debug("loaded process");
 			session.refresh(o);
 			logger.debug("refreshed process");
@@ -52,7 +66,6 @@ public class RefreshObject {
 		} catch (Throwable e) {
 			logger.error("cannot refresh process with id " + processID);
 		}
-
 	}
 
 	public static void refreshProcess_GUI(int processID) {
@@ -77,8 +90,7 @@ public class RefreshObject {
 
 	public static void refreshStep(int stepID) {
 		try {
-			Session session = HibernateUtilOld.getSessionFactory()
-					.openSession();
+			Session session = HibernateUtilOld.getSessionFactory().openSession();
 			// Session session = Helper.getHibernateSession();
 			// if (session == null || !session.isOpen() ||
 			// !session.isConnected()) {

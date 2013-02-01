@@ -179,8 +179,10 @@ public class HelperSchritteWithoutHibernate {
 			logger.debug("update hibernate cache");
 			if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)){
 				RefreshObject.refreshProcess_GUI(processId);
-			}else{
+			}else {
+			 if (ConfigMain.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
 				RefreshObject.refreshProcess(processId);
+				 }
 			}
 		} catch (Exception e) {
 			logger.error("Exception during update of hibernate cache", e);
