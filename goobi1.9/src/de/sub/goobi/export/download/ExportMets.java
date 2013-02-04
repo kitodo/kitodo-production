@@ -49,12 +49,15 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -63,7 +66,6 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 public class ExportMets {
 	protected Helper help = new Helper();
@@ -145,8 +147,7 @@ public class ExportMets {
 	/**
 	 * prepare user directory
 	 * 
-	 * @param inTargetFolder
-	 *            the folder to proove and maybe create it
+	 * @param inTargetFolder the folder to proove and maybe create it
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
@@ -164,19 +165,16 @@ public class ExportMets {
 	/**
 	 * write MetsFile to given Path
 	 * 
-	 * @param myProzess
-	 *            the Process to use
-	 * @param targetFileName
-	 *            the filename where the metsfile should be written
-	 * @param gdzfile
-	 *            the FileFormat-Object to use for Mets-Writing
+	 * @param myProzess the Process to use
+	 * @param targetFileName the filename where the metsfile should be written
+	 * @param gdzfile the FileFormat-Object to use for Mets-Writing
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	@SuppressWarnings("deprecation")
+
 	protected boolean writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
@@ -295,29 +293,36 @@ public class ExportMets {
 		pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
-		try {
-			// TODO andere Dateigruppen nicht mit image Namen ersetzen
-			MetadatenImagesHelper mih = new MetadatenImagesHelper(myPrefs, dd);
-			List<String> images = mih.getDataFiles(myProzess);
-			int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
-			if (images != null) {
-				int sizeOfImages = images.size();
-				if (sizeOfPagination == sizeOfImages) {
-					dd.overrideContentFiles(images);
-				} else {
-					List<String> param = new ArrayList<String>();
-					param.add(String.valueOf(sizeOfPagination));
-					param.add(String.valueOf(sizeOfImages));
-					Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-					return false;
+		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+		List<String> images = new ArrayList<String>();
+		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
+			try {
+				// TODO andere Dateigruppen nicht mit image Namen ersetzen
+				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+				if (images != null) {
+					int sizeOfImages = images.size();
+					if (sizeOfPagination == sizeOfImages) {
+						dd.overrideContentFiles(images);
+					} else {
+						List<String> param = new ArrayList<String>();
+						param.add(String.valueOf(sizeOfPagination));
+						param.add(String.valueOf(sizeOfImages));
+						Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+						return false;
+					}
 				}
+			} catch (IndexOutOfBoundsException e) {
+				myLogger.error(e);
+				return false;
+			} catch (InvalidImagesException e) {
+				myLogger.error(e);
+				return false;
 			}
-		} catch (IndexOutOfBoundsException e) {
-			myLogger.error(e);
-			return false;
-		} catch (InvalidImagesException e) {
-			myLogger.error(e);
-			return false;
+		} else {
+			// create pagination out of virtual file names
+			dd.addAllContentFiles();
+
 		}
 		mm.write(targetFileName);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");

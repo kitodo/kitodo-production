@@ -612,8 +612,7 @@ public class Metadaten {
 	 * @throws ReadException
 	 * @throws InterruptedException
 	 * @throws IOException
-	 * @throws PreferencesException
-	 *             ============================================================ == ==
+	 * @throws PreferencesException ============================================================ == ==
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -690,6 +689,7 @@ public class Metadaten {
 
 
 	private void calculateMetadataAndImages() {
+
 		/*
 		 * für den Prozess nochmal die Metadaten durchlaufen und die Daten speichern
 		 */
@@ -720,7 +720,6 @@ public class Metadaten {
 	private boolean storeMetadata() {
 		boolean result = true;
 		try {
-//			if (!new MetadatenVerifizierungWithoutHibernate().validateIdentifier(gdzfile.getDigitalDocument().getLogicalDocStruct())) {
 			this.myProzess.writeMetadataFile(this.gdzfile);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
@@ -760,8 +759,7 @@ public class Metadaten {
 	/**
 	 * vom aktuellen Strukturelement alle Metadaten einlesen
 	 * 
-	 * @param inStrukturelement
-	 *            ============================================================== ==
+	 * @param inStrukturelement ============================================================== ==
 	 */
 
 	private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
@@ -867,8 +865,7 @@ public class Metadaten {
 	/**
 	 * Metadaten in Tree3 ausgeben
 	 * 
-	 * @param inStrukturelement
-	 *            ============================================================== ==
+	 * @param inStrukturelement ============================================================== ==
 	 */
 	private void MetadatenalsTree3Einlesen2(DocStruct inStrukturelement, TreeNodeStruct3 OberKnoten) {
 		OberKnoten.setMainTitle(MetadatenErmitteln(inStrukturelement, "TitleDocMain"));
@@ -908,8 +905,7 @@ public class Metadaten {
 	/**
 	 * Metadaten gezielt zurückgeben
 	 * 
-	 * @param inStrukturelement
-	 *            ============================================================== ==
+	 * @param inStrukturelement ============================================================== ==
 	 */
 	private String MetadatenErmitteln(DocStruct inStrukturelement, String inTyp) {
 		String rueckgabe = "";
@@ -978,8 +974,7 @@ public class Metadaten {
 	/**
 	 * Knoten zu einer anderen Stelle
 	 * 
-	 * @throws TypeNotAllowedAsChildException
-	 *             ============================================================ == ==
+	 * @throws TypeNotAllowedAsChildException ============================================================ == ==
 	 */
 	public String KnotenVerschieben() throws TypeNotAllowedAsChildException {
 		this.myDocStruct.getParent().removeChild(this.myDocStruct);
@@ -993,8 +988,7 @@ public class Metadaten {
 	/**
 	 * Knoten nach oben schieben
 	 * 
-	 * @throws IOException
-	 *             ============================================================ == ==
+	 * @throws IOException ============================================================ == ==
 	 */
 	public String KnotenDelete() throws IOException {
 		if (this.myDocStruct != null && this.myDocStruct.getParent() != null) {
@@ -1013,8 +1007,7 @@ public class Metadaten {
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 * @throws TypeNotAllowedAsChildException
-	 * @throws TypeNotAllowedAsChildException
-	 *             ============================================================ == ==
+	 * @throws TypeNotAllowedAsChildException ============================================================ == ==
 	 */
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 		
@@ -1658,7 +1651,9 @@ public class Metadaten {
 		/* wenn bisher noch kein Bild da ist, das erste nehmen */
 		boolean exists = false;
 		try {
-			exists = (new File(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
+			if (this.currentTifFolder != null && this.myBild != null) {
+				exists = (new File(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
+			} 
 		} catch (Exception e) {
 			this.myBildNummer = -1;
 			myLogger.error(e);
@@ -2076,7 +2071,7 @@ public class Metadaten {
 			int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - this.myBildNummer + 1;
 			BildErmitteln(pageNumber);
 		} catch (Exception e) {
-			
+
 		}
 		return "";
 	}
