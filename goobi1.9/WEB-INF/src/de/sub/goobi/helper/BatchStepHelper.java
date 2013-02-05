@@ -824,14 +824,15 @@ public class BatchStepHelper {
 		// this.processProperty = pp;
 		// saveCurrentPropertyForAll();
 		// }
-
+		HelperSchritteWithoutHibernate helper = new HelperSchritteWithoutHibernate();
 		for (Schritt s : this.steps) {
+			boolean error = false;
 			if (s.getValidationPlugin() != null && s.getValidationPlugin().length() > 0) {
 				IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, s.getValidationPlugin());
 				if (ivp != null) {
 					ivp.setStep(s);
 					if (!ivp.validate()) {
-						return "";
+						error = true;
 					}
 				} else {
 					Helper.setFehlerMeldung("ErrorLoadingValidationPlugin");
@@ -852,14 +853,14 @@ public class BatchStepHelper {
 					MetadatenVerifizierung mv = new MetadatenVerifizierung();
 					mv.setAutoSave(true);
 					if (!mv.validate(s.getProzess())) {
-						return "";
+						error = true;
 					}
 				}
 				if (s.isTypImagesSchreiben()) {
 					MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
 					try {
 						if (!mih.checkIfImagesValid(s.getProzess().getTitel(), s.getProzess().getImagesOrigDirectory(false))) {
-							return "";
+							error = true;
 						}
 					} catch (Exception e) {
 						Helper.setFehlerMeldung("Error on image validation: ", e);
@@ -876,21 +877,22 @@ public class BatchStepHelper {
 						parameter.add(prop.getName());
 						parameter.add(s.getProzess().getTitel());
 						Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
-						return "";
+						error = true;
 					} else if (!prop.isValid()) {
 						List<String> parameter = new ArrayList<String>();
 						parameter.add(prop.getName());
 						parameter.add(s.getProzess().getTitel());
 						Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyValidation", parameter));
-						return "";
+						error = true;
 					}
 				}
 			}
-
-			this.myDav.UploadFromHome(s.getProzess());
-			StepObject so = StepManager.getStepById(s.getId());
-			so.setEditType(StepEditType.MANUAL_MULTI.getValue());
-			new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
+			if (!error) {
+				this.myDav.UploadFromHome(s.getProzess());
+				StepObject so = StepManager.getStepById(s.getId());
+				so.setEditType(StepEditType.MANUAL_MULTI.getValue());
+				helper.CloseStepObjectAutomatic(so, true);
+			}
 		}
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
 		return asf.FilterAlleStart();
