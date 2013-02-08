@@ -68,7 +68,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/lucene-core-3.0.2.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/lucene-analyzers-3.0.2.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/ics_0.0.4.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/intrandaChart_1.4.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/poi-3.6-20091214.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/poi-contrib-3.6-20091214.jar"/>
@@ -98,6 +97,7 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/jersey-server-1.12.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jersey-servlet-1.12.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jsr311-api-1.1.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/ics-1.1.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/avalon-framework-4.2.0.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/barcode4j-fop-ext-complete.jar"/>
