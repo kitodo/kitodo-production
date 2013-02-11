@@ -219,15 +219,22 @@ public class ActiveMQDirector implements ServletContextListener,
 		}	}	}
 
 		// quit session
-		try {
-			session.close();
-		} catch (JMSException e) {
-			logger.error(e);
+		if (session != null) {
+			try {
+				session.close();
+			} catch (JMSException e) {
+				logger.error(e);
+			}
 		}
 
 		// shut down connection
-		try {
-			connection.close();
-		} catch (JMSException e) {
-			logger.error(e);
-}	}	}
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (JMSException e) {
+				logger.error(e);
+			}
+		}
+	}
+}
+
