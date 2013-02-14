@@ -42,6 +42,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
@@ -49,6 +53,7 @@ import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.jdom.JDOMException;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -59,6 +64,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
@@ -71,6 +77,11 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 
+@XmlAccessorType(XmlAccessType.NONE)
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be added as needed by annotating with
+// @XmlElement, but their respective names should be wisely chosen according to
+// the Coding Guidelines (e.g. *english* names).
 public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
@@ -150,6 +161,7 @@ public class Prozess implements Serializable {
 		this.istTemplate = istTemplate;
 	}
 
+	@XmlAttribute(name="key")
 	public String getTitel() {
 		return this.titel;
 	}
@@ -1168,5 +1180,9 @@ public class Prozess implements Serializable {
 	public void setDocket(Docket docket) {
 		this.docket = docket;
 	}
-
+	
+	@XmlElement(name = "collection")
+	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
+		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
+	}
 }
