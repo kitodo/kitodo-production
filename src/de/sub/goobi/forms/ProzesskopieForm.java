@@ -812,8 +812,16 @@ public class ProzesskopieForm {
 				ds.addChild(dsvolume);
 				myRdf = ff;
 			}
-			
-			
+			if (docType.equals("bundleOfPapers")) {
+				DocStructType dsty = myPrefs.getDocStrctTypeByName("BundleOfPapers");
+				DocStruct ds = dd.createDocStruct(dsty);
+				dd.setLogicalDocStruct(ds);
+
+				DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PortFolio");
+				DocStruct dsvolume = dd.createDocStruct(dstyvolume);
+				ds.addChild(dsvolume);
+				myRdf = ff;
+			}
 
 		} catch (TypeNotAllowedForParentException e) {
 			myLogger.error(e);
