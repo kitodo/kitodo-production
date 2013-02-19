@@ -72,11 +72,6 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		xpath = xFactory.newXPath();
 	}
 
-	/**
-	 *
-	 * @param args
-	 * @throws Exception
-	 */
 	@Override
 	protected void process(MapMessageObjectReader args) throws Exception {
 		logger.info("CreateNewProcessWithLogicalStructureData got new ticket.");
@@ -91,12 +86,13 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Creates a new process with submitted information.
 	 *
-	 * @param processIdentifier
-	 * @param templateName
-	 * @param docType
-	 * @param collections
-	 * @param xmlData
+	 * @param processIdentifier used identifier for creating
+	 * @param templateName name of template to be used
+	 * @param docType name of document type to be used
+	 * @param collections set of collections to be used
+	 * @param xmlData holds data for global metadata and additional logical structure elements
 	 * @throws Exception
 	 */
 	private void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData) throws Exception {
@@ -143,9 +139,10 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method to create a new process form object.
 	 *
-	 * @param templateName
-	 * @return
+	 * @param templateName name of template to be used to create new process form
+	 * @return returns created and basic intialized process form object.
 	 */
 	private ProzesskopieForm createNewProcessFromTemplate(String templateName) {
 		ProzesskopieForm result = new ProzesskopieForm();
@@ -159,14 +156,15 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method to look up for a process template to be used for creating a process form.
 	 *
-	 * @param templateName
-	 * @return
+	 * @param templateName name of template which should be used
+	 * @return returns a process template
 	 */
 	private Prozess getProcessTemplateByName(String templateName) {
 		Criteria criteria;
 		Session hibernateSession;
-		List<Prozess> interimResult;
+		List interimResult;
 		Integer resultSize;
 		Prozess result;
 
@@ -185,16 +183,17 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		} else if (resultSize > 1) {
 			logger.warn("Got more than one result for template \"" + templateName + "\", taken first result!");
 		}
-		result = interimResult.get(0);
+		result = (Prozess) interimResult.get(0);
 
 		return result;
 	}
 
 	/**
+	 * Utility method to validate given collections.
 	 *
-	 * @param pKF
-	 * @param collections
-	 * @return
+	 * @param pKF process form with a valid collections
+	 * @param collections collections to proof if they are valid for this process form
+	 * @return returns true on valid otherwise false
 	 */
 	private boolean validateCollectionsForProcess(ProzesskopieForm pKF, Set<String> collections) {
 		HashSet<String> possibleCollections = new HashSet<String>(pKF.getPossibleDigitalCollections());
@@ -202,10 +201,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method to validate document type name.
 	 *
-	 * @param pKF
-	 * @param docType
-	 * @return
+	 * @param pKF process form to proof against
+	 * @param docType name of document type tp proof
+	 * @return returns true if name are valid
 	 */
 	private boolean validDocTypeForProcess(ProzesskopieForm pKF, String docType) {
 		Boolean fieldIsUsed = pKF.getStandardFields().get("doctype");
@@ -213,7 +213,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE))
 			throw new IllegalArgumentException("Bad argument \"docType\": Selected template doesn’t provide the standard field \"doctype\".");
 
-		boolean valueIsValid = false;
+		boolean valueIsValid;
 		Iterator<ConfigOpacDoctype> configOpacDoctypeIterator = pKF.getAllDoctypes().iterator();
 		do {
 			ConfigOpacDoctype option = configOpacDoctypeIterator.next();
@@ -269,10 +269,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method for adding logical structure elements.
 	 *
-	 * @param pKF
-	 * @param xmlDocument
-	 * @throws Exception
+	 * @param pKF process form which holds a digital document which is used for adding logical structure elements-
+	 * @param xmlDocument holds logical structure information
+	 * @throws Exception thrown if digital document or insert point inside digitial document could not be determinated
 	 */
 	private	void addAdditionalLogicalStructureData(ProzesskopieForm pKF, Document xmlDocument) throws Exception {
 
@@ -301,10 +302,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method to get digital document.
 	 *
-	 * @param pKF
-	 * @return
-	 * @throws Exception
+	 * @param pKF process form to use
+	 * @return returns digital document of process form
+	 * @throws Exception thrown if internal file format is null or no digital document is available
 	 */
 	private DigitalDocument getDigitalDocument(ProzesskopieForm pKF) throws Exception {
 
@@ -325,15 +327,15 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method to get useful entry point for later created structure elements.
 	 *
-	 * @param digitalDocument
-	 * @return
-	 * @throws Exception
+	 * @param digitalDocument used digital document
+	 * @return returns first logical structure element of given digital document
+	 * @throws Exception thrown if logical document structure is invalid or there are no child element
 	 */
 	private DocStruct getInsertPointOfLogicalDocument(DigitalDocument digitalDocument) throws Exception {
 
 		DocStruct logicalDocStruct;
-		DocStruct insertPoint;
 
 		logicalDocStruct = digitalDocument.getLogicalDocStruct();
 		if (logicalDocStruct == null) {
@@ -355,16 +357,15 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			throw new Exception("Expecting at leat one children of logical document structure.");
 		}
 
-		insertPoint = firstChild;
-
-		return insertPoint;
+		return firstChild;
 	}
 
 	/**
+	 * Utility method to get preferences of current process.
 	 *
-	 * @param pKF
-	 * @return
-	 * @throws Exception
+	 * @param pKF process form which holds current process
+	 * @return preferences of current process
+	 * @throws Exception thrown if Regelsatz or depending preferences could not be found.
 	 */
 	private Prefs getProjectPreferences(ProzesskopieForm pKF) throws Exception {
 		Regelsatz regelsatz;
@@ -372,24 +373,25 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 		regelsatz = pKF.getProzessKopie().getRegelsatz();
 		if (regelsatz == null) {
-			throw new Exception("Could not retrieve Regelsatz for current pKF.");
+			throw new Exception("Could not retrieve Regelsatz for current process.");
 		}
 
 		prefs = regelsatz.getPreferences();
 		if (prefs == null) {
-			throw new Exception("Could not retrieve preferences for current pKF.");
+			throw new Exception("Could not retrieve preferences for current process.");
 		}
 
 		return prefs;
 	}
 
 	/**
+	 * Create new structure element of given name.
 	 *
-	 * @param digitalDocument
-	 * @param prefs
-	 * @param docStructName
-	 * @return
-	 * @throws Exception
+	 * @param digitalDocument digital document as source for creating
+	 * @param prefs preferences to use
+	 * @param docStructName name of new document structure element
+	 * @return returns created structure element
+	 * @throws Exception thrown if structure element could not be found in preferences or element is not allowed
 	 */
 	private DocStruct createDocStructElement(DigitalDocument digitalDocument, Prefs prefs, String docStructName) throws Exception {
 		DocStructType dst;
@@ -403,12 +405,13 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Create a metadata element and add its value.
 	 *
-	 * @param prefs
-	 * @param metadataTypeName
-	 * @param metadataValue
-	 * @return
-	 * @throws Exception
+	 * @param prefs holds preferences for to be generated metadata element
+	 * @param metadataTypeName name of metadata element to be created
+	 * @param metadataValue value of new metadata element
+	 * @return returns created metadata element
+	 * @throws Exception thrown if metadata name could not be found
 	 */
 	private Metadata createMetadataElement(Prefs prefs, String metadataTypeName, String metadataValue) throws Exception {
 		MetadataType mdt;
@@ -426,15 +429,17 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Create a usable dom document with given xml string data.
 	 *
-	 * @param xmlData
-	 * @return
+	 * @param xmlData holds xml
+	 * @return returns a dom document
+	 * @throws Exception thrown if parsing of xml data failed
 	 */
-	private Document createXmlDocument(String xmlData) {
+	private Document createXmlDocument(String xmlData) throws Exception {
 
 		DocumentBuilderFactory factory;
 		DocumentBuilder builder;
-		Document doc = null;
+		Document doc;
 		InputSource source;
 
 		factory = DocumentBuilderFactory.newInstance();
@@ -444,22 +449,23 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(source);
 		} catch (ParserConfigurationException e) {
-			logger.error(e.getMessage());
+			throw new Exception("Parser configuration error while converting xml data string into dom object. Reason: " + e.getMessage());
 		} catch (SAXException e) {
-			logger.error(e.getMessage());
+			throw new Exception("SAX error while converting xml data string into dom object. Reason: " + e.getMessage());
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			throw new Exception("IO error while converting xml data string into dom object. Reason: " + e.getMessage());
 		}
 
 		return doc;
 	}
 
 	/**
+	 * Add single metadata fields for structure element letter.
 	 *
-	 * @param prefs
-	 * @param digitalDocument
-	 * @param currentNode
-	 * @return
+	 * @param prefs holds preferences for created metadata elements
+	 * @param digitalDocument global digital document used for creating structure element letter
+	 * @param currentNode holds values for metada fields
+	 * @return returns a created and well populated structure element
 	 * @throws Exception
 	 */
 	private DocStruct processLetterElement(Prefs prefs, DigitalDocument digitalDocument, Node currentNode) throws Exception {
@@ -493,9 +499,10 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Retrieve global used metadata informations from xml dom document.
 	 *
-	 * @param doc
-	 * @return
+	 * @param doc dom document used for retrieving data
+	 * @return returns a key value map
 	 */
 	private Map<String, String> getGlobalMetadata(Document doc) {
 		Map<String, String> result = new HashMap<String, String>();
@@ -527,11 +534,12 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Returns a text value for a given xpath expression on a specific object.
 	 *
-	 * @param item
-	 * @param xpathExpression
-	 * @return
-	 * @throws XPathExpressionException
+	 * @param item object to be searched
+	 * @param xpathExpression xpath expression used for searching
+	 * @return returns founded text value
+	 * @throws XPathExpressionException thrown if xpath expression is invalid
 	 */
 	private String extractTextInformation(Object item, String xpathExpression) throws XPathExpressionException {
 		String result;
@@ -542,11 +550,12 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Returns a list of objects for a given xpath expression.
 	 *
-	 * @param item
-	 * @param xpathExpression
-	 * @return
-	 * @throws XPathExpressionException
+	 * @param item object to be searched
+	 * @param xpathExpression xpath pression used for searching
+	 * @return list of nodes which contains searched data
+	 * @throws XPathExpressionException thrown if xpath expression is invalid
 	 */
 	private NodeList extractListInformation(Object item, String xpathExpression) throws XPathExpressionException {
 		NodeList nodes;
@@ -557,12 +566,13 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Returns a object of a xpath expression on given search object.
 	 *
-	 * @param item
-	 * @param xpathExpression
-	 * @param returnValue
-	 * @return
-	 * @throws XPathExpressionException
+	 * @param item object to be searched
+	 * @param xpathExpression xpath expression used for searching
+	 * @param returnValue expected return value (string, list, ...)
+	 * @return returns a unspecific object - casting to result definition neccessary
+	 * @throws XPathExpressionException thrown if xpath expression is invalid
 	 */
 	private Object extractInformation(Object item, String xpathExpression, QName returnValue) throws XPathExpressionException {
 		XPathExpression expr;
@@ -575,10 +585,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Utility method for creating ats / tls.
 	 *
-	 * @param title
-	 * @param authors
-	 * @return
+	 * @param title name of title to be used
+	 * @param authors name of authors to be used
+	 * @return returns generated ats / tls
 	 */
 	private String createAtsTls(String title, String authors) {
 		ImportOpac importOpac = new ImportOpac();
@@ -589,30 +600,32 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Add a metadata element to structure.
 	 *
-	 * @param prefs
-	 * @param docStructElement
-	 * @param metadataName
-	 * @param metadataValue
-	 * @throws Exception
+	 * @param prefs for retrieving metadata element
+	 * @param docStructElement structure element to add new metadata element
+	 * @param metadataName name of metadata element
+	 * @param metadataValue value of metadata element
+	 * @throws Exception thrown if meta data element could not be created or added to structure element
 	 */
 	private void addMetadataToStructure(Prefs prefs, DocStruct docStructElement, String metadataName, String metadataValue) throws Exception {
 		Metadata metadataElement;
 
 		metadataElement = createMetadataElement(prefs, metadataName, metadataValue);
-		metadataElement.setDocStruct(docStructElement); // adding reference to document structure
+		metadataElement.setDocStruct(docStructElement); // adding reference to structure element
 
 		// putting data together
-		docStructElement.addMetadata(metadataElement); // adding metadata object to document structure
+		docStructElement.addMetadata(metadataElement); // adding metadata object to structure element
 	}
 
 	/**
+	 * Adds person data to a structure element.
 	 *
-	 * @param prefs
-	 * @param docStructElement
-	 * @param personRole
-	 * @param personList
-	 * @throws Exception
+	 * @param prefs for retrieving metadata element
+	 * @param docStructElement structure element to add new person data
+	 * @param personRole role of a person f.e. author, recipient, ...
+	 * @param personList a list of persons to add
+	 * @throws Exception if person role is not a valid element
 	 */
 	private void addPersonDataToStructure(Prefs prefs, DocStruct docStructElement, String personRole, NodeList personList) throws Exception {
 		Person person;
@@ -622,7 +635,9 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		if (mdt == null) {
 			throw new Exception("Could not retrieve metadata type for '" + personRole + "'.");
 		}
+
 		logger.debug("Create " + personList.getLength() + " new persons for role " + personRole + ".");
+
 		for (int i = 0; i < personList.getLength(); i++) {
 			Node currentNode = personList.item(i);
 			person = new Person(mdt);
@@ -645,14 +660,16 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			person.setIdentifierType("GND");
 			person.setRole(personRole);
 
+			// putting data together
 			docStructElement.addPerson(person);
 		}
 	}
 
 	/**
+	 * Format a date string from yyyyMMdd into dd.MM.yyyy
 	 *
-	 * @param inputDate
-	 * @return
+	 * @param inputDate date string in yyyyMMdd format
+	 * @return result date string in dd.MM.yyyy
 	 */
 	private String formatDateString(String inputDate) {
 		String inputFormat = "yyyyMMdd";
@@ -661,11 +678,12 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Format a given date string into an other date string format
 	 *
-	 * @param inputDate
-	 * @param inputFormat
-	 * @param resultFormat
-	 * @return
+	 * @param inputDate given date string to convert
+	 * @param inputFormat format of input date string
+	 * @param resultFormat result format to convert date string
+	 * @return returns formated date string in new format
 	 */
 	private String formatDateString(String inputDate, String inputFormat, String resultFormat) {
 		Date date;
@@ -688,9 +706,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Split a given person name <last name><comma><first name> into first and last name entry.
+	 * Exception to this is, if person name contains no comma as seperator or person name contains < and >
 	 *
-	 * @param personName
-	 * @return
+	 * @param personName person name to split
+	 * @return returns as hash map with at least lastName key and optional firstName key
 	 */
 	private HashMap<String, String> splitPersonName(String personName) {
 		HashMap<String, String> result = new HashMap<String, String>();
@@ -709,9 +729,10 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	}
 
 	/**
+	 * Convert a given person name in format <last name><comma><first name> into <first name> <last name>
 	 *
-	 * @param personName
-	 * @return
+	 * @param personName person name to convert
+	 * @return returns converted person name (could be the same as input)
 	 */
 	private String convertPersonName(String personName) {
 		HashMap<String, String> splittedName;
