@@ -436,7 +436,6 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		InputSource source;
 
 		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
 		source = new InputSource(new StringReader(xmlData));
 
 		try {
@@ -486,8 +485,6 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		addMetadataToStructure(prefs, letterElement, "slub_Place", "Entstehungsort: " + place);
 		addMetadataToStructure(prefs, letterElement, "DocLanguage", extractTextInformation(currentNode, "./language"));
 		addMetadataToStructure(prefs, letterElement, "slub_comment", "Formatangabe: " + extractTextInformation(currentNode, "./dimensions"));
-		addMetadataToStructure(prefs, letterElement, "slub_ownerOrig", extractTextInformation(currentNode, "/convolute/owner/name"));
-		addMetadataToStructure(prefs, letterElement, "slub_ownerDigi", extractTextInformation(currentNode, "/convolute/owner/name"));
 
 		return letterElement;
 	}
@@ -508,17 +505,17 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			result.put("Identifier Mappe", extractTextInformation(doc, "/convolute/folders/folder/id"));
 			result.put("Mappennummer", extractTextInformation(doc, "/convolute/folders/folder/folder"));
 
-			String portfolioTitle = extractTextInformation(doc, "/convolute/folders/folder/title");
+			String folderTitle = extractTextInformation(doc, "/convolute/folders/folder/title");
 
 			// optional fields
 			result.put("Artist", "SLUB");
-			result.put("ATS", createAtsTls(portfolioTitle, ""));
-			result.put("Titel Konvolut (Sortierung)", "");
-			result.put("Autoren", "");
-			result.put("Titel (Mappe)", portfolioTitle);
-			result.put("Titel (Mappe) (Sortierung)", "");
-			result.put("Autoren (Mappe)", "");
+			result.put("ATS", createAtsTls(folderTitle, ""));
+			result.put("Titel (Mappe)", folderTitle);
 			result.put("Signatur", extractTextInformation(doc, "/convolute/folders/folder/signature"));
+
+			result.put("Besitzende Institution (Vorlage)", extractTextInformation(doc, "/convolute/owner/name"));
+			result.put("Besitzende Institution (Digitalisat)", extractTextInformation(doc, "/convolute/owner/name"));
+
 		} catch (XPathExpressionException e) {
 			logger.error(e.getMessage());
 		}
