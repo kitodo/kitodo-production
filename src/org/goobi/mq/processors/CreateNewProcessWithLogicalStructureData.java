@@ -477,8 +477,8 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		String formatedDate = formatDateString(date);
 		String generatedTitle;
 		String title = extractTextInformation(currentNode, "./title");
-		String firstAuthor = extractTextInformation(currentNode, "./creator[1]/name");
-		String firstRecipient = extractTextInformation(currentNode, "./addressee[1]/name");
+		String firstAuthor = convertPersonName(extractTextInformation(currentNode, "./creator[1]/name"));
+		String firstRecipient = convertPersonName(extractTextInformation(currentNode, "./addressee[1]/name"));
 
 		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient + ", " + place + ", " + formatedDate;
 
@@ -619,20 +619,17 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			Node currentNode = personList.item(i);
 			person = new Person(mdt);
 	        String firstName = "";
-			String lastName = "";
+			String lastName;
 	        String personName = extractTextInformation(currentNode, "./name");
 
-			if (personName.contains("<") || personName.contains(">")) {
-				lastName = personName;
+			HashMap<String, String> splittedPersonName = splitPersonName(personName);
+			if (splittedPersonName.size() == 2) {
+				firstName = splittedPersonName.get("firstName");
+				lastName = splittedPersonName.get("lastName");
 			} else {
-				String nameParts[] = personName.split(",", 2);
-				if (nameParts.length == 2) {
-					firstName = nameParts[1];
-					lastName = nameParts[0];
-				} else {
-					lastName = personName;
-				}
+				lastName = splittedPersonName.get("lastName");
 			}
+
 			logger.debug("first name: " + firstName + " lastname: " + lastName + " gnd: " + extractTextInformation(currentNode, "./gnd-id"));
 			person.setFirstname(firstName.trim());
 			person.setLastname(lastName.trim());
@@ -680,6 +677,46 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		}
 
 		return resultDate;
+	}
+
+	/**
+	 *
+	 * @param personName
+	 * @return
+	 */
+	private HashMap<String, String> splitPersonName(String personName) {
+		HashMap<String, String> result = new HashMap<String, String>();
+		String[] splitted = personName.split(",", 2);
+
+		if (personName.contains("<") && personName.contains(">")) {
+			result.put("lastName", personName.trim());
+		} else if (splitted.length == 2){
+			result.put("firstName", splitted[1].trim());
+			result.put("lastName", splitted[0].trim());
+		} else if (splitted.length == 1) {
+			result.put("lastName", personName.trim());
+		}
+
+		return result;
+	}
+
+	/**
+	 *
+	 * @param personName
+	 * @return
+	 */
+	private String convertPersonName(String personName) {
+		HashMap<String, String> splittedName;
+		String result;
+
+		splittedName = splitPersonName(personName);
+		if (splittedName.size() == 2) {
+			result = splittedName.get("firstName") + " " + splittedName.get("lastName");
+		} else {
+			result = splittedName.get("lastName");
+		}
+
+		return result;
 	}
 
 }
