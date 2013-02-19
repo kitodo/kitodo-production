@@ -99,7 +99,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param xmlData
 	 * @throws Exception
 	 */
-	protected void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData) throws Exception {
+	private void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData) throws Exception {
 		try {
 			ProzesskopieForm newPFK = createNewProcessFromTemplate(templateName);
 
@@ -147,7 +147,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param templateName
 	 * @return
 	 */
-	protected ProzesskopieForm createNewProcessFromTemplate(String templateName) {
+	private ProzesskopieForm createNewProcessFromTemplate(String templateName) {
 		ProzesskopieForm result = new ProzesskopieForm();
 
 		Prozess selectedTemplate = getProcessTemplateByName(templateName);
@@ -163,7 +163,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param templateName
 	 * @return
 	 */
-	protected Prozess getProcessTemplateByName(String templateName) {
+	private Prozess getProcessTemplateByName(String templateName) {
 		Criteria criteria;
 		Session hibernateSession;
 		List<Prozess> interimResult;
@@ -196,7 +196,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param collections
 	 * @return
 	 */
-	protected boolean validateCollectionsForProcess(ProzesskopieForm pKF, Set<String> collections) {
+	private boolean validateCollectionsForProcess(ProzesskopieForm pKF, Set<String> collections) {
 		HashSet<String> possibleCollections = new HashSet<String>(pKF.getPossibleDigitalCollections());
 		return possibleCollections.containsAll(collections);
 	}
@@ -207,7 +207,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param docType
 	 * @return
 	 */
-	protected boolean validDocTypeForProcess(ProzesskopieForm pKF, String docType) {
+	private boolean validDocTypeForProcess(ProzesskopieForm pKF, String docType) {
 		Boolean fieldIsUsed = pKF.getStandardFields().get("doctype");
 
 		if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE))
@@ -236,7 +236,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @throws RuntimeException in case that no field with a matching title was found in the
 	 *                          ProzesskopieForm object
 	 */
-	protected void setUserFields(ProzesskopieForm pKF, Map<String, String> userFields) throws RuntimeException {
+	private void setUserFields(ProzesskopieForm pKF, Map<String, String> userFields) throws RuntimeException {
 
 		for (String key : userFields.keySet()) {
 			setAdditionalField(pKF, key, userFields.get(key));
@@ -254,7 +254,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @throws RuntimeException in case that no field with a matching title was found in the
 	 *                          ProzesskopieForm object
 	 */
-	protected void setAdditionalField(ProzesskopieForm pKF, String key, String value) throws RuntimeException {
+	private void setAdditionalField(ProzesskopieForm pKF, String key, String value) throws RuntimeException {
 
 		boolean unknownField = true;
 		for (AdditionalField field : pKF.getAdditionalFields()) {
@@ -274,7 +274,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param xmlDocument
 	 * @throws Exception
 	 */
-	protected void addAdditionalLogicalStructureData(ProzesskopieForm pKF, Document xmlDocument) throws Exception {
+	private	void addAdditionalLogicalStructureData(ProzesskopieForm pKF, Document xmlDocument) throws Exception {
 
 		DigitalDocument digitalDocument;
 		DocStruct insertPoint;
@@ -497,7 +497,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param doc
 	 * @return
 	 */
-	protected Map<String, String> getGlobalMetadata(Document doc) {
+	private Map<String, String> getGlobalMetadata(Document doc) {
 		Map<String, String> result = new HashMap<String, String>();
 
 		try {
@@ -606,6 +606,14 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		docStructElement.addMetadata(metadataElement); // adding metadata object to document structure
 	}
 
+	/**
+	 *
+	 * @param prefs
+	 * @param docStructElement
+	 * @param personRole
+	 * @param personList
+	 * @throws Exception
+	 */
 	private void addPersonDataToStructure(Prefs prefs, DocStruct docStructElement, String personRole, NodeList personList) throws Exception {
 		Person person;
 		MetadataType mdt;
