@@ -287,7 +287,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 		prefs = getProjectPreferences(pKF);
 
-		NodeList elements = extractListInformation(xmlDocument, "/convolute/folders/folder/elements/*");
+		NodeList elements = extractListInformation(xmlDocument, "/bundle/folders/folder/elements/*");
 		for (int i = 0; i < elements.getLength(); i++){
 			Node currentNode = elements.item(i);
 			String nodeName = currentNode.getNodeName();
@@ -510,21 +510,21 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		try {
 			// required fields
 			result.put("Schrifttyp", "keine OCR");
-			result.put("Titel Konvolut", extractTextInformation(doc, "/convolute/title"));
-			result.put("Identifier Konvolut", extractTextInformation(doc, "/convolute/id"));
-			result.put("Identifier Mappe", extractTextInformation(doc, "/convolute/folders/folder/id"));
-			result.put("Mappennummer", extractTextInformation(doc, "/convolute/folders/folder/folder"));
+			result.put("Titel Konvolut", extractTextInformation(doc, "/bundle/title"));
+			result.put("Identifier Konvolut", extractTextInformation(doc, "/bundle/id"));
+			result.put("Identifier Mappe", extractTextInformation(doc, "/bundle/folders/folder/id"));
+			result.put("Mappennummer", extractTextInformation(doc, "/bundle/folders/folder/folder"));
 
-			String folderTitle = extractTextInformation(doc, "/convolute/folders/folder/title");
+			String folderTitle = extractTextInformation(doc, "/bundle/folders/folder/title");
 
 			// optional fields
 			result.put("Artist", "SLUB");
 			result.put("ATS", createAtsTls(folderTitle, ""));
 			result.put("Titel (Mappe)", folderTitle);
-			result.put("Signatur", extractTextInformation(doc, "/convolute/folders/folder/signature"));
+			result.put("Signatur", extractTextInformation(doc, "/bundle/folders/folder/signature"));
 
-			result.put("Besitzende Institution (Vorlage)", extractTextInformation(doc, "/convolute/owner/name"));
-			result.put("Besitzende Institution (Digitalisat)", extractTextInformation(doc, "/convolute/owner/name"));
+			result.put("Besitzende Institution (Vorlage)", extractTextInformation(doc, "/bundle/owner/name"));
+			result.put("Besitzende Institution (Digitalisat)", extractTextInformation(doc, "/bundle/owner/name"));
 
 		} catch (XPathExpressionException e) {
 			logger.error(e.getMessage());
