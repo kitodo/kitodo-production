@@ -50,6 +50,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -472,16 +474,17 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 		String place = extractTextInformation(currentNode, "./origin");
 		String date = extractTextInformation(currentNode, "./date");
+		String formatedDate = formatDateString(date);
 		String generatedTitle;
 		String title = extractTextInformation(currentNode, "./title");
 		String firstAuthor = extractTextInformation(currentNode, "./creator[1]/name");
 		String firstRecipient = extractTextInformation(currentNode, "./addressee[1]/name");
 
-		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient + ", " + place + ", " + date;
+		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient + ", " + place + ", " + formatedDate;
 
 		addMetadataToStructure(prefs, letterElement, "TitleDocMain", generatedTitle);
 		addMetadataToStructure(prefs, letterElement, "slub_comment", "Umfang: " + extractTextInformation(currentNode, "./extent"));
-		addMetadataToStructure(prefs, letterElement, "slub_comment", "Entstehungszeit: " + date);
+		addMetadataToStructure(prefs, letterElement, "slub_comment", "Entstehungszeit: " + formatedDate);
 		addMetadataToStructure(prefs, letterElement, "slub_Place", "Entstehungsort: " + place);
 		addMetadataToStructure(prefs, letterElement, "DocLanguage", extractTextInformation(currentNode, "./language"));
 		addMetadataToStructure(prefs, letterElement, "slub_comment", "Formatangabe: " + extractTextInformation(currentNode, "./dimensions"));
@@ -639,6 +642,44 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 			docStructElement.addPerson(person);
 		}
+	}
+
+	/**
+	 *
+	 * @param inputDate
+	 * @return
+	 */
+	private String formatDateString(String inputDate) {
+		String inputFormat = "yyyyMMdd";
+		String resultFormat = "dd.MM.yyyy";
+		return formatDateString(inputDate, inputFormat, resultFormat);
+	}
+
+	/**
+	 *
+	 * @param inputDate
+	 * @param inputFormat
+	 * @param resultFormat
+	 * @return
+	 */
+	private String formatDateString(String inputDate, String inputFormat, String resultFormat) {
+		Date date;
+		SimpleDateFormat parser;
+		SimpleDateFormat formatter;
+		String resultDate;
+
+		parser = new SimpleDateFormat(inputFormat);
+		formatter = new SimpleDateFormat(resultFormat);
+
+		try {
+			date = parser.parse(inputDate);
+			resultDate = formatter.format(date);
+		} catch (ParseException e) {
+			logger.warn("Input date '" + inputDate + "' is not valid for format '" + inputFormat + "'.");
+			resultDate = inputDate;
+		}
+
+		return resultDate;
 	}
 
 }
