@@ -471,7 +471,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	private DocStruct processLetterElement(Prefs prefs, DigitalDocument digitalDocument, Node currentNode) throws Exception {
 		DocStruct letterElement = createDocStructElement(digitalDocument, prefs, "Letter");
 		addMetadataToStructure(prefs, letterElement, "CatalogIDDigital", extractTextInformation(currentNode, "./id"));
-		addMetadataToStructure(prefs, letterElement, "slub_comment", "Blatt: " + extractTextInformation(currentNode, "./folio"));
+		addMetadataToStructure(prefs, letterElement, "slub_comment", extractTextInformation(currentNode, "./folio"));
 		addMetadataToStructure(prefs, letterElement, "shelfmarksource", extractTextInformation(currentNode, "./signature"));
 		addMetadataToStructure(prefs, letterElement, "shelfmarksource", extractTextInformation(currentNode, "./further-signature"));
 
@@ -489,11 +489,11 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient + ", " + place + ", " + formatedDate;
 
 		addMetadataToStructure(prefs, letterElement, "TitleDocMain", generatedTitle);
-		addMetadataToStructure(prefs, letterElement, "slub_comment", "Umfang: " + extractTextInformation(currentNode, "./extent"));
-		addMetadataToStructure(prefs, letterElement, "slub_comment", "Entstehungszeit: " + formatedDate);
-		addMetadataToStructure(prefs, letterElement, "slub_Place", "Entstehungsort: " + place);
+		addMetadataToStructure(prefs, letterElement, "SizeSourcePrint", extractTextInformation(currentNode, "./extent"));
+		addMetadataToStructure(prefs, letterElement, "slub_dateCreated", formatedDate);
+		addMetadataToStructure(prefs, letterElement, "PlaceOfPublication", place);
 		addMetadataToStructure(prefs, letterElement, "DocLanguage", extractTextInformation(currentNode, "./language"));
-		addMetadataToStructure(prefs, letterElement, "slub_comment", "Formatangabe: " + extractTextInformation(currentNode, "./dimensions"));
+		addMetadataToStructure(prefs, letterElement, "FormatSourcePrint", extractTextInformation(currentNode, "./dimensions"));
 
 		return letterElement;
 	}
@@ -508,8 +508,14 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		Map<String, String> result = new HashMap<String, String>();
 
 		try {
-			// required fields
+
+			// hard coded fields
+			result.put("Artist", "SLUB");
 			result.put("Schrifttyp", "keine OCR");
+			result.put("Fußleiste", "slubdfgkozemar");
+			result.put("Förderer", "Deutsche Forschungsgemeinschaft");
+
+			// required fields
 			result.put("Titel Konvolut", extractTextInformation(doc, "/bundle/title"));
 			result.put("Identifier Konvolut", extractTextInformation(doc, "/bundle/id"));
 			result.put("Identifier Mappe", extractTextInformation(doc, "/bundle/folders/folder/id"));
@@ -518,7 +524,6 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			String folderTitle = extractTextInformation(doc, "/bundle/folders/folder/title");
 
 			// optional fields
-			result.put("Artist", "SLUB");
 			result.put("ATS", createAtsTls(folderTitle, ""));
 			result.put("Titel (Mappe)", folderTitle);
 			result.put("Signatur", extractTextInformation(doc, "/bundle/folders/folder/signature"));
