@@ -812,12 +812,12 @@ public class ProzesskopieForm {
 				ds.addChild(dsvolume);
 				myRdf = ff;
 			}
-			if (docType.equals("bundleOfPapers")) {
-				DocStructType dsty = myPrefs.getDocStrctTypeByName("BundleOfPapers");
+			if (docType.equals("bundle")) {
+				DocStructType dsty = myPrefs.getDocStrctTypeByName("Bundle");
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
 
-				DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("PortFolio");
+				DocStructType dstyvolume = myPrefs.getDocStrctTypeByName("Folder");
 				DocStruct dsvolume = dd.createDocStruct(dstyvolume);
 				ds.addChild(dsvolume);
 				myRdf = ff;

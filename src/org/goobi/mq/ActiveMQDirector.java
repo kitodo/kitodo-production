@@ -35,8 +35,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
-import org.goobi.mq.processors.CreateNewProcessBasedOnEad;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
+import org.goobi.mq.processors.CreateNewProcessWithLogicalStructureData;
 import org.goobi.mq.processors.FinaliseStepProcessor;
 
 import de.sub.goobi.config.ConfigMain;
@@ -72,7 +72,7 @@ public class ActiveMQDirector implements ServletContextListener,
 		services = new ActiveMQProcessor[] {
 			new CreateNewProcessProcessor(),
 			new FinaliseStepProcessor(),
-            new CreateNewProcessBasedOnEad()
+            new CreateNewProcessWithLogicalStructureData()
 		};
 	}
 
