@@ -81,8 +81,9 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		String docType = args.getMandatoryString("docType");
 		String xmlData = args.getMandatoryString("xml");
 		Set<String> collections = args.getMandatorySetOfString("collections");
+		Map<String, String> userFields = args.getMapOfStringToString("userMessageFields");
 
-		createNewProcess(processIdentifier, templateName, docType, collections, xmlData);
+		createNewProcess(processIdentifier, templateName, docType, collections, xmlData, userFields);
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param xmlData holds data for global metadata and additional logical structure elements
 	 * @throws Exception
 	 */
-	private void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData) throws Exception {
+	private void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData, Map<String, String> userFields) throws Exception {
 		try {
 			ProzesskopieForm newPFK = createNewProcessFromTemplate(templateName);
 
@@ -114,9 +115,9 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 			Document xmlDocument = createXmlDocument(xmlData);
 
-			Map<String, String> userFields = getGlobalMetadata(xmlDocument);
+			userFields.putAll(getGlobalMetadata(xmlDocument));
 
-			if ((userFields != null) && (!userFields.isEmpty())) {
+			if (!userFields.isEmpty()) {
 				setUserFields(newPFK, userFields);
 			} else {
 				throw new IllegalArgumentException("Userfields should not be null!");
@@ -508,12 +509,6 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		Map<String, String> result = new HashMap<String, String>();
 
 		try {
-
-			// hard coded fields
-			result.put("Artist", "SLUB");
-			result.put("Schrifttyp", "keine OCR");
-			result.put("Fußleiste", "slubdfgkozemar");
-			result.put("Förderer", "Deutsche Forschungsgemeinschaft");
 
 			// required fields
 			result.put("Titel Konvolut", extractTextInformation(doc, "/bundle/title"));
