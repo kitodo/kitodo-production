@@ -88,6 +88,14 @@ public class ActiveMQDirector implements ServletContextListener,
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent initialisation) {
+		setupConnection();
+	}
+
+	/**
+	 * Setup a configured ActiveMQ server connection.
+	 *
+	 */
+	protected void setupConnection() {
 		String activeMQHost = ConfigMain.getParameter("activeMQ.hostURL", null);
 		if (activeMQHost != null) {
 			session = connectToServer(activeMQHost);
@@ -95,7 +103,10 @@ public class ActiveMQDirector implements ServletContextListener,
 				registerListeners(services);
 				if (ConfigMain.getParameter("activeMQ.results.topic", null) != null) {
 					resultsTopic = setUpReportChannel(ConfigMain.getParameter("activeMQ.results.topic"));
-	}	}	}	}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Sets up a connection to an active MQ server. The connection object is
@@ -137,7 +148,10 @@ public class ActiveMQDirector implements ServletContextListener,
 					processor.saveChecker(messageChecker);
 				} catch (Exception e) {
 					logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
-	}	}	}	}
+				}
+			}
+		}
+	}
 
 	/**
 	 * This sets up a connection to the topic the results shall be written to.
@@ -174,7 +188,31 @@ public class ActiveMQDirector implements ServletContextListener,
 	 */
 	@Override
 	public void onException(JMSException exce) {
-		logger.error(exce);
+		Throwable cause = exce.getCause();
+		if (cause.getClass().getCanonicalName().equals("java.io.EOFException")) {
+			logger.warn("Connection to ActiveMQ server got lost. Try to reconnect.");
+			reconnectToServer();
+		} else {
+			logger.error(exce);
+		}
+
+	}
+
+	/**
+	 * Reestablished a connection to an ActiveMQ server.
+	 *
+	 */
+	protected void reconnectToServer() {
+		long waitTime = ConfigMain.getLongParameter("activeMQ.reconnectWaitTime", 60000);
+		try {
+			logger.debug("Waiting " + waitTime + " milli seconds.");
+			Thread.sleep(waitTime);
+			logger.debug("Reconnect to ActiveQM server.");
+			setupConnection();
+			logger.debug("Reconnecting was successful.");
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	/**
