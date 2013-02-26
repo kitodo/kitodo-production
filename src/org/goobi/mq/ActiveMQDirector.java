@@ -33,7 +33,9 @@ import javax.jms.Session;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQSession;
 import org.apache.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.CreateNewProcessWithLogicalStructureData;
@@ -207,11 +209,16 @@ public class ActiveMQDirector implements ServletContextListener,
 	protected void reconnectToServer() {
 		long waitTime = ConfigMain.getLongParameter("activeMQ.reconnectWaitTime", 60000);
 		try {
+			cleanupServerConnection();
 			logger.debug("Waiting " + waitTime + " milli seconds.");
 			Thread.sleep(waitTime);
 			logger.debug("Reconnect to ActiveQM server.");
 			setupConnection();
-			logger.debug("Reconnecting was successful.");
+			if (session != null && connection != null) {
+				logger.debug("Reconnecting was successful.");
+			} else {
+				logger.error("Could not reestablish connection to ActiveMQ server!");
+			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
@@ -254,25 +261,35 @@ public class ActiveMQDirector implements ServletContextListener,
 					watcher.close();
 				} catch (JMSException e) {
 					logger.error(e);
-		}	}	}
+				}
+			}
+		}
 
-		// quit session
+		cleanupServerConnection();
+	}
+
+	/**
+	 * Close open session and connection.
+	 */
+	protected void cleanupServerConnection() {
 		if (session != null) {
 			try {
 				session.close();
-			} catch (JMSException e) {
-				logger.error(e);
+			} catch (JMSException jmse) {
+				logger.error("Could not close session! Reason: " + jmse.getMessage());
 			}
 		}
 
-		// shut down connection
 		if (connection != null) {
 			try {
 				connection.close();
-			} catch (JMSException e) {
-				logger.error(e);
+			} catch (JMSException jmse) {
+				logger.error("Could not close connection! Reason: " + jmse.getMessage());
 			}
 		}
-	}
-}
 
+		session = null;
+		connection = null;
+	}
+
+}
