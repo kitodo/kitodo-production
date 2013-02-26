@@ -40,6 +40,9 @@ import org.goobi.mq.processors.FinaliseStepProcessor;
 
 import de.sub.goobi.config.ConfigMain;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
  * implements the ServletContextListener interface and is − if configured in
@@ -77,6 +80,8 @@ public class ActiveMQDirector implements ServletContextListener,
 	protected static Connection connection = null;
 	protected static Session session = null;
 	protected static MessageProducer resultsTopic;
+	private static AtomicBoolean isReconnecting = new AtomicBoolean(false);
+	private static AtomicInteger currentCountOfReconnectAttempts = new AtomicInteger(1);
 
 	/**
 	 * The method contextInitialized() is called by the web container on startup
@@ -124,7 +129,8 @@ public class ActiveMQDirector implements ServletContextListener,
 			connection.setExceptionListener(this); // → ActiveMQDirector.onException()
 			return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		} catch (Exception e) {
-			logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
+			logger.error("Error connecting to ActiveMQ server. Reason: " + e.getMessage() + " Try to reconnect.");
+			reconnectToServer();
 		}
 		return null;
 	}
@@ -199,21 +205,40 @@ public class ActiveMQDirector implements ServletContextListener,
 	}
 
 	/**
-	 * Reestablished a connection to an ActiveMQ server.
+	 * Reestablish a connection to an ActiveMQ server.
 	 *
 	 */
 	protected void reconnectToServer() {
 		long waitTime = ConfigMain.getLongParameter("activeMQ.reconnectWaitTime", 60000);
+		int maxReconnectAttemptCount = ConfigMain.getIntParameter("activeMQ.reconnectMaximumAttemptCount", 5);
+
+		if (isReconnecting.get()) {
+			logger.warn("Already try to reconnect. Abort this attempt.");
+			return;
+		}
+
+		if (currentCountOfReconnectAttempts.get() > maxReconnectAttemptCount) {
+			logger.fatal("Maximum attempts to reconnect reached. Could not connect to server in given time and attempts.");
+			return;
+		}
+
+		logger.debug("Current try: " + currentCountOfReconnectAttempts.get());
 		try {
+			isReconnecting.set(true);
 			cleanupServerConnection();
 			logger.debug("Waiting " + waitTime + " milli seconds.");
 			Thread.sleep(waitTime);
 			logger.debug("Reconnect to ActiveQM server.");
 			setupConnection();
+			isReconnecting.set(false);
 			if (session != null && connection != null) {
 				logger.debug("Reconnecting was successful.");
+				currentCountOfReconnectAttempts.set(1);
 			} else {
 				logger.error("Could not reestablish connection to ActiveMQ server!");
+				int newValue = currentCountOfReconnectAttempts.incrementAndGet();
+				logger.debug("new try value: " + newValue);
+				reconnectToServer();
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
