@@ -33,9 +33,7 @@ import javax.jms.Session;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.ActiveMQSession;
 import org.apache.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.CreateNewProcessWithLogicalStructureData;
