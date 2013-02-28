@@ -134,8 +134,9 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 			addAdditionalLogicalStructureData(newPFK, xmlDocument);
 
 			String state = newPFK.NeuenProzessAnlegen(); // create new process and store process metadata to file space storage
+			// value "ProzessverwaltungKopie3" is the expected return value in case of success
 			if (!state.equals("ProzessverwaltungKopie3")) {
-				throw new Exception("NeuenProzessAnlegen() returned an unexpected return value: \"" + state + "\"!");
+				throw new Exception("Unexpected return value - something has gone wrong.");
 			}
 
 			logger.info("Succesfull created new process with identifier " + processIdentifier + " and Goobi ID " + newPFK.getProzessKopie().getId());
