@@ -94,6 +94,8 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 	 * @param docType name of document type to be used
 	 * @param collections set of collections to be used
 	 * @param xmlData holds data for global metadata and additional logical structure elements
+	 * @param userFields holds field information
+	 *
 	 * @throws Exception
 	 */
 	private void createNewProcess(String processIdentifier, String templateName, String docType, Set<String> collections, String xmlData, Map<String, String> userFields) throws Exception {
@@ -115,12 +117,16 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 
 			Document xmlDocument = createXmlDocument(xmlData);
 
+			if (userFields == null) {
+				userFields = new HashMap<String, String>();
+			}
+
 			userFields.putAll(getGlobalMetadata(xmlDocument));
 
 			if (!userFields.isEmpty()) {
 				setUserFields(newPFK, userFields);
 			} else {
-				throw new IllegalArgumentException("Userfields should not be null!");
+				throw new IllegalArgumentException("Userfields should not be empty!");
 			}
 
 			newPFK.CalcProzesstitel(); // use given meta data from userFields
