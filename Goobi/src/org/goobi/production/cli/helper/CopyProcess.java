@@ -1354,23 +1354,23 @@ public class CopyProcess extends ProzesskopieForm {
 				titeldefinition = titel;
 				break;
 			}
+ 
+            /* wenn beides angegeben wurde */
+            if (!isdoctype.equals("") && !isnotdoctype.equals("") && StringUtils.containsIgnoreCase(this.docType, isdoctype) && !StringUtils.containsIgnoreCase(this.docType, isnotdoctype)) {
+                titeldefinition = titel;
+                break;
+            }
 
-			/* wenn beides angegeben wurde */
-			if (!isdoctype.equals("") && !isnotdoctype.equals("") && isdoctype.contains(this.docType) && !isnotdoctype.contains(this.docType)) {
-				titeldefinition = titel;
-				break;
-			}
-
-			/* wenn nur pflicht angegeben wurde */
-			if (isnotdoctype.equals("") && isdoctype.contains(this.docType)) {
-				titeldefinition = titel;
-				break;
-			}
-			/* wenn nur "darf nicht" angegeben wurde */
-			if (isdoctype.equals("") && !isnotdoctype.contains(this.docType)) {
-				titeldefinition = titel;
-				break;
-			}
+            /* wenn nur pflicht angegeben wurde */
+            if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(this.docType, isdoctype)) {
+                titeldefinition = titel;
+                break;
+            }
+            /* wenn nur "darf nicht" angegeben wurde */
+            if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(this.docType, isnotdoctype)) {
+                titeldefinition = titel;
+                break;
+            }
 		}
 
 		StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
