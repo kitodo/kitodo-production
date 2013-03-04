@@ -35,6 +35,12 @@
 	<meta http-equiv="pragma" content="no-cache"/>
 	<meta http-equiv="cache-control" content="no-cache"/>
 	<meta name="date" content="1970-01-01T00:00:00+01:00"/>
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="cache-control" content="max-age=0" />
+	<meta http-equiv="expires" content="0" />
+
+	
+	
 	<link rel="shortcut icon" href="favicon.ico"/> 
 	
 	<!-- Sam Skin CSS for TabView -->
