@@ -41,6 +41,9 @@ import org.goobi.mq.processors.FinaliseStepProcessor;
 
 import de.sub.goobi.config.ConfigMain;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
  * implements the ServletContextListener interface and is − if configured in
@@ -79,6 +82,8 @@ public class ActiveMQDirector implements ServletContextListener,
 	protected static Connection connection = null;
 	protected static Session session = null;
 	protected static MessageProducer resultsTopic;
+	private static AtomicBoolean isReconnecting = new AtomicBoolean(false);
+	private static AtomicInteger currentCountOfReconnectAttempts = new AtomicInteger(1);
 
 	/**
 	 * The method contextInitialized() is called by the web container on startup
@@ -90,6 +95,14 @@ public class ActiveMQDirector implements ServletContextListener,
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent initialisation) {
+		setupConnection();
+	}
+
+	/**
+	 * Setup a configured ActiveMQ server connection.
+	 *
+	 */
+	protected void setupConnection() {
 		String activeMQHost = ConfigMain.getParameter("activeMQ.hostURL", null);
 		if (activeMQHost != null) {
 			session = connectToServer(activeMQHost);
@@ -97,7 +110,10 @@ public class ActiveMQDirector implements ServletContextListener,
 				registerListeners(services);
 				if (ConfigMain.getParameter("activeMQ.results.topic", null) != null) {
 					resultsTopic = setUpReportChannel(ConfigMain.getParameter("activeMQ.results.topic"));
-	}	}	}	}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Sets up a connection to an active MQ server. The connection object is
@@ -115,7 +131,8 @@ public class ActiveMQDirector implements ServletContextListener,
 			connection.setExceptionListener(this); // → ActiveMQDirector.onException()
 			return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		} catch (Exception e) {
-			logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
+			logger.error("Error connecting to ActiveMQ server. Reason: " + e.getMessage() + " Try to reconnect.");
+			reconnectToServer();
 		}
 		return null;
 	}
@@ -139,7 +156,10 @@ public class ActiveMQDirector implements ServletContextListener,
 					processor.saveChecker(messageChecker);
 				} catch (Exception e) {
 					logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
-	}	}	}	}
+				}
+			}
+		}
+	}
 
 	/**
 	 * This sets up a connection to the topic the results shall be written to.
@@ -176,7 +196,55 @@ public class ActiveMQDirector implements ServletContextListener,
 	 */
 	@Override
 	public void onException(JMSException exce) {
-		logger.error(exce);
+		Throwable cause = exce.getCause();
+		if (cause.getClass().getCanonicalName().equals("java.io.EOFException")) {
+			logger.warn("Connection to ActiveMQ server got lost. Try to reconnect.");
+			reconnectToServer();
+		} else {
+			logger.error(exce);
+		}
+
+	}
+
+	/**
+	 * Reestablish a connection to an ActiveMQ server.
+	 *
+	 */
+	protected void reconnectToServer() {
+		long waitTime = ConfigMain.getLongParameter("activeMQ.reconnectWaitTime", 60000);
+		int maxReconnectAttemptCount = ConfigMain.getIntParameter("activeMQ.reconnectMaximumAttemptCount", 5);
+
+		if (isReconnecting.get()) {
+			logger.warn("Already try to reconnect. Abort this attempt.");
+			return;
+		}
+
+		if (currentCountOfReconnectAttempts.get() > maxReconnectAttemptCount) {
+			logger.fatal("Maximum attempts to reconnect reached. Could not connect to server in given time and attempts.");
+			return;
+		}
+
+		logger.debug("Current try: " + currentCountOfReconnectAttempts.get());
+		try {
+			isReconnecting.set(true);
+			cleanupServerConnection();
+			logger.debug("Waiting " + waitTime + " milli seconds.");
+			Thread.sleep(waitTime);
+			logger.debug("Reconnect to ActiveQM server.");
+			setupConnection();
+			isReconnecting.set(false);
+			if (session != null && connection != null) {
+				logger.debug("Reconnecting was successful.");
+				currentCountOfReconnectAttempts.set(1);
+			} else {
+				logger.error("Could not reestablish connection to ActiveMQ server!");
+				int newValue = currentCountOfReconnectAttempts.incrementAndGet();
+				logger.debug("new try value: " + newValue);
+				reconnectToServer();
+			}
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	/**
@@ -216,25 +284,35 @@ public class ActiveMQDirector implements ServletContextListener,
 					watcher.close();
 				} catch (JMSException e) {
 					logger.error(e);
-		}	}	}
+				}
+			}
+		}
 
-		// quit session
+		cleanupServerConnection();
+	}
+
+	/**
+	 * Close open session and connection.
+	 */
+	protected void cleanupServerConnection() {
 		if (session != null) {
 			try {
 				session.close();
-			} catch (JMSException e) {
-				logger.error(e);
+			} catch (JMSException jmse) {
+				logger.error("Could not close session! Reason: " + jmse.getMessage());
 			}
 		}
 
-		// shut down connection
 		if (connection != null) {
 			try {
 				connection.close();
-			} catch (JMSException e) {
-				logger.error(e);
+			} catch (JMSException jmse) {
+				logger.error("Could not close connection! Reason: " + jmse.getMessage());
 			}
 		}
-	}
-}
 
+		session = null;
+		connection = null;
+	}
+
+}
