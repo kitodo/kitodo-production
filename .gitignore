@@ -1,8 +1,7 @@
 /work
-goobi1.9/work
 /build
-goobi1.9/build
+dist/
 /WEB-INF/classes 
-goobi1.9/WEB-INF/classes 
 build.properties
 deploy.properties
+config-local
