@@ -494,7 +494,14 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		String firstAuthor = convertPersonName(extractTextInformation(currentNode, "./creator[1]/name"));
 		String firstRecipient = convertPersonName(extractTextInformation(currentNode, "./addressee[1]/name"));
 
-		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient + ", " + place + ", " + formatedDate;
+		generatedTitle = title + " von " + firstAuthor + " an " + firstRecipient;
+		if (place != null && !place.isEmpty()) {
+			generatedTitle += ", " + place;
+		}
+
+		if (formatedDate != null && !formatedDate.isEmpty()) {
+			generatedTitle += ", " + formatedDate;
+		}
 
 		addMetadataToStructure(prefs, letterElement, "TitleDocMain", generatedTitle);
 		addMetadataToStructure(prefs, letterElement, "SizeSourcePrint", extractTextInformation(currentNode, "./extent"));
