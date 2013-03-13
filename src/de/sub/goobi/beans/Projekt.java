@@ -26,6 +26,7 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,13 +34,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.goobi.production.flow.statistics.StepInformation;
+import org.goobi.webapi.beans.Field;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 import de.sub.goobi.helper.ProjectHelper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 
+@XmlAccessorType(XmlAccessType.NONE)
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be added as needed by annotating with
+// @XmlElement, but their respective names should be wisely chosen according to
+// the Coding Guidelines (e.g. *english* names).
+@XmlType(propOrder = { "template", "fieldConfig" })
+// This annotation declares the desired order of XML elements generated and
+// rather serves for better legibility of the generated XML. The list must be
+// exhaustive and the properties have to be named according to their respective
+// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
+// referenced as "fieldConfig" here, not "field" as one might expect.
 public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
 	private Integer id;
@@ -78,6 +97,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	private Integer numberOfPages;
 	private Integer numberOfVolumes;
 	private Boolean projectIsArchived = false;
+
+	@XmlElement(name = "template")
+	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child nodes of the respective project.
 
 	public Projekt() {
 		this.prozesse = new HashSet<Prozess>();
@@ -123,6 +145,7 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.prozesse = prozesse;
 	}
 
+	@XmlAttribute(name="key")
 	public String getTitel() {
 		return this.titel;
 	}
@@ -468,5 +491,10 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	@Override
 	public boolean equals(Object obj) {
 		return this.getTitel().equals(((Projekt)obj).getTitel());
+	}
+
+	@XmlElement(name = "field")
+	public List<Field> getFieldConfig() throws IOException {
+		return Field.getFieldConfigForProject(this);
 	}
 }
