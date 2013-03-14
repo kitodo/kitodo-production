@@ -509,6 +509,7 @@ public class CreateNewProcessWithLogicalStructureData extends ActiveMQProcessor 
 		addMetadataToStructure(prefs, letterElement, "PlaceOfPublication", place);
 		addMetadataToStructure(prefs, letterElement, "DocLanguage", extractTextInformation(currentNode, "./language"));
 		addMetadataToStructure(prefs, letterElement, "FormatSourcePrint", extractTextInformation(currentNode, "./dimensions"));
+		addMetadataToStructure(prefs, letterElement, "slub_attachment", extractTextInformation(currentNode, "./addendum"));
 
 		return letterElement;
 	}
