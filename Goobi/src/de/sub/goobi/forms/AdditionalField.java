@@ -182,12 +182,12 @@ public class AdditionalField {
 		}
 
 		/* wenn pflicht angegeben wurde */
-		if (!this.isdoctype.equals("") && !StringUtils.containsIgnoreCase(this.pkf.getDocType(), isdoctype)) {
+		if (!this.isdoctype.equals("") && !StringUtils.containsIgnoreCase(isdoctype, this.pkf.getDocType())) {
 			return false;
 		}
 
 		/* wenn nur "darf nicht" angegeben wurde */
-		if (!this.isnotdoctype.equals("") && StringUtils.containsIgnoreCase(this.pkf.getDocType(), isnotdoctype)) {
+		if (!this.isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isnotdoctype, this.pkf.getDocType())) {
 			return false;
 		}
 
