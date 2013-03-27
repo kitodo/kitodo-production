@@ -558,10 +558,10 @@ public class MetadatenHelper implements Comparator<Object> {
 		public int compare(Object o1, Object o2) {
 			Metadata s1 = (Metadata) o1;
 			Metadata s2 = (Metadata) o2;
-			if (o1 == null) {
+			if (s1 == null) {
 				return -1;
 			}
-			if (o2 == null) {
+			if (s2 == null) {
 				return 1;
 			}
 			String name1 = "", name2 = "";
@@ -571,7 +571,7 @@ public class MetadatenHelper implements Comparator<Object> {
 				name1 = mdt1.getNameByLanguage(this.language);
 				name2 = mdt2.getNameByLanguage(this.language);
 			} catch (java.lang.NullPointerException e) {
-				myLogger.error("metadata is null", e);
+                myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType() + " is missing in ruleset");
 				return 0;
 			}
 			if (name1 == null || name1.length() == 0) {
