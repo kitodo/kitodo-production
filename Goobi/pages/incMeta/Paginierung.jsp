@@ -35,6 +35,16 @@
                                   Paginierungssequenzen
 
 #########################################--%>
+
+<h:panelGroup rendered="#{Metadaten.alleSeiten != null}">
+	<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}">
+		<f:selectItems value="#{Metadaten.alleSeiten}" />
+	</h:selectOneMenu>
+	<h:commandButton action="#{Metadaten.Reload}" value="#{msgs.saveValue}" />
+</h:panelGroup>
+
+<htm:br />
+
 <%-- <h:form> --%>
 <a4j:commandLink action="#{Metadaten.createPagination}"
 	reRender="mygrid10,myMessages" value="#{msgs.paginierungEinlesen}" />
