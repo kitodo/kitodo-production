@@ -37,6 +37,7 @@
 #########################################--%>
 
 <h:panelGroup rendered="#{Metadaten.alleSeiten != null}">
+	<h:outputText value="#{msgs.setRepresentative} " />
 	<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}">
 		<f:selectItems value="#{Metadaten.alleSeiten}" />
 	</h:selectOneMenu>
