@@ -258,6 +258,13 @@ public class BatchProcessHelper {
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
 		
 		for (ProcessProperty pt : this.processPropertyList) {
+		    if (pt.getProzesseigenschaft() == null) {
+                Prozesseigenschaft pe = new Prozesseigenschaft();
+                pe.setProzess(process);
+                pt.setProzesseigenschaft(pe);
+                process.getEigenschaften().add(pe);
+                pt.transfer();
+            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
 				plo.addToList(pt);

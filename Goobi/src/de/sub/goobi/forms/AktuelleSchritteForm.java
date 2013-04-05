@@ -1114,6 +1114,13 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
 
 		for (ProcessProperty pt : this.processPropertyList) {
+            if (pt.getProzesseigenschaft() == null) {
+                Prozesseigenschaft pe = new Prozesseigenschaft();
+                pe.setProzess(this.mySchritt.getProzess());
+                pt.setProzesseigenschaft(pe);
+                this.mySchritt.getProzess().getEigenschaften().add(pe);
+                pt.transfer();
+            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
 				plo.addToList(pt);

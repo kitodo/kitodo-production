@@ -1858,6 +1858,13 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
 
 		for (ProcessProperty pt : this.processPropertyList) {
+	          if (pt.getProzesseigenschaft() == null) {
+	                Prozesseigenschaft pe = new Prozesseigenschaft();
+	                pe.setProzess(myProzess);
+	                pt.setProzesseigenschaft(pe);
+	                myProzess.getEigenschaften().add(pe);
+	                pt.transfer();
+	            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
 				plo.addToList(pt);
