@@ -35,23 +35,28 @@
 --%>
 <%-- nur anzeigen, wenn es ein Bild gibt --%>
 <h:form id="formularBild">
-	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;"
+		immediate="true">
 		<f:param name="Anzahl" value="-1" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext" style="display:none" action="#{Metadaten.BildBlaettern}" value=">" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext" style="display:none" action="#{Metadaten.BildBlaettern}" value=">"
+		immediate="true">
 		<f:param name="Anzahl" value="1" />
 	</a4j:commandButton>
 	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack20" style="display:none" action="#{Metadaten.BildBlaettern}" value="&lt;&lt;"
 		immediate="true">
 		<f:param name="Anzahl" value="-20" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext20" style="display:none" action="#{Metadaten.BildBlaettern}" value=">>" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext20" style="display:none" action="#{Metadaten.BildBlaettern}" value=">>"
+		immediate="true">
 		<f:param name="Anzahl" value="20" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageFirst" style="display:none" action="#{Metadaten.BildBlaettern}" value="|&lt;" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageFirst" style="display:none" action="#{Metadaten.BildBlaettern}" value="|&lt;"
+		immediate="true">
 		<f:param name="Anzahl" value="-#{Metadaten.bildNummer}" />
 	</a4j:commandButton>
-	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageLast" style="display:none" action="#{Metadaten.BildBlaettern}" value=">|" immediate="true">
+	<a4j:commandButton reRender="BildArea,myBild,imageform" id="imageLast" style="display:none" action="#{Metadaten.BildBlaettern}" value=">|"
+		immediate="true">
 		<f:param name="Anzahl" value="#{Metadaten.bildLetztes}" />
 	</a4j:commandButton>
 
@@ -121,7 +126,8 @@
 									<%-- Trennzeichen --%>
 									<h:outputText value=" | " />
 									<%-- Uebernaechste Seite --%>
-									<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 2}" immediate="true">
+									<a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 2}"
+										immediate="true">
 										<f:param name="Anzahl" value="2" />
 									</a4j:commandLink>
 								</h:panelGroup>
@@ -190,7 +196,8 @@
 			<h:outputText value="#{msgs.geheZuBild}:" style="margin-left:5px;margin-right:0px;font-size: 12px" title="#{msgs.geheZuImage}" />
 			<h:inputText value="#{Metadaten.bildNummerGeheZu}" onkeypress="return submitEnter('formularBild:goButton',event)"
 				style="width:30px;border-style: solid;border-color: silver;border-width: 1px" />
-			<a4j:commandButton reRender="BildArea,myBild,imageform" value="go" id="goButton" action="#{Metadaten.BildGeheZu}" style="margin-left:5px; display:none" />
+			<a4j:commandButton reRender="BildArea,myBild,imageform" value="go" id="goButton" action="#{Metadaten.BildGeheZu}"
+				style="margin-left:5px; display:none" />
 
 			<%-- OCR --%>
 			<a4j:commandLink reRender="BildArea,myBild" id="ocrButton" action="#{Metadaten.showOcrResult}" rendered="#{Metadaten.showOcrButton}">
@@ -238,6 +245,9 @@
 
 </h:form>
 
+
+
+
 <h:form id="imageform">
 	<x:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.bildNummer}" />
 </h:form>
@@ -246,4 +256,13 @@
 <%-- wenn kein Bild vorhanden, dann nur Meldung --%>
 <h:outputText value="- #{msgs.keinBildVorhanden} -" rendered="#{Metadaten.bildNummer == '-1'}" />
 
+<h:form id="representative" style="margin-top:15px">
+	<h:panelGroup rendered="#{Metadaten.alleSeiten != null}">
+		<h:outputText value="#{msgs.setRepresentative} " />
+		<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}">
+			<f:selectItems value="#{Metadaten.alleSeiten}" />
+		</h:selectOneMenu>
+		<h:commandButton action="#{Metadaten.Reload}" value="#{msgs.saveValue}" />
+	</h:panelGroup>
+</h:form>
 
