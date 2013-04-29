@@ -351,28 +351,7 @@ public class ExportDms extends ExportMets {
 
 	private void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
 
-		if (! sourceDirectory.isDirectory()) {
-			myLogger.error("Given source " + sourceDirectory.getPath() + " is not a directory!");
-			return;
-		}
-
-		if (! destinationDirectory.exists()) {
-			boolean result;
-			result = destinationDirectory.mkdir();
-			if (! result) {
-				myLogger.error("Could not create directory " + destinationDirectory.getPath() + "!");
-				return;
-			}
-		}
-
-		File[] sourceFiles = sourceDirectory.listFiles();
-		if (sourceFiles != null) {
-			for (File sourceFile : sourceFiles) {
-				File destinationFile = new File(destinationDirectory + File.separator + sourceFile.getName());
-				Helper.copyFile(sourceFile, destinationFile);
-			}
-		}
-
+		copyFilesOfDirectories(sourceDirectory, destinationDirectory, null);
 	}
 
 	private void copyAdditionalFilesOnExport(String sourceDirectory, String destinationDirectory) throws IOException {
@@ -384,6 +363,12 @@ public class ExportDms extends ExportMets {
 			myLogger.trace("No additional files to copy on export.");
 			return;
 		}
+
+		FileListFilter filter = new FileListFilter(fileMatcher);
+		copyFilesOfDirectories(source, destination, filter);
+	}
+
+	private void copyFilesOfDirectories(File source, File destination, FileListFilter filter) throws IOException {
 
 		if (! source.isDirectory()) {
 			myLogger.error("Given source " + source.getPath() + " is not a directory!");
@@ -400,7 +385,6 @@ public class ExportDms extends ExportMets {
 			}
 		}
 
-		FileListFilter filter = new FileListFilter(fileMatcher);
 		File[] sourceFiles = source.listFiles(filter);
 		if (sourceFiles != null) {
 			for (File sourceFile : sourceFiles) {
@@ -408,6 +392,7 @@ public class ExportDms extends ExportMets {
 				Helper.copyFile(sourceFile, destinationFile);
 			}
 		}
+
 	}
 
 }
