@@ -359,7 +359,7 @@ public class ExportDms extends ExportMets {
 		File destination = new File(destinationDirectory);
 		String fileMatcher = ConfigMain.getParameter("copyAdditionalFilesOnExport", null);
 
-		if (fileMatcher == null) {
+		if (fileMatcher == null || fileMatcher.isEmpty()) {
 			myLogger.trace("No additional files to copy on export.");
 			return;
 		}
