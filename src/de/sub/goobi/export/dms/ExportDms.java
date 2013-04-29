@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
+import org.goobi.io.FileListFilter;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -258,6 +259,8 @@ public class ExportDms extends ExportMets {
 
 			Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
 		}
+
+		copyAdditionalFilesOnExport(myProzess.getProcessDataDirectory(), zielVerzeichnis);
 	}
 
 	/**
@@ -348,24 +351,44 @@ public class ExportDms extends ExportMets {
 
 	private void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
 
-		if (! sourceDirectory.isDirectory()) {
-			myLogger.error("Given source " + sourceDirectory.getPath() + " is not a directory!");
+		copyFilesOfDirectories(sourceDirectory, destinationDirectory, null);
+	}
+
+	private void copyAdditionalFilesOnExport(String sourceDirectory, String destinationDirectory) throws IOException {
+		File source = new File(sourceDirectory);
+		File destination = new File(destinationDirectory);
+		String fileMatcher = ConfigMain.getParameter("copyAdditionalFilesOnExport", null);
+
+		if (fileMatcher == null || fileMatcher.isEmpty()) {
+			myLogger.trace("No additional files to copy on export.");
 			return;
 		}
 
-		if (! destinationDirectory.exists()) {
+		FileListFilter filter = new FileListFilter(fileMatcher);
+		copyFilesOfDirectories(source, destination, filter);
+	}
+
+	private void copyFilesOfDirectories(File source, File destination, FileListFilter filter) throws IOException {
+
+		if (! source.isDirectory()) {
+			myLogger.error("Given source " + source.getPath() + " is not a directory!");
+			return;
+		}
+
+		if (! destination.exists()) {
+			myLogger.trace("Destination directory " + destination.getPath() + " does not exists. Creating it!");
 			boolean result;
-			result = destinationDirectory.mkdir();
+			result = destination.mkdir();
 			if (! result) {
-				myLogger.error("Could not create directory " + destinationDirectory.getPath() + "!");
+				myLogger.error("Could not create directory " + destination.getPath() + "!");
 				return;
 			}
 		}
 
-		File[] sourceFiles = sourceDirectory.listFiles();
+		File[] sourceFiles = source.listFiles(filter);
 		if (sourceFiles != null) {
 			for (File sourceFile : sourceFiles) {
-				File destinationFile = new File(destinationDirectory + File.separator + sourceFile.getName());
+				File destinationFile = new File(destination + File.separator + sourceFile.getName());
 				Helper.copyFile(sourceFile, destinationFile);
 			}
 		}
