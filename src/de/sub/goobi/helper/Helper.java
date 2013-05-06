@@ -472,7 +472,7 @@ public class Helper implements Serializable, Observer {
 
 	public static Benutzer getCurrentUser() {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		return login.getMyBenutzer();
+		return login != null ? login.getMyBenutzer() : null;
 	}
 
 	/**
