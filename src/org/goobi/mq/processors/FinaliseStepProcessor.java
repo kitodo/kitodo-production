@@ -92,6 +92,15 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 		dialog.SchrittDurchBenutzerAbschliessen();
 	}
 
+	/**
+	 * The method updateProperties() transfers the properties to set into
+	 * Goobi’s data model.
+	 * 
+	 * @param dialog
+	 *            The AktuelleSchritteForm that we work with
+	 * @param propertiesToSet
+	 *            A Map with the properties to set
+	 */
 	protected void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
 		List<ProcessProperty> availableProperties = dialog.getProcessProperties();
 		for (int position = 0; position < availableProperties.size(); position++) {
