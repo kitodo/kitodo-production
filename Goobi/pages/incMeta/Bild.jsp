@@ -231,38 +231,27 @@
 	<h:graphicImage value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()" />
 </x:panelGroup>
 
+
+
 <h:form id="formularOrdner" rendered="#{Metadaten.bildNummer != '-1'}" style="margin-top:15px">
-	<h:outputText value="#{msgs.aktuellerOrdner}: " />
-	<h:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}">
-		<si:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+	<h:panelGrid columns="3">
 
-		<s:submitOnEvent for="cmdOrdnerWechseln" event="change" />
-	</h:selectOneMenu>
-	<a4j:commandLink id="cmdOrdnerWechseln" reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}" value="#{msgs.ordnerWechseln}"
-		style="display: none">
-		<f:param name="Anzahl" value="0" />
-	</a4j:commandLink>
+		<h:outputText value="#{msgs.aktuellerOrdner}: " />
+		<h:selectOneMenu id="TifFolders" style="width: 200px" value="#{Metadaten.currentTifFolder}">
+			<si:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+		</h:selectOneMenu>
+		<h:commandButton id="cmdOrdnerWechseln" action="#{Metadaten.BildBlaettern}" type="submit" value="#{msgs.ordnerWechseln}">
+			<f:param name="Anzahl" value="0" />
+		</h:commandButton>
 
-</h:form>
-
-
-
-
-<h:form id="imageform">
-	<x:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.bildNummer}" />
-</h:form>
-
-
-<%-- wenn kein Bild vorhanden, dann nur Meldung --%>
-<h:outputText value="- #{msgs.keinBildVorhanden} -" rendered="#{Metadaten.bildNummer == '-1'}" />
-
-<h:form id="representative" style="margin-top:15px">
-	<h:panelGroup rendered="#{Metadaten.alleSeiten != null}">
-		<h:outputText value="#{msgs.setRepresentative} " />
-		<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}">
+		<h:outputText value="#{msgs.setRepresentative} " rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}" />
+		<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
+			rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}">
 			<f:selectItems value="#{Metadaten.alleSeiten}" />
 		</h:selectOneMenu>
-		<h:commandButton action="#{Metadaten.Reload}" value="#{msgs.uebernehmen}" />
-	</h:panelGroup>
+		<h:commandButton action="#{Metadaten.Reload}" value="#{msgs.uebernehmen}"
+			rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}" />
+	</h:panelGrid>
+
 </h:form>
 

@@ -70,9 +70,9 @@
 
 	<h:panelGrid id="mygrid11" columns="1" width="270px" style="margin:0px;">
 		<%-- ++++++++++++++++     Paginierung festlegen      ++++++++++++++++ --%>
-		<htm:table cellpadding="3" cellspacing="0"  id="PaginierungActionBox"
-			rendered="#{Metadaten.alleSeiten !=null}" styleClass="eingabeBoxen"
-			style="position: fixed;top: 104px;left: 250px;">
+		<h:panelGroup rendered="#{Metadaten.alleSeiten !=null}" style="position: fixed; top: 180px; left: 250px;">
+			<htm:table cellpadding="3" cellspacing="0" id="PaginierungActionBox" rendered="#{Metadaten.alleSeiten !=null}" styleClass="eingabeBoxen"
+				style="width: 320px;">
 			<htm:tr>
 				<htm:td styleClass="eingabeBoxen_row1">
 					<h:outputText value="#{msgs.paginierungFestlegen}" />
@@ -196,5 +196,46 @@
 			</htm:tr>
 		</htm:table>
 		<%-- ++++++++++++++++     // Paginierung festlegen      ++++++++++++++++ --%>
+			<htm:table cellpadding="3" cellspacing="0" id="pageOrder" styleClass="eingabeBoxen" style="width: 320px;margin-top:10px;">
+				<htm:tr>
+					<htm:td styleClass="eingabeBoxen_row1">
+						<h:outputText value="#{msgs.pageOrder}" />
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td styleClass="eingabeBoxen_row2">
+						<h:commandLink action="#{Metadaten.moveSeltectedPagesUp}">
+							<h:graphicImage value="/newpages/images/buttons/up_20px.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+							<h:outputText value="#{msgs.moveSeltectedPagesUp}" />
+						</h:commandLink>
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td styleClass="eingabeBoxen_row2">
+						<h:commandLink action="#{Metadaten.moveSeltectedPagesDown}">
+							<h:graphicImage value="/newpages/images/buttons/down_20px.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+							<h:outputText value="#{msgs.moveSeltectedPagesDown}" />
+						</h:commandLink>
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td styleClass="eingabeBoxen_row2">
+						<h:commandLink action="#{Metadaten.deleteSeltectedPages}" onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return false">
+							<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+							<h:outputText value="#{msgs.deleteSeltectedPages}" />
+						</h:commandLink>
+					</htm:td>
+				</htm:tr>
+				<htm:tr>
+					<htm:td styleClass="eingabeBoxen_row2">
+						<h:commandLink action="#{Metadaten.reOrderPagination}">
+							<h:graphicImage value="/newpages/images/buttons/reload.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+							<h:outputText value="#{msgs.reOrder}" />
+						</h:commandLink>
+					</htm:td>
+				</htm:tr>
+
+			</htm:table>
+		</h:panelGroup>
 	</h:panelGrid>
 </h:panelGrid>

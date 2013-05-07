@@ -1,11 +1,11 @@
 
 <%
-	if (request.getHeader("User-Agent").contains("MSIE 7.0")) {
+    if (request.getHeader("User-Agent").contains("MSIE 7.0")) {
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
 <%
-	}
+    }
 %>
 <html>
 
@@ -87,6 +87,15 @@
 
 										<h:outputText id="vdid14" value="#{msgs.metadaten}" style="font-weight:bold;font-size: 11px;"
 											rendered="#{Metadaten.modusAnsicht == 'Metadaten'}" />
+										<h:outputText value=" | " style="font-size: 11px;" />
+
+										<h:commandLink id="vdid16" action="#{Metadaten.AnsichtAendern}" value="#{msgs.fileManipulation}" style="font-size: 11px;"
+											rendered="#{Metadaten.modusAnsicht != 'File'}">
+											<f:param id="vdid17" name="Ansicht" value="File" />
+										</h:commandLink>
+
+										<h:outputText id="vdid18" value="#{msgs.fileManipulation}" style="font-weight:bold;font-size: 11px;"
+											rendered="#{Metadaten.modusAnsicht == 'File'}" />
 
 									</h:panelGroup>
 								</htm:td>
@@ -167,6 +176,10 @@
 
 
 					</h:form>
+					<h:panelGroup rendered="#{Metadaten.modusAnsicht =='File'}">
+
+						<%@include file="incMeta/File.jsp"%>
+					</h:panelGroup>
 				</htm:td>
 
 				<htm:td rendered="#{Metadaten.bildAnzeigen==true}" style="top: 30px;">

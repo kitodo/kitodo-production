@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -72,6 +73,8 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.importer.ImportOpac;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
@@ -84,8 +87,6 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.importer.ImportOpac;
-import de.sub.goobi.persistence.ProzessDAO;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
@@ -175,6 +176,7 @@ public class Metadaten {
 	private String pagesEnd = "";
 	private HashMap<String, Boolean> treeProperties;
 	private ReentrantLock xmlReadingLock = new ReentrantLock();
+    private FileManipulation fileManipulation = null;
 
 	/**
 	 * Konstruktor ================================================================
@@ -797,6 +799,14 @@ public class Metadaten {
 		return this.zurueck;
 	}
 
+    public boolean isCheckForRepresentative() {
+        MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
+        if (mdt != null) {
+            return true;
+        }
+        return false;
+    }
+	
 	/**
 	 * vom aktuellen Strukturelement alle Metadaten einlesen
 	 * 
@@ -1243,7 +1253,7 @@ public class Metadaten {
 	/**
 	 * alle Seiten ermitteln ================================================================
 	 */
-	private void retrieveAllImages() {
+    public void retrieveAllImages() {
 		DigitalDocument mydocument = null;
 		try {
 			mydocument = this.gdzfile.getDigitalDocument();
@@ -1539,7 +1549,7 @@ public class Metadaten {
 		return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
 	}
 
-	public List<String> getAllTifFolders() throws IOException, InterruptedException {
+    public List<String> getAllTifFolders() {
 		return this.allTifFolders;
 	}
 
@@ -1577,116 +1587,120 @@ public class Metadaten {
 		}
 	}
 
-	private void BildErmitteln(int welches) {
-		/*
-		 * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
-		 */
-		myLogger.trace("start BildErmitteln 1");
-		if (!this.bildAnzeigen) {
-			myLogger.trace("end BildErmitteln 1");
-			return;
-		}
-		myLogger.trace("ocr BildErmitteln");
-		this.ocrResult = "";
+	 public void BildErmitteln(int welches) {
+	        /*
+	         * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
+	         */
+	        myLogger.trace("start BildErmitteln 1");
+	        if (!this.bildAnzeigen) {
+	            myLogger.trace("end BildErmitteln 1");
+	            return;
+	        }
+	        myLogger.trace("ocr BildErmitteln");
+	        this.ocrResult = "";
 
-		ArrayList<String> dataList = new ArrayList<String>();
-		myLogger.trace("dataList");
-		try {
-			dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
-			myLogger.trace("dataList 2");
-		} catch (InvalidImagesException e) {
-			myLogger.trace("dataList error");
-			myLogger.error("Images could not be read", e);
-			Helper.setFehlerMeldung("images could not be read", e);
-		}
+	        List<String> dataList = new ArrayList<String>();
+	        myLogger.trace("dataList");
+	        //      try {
+	        dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+	        myLogger.trace("dataList 2");
+	        //      } catch (InvalidImagesException e) {
+	        //          myLogger.trace("dataList error");
+	        //          myLogger.error("Images could not be read", e);
+	        //          Helper.setFehlerMeldung("images could not be read", e);
+	        //      }
 
-		if (dataList != null && dataList.size() > 0) {
-			myLogger.trace("dataList not null");
-			this.myBildLetztes = dataList.size();
-			myLogger.trace("myBildLetztes");
-			for (int i = 0; i < dataList.size(); i++) {
-				myLogger.trace("file: " + i);
-				if (this.myBild == null) {
-					this.myBild = dataList.get(0);
-				}
-				myLogger.trace("myBild: " + this.myBild);
-				String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
-				myLogger.trace("index: " + index);
-				String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
-				myLogger.trace("myPicture: " + myPicture);
-				/* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
-				if (index.equals(myPicture)) {
-					myLogger.trace("index == myPicture");
-					int pos = i + welches;
-					myLogger.trace("pos: " + pos);
-					/* aber keine Indexes ausserhalb des Array erlauben */
-					if (pos < 0) {
-						pos = 0;
-					}
-					if (pos > dataList.size() - 1) {
-						pos = dataList.size() - 1;
-					}
-					if (this.currentTifFolder != null) {
-						myLogger.trace("currentTifFolder: " + this.currentTifFolder);
-						try {
-							dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
+	        if (dataList != null && dataList.size() > 0) {
+	            myLogger.trace("dataList not null");
+	            this.myBildLetztes = dataList.size();
+	            myLogger.trace("myBildLetztes");
+	            for (int i = 0; i < dataList.size(); i++) {
+	                myLogger.trace("file: " + i);
+	                if (this.myBild == null) {
+	                    this.myBild = dataList.get(0);
+	                }
+	                myLogger.trace("myBild: " + this.myBild);
+	                String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
+	                myLogger.trace("index: " + index);
+	                String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
+	                myLogger.trace("myPicture: " + myPicture);
+	                /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
+	                if (index.equals(myPicture)) {
+	                    myLogger.trace("index == myPicture");
+	                    int pos = i + welches;
+	                    myLogger.trace("pos: " + pos);
+	                    /* aber keine Indexes ausserhalb des Array erlauben */
+	                    if (pos < 0) {
+	                        pos = 0;
+	                    }
+	                    if (pos > dataList.size() - 1) {
+	                        pos = dataList.size() - 1;
+	                    }
+	                    if (this.currentTifFolder != null) {
+	                        myLogger.trace("currentTifFolder: " + this.currentTifFolder);
+	                        try {
+	                            //                          dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+	                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
+	                            if (dataList == null) {
+	                                return;
+	                            }
+	                            //
+	                        } catch (InvalidImagesException e1) {
+	                            myLogger.trace("dataList error");
+	                            myLogger.error("Images could not be read", e1);
+	                            Helper.setFehlerMeldung("images could not be read", e1);
+	                        }
+	                    }
+	                    //                  if (dataList == null) {
+	                    //                      myLogger.trace("dataList: null");
+	                    //                      return;
+	                    //                  }
+	                    /* das aktuelle tif erfassen */
+	                    if (dataList.size() > pos) {
+	                        this.myBild = dataList.get(pos);
+	                    } else {
+	                        this.myBild = dataList.get(dataList.size() - 1);
+	                    }
+	                    myLogger.trace("found myBild");
+	                    /* die korrekte Seitenzahl anzeigen */
+	                    this.myBildNummer = pos + 1;
+	                    myLogger.trace("myBildNummer: " + this.myBildNummer);
+	                    /* Pages-Verzeichnis ermitteln */
+	                    String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
+	                    myLogger.trace("myPfad: " + myPfad);
+	                    /*
+	                     * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
+	                     */
+	                    this.myBildCounter++;
+	                    myLogger.trace("myBildCounter: " + this.myBildCounter);
 
-						} catch (InvalidImagesException e1) {
-							myLogger.trace("dataList error");
-							myLogger.error("Images could not be read", e1);
-							Helper.setFehlerMeldung("images could not be read", e1);
-						}
-					}
-					if (dataList == null) {
-						myLogger.trace("dataList: null");
-						return;
-					}
-					/* das aktuelle tif erfassen */
-					if (dataList.size() > pos) {
-						this.myBild = dataList.get(pos);
-					} else {
-						this.myBild = dataList.get(dataList.size() - 1);
-					}
-					myLogger.trace("found myBild");
-					/* die korrekte Seitenzahl anzeigen */
-					this.myBildNummer = pos + 1;
-					myLogger.trace("myBildNummer: " + this.myBildNummer);
-					/* Pages-Verzeichnis ermitteln */
-					String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
-					myLogger.trace("myPfad: " + myPfad);
-					/*
-					 * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
-					 */
-					this.myBildCounter++;
-					myLogger.trace("myBildCounter: " + this.myBildCounter);
+	                    /* Session ermitteln */
+	                    FacesContext context = FacesContext.getCurrentInstance();
+	                    HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+	                    String mySession = session.getId() + "_" + this.myBildCounter + ".png";
+	                    myLogger.trace("facescontext");
 
-					/* Session ermitteln */
-					FacesContext context = FacesContext.getCurrentInstance();
-					HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-					String mySession = session.getId() + "_" + this.myBildCounter + ".png";
-					myLogger.trace("facescontext");
-
-					/* das neue Bild zuweisen */
-					try {
-						String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
-						myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
-						if (!new File(tiffconverterpfad).exists()) {
-							tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
-							Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
-									+ this.currentTifFolder + ", using image from " + new File(this.myProzess.getImagesTifDirectory(true)).getName());
-						}
-						this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
-						myLogger.trace("scaleFile");
-					} catch (Exception e) {
-						Helper.setFehlerMeldung("could not found image folder", e);
-						myLogger.error(e);
-					}
-					break;
-				}
-			}
-		}
-		BildPruefen();
-	}
+	                    /* das neue Bild zuweisen */
+	                    try {
+	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
+	                        myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
+	                        if (!new File(tiffconverterpfad).exists()) {
+	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
+	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
+	                                    + this.currentTifFolder + ", using image from " + new File(this.myProzess.getImagesTifDirectory(true)).getName());
+	                        }
+	                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
+	                        myLogger.trace("scaleFile");
+	                    } catch (Exception e) {
+	                        Helper.setFehlerMeldung("could not found image folder", e);
+	                        myLogger.error(e);
+	                    }
+	                    break;
+	                }
+	            }
+	        }
+	        BildPruefen();
+	    }
 
 	private void BildPruefen() {
 		/* wenn bisher noch kein Bild da ist, das erste nehmen */
@@ -2076,21 +2090,24 @@ public class Metadaten {
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildErsteSeiteAnzeigen() {
-		this.bildAnzeigen = true;
-		if (this.treeProperties.get("showpagesasajax")) {
-			for (int i = 0; i < this.alleSeiten.length; i++) {
-				SelectItem si = this.alleSeiten[i];
-				if (si.getLabel().equals(this.ajaxSeiteStart)) {
-					this.alleSeitenAuswahl_ersteSeite = (String) si.getValue();
-					break;
-				}
-			}
-		}
-		try {
-			int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1;
-			BildErmitteln(pageNumber);
-		} catch (Exception e) {
-		}
+        //        this.bildAnzeigen = true;
+        //        if (this.treeProperties.get("showpagesasajax")) {
+        //            for (int i = 0; i < this.alleSeiten.length; i++) {
+        //                SelectItem si = this.alleSeiten[i];
+        //                if (si.getLabel().equals(this.ajaxSeiteStart)) {
+        //                    this.alleSeitenAuswahl_ersteSeite = (String) si.getValue();
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //        try {
+        //            int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1;
+        //            BildErmitteln(pageNumber);
+        myBild = null;
+        BildErmitteln(0);
+        //        } catch (Exception e) {
+        //
+        //        }
 		return "";
 	}
 
@@ -2687,4 +2704,319 @@ public class Metadaten {
         this.currentRepresentativePage = currentRepresentativePage;
     }
 
+    private void switchFileNames(DocStruct firstpage, DocStruct secondpage) {
+        String firstFile = firstpage.getImageName();
+        String otherFile = secondpage.getImageName();
+
+        firstpage.setImageName(otherFile);
+        secondpage.setImageName(firstFile);
+    }
+
+    public void moveSeltectedPagesUp() {
+        List<Integer> selectedPages = new ArrayList<Integer>();
+        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<String> pageNoList = Arrays.asList(alleSeitenAuswahl);
+        for (String order : pageNoList) {
+            int currentPhysicalPageNo = Integer.parseInt(order);
+            if (currentPhysicalPageNo == 0) {
+                break;
+            }
+            selectedPages.add(currentPhysicalPageNo);
+        }
+
+        if (selectedPages.isEmpty()) {
+            return;
+        }
+        List<String> newSelectionList = new ArrayList<String>();
+        for (Integer pageIndex : selectedPages) {
+            DocStruct firstpage = allPages.get(pageIndex - 1);
+            DocStruct secondpage = allPages.get(pageIndex);
+            switchFileNames(firstpage, secondpage);
+            newSelectionList.add(String.valueOf(pageIndex - 1));
+        }
+
+        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+
+        retrieveAllImages();
+        BildErmitteln(0);
+    }
+
+    public void moveSeltectedPagesDown() {
+        List<Integer> selectedPages = new ArrayList<Integer>();
+        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+        Collections.reverse(pagesList);
+        for (String order : pagesList) {
+            int currentPhysicalPageNo = Integer.parseInt(order);
+            if (currentPhysicalPageNo + 1 == alleSeiten.length) {
+                break;
+            }
+            selectedPages.add(currentPhysicalPageNo);
+        }
+
+        if (selectedPages.isEmpty()) {
+            return;
+        }
+        List<String> newSelectionList = new ArrayList<String>();
+        for (Integer pageIndex : selectedPages) {
+            DocStruct firstpage = allPages.get(pageIndex + 1);
+            DocStruct secondpage = allPages.get(pageIndex);
+            switchFileNames(firstpage, secondpage);
+            newSelectionList.add(String.valueOf(pageIndex + 1));
+        }
+
+        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+        retrieveAllImages();
+        BildErmitteln(0);
+    }
+
+    public void deleteSeltectedPages() {
+        List<Integer> selectedPages = new ArrayList<Integer>();
+        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+        Collections.reverse(pagesList);
+        for (String order : pagesList) {
+            int currentPhysicalPageNo = Integer.parseInt(order);
+            selectedPages.add(currentPhysicalPageNo);
+        }
+
+        if (selectedPages.isEmpty()) {
+            return;
+        }
+
+        for (Integer pageIndex : selectedPages) {
+
+            DocStruct pageToRemove = allPages.get(pageIndex);
+            String imagename = pageToRemove.getImageName();
+
+            removeImage(imagename);
+            //            try {
+            mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
+            //                pageToRemove.removeContentFile(pageToRemove.getAllContentFiles().get(0));
+            //            } catch (ContentFileNotLinkedException e) {
+            //                myLogger.error(e);
+            //            }
+
+            mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
+            List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
+            for (ugh.dl.Reference ref : refs) {
+                ref.getSource().removeReferenceTo(pageToRemove);
+            }
+
+        }
+
+        alleSeitenAuswahl = null;
+        myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
+
+        allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+
+        int currentPhysicalOrder = 1;
+        MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+        for (DocStruct page : allPages) {
+            List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+            if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                currentPhysicalOrder++;
+                break;
+            }
+            for (Metadata pageNo : pageNoMetadata) {
+                pageNo.setValue(String.valueOf(currentPhysicalOrder));
+            }
+            currentPhysicalOrder++;
+        }
+
+        retrieveAllImages();
+
+        // current image was deleted, load first image
+        if (selectedPages.contains(myBildNummer - 1)) {
+
+            BildErsteSeiteAnzeigen();
+        } else {
+            BildErmitteln(0);
+        }
+    }
+
+    public void reOrderPagination() {
+        String imageDirectory = "";
+        try {
+            imageDirectory = myProzess.getImagesDirectory();
+        } catch (SwapException e) {
+            myLogger.error(e);
+        } catch (DAOException e) {
+            myLogger.error(e);
+        } catch (IOException e) {
+            myLogger.error(e);
+        } catch (InterruptedException e) {
+            myLogger.error(e);
+
+        }
+        if (imageDirectory.equals("")) {
+            Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
+            return;
+        }
+
+        List<String> oldfilenames = new ArrayList<String>();
+        for (DocStruct page : mydocument.getPhysicalDocStruct().getAllChildren()) {
+            oldfilenames.add(page.getImageName());
+        }
+
+        for (String imagename : oldfilenames) {
+            for (String folder : allTifFolders) {
+                File filename = new File(imageDirectory + folder, imagename);
+                File newFileName = new File(imageDirectory + folder, imagename + "_bak");
+                filename.renameTo(newFileName);
+            }
+
+            try {
+                File ocr = new File(myProzess.getOcrDirectory());
+                if (ocr.exists()) {
+                    File[] allOcrFolder = ocr.listFiles();
+                    for (File folder : allOcrFolder) {
+                        File filename = new File(folder, imagename);
+                        File newFileName = new File(folder, imagename + "_bak");
+                        filename.renameTo(newFileName);
+                    }
+                }
+            } catch (SwapException e) {
+                myLogger.error(e);
+            } catch (DAOException e) {
+                myLogger.error(e);
+            } catch (IOException e) {
+                myLogger.error(e);
+            } catch (InterruptedException e) {
+                myLogger.error(e);
+            }
+
+        }
+        int counter = 1;
+        for (String imagename : oldfilenames) {
+            String newfilenamePrefix = generateFileName(counter);
+            for (String folder : allTifFolders) {
+                File fileToSort = new File(imageDirectory + folder, imagename);
+                String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
+                File tempFileName = new File(imageDirectory + folder, fileToSort.getName() + "_bak");
+                File sortedName = new File(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
+                tempFileName.renameTo(sortedName);
+                mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.getName());
+            }
+            try {
+                File ocr = new File(myProzess.getOcrDirectory());
+                if (ocr.exists()) {
+                    File[] allOcrFolder = ocr.listFiles();
+                    for (File folder : allOcrFolder) {
+                        File fileToSort = new File(folder, imagename);
+                        String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
+                        File tempFileName = new File(folder, fileToSort.getName() + "_bak");
+                        File sortedName = new File(folder, newfilenamePrefix + fileExtension.toLowerCase());
+                        tempFileName.renameTo(sortedName);
+                    }
+                }
+            } catch (SwapException e) {
+                myLogger.error(e);
+            } catch (DAOException e) {
+                myLogger.error(e);
+            } catch (IOException e) {
+                myLogger.error(e);
+            } catch (InterruptedException e) {
+                myLogger.error(e);
+            }
+            counter++;
+        }
+        retrieveAllImages();
+
+        BildErmitteln(0);
+    }
+
+    private void removeImage(String fileToDelete) {
+        try {
+            // TODO check what happens with .tar.gz
+            String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
+            for (String folder : allTifFolders) {
+                File[] filesInFolder = new File(myProzess.getImagesDirectory() + folder).listFiles();
+                for (File currentFile : filesInFolder) {
+                    String filename = currentFile.getName();
+                    String filenamePrefix = filename.replace(getFileExtension(filename), "");
+                    if (filenamePrefix.equals(fileToDeletePrefix)) {
+                        currentFile.delete();
+                    }
+                }
+            }
+
+            File ocr = new File(myProzess.getOcrDirectory());
+            if (ocr.exists()) {
+                File[] folder = ocr.listFiles();
+                for (File dir : folder) {
+                    if (dir.isDirectory() && dir.list().length > 0) {
+                        File[] filesInFolder = dir.listFiles();
+                        for (File currentFile : filesInFolder) {
+                            String filename = currentFile.getName();
+                            String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
+                            if (filenamePrefix.equals(fileToDeletePrefix)) {
+                                currentFile.delete();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SwapException e) {
+            myLogger.error(e);
+        } catch (DAOException e) {
+            myLogger.error(e);
+        } catch (IOException e) {
+            myLogger.error(e);
+        } catch (InterruptedException e) {
+            myLogger.error(e);
+        }
+
+    }
+
+    private static String generateFileName(int counter) {
+        String filename = "";
+        if (counter >= 10000000) {
+            filename = "" + counter;
+        } else if (counter >= 1000000) {
+            filename = "0" + counter;
+        } else if (counter >= 100000) {
+            filename = "00" + counter;
+        } else if (counter >= 10000) {
+            filename = "000" + counter;
+        } else if (counter >= 1000) {
+            filename = "0000" + counter;
+        } else if (counter >= 100) {
+            filename = "00000" + counter;
+        } else if (counter >= 10) {
+            filename = "000000" + counter;
+        } else {
+            filename = "0000000" + counter;
+        }
+        return filename;
+    }
+
+    public FileManipulation getFileManipulation() {
+        if (fileManipulation == null) {
+            fileManipulation = new FileManipulation(this);
+        }
+        return fileManipulation;
+    }
+
+    public void setFileManipulation(FileManipulation fileManipulation) {
+        this.fileManipulation = fileManipulation;
+    }
+
+    public DigitalDocument getDocument() {
+        return mydocument;
+    }
+
+    public void setDocument(DigitalDocument document) {
+        this.mydocument = document;
+    }
+
+    public static String getFileExtension(String filename) {
+        if (filename == null) {
+            return "";
+        }
+        String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
+        int afterLastBackslash = afterLastSlash.lastIndexOf('\\') + 1;
+        int dotIndex = afterLastSlash.indexOf('.', afterLastBackslash);
+        return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex);
+    }
 }
