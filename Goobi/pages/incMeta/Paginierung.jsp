@@ -177,26 +177,34 @@
 					<htm:br />
 					<htm:br />
 
-					<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}"
-						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10" >
-						<h:outputText value="#{msgs.nurDieMarkiertenSeiten}" />
-						<x:updateActionListener
-							property="#{Metadaten.paginierungAbSeiteOderMarkierung}"
-							value="2" />
-					</a4j:commandLink>
-					<htm:br style="margin-top:15px" />
-					<a4j:commandLink id="s5" action="#{Metadaten.Paginierung}"
-						style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10" >
-						<h:outputText value="#{msgs.abDerErstenMarkiertenSeite}" />
-						<x:updateActionListener
-							property="#{Metadaten.paginierungAbSeiteOderMarkierung}"
-							value="1" />
-					</a4j:commandLink>
-				</htm:td>
-			</htm:tr>
-		</htm:table>
-		<%-- ++++++++++++++++     // Paginierung festlegen      ++++++++++++++++ --%>
-			<htm:table cellpadding="3" cellspacing="0" id="pageOrder" styleClass="eingabeBoxen" style="width: 320px;margin-top:10px;">
+
+						<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=5}" title="#{msgs.seitenzaehlungrectoverso}"
+							reRender="PaginierungActionBox,myMessages,mygrid10">
+							<h:graphicImage value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.png"
+								style="margin-left:4px;margin-right:6px;vertical-align:middle" />
+							<x:updateActionListener value="5" property="#{Metadaten.paginierungSeitenProImage}" />
+						</a4j:commandLink>
+						<h:graphicImage rendered="#{Metadaten.paginierungSeitenProImage==5}" value="/newpages/images/buttons/paginierung_seite_rectoverso.png"
+							style="margin-left:4px;margin-right:6px;vertical-align:middle" title="#{msgs.seitenzaehlungrectoverso}" />
+
+						<htm:br />
+						<htm:br />
+
+						<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10">
+							<h:outputText value="#{msgs.nurDieMarkiertenSeiten}" />
+							<x:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="2" />
+						</a4j:commandLink>
+						<htm:br style="margin-top:15px" />
+						<a4j:commandLink id="s5" action="#{Metadaten.Paginierung}" style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10">
+							<h:outputText value="#{msgs.abDerErstenMarkiertenSeite}" />
+							<x:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="1" />
+						</a4j:commandLink>
+					</htm:td>
+				</htm:tr>
+			</htm:table>
+			<%-- ++++++++++++++++     // Paginierung festlegen      ++++++++++++++++ --%>
+
+			<htm:table cellpadding="3" cellspacing="0" id="pageOrder" styleClass="eingabeBoxen" style="width: 320px;margin-top:10px;" rendered="#{Metadaten.displayFileManipulation}">
 				<htm:tr>
 					<htm:td styleClass="eingabeBoxen_row1">
 						<h:outputText value="#{msgs.pageOrder}" />

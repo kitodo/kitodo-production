@@ -3019,4 +3019,10 @@ public class Metadaten {
         int dotIndex = afterLastSlash.indexOf('.', afterLastBackslash);
         return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex);
     }
+
+    
+    public Boolean getDisplayFileManipulation() {
+        return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false); 
+    }
+    
 }
