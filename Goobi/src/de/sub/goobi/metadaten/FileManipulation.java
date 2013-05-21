@@ -195,7 +195,7 @@ public class FileManipulation {
                         // set new logical no. for new and old page 
                         Metadata oldPageNo = oldPage.getAllMetadataByType(logicalPageNoType).get(0);
                         mdTemp.setValue(oldPageNo.getValue());
-                        if (index < pageList.size()) {
+                        if (index + 1 < pageList.size()) {
                             Metadata pageNoOfFollowingElement = pageList.get(index + 1).getAllMetadataByType(logicalPageNoType).get(0);
                             oldPageNo.setValue(pageNoOfFollowingElement.getValue());
                         } else {
@@ -584,33 +584,33 @@ public class FileManipulation {
                         }
                     }
                 }
-            }
-        }
-        // update pagination
-        try {
-            if (insertPage.equals(Helper.getTranslation("lastPage"))) {
-                metadataBean.createPagination();
-            } else {
-                int indexToImport = Integer.parseInt(insertPage);
-                for (String filename : importedFilenames) {
-                    updatePagination(filename);
-                    insertPage = String.valueOf(++indexToImport);
+
+                // update pagination
+                try {
+                    if (insertPage.equals(Helper.getTranslation("lastPage"))) {
+                        metadataBean.createPagination();
+                    } else {
+                        int indexToImport = Integer.parseInt(insertPage);
+                        for (String filename : importedFilenames) {
+                            updatePagination(filename);
+                            insertPage = String.valueOf(++indexToImport);
+                        }
+                    }
+                } catch (TypeNotAllowedForParentException e) {
+                    logger.error(e);
+                } catch (SwapException e) {
+                    logger.error(e);
+                } catch (DAOException e) {
+                    logger.error(e);
+                } catch (MetadataTypeNotAllowedException e) {
+                    logger.error(e);
+                } catch (IOException e) {
+                    logger.error(e);
+                } catch (InterruptedException e) {
+                    logger.error(e);
                 }
             }
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-        } catch (SwapException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
-            logger.error(e);
         }
-
         // delete folder
 
         for (String importName : selectedFiles) {
