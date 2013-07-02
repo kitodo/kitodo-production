@@ -25,7 +25,6 @@ package de.unigoettingen.sub.search.opac;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -445,7 +444,7 @@ public class GetOpac {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
 		return retrieveDataFromOPAC(DATABASE_URL + cat.getDataBase() + PICAPLUS_XML_URL + data_character_encoding + SET_ID_URL
-				+ lastOpacResult.getSet() + SESSIONID_URL + URLEncoder.encode(lastOpacResult.getSessionId(), URL_CHARACTER_ENCODING)
+				+ lastOpacResult.getSet() + SESSIONID_URL + lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber);
 	}
 
