@@ -30,7 +30,6 @@ package de.unigoettingen.sub.search.opac;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -450,7 +449,7 @@ public class GetOpac {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
 		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.data_character_encoding + SET_ID_URL
-				+ this.lastOpacResult.getSet() + SESSIONID_URL + URLEncoder.encode(this.lastOpacResult.getSessionId(), URL_CHARACTER_ENCODING)
+				+ this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber);
 	}
 
