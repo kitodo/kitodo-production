@@ -23,6 +23,8 @@
 package de.unigoettingen.sub.search.opac;
 
 import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -123,12 +125,15 @@ public class OpacResponseHandler extends DefaultHandler {
 	}
 
 
-	public String getSessionId() {
+	public String getSessionId() throws UnsupportedEncodingException {
 		//TODO HACK
+		String sessionIdUrlencoded = URLEncoder.encode(sessionId, GetOpac.URL_CHARACTER_ENCODING);
+
 		if (!cookie.equals("")){
-			return sessionId + "/COOKIE=" + cookie;
+			sessionIdUrlencoded = sessionIdUrlencoded + "/COOKIE=" + URLEncoder.encode(cookie, GetOpac.URL_CHARACTER_ENCODING);
 		}
-		return sessionId;
+
+		return sessionIdUrlencoded;
 	}
 
 
