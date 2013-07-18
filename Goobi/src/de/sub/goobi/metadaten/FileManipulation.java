@@ -106,7 +106,7 @@ public class FileManipulation {
 
             if (new File(filename).exists()) {
                 List<String> parameterList = new ArrayList<String>();
-                parameterList.add(filename);
+                parameterList.add(basename);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
             }

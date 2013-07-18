@@ -16,7 +16,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.fileUpload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.fileUpload}" />
@@ -39,15 +39,17 @@
 						<f:selectItems value="#{Metadaten.alleSeiten}" />
 						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="#{msgs.lastPage}" />
 					</h:selectOneMenu>
-
+	                
+	                <h:outputText value="#{msgs.newFileName}" />
+                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}"  style="width:220px"/>
+					
 					<h:outputText value="#{msgs.paginierung}:" />
 					<h:selectOneRadio value="#{Metadaten.fileManipulation.insertMode}">
 						<f:selectItem itemValue="uncounted" itemLabel="#{msgs.insertAsUncounted}" />
 						<f:selectItem itemValue="insertIntoPagination" itemLabel="#{msgs.insertIntoPagination}" />
 					</h:selectOneRadio>
 					
-					<h:outputText value="#{msgs.newFileName}" />
-                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}"  style="width:220px"/>
+				
 				</h:panelGrid>
 			</htm:td>
 		</htm:tr>
@@ -66,7 +68,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.fileDownload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.fileDownload}" />
@@ -102,7 +104,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.serversideUpload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.serversideUpload}" />
@@ -135,7 +137,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.serversideDownload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.serversideDownload}" />
