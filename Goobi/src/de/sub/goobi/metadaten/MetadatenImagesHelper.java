@@ -164,27 +164,32 @@ public class MetadatenImagesHelper {
         Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<DocStruct>();
         List<String> imagesWithoutPageElements = new ArrayList<String>();
-        for (DocStruct page : physicaldocstruct.getAllChildren()) {
-            if (page.getImageName() != null) {
-                File imageFile = null;
-                if (directory == null) {
-                    imageFile = new File(inProzess.getImagesTifDirectory(true), page.getImageName());
-                } else {
-                    imageFile = new File(inProzess.getImagesDirectory() + directory, page.getImageName());
-                }
-                if (imageFile.exists()) {
-                    assignedImages.put(page.getImageName(), page);
-                } else {
-                    try {
-                        page.removeContentFile(page.getAllContentFiles().get(0));
-                        pageElementsWithoutImages.add(page);
-                    } catch (ContentFileNotLinkedException e) {
-                        logger.error(e);
+
+        if (physicaldocstruct.getAllChildren() != null && !physicaldocstruct.getAllChildren().isEmpty()) {
+            for (DocStruct page : physicaldocstruct.getAllChildren()) {
+                if (page.getImageName() != null) {
+                    File imageFile = null;
+                    if (directory == null) {
+                        imageFile = new File(inProzess.getImagesTifDirectory(true), page.getImageName());
+                    } else {
+                        imageFile = new File(inProzess.getImagesDirectory() + directory, page.getImageName());
                     }
+                    if (imageFile.exists()) {
+                        assignedImages.put(page.getImageName(), page);
+                    } else {
+                        try {
+                            page.removeContentFile(page.getAllContentFiles().get(0));
+                            pageElementsWithoutImages.add(page);
+                        } catch (ContentFileNotLinkedException e) {
+                            logger.error(e);
+                        }
+                    }
+                } else {
+                    pageElementsWithoutImages.add(page);
+
                 }
-            } else {
-                pageElementsWithoutImages.add(page);
             }
+
         }
         try {
             List<String> imageNamesInMediaFolder = getDataFiles(inProzess);
