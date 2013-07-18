@@ -60,14 +60,14 @@ public class TimeUnitTest{
 
 	}
 
-	@Test
-	public final void testGetTitle() {
-		assertEquals("days",TimeUnit.days.getTitle());
-		assertEquals("weeks",TimeUnit.weeks.getTitle());
-		assertEquals("months",TimeUnit.months.getTitle());
-		assertEquals("quarters",TimeUnit.quarters.getTitle());
-		assertEquals("years",TimeUnit.years.getTitle());
-	}
+//	@Test
+//	public final void testGetTitle() {
+//		assertEquals("days",TimeUnit.days.getTitle());
+//		assertEquals("weeks",TimeUnit.weeks.getTitle());
+//		assertEquals("months",TimeUnit.months.getTitle());
+//		assertEquals("quarters",TimeUnit.quarters.getTitle());
+//		assertEquals("years",TimeUnit.years.getTitle());
+//	}
 
 	@Test
 	public final void testGetById() {
