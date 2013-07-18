@@ -45,7 +45,9 @@
 						<f:selectItem itemValue="uncounted" itemLabel="#{msgs.insertAsUncounted}" />
 						<f:selectItem itemValue="insertIntoPagination" itemLabel="#{msgs.insertIntoPagination}" />
 					</h:selectOneRadio>
-
+					
+					<h:outputText value="#{msgs.newFileName}" />
+                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}" />
 				</h:panelGrid>
 			</htm:td>
 		</htm:tr>

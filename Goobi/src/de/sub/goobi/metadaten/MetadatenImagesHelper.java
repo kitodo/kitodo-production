@@ -332,16 +332,18 @@ public class MetadatenImagesHelper {
         int currentPhysicalOrder = 1;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-            for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
-                List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
-                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+            if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
+                for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
+                    List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+                    if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                        currentPhysicalOrder++;
+                        break;
+                    }
+                    for (Metadata pageNo : pageNoMetadata) {
+                        pageNo.setValue(String.valueOf(currentPhysicalOrder));
+                    }
                     currentPhysicalOrder++;
-                    break;
                 }
-                for (Metadata pageNo : pageNoMetadata) {
-                    pageNo.setValue(String.valueOf(currentPhysicalOrder));
-                }
-                currentPhysicalOrder++;
             }
         }
     }
