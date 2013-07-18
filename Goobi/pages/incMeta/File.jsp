@@ -47,7 +47,7 @@
 					</h:selectOneRadio>
 					
 					<h:outputText value="#{msgs.newFileName}" />
-                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}" />
+                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}"  style="width:220px"/>
 				</h:panelGrid>
 			</htm:td>
 		</htm:tr>
