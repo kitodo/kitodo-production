@@ -1609,7 +1609,22 @@ public class Metadaten {
 	        //          myLogger.error("Images could not be read", e);
 	        //          Helper.setFehlerMeldung("images could not be read", e);
 	        //      }
-
+	        if (dataList == null || dataList.isEmpty()) {
+	            try {
+	                createPagination();
+	                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+	            } catch (TypeNotAllowedForParentException e) {
+	                myLogger.error(e);
+	            } catch (SwapException e) {
+	                myLogger.error(e);
+	            } catch (DAOException e) {
+	                myLogger.error(e);
+	            } catch (IOException e) {
+	                myLogger.error(e);
+	            } catch (InterruptedException e) {
+	                myLogger.error(e);
+	            }
+	        }
 	        if (dataList != null && dataList.size() > 0) {
 	            myLogger.trace("dataList not null");
 	            this.myBildLetztes = dataList.size();
