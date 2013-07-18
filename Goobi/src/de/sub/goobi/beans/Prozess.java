@@ -283,22 +283,22 @@ public class Prozess implements Serializable {
 			}
 		}
 		
-		if (!tifOrdner.equals("") && useFallBack) {
-			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
-			if (!suffix.equals("")) {
-				File tif = new File(tifOrdner);
-				String[] files = tif.list();
-				if (files == null || files.length == 0) {
-					String[] folderList = dir.list();
-					for (String folder : folderList) {
-						if (folder.endsWith(suffix)) {
-							tifOrdner = folder;
-							break;
-						}
-					}
-				}
-			}
-		}
+		 if (!tifOrdner.equals("") && useFallBack) {
+	            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+	            if (!suffix.equals("")) {
+	                File tif = new File(tifOrdner);
+	                String[] files = tif.list();
+	                if (files == null || files.length == 0) {
+	                    String[] folderList = dir.list();
+	                    for (String folder : folderList) {
+	                        if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
+	                            tifOrdner = folder;
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
+	        }
 		
 		if (tifOrdner.equals("")) {
 			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
