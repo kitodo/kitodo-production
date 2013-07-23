@@ -80,7 +80,7 @@ $ curl -H 'Accept: application/xml' http://localhost:8080/goobi/rest/processes
 Note that the amount of data returned can be very big depending on the number of
 processes in your system. The output appears to be more performant.
 
-### /processes/<Identifier>
+### /processes/\<Identifier\>
 Get XML formatted information about a single process:
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -89,11 +89,12 @@ Get XML formatted information about a single process:
         <title>An das Königliche Ministerium des Innern, Abteilung für Ackerbau, Gewerbe und Handel zu Dresden</title>
     </goobiProcess>
 
-### /process/<Identifier>/steps
-Get XML formatted information about the steps of a process and their current state.
+### /process/\<Identifier\>/steps
+Get XML formatted information about the steps of a specific process and their current state.
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <goobiProcessSteps> <goobiProcessStep>
+    <goobiProcessSteps>
+        <goobiProcessStep>
             <sequence>1</sequence>
             <state>3</state>
             <title>Anlegen eines Vorganges</title>
