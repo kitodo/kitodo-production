@@ -50,15 +50,17 @@ request to /rest/processes:
 $ curl http://localhost:8080/goobi/rest/processes
 
     {
-        "goobiProcess": [ 
-        {
-            "identifier":"1118749846",
-            "title":"Abbildungen von Dresdens alten und neuen Pracht-Gebäuden, Volks- und Hof-Festen"
-        },
-        {
-            "identifier":"118765094",
-            "title":"Dresden mit seinen Prachtgebäuden und schönsten Umgebungen" 
-        } ]
+        "goobiProcess":
+        [ 
+            {
+                "identifier":"1118749846",
+                "title":"Abbildungen von Dresdens alten und neuen Pracht-Gebäuden, Volks- und Hof-Festen"
+            },
+            {
+                "identifier":"118765094",
+                "title":"Dresden mit seinen Prachtgebäuden und schönsten Umgebungen" 
+            }
+        ]
     }
 
 $ curl -H 'Accept: application/xml' http://localhost:8080/goobi/rest/processes
@@ -78,29 +80,48 @@ $ curl -H 'Accept: application/xml' http://localhost:8080/goobi/rest/processes
 Note that the amount of data returned can be very big depending on the number of
 processes in your system. The output appears to be more performant.
 
-### /processes/<Identifier> GET: XML formatted information about a single
+### /processes/<Identifier>
+Get XML formatted information about a single process:
 
-process <?xml version="1.0" encoding="UTF-8" standalone="yes"?> <goobiProcess>
-<identifier>319329496</identifier><title>An das Königliche Ministerium des
-Innern, Abteilung für Ackerbau, Gewerbe und Handel zu Dresden</title>
-</goobiProcess>
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <goobiProcess>
+        <identifier>319329496</identifier>
+        <title>An das Königliche Ministerium des Innern, Abteilung für Ackerbau, Gewerbe und Handel zu Dresden</title>
+    </goobiProcess>
 
-### /process/<Identifier>/steps GET: XML formatted information about the steps
+### /process/<Identifier>/steps
+Get XML formatted information about the steps of a process and their current state.
 
-of a process and their current state.  <?xml version="1.0" encoding="UTF-8"
-standalone="yes"?> <goobiProcessSteps> <goobiProcessStep>
-<sequence>1</sequence><state>3</state><title>Anlegen eines Vorganges</title>
-</goobiProcessStep> <goobiProcessStep>
-<sequence>2</sequence><state>3</state><title>Scannen</title> </goobiProcessStep>
-<goobiProcessStep> <sequence>3</sequence><state>3</state><title>Erfassen der
-Meta- und Strukturdaten</title> </goobiProcessStep> <goobiProcessStep>
-<sequence>4</sequence><state>3</state><title>Export / Import in das DMS</title>
-</goobiProcessStep> </goobiProcessSteps>
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <goobiProcessSteps> <goobiProcessStep>
+            <sequence>1</sequence>
+            <state>3</state>
+            <title>Anlegen eines Vorganges</title>
+        </goobiProcessStep>
+         <goobiProcessStep>
+            <sequence>2</sequence>
+            <state>3</state>
+            <title>Scannen</title> 
+        </goobiProcessStep>
+        <goobiProcessStep>
+             <sequence>3</sequence>
+             <state>3</state>
+             <title>Erfassen der Meta- und Strukturdaten</title>
+        </goobiProcessStep>
+         <goobiProcessStep>
+            <sequence>4</sequence>
+            <state>3</state>
+            <title>Export / Import in das DMS</title>
+        </goobiProcessStep>
+    </goobiProcessSteps>
 
-CatalogConfiguration --------------------
+CatalogConfiguration
+--------------------
 
 // TODO Add resource documentation for /rest/CatalogConfiguration.
 
-Projects --------
+Projects
+--------
 
 // TODO Add resource documentation for /rest/Projects.
+
