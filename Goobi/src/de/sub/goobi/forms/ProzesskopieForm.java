@@ -47,7 +47,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -75,7 +77,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
-
+import de.sub.goobi.importer.IOpacPlugin;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -96,12 +98,12 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.importer.ImportOpac;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class ProzesskopieForm {
@@ -115,7 +117,7 @@ public class ProzesskopieForm {
 	private String opacKatalog;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private ImportOpac myImportOpac = new ImportOpac();
+	private IOpacPlugin myImportOpac = null;
 	private ConfigOpac co;
 	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
@@ -306,11 +308,15 @@ public class ProzesskopieForm {
 		clearValues();
 		readProjectConfigs();
 		try {
+		    ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
+		    
+		    myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
+		    
 			/* den Opac abfragen und ein RDF draus bauen lassen */
-			this.myRdf = this.myImportOpac.OpacToDocStruct(this.opacSuchfeld, this.opacSuchbegriff, this.opacKatalog, this.prozessKopie
-					.getRegelsatz().getPreferences(), true);
-			if (this.myImportOpac.getOpacDocType(true) != null) {
-				this.docType = this.myImportOpac.getOpacDocType(true).getTitle();
+			this.myRdf = this.myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie
+					.getRegelsatz().getPreferences());
+			if (this.myImportOpac.getOpacDocType() != null) {
+				this.docType = this.myImportOpac.getOpacDocType().getTitle();
 			}
 			this.atstsl = this.myImportOpac.getAtstsl();
 			fillFieldsFromMetadataFile();
