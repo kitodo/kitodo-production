@@ -56,6 +56,7 @@ import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -75,7 +76,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.importer.IOpacPlugin;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;

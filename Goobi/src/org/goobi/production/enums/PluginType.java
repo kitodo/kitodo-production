@@ -28,11 +28,10 @@ package org.goobi.production.enums;
  */
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
-import de.sub.goobi.importer.IOpacPlugin;
 
 public enum PluginType {
 

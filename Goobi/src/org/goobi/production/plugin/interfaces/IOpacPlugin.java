@@ -1,6 +1,4 @@
-package de.sub.goobi.importer;
-
-import org.goobi.production.plugin.interfaces.IPlugin;
+package org.goobi.production.plugin.interfaces;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
