@@ -27,7 +27,6 @@
  */
 package org.goobi.production.flow.statistics.enums;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,15 +41,15 @@ public class StatisticsModeTest {
 		assertFalse(StatisticsMode.PRODUCTION.getIsSimple());
 	}
 
-	@Test
-	public final void testGetTitle() {
-		assertEquals("Duration of the steps", StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
-		assertEquals("Production throughput", StatisticsMode.THROUGHPUT.getTitle());
-		assertEquals("Error tracking", StatisticsMode.CORRECTIONS.getTitle());
-		assertEquals("Storage calculator", StatisticsMode.STORAGE.getTitle());
-		assertEquals("Production statistics", StatisticsMode.PRODUCTION.getTitle());
-		assertEquals("Project association", StatisticsMode.PROJECTS.getTitle());
-	}
+//	@Test
+//	public final void testGetTitle() {
+//		assertEquals("Duration of the steps", StatisticsMode.SIMPLE_RUNTIME_STEPS.getTitle());
+//		assertEquals("Production throughput", StatisticsMode.THROUGHPUT.getTitle());
+//		assertEquals("Error tracking", StatisticsMode.CORRECTIONS.getTitle());
+//		assertEquals("Storage calculator", StatisticsMode.STORAGE.getTitle());
+//		assertEquals("Production statistics", StatisticsMode.PRODUCTION.getTitle());
+//		assertEquals("Project association", StatisticsMode.PROJECTS.getTitle());
+//	}
 
 	@Test
 	public final void testGetStatisticalQuestion() {

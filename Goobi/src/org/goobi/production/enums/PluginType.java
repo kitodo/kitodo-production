@@ -28,13 +28,15 @@ package org.goobi.production.enums;
  */
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
 
-	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation", IValidatorPlugin.class), Command(4, "command", ICommandPlugin.class);
+	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation", IValidatorPlugin.class), 
+	Command(4, "command", ICommandPlugin.class), Opac(5,"opac" ,IOpacPlugin.class);
 	
 	private int id;
 	private String name;

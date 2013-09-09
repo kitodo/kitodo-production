@@ -146,6 +146,8 @@ public class GoobiScript {
             addModuleToStep(inProzesse);
         } else if (this.myParameters.get("action").equals("updateImagePath")) {
             updateImagePath(inProzesse);
+        } else if (this.myParameters.get("action").equals("updateContentFiles")) {
+            updateContentFiles(inProzesse);
         } else if (this.myParameters.get("action").equals("deleteTiffHeaderFile")) {
             deleteTiffHeaderFile(inProzesse);
         } else if (this.myParameters.get("action").equals("setRuleset")) {
@@ -185,6 +187,23 @@ public class GoobiScript {
         Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
     }
 
+    private void updateContentFiles(List<Prozess> inProzesse) {
+        for (Prozess proz : inProzesse) {
+            try {
+                Fileformat myRdf = proz.readMetadataFile();
+                myRdf.getDigitalDocument().addAllContentFiles();
+                proz.writeMetadataFile(myRdf);
+                Helper.setMeldung("goobiScriptfield", "ContentFiles updated: ", proz.getTitel());
+            } catch (ugh.exceptions.DocStructHasNoTypeException e) {
+                Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
+
+            } catch (Exception e) {
+                Helper.setFehlerMeldung("goobiScriptfield", "Error while updating content files", e);
+            }
+        }
+        Helper.setMeldung("goobiScriptfield", "", "updateContentFiles finished");
+    }
+    
     private void deleteProcess(List<Prozess> inProzesse, boolean contentOnly) {
         ProzessDAO dao = new ProzessDAO();
         for (Prozess p : inProzesse) {

@@ -41,12 +41,12 @@ public class ResultOutputTest{
 		assertEquals("3",ResultOutput.chartAndTable.getId());
 	}
 
-	@Test
-	public final void testGetTitle() {
-		assertEquals("Chart",ResultOutput.chart.getTitle());
-		assertEquals("Table",ResultOutput.table.getTitle());
-		assertEquals("Chart & table",ResultOutput.chartAndTable.getTitle());
-	}
+//	@Test
+//	public final void testGetTitle() {
+//		assertEquals("Chart",ResultOutput.chart.getTitle());
+//		assertEquals("Table",ResultOutput.table.getTitle());
+//		assertEquals("Chart & table",ResultOutput.chartAndTable.getTitle());
+//	}
 
 	@Test
 	public final void testGetById() {

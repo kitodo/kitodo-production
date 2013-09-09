@@ -42,8 +42,9 @@ public class ImportObject {
 	private String processTitle ="";
 	private Integer batchId;
 	
-	// TODO needed?
 	private String metsFilename ="";
+
+    private String importFileName = "";
 
 	// error handling
 	private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
@@ -113,5 +114,12 @@ public class ImportObject {
 		this.batchId = batchId;
 	}
 	
+    public String getImportFileName() {
+        return importFileName;
+    }
+
+    public void setImportFileName(String importFileName) {
+        this.importFileName = importFileName;
+    }
 	
 }

@@ -54,6 +54,9 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -73,7 +76,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.importer.ImportOpac;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
@@ -87,6 +89,8 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
@@ -1609,7 +1613,22 @@ public class Metadaten {
 	        //          myLogger.error("Images could not be read", e);
 	        //          Helper.setFehlerMeldung("images could not be read", e);
 	        //      }
-
+	        if (dataList == null || dataList.isEmpty()) {
+	            try {
+	                createPagination();
+	                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+	            } catch (TypeNotAllowedForParentException e) {
+	                myLogger.error(e);
+	            } catch (SwapException e) {
+	                myLogger.error(e);
+	            } catch (DAOException e) {
+	                myLogger.error(e);
+	            } catch (IOException e) {
+	                myLogger.error(e);
+	            } catch (InterruptedException e) {
+	                myLogger.error(e);
+	            }
+	        }
 	        if (dataList != null && dataList.size() > 0) {
 	            myLogger.trace("dataList not null");
 	            this.myBildLetztes = dataList.size();
@@ -1848,12 +1867,14 @@ public class Metadaten {
 	 * ================================================================
 	 */
 	public String AddAdditionalOpacPpns() {
-		ImportOpac iopac = new ImportOpac();
 		StringTokenizer tokenizer = new StringTokenizer(this.additionalOpacPpns, "\r\n");
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = iopac.OpacToDocStruct(this.opacSuchfeld, tok, this.opacKatalog, this.myPrefs, false);
+                ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
+                IOpacPlugin iopac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
+
+                Fileformat addrdf = iopac.search(this.opacSuchfeld, tok, coc, this.myPrefs);
 				if (addrdf != null) {
 					this.myDocStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
 					MetadatenalsTree3Einlesen1();
@@ -1871,12 +1892,13 @@ public class Metadaten {
 	 * ================================================================
 	 */
 	public String AddMetadaFromOpacPpn() {
-		ImportOpac iopac = new ImportOpac();
 		StringTokenizer tokenizer = new StringTokenizer(this.additionalOpacPpns, "\r\n");
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = iopac.OpacToDocStruct(this.opacSuchfeld, tok, this.opacKatalog, this.myPrefs, false);
+                ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
+                IOpacPlugin iopac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
+                Fileformat addrdf = iopac.search(this.opacSuchfeld, tok, coc, this.myPrefs);
 				if (addrdf != null) {
 
 					/* die Liste aller erlaubten Metadatenelemente erstellen */

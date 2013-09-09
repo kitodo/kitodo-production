@@ -16,7 +16,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.fileUpload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.fileUpload}" />
@@ -34,18 +34,22 @@
 						<si:selectItems value="#{Metadaten.allTifFolders}"  var="folder" itemLabel="#{folder}" itemValue="#{folder}" />
 					</h:selectOneMenu>
 
-					<h:outputLabel value="#{msgs.position}:" for="paginationSelection" />
-					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection" style="width:220px">
+					<h:outputLabel value="#{msgs.position}:" for="paginationSelection" rendered="#{Metadaten.alleSeiten != null}" />
+					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection" style="width:220px" rendered="#{Metadaten.alleSeiten != null}">
 						<f:selectItems value="#{Metadaten.alleSeiten}" />
 						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="#{msgs.lastPage}" />
 					</h:selectOneMenu>
-
-					<h:outputText value="#{msgs.paginierung}:" />
+	                
+	                <h:outputText value="#{msgs.newFileName}" />
+                    <h:inputText value="#{Metadaten.fileManipulation.uploadedFileName}"  style="width:220px"/>
+					
+					<h:outputText value="#{msgs.paginierung}:"  />
 					<h:selectOneRadio value="#{Metadaten.fileManipulation.insertMode}">
 						<f:selectItem itemValue="uncounted" itemLabel="#{msgs.insertAsUncounted}" />
 						<f:selectItem itemValue="insertIntoPagination" itemLabel="#{msgs.insertIntoPagination}" />
 					</h:selectOneRadio>
-
+					
+				
 				</h:panelGrid>
 			</htm:td>
 		</htm:tr>
@@ -60,11 +64,11 @@
 	</htm:table>
 </h:form>
 
-<h:form id="fileDownload">
+<h:form id="fileDownload" rendered="#{Metadaten.alleSeiten != null}">
 	<htm:h4>
 		<h:outputText value="#{msgs.fileDownload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.fileDownload}" />
@@ -96,11 +100,11 @@
 	</htm:table>
 </h:form>
 
-<h:form>
+<h:form rendered="#{Metadaten.alleSeiten != null}">
 	<htm:h4>
 		<h:outputText value="#{msgs.serversideUpload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.serversideUpload}" />
@@ -133,7 +137,7 @@
 	<htm:h4>
 		<h:outputText value="#{msgs.serversideDownload}" />
 	</htm:h4>
-	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 400px;">
+	<htm:table cellpadding="3" cellspacing="0" styleClass="eingabeBoxen" style="margin-bottom: 20px; width: 450px;">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.serversideDownload}" />
@@ -147,8 +151,8 @@
 						<si:selectItems itemLabel="#{folder}" itemValue="#{folder}" var="folder" value="#{Metadaten.fileManipulation.allImportFolder}" />
 					</h:selectManyListbox>
 
-					<h:outputLabel value="#{msgs.position}:" for="paginationSelection2" />
-					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection2" style="width:220px">
+					<h:outputLabel value="#{msgs.position}:" for="paginationSelection2" rendered="#{Metadaten.alleSeiten != null}" />
+					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection2" style="width:220px" rendered="#{Metadaten.alleSeiten != null}">
 						<f:selectItems value="#{Metadaten.alleSeiten}" />
 						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="#{msgs.lastPage}" />
 					</h:selectOneMenu>

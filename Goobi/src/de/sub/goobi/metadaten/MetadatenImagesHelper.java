@@ -164,27 +164,32 @@ public class MetadatenImagesHelper {
         Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<DocStruct>();
         List<String> imagesWithoutPageElements = new ArrayList<String>();
-        for (DocStruct page : physicaldocstruct.getAllChildren()) {
-            if (page.getImageName() != null) {
-                File imageFile = null;
-                if (directory == null) {
-                    imageFile = new File(inProzess.getImagesTifDirectory(true), page.getImageName());
-                } else {
-                    imageFile = new File(inProzess.getImagesDirectory() + directory, page.getImageName());
-                }
-                if (imageFile.exists()) {
-                    assignedImages.put(page.getImageName(), page);
-                } else {
-                    try {
-                        page.removeContentFile(page.getAllContentFiles().get(0));
-                        pageElementsWithoutImages.add(page);
-                    } catch (ContentFileNotLinkedException e) {
-                        logger.error(e);
+
+        if (physicaldocstruct.getAllChildren() != null && !physicaldocstruct.getAllChildren().isEmpty()) {
+            for (DocStruct page : physicaldocstruct.getAllChildren()) {
+                if (page.getImageName() != null) {
+                    File imageFile = null;
+                    if (directory == null) {
+                        imageFile = new File(inProzess.getImagesTifDirectory(true), page.getImageName());
+                    } else {
+                        imageFile = new File(inProzess.getImagesDirectory() + directory, page.getImageName());
                     }
+                    if (imageFile.exists()) {
+                        assignedImages.put(page.getImageName(), page);
+                    } else {
+                        try {
+                            page.removeContentFile(page.getAllContentFiles().get(0));
+                            pageElementsWithoutImages.add(page);
+                        } catch (ContentFileNotLinkedException e) {
+                            logger.error(e);
+                        }
+                    }
+                } else {
+                    pageElementsWithoutImages.add(page);
+
                 }
-            } else {
-                pageElementsWithoutImages.add(page);
             }
+
         }
         try {
             List<String> imageNamesInMediaFolder = getDataFiles(inProzess);
@@ -331,16 +336,20 @@ public class MetadatenImagesHelper {
         }
         int currentPhysicalOrder = 1;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
-            List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
-            if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
-                currentPhysicalOrder++;
-                break;
+        if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
+            if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
+                for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
+                    List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+                    if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                        currentPhysicalOrder++;
+                        break;
+                    }
+                    for (Metadata pageNo : pageNoMetadata) {
+                        pageNo.setValue(String.valueOf(currentPhysicalOrder));
+                    }
+                    currentPhysicalOrder++;
+                }
             }
-            for (Metadata pageNo : pageNoMetadata) {
-                pageNo.setValue(String.valueOf(currentPhysicalOrder));
-            }
-            currentPhysicalOrder++;
         }
     }
 
@@ -571,19 +580,20 @@ public class MetadatenImagesHelper {
             /* alle Dateien durchlaufen */
         }
         List<String> orderedFilenameList = new ArrayList<String>();
-            if (dataList != null && dataList.size() != 0) {
+        if (dataList != null && dataList.size() != 0) {
             List<DocStruct> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-            for (DocStruct page : pagesList) {
-                String filename = page.getImageName();
-                String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
-                for (String currentImage : dataList) {
-                    String currentImagePrefix = currentImage.replace(Metadaten.getFileExtension(currentImage), "");
-                    if (currentImagePrefix.equals(filenamePrefix)) {
-                        orderedFilenameList.add(currentImage);
-                        break;
+            if (pagesList != null) {
+                for (DocStruct page : pagesList) {
+                    String filename = page.getImageName();
+                    String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
+                    for (String currentImage : dataList) {
+                        String currentImagePrefix = currentImage.replace(Metadaten.getFileExtension(currentImage), "");
+                        if (currentImagePrefix.equals(filenamePrefix)) {
+                            orderedFilenameList.add(currentImage);
+                            break;
+                        }
                     }
                 }
-
                 //                    orderedFilenameList.add(page.getImageName());
             }
 
@@ -602,14 +612,15 @@ public class MetadatenImagesHelper {
     public List<String> getImageFiles(DocStruct physical) {
         List<String> orderedFileList = new ArrayList<String>();
         List<DocStruct> pages = physical.getAllChildren();
-        for (DocStruct page : pages) {
-            String filename = page.getImageName();
-            if (filename != null) {
-                orderedFileList.add(filename);
-            } else {
-                logger.error("cannot find image");
+        if (pages != null) {
+            for (DocStruct page : pages) {
+                String filename = page.getImageName();
+                if (filename != null) {
+                    orderedFileList.add(filename);
+                } else {
+                    logger.error("cannot find image");
+                }
             }
-
         }
         return orderedFileList;
     }

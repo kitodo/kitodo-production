@@ -40,12 +40,12 @@ public class CalculationUnitTest{
 		
 	}
 
-	@Test
-	public final void testGetTitle() {
-		assertEquals("Volumes",CalculationUnit.volumes.getTitle());
-		assertEquals("Pages",CalculationUnit.pages.getTitle());
-		assertEquals("Volumes & pages",CalculationUnit.volumesAndPages.getTitle());
-	}
+//	@Test
+//	public final void testGetTitle() {
+//		assertEquals("Volumes",CalculationUnit.volumes.getTitle());
+//		assertEquals("Pages",CalculationUnit.pages.getTitle());
+//		assertEquals("Volumes & pages",CalculationUnit.volumesAndPages.getTitle());
+//	}
 
 	@Test
 	public final void testGetById() {
