@@ -37,7 +37,9 @@
     <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
-
+    <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
+    <property name="test.report.dir" value="${build.dir}/test-reports/"/>
+    
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
     <property name="build.dist.version" value="1.10.1" />
@@ -49,15 +51,15 @@
     <property name="build.tomcat.compile.jsp" value="false"/>
     <property name="build.tomcat.dir.lib" value="${basedir}"/>
 
-    <property name="lib.dir" value="${basedir}/WEB-INF/lib"/>
+    <property name="src.dir" value="${basedir}/Goobi"/>
+    <property name="lib.dir" value="${src.dir}/WEB-INF/lib"/>
 
-    <property name="config.dir" value="${basedir}/config"/>
+    <property name="config.dir" value="${src.dir}/config"/>
     <property name="config.local.dir" value="${basedir}/config-local"/>
-    <property name="tests.src.dir" value="./test/src"/>
-    <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
-    <property name="test.report.dir" value="${build.dir}/test-reports/"/>
-    <property name="java.src.dir" value="${basedir}/src"/>
-    <property name="java.src.dubious.dir" value="${basedir}/src-dubious"/>
+    <property name="tests.src.dir" value="${src.dir}/test/src"/>
+
+    <property name="java.src.dir" value="${src.dir}/src"/>
+    <property name="java.src.dubious.dir" value="${src.dir}/src-dubious"/>
 
     <!--==================================================
         Datatype declarations
@@ -257,21 +259,23 @@
     <!-- Build of war file. -->
     <target name="war" depends="compile, copy-config">
 
-        <war destfile="${build.dist.war}" webxml="WEB-INF/web.xml">
+        <war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
 
             <classes dir="${build.classes}"/>
 
             <lib dir="${lib.dir}"/>
 
-            <fileset dir="." includes="WEB-INF/*.*, index.jsp, LICENSE"
-                     excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
+            <fileset dir="${src.dir}"
+                includes="WEB-INF/*.*, index.jsp, LICENSE"
+                excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
 
-            <zipfileset dir="pages" prefix="pages">
+            <zipfileset dir="${src.dir}/pages" prefix="pages">
                 <patternset>
                     <include name="**/*.jsp"/>
                 </patternset>
             </zipfileset>
-            <zipfileset dir="newpages" prefix="newpages">
+
+            <zipfileset dir="${src.dir}/newpages" prefix="newpages">
                 <patternset>
                     <include name="**/*.jsp"/>
                     <include name="**/*.gif"/>
@@ -280,8 +284,8 @@
                     <include name="**/*.ico"/>
                 </patternset>
             </zipfileset>
-            <zipfileset dir="css" prefix="css"/>
-        	<zipfileset dir="js" prefix="js" />
+            <zipfileset dir="${src.dir}/css" prefix="css"/>
+            <zipfileset dir="${src.dir}/js" prefix="js" />
 
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>

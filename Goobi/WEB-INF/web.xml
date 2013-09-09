@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+
+	<!--
+		* Copyright 2004 The Apache Software Foundation. * * Licensed under
+		the Apache License, Version 2.0 (the "License"); * you may not use
+		this file except in compliance with the License. * You may obtain a
+		copy of the License at * * http://www.apache.org/licenses/LICENSE-2.0
+		* * Unless required by applicable law or agreed to in writing,
+		software * distributed under the License is distributed on an "AS IS"
+		BASIS, * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+		or implied. * See the License for the specific language governing
+		permissions and * limitations under the License.
+	-->
+
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<display-name>Goobi</display-name>
+
+	<context-param>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value> /WEB-INF/metadata-editor-config.xml </param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.myfaces.ALLOW_JAVASCRIPT</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.myfaces.DETECT_JAVASCRIPT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.myfaces.PRETTY_HTML</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.apache.myfaces.CONFIG_REFRESH_PERIOD</param-name>
+		<param-value>60</param-value>
+	</context-param>
+	
+	<context-param>
+  	  <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+  	  <param-value>true</param-value>
+	</context-param>
+	
+
+	<!-- WelcomeFile Filter -->
+	<!--
+		<filter> <filter-name>WelcomeFile Filter</filter-name>
+		<filter-class>org.apache.myfaces.webapp.filter.WelcomeFileFilter</filter-class>
+		<description> Due to the manner in which the JSP / servlet lifecycle
+		functions, it is not currently possible to specify default welcome
+		files for a web application and map them to the MyFacesServlet.
+		Normally they will be mapped to the default servlet for the JSP
+		container. To offset this shortcoming, we utilize a servlet Filter
+		which examines the URI of all incoming requests. </description>
+		</filter>
+	-->
+
+	<!-- JavaScriptDetector Filter -->
+	<!--    <filter>-->
+	<!--        <filter-name>javascriptDetector</filter-name>-->
+	<!--
+		<filter-class>org.apache.myfaces.webapp.filter.JavaScriptDetectorFilter</filter-class>
+	-->
+	<!--    </filter>-->
+
+	<!-- Extensions Filter -->
+	<filter>
+		<filter-name>extensionsFilter</filter-name>
+		<filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+		<init-param>
+			<param-name>uploadMaxFileSize</param-name>
+			<param-value>100m</param-value>
+		</init-param>
+		<init-param>
+			<param-name>uploadThresholdSize</param-name>
+			<param-value>100k</param-value>
+		</init-param>
+		<!--
+			<init-param> org.apache.myfaces.component.html.util.ExtensionsFilter
+			<param-name>uploadRepositoryPath</param-name>
+			<param-value>/temp</param-value> <description>Set the path where the
+			intermediary files will be stored. </description> </init-param>
+		-->
+	</filter>
+
+	<!-- Filter Mappings -->
+
+	<!-- see MyFaces Filter above for a description -->
+	<!--
+		<filter-mapping> <filter-name>WelcomeFile Filter</filter-name>
+		<url-pattern>/*</url-pattern> </filter-mapping>
+	-->
+
+	<!--    <filter-mapping>-->
+	<!--        <filter-name>javascriptDetector</filter-name>-->
+	<!--        <url-pattern>/_javascriptDetector_</url-pattern>-->
+	<!--    </filter-mapping>-->
+
+	<!-- ##################################################-->
+	<!-- ###################     neu              #####################-->
+	<!-- ##################################################-->
+
+	<filter>
+		<filter-name>requestControlFilter</filter-name>
+		<filter-class>de.sub.goobi.helper.servletfilter.RequestControlFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>SecurityCheckFilter</filter-name>
+		<filter-class>de.sub.goobi.helper.servletfilter.SecurityCheckFilter</filter-class>
+	</filter>
+
+    <!-- 	
+    <filter>
+		<filter-name>HibernateFilter</filter-name>
+		<filter-class>de.sub.goobi.persistence.HibernateSessionConversationFilter</filter-class> 
+	</filter>
+	 -->
+	
+	<filter>
+        <filter-name>HibernateFilter</filter-name>
+        <filter-class>de.sub.goobi.helper.servletfilter.HibernateSessionFilter2</filter-class> 
+    </filter>
+    
+	<filter>
+		<filter-name>sessionCounterFilter</filter-name>
+		<filter-class>de.sub.goobi.helper.servletfilter.SessionCounterFilter</filter-class>
+	</filter>
+
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>blueSky</param-value>
+	</context-param>
+
+	<filter>
+		<display-name>RichFaces Filter</display-name>
+		<filter-name>richfaces</filter-name>
+		<filter-class>org.ajax4jsf.Filter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>richfaces</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+
+
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>/faces/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>requestControlFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>SecurityCheckFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>HibernateFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>sessionCounterFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+
+    <!-- Listener for ImageIO initialization (Tomcat workaround) -->
+	<listener>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
+	</listener>
+
+	<!--
+		xml-Rpc-Server starten <listener> <listener-class>
+		de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
+	-->
+
+	<!--
+		Listener für die Modularisierung <listener> <listener-class>
+		de.sub.goobi.Modul.ModulListener </listener-class> </listener>
+	-->
+<!-- Listener for ImageIO -->
+	<listener>
+		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+	</listener>
+
+	<!-- Listener for JobManager 
+	<listener>
+		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
+	</listener>
+	-->
+	<!--  
+	<listener>
+		<listener-class>
+			org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+	</listener>
+-->
+
+	<listener>
+		<listener-class>org.goobi.production.GoobiVersionListener</listener-class>
+	</listener>
+
+	<!-- Faces Servlet -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>Jenia internal servlet</servlet-name>
+		<servlet-class>org.jenia.faces.util.Servlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<description>
+        </description>
+		<display-name>GoobiContentServer</display-name>
+		<servlet-name>GoobiContentServer</servlet-name>
+		<servlet-class>
+			org.goobi.presentation.contentServlet.controller.GoobiContentServer</servlet-class>
+	</servlet>
+
+	<servlet>
+		<description>
+        </description>
+		<display-name>ContentServer</display-name>
+		<servlet-name>ContentServer</servlet-name>
+		<servlet-class>
+			de.unigoettingen.sub.commons.contentlib.servlet.controller.ContentServer</servlet-class>
+	</servlet>
+
+
+  <servlet>
+    <description></description>
+    <display-name>WebInterface</display-name>
+    <servlet-name>WebInterface</servlet-name>
+    <servlet-class>org.goobi.production.cli.WebInterface</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WebInterface</servlet-name>
+    <url-pattern>/wi</url-pattern>
+  </servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>Jenia internal servlet</servlet-name>
+		<url-pattern>/jenia4faces/*</url-pattern>
+	</servlet-mapping>
+	<!-- Faces Servlet Mapping -->
+
+	<!-- extension mapping -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+
+	<!-- goobiContentServer -->
+	<servlet-mapping>
+		<servlet-name>GoobiContentServer</servlet-name>
+		<url-pattern>/gcs/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ContentServer</servlet-name>
+		<url-pattern>/cs/*</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+	<!-- Welcome files -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsf</welcome-file>
+	</welcome-file-list>
+
+	<!-- Error pages -->
+	<error-page>
+		<error-code>500</error-code>
+		<location>/newpages/error.jsf</location>
+	</error-page>
+
+ 	<servlet>
+        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.goobi.webapi.resources; org.goobi.webapi.provider</param-value>
+        </init-param>
+        <!-- explanation of load-on-startup: http://stackoverflow.com/a/1298984 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+</web-app>
