@@ -627,6 +627,7 @@ public class Metadaten {
 
 	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
+	    currentRepresentativePage = "";
 		this.myPrefs = this.myProzess.getRegelsatz().getPreferences();
 		this.modusAnsicht = "Metadaten";
 		this.modusHinzufuegen = false;
