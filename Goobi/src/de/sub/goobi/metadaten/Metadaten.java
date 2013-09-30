@@ -1918,6 +1918,13 @@ public class Metadaten {
 							this.myDocStruct.addMetadata(m);
 						}
 					}
+					
+                    for (Iterator<Person> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons().iterator(); it.hasNext();) {
+                        Person m = it.next();
+                        if (erlaubte.contains(m.getType().getName())) {
+                            this.myDocStruct.addPerson(m);
+                        }
+                    }
 
 					MetadatenalsTree3Einlesen1();
 				} else {
