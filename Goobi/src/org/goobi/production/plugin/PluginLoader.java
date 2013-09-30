@@ -79,7 +79,7 @@ public class PluginLoader {
 	
 	private static PluginManagerUtil initialize(PluginType inType) {
 		PluginManager pm = PluginManagerFactory.createPluginManager();
-		String path = ConfigMain.getParameter("pluginFolder") + inType.getName() + "/";
+		String path = ConfigMain.getParameter("pluginFolder") + inType.getName() + File.separator;
 		// switch here to development path for development of special plugin
 		if (useDevelopmentPath){
 			path = developmentPath;
