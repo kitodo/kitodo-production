@@ -18,7 +18,7 @@
  * 
  */
 
-package de.intranda.goobi;
+package org.goobi.production.plugin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
