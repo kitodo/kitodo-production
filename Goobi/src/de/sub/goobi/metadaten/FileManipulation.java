@@ -618,7 +618,7 @@ public class FileManipulation {
         }
         // update pagination
         try {
-            if (insertPage.equals("lastPage")) {
+            if (insertPage == null || insertPage.isEmpty() || insertPage.equals("lastPage")) {
                 metadataBean.createPagination();
             } else {
                 int indexToImport = Integer.parseInt(insertPage);
