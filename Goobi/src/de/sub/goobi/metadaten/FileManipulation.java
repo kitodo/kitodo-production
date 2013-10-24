@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -30,7 +31,6 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-
 import de.schlichtherle.io.FileInputStream;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -538,7 +538,9 @@ public class FileManipulation {
                                 masterDirectory.mkdir();
                             }
                             File[] objectInFolder = subfolder.listFiles();
-                            for (File object : objectInFolder) {
+                            List<File> sortedList = Arrays.asList(objectInFolder);
+                            Collections.sort(sortedList);
+                           for (File object : sortedList) {
                                 FileUtils.copyFileToDirectory(object, masterDirectory);
                             }
                         } catch (SwapException e) {
@@ -559,7 +561,9 @@ public class FileManipulation {
                                 try {
                                     File directory = new File(folderName);
                                     File[] objectInFolder = subfolder.listFiles();
-                                    for (File object : objectInFolder) {
+                                    List<File> sortedList = Arrays.asList(objectInFolder);
+                                    Collections.sort(sortedList);
+                                    for (File object : sortedList) {
                                         if (currentProcess.getImagesTifDirectory(false).equals(folderName + File.separator)) {
                                             importedFilenames.add(object.getName());
                                         }
@@ -589,7 +593,9 @@ public class FileManipulation {
                         if (folderName != null) {
                             File directory = new File(folderName);
                             File[] objectInFolder = subfolder.listFiles();
-                            for (File object : objectInFolder) {
+                            List<File> sortedList = Arrays.asList(objectInFolder);
+                            Collections.sort(sortedList);
+                            for (File object : sortedList) {
                                 try {
                                     if (currentProcess.getImagesTifDirectory(false).equals(folderName + File.separator)) {
                                         importedFilenames.add(object.getName());
