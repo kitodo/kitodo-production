@@ -627,6 +627,7 @@ public class Metadaten {
 
 	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
+	    currentRepresentativePage = "";
 		this.myPrefs = this.myProzess.getRegelsatz().getPreferences();
 		this.modusAnsicht = "Metadaten";
 		this.modusHinzufuegen = false;
@@ -1917,6 +1918,13 @@ public class Metadaten {
 							this.myDocStruct.addMetadata(m);
 						}
 					}
+					
+                    for (Iterator<Person> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons().iterator(); it.hasNext();) {
+                        Person m = it.next();
+                        if (erlaubte.contains(m.getType().getName())) {
+                            this.myDocStruct.addPerson(m);
+                        }
+                    }
 
 					MetadatenalsTree3Einlesen1();
 				} else {
