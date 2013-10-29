@@ -13,9 +13,6 @@ public interface IOpacPlugin extends IPlugin {
 
     public int getHitcount();
 
- 
-    public String createAtstsl(String myTitle, String autor);
-
     public String getAtstsl();
 
     public ConfigOpacDoctype getOpacDocType();

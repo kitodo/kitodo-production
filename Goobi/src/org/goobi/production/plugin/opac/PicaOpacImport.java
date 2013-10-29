@@ -20,9 +20,7 @@
 package org.goobi.production.plugin.opac;
 
 import java.io.IOException;
-
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -45,6 +43,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
+import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.unigoettingen.sub.search.opac.Catalogue;
@@ -62,7 +61,7 @@ public class PicaOpacImport implements IOpacPlugin {
     private String gattung = "Aa";
     private String atstsl;
     ConfigOpacCatalogue coc;
-    private boolean verbose = false;
+    private final boolean verbose = false;
 
     /* (non-Javadoc)
      * @see de.sub.goobi.Import.IOpac#OpacToDocStruct(java.lang.String, java.lang.String, java.lang.String, ugh.dl.Prefs, boolean)
@@ -449,7 +448,7 @@ public class PicaOpacImport implements IOpacPlugin {
         if (autor == null || autor.equals("")) {
             autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
         }
-        this.atstsl = createAtstsl(myTitle, autor);
+		this.atstsl = ProzesskopieForm.createAtstsl(myTitle, autor);
 
         /*
          * -------------------------------- bei Zeitschriften noch ein PeriodicalVolume als Child einfügen --------------------------------
@@ -469,67 +468,6 @@ public class PicaOpacImport implements IOpacPlugin {
 
     }
 
-    /* (non-Javadoc)
-     * @see de.sub.goobi.Import.IOpac#createAtstsl(java.lang.String, java.lang.String)
-     */
-    @Override
-    public String createAtstsl(String myTitle, String autor) {
-        String myAtsTsl = "";
-        if (autor != null && !autor.equals("")) {
-            /* autor */
-            if (autor.length() > 4) {
-                myAtsTsl = autor.substring(0, 4);
-            } else {
-                myAtsTsl = autor;
-                /* titel */
-            }
-
-            if (myTitle.length() > 4) {
-                myAtsTsl += myTitle.substring(0, 4);
-            } else {
-                myAtsTsl += myTitle;
-            }
-        }
-
-        /*
-         * -------------------------------- bei Zeitschriften Tsl berechnen --------------------------------
-         */
-        // if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
-        if (autor == null || autor.equals("")) {
-            myAtsTsl = "";
-            StringTokenizer tokenizer = new StringTokenizer(myTitle);
-            int counter = 1;
-            while (tokenizer.hasMoreTokens()) {
-                String tok = tokenizer.nextToken();
-                if (counter == 1) {
-                    if (tok.length() > 4) {
-                        myAtsTsl += tok.substring(0, 4);
-                    } else {
-                        myAtsTsl += tok;
-                    }
-                }
-                if (counter == 2 || counter == 3) {
-                    if (tok.length() > 2) {
-                        myAtsTsl += tok.substring(0, 2);
-                    } else {
-                        myAtsTsl += tok;
-                    }
-                }
-                if (counter == 4) {
-                    if (tok.length() > 1) {
-                        myAtsTsl += tok.substring(0, 1);
-                    } else {
-                        myAtsTsl += tok;
-                    }
-                }
-                counter++;
-            }
-        }
-        /* im ATS-TSL die Umlaute ersetzen */
-
-        myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
-        return myAtsTsl;
-    }
 
     @SuppressWarnings("unchecked")
     private Element getElementFromChildren(Element inHit, String inTagName) {
