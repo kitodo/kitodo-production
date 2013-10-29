@@ -939,9 +939,74 @@ public class ProzesskopieForm {
 		return this.docType;
 	}
 
-	public void setDocType(String docType) {
-		this.docType = docType;
-	}
+	   public void setDocType(String docType) {
+	        this.docType = docType;
+
+	        if (myRdf != null) {
+
+	            Fileformat tmp = myRdf;
+
+	            createNewFileformat();
+	            try {
+	                if (myRdf.getDigitalDocument().getLogicalDocStruct().equals(tmp.getDigitalDocument().getLogicalDocStruct())) {
+	                    myRdf = tmp;
+	                } else {
+	                    DocStruct oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
+	                    DocStruct newLogicalDocstruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+	                    // both have no childen
+	                    if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() == null) {
+	                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+	    }
+	                    // old has a child, new has no child
+	                    else if (oldLogicalDocstruct.getAllChildren() != null && newLogicalDocstruct.getAllChildren() == null) {
+	                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+	                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct);
+	                    }
+	                    // new has a child, bot old not
+	                    else if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() != null) {
+	                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+	                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct.getAllChildren().get(0));
+	                    }
+
+	                    // both have childen
+	                    else if (oldLogicalDocstruct.getAllChildren() != null && newLogicalDocstruct.getAllChildren() != null) {
+	                        copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
+	                        copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct.getAllChildren().get(0));
+	                    }
+	                }
+	            } catch (PreferencesException e) {
+	                myLogger.error(e);
+	            }
+	            try {
+	                fillFieldsFromMetadataFile();
+	            } catch (PreferencesException e) {
+	                myLogger.error(e);
+	            }
+	        }
+
+	    }
+
+	    private void copyMetadata(DocStruct oldDocStruct, DocStruct newDocStruct) {
+	   
+	        if (oldDocStruct.getAllMetadata() != null) {
+	            for (Metadata md : oldDocStruct.getAllMetadata()) {
+	                try {
+	                    newDocStruct.addMetadata(md);
+	                } catch (MetadataTypeNotAllowedException e) {
+	                } catch (DocStructHasNoTypeException e) {
+	                }
+	            }
+	        }
+	        if (oldDocStruct.getAllPersons() != null) {
+	            for (Person p : oldDocStruct.getAllPersons()) {
+	                try {
+	                    newDocStruct.addPerson(p);
+	                } catch (MetadataTypeNotAllowedException e) {
+	                } catch (DocStructHasNoTypeException e) {
+	                }
+	            }
+	        }
+	    }
 
 	public Collection<SelectItem> getArtists() {
 		ArrayList<SelectItem> artisten = new ArrayList<SelectItem>();
