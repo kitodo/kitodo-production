@@ -650,22 +650,28 @@ public class GetOpac {
 	 * @throws IOException
 	 *             If the connection failed
 	 **********************************************************************/
-	private String retrieveDataFromOPAC(String url) throws IOException {
+    private String retrieveDataFromOPAC(String url) throws IOException {
 
-		 if (verbose){
-			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
-		 }
+        if (verbose) {
+            logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
+        }
 
-		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
+        GetMethod opacRequest = null;
+        opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + url + this.cat.getCbs());
 
-		try {
-			this.opacClient.executeMethod(opacRequest);
-			return opacRequest.getResponseBodyAsString();
-		} finally {
-			opacRequest.releaseConnection();
-		}
+        if (this.cat.getPort() == 80) {
+        } else {
+            opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
 
-	}
+        }
+        try {
+            this.opacClient.executeMethod(opacRequest);
+            return opacRequest.getResponseBodyAsString();
+        } finally {
+            opacRequest.releaseConnection();
+        }
+
+    }
 
 	public OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException, ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;").replace("&amp;lt;", "&lt;")
