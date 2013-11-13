@@ -2836,24 +2836,29 @@ public class Metadaten {
         }
 
         alleSeitenAuswahl = null;
-        myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
+        if (mydocument.getPhysicalDocStruct().getAllChildren() != null) {
+            myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
+        } else {
+            myBildLetztes = 0;
+        }
 
         allPages = mydocument.getPhysicalDocStruct().getAllChildren();
 
         int currentPhysicalOrder = 1;
-        MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
-        for (DocStruct page : allPages) {
-            List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
-            if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+        if (allPages != null) {
+            MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+            for (DocStruct page : allPages) {
+                List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                    currentPhysicalOrder++;
+                    break;
+                }
+                for (Metadata pageNo : pageNoMetadata) {
+                    pageNo.setValue(String.valueOf(currentPhysicalOrder));
+                }
                 currentPhysicalOrder++;
-                break;
             }
-            for (Metadata pageNo : pageNoMetadata) {
-                pageNo.setValue(String.valueOf(currentPhysicalOrder));
-            }
-            currentPhysicalOrder++;
         }
-
         retrieveAllImages();
 
         // current image was deleted, load first image

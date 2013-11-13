@@ -655,8 +655,14 @@ public class GetOpac {
 			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
 		 }
 
-		GetMethod opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
+        GetMethod opacRequest = null;
+        opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + url + this.cat.getCbs());
 
+        if (this.cat.getPort() == 80) {
+        } else {
+            opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
+
+        }
 		try {
 			this.opacClient.executeMethod(opacRequest);
 			return opacRequest.getResponseBodyAsString();
