@@ -42,8 +42,8 @@
     
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
-    <property name="build.dist.version" value="1.10.1" />
-    <property name="build.dist.vendor" value="intranda GmbH"/>
+    <property name="build.dist.version" value="1.10.2" />
+    <property name="build.dist.vendor" value="goobi.org"/>
     <property name="build.dist.url" value="http://repository.digiverso.com/gitweb"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
     <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
