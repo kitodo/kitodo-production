@@ -940,9 +940,9 @@ public class ProzesskopieForm {
 
     public void setDocType(String docType) {
         if (this.docType.equals(docType)) {
-            this.docType = docType;
+            return;
         } else {
-
+			this.docType = docType;
             if (myRdf != null) {
 
                 Fileformat tmp = myRdf;
@@ -1329,7 +1329,7 @@ public class ProzesskopieForm {
                     if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
                             && (myField.getWert() == null || myField.getWert().equals(""))) {
                         if (atstsl == null || atstsl.length() == 0) {
-                            atstsl = myImportOpac.createAtstsl(currentTitle, currentAuthors);
+							atstsl = createAtstsl(currentTitle, currentAuthors);
                         }
                         myField.setWert(this.atstsl);
                     }
@@ -1490,4 +1490,32 @@ public class ProzesskopieForm {
             this.prozessKopie.setWikifield(WikiFieldHelper.getWikiMessage(prozessKopie.getWikifield(), "info", message));
         }
     }
+
+	public static String createAtstsl(String title, String author) {
+		StringBuilder result = new StringBuilder(8);
+		if (author != null && author.trim().length() > 0) {
+			result.append(author.length() > 4 ? author.substring(0, 4) : author);
+			result.append(title.length() > 4 ? title.substring(0, 4) : title);
+		} else {
+			StringTokenizer titleWords = new StringTokenizer(title);
+			int wordNo = 1;
+			while (titleWords.hasMoreTokens() && wordNo < 5) {
+				String word = titleWords.nextToken();
+				switch (wordNo) {
+				case 1:
+					result.append(word.length() > 4 ? word.substring(0, 4) : word);
+					break;
+				case 2:
+				case 3:
+					result.append(word.length() > 2 ? word.substring(0, 2) : word);
+					break;
+				case 4:
+					result.append(word.length() > 1 ? word.substring(0, 1) : word);
+					break;
+				}
+				wordNo++;
+			}
+		}
+		return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
+	}
 }
