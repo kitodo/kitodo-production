@@ -215,7 +215,9 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
 
 		// shut down connection
 		try {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		} catch (JMSException e) {
 			logger.error(e);
 		}
