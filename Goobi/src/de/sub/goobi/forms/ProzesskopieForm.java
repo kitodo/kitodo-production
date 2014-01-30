@@ -940,9 +940,9 @@ public class ProzesskopieForm {
 
 	public void setDocType(String docType) {
         if (this.docType.equals(docType)) {
-		this.docType = docType;
+            return;
         } else {
-
+			this.docType = docType;
             if (myRdf != null) {
 
                 Fileformat tmp = myRdf;
@@ -966,7 +966,7 @@ public class ProzesskopieForm {
                         // new has a child, bot old not
                         else if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() != null) {
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
-                            copyMetadata(oldLogicalDocstruct, newLogicalDocstruct.getAllChildren().get(0));
+                            copyMetadata(oldLogicalDocstruct.copy(true, false), newLogicalDocstruct.getAllChildren().get(0));
                         }
 
                         // both have childen
