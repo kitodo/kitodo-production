@@ -36,6 +36,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.goobi.webapi.beans.ProjectsRootNode;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -56,18 +58,17 @@ public class Projects {
 	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
 		Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
 
+		Criteria query = Helper.getHibernateSession().createCriteria(Prozess.class);
 		@SuppressWarnings("unchecked")
-		List<Prozess> processes = (List<Prozess>) Helper.getHibernateSession().createCriteria(Prozess.class).list();
-		for (Prozess process : processes) {
-			if (process.isIstTemplate()) {
-				Projekt project = process.getProjekt();
-				Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
-				templates.add(process);
-				data.put(project, templates);
-			}
+		List<Prozess> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
+		for (Prozess processTemplate : processTemplates) {
+			Projekt project = processTemplate.getProjekt();
+			Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
+			templates.add(processTemplate);
+			data.put(project, templates);
 		}
 		List<Projekt> result = new ArrayList<Projekt>();
-		for(Projekt project : data.keySet()){
+		for (Projekt project : data.keySet()) {
 			project.template = new ArrayList<Prozess>(data.get(project));
 			result.add(project);
 		}
