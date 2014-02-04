@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
@@ -169,34 +169,16 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	protected ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
 		ProzesskopieForm result = new ProzesskopieForm();
 
-		List<Prozess> allTemplates = allTemplatesFromDatabase();
-		Prozess selectedTemplate = selectTemplateByTitle(allTemplates, templateTitle);
+		Prozess selectedTemplate = getTemplateByTitle(templateTitle);
 		result.setProzessVorlage(selectedTemplate);
 		result.Prepare();
 		return result;
 	}
 
 	/**
-	 * This method reads all Prozess objects from the hibernate.
+	 * The function getTemplateByTitle() fetches the first Prozess with
+	 * istTemplate and the given templateTitle from the database.
 	 * 
-	 * @return a List<Prozess> holding all templates
-	 */
-	protected List<Prozess> allTemplatesFromDatabase() {
-		Session hibernateSession = Helper.getHibernateSession();
-		Criteria request = hibernateSession.createCriteria(Prozess.class);
-
-		@SuppressWarnings("unchecked")
-		List<Prozess> result = (List<Prozess>) request.list();
-
-		return result;
-	}
-
-	/**
-	 * The function selectTemplateByTitle() iterates over a List of Prozess and
-	 * returns the first element whose titel equals the given templateTitle.
-	 * 
-	 * @param allTemplates
-	 *            a List<Prozess> which shall be examined
 	 * @param templateTitle
 	 *            the title of the template to be picked up
 	 * @return the template, if found
@@ -204,18 +186,19 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             is thrown, if there is no template matching the given
 	 *             templateTitle
 	 */
-	protected Prozess selectTemplateByTitle(List<Prozess> allTemplates, String templateTitle) throws IllegalArgumentException {
+	protected Prozess getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
 
-		Prozess result = null;
-		for (Prozess aTemplate : allTemplates) {
-			if (aTemplate.getTitel().equals(templateTitle)) {
-				result = aTemplate;
-				break;
-			}
-		}
-		if (result == null)
+		Criteria request = Helper.getHibernateSession().createCriteria(Prozess.class);
+		request.add(Restrictions.eq("istTemplate", Boolean.TRUE));
+		request.add(Restrictions.like("titel", templateTitle));
+
+		@SuppressWarnings("unchecked")
+		List<Prozess> response = request.list();
+
+		if (response.size() > 0)
+			return response.get(0);
+		else
 			throw new IllegalArgumentException("Bad argument: No template \"" + templateTitle + "\" available.");
-		return result;
 	}
 
 	/**
