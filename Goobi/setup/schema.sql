@@ -31,19 +31,20 @@ CREATE TABLE `benutzer` (
   `Vorname` varchar(255) DEFAULT NULL,
   `Nachname` varchar(255) DEFAULT NULL,
   `login` varchar(255) DEFAULT NULL,
+  `ldaplogin` varchar(255) DEFAULT NULL,
   `passwort` varchar(255) DEFAULT NULL,
-  `IstAktiv` bit(1) DEFAULT NULL,
+  `IstAktiv` tinyint(1) DEFAULT NULL,
   `isVisible` varchar(255) DEFAULT NULL,
   `Standort` varchar(255) DEFAULT NULL,
   `metadatensprache` varchar(255) DEFAULT NULL,
   `css` varchar(255) DEFAULT NULL,
-  `mitMassendownload` bit(1) DEFAULT NULL,
-  `confVorgangsdatumAnzeigen` bit(1) DEFAULT NULL,
+  `mitMassendownload` tinyint(1) DEFAULT NULL,
+  `confVorgangsdatumAnzeigen` tinyint(1) DEFAULT NULL,
   `Tabellengroesse` int(11) DEFAULT NULL,
   `sessiontimeout` int(11) DEFAULT NULL,
   `ldapgruppenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`BenutzerID`),
-  KEY `FK6564F1FD78EC6B0F` (`ldapgruppenID`)
+  KEY `FK6564F1FDAB2826EF` (`ldapgruppenID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -52,13 +53,13 @@ CREATE TABLE `benutzereigenschaften` (
   `benutzereigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `Wert` varchar(255) DEFAULT NULL,
-  `IstObligatorisch` bit(1) DEFAULT NULL,
+  `IstObligatorisch` tinyint(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
   `creationDate` datetime DEFAULT NULL,
   `BenutzerID` int(11) DEFAULT NULL,
   PRIMARY KEY (`benutzereigenschaftenID`),
-  KEY `FK963DAE0F8896477B` (`BenutzerID`)
+  KEY `FK963DAE0FC44F7B5B` (`BenutzerID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -76,8 +77,17 @@ CREATE TABLE `benutzergruppenmitgliedschaft` (
   `BenutzerGruppenID` int(11) NOT NULL,
   `BenutzerID` int(11) NOT NULL,
   PRIMARY KEY (`BenutzerID`,`BenutzerGruppenID`),
-  KEY `FK45CBE5781843242F` (`BenutzerGruppenID`),
-  KEY `FK45CBE5788896477B` (`BenutzerID`)
+  KEY `FK45CBE578C7DF00F` (`BenutzerGruppenID`),
+  KEY `FK45CBE578C44F7B5B` (`BenutzerID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dockets` (
+  `docketID` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `file` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`docketID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -90,7 +100,7 @@ CREATE TABLE `history` (
   `date` datetime DEFAULT NULL,
   `processID` int(11) DEFAULT NULL,
   PRIMARY KEY (`historyid`),
-  KEY `FK373FE4946640305C` (`processID`)
+  KEY `FK373FE49436A1007C` (`processID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -125,7 +135,7 @@ CREATE TABLE `metadatenkonfigurationen` (
   `MetadatenKonfigurationID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `Datei` varchar(255) DEFAULT NULL,
-  `orderMetadataByRuleset` bit(1) DEFAULT NULL,
+  `orderMetadataByRuleset` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MetadatenKonfigurationID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -137,9 +147,10 @@ CREATE TABLE `projectfilegroups` (
   `path` varchar(255) DEFAULT NULL,
   `mimetype` varchar(255) DEFAULT NULL,
   `suffix` varchar(255) DEFAULT NULL,
+  `folder` varchar(255) DEFAULT NULL,
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
-  KEY `FK51AAC229327F143A` (`ProjekteID`)
+  KEY `FK51AAC2292DFE45A` (`ProjekteID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -148,8 +159,8 @@ CREATE TABLE `projektbenutzer` (
   `BenutzerID` int(11) NOT NULL,
   `ProjekteID` int(11) NOT NULL,
   PRIMARY KEY (`BenutzerID`,`ProjekteID`),
-  KEY `FKEC749D0E327F143A` (`ProjekteID`),
-  KEY `FKEC749D0E8896477B` (`BenutzerID`)
+  KEY `FKEC749D0E2DFE45A` (`ProjekteID`),
+  KEY `FKEC749D0EC44F7B5B` (`BenutzerID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -157,13 +168,13 @@ CREATE TABLE `projektbenutzer` (
 CREATE TABLE `projekte` (
   `ProjekteID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
-  `useDmsImport` bit(1) DEFAULT NULL,
+  `useDmsImport` tinyint(1) DEFAULT NULL,
   `dmsImportTimeOut` int(11) DEFAULT NULL,
   `dmsImportRootPath` varchar(255) DEFAULT NULL,
   `dmsImportImagesPath` varchar(255) DEFAULT NULL,
   `dmsImportSuccessPath` varchar(255) DEFAULT NULL,
   `dmsImportErrorPath` varchar(255) DEFAULT NULL,
-  `dmsImportCreateProcessFolder` bit(1) DEFAULT NULL,
+  `dmsImportCreateProcessFolder` tinyint(1) DEFAULT NULL,
   `fileFormatInternal` varchar(255) DEFAULT NULL,
   `fileFormatDmsExport` varchar(255) DEFAULT NULL,
   `metsRightsOwner` varchar(255) DEFAULT NULL,
@@ -182,6 +193,7 @@ CREATE TABLE `projekte` (
   `endDate` datetime DEFAULT NULL,
   `numberOfPages` int(11) DEFAULT NULL,
   `numberOfVolumes` int(11) DEFAULT NULL,
+  `projectIsArchived` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`ProjekteID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -191,21 +203,24 @@ CREATE TABLE `prozesse` (
   `ProzesseID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `ausgabename` varchar(255) DEFAULT NULL,
-  `IstTemplate` bit(1) DEFAULT NULL,
-  `swappedOut` bit(1) DEFAULT NULL,
-  `inAuswahllisteAnzeigen` bit(1) DEFAULT NULL,
+  `IstTemplate` tinyint(1) DEFAULT NULL,
+  `swappedOut` tinyint(1) DEFAULT NULL,
+  `inAuswahllisteAnzeigen` tinyint(1) DEFAULT NULL,
   `sortHelperStatus` varchar(255) DEFAULT NULL,
   `sortHelperImages` int(11) DEFAULT NULL,
   `sortHelperArticles` int(11) DEFAULT NULL,
   `sortHelperDocstructs` int(11) DEFAULT NULL,
   `sortHelperMetadata` int(11) DEFAULT NULL,
   `erstellungsdatum` datetime DEFAULT NULL,
-  `wikifield` varchar(255) DEFAULT NULL,
+  `batchID` int(11) DEFAULT NULL,
+  `wikifield` longtext,
   `ProjekteID` int(11) DEFAULT NULL,
   `MetadatenKonfigurationID` int(11) DEFAULT NULL,
+  `docketID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProzesseID`),
-  KEY `FKC55ACC6D327F143A` (`ProjekteID`),
-  KEY `FKC55ACC6DACAFE8C7` (`MetadatenKonfigurationID`)
+  KEY `FKC55ACC6D2DFE45A` (`ProjekteID`),
+  KEY `FKC55ACC6DE81D30E7` (`MetadatenKonfigurationID`),
+  KEY `FKC55ACC6DC729A7E5` (`docketID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -213,15 +228,15 @@ CREATE TABLE `prozesse` (
 CREATE TABLE `prozesseeigenschaften` (
   `prozesseeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
-  `Wert` varchar(255) DEFAULT NULL,
-  `IstObligatorisch` bit(1) DEFAULT NULL,
+  `Wert` longtext,
+  `IstObligatorisch` tinyint(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
   `creationDate` datetime DEFAULT NULL,
   `container` int(11) DEFAULT NULL,
   `prozesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`prozesseeigenschaftenID`),
-  KEY `FK3B22499F815A56DA` (`prozesseID`)
+  KEY `FK3B22499F51BB26FA` (`prozesseID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -237,17 +252,17 @@ CREATE TABLE `schritte` (
   `BearbeitungsBeginn` datetime DEFAULT NULL,
   `BearbeitungsEnde` datetime DEFAULT NULL,
   `homeverzeichnisNutzen` smallint(6) DEFAULT NULL,
-  `typMetadaten` bit(1) DEFAULT NULL,
-  `typAutomatisch` bit(1) DEFAULT NULL,
-  `typImportFileUpload` bit(1) DEFAULT NULL,
-  `typExportRus` bit(1) DEFAULT NULL,
-  `typImagesLesen` bit(1) DEFAULT NULL,
-  `typImagesSchreiben` bit(1) DEFAULT NULL,
-  `typExportDMS` bit(1) DEFAULT NULL,
-  `typBeimAnnehmenModul` bit(1) DEFAULT NULL,
-  `typBeimAnnehmenAbschliessen` bit(1) DEFAULT NULL,
-  `typBeimAnnehmenModulUndAbschliessen` bit(1) DEFAULT NULL,
-  `typScriptStep` bit(1) DEFAULT NULL,
+  `typMetadaten` tinyint(1) DEFAULT NULL,
+  `typAutomatisch` tinyint(1) DEFAULT NULL,
+  `typImportFileUpload` tinyint(1) DEFAULT NULL,
+  `typExportRus` tinyint(1) DEFAULT NULL,
+  `typImagesLesen` tinyint(1) DEFAULT NULL,
+  `typImagesSchreiben` tinyint(1) DEFAULT NULL,
+  `typExportDMS` tinyint(1) DEFAULT NULL,
+  `typBeimAnnehmenModul` tinyint(1) DEFAULT NULL,
+  `typBeimAnnehmenAbschliessen` tinyint(1) DEFAULT NULL,
+  `typBeimAnnehmenModulUndAbschliessen` tinyint(1) DEFAULT NULL,
+  `typScriptStep` tinyint(1) DEFAULT NULL,
   `scriptName1` varchar(255) DEFAULT NULL,
   `typAutomatischScriptpfad` varchar(255) DEFAULT NULL,
   `scriptName2` varchar(255) DEFAULT NULL,
@@ -258,13 +273,16 @@ CREATE TABLE `schritte` (
   `typAutomatischScriptpfad4` varchar(255) DEFAULT NULL,
   `scriptName5` varchar(255) DEFAULT NULL,
   `typAutomatischScriptpfad5` varchar(255) DEFAULT NULL,
-  `typBeimAbschliessenVerifizieren` bit(1) DEFAULT NULL,
+  `typBeimAbschliessenVerifizieren` tinyint(1) DEFAULT NULL,
   `typModulName` varchar(255) DEFAULT NULL,
+  `batchStep` tinyint(1) DEFAULT NULL,
+  `stepPlugin` varchar(255) DEFAULT NULL,
+  `validationPlugin` varchar(255) DEFAULT NULL,
   `BearbeitungsBenutzerID` int(11) DEFAULT NULL,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`SchritteID`),
-  KEY `FKD7200736815A56DA` (`ProzesseID`),
-  KEY `FKD72007365B4F6962` (`BearbeitungsBenutzerID`)
+  KEY `FKD720073651BB26FA` (`ProzesseID`),
+  KEY `FKD720073697089D42` (`BearbeitungsBenutzerID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -273,8 +291,8 @@ CREATE TABLE `schritteberechtigtebenutzer` (
   `BenutzerID` int(11) NOT NULL,
   `schritteID` int(11) NOT NULL,
   PRIMARY KEY (`schritteID`,`BenutzerID`),
-  KEY `FK4BB889CFBB6FCB7A` (`schritteID`),
-  KEY `FK4BB889CF8896477B` (`BenutzerID`)
+  KEY `FK4BB889CF8BD09B9A` (`schritteID`),
+  KEY `FK4BB889CFC44F7B5B` (`BenutzerID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -283,8 +301,8 @@ CREATE TABLE `schritteberechtigtegruppen` (
   `BenutzerGruppenID` int(11) NOT NULL,
   `schritteID` int(11) NOT NULL,
   PRIMARY KEY (`schritteID`,`BenutzerGruppenID`),
-  KEY `FKA5A0CC81BB6FCB7A` (`schritteID`),
-  KEY `FKA5A0CC811843242F` (`BenutzerGruppenID`)
+  KEY `FKA5A0CC818BD09B9A` (`schritteID`),
+  KEY `FKA5A0CC81C7DF00F` (`BenutzerGruppenID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -293,14 +311,14 @@ CREATE TABLE `schritteeigenschaften` (
   `schritteeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `Wert` longtext,
-  `IstObligatorisch` bit(1) DEFAULT NULL,
+  `IstObligatorisch` tinyint(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
   `creationDate` datetime DEFAULT NULL,
   `container` int(11) DEFAULT NULL,
   `schritteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`schritteeigenschaftenID`),
-  KEY `FK884E9D76BB6FCB7A` (`schritteID`)
+  KEY `FK884E9D768BD09B9A` (`schritteID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -310,7 +328,7 @@ CREATE TABLE `vorlagen` (
   `Herkunft` varchar(255) DEFAULT NULL,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`VorlagenID`),
-  KEY `FK9A466882815A56DA` (`ProzesseID`)
+  KEY `FK9A46688251BB26FA` (`ProzesseID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -319,14 +337,14 @@ CREATE TABLE `vorlageneigenschaften` (
   `vorlageneigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `Wert` longtext,
-  `IstObligatorisch` bit(1) DEFAULT NULL,
+  `IstObligatorisch` tinyint(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
   `creationDate` datetime DEFAULT NULL,
   `container` int(11) DEFAULT NULL,
   `vorlagenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`vorlageneigenschaftenID`),
-  KEY `FKAA25B7AA239F423` (`vorlagenID`)
+  KEY `FKAA25B7AAD29AC443` (`vorlagenID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -335,7 +353,7 @@ CREATE TABLE `werkstuecke` (
   `WerkstueckeID` int(11) NOT NULL AUTO_INCREMENT,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`WerkstueckeID`),
-  KEY `FK98DED745815A56DA` (`ProzesseID`)
+  KEY `FK98DED74551BB26FA` (`ProzesseID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -344,13 +362,13 @@ CREATE TABLE `werkstueckeeigenschaften` (
   `werkstueckeeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
   `Titel` varchar(255) DEFAULT NULL,
   `Wert` longtext,
-  `IstObligatorisch` bit(1) DEFAULT NULL,
+  `IstObligatorisch` tinyint(1) DEFAULT NULL,
   `DatentypenID` int(11) DEFAULT NULL,
   `Auswahl` varchar(255) DEFAULT NULL,
   `creationDate` datetime DEFAULT NULL,
   `container` int(11) DEFAULT NULL,
   `werkstueckeID` int(11) DEFAULT NULL,
   PRIMARY KEY (`werkstueckeeigenschaftenID`),
-  KEY `FK7B209DC7C9900466` (`werkstueckeID`)
+  KEY `FK7B209DC7FBCBC046` (`werkstueckeID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
