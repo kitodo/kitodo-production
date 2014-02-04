@@ -43,7 +43,7 @@ public class DigitalCollections {
 			Prozess process) throws JDOMException, IOException {
 		
 		List<String> result = new ArrayList<String>();
-		String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "digitalCollections.xml";
+		String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			throw new FileNotFoundException("File not found: " + filename);
 		}
