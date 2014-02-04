@@ -45,7 +45,7 @@ CREATE TABLE `benutzer` (
   `ldapgruppenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`BenutzerID`),
   KEY `FK6564F1FDAB2826EF` (`ldapgruppenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -60,7 +60,7 @@ CREATE TABLE `benutzereigenschaften` (
   `BenutzerID` int(11) DEFAULT NULL,
   PRIMARY KEY (`benutzereigenschaftenID`),
   KEY `FK963DAE0FC44F7B5B` (`BenutzerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -69,7 +69,7 @@ CREATE TABLE `benutzergruppen` (
   `titel` varchar(255) DEFAULT NULL,
   `berechtigung` int(11) DEFAULT NULL,
   PRIMARY KEY (`BenutzergruppenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -79,7 +79,7 @@ CREATE TABLE `benutzergruppenmitgliedschaft` (
   PRIMARY KEY (`BenutzerID`,`BenutzerGruppenID`),
   KEY `FK45CBE578C7DF00F` (`BenutzerGruppenID`),
   KEY `FK45CBE578C44F7B5B` (`BenutzerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -88,7 +88,7 @@ CREATE TABLE `dockets` (
   `name` varchar(255) DEFAULT NULL,
   `file` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`docketID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -101,7 +101,7 @@ CREATE TABLE `history` (
   `processID` int(11) DEFAULT NULL,
   PRIMARY KEY (`historyid`),
   KEY `FK373FE49436A1007C` (`processID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -127,7 +127,7 @@ CREATE TABLE `ldapgruppen` (
   `sambaLogonHours` varchar(255) DEFAULT NULL,
   `sambaKickoffTime` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ldapgruppenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -137,7 +137,7 @@ CREATE TABLE `metadatenkonfigurationen` (
   `Datei` varchar(255) DEFAULT NULL,
   `orderMetadataByRuleset` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`MetadatenKonfigurationID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -151,7 +151,7 @@ CREATE TABLE `projectfilegroups` (
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
   KEY `FK51AAC2292DFE45A` (`ProjekteID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -161,7 +161,7 @@ CREATE TABLE `projektbenutzer` (
   PRIMARY KEY (`BenutzerID`,`ProjekteID`),
   KEY `FKEC749D0E2DFE45A` (`ProjekteID`),
   KEY `FKEC749D0EC44F7B5B` (`BenutzerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -195,7 +195,7 @@ CREATE TABLE `projekte` (
   `numberOfVolumes` int(11) DEFAULT NULL,
   `projectIsArchived` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`ProjekteID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -221,7 +221,7 @@ CREATE TABLE `prozesse` (
   KEY `FKC55ACC6D2DFE45A` (`ProjekteID`),
   KEY `FKC55ACC6DE81D30E7` (`MetadatenKonfigurationID`),
   KEY `FKC55ACC6DC729A7E5` (`docketID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -237,7 +237,7 @@ CREATE TABLE `prozesseeigenschaften` (
   `prozesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`prozesseeigenschaftenID`),
   KEY `FK3B22499F51BB26FA` (`prozesseID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -283,7 +283,7 @@ CREATE TABLE `schritte` (
   PRIMARY KEY (`SchritteID`),
   KEY `FKD720073651BB26FA` (`ProzesseID`),
   KEY `FKD720073697089D42` (`BearbeitungsBenutzerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -293,7 +293,7 @@ CREATE TABLE `schritteberechtigtebenutzer` (
   PRIMARY KEY (`schritteID`,`BenutzerID`),
   KEY `FK4BB889CF8BD09B9A` (`schritteID`),
   KEY `FK4BB889CFC44F7B5B` (`BenutzerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -303,7 +303,7 @@ CREATE TABLE `schritteberechtigtegruppen` (
   PRIMARY KEY (`schritteID`,`BenutzerGruppenID`),
   KEY `FKA5A0CC818BD09B9A` (`schritteID`),
   KEY `FKA5A0CC81C7DF00F` (`BenutzerGruppenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -319,7 +319,7 @@ CREATE TABLE `schritteeigenschaften` (
   `schritteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`schritteeigenschaftenID`),
   KEY `FK884E9D768BD09B9A` (`schritteID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -329,7 +329,7 @@ CREATE TABLE `vorlagen` (
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`VorlagenID`),
   KEY `FK9A46688251BB26FA` (`ProzesseID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -345,7 +345,7 @@ CREATE TABLE `vorlageneigenschaften` (
   `vorlagenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`vorlageneigenschaftenID`),
   KEY `FKAA25B7AAD29AC443` (`vorlagenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -354,7 +354,7 @@ CREATE TABLE `werkstuecke` (
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`WerkstueckeID`),
   KEY `FK98DED74551BB26FA` (`ProzesseID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -370,5 +370,5 @@ CREATE TABLE `werkstueckeeigenschaften` (
   `werkstueckeID` int(11) DEFAULT NULL,
   PRIMARY KEY (`werkstueckeeigenschaftenID`),
   KEY `FK7B209DC7FBCBC046` (`werkstueckeID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
