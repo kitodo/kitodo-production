@@ -105,9 +105,9 @@ public class ConfigMain implements Serializable {
 	}
 
 	/**
-	 * Ermitteln eines bestimmten Paramters der Konfiguration
+	 * Request selected parameter from configuration
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter as String
 	 */
 	public static String getParameter(String inParameter) {
 		try {
@@ -119,9 +119,9 @@ public class ConfigMain implements Serializable {
 	}
 
 	/**
-	 * Ermitteln eines bestimmten Paramters der Konfiguration mit Angabe eines Default-Wertes
+	 * Request selected parameter with given default value from configuration
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter as String
 	 */
 	public static String getParameter(String inParameter, String inDefaultIfNull) {
 		try {
@@ -133,27 +133,27 @@ public class ConfigMain implements Serializable {
 	}
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration, default if missing: false
+	 * Request boolean parameter from configuration, default if missing: false
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter) {
 		return getBooleanParameter(inParameter, false);
 	}
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration
+	 * Request boolean parameter from configuration
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
 		return config.getBoolean(inParameter, inDefault);
 	}
 
 	/**
-	 * Ermitteln eines long-Paramters der Konfiguration
+	 * Request long parameter from configuration
 	 * 
-	 * @return Paramter als Long
+	 * @return Parameter as Long
 	 */
 	public static long getLongParameter(String inParameter, long inDefault) {
 		return config.getLong(inParameter, inDefault);
@@ -162,7 +162,7 @@ public class ConfigMain implements Serializable {
 	/**
 	 * Request int-parameter from Configuration
 	 * 
-	 * @return Paramter as Int
+	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter) {
 		return getIntParameter(inParameter, 0);
@@ -171,7 +171,7 @@ public class ConfigMain implements Serializable {
 	/**
 	 * Request int-parameter from Configuration with default-value
 	 * 
-	 * @return Paramter as Int
+	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter, int inDefault) {
 		try {
