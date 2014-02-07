@@ -203,7 +203,7 @@
 <%-- ++++++++++++++++     // Presentation of Data      ++++++++++++++++ --%>
 
 <%-- hide statistics, if any action happens
-for old simple statistics: hide immediatly
+for old simple statistics: hide immediately
 for the new enhanced statistics: hide it only, when some data where calculated
 
 
