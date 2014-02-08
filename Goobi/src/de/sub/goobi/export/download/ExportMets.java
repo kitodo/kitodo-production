@@ -147,7 +147,7 @@ public class ExportMets {
 	/**
 	 * prepare user directory
 	 * 
-	 * @param inTargetFolder the folder to proove and maybe create it
+	 * @param inTargetFolder the folder to prove and maybe create it
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
@@ -242,8 +242,8 @@ public class ExportMets {
 		 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 		 * --------------------------------
 		 */
-		// Replace all pathes with the given VariableReplacer, also the file
-		// group pathes!
+		// Replace all paths with the given VariableReplacer, also the file
+		// group paths!
 		VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
 		Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
 

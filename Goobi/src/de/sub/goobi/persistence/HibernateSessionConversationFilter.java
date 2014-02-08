@@ -138,7 +138,7 @@ public class HibernateSessionConversationFilter implements Filter {
 				currentSession.getTransaction().commit();
 			} catch (Exception e) {
 				try {
-					log.error("error while commiting", e);
+					log.error("error while committing", e);
 					if (currentSession.getTransaction().isActive()) {
 						currentSession.getTransaction().rollback();
 						currentSession.close();

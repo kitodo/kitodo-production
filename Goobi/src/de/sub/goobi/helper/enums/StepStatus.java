@@ -109,7 +109,7 @@ public enum StepStatus {
 	}
 
 	/**
-	 * retrieve StepStatus by integer value, neccessary for database handlings,
+	 * retrieve StepStatus by integer value, necessary for database handlings,
 	 * where only integer is saved but not type safe
 	 * 
 	 * @param inValue

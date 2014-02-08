@@ -500,7 +500,7 @@ public class MetadatenImagesHelper {
     /**
      * 
      * @param myProzess current process
-     * @return sorted list with strings representing images of proces
+     * @return sorted list with strings representing images of process
      * @throws InvalidImagesException
      */
 
@@ -558,7 +558,7 @@ public class MetadatenImagesHelper {
      * 
      * @param myProzess current process
      * @param directory current folder
-     * @return sorted list with strings representing images of proces
+     * @return sorted list with strings representing images of process
      * @throws InvalidImagesException
      */
 
