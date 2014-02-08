@@ -125,7 +125,7 @@
     <!-- Check all build preconditions -->
     <target name="check-preconditions" depends="check-java-version, check-servlet-api, check-jsp-compilation"/>
 
-    <!-- Check if needed libraries are on the classpath and set apropriate properties -->
+    <!-- Check if needed libraries are on the classpath and set appropriate properties -->
     <target name="check-classpath">
         <condition property="servletapi.present">
             <available classname="javax.servlet.http.HttpServlet" classpathref="compile.classpath"/>
