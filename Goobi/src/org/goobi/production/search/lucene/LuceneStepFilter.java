@@ -34,7 +34,7 @@
 // * 
 // * all what needs to happen seems at this point to be shielding the filter
 // * string from the super class so where the filter string applies it can be send
-// * to the lucene search function instead of useing the old hibernate stuff
+// * to the lucene search function instead of using the old hibernate stuff
 // * 
 // * @author Wulf
 // * 

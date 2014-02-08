@@ -187,7 +187,7 @@ public class FilterHelper {
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the step filter in first positon.
+	 * This functions extracts the Integer from the parameters passed with the step filter in first position.
 	 * 
 	 * @param String
 	 *            parameter
@@ -200,7 +200,7 @@ public class FilterHelper {
 	}
 
 	/**
-	 * This functions extracts the Integer from the parameters passed with the step filter in last positon.
+	 * This functions extracts the Integer from the parameters passed with the step filter in last position.
 	 * 
 	 * @param String
 	 *            parameter

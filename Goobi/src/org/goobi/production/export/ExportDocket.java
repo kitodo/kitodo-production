@@ -88,9 +88,9 @@ public class ExportDocket implements IProcessDataExport {
 			Result res = new SAXResult(fop.getDefaultHandler());
 			xslfoTransformer.transform(source, res);
 		} catch (FOPException e) {
-			throw new IOException("FOPException occured", e);
+			throw new IOException("FOPException occurred", e);
 		} catch (TransformerException e) {
-			throw new IOException("TransformerException occured", e);
+			throw new IOException("TransformerException occurred", e);
 		}
 
 		// write the content to output stream
@@ -118,9 +118,9 @@ public class ExportDocket implements IProcessDataExport {
 			Result res = new SAXResult(fop.getDefaultHandler());
 			xslfoTransformer.transform(source, res);
 		} catch (FOPException e) {
-			throw new IOException("FOPException occured", e);
+			throw new IOException("FOPException occurred", e);
 		} catch (TransformerException e) {
-			throw new IOException("TransformerException occured", e);
+			throw new IOException("TransformerException occurred", e);
 		}
 
 		// write the content to output stream
