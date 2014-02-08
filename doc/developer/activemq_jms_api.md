@@ -90,7 +90,7 @@ only:
 Process Creation Service
 ------------------------
 
-Goobi.Production is equiped with a web service interface to automatically
+Goobi.Production is equipped with a web service interface to automatically
 create new processes based on a given template. This allows the digitization
 process to be initiated from outside the application, for example by assigning
 a new digital ID to a record in a library catalogue (or—at choice of the
@@ -199,7 +199,7 @@ folder are required on the classpath:
 Service to finalize steps
 -------------------------
 
-Goobi.Production is equiped with a web service interface to automatically
+Goobi.Production is equipped with a web service interface to automatically
 finalize steps. This allows external software contributing to a workflow to
 report their success from outside the application. Additionally, properties
 can be populated and a message can be added to the processes’ log (in former

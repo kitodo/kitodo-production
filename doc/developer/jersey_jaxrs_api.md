@@ -11,7 +11,7 @@ Implementation and Configuration
 The web resources belong to the org.goobi.webapi package and use standard Java
 JAX-RS API annotations to denote resource routing. Coming from different people,
 data access is implemented in different ways. The Processes resources uses a DAO
-to query Hibernate and deliver POJO Bean instances, wheras Projects and
+to query Hibernate and deliver POJO Bean instances, whereas Projects and
 CatalogConfiguration resources directly access to internal Goobi API.
 
 ### Jersey Servlet Configuration
