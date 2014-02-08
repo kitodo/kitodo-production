@@ -205,8 +205,8 @@ public class GetOpac {
 	 * @param subfield
 	 * @return
 	 ***********************************************************************/
-	public static String getDataFromPica(Element picaRecord, String field, String occurence, String subfield) {
-		return getDataFromPica(picaRecord.getElementsByTagName(PICA_FIELD), field, occurence, subfield);
+	public static String getDataFromPica(Element picaRecord, String field, String occurrence, String subfield) {
+		return getDataFromPica(picaRecord.getElementsByTagName(PICA_FIELD), field, occurrence, subfield);
 	}
 
 	/************************************************************************
@@ -217,13 +217,13 @@ public class GetOpac {
 	 * @param subfield
 	 * @return
 	 ***********************************************************************/
-	public static String getDataFromPica(NodeList picaFields, String field, String occurence, String subfield) {
+	public static String getDataFromPica(NodeList picaFields, String field, String occurrence, String subfield) {
 		String result = null;
 		for (int i = 0; i < picaFields.getLength(); i++) {
 			if ((picaFields.item(i).getNodeType() == Node.ELEMENT_NODE) && ((Element) picaFields.item(i)).hasAttribute(PICA_FIELD_NAME)
 					&& (((Element) picaFields.item(i)).getAttribute(PICA_FIELD_NAME).equals(field))
 					&& ((Element) picaFields.item(i)).hasAttribute(PICA_FIELD_OCCURENCES)
-					&& (((Element) picaFields.item(i)).getAttribute(PICA_FIELD_OCCURENCES).equals(occurence))) {
+					&& (((Element) picaFields.item(i)).getAttribute(PICA_FIELD_OCCURENCES).equals(occurrence))) {
 				NodeList values = ((Element) picaFields.item(i)).getElementsByTagName(PICA_SUBFIELD);
 				for (int j = 0; j < values.getLength(); j++) {
 					if (((Element) values.item(j)).getAttribute(PICA_SUBFIELD_NAME).equals(subfield)) {
@@ -236,7 +236,7 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Gets the formated picaplus data of the specified hits for the query in the specified field from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query in the specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
@@ -244,7 +244,7 @@ public class GetOpac {
 	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field where the query should be found.
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to 0 to return all hits.
-	 * @return returns the root node of the retrieved and formated xml.
+	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
@@ -255,7 +255,7 @@ public class GetOpac {
 	}
 
 	/************************************************************************
-	 * Gets the formated picaplus data of the specified hits for the query from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query from the OPAC.
 	 * 
 	 * @param query
 	 *            The query you are looking for.
@@ -263,7 +263,7 @@ public class GetOpac {
 	 *            The index of the first result to be returned
 	 * @param end
 	 *            The index of the first result NOT to be returned
-	 * @return returns the root node of the retrieved and formated xml.
+	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
@@ -274,7 +274,7 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Gets the formated picaplus data of the specified hits for the query in the specified field from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query in the specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
@@ -282,7 +282,7 @@ public class GetOpac {
 	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field where the query should be found.
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to 0 to return all hits.
-	 * @return returns the root node of the retrieved and formated xml.
+	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException

@@ -106,7 +106,7 @@ public class BackupFileRotation {
 	 * Set the directory to find the original files and to place the backup files.
 	 * 
 	 * @param processDataDirectory
-	 *            A platform specfic filesystem path
+	 *            A platform specific filesystem path
 	 */
 	public void setProcessDataDirectory(String processDataDirectory) {
 		this.processDataDirectory = processDataDirectory;
