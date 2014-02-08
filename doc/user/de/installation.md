@@ -6,16 +6,16 @@ Einfuehrung
 
 ### Goobi Architektur
 
-### Systemvorraussetzungen
+### Systemvoraussetzungen
 
 ### Benoetigte Dateien
 
 Installation vorbereiten
 ------------------------
 
-### Vereichnisse einrichten
+### Verzeichnisse einrichten
 
-### Tomcat Applikationserver installieren
+### Tomcat Applikationsserver installieren
 
 ### MySQL Datenbank installieren
 
