@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -58,15 +59,15 @@ public class CourseToGerman {
 	 * Days of week’s names in German.
 	 * 
 	 * <p>
-	 * Joda time’s days of week are 1-based, where 1 references monday through 7
-	 * references sunday. Therefore the “null” in first place.
+	 * Joda time’s days of week are 1-based, where 1 references Monday through 7
+	 * references Sunday. Therefore the “null” in first place.
 	 * </p>
 	 */
 	private static final String[] DAYS_OF_WEEK_NAMES = new String[] { null, "Montag", "Dienstag", "Mittwoch",
 			"Donnerstag", "Freitag", "Samstag", "Sonntag" };
 
 	/**
-	 * Month names in German.
+	 * Month’s names in German.
 	 * 
 	 * <p>
 	 * Joda time’s months are 1-based, therefore the “null” in first place.
@@ -164,8 +165,8 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The method appendIrregularities() formulates the irregularities of the
-	 * individual issues.
+	 * The function irregularitiesToString() formulates the irregularities of
+	 * the individual issues.
 	 * 
 	 * @param issues
 	 *            issues whose irregularities shall be formulated
@@ -183,38 +184,44 @@ public class CourseToGerman {
 		buffer.append("“ erschien ");
 
 		if (exclusionsSize > 0) {
-			buffer.append("nicht ");
-			Iterator<LocalDate> exclusionIterator = issue.getExclusions().iterator();
-			for (int exclusionIndex = 0; exclusionIndex < exclusionsSize; exclusionIndex++) {
-				LocalDate exclusion = exclusionIterator.next();
-				prependDayOfWeek(buffer, exclusion);
-				appendDate(buffer, exclusion);
-				if (exclusionIndex < exclusionsSize - 2)
-					buffer.append(", ");
-				if (exclusionIndex == exclusionsSize - 2)
-					buffer.append(" sowie ");
-			}
-
+			appendManyDates(buffer, issue.getExclusions(), false);
 			if (additionsSize > 0)
 				buffer.append(", dafür jedoch ");
 		}
-
-		if (additionsSize > 0) {
-			buffer.append("zusätzlich ");
-			Iterator<LocalDate> additionsIterator = issue.getAdditions().iterator();
-			for (int additionIndex = 0; additionIndex < additionsSize; additionIndex++) {
-				LocalDate addition = additionsIterator.next();
-				prependDayOfWeek(buffer, addition);
-				appendDate(buffer, addition);
-				if (additionIndex < additionsSize - 2)
-					buffer.append(", ");
-				if (additionIndex == additionsSize - 2)
-					buffer.append(" sowie ");
-			}
-		}
+		if (additionsSize > 0)
+			appendManyDates(buffer, issue.getAdditions(), true);
 		buffer.append(".");
 
 		return buffer.toString();
+	}
+
+	/**
+	 * The method innerIrregularitiesToString() converts a lot of date objects
+	 * into readable text.
+	 * 
+	 * @param buffer
+	 *            StringBuilder to write to
+	 * @param data
+	 *            Set of dates to convert to text
+	 * @param signum
+	 *            sign, i.e. true for additions, false for exclusions
+	 */
+	protected static void appendManyDates(StringBuilder buffer, Set<LocalDate> data, boolean signum) {
+		if (signum)
+			buffer.append("zusätzlich ");
+		else
+			buffer.append("nicht ");
+		int dataSize = data.size();
+		Iterator<LocalDate> exclusionIterator = data.iterator();
+		for (int exclusionIndex = 0; exclusionIndex < dataSize; exclusionIndex++) {
+			LocalDate exclusion = exclusionIterator.next();
+			prependDayOfWeek(buffer, exclusion);
+			appendDate(buffer, exclusion);
+			if (exclusionIndex < dataSize - 2)
+				buffer.append(", ");
+			if (exclusionIndex == dataSize - 2)
+				buffer.append(" sowie ");
+		}
 	}
 
 	/**
