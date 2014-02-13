@@ -44,9 +44,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+
+import de.sub.goobi.helper.DateFuncs;
 
 /**
  * The static class CourseToGerman provides a toString() method to convert a
@@ -174,12 +177,12 @@ public class CourseToGerman {
 	protected static String irregularitiesToString(Issue issue) {
 		int additionsSize = issue.getAdditions().size();
 		int exclusionsSize = issue.getExclusions().size();
-		StringBuilder buffer = new StringBuilder((int) (Math.ceil(32.763 * (additionsSize + exclusionsSize)) + 100));
+		StringBuilder buffer = new StringBuilder((int) (Math.ceil(10.907 * (additionsSize + exclusionsSize)) + 500));
 
 		if (additionsSize == 0 && exclusionsSize == 0)
 			return null;
 
-		buffer.append("\n\nDie Ausgabe „");
+		buffer.append("Die Ausgabe „");
 		buffer.append(issue.getHeading());
 		buffer.append("“ erschien ");
 
@@ -192,36 +195,87 @@ public class CourseToGerman {
 			appendManyDates(buffer, issue.getAdditions(), true);
 		buffer.append(".");
 
+		buffer.append(Integer.toString(additionsSize + exclusionsSize));
+
 		return buffer.toString();
 	}
 
 	/**
-	 * The method innerIrregularitiesToString() converts a lot of date objects
-	 * into readable text.
+	 * The method appendManyDates() converts a lot of date objects into readable
+	 * text.
 	 * 
 	 * @param buffer
 	 *            StringBuilder to write to
-	 * @param data
+	 * @param dates
 	 *            Set of dates to convert to text
 	 * @param signum
 	 *            sign, i.e. true for additions, false for exclusions
+	 * @throws NoSuchElementException
+	 *             if dates has no elements
+	 * @throws NullPointerException
+	 *             if buffer or dates is null
 	 */
-	protected static void appendManyDates(StringBuilder buffer, Set<LocalDate> data, boolean signum) {
+	protected static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
 		if (signum)
 			buffer.append("zusätzlich ");
 		else
 			buffer.append("nicht ");
-		int dataSize = data.size();
-		Iterator<LocalDate> exclusionIterator = data.iterator();
-		for (int exclusionIndex = 0; exclusionIndex < dataSize; exclusionIndex++) {
-			LocalDate exclusion = exclusionIterator.next();
-			prependDayOfWeek(buffer, exclusion);
-			appendDate(buffer, exclusion);
-			if (exclusionIndex < dataSize - 2)
-				buffer.append(", ");
-			if (exclusionIndex == dataSize - 2)
-				buffer.append(" sowie ");
-		}
+
+		TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates
+				: new TreeSet<LocalDate>(dates);
+
+		Iterator<LocalDate> datesIterator = orderedDates.iterator();
+
+		LocalDate current = datesIterator.next();
+		LocalDate next = datesIterator.hasNext() ? datesIterator.next() : null;
+		LocalDate overNext = datesIterator.hasNext() ? datesIterator.next() : null;
+		int previousYear = Integer.MIN_VALUE;
+		boolean nextInSameMonth = false;
+		boolean nextBothInSameMonth = next != null ? DateFuncs.sameMonth(current, next) : false;
+		int lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, next.getYear());
+
+		do {
+			nextInSameMonth = nextBothInSameMonth;
+			nextBothInSameMonth = DateFuncs.sameMonth(next, overNext);
+
+			if (previousYear != current.getYear())
+				buffer.append("am ");
+
+			buffer.append(current.getDayOfMonth());
+			buffer.append('.');
+
+			if (!nextInSameMonth) {
+				buffer.append(' ');
+				buffer.append(MONTH_NAMES[current.getMonthOfYear()]);
+			}
+
+			if (!DateFuncs.sameYear(current, next)) {
+				buffer.append(' ');
+				buffer.append(current.getYear());
+				if (next != null)
+					if (!DateFuncs.sameYear(next, orderedDates.last()))
+						buffer.append(", ");
+					else {
+						buffer.append(" und ebenfalls ");
+						if (!signum)
+							buffer.append("nicht ");
+					}
+				if (next != null)
+					lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, next.getYear());
+			} else if (next != null) {
+				if (nextInSameMonth && nextBothInSameMonth || !nextInSameMonth
+						&& next.getMonthOfYear() != lastMonthOfYear)
+					buffer.append(", ");
+				else
+					buffer.append(" und ");
+			}
+
+			// prepare for next iteration
+			previousYear = current.getYear();
+			current = next;
+			next = overNext;
+			overNext = datesIterator.hasNext() ? datesIterator.next() : null;
+		} while (current != null);
 	}
 
 	/**
