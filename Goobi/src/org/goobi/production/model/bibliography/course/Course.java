@@ -40,10 +40,10 @@ package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -134,8 +134,8 @@ public class Course extends ArrayList<Title> {
 	 * @return a SortedSet of IndividualIssue objects, each of them representing
 	 *         one physically appeared issue
 	 */
-	public SortedSet<IndividualIssue> getIndividualIssues() {
-		SortedSet<IndividualIssue> result = new TreeSet<IndividualIssue>();
+	public Set<IndividualIssue> getIndividualIssues() {
+		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
 		for (Title title : this) {
 			LocalDate lastAppearance = title.getLastAppearance();
 			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
