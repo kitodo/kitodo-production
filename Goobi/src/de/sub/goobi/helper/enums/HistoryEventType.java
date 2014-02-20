@@ -152,7 +152,7 @@ public enum HistoryEventType {
 	}
 
 	/**
-	 * retrieve history event type by integer value, neccessary for database handlings,
+	 * retrieve history event type by integer value, necessary for database handlings,
 	 * where only integer is saved but not type safe
 	 * 
 	 * @param inType

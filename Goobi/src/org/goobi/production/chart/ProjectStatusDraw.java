@@ -45,7 +45,7 @@ import de.intranda.commons.chart.results.DataTable;
 
 /*************************************************************************************
  * ProjectStatusDraw class creates and paints the chart depending on given parameters.
- * The value parameters are transfered as {@link ProjectStatusDataTable}-Object.
+ * The value parameters are transferred as {@link ProjectStatusDataTable}-Object.
  * Width and height have to be set as pixel values.
  * 
  * @author Karsten Köhler

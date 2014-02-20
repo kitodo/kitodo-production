@@ -739,7 +739,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occured while trying to export METS file for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung("An error occurred while trying to export METS file for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportMETS error", e);
 		}
 	}
@@ -749,7 +749,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occured while trying to export PDF file for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung("An error occurred while trying to export PDF file for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportPDF error", e);
 		}
 	}
@@ -759,7 +759,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occured while trying to export to DMS for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportDMS error", e);
 		}
 	}

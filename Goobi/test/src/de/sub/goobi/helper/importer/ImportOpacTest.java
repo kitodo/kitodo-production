@@ -32,7 +32,7 @@ import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import de.sub.goobi.helper.Helper;
 
-@Ignore("Test defintion incorrect.")
+@Ignore("Test definition incorrect.")
 public class ImportOpacTest {
    public static void main(String[] args) {
        System.out.println("class ImportOpac has been deleted.");

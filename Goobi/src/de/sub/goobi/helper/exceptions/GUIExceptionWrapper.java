@@ -148,7 +148,7 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes it inot html format for display in browsers
+	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes it into html format for display in browsers
 	 */
 	@Override
 	public String getLocalizedMessage() {

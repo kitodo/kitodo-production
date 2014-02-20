@@ -86,7 +86,7 @@ public enum StepEditType {
 	}
 
 	/**
-	 * retrieve editType by integer value, neccessary for database handlings,
+	 * retrieve editType by integer value, necessary for database handlings,
 	 * where only integer is saved but not type safe
 	 * 
 	 * @param editType

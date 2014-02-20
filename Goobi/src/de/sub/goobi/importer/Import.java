@@ -71,7 +71,7 @@ public class Import {
 			// Einlesen(prozessID.toString());
 			Einlesen();
 		} catch (Exception e) {
-			this.importFehler = "An error occured: " + e.getMessage();
+			this.importFehler = "An error occurred: " + e.getMessage();
 			myLogger.error(e);
 		}
 		myLogger.info("Import Start - ende");

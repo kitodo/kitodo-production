@@ -444,11 +444,11 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- bei nicht-Zeitschriften Ats berechnen --------------------------------
          */
         // if (!gattung.startsWith("ab") && !gattung.startsWith("ob")) {
-        String autor = getElementFieldValue(myFirstHit, "028A", "a").toLowerCase();
-        if (autor == null || autor.equals("")) {
-            autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
+        String author = getElementFieldValue(myFirstHit, "028A", "a").toLowerCase();
+        if (author == null || author.equals("")) {
+            author = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
         }
-		this.atstsl = ProzesskopieForm.createAtstsl(myTitle, autor);
+		this.atstsl = ProzesskopieForm.createAtstsl(myTitle, author);
 
         /*
          * -------------------------------- bei Zeitschriften noch ein PeriodicalVolume als Child einfügen --------------------------------

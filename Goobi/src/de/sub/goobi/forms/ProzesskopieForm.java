@@ -954,7 +954,7 @@ public class ProzesskopieForm {
                     } else {
                         DocStruct oldLogicalDocstruct = tmp.getDigitalDocument().getLogicalDocStruct();
                         DocStruct newLogicalDocstruct = myRdf.getDigitalDocument().getLogicalDocStruct();
-                        // both have no childen
+                        // both have no children
                         if (oldLogicalDocstruct.getAllChildren() == null && newLogicalDocstruct.getAllChildren() == null) {
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                         }
@@ -969,7 +969,7 @@ public class ProzesskopieForm {
                             copyMetadata(oldLogicalDocstruct.copy(true, false), newLogicalDocstruct.getAllChildren().get(0));
                         }
 
-                        // both have childen
+                        // both have children
                         else if (oldLogicalDocstruct.getAllChildren() != null && newLogicalDocstruct.getAllChildren() != null) {
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0), newLogicalDocstruct.getAllChildren().get(0));

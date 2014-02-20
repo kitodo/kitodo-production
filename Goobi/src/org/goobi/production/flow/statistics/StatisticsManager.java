@@ -169,7 +169,7 @@ public class StatisticsManager implements Serializable {
 				+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
 
 		/*
-		 * -------------------------------- calulate the statistical results and
+		 * -------------------------------- calculate the statistical results and
 		 * save it as List of DataTables (because some statistical questions
 		 * allow multiple tables and charts) --------------------------------
 		 */

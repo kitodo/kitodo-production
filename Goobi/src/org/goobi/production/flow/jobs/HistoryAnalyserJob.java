@@ -441,16 +441,16 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 					}
 
 				} catch (HibernateException e) {
-					logger.error("HibernateException occured while scheduled storage calculation", e);
+					logger.error("HibernateException occurred while scheduled storage calculation", e);
 
 				} catch (Exception e) {
-					Helper.setFehlerMeldung("An error occured while scheduled storage calculation", e);
-					logger.error("ServletException occured while scheduled storage calculation", e);
+					Helper.setFehlerMeldung("An error occurred while scheduled storage calculation", e);
+					logger.error("ServletException occurred while scheduled storage calculation", e);
 				}
 			}
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("Another Exception occured while scheduled storage calculation", e);
-			logger.error("Another Exception occured while scheduled storage calculation", e);
+			Helper.setFehlerMeldung("Another Exception occurred while scheduled storage calculation", e);
+			logger.error("Another Exception occurred while scheduled storage calculation", e);
 		}
 		logger.info("end history updating for all processes");
 	}

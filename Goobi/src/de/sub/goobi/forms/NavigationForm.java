@@ -54,7 +54,7 @@ public class NavigationForm {
 
     /**
      * 
-     * @return true if show_taskmanager in file GoobiConfig.properties is =true
+     * @return true if show_taskmanager in file goobi_config.properties is =true
      */
     public Boolean getShowTaskManager(){
     	return ConfigMain.getBooleanParameter("show_taskmanager", false);	

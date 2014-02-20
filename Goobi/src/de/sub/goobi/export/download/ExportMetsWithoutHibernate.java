@@ -144,7 +144,7 @@ public class ExportMetsWithoutHibernate {
 	 * prepare user directory
 	 * 
 	 * @param inTargetFolder
-	 *            the folder to proove and maybe create it
+	 *            the folder to prove and maybe create it
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
@@ -241,8 +241,8 @@ public class ExportMetsWithoutHibernate {
 			 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 			 * --------------------------------
 			 */
-			// Replace all pathes with the given VariableReplacer, also the file
-			// group pathes!
+			// Replace all paths with the given VariableReplacer, also the file
+			// group paths!
 			VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(), this.myPrefs, process, null);
 			List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId());
 

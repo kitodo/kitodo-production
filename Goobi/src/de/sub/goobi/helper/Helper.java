@@ -103,9 +103,9 @@ public class Helper implements Serializable, Observer {
 	public static Map<String, String> activeMQReporting = null;
 
 	/**
-	 * Ermitteln eines bestimmten Paramters des Requests
+	 * Ermitteln eines bestimmten Parameters des Requests
 	 * 
-	 * @return Paramter als String
+	 * @return Parameter als String
 	 */
 	@SuppressWarnings("rawtypes")
 	public static String getRequestParameter(String Parameter) {

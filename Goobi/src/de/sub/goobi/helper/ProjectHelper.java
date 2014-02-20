@@ -187,7 +187,7 @@ public class ProjectHelper {
 	}
 
 	/*
-	 * enum to help adressing the fields of the projections above
+	 * enum to help addressing the fields of the projections above
 	 */
 	static private enum FieldList {
 		stepName(0), stepCount(1), stepOrder(2),
