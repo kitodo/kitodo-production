@@ -102,6 +102,9 @@
 												<h:commandButton value="#{msgs.speichern}" rendered="#{ProzesskopieForm.prozessKopie.eigenschaftenSize==0}"
 													action="#{ProzesskopieForm.NeuenProzessAnlegen}">
 												</h:commandButton>
+												<h:commandButton value="#{msgs.weiter}" rendered="#{ProzesskopieForm.calendarButtonShowing}"
+													action="ShowCalendarEditor">
+												</h:commandButton>
 											</htm:td>
 										</htm:tr>
 									</htm:table>

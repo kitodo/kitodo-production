@@ -212,11 +212,13 @@ public class ConfigOpac {
             boolean periodical = this.config.getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
             boolean multiVolume = this.config.getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
             boolean containedWork = this.config.getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+				boolean newspaper = this.config.getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
             ArrayList<String> mappings = (ArrayList<String>) this.config.getList("doctypes.type(" + i
                   + ").mapping");
 
             ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType,
-                  periodical, multiVolume, containedWork, labels, mappings);
+ periodical,
+						multiVolume, containedWork, newspaper, labels, mappings);
             return cod;
          }
       }
