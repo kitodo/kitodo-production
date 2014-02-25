@@ -8,7 +8,7 @@
 			<mapping>Oa</mapping>
 		</type>
 		<type isContainedWork="false" isMultiVolume="false" isPeriodical="true" isNewspaper="true" rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
-			<label language="de">Zeitschrift</label>
+			<label language="de">Zeitschrift / Zeitung</label>
 			<label language="en">Periodical</label>
 			<mapping>Ab</mapping>
 			<mapping>Ob</mapping>
