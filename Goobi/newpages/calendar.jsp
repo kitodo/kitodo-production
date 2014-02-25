@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
+	prefix="si"%>
 <%-- 
 	This file is part of the Goobi Application - a Workflow tool for the support
 	of mass digitization.
@@ -57,26 +59,30 @@
 				}
 				return true;
 			}
-		</script>		
-		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable" align="center">
+		</script>
+		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+			align="center">
 			<%@include file="/newpages/inc/tbl_Kopf.jsp"%>
 			<htm:tr>
 				<%@include file="/newpages/inc/tbl_Navigation.jsp"%>
 				<htm:td valign="top" styleClass="layoutInhalt">
 
 					<%-- ===================== Page main box ===================== --%>
-					
+
 					<h:form id="pageform1" onkeypress="return ignoreEnterKey(event);">
-					
+
 						<%-- Bread crumbs --%>
-						
-						<h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
+
+						<h:panelGrid width="100%" columns="1"
+							styleClass="layoutInhaltKopf">
 							<h:panelGroup>
 								<h:commandLink value="#{msgs.startseite}" action="newMain" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:commandLink value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle" />
+								<h:commandLink value="#{msgs.prozessverwaltung}"
+									action="ProzessverwaltungAlle" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:commandLink value="#{msgs.einenNeuenProzessAnlegen}" action="#{ProzesskopieForm.GoToSeite1}" />
+								<h:commandLink value="#{msgs.einenNeuenProzessAnlegen}"
+									action="#{ProzesskopieForm.GoToSeite1}" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:outputText value="#{msgs.enterCourse}" />
 							</h:panelGroup>
@@ -90,12 +96,57 @@
 									</htm:h3>
 
 									<%-- Global warnings and error messages --%>
-									
-									<h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+
+									<h:messages globalOnly="true" errorClass="text_red"
+										infoClass="text_blue" showDetail="true" showSummary="true"
+										tooltip="true" />
 
 									<%-- ===================== Page main content ====================== --%>
-	
-									
+
+									<htm:div styleClass="blocksAndIssues">
+										<htm:div styleClass="titleManagement">
+
+											<%-- Select box to switch between already defined titles --%>
+											<h:selectOneListbox styleClass="titlePicker" size="7"
+												value="#{CalendarForm.titlePickerSelected}"
+												onchange="submit()">
+												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
+													var="item" itemLabel="#{item.label}"
+													itemValue="#{item.value}" />
+											</h:selectOneListbox>
+
+											<%-- Buttons to add and remove titles --%>
+											<h:commandLink value="#{msgs.addTitle}"
+												action="#{CalendarForm.addTitleClick}" />
+											<h:commandLink value="#{msgs.removeTitle}"
+												action="#{CalendarForm.removeTitleClick}" />
+										</htm:div>
+
+										<%-- Input elements for base data --%>
+										<htm:div styleClass="titleData">
+											<htm:div styleClass="keepTogether">
+												<h:outputText value="#{msgs.titleHeading}" />
+												<h:inputText value="#{CalendarForm.titleHeading}"
+													onchange="startEditBlock()" />
+											</htm:div>
+
+											<htm:div styleClass="keepTogether">
+												<h:outputText value="#{msgs.firstAppearance}" />
+												<h:inputText value="#{CalendarForm.firstAppearance}"
+													onchange="startEditBlock()" />
+											</htm:div>
+
+											<htm:div styleClass="keepTogether">
+												<h:outputText value="#{msgs.lastAppearance}" />
+												<h:inputText value="#{CalendarForm.lastAppearance}"
+													onchange="startEditBlock()" />
+											</htm:div>
+
+											<h:commandLink value="#{msgs.applyChanges}"
+												onclick="if(blockDataIsValid()){endEditBlock();submit();}" />
+										</htm:div>
+
+									</htm:div>
 
 									<%-- ===================== End page main content ====================== --%>
 
@@ -103,7 +154,7 @@
 							</htm:tr>
 						</htm:table>
 					</h:form>
-					
+
 					<%-- ===================== End page main box ===================== --%>
 
 				</htm:td>
