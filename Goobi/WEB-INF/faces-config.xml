@@ -273,7 +273,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	
+	<!-- Show calendar editor for newspapers -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>ShowCalendarEditor</from-outcome>
+			<to-view-id>/newpages/calendar.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- Aktuelle Schritte - Bearbeiten -->
 	<navigation-rule>
