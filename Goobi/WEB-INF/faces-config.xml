@@ -534,6 +534,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- Bean for Calendar -->
+	<managed-bean>
+		<managed-bean-name>CalendarForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.forms.CalendarForm </managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- Bean für Aktuelle Schritte -->
 	<managed-bean>
 		<managed-bean-name>AktuelleSchritteForm</managed-bean-name>
