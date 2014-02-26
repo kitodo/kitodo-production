@@ -446,9 +446,11 @@ public class Title {
 		StringBuilder result = new StringBuilder();
 		result.append(heading);
 		result.append(" (");
-		result.append(firstAppearance.toString());
+		if (firstAppearance != null)
+			result.append(firstAppearance.toString());
 		result.append(" - ");
-		result.append(lastAppearance.toString());
+		if (lastAppearance != null)
+			result.append(lastAppearance.toString());
 		result.append(") [");
 		boolean first = true;
 		for (Issue issue : issues) {
