@@ -50,7 +50,51 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
+		<style type="text/css">
+			.titleManagement {
+			    float: left;
+			    margin-right: 12px;
+			    max-width: 250px;
+			    width: 30%;
+			}
+			.titleManagement select {
+			    margin-bottom: 4px;
+			    width: 100%;
+			}
+			.titleManagement a {
+			    margin: 5px;
+			}
+			.titleData {
+   				float: left;
+   				width: 65%;
+   			}
+			.titleHeading {
+			    margin-bottom: 4px;
+			    max-width: 475px;
+			    width: 90%;
+			}
+			.keepTogether {
+			    display: inline-block;
+			    margin-right: 6px;
+			}
+			.keepTogether input {
+				max-width: 100px;
+			}
+		</style>
 		<script type="text/javascript">
+		<%--
+		 * The function endEditTitle() is called after successful validation of the
+		 * modified title block data when the user clicks “apply changes” to
+		 * re-enable any form elements previously disabled by startEditTitle(). This
+		 * is necessary because otherwise the browser—by specification—doesn’t
+		 * submit them, which will cause JSF to fail.
+		 * 
+		 * @return always true
+		 --%>
+			function endEditTitle() {
+				// TODO
+				return true;
+			}
 		<%--
 		 * The function startEditTitle() is called whenever the data of the title
 		 * block is being edited by the user. It disables all other form elements
@@ -66,19 +110,6 @@
 				return true;
 			}
 		<%--
-		 * The function endEditTitle() is called after successful validation of the
-		 * modified title block data when the user clicks “apply changes” to
-		 * re-enable any form elements previously disabled by startEditTitle(). This
-		 * is necessary because otherwise the browser—by specification—doesn’t
-		 * submit them, which will cause JSF to fail.
-		 * 
-		 * @return always true
-		 --%>
-			function endEditTitle() {
-				// TODO
-				return true;
-			}
-		<%--
 		 * The function titleDataIsValid() validates the title data typed in by the
 		 * user.
 		 * 
@@ -89,7 +120,21 @@
 		 * @return whether the title data is valid
 		 --%>
 			function titleDataIsValid() {
-				// TODO
+				if(!document.getElementById("form1:titleHeading").value.match(/\S/)){
+					alert("${msgs['calendar.title.heading.invalid']}");
+					document.getElementById("form1:titleHeading").focus();
+					return false;
+				}
+				if(!document.getElementById("form1:firstAppearance").value.match(/^[0-3]\d\.[01]\d.\d{4}$/)){
+					alert("${msgs['calendar.title.firstAppearance.invalid']}");
+					document.getElementById("form1:firstAppearance").focus();
+					return false;
+				}
+				if(!document.getElementById("form1:lastAppearance").value.match(/^[0-3]\d\.[01]\d.\d{4}$/)){
+					alert("${msgs['calendar.title.lastAppearance.invalid']}");
+					document.getElementById("form1:lastAppearance").focus();
+					return false;
+				}
 				return true;
 			}
 		</script>
@@ -102,7 +147,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form>
+					<h:form id="form1">
 
 						<%-- Bread crumbs --%>
 
@@ -117,7 +162,7 @@
 								<h:commandLink value="#{msgs.einenNeuenProzessAnlegen}"
 									action="#{ProzesskopieForm.GoToSeite1}" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:outputText value="#{msgs.enterCourse}" />
+								<h:outputText value="#{msgs['calendar.header']}" />
 							</h:panelGroup>
 						</h:panelGrid>
 
@@ -125,7 +170,7 @@
 							<htm:tr>
 								<htm:td>
 									<htm:h3>
-										<h:outputText value="#{msgs.enterCourse}" />
+										<h:outputText value="#{msgs['calendar.header']}" />
 									</htm:h3>
 
 									<%-- Global warnings and error messages --%>
@@ -149,34 +194,35 @@
 											</h:selectOneListbox>
 
 											<%-- Buttons to add and remove titles --%>
-											<h:commandLink value="#{msgs.addTitle}"
+											<h:commandLink value="#{msgs['calendar.title.add']}"
 												action="#{CalendarForm.addTitleClick}" />
-											<h:commandLink value="#{msgs.removeTitle}"
+											<h:commandLink value="#{msgs['calendar.title.remove']}"
 												action="#{CalendarForm.removeTitleClick}" />
 										</htm:div>
 
 										<%-- Input elements for base data --%>
 										<htm:div styleClass="titleData">
-											<htm:div styleClass="keepTogether">
-												<h:outputText value="#{msgs.titleHeading}" />
+											<htm:div>
+												<h:outputText value="#{msgs['calendar.title.heading']}" />
 												<h:inputText value="#{CalendarForm.titleHeading}"
-													onchange="startEditTitle()" />
+													onchange="startEditTitle()" id="titleHeading"
+													styleClass="titleHeading" />
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
-												<h:outputText value="#{msgs.firstAppearance}" />
+												<h:outputText value="#{msgs['calendar.title.firstAppearance']}" />
 												<h:inputText value="#{CalendarForm.firstAppearance}"
-													onchange="startEditTitle()" />
+													onchange="startEditTitle()" id="firstAppearance" />
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
-												<h:outputText value="#{msgs.lastAppearance}" />
+												<h:outputText value="#{msgs['calendar.title.lastAppearance']}" />
 												<h:inputText value="#{CalendarForm.lastAppearance}"
-													onchange="startEditTitle()" />
+													onchange="startEditTitle()" id="lastAppearance" />
 											</htm:div>
 
-											<h:commandLink value="#{msgs.applyChanges}"
-												onclick="if(titleDataIsValid()){endEditTitle()}" />
+											<h:commandLink value="#{msgs['calendar.applyChanges']}"
+												onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}" />
 										</htm:div>
 
 									</htm:div>

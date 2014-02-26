@@ -233,7 +233,7 @@ public class CalendarForm {
 	 * @return date of first appearance of currently showing title
 	 */
 	public String getFirstAppearance() {
-		if (titleShowing != null)
+		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
 			return dateConverter.print(titleShowing.getFirstAppearance());
 		else
 			return "";
@@ -270,7 +270,7 @@ public class CalendarForm {
 	 * @return date of last appearance of currently showing title
 	 */
 	public String getLastAppearance() {
-		if (titleShowing != null)
+		if (titleShowing != null && titleShowing.getLastAppearance() != null)
 			return dateConverter.print(titleShowing.getLastAppearance());
 		else
 			return "";
