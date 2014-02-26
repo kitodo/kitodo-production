@@ -165,13 +165,16 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The method addTitleClick() resets the field titleShowing which will
-	 * result in any modifications to the title data coming in later will be
-	 * stored in a new title block.
+	 * The method addTitleClick() creates a copy of the currently showing title
+	 * block.
 	 */
 	public void addTitleClick() {
-		titleShowing = null;
-		updateTitleAllowed = true;
+		Title copy = titleShowing.clone();
+		LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
+		copy.setFirstAppearance(firstAppearance);
+		copy.setLastAppearance(firstAppearance);
+		course.add(copy);
+		titleShowing = copy;
 	}
 
 	/**

@@ -51,37 +51,44 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<style type="text/css">
-			.titleManagement {
-			    float: left;
-			    margin-right: 12px;
-			    max-width: 250px;
-			    width: 30%;
-			}
-			.titleManagement select {
-			    margin-bottom: 4px;
-			    width: 100%;
-			}
-			.titleManagement a {
-			    margin: 5px;
-			}
-			.titleData {
-   				float: left;
-   				width: 65%;
-   			}
-			.titleHeading {
-			    margin-bottom: 4px;
-			    max-width: 475px;
-			    width: 90%;
-			}
-			.keepTogether {
-			    display: inline-block;
-			    margin-right: 6px;
-			}
-			.keepTogether input {
-				max-width: 100px;
-			}
-		</style>
+.titleManagement {
+	float: left;
+	margin-right: 12px;
+	max-width: 250px;
+	width: 30%;
+}
+
+.titleManagement select {
+	margin-bottom: 4px;
+	width: 100%;
+}
+
+.titleManagement a {
+	margin: 5px;
+}
+
+.titleData {
+	float: left;
+	width: 65%;
+}
+
+.titleHeading {
+	margin-bottom: 4px;
+	max-width: 475px;
+	width: 90%;
+}
+
+.keepTogether {
+	display: inline-block;
+	margin-right: 6px;
+}
+
+.keepTogether input {
+	max-width: 100px;
+}
+</style>
 		<script type="text/javascript">
+			
 		<%--
 		 * The function endEditTitle() is called after successful validation of the
 		 * modified title block data when the user clicks “apply changes” to
@@ -94,6 +101,22 @@
 			function endEditTitle() {
 				// TODO
 				return true;
+			}
+		<%--
+		 * The function removeClickQuery() checks whether a title block shall or
+		 * shall not be deleted. The user is presented with a query whether it wants
+		 * to delete the block. This is to prevent misclicks. If there is only one
+		 * block left, instead, the user is presented with an information that this
+		 * isn’t allowed.
+		 * 
+		 * @return whether a title block can be deleted
+		 --%>
+			function removeClickQuery() {
+				if (document.getElementById("form1:titlePicker").length >= 2) {
+					return confirm("${msgs['calendar.title.remove.query']}");
+				} else
+					alert("${msgs['calendar.title.remove.disabled']}");
+				return false;
 			}
 		<%--
 		 * The function startEditTitle() is called whenever the data of the title
@@ -120,17 +143,20 @@
 		 * @return whether the title data is valid
 		 --%>
 			function titleDataIsValid() {
-				if(!document.getElementById("form1:titleHeading").value.match(/\S/)){
+				if (!document.getElementById("form1:titleHeading").value
+						.match(/\S/)) {
 					alert("${msgs['calendar.title.heading.invalid']}");
 					document.getElementById("form1:titleHeading").focus();
 					return false;
 				}
-				if(!document.getElementById("form1:firstAppearance").value.match(/^[0-3]\d\.[01]\d.\d{4}$/)){
+				if (!document.getElementById("form1:firstAppearance").value
+						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
 					document.getElementById("form1:firstAppearance").focus();
 					return false;
 				}
-				if(!document.getElementById("form1:lastAppearance").value.match(/^[0-3]\d\.[01]\d.\d{4}$/)){
+				if (!document.getElementById("form1:lastAppearance").value
+						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.lastAppearance.invalid']}");
 					document.getElementById("form1:lastAppearance").focus();
 					return false;
@@ -187,7 +213,7 @@
 											<%-- Select box to switch between already defined titles --%>
 											<h:selectOneListbox styleClass="titlePicker" size="7"
 												value="#{CalendarForm.titlePickerSelected}"
-												onchange="submit()">
+												onchange="submit()" id="titlePicker">
 												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
 													var="item" itemLabel="#{item.label}"
 													itemValue="#{item.value}" />
@@ -197,7 +223,8 @@
 											<h:commandLink value="#{msgs['calendar.title.add']}"
 												action="#{CalendarForm.addTitleClick}" />
 											<h:commandLink value="#{msgs['calendar.title.remove']}"
-												action="#{CalendarForm.removeTitleClick}" />
+												action="#{CalendarForm.removeTitleClick}"
+												onclick="if(!removeClickQuery()){return false;}" />
 										</htm:div>
 
 										<%-- Input elements for base data --%>
@@ -210,13 +237,15 @@
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
-												<h:outputText value="#{msgs['calendar.title.firstAppearance']}" />
+												<h:outputText
+													value="#{msgs['calendar.title.firstAppearance']}" />
 												<h:inputText value="#{CalendarForm.firstAppearance}"
 													onchange="startEditTitle()" id="firstAppearance" />
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
-												<h:outputText value="#{msgs['calendar.title.lastAppearance']}" />
+												<h:outputText
+													value="#{msgs['calendar.title.lastAppearance']}" />
 												<h:inputText value="#{CalendarForm.lastAppearance}"
 													onchange="startEditTitle()" id="lastAppearance" />
 											</htm:div>

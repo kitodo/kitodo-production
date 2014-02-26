@@ -56,7 +56,7 @@ import org.joda.time.LocalDate;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Title {
+public class Title implements Cloneable {
 	protected String heading;
 	protected LocalDate firstAppearance;
 	protected LocalDate lastAppearance;
@@ -159,6 +159,20 @@ public class Title {
 	 */
 	public void clearIssues() {
 		issues.clear();
+	}
+
+	/**
+	 * Creates and returns a copy of this Title.
+	 * 
+	 * <p>
+	 * getIssues() creates a copy, String and LocalDate are final.
+	 * </p>
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Title clone() {
+		return new Title(heading, firstAppearance, lastAppearance, getIssues());
 	}
 
 	/**
