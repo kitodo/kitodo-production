@@ -150,6 +150,26 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * The function getLastAppearance() returns the date the regularity of this
+	 * course of appearance ends with.
+	 * 
+	 * @return the date of last appearance
+	 */
+	public LocalDate getLastAppearance() {
+		if (super.isEmpty())
+			return null;
+		else {
+			LocalDate result = super.get(0).getLastAppearance();
+			for (int index = 1; index < super.size(); index++) {
+				LocalDate lastAppearance = super.get(index).getLastAppearance();
+				if (lastAppearance.isAfter(result))
+					result = lastAppearance;
+			}
+			return result;
+		}
+	}
+
+	/**
 	 * The function toXML() transforms a course of appearance to XML.
 	 * 
 	 * @param lang
