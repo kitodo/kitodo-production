@@ -51,12 +51,45 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<script type="text/javascript">
-			function ignoreEnterKey(e) {
-				var keycode;
-				keycode = getKeyCode(e);
-				if (keycode == 13) {
-					return false;
-				}
+		<%--
+		 * The function startEditTitle() is called whenever the data of the title
+		 * block is being edited by the user. It disables all other form elements
+		 * whose contents depend on this data and need to be recomposed after it was
+		 * altered. The form elements must be re-enabled if the user clicks “apply
+		 * changes” before the form is submitted, otherwise the browser—by
+		 * specification—doesn’t submit them which will cause JSF to fail.
+		 * 
+		 * @return always true
+		 --%>
+			function startEditTitle() {
+				// TODO
+				return true;
+			}
+		<%--
+		 * The function endEditTitle() is called after successful validation of the
+		 * modified title block data when the user clicks “apply changes” to
+		 * re-enable any form elements previously disabled by startEditTitle(). This
+		 * is necessary because otherwise the browser—by specification—doesn’t
+		 * submit them, which will cause JSF to fail.
+		 * 
+		 * @return always true
+		 --%>
+			function endEditTitle() {
+				// TODO
+				return true;
+			}
+		<%--
+		 * The function titleDataIsValid() validates the title data typed in by the
+		 * user.
+		 * 
+		 * The following requirements must be met:
+		 * 		• The title must not be empty.
+		 * 		• The dates must be well-formed.
+		 * 
+		 * @return whether the title data is valid
+		 --%>
+			function titleDataIsValid() {
+				// TODO
 				return true;
 			}
 		</script>
@@ -67,9 +100,9 @@
 				<%@include file="/newpages/inc/tbl_Navigation.jsp"%>
 				<htm:td valign="top" styleClass="layoutInhalt">
 
-					<%-- ===================== Page main box ===================== --%>
+					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="pageform1" onkeypress="return ignoreEnterKey(event);">
+					<h:form>
 
 						<%-- Bread crumbs --%>
 
@@ -127,23 +160,23 @@
 											<htm:div styleClass="keepTogether">
 												<h:outputText value="#{msgs.titleHeading}" />
 												<h:inputText value="#{CalendarForm.titleHeading}"
-													onchange="startEditBlock()" />
+													onchange="startEditTitle()" />
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText value="#{msgs.firstAppearance}" />
 												<h:inputText value="#{CalendarForm.firstAppearance}"
-													onchange="startEditBlock()" />
+													onchange="startEditTitle()" />
 											</htm:div>
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText value="#{msgs.lastAppearance}" />
 												<h:inputText value="#{CalendarForm.lastAppearance}"
-													onchange="startEditBlock()" />
+													onchange="startEditTitle()" />
 											</htm:div>
 
 											<h:commandLink value="#{msgs.applyChanges}"
-												onclick="if(blockDataIsValid()){endEditBlock();submit();}" />
+												onclick="if(titleDataIsValid()){endEditTitle()}" />
 										</htm:div>
 
 									</htm:div>
@@ -155,7 +188,7 @@
 						</htm:table>
 					</h:form>
 
-					<%-- ===================== End page main box ===================== --%>
+					<%-- ===================== End page main frame ===================== --%>
 
 				</htm:td>
 			</htm:tr>

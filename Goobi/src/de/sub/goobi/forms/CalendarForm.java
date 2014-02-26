@@ -50,8 +50,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * The class CalendarForm provides for a calendar editor to enter the course of
- * apparance of a newspaper.
+ * The class CalendarForm provides the screen logic for a JSF calendar editor to
+ * enter the course of apparance of a newspaper.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -70,7 +70,8 @@ public class CalendarForm {
 
 	/**
 	 * The field titleShowing holds the Title block currently showing in this
-	 * calendar instance.
+	 * calendar instance. The Title held in titleShowing must be part of the
+	 * course object, too.
 	 */
 	protected Title titleShowing;
 
@@ -80,6 +81,22 @@ public class CalendarForm {
 	 * IDs for easily looking them up on change.
 	 */
 	protected Map<String, Title> titlePickerResolver;
+
+	/**
+	 * The field updateTitleAllowed is of importance only during the update
+	 * model values phase of the JSF lifecycle. During that phase several setter
+	 * methods are sequentially called. The first method called is
+	 * setTitlePickerSelected(). If the user chose a different title block to be
+	 * displayed, titleShowing will be altered. This would cause the subsequent
+	 * calls to other setter methods to overwrite the values in the newly
+	 * selected title block with the values of the previously displayed block
+	 * which come back in in the form that is submitted by the browser if this
+	 * is not blocked. Therefore setTitlePickerSelected() sets
+	 * updateTitleAllowed to control whether the other setter methods shall or
+	 * shall not write the incoming data to the title block referenced in
+	 * titleShowing.
+	 */
+	protected boolean updateTitleAllowed = true;
 
 	/**
 	 * Empty constructor. Creates a new form without yet any data.
@@ -127,20 +144,24 @@ public class CalendarForm {
 
 	/**
 	 * The method setTitlePickerSelected() will be called by Faces to store a
-	 * new value of the read-write property "titlePickerSelected", which means
-	 * that the user selected a different Title block in the title picker list
-	 * box. The event will be used to alter the “titleShowing” field which keeps
-	 * the Title block currently showing.
+	 * new value of the read-write property "titlePickerSelected". If it is
+	 * different from the current one, this means that the user selected a
+	 * different Title block in the title picker list box. The event will be
+	 * used to alter the “titleShowing” field which keeps the Title block
+	 * currently showing. “updateTitleAllowed” will be set accordingly to update
+	 * the current title or to prevent fields containing data from the
+	 * previously displaying title block to overwrite the data inside the newly
+	 * selected one.
 	 * 
 	 * @param value
 	 *            hashCode() in hex of the Title to be selected
 	 */
 	public void setTitlePickerSelected(String value) {
-		if ("".equals(value)) {
-			titleShowing = null;
+		if (value == null)
 			return;
-		}
-		titleShowing = titlePickerResolver.get(value);
+		updateTitleAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
+		if (!updateTitleAllowed)
+			titleShowing = titlePickerResolver.get(value);
 	}
 
 	/**
@@ -150,6 +171,7 @@ public class CalendarForm {
 	 */
 	public void addTitleClick() {
 		titleShowing = null;
+		updateTitleAllowed = true;
 	}
 
 	/**
@@ -194,9 +216,10 @@ public class CalendarForm {
 	 *            new heading for the title block
 	 */
 	public void setTitleHeading(String heading) {
-		if (titleShowing != null)
-			titleShowing.setHeading(heading);
-		else {
+		if (titleShowing != null) {
+			if (updateTitleAllowed)
+				titleShowing.setHeading(heading);
+		} else {
 			titleShowing = new Title(heading);
 			course.add(titleShowing);
 		}
@@ -229,9 +252,10 @@ public class CalendarForm {
 	 */
 	public void setFirstAppearance(String firstAppearance) {
 		LocalDate newFirstAppearance = dateConverter.parseLocalDate(firstAppearance);
-		if (titleShowing != null)
-			titleShowing.setFirstAppearance(newFirstAppearance);
-		else {
+		if (titleShowing != null) {
+			if (updateTitleAllowed)
+				titleShowing.setFirstAppearance(newFirstAppearance);
+		} else {
 			titleShowing = new Title();
 			titleShowing.setFirstAppearance(newFirstAppearance);
 			course.add(titleShowing);
@@ -265,13 +289,13 @@ public class CalendarForm {
 	 */
 	public void setLastAppearance(String lastAppearance) {
 		LocalDate newLastAppearance = dateConverter.parseLocalDate(lastAppearance);
-		if (titleShowing != null)
-			titleShowing.setLastAppearance(newLastAppearance);
-		else {
+		if (titleShowing != null) {
+			if (updateTitleAllowed)
+				titleShowing.setLastAppearance(newLastAppearance);
+		} else {
 			titleShowing = new Title();
 			titleShowing.setLastAppearance(newLastAppearance);
 			course.add(titleShowing);
 		}
 	}
-
 }
