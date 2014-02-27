@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
-<%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
+<%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t"%>
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
 	prefix="si"%>
 <%-- 
@@ -89,6 +89,16 @@
 </style>
 		<script type="text/javascript">
 			
+		<%--
+		 * The function deleteClickQuery() checks whether an issue shall or shall 
+		 * not be deleted. The user is presented with a query whether it wants to
+		 * delete the block. This is to prevent misclicks.
+		 * 
+		 * @return whether an issue can be deleted
+		 --%>
+			function deleteClickQuery() {
+				return confirm("${msgs['calendar.issue.delete.query']}");
+			}
 		<%--
 		 * The function endEditTitle() is called after successful validation of the
 		 * modified title block data when the user clicks “apply changes” to
@@ -252,6 +262,81 @@
 
 											<h:commandLink value="#{msgs['calendar.applyChanges']}"
 												onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}" />
+										</htm:div>
+
+										<htm:div styleClass="issues">
+											<t:dataList layout="simple" var="issue"
+												value="#{CalendarForm.issues}">
+												<htm:div styleClass="issue">
+													<%-- bubble --%>
+
+													<%-- Prefix text --%>
+													<h:outputText value="#{msgs['calendar.issue']}" />
+
+													<%-- Issue name box --%>
+													<h:inputText value="#{issue.heading}" id="issueHeading"
+														styleClass="issueHeading" />
+
+													<%-- Delete button --%>
+													<h:commandLink value="#{msgs['calendar.issue.delete']}"
+														action="#{issue.deleteClick}"
+														onclick="if(!deleteClickQuery()){return false;}" />
+
+													<%-- Days of week --%>
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="monday"
+															value="#{issue.monday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.monday']}"
+															for="monday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="tuesday"
+															value="#{issue.tuesday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
+															for="tuesday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="wednesday"
+															value="#{issue.wednesday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.wednesday']}"
+															for="wednesday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="thursday"
+															value="#{issue.thursday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.thursday']}"
+															for="thursday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="friday"
+															value="#{issue.friday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.friday']}"
+															for="friday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="saturday"
+															value="#{issue.saturday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.saturday']}"
+															for="saturday" />
+													</htm:div>
+
+													<htm:div styleClass="keepTogether">
+														<h:selectBooleanCheckbox id="sunday"
+															value="#{issue.sunday}" onchange="submit()" />
+														<h:outputLabel value="#{msgs['calendar.issue.sunday']}"
+															for="sunday" />
+													</htm:div>
+
+												</htm:div>
+											</t:dataList>
+											<%-- Add button --%>
+											<h:commandLink value="#{msgs['calendar.issue.add']}"
+												action="#{CalendarForm.addIssueClick}" />
 										</htm:div>
 
 									</htm:div>
