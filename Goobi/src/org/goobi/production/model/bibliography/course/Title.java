@@ -164,15 +164,16 @@ public class Title implements Cloneable {
 	/**
 	 * Creates and returns a copy of this Title.
 	 * 
-	 * <p>
-	 * getIssues() creates a copy, String and LocalDate are final.
-	 * </p>
-	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public Title clone() {
-		return new Title(heading, firstAppearance, lastAppearance, getIssues());
+		Title result = new Title(heading, firstAppearance, lastAppearance);
+		Set<Issue> copyOfIssues = issues instanceof LinkedHashSet ? new LinkedHashSet<Issue>() : new HashSet<Issue>();
+		for (Issue issue : issues)
+			copyOfIssues.add(issue.clone());
+		result.setIssues(copyOfIssues);
+		return result;
 	}
 
 	/**
@@ -206,10 +207,7 @@ public class Title implements Cloneable {
 	 * @return a new set with the issues from this Title
 	 */
 	public Set<Issue> getIssues() {
-		Set<Issue> result = issues instanceof LinkedHashSet ? new LinkedHashSet<Issue>() : new HashSet<Issue>();
-		for (Issue issue : issues)
-			result.add(issue.clone());
-		return result;
+		return issues;
 	}
 
 	/**
