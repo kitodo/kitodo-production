@@ -51,71 +51,78 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<style type="text/css">
-			.titleManagement {
-				float: left;
-				margin-bottom: 5px;
-				margin-right: 12px;
-				width: 250px;
-			}
-			
-			.titleManagement select {
-				margin-bottom: 4px;
-				width: 100%;
-			}
-			
-			.titleManagement a {
-				margin: 5px;
-			}
-			
-			.titleContents {
-				float: left;
-				max-width: 600px;
-				width: 100%;
-			}
-			
-			.titleData {
-				margin-bottom: 10px;
-			}
-			
-			.fullWideBox {
-				display: block;
-				overflow: hidden;
-				padding-left: 4px;
-			}
-			
-			.fullWideLabel {
-				float: left;
-				padding-top: 5px;
-			}
-			
-			.fullWideInput {
-				margin-bottom: 3px;
-				width: 100%;
-			}
-			
-			.keepTogether {
-				display: inline-block;
-				margin-right: 6px;
-			}
-			
-			.keepTogether input {
-				max-width: 100px;
-			}
-			
-			.issue {
-				margin: 10px 0;
-			}
-			
-			.issueHeading {
-				margin: 0 4px;
-				width: 250px;
-			}
-			
-			.deleteIssue {
-				float: right;
-				padding: 5px 0 0 5px;
-			}
-		</style>
+.titleManagement {
+	float: left;
+	margin-bottom: 5px;
+	margin-right: 12px;
+	width: 250px;
+}
+
+.titleManagement select {
+	margin-bottom: 4px;
+	width: 100%;
+}
+
+.titleManagement a {
+	margin: 5px;
+}
+
+.titleContents {
+	float: left;
+	max-width: 600px;
+	width: 100%;
+}
+
+.titleData {
+	margin-bottom: 10px;
+}
+
+.fullWideBox {
+	display: block;
+	overflow: hidden;
+	padding-left: 4px;
+}
+
+.fullWideLabel {
+	float: left;
+	padding-top: 5px;
+}
+
+.fullWideInput {
+	margin-bottom: 3px;
+	width: 100%;
+}
+
+.keepTogether {
+	display: inline-block;
+	margin-right: 6px;
+}
+
+.keepTogether input {
+	max-width: 100px;
+}
+
+.issue {
+	margin: 10px 0;
+}
+
+.bubble {
+    font-size: 17pt;
+    line-height: 8px;
+    padding-right: 3px;
+    vertical-align: sub;
+}
+
+.issueHeading {
+	margin: 0 4px;
+	width: 250px;
+}
+
+.deleteIssue {
+	float: right;
+	padding: 5px 0 0 5px;
+}
+</style>
 		<script type="text/javascript">
 			
 		<%--
@@ -301,11 +308,17 @@
 												<t:dataList layout="simple" var="issue"
 													value="#{CalendarForm.issues}">
 													<htm:div styleClass="issue">
-														<%-- bubble --%>
+														<htm:span styleClass="fullWideLabel">
+															<%-- bubble --%>
+															<htm:span styleClass="bubble"
+																style="color: #{issue.colour}">
+																<h:outputText value="●" />
+															</htm:span>
 
-														<%-- Prefix text --%>
-														<h:outputLabel value="#{msgs['calendar.issue']}"
-															for="issueHeading" styleClass="fullWideLabel" />
+															<%-- Prefix text --%>
+															<h:outputLabel value="#{msgs['calendar.issue']}"
+																for="issueHeading" />
+														</htm:span>
 
 														<%-- Delete button --%>
 														<h:commandLink value="#{msgs['calendar.issue.delete']}"
