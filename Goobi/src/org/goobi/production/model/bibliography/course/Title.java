@@ -49,6 +49,8 @@ import java.util.Set;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
+import de.sub.goobi.helper.DateFuncs;
+
 /**
  * The class Title is a bean class that represents an interval of time in the
  * course of appearance of a newspaper within which it wasn’t suspended and
@@ -453,22 +455,13 @@ public class Title implements Cloneable {
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append(heading);
-		result.append(" (");
 		if (firstAppearance != null)
-			result.append(firstAppearance.toString());
-		result.append(" - ");
+			result.append(DateFuncs.DATE_CONVERTER.print(firstAppearance));
+		result.append(" − ");
 		if (lastAppearance != null)
-			result.append(lastAppearance.toString());
-		result.append(") [");
-		boolean first = true;
-		for (Issue issue : issues) {
-			if (!first)
-				result.append(", ");
-			result.append(issue.toString());
-			first = false;
-		}
-		result.append("]");
+			result.append(DateFuncs.DATE_CONVERTER.print(lastAppearance));
+		result.append(", ");
+		result.append(heading);
 		return result.toString();
 	}
 

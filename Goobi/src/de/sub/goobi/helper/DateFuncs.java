@@ -42,6 +42,8 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * The class DateFuncs contains an omnium-gatherum of functions that work on
@@ -50,19 +52,58 @@ import org.joda.time.LocalDate;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DateFuncs {
+	/**
+	 * The dateConverter can be used to convert between LocalDate objects and
+	 * String in German notation
+	 */
+	public static final DateTimeFormatter DATE_CONVERTER = DateTimeFormat.forPattern("dd.MM.yyyy");
 
-	public static boolean sameMonth(LocalDate current, LocalDate next) {
-		if (!sameYear(current, next))
+	/**
+	 * The function sameMonth() compares two LocalDate objects in regard to the
+	 * question whether their two dates reside in the same month of the calendar
+	 * system presumed. Two dates are considered to be in the same month exactly
+	 * if both their year and month of year fields are equal.
+	 * 
+	 * @param compared
+	 *            date to compare against
+	 * @param comparee
+	 *            date to compare, may be null
+	 * @return whether the two dates are in the same month
+	 */
+	public static boolean sameMonth(LocalDate compared, LocalDate comparee) {
+		if (!sameYear(compared, comparee))
 			return false;
-		return current.getMonthOfYear() == next.getMonthOfYear();
+		return compared.getMonthOfYear() == comparee.getMonthOfYear();
 	}
 
+	/**
+	 * The function sameYear() compares two LocalDate objects in regard to the
+	 * question whether their two dates reside in the same year of the calendar
+	 * system presumed. Two dates are considered to be in the same year exactly
+	 * if none of them is null and their year fields are equal.
+	 * 
+	 * @param compared
+	 *            date to compare against
+	 * @param comparee
+	 *            date to compare, may be null
+	 * @return whether the two dates are in the same year
+	 */
 	public static boolean sameYear(LocalDate current, LocalDate next) {
 		if (next == null)
 			return false;
 		return current.getYear() == next.getYear();
 	}
 
+	/**
+	 * The function lastMonthForYear() returns for a given year the last month
+	 * which can be found in a date in an ordered set of dates.
+	 * 
+	 * @param data
+	 *            an ordered set of dates
+	 * @param year
+	 *            year in question
+	 * @return the last month which can be found up to the end of that year
+	 */
 	public static int lastMonthForYear(TreeSet<LocalDate> data, int year) {
 		return data.headSet(new LocalDate(year, DateTimeConstants.DECEMBER, 31), true).last().getMonthOfYear();
 	}
