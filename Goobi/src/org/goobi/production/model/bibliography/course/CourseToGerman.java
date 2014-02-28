@@ -116,6 +116,7 @@ public class CourseToGerman {
 	 */
 	protected static String titleToString(Title current, String previousTitle) {
 		StringBuilder result = new StringBuilder(500);
+		int currentIssuesSize = current.getIssues().size();
 		if (previousTitle == null) {
 			result.append("Die Zeitung „");
 			result.append(current.getHeading());
@@ -140,7 +141,7 @@ public class CourseToGerman {
 		result.append(" regelmäßig ");
 
 		Iterator<Issue> issueIterator = current.getIssues().iterator();
-		for (int issueIndex = 0; issueIndex < current.getIssues().size(); issueIndex++) {
+		for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
 			Issue issue = issueIterator.next();
 			result.append("an allen ");
 			int daysOfWeekCount = 0;
@@ -157,11 +158,11 @@ public class CourseToGerman {
 			}
 			result.append(" als ");
 			result.append(issue.getHeading());
-			if (issueIndex < current.getIssues().size() - 2)
+			if (issueIndex < currentIssuesSize - 2)
 				result.append(", ");
-			if (issueIndex == current.getIssues().size() - 2)
+			if (issueIndex == currentIssuesSize - 2)
 				result.append(" sowie ");
-			if (issueIndex == current.getIssues().size() - 1)
+			if (issueIndex == currentIssuesSize - 1)
 				result.append(".");
 		}
 		return result.toString();
