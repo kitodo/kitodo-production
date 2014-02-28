@@ -51,42 +51,71 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<style type="text/css">
-.titleManagement {
-	float: left;
-	margin-right: 12px;
-	max-width: 250px;
-	width: 30%;
-}
-
-.titleManagement select {
-	margin-bottom: 4px;
-	width: 100%;
-}
-
-.titleManagement a {
-	margin: 5px;
-}
-
-.titleData {
-	float: left;
-	width: 65%;
-}
-
-.titleHeading {
-	margin-bottom: 4px;
-	max-width: 475px;
-	width: 90%;
-}
-
-.keepTogether {
-	display: inline-block;
-	margin-right: 6px;
-}
-
-.keepTogether input {
-	max-width: 100px;
-}
-</style>
+			.titleManagement {
+				float: left;
+				margin-bottom: 5px;
+				margin-right: 12px;
+				width: 250px;
+			}
+			
+			.titleManagement select {
+				margin-bottom: 4px;
+				width: 100%;
+			}
+			
+			.titleManagement a {
+				margin: 5px;
+			}
+			
+			.titleContents {
+				float: left;
+				max-width: 600px;
+				width: 100%;
+			}
+			
+			.titleData {
+				margin-bottom: 10px;
+			}
+			
+			.fullWideBox {
+				display: block;
+				overflow: hidden;
+				padding-left: 4px;
+			}
+			
+			.fullWideLabel {
+				float: left;
+				padding-top: 5px;
+			}
+			
+			.fullWideInput {
+				margin-bottom: 3px;
+				width: 100%;
+			}
+			
+			.keepTogether {
+				display: inline-block;
+				margin-right: 6px;
+			}
+			
+			.keepTogether input {
+				max-width: 100px;
+			}
+			
+			.issue {
+				margin: 10px 0;
+			}
+			
+			.issueHeading {
+				margin: 0 4px;
+				width: 250px;
+			}
+			
+			.deleteIssue {
+				float: right;
+				padding: 5px 0 0 5px;
+			}
+		</style>
 		<script type="text/javascript">
 			
 		<%--
@@ -237,108 +266,121 @@
 												onclick="if(!removeClickQuery()){return false;}" />
 										</htm:div>
 
-										<%-- Input elements for base data --%>
-										<htm:div styleClass="titleData">
-											<htm:div>
-												<h:outputText value="#{msgs['calendar.title.heading']}" />
-												<h:inputText value="#{CalendarForm.titleHeading}"
-													onchange="startEditTitle()" id="titleHeading"
-													styleClass="titleHeading" />
-											</htm:div>
-
-											<htm:div styleClass="keepTogether">
-												<h:outputText
-													value="#{msgs['calendar.title.firstAppearance']}" />
-												<h:inputText value="#{CalendarForm.firstAppearance}"
-													onchange="startEditTitle()" id="firstAppearance" />
-											</htm:div>
-
-											<htm:div styleClass="keepTogether">
-												<h:outputText
-													value="#{msgs['calendar.title.lastAppearance']}" />
-												<h:inputText value="#{CalendarForm.lastAppearance}"
-													onchange="startEditTitle()" id="lastAppearance" />
-											</htm:div>
-
-											<h:commandLink value="#{msgs['calendar.applyChanges']}"
-												onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}" />
-										</htm:div>
-
-										<htm:div styleClass="issues">
-											<t:dataList layout="simple" var="issue"
-												value="#{CalendarForm.issues}">
-												<htm:div styleClass="issue">
-													<%-- bubble --%>
-
-													<%-- Prefix text --%>
-													<h:outputText value="#{msgs['calendar.issue']}" />
-
-													<%-- Issue name box --%>
-													<h:inputText value="#{issue.heading}" id="issueHeading"
-														styleClass="issueHeading" />
-
-													<%-- Delete button --%>
-													<h:commandLink value="#{msgs['calendar.issue.delete']}"
-														action="#{issue.deleteClick}"
-														onclick="if(!deleteClickQuery()){return false;}" />
-
-													<%-- Days of week --%>
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="monday"
-															value="#{issue.monday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.monday']}"
-															for="monday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="tuesday"
-															value="#{issue.tuesday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
-															for="tuesday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="wednesday"
-															value="#{issue.wednesday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.wednesday']}"
-															for="wednesday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="thursday"
-															value="#{issue.thursday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.thursday']}"
-															for="thursday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="friday"
-															value="#{issue.friday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.friday']}"
-															for="friday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="saturday"
-															value="#{issue.saturday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.saturday']}"
-															for="saturday" />
-													</htm:div>
-
-													<htm:div styleClass="keepTogether">
-														<h:selectBooleanCheckbox id="sunday"
-															value="#{issue.sunday}" onchange="submit()" />
-														<h:outputLabel value="#{msgs['calendar.issue.sunday']}"
-															for="sunday" />
-													</htm:div>
-
+										<htm:div styleClass="titleContents">
+											<%-- Input elements for base data --%>
+											<htm:div styleClass="titleData">
+												<htm:div>
+													<h:outputLabel value="#{msgs['calendar.title.heading']}"
+														styleClass="fullWideLabel" for="titleHeading" />
+													<htm:span styleClass="fullWideBox">
+														<h:inputText value="#{CalendarForm.titleHeading}"
+															onchange="startEditTitle()" id="titleHeading"
+															styleClass="fullWideInput" />
+													</htm:span>
 												</htm:div>
-											</t:dataList>
-											<%-- Add button --%>
-											<h:commandLink value="#{msgs['calendar.issue.add']}"
-												action="#{CalendarForm.addIssueClick}" />
-										</htm:div>
 
+												<htm:div styleClass="keepTogether">
+													<h:outputText
+														value="#{msgs['calendar.title.firstAppearance']}" />
+													<h:inputText value="#{CalendarForm.firstAppearance}"
+														onchange="startEditTitle()" id="firstAppearance" />
+												</htm:div>
+
+												<htm:div styleClass="keepTogether">
+													<h:outputText
+														value="#{msgs['calendar.title.lastAppearance']}" />
+													<h:inputText value="#{CalendarForm.lastAppearance}"
+														onchange="startEditTitle()" id="lastAppearance" />
+												</htm:div>
+
+												<h:commandLink value="#{msgs['calendar.applyChanges']}"
+													onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}" />
+											</htm:div>
+
+											<htm:div styleClass="issues">
+												<t:dataList layout="simple" var="issue"
+													value="#{CalendarForm.issues}">
+													<htm:div styleClass="issue">
+														<%-- bubble --%>
+
+														<%-- Prefix text --%>
+														<h:outputLabel value="#{msgs['calendar.issue']}"
+															for="issueHeading" styleClass="fullWideLabel" />
+
+														<%-- Delete button --%>
+														<h:commandLink value="#{msgs['calendar.issue.delete']}"
+															action="#{issue.deleteClick}"
+															onclick="if(!deleteClickQuery()){return false;}"
+															styleClass="deleteIssue" />
+
+														<%-- Issue name box --%>
+														<htm:span styleClass="fullWideBox">
+															<h:inputText value="#{issue.heading}" id="issueHeading"
+																styleClass="fullWideInput" />
+														</htm:span>
+
+														<%-- Days of week --%>
+														<htm:div styleClass="daysOfWeek">
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="monday"
+																	value="#{issue.monday}" onchange="submit()" />
+																<h:outputLabel value="#{msgs['calendar.issue.monday']}"
+																	for="monday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="tuesday"
+																	value="#{issue.tuesday}" onchange="submit()" />
+																<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
+																	for="tuesday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="wednesday"
+																	value="#{issue.wednesday}" onchange="submit()" />
+																<h:outputLabel
+																	value="#{msgs['calendar.issue.wednesday']}"
+																	for="wednesday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="thursday"
+																	value="#{issue.thursday}" onchange="submit()" />
+																<h:outputLabel
+																	value="#{msgs['calendar.issue.thursday']}"
+																	for="thursday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="friday"
+																	value="#{issue.friday}" onchange="submit()" />
+																<h:outputLabel value="#{msgs['calendar.issue.friday']}"
+																	for="friday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="saturday"
+																	value="#{issue.saturday}" onchange="submit()" />
+																<h:outputLabel
+																	value="#{msgs['calendar.issue.saturday']}"
+																	for="saturday" />
+															</htm:div>
+
+															<htm:div styleClass="keepTogether">
+																<h:selectBooleanCheckbox id="sunday"
+																	value="#{issue.sunday}" onchange="submit()" />
+																<h:outputLabel value="#{msgs['calendar.issue.sunday']}"
+																	for="sunday" />
+															</htm:div>
+														</htm:div>
+													</htm:div>
+												</t:dataList>
+												<%-- Add button --%>
+												<h:commandLink value="#{msgs['calendar.issue.add']}"
+													action="#{CalendarForm.addIssueClick}" />
+											</htm:div>
+
+										</htm:div>
 									</htm:div>
 
 									<%-- ===================== End page main content ====================== --%>
