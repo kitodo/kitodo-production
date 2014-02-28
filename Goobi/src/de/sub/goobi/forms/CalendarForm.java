@@ -47,8 +47,8 @@ import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
+import de.sub.goobi.helper.DateFuncs;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -57,11 +57,6 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CalendarForm {
-
-	/**
-	 * The dateConverter is used to convert between LocalDate objects and String
-	 */
-	protected static final DateTimeFormatter dateConverter = DateTimeFormat.forPattern("dd.MM.yyyy");
 
 	/**
 	 * The field course holds the course of appearance currently under edit by
@@ -84,20 +79,19 @@ public class CalendarForm {
 	protected Title titleShowing;
 
 	/**
-	 * The field updateTitleAllowed is of importance only during the update
-	 * model values phase of the JSF lifecycle. During that phase several setter
+	 * The field updateAllowed is of importance only during the update model
+	 * values phase of the JSF lifecycle. During that phase several setter
 	 * methods are sequentially called. The first method called is
 	 * setTitlePickerSelected(). If the user chose a different title block to be
 	 * displayed, titleShowing will be altered. This would cause the subsequent
 	 * calls to other setter methods to overwrite the values in the newly
 	 * selected title block with the values of the previously displayed block
 	 * which come back in in the form that is submitted by the browser if this
-	 * is not blocked. Therefore setTitlePickerSelected() sets
-	 * updateTitleAllowed to control whether the other setter methods shall or
-	 * shall not write the incoming data to the title block referenced in
-	 * titleShowing.
+	 * is not blocked. Therefore setTitlePickerSelected() sets updateAllowed to
+	 * control whether the other setter methods shall or shall not write the
+	 * incoming data to the respective fields.
 	 */
-	protected boolean updateTitleAllowed = true;
+	protected boolean updateAllowed = true;
 
 	/**
 	 * The class IssueAdapter provides access methods for faces to an issue for
@@ -248,10 +242,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Fridays
 		 */
 		public void setFriday(boolean appears) {
-			if (appears)
-				issue.addFriday();
-			else
-				issue.removeFriday();
+			if (updateAllowed)
+				if (appears)
+					issue.addFriday();
+				else
+					issue.removeFriday();
 		}
 
 		/**
@@ -263,7 +258,8 @@ public class CalendarForm {
 		 *            heading to be used
 		 */
 		public void setHeading(String heading) {
-			issue.setHeading(heading);
+			if (updateAllowed)
+				issue.setHeading(heading);
 		}
 
 		/**
@@ -275,10 +271,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Mondays
 		 */
 		public void setMonday(boolean appears) {
-			if (appears)
-				issue.addMonday();
-			else
-				issue.removeMonday();
+			if (updateAllowed)
+				if (appears)
+					issue.addMonday();
+				else
+					issue.removeMonday();
 		}
 
 		/**
@@ -290,10 +287,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Saturdays
 		 */
 		public void setSaturday(boolean appears) {
-			if (appears)
-				issue.addSaturday();
-			else
-				issue.removeSaturday();
+			if (updateAllowed)
+				if (appears)
+					issue.addSaturday();
+				else
+					issue.removeSaturday();
 		}
 
 		/**
@@ -305,10 +303,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Sundays
 		 */
 		public void setSunday(boolean appears) {
-			if (appears)
-				issue.addSunday();
-			else
-				issue.removeSunday();
+			if (updateAllowed)
+				if (appears)
+					issue.addSunday();
+				else
+					issue.removeSunday();
 		}
 
 		/**
@@ -320,10 +319,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Thursdays
 		 */
 		public void setThursday(boolean appears) {
-			if (appears)
-				issue.addThursday();
-			else
-				issue.removeThursday();
+			if (updateAllowed)
+				if (appears)
+					issue.addThursday();
+				else
+					issue.removeThursday();
 		}
 
 		/**
@@ -335,10 +335,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Tuesdays
 		 */
 		public void setTuesday(boolean appears) {
-			if (appears)
-				issue.addTuesday();
-			else
-				issue.removeTuesday();
+			if (updateAllowed)
+				if (appears)
+					issue.addTuesday();
+				else
+					issue.removeTuesday();
 		}
 
 		/**
@@ -350,10 +351,11 @@ public class CalendarForm {
 		 *            whether the issue appears on Wednesdays
 		 */
 		public void setWednesday(boolean appears) {
-			if (appears)
-				issue.addWednesday();
-			else
-				issue.removeWednesday();
+			if (updateAllowed)
+				if (appears)
+					issue.addWednesday();
+				else
+					issue.removeWednesday();
 		}
 	}
 
@@ -396,7 +398,7 @@ public class CalendarForm {
 	 */
 	public String getFirstAppearance() {
 		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
-			return dateConverter.print(titleShowing.getFirstAppearance());
+			return DateFuncs.DATE_CONVERTER.print(titleShowing.getFirstAppearance());
 		else
 			return "";
 	}
@@ -424,7 +426,7 @@ public class CalendarForm {
 	 */
 	public String getLastAppearance() {
 		if (titleShowing != null && titleShowing.getLastAppearance() != null)
-			return dateConverter.print(titleShowing.getLastAppearance());
+			return DateFuncs.DATE_CONVERTER.print(titleShowing.getLastAppearance());
 		else
 			return "";
 	}
@@ -506,9 +508,9 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = dateConverter.parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
-			if (updateTitleAllowed)
+			if (updateAllowed)
 				titleShowing.setFirstAppearance(newFirstAppearance);
 		} else {
 			titleShowing = new Title();
@@ -529,9 +531,9 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = dateConverter.parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
-			if (updateTitleAllowed)
+			if (updateAllowed)
 				titleShowing.setLastAppearance(newLastAppearance);
 		} else {
 			titleShowing = new Title();
@@ -553,7 +555,7 @@ public class CalendarForm {
 	 */
 	public void setTitleHeading(String heading) {
 		if (titleShowing != null) {
-			if (updateTitleAllowed)
+			if (updateAllowed)
 				titleShowing.setHeading(heading);
 		} else {
 			titleShowing = new Title(heading);
@@ -567,10 +569,10 @@ public class CalendarForm {
 	 * different from the current one, this means that the user selected a
 	 * different Title block in the title picker list box. The event will be
 	 * used to alter the “titleShowing” field which keeps the Title block
-	 * currently showing. “updateTitleAllowed” will be set accordingly to update
-	 * the current title or to prevent fields containing data from the
-	 * previously displaying title block to overwrite the data inside the newly
-	 * selected one.
+	 * currently showing. “updateAllowed” will be set accordingly to update the
+	 * contents of the current title block or to prevent fields containing data
+	 * from the previously displaying title block to overwrite the data inside
+	 * the newly selected one.
 	 * 
 	 * @param value
 	 *            hashCode() in hex of the Title to be selected
@@ -578,8 +580,8 @@ public class CalendarForm {
 	public void setTitlePickerSelected(String value) {
 		if (value == null)
 			return;
-		updateTitleAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
-		if (!updateTitleAllowed)
+		updateAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
+		if (!updateAllowed)
 			titleShowing = titlePickerResolver.get(value);
 	}
 }
