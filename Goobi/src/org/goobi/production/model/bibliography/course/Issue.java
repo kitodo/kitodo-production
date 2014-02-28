@@ -277,44 +277,38 @@ public class Issue implements Cloneable {
 	 */
 	@Override
 	public Issue clone() {
-		Issue copy = new Issue(heading); // String is final
-		copy.setAdditions(getAdditions()); // getAdditions() creates a copy, LocalDate is final
-		copy.setDaysOfWeek(getDaysOfWeek()); // getAdditions() creates a copy, Integer is final
-		copy.setExclusions(getExclusions()); // getAdditions() creates a copy, LocalDate is final
+		Issue copy = new Issue(heading);
+		copy.setAdditions(new HashSet<LocalDate>(additions));
+		copy.setDaysOfWeek(new HashSet<Integer>(daysOfWeek));
+		copy.setExclusions(new HashSet<LocalDate>(exclusions));
 		return copy;
 	}
 
 	/**
-	 * Getter function for the Set of additions. Returns a copy, i.e.
-	 * modifications of the returned object will not have an influence to the
-	 * internals of the Issue object.
+	 * Getter function for the Set of additions.
 	 * 
-	 * @return a copy of the set of additions
+	 * @return the set of additions
 	 */
 	public Set<LocalDate> getAdditions() {
-		return new HashSet<LocalDate>(additions);
+		return additions;
 	}
 
 	/**
 	 * Getter function for the Set of days of week the issue regularly appears.
-	 * Returns a copy, i.e. modifications of the returned object will not have
-	 * an influence to the internals of the Issue object.
 	 * 
-	 * @return a copy of the set of days of week the issue regularly appears
+	 * @return the set of days of week the issue regularly appears
 	 */
 	public Set<Integer> getDaysOfWeek() {
-		return new HashSet<Integer>(daysOfWeek);
+		return daysOfWeek;
 	}
 
 	/**
-	 * Getter function for the Set of exclusions. Returns a copy, i.e.
-	 * modifications of the returned object will not have an influence to the
-	 * internals of the Issue object.
+	 * Getter function for the Set of exclusions.
 	 * 
-	 * @return a copy of the set of exclusions
+	 * @return the set of exclusions
 	 */
-	public HashSet<LocalDate> getExclusions() {
-		return new HashSet<LocalDate>(exclusions);
+	public Set<LocalDate> getExclusions() {
+		return exclusions;
 	}
 
 	/**
