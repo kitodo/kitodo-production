@@ -58,6 +58,9 @@ import de.sub.goobi.helper.DateFuncs;
  */
 public class CalendarForm {
 
+	protected static final String[] ISSUE_COLOURS = new String[] { "#D1D1DB", "#11FF75", "#00B4DB", "#FF0000",
+			"#0000BC", "#934500", "#000075", "#D1D100", "#00FFBC", "#C25CDB", "#2A5C00", "#000000" };
+
 	/**
 	 * The field course holds the course of appearance currently under edit by
 	 * this calendar form instance.
@@ -127,6 +130,10 @@ public class CalendarForm {
 		 */
 		public void deleteClick() {
 			titleShowing.removeIssue(issue);
+		}
+
+		public String getColour() {
+			return ISSUE_COLOURS[index % ISSUE_COLOURS.length];
 		}
 
 		/**
