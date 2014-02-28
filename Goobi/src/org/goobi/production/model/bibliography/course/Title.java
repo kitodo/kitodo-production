@@ -39,10 +39,11 @@
 
 package org.goobi.production.model.bibliography.course;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTimeConstants;
@@ -60,7 +61,7 @@ public class Title implements Cloneable {
 	protected String heading;
 	protected LocalDate firstAppearance;
 	protected LocalDate lastAppearance;
-	protected Set<Issue> issues;
+	protected List<Issue> issues;
 
 	/**
 	 * Constructor for a Title object without any data.
@@ -69,7 +70,7 @@ public class Title implements Cloneable {
 		this.heading = "";
 		this.firstAppearance = null;
 		this.lastAppearance = null;
-		this.issues = new LinkedHashSet<Issue>();
+		this.issues = new ArrayList<Issue>();
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class Title implements Cloneable {
 		this.heading = heading;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
-		this.issues = new LinkedHashSet<Issue>();
+		this.issues = new ArrayList<Issue>();
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class Title implements Cloneable {
 		this.heading = heading;
 		this.firstAppearance = firstAppearance;
 		this.lastAppearance = lastAppearance;
-		this.issues = new LinkedHashSet<Issue>();
+		this.issues = new ArrayList<Issue>();
 	}
 
 	/**
@@ -114,7 +115,7 @@ public class Title implements Cloneable {
 	 * @param issues
 	 *            Issues to be held by this title
 	 */
-	public Title(String heading, LocalDate firstAppearance, LocalDate lastAppearance, Set<Issue> issues) {
+	public Title(String heading, LocalDate firstAppearance, LocalDate lastAppearance, List<Issue> issues) {
 		this.heading = heading;
 		this.firstAppearance = firstAppearance;
 		this.lastAppearance = lastAppearance;
@@ -169,10 +170,7 @@ public class Title implements Cloneable {
 	@Override
 	public Title clone() {
 		Title result = new Title(heading, firstAppearance, lastAppearance);
-		Set<Issue> copyOfIssues = issues instanceof LinkedHashSet ? new LinkedHashSet<Issue>() : new HashSet<Issue>();
-		for (Issue issue : issues)
-			copyOfIssues.add(issue.clone());
-		result.setIssues(copyOfIssues);
+		result.setIssues(new ArrayList<Issue>(issues));
 		return result;
 	}
 
@@ -200,14 +198,13 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * The function getHeading() returns a set with the issues contained in this
-	 * Title. This is not intended for modification of the set or the issues in
-	 * it from behind, so we perform a deep copy here.
+	 * The function getIssues() returns the list of issues contained in this
+	 * Title.
 	 * 
-	 * @return a new set with the issues from this Title
+	 * @return the list of issues from this Title
 	 */
-	public Set<Issue> getIssues() {
-		return issues;
+	public List<Issue> getIssues() {
+		return new ArrayList<Issue>(issues);
 	}
 
 	/**
@@ -441,7 +438,7 @@ public class Title implements Cloneable {
 	 * @param issues
 	 *            new Set to be subsequently used
 	 */
-	public void setIssues(Set<Issue> issues) {
+	public void setIssues(List<Issue> issues) {
 		this.issues = issues;
 	}
 
@@ -493,9 +490,9 @@ public class Title implements Cloneable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((firstAppearance == null) ? 0 : firstAppearance.hashCode());
+		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		result = prime * result + ((issues == null) ? 0 : issues.hashCode());
 		result = prime * result + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
-		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		return result;
 	}
 
@@ -525,6 +522,11 @@ public class Title implements Cloneable {
 				return false;
 		} else if (!firstAppearance.equals(other.firstAppearance))
 			return false;
+		if (heading == null) {
+			if (other.heading != null)
+				return false;
+		} else if (!heading.equals(other.heading))
+			return false;
 		if (issues == null) {
 			if (other.issues != null)
 				return false;
@@ -534,11 +536,6 @@ public class Title implements Cloneable {
 			if (other.lastAppearance != null)
 				return false;
 		} else if (!lastAppearance.equals(other.lastAppearance))
-			return false;
-		if (heading == null) {
-			if (other.heading != null)
-				return false;
-		} else if (!heading.equals(other.heading))
 			return false;
 		return true;
 	}
