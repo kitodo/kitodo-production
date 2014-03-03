@@ -361,7 +361,6 @@
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}"
 													id="applyChanges" />
 											</htm:div>
 
