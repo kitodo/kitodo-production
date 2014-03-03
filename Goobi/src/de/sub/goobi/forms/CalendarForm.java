@@ -46,20 +46,34 @@ import java.util.Map;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.ReadablePartial;
 
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.DateFuncs;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
- * enter the course of apparance of a newspaper.
+ * enter the course of appearance of a newspaper.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CalendarForm {
 
-	protected static final String[] ISSUE_COLOURS = new String[] { "#D1D1DB", "#11FF75", "#00B4DB", "#FF0000",
-			"#0000BC", "#934500", "#000075", "#D1D100", "#00FFBC", "#C25CDB", "#2A5C00", "#000000" };
+	/**
+	 * These are the colours used to represent the issues in the calendar
+	 * editor. The presets are samples. Arbitrary colours can be definded in
+	 * goobi_config.properties by setting the property "issue.colours".
+	 */
+	protected static final String[] ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
+			"#D1D1DB;#11FF75;#00B4DB;#FF0000;#0000BC;#934500;#000075;#D1D100;#00FFBC;#C25CDB;#2A5C00;#000000").split(
+			";");
+
+	/**
+	 * An empty list of IssueOption. We can use the same one everywhere.
+	 */
+	protected static final List<IssueOption> EMPTY_LIST_OF_ISSUE_OPTIONS = new ArrayList<IssueOption>(0);
 
 	/**
 	 * The field course holds the course of appearance currently under edit by
@@ -83,7 +97,7 @@ public class CalendarForm {
 
 	/**
 	 * The field updateAllowed is of importance only during the update model
-	 * values phase of the JSF lifecycle. During that phase several setter
+	 * values phase of the JSF life-cycle. During that phase several setter
 	 * methods are sequentially called. The first method called is
 	 * setTitlePickerSelected(). If the user chose a different title block to be
 	 * displayed, titleShowing will be altered. This would cause the subsequent
@@ -97,12 +111,19 @@ public class CalendarForm {
 	protected boolean updateAllowed = true;
 
 	/**
-	 * The class IssueAdapter provides access methods for faces to an issue for
-	 * Faces.
+	 * The field yearShowing tells the year currently showing in this calendar
+	 * instance.
+	 */
+	protected int yearShowing = 1801;
+
+	/**
+	 * The class IssueController backs the control elements that are necessary
+	 * to manage the properties of an issue for Faces, including the option to
+	 * delete it.
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class IssueAdapter {
+	public class IssueController {
 		/**
 		 * Issue the adapter is for
 		 */
@@ -119,7 +140,7 @@ public class CalendarForm {
 		 * @param issue
 		 *            Issue the adapter is for
 		 */
-		public IssueAdapter(Issue issue, int index) {
+		public IssueController(Issue issue, int index) {
 			this.issue = issue;
 			this.index = index;
 		}
@@ -132,6 +153,12 @@ public class CalendarForm {
 			titleShowing.removeIssue(issue);
 		}
 
+		/**
+		 * The method getColour() returns a colour representative for optically
+		 * distinguishing the given issue
+		 * 
+		 * @return the HTML colour code of the issue
+		 */
 		public String getColour() {
 			return ISSUE_COLOURS[index % ISSUE_COLOURS.length];
 		}
@@ -367,6 +394,168 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The class Cell represents one single table cell on the calendar sheet.
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 */
+	public class Cell {
+
+		protected LocalDate date = null;
+		protected List<IssueOption> issues = EMPTY_LIST_OF_ISSUE_OPTIONS;
+		protected boolean onTitle = true; // do not grey out dates which aren’t defined by the caledar system
+
+		/**
+		 * The function getDay() returns the day of month (that is a number in
+		 * 1−31) of the date the cell represents, followed by a full stop.
+		 * 
+		 * <p>
+		 * For cells which are undefined by the calendar system, returns the
+		 * empty String.
+		 * </p>
+		 * 
+		 * @return the day of month in enumerative form
+		 */
+		public String getDay() {
+			if (date == null)
+				return "";
+			return Integer.toString(date.getDayOfMonth()).concat(".");
+		}
+
+		/**
+		 * The function getIssues() returns the issues that may have appeared on
+		 * that day.
+		 * 
+		 * @return the issues optionally appeared that day
+		 */
+		public List<IssueOption> getIssues() {
+			return issues;
+		}
+
+		/**
+		 * The function getStyleClass returns the CSS class names to be printed
+		 * into the HTML to display the table cell state.
+		 * 
+		 * @return
+		 */
+		public String getStyleClass() {
+			if (date == null)
+				return "";
+			if (onTitle) {
+				switch (date.getDayOfWeek()) {
+				case DateTimeConstants.SATURDAY:
+					return "saturday";
+				case DateTimeConstants.SUNDAY:
+					return "sunday";
+				default:
+					return "weekday";
+				}
+			} else {
+				switch (date.getDayOfWeek()) {
+				case DateTimeConstants.SATURDAY:
+					return "saturdayNoTitle";
+				case DateTimeConstants.SUNDAY:
+					return "sundayNoTitle";
+				default:
+					return "weekdayNoTitle";
+				}
+			}
+		}
+
+		public void setDate(LocalDate date) {
+			this.date = date;
+		}
+
+		public void setIssues(List<IssueOption> issues) {
+			this.issues = issues;
+		}
+
+		public void setOnTitle(boolean onTitle) {
+			this.onTitle = onTitle;
+		}
+	}
+
+	/**
+	 * The class IssuesOption represents the option that an Issue may have been
+	 * issued on a certain day in history.
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 */
+	public class IssueOption {
+		protected final LocalDate date;
+		protected final String colour;
+		protected final Issue issue;
+
+		/**
+		 * Constructor for an IssueOption.
+		 * 
+		 * @param controller
+		 *            IssueController class for that issue
+		 * @param date
+		 *            date of the issue option
+		 */
+		public IssueOption(IssueController controller, LocalDate date) {
+			this.colour = controller.getColour();
+			this.issue = controller.getIssue();
+			this.date = date;
+		}
+
+		/**
+		 * The function getColour() returns a colour representative for
+		 * optically distinguishing the given issue
+		 * 
+		 * @return the HTML colour code of the issue
+		 */
+		public String getColour() {
+			return colour;
+		}
+
+		/**
+		 * The function getIssue() returns the issue’s name
+		 * 
+		 * @return the issue’s name
+		 */
+		public String getIssue() {
+			return issue.getHeading();
+		}
+
+		/**
+		 * The function getSelected() returns whether the issue appeared on the
+		 * given LocalDate, taking into consideration the daysOfWeek of regular
+		 * appearance, the Set of exclusions and the Set of additions.
+		 * 
+		 * @return whether the issue appeared that day
+		 */
+		public boolean getSelected() {
+			return issue.isMatch(date);
+		}
+
+		/**
+		 * The method selectClick() is executed if the user clicks an issue
+		 * option in unselected state. If this is an exception, the exception
+		 * will be removed. Otherwise, an additional issue will be added.
+		 */
+		public void selectClick() {
+			if (issue.isDayOfWeek(date.getDayOfWeek()))
+				issue.removeExclusion(date);
+			else
+				issue.addAddition(date);
+		}
+
+		/**
+		 * The method unselectClick() is executed if the user clicks an issue
+		 * option in selected state. If this is regular appearance of that
+		 * issue, an exception will be added. Otherwise, the additional issue
+		 * will be removed.
+		 */
+		public void unselectClick() {
+			if (issue.isDayOfWeek(date.getDayOfWeek()))
+				issue.addExclusion(date);
+			else
+				issue.removeAddition(date);
+		}
+	}
+
+	/**
 	 * Empty constructor. Creates a new form without yet any data.
 	 */
 	public CalendarForm() {
@@ -397,6 +586,93 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The method backwardClick() flips the calendar sheet back one year in
+	 * time.
+	 */
+	public void backwardClick() {
+		yearShowing -= 1;
+	}
+
+	/**
+	 * The method forwardClick() flips the calendar sheet foreward one year in
+	 * time.
+	 */
+	public void forwardClick() {
+		yearShowing += 1;
+	}
+
+	/**
+	 * The function getCalendarSheet() returns the data required to build the
+	 * calendar sheet as read-only property "calendarSheet". The outer list
+	 * contains 31 entries, each representing a row of the calendar (the days
+	 * 1−31), each line then contains 12 cells representing the months. This is
+	 * due to HTML table being produced line by line.
+	 * 
+	 * @return
+	 */
+	public List<List<Cell>> getCalendarSheet() {
+		List<List<Cell>> result = getEmptySheet();
+		populateByCalendar(result);
+		return result;
+	}
+
+	/**
+	 * The function getEmptySheet() builds the empty calendar sheet with 31 rows
+	 * of twelve cells with empty objects of type Cell().
+	 * 
+	 * @return an empty calendar sheet
+	 */
+	protected List<List<Cell>> getEmptySheet() {
+		List<List<Cell>> result = new ArrayList<List<Cell>>(31);
+		for (int day = 1; day <= 31; day++) {
+			ArrayList<Cell> row = new ArrayList<Cell>(DateTimeConstants.DECEMBER);
+			for (int month = 1; month <= 12; month++)
+				row.add(new Cell());
+			result.add(row);
+		}
+		return result;
+	}
+
+	/**
+	 * The method populateByCalendar() populates an empty calendar sheet by
+	 * iterating on LocalDate.
+	 * 
+	 * @param sheet
+	 *            calendar sheet to populate
+	 */
+	protected void populateByCalendar(List<List<Cell>> sheet) {
+		List<IssueController> issueControllersCreatedOnce = getIssues();
+		ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
+		for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
+				.plusDays(1)) {
+			Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
+			cell.setDate(date);
+			if (titleShowing == null || !titleShowing.isMatch(date)) {
+				cell.setOnTitle(false);
+			} else {
+				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce, date));
+			}
+		}
+	}
+
+	/**
+	 * The function buildIssueOptions() creates a list of issueOptions for a
+	 * given date.
+	 * 
+	 * @param issueControllers
+	 *            the list of issue controllers in question
+	 * @param date
+	 *            the date in question
+	 * @return a list of issue options for the date
+	 */
+	protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
+		List<IssueOption> result = new ArrayList<IssueOption>();
+		for (IssueController controller : issueControllers)
+			result.add(new IssueOption(controller, date));
+		return result;
+	}
+
+	/**
 	 * The function getFirstAppearance() returns the date of first appearance of
 	 * the Title block currently showing as read-write property
 	 * "firstAppearance".
@@ -416,11 +692,11 @@ public class CalendarForm {
 	 * 
 	 * @return the list of issues
 	 */
-	public List<IssueAdapter> getIssues() {
-		List<IssueAdapter> result = new ArrayList<IssueAdapter>();
+	public List<IssueController> getIssues() {
+		List<IssueController> result = new ArrayList<IssueController>();
 		if (titleShowing != null)
 			for (Issue issue : titleShowing.getIssues())
-				result.add(new IssueAdapter(issue, result.size()));
+				result.add(new IssueController(issue, result.size()));
 		return result;
 	}
 
@@ -483,6 +759,16 @@ public class CalendarForm {
 	 */
 	public String getTitlePickerSelected() {
 		return titleShowing == null ? "" : Integer.toHexString(titleShowing.hashCode());
+	}
+
+	/**
+	 * The function getYear() returns the year to be shown in the calendar sheet
+	 * as read-only property "year".
+	 * 
+	 * @return
+	 */
+	public String getYear() {
+		return Integer.toString(yearShowing);
 	}
 
 	/**
@@ -588,7 +874,9 @@ public class CalendarForm {
 		if (value == null)
 			return;
 		updateAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
-		if (!updateAllowed)
+		if (!updateAllowed) {
 			titleShowing = titlePickerResolver.get(value);
+			yearShowing = titleShowing.getFirstAppearance().getYear();
+		}
 	}
 }

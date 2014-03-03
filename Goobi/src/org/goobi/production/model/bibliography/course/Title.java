@@ -249,6 +249,18 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The function isMatch() returns whether a given LocalDate comes within the
+	 * limits of this title.
+	 * 
+	 * @param date
+	 *            a LocalDate to examine
+	 * @return whether the date is within the limits of this title block
+	 */
+	public boolean isMatch(LocalDate date) {
+		return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+	}
+
+	/**
 	 * The function issuesIterator() returns an iterator over the Issues in this
 	 * Title. If the underlying Set contains more than Integer.MAX_VALUE
 	 * elements, Integer.MAX_VALUE is returned.

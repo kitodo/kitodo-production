@@ -106,11 +106,14 @@
 	margin: 10px 0;
 }
 
+.bubble,.issueOption {
+	font-size: 15pt;
+	line-height: 8px;
+}
+
 .bubble {
-    font-size: 17pt;
-    line-height: 8px;
-    padding-right: 3px;
-    vertical-align: sub;
+	padding-right: 3px;
+	vertical-align: sub;
 }
 
 .issueHeading {
@@ -121,6 +124,49 @@
 .deleteIssue {
 	float: right;
 	padding: 5px 0 0 5px;
+}
+
+.calendarSheet {
+	border-collapse: collapse;
+	table-layout: fixed; width : 100%;
+	clear: both;
+	width: 100%;
+}
+
+.calendarSheet caption {
+	font-size: bigger;
+}
+
+.calendarSheet td,.calendarSheet th {
+	border: 1px solid;
+}
+
+.calendarSheet th {
+	border-top: none;
+}
+
+.saturday {
+	background-color: #B0E0E6;
+}
+
+.sunday {
+	background-color: #FA8072;
+}
+
+.weekdayNoTitle {
+	background-color: #C0C0C0;
+}
+
+.saturdayNoTitle {
+	background-color: #778899;
+}
+
+.sundayNoTitle {
+	background-color: #BC8F8F;
+}
+
+.issueOptions {
+	padding-left: 3px;
 }
 </style>
 		<script type="text/javascript">
@@ -395,6 +441,90 @@
 
 										</htm:div>
 									</htm:div>
+
+									<%-- Calender sheet --%>
+
+									<htm:table styleClass="calendarSheet">
+										<htm:caption>
+											<h:commandLink value="←"
+												action="#{CalendarForm.backwardClick}" styleClass="backward" />
+											<h:outputText value="#{CalendarForm.year}" />
+											<h:commandLink value="→"
+												action="#{CalendarForm.forwardClick}" styleClass="forward" />
+										</htm:caption>
+										<htm:tr>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.january']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.february']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText value="#{msgs['calendar.sheet.column.march']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText value="#{msgs['calendar.sheet.column.april']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText value="#{msgs['calendar.sheet.column.may']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText value="#{msgs['calendar.sheet.column.june']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText value="#{msgs['calendar.sheet.column.july']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.august']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.september']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.october']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.november']}" />
+											</htm:th>
+											<htm:th>
+												<h:outputText
+													value="#{msgs['calendar.sheet.column.december']}" />
+											</htm:th>
+										</htm:tr>
+										<t:dataList layout="simple" var="row"
+											value="#{CalendarForm.calendarSheet}">
+											<htm:tr>
+												<t:dataList layout="simple" var="cell" value="#{row}">
+													<htm:td styleClass="#{cell.styleClass}">
+														<h:outputText value="#{cell.day}" />
+														<htm:span styleClass="issueOptions">
+															<t:dataList layout="simple" var="issueOption"
+																value="#{cell.issues}">
+																<h:commandLink value="●​"
+																	style="color: #{issueOption.colour};"
+																	title="#{issueOption.issue} #{msgs['calendar.sheet.issue.selected']}"
+																	styleClass="issueOption"
+																	action="#{issueOption.unselectClick}"
+																	rendered="#{issueOption.selected}" />
+																<h:commandLink value="○​"
+																	style="color: #{issueOption.colour};"
+																	title="#{issueOption.issue} #{msgs['calendar.sheet.issue.notSelected']}"
+																	styleClass="issueOption"
+																	action="#{issueOption.selectClick}"
+																	rendered="#{not issueOption.selected}" />
+															</t:dataList>
+														</htm:span>
+													</htm:td>
+												</t:dataList>
+											</htm:tr>
+										</t:dataList>
+									</htm:table>
 
 									<%-- ===================== End page main content ====================== --%>
 
