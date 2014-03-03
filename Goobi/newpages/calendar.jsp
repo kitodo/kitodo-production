@@ -216,6 +216,17 @@
 					alert("${msgs['calendar.title.remove.disabled']}");
 				return false;
 			}
+			<%--
+			 * The function showApplyLink() makes the apply changes link for an
+			 * issue name box show.
+			 * 
+			 * @return always true
+			 --%>
+			function showApplyLink(o) {
+				document.getElementById(o.id.replace(/issueHeading/,
+						"applyLink")).style.display = "inline";
+				return true;
+			}
 		<%--
 		 * The function startEditTitle() is called whenever the data of the title
 		 * block is being edited by the user. The button “apply changes” is shown
@@ -397,9 +408,15 @@
 															onclick="if(!deleteClickQuery()){return false;}"
 															styleClass="deleteIssue" />
 
+														<%-- Update button --%>
+														<h:commandLink value="#{msgs['calendar.applyChanges']}"
+															id="applyLink" styleClass="deleteIssue"
+															style="display: none;" />
+
 														<%-- Issue name box --%>
 														<htm:span styleClass="fullWideBox">
 															<h:inputText value="#{issue.heading}" id="issueHeading"
+																onkeydown="showApplyLink(this);"
 																styleClass="fullWideInput" />
 														</htm:span>
 
