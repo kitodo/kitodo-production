@@ -603,6 +603,22 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function getBlank() returns whether the calendar editor is in mint
+	 * condition, i.e. there is no title block defined yet, as read-only
+	 * property “blank”.
+	 * 
+	 * <p>
+	 * Note: “empty” is a reserved word in JSP and cannot be used as property
+	 * name.
+	 * </p>
+	 * 
+	 * @return whether there is no title block yet
+	 */
+	public boolean getBlank() {
+		return course.size() == 0;
+	}
+
+	/**
 	 * The function getCalendarSheet() returns the data required to build the
 	 * calendar sheet as read-only property "calendarSheet". The outer list
 	 * contains 31 entries, each representing a row of the calendar (the days
