@@ -49,7 +49,7 @@
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
-	<body onload="init()">
+	<body>
 		<style type="text/css">
 .titleManagement {
 	float: left;
@@ -173,6 +173,24 @@
 		<script type="text/javascript">
 			
 		<%--
+		 * The function addClickQuery() checks whether adding a title block can be
+		 * performed without unexpected side effects. In the rare case that there
+		 * could be confusion the user will be prompted with an explainatory message
+		 * and has an option to continue or not.
+		 * 
+		 * @return whether the add request shall be processed
+		 --%>
+			function addClickQuery() {
+				if (!titleDataIsValid()) {
+					return false;
+				}
+				if (document.getElementById("form1:applyChanges").style.display == "none") {
+					return true;
+				} else {
+					return confirm("${msgs['calendar.title.add.query']}");
+				}
+			}
+		<%--
 		 * The function deleteClickQuery() checks whether an issue shall or shall 
 		 * not be deleted. The user is presented with a query whether it wants to
 		 * delete the block. This is to prevent misclicks.
@@ -181,20 +199,6 @@
 		 --%>
 			function deleteClickQuery() {
 				return confirm("${msgs['calendar.issue.delete.query']}");
-			}
-		<%--
-		 * The function init() is called after the DOM tree has been built. Unless
-		 * the form is virginal, the button “apply changes” is hidden while not
-		 * needed.
-		 * 
-		 * @return always true
-		 --%>
-			function init() {
-				if (document.getElementById("form1:titleHeading").value
-						.match(/\S/)) {
-					document.getElementById("form1:applyChanges").style.display = "none";
-				}
-				return true;
 			}
 		<%--
 		 * The function removeClickQuery() checks whether a title block shall or
@@ -214,12 +218,15 @@
 			}
 		<%--
 		 * The function startEditTitle() is called whenever the data of the title
-		 * block is being edited by the user. The button “apply changes” is shown.
+		 * block is being edited by the user. The button “apply changes” is shown
+		 * except for the first title block (because there isn’t anything yet that
+		 * changes can be “applied on” in the sense of meaning).
 		 * 
 		 * @return always true
 		 --%>
 			function startEditTitle() {
-				document.getElementById("form1:applyChanges").style.display = "inline";
+				if (document.getElementById("form1:titlePicker").options.length > 0)
+					document.getElementById("form1:applyChanges").style.display = "inline";
 				return true;
 			}
 		<%--
@@ -265,7 +272,7 @@
 				if (document.getElementById("form1:applyChanges").style.display == "none") {
 					return true;
 				} else {
-					return confirm("${msgs['calendar.title.lastAppearance.invalid']}");
+					return confirm("${msgs['calendar.title.alter.query']}");
 				}
 			}
 		</script>
@@ -327,7 +334,11 @@
 
 											<%-- Buttons to add and remove titles --%>
 											<h:commandLink value="#{msgs['calendar.title.add']}"
-												action="#{CalendarForm.addTitleClick}" />
+												rendered="#{CalendarForm.blank}" />
+											<h:commandLink value="#{msgs['calendar.title.add']}"
+												action="#{CalendarForm.addTitleClick}"
+												onclick="if(!addClickQuery()){return false;}"
+												rendered="#{not CalendarForm.blank}" />
 											<h:commandLink value="#{msgs['calendar.title.remove']}"
 												action="#{CalendarForm.removeTitleClick}"
 												onclick="if(!removeClickQuery()){return false;}" />
@@ -361,7 +372,7 @@
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													id="applyChanges" />
+													id="applyChanges" style="display: none;" />
 											</htm:div>
 
 											<htm:div styleClass="issues">
