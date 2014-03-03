@@ -49,7 +49,7 @@
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
-	<body>
+	<body onload="init()">
 		<style type="text/css">
 .titleManagement {
 	float: left;
@@ -128,13 +128,14 @@
 
 .calendarSheet {
 	border-collapse: collapse;
-	table-layout: fixed; width : 100%;
+	table-layout: fixed;
+	width: 100%;
 	clear: both;
 	width: 100%;
 }
 
 .calendarSheet caption {
-	font-size: bigger;
+	font-size: larger;
 }
 
 .calendarSheet td,.calendarSheet th {
@@ -182,16 +183,17 @@
 				return confirm("${msgs['calendar.issue.delete.query']}");
 			}
 		<%--
-		 * The function endEditTitle() is called after successful validation of the
-		 * modified title block data when the user clicks “apply changes” to
-		 * re-enable any form elements previously disabled by startEditTitle(). This
-		 * is necessary because otherwise the browser—by specification—doesn’t
-		 * submit them, which will cause JSF to fail.
+		 * The function init() is called after the DOM tree has been built. Unless
+		 * the form is virginal, the button “apply changes” is hidden while not
+		 * needed.
 		 * 
 		 * @return always true
 		 --%>
-			function endEditTitle() {
-				// TODO
+			function init() {
+				if (document.getElementById("form1:titleHeading").value
+						.match(/\S/)) {
+					document.getElementById("form1:applyChanges").style.display = "none";
+				}
 				return true;
 			}
 		<%--
@@ -212,16 +214,12 @@
 			}
 		<%--
 		 * The function startEditTitle() is called whenever the data of the title
-		 * block is being edited by the user. It disables all other form elements
-		 * whose contents depend on this data and need to be recomposed after it was
-		 * altered. The form elements must be re-enabled if the user clicks “apply
-		 * changes” before the form is submitted, otherwise the browser—by
-		 * specification—doesn’t submit them which will cause JSF to fail.
+		 * block is being edited by the user. The button “apply changes” is shown.
 		 * 
 		 * @return always true
 		 --%>
 			function startEditTitle() {
-				// TODO
+				document.getElementById("form1:applyChanges").style.display = "inline";
 				return true;
 			}
 		<%--
@@ -255,6 +253,21 @@
 				}
 				return true;
 			}
+		<%--
+		 * The function titlePickerChangeQuery() checks whether silently changing
+		 * the title block is possible. In the rare case that there are uncommited
+		 * changes to the title block, the user is presented with a query whether it
+		 * wants to continue, which implies that the changes will be lost.
+		 * 
+		 * @return whether the change request shall be processed
+		 --%>
+			function titlePickerChangeQuery() {
+				if (document.getElementById("form1:applyChanges").style.display == "none") {
+					return true;
+				} else {
+					return confirm("${msgs['calendar.title.lastAppearance.invalid']}");
+				}
+			}
 		</script>
 		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
 			align="center">
@@ -265,7 +278,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1">
+					<h:form id="form1" onsubmit="return titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -305,7 +318,8 @@
 											<%-- Select box to switch between already defined titles --%>
 											<h:selectOneListbox styleClass="titlePicker" size="7"
 												value="#{CalendarForm.titlePickerSelected}"
-												onchange="submit()" id="titlePicker">
+												onchange="if(titlePickerChangeQuery()){submit();}"
+												id="titlePicker">
 												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
 													var="item" itemLabel="#{item.label}"
 													itemValue="#{item.value}" />
@@ -327,7 +341,7 @@
 														styleClass="fullWideLabel" for="titleHeading" />
 													<htm:span styleClass="fullWideBox">
 														<h:inputText value="#{CalendarForm.titleHeading}"
-															onchange="startEditTitle()" id="titleHeading"
+															onkeydown="startEditTitle()" id="titleHeading"
 															styleClass="fullWideInput" />
 													</htm:span>
 												</htm:div>
@@ -336,18 +350,19 @@
 													<h:outputText
 														value="#{msgs['calendar.title.firstAppearance']}" />
 													<h:inputText value="#{CalendarForm.firstAppearance}"
-														onchange="startEditTitle()" id="firstAppearance" />
+														onkeydown="startEditTitle()" id="firstAppearance" />
 												</htm:div>
 
 												<htm:div styleClass="keepTogether">
 													<h:outputText
 														value="#{msgs['calendar.title.lastAppearance']}" />
 													<h:inputText value="#{CalendarForm.lastAppearance}"
-														onchange="startEditTitle()" id="lastAppearance" />
+														onkeydown="startEditTitle()" id="lastAppearance" />
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}" />
+													onclick="if(titleDataIsValid()){endEditTitle();}else{return false;}"
+													id="applyChanges" />
 											</htm:div>
 
 											<htm:div styleClass="issues">

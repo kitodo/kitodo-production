@@ -114,7 +114,7 @@ public class CalendarForm {
 	 * The field yearShowing tells the year currently showing in this calendar
 	 * instance.
 	 */
-	protected int yearShowing = 1801;
+	protected int yearShowing = 1979; // cf. 42
 
 	/**
 	 * The class IssueController backs the control elements that are necessary
@@ -575,6 +575,7 @@ public class CalendarForm {
 		copy.setLastAppearance(firstAppearance);
 		course.add(copy);
 		titleShowing = copy;
+		navigate();
 	}
 
 	/**
@@ -772,6 +773,21 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The method navigate() alters the year the calendar sheet is shown for so
+	 * that something of the current title block is visible to prevent the user
+	 * from needing to click through centuries manually to get there.
+	 */
+	protected void navigate() {
+		try {
+			if (yearShowing > titleShowing.getLastAppearance().getYear())
+				yearShowing = titleShowing.getLastAppearance().getYear();
+			if (yearShowing < titleShowing.getFirstAppearance().getYear())
+				yearShowing = titleShowing.getFirstAppearance().getYear();
+		} catch (NullPointerException e) {
+		}
+	}
+
+	/**
 	 * The method removeTitleClick() deletes the currently selected Title block
 	 * from the course of appearance.The method is not intended to be used if
 	 * there is only one block left.
@@ -787,6 +803,7 @@ public class CalendarForm {
 		if (index > 0)
 			index--;
 		titleShowing = course.get(index);
+		navigate();
 	}
 
 	/**
@@ -803,8 +820,13 @@ public class CalendarForm {
 	public void setFirstAppearance(String firstAppearance) {
 		LocalDate newFirstAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
-			if (updateAllowed)
-				titleShowing.setFirstAppearance(newFirstAppearance);
+			if (updateAllowed) {
+				if (titleShowing.getFirstAppearance() == null
+						|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
+					titleShowing.setFirstAppearance(newFirstAppearance);
+					navigate();
+				}
+			}
 		} else {
 			titleShowing = new Title();
 			titleShowing.setFirstAppearance(newFirstAppearance);
@@ -826,8 +848,13 @@ public class CalendarForm {
 	public void setLastAppearance(String lastAppearance) {
 		LocalDate newLastAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
-			if (updateAllowed)
-				titleShowing.setLastAppearance(newLastAppearance);
+			if (updateAllowed) {
+				if (titleShowing.getLastAppearance() == null
+						|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+					titleShowing.setLastAppearance(newLastAppearance);
+					navigate();
+				}
+			}
 		} else {
 			titleShowing = new Title();
 			titleShowing.setLastAppearance(newLastAppearance);
@@ -876,7 +903,7 @@ public class CalendarForm {
 		updateAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
 		if (!updateAllowed) {
 			titleShowing = titlePickerResolver.get(value);
-			yearShowing = titleShowing.getFirstAppearance().getYear();
+			navigate();
 		}
 	}
 }
