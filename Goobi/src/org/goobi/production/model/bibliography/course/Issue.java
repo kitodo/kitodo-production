@@ -116,56 +116,6 @@ public class Issue implements Cloneable {
 	}
 
 	/**
-	 * Simple Issue constructor.
-	 * 
-	 * @param heading
-	 *            issue name
-	 */
-	public Issue(String heading) {
-		this();
-		this.heading = heading;
-	}
-
-	/**
-	 * Extended Issue constructor.
-	 * 
-	 * @param heading
-	 *            issue name
-	 * @param monday
-	 *            whether the issue regularly appears on Mondays
-	 * @param tuesday
-	 *            whether the issue regularly appears on Tuesdays
-	 * @param wednesday
-	 *            whether the issue regularly appears on Wednesdays
-	 * @param thursday
-	 *            whether the issue regularly appears on Thursdays
-	 * @param friday
-	 *            whether the issue regularly appears on Fridays
-	 * @param saturday
-	 *            whether the issue regularly appears on Saturdays
-	 * @param sunday
-	 *            whether the issue regularly appears on Sundays
-	 */
-	public Issue(String heading, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday,
-			boolean saturday, boolean sunday) {
-		this(heading);
-		if (monday)
-			daysOfWeek.add(DateTimeConstants.MONDAY);
-		if (tuesday)
-			daysOfWeek.add(DateTimeConstants.TUESDAY);
-		if (wednesday)
-			daysOfWeek.add(DateTimeConstants.WEDNESDAY);
-		if (thursday)
-			daysOfWeek.add(DateTimeConstants.THURSDAY);
-		if (friday)
-			daysOfWeek.add(DateTimeConstants.FRIDAY);
-		if (saturday)
-			daysOfWeek.add(DateTimeConstants.SATURDAY);
-		if (sunday)
-			daysOfWeek.add(DateTimeConstants.SUNDAY);
-	}
-
-	/**
 	 * Adds a LocalDate to the set of exclusions.
 	 * 
 	 * @param exclusion
@@ -183,7 +133,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	public boolean addDayOfWeek(int dayOfWeek) {
+	private boolean addDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.add(dayOfWeek);
 	}
 
@@ -277,38 +227,12 @@ public class Issue implements Cloneable {
 	 */
 	@Override
 	public Issue clone() {
-		Issue copy = new Issue(heading);
-		copy.setAdditions(new HashSet<LocalDate>(additions));
-		copy.setDaysOfWeek(new HashSet<Integer>(daysOfWeek));
-		copy.setExclusions(new HashSet<LocalDate>(exclusions));
+		Issue copy = new Issue();
+		copy.heading = heading;
+		copy.additions = new HashSet<LocalDate>(additions);
+		copy.daysOfWeek = new HashSet<Integer>(daysOfWeek);
+		copy.exclusions = new HashSet<LocalDate>(exclusions);
 		return copy;
-	}
-
-	/**
-	 * Getter function for the Set of additions.
-	 * 
-	 * @return the set of additions
-	 */
-	public Set<LocalDate> getAdditions() {
-		return additions;
-	}
-
-	/**
-	 * Getter function for the Set of days of week the issue regularly appears.
-	 * 
-	 * @return the set of days of week the issue regularly appears
-	 */
-	public Set<Integer> getDaysOfWeek() {
-		return daysOfWeek;
-	}
-
-	/**
-	 * Getter function for the Set of exclusions.
-	 * 
-	 * @return the set of exclusions
-	 */
-	public Set<LocalDate> getExclusions() {
-		return exclusions;
 	}
 
 	/**
@@ -423,7 +347,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	public boolean removeDayOfWeek(int dayOfWeek) {
+	private boolean removeDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.remove(dayOfWeek);
 	}
 
@@ -500,36 +424,6 @@ public class Issue implements Cloneable {
 	}
 
 	/**
-	 * Setter method for the set of additions
-	 * 
-	 * @param additions
-	 *            set to be used
-	 */
-	public void setAdditions(Set<LocalDate> additions) {
-		this.additions = additions;
-	}
-
-	/**
-	 * Setter method for the set of daysOfWeek
-	 * 
-	 * @param daysOfWeek
-	 *            set to be used
-	 */
-	public void setDaysOfWeek(Set<Integer> daysOfWeek) {
-		this.daysOfWeek = daysOfWeek;
-	}
-
-	/**
-	 * Setter method for the set of exclusions
-	 * 
-	 * @param exclusions
-	 *            set to be used
-	 */
-	public void setExclusions(Set<LocalDate> exclusions) {
-		this.exclusions = exclusions;
-	}
-
-	/**
 	 * Setter method for the issue’s name
 	 * 
 	 * @param heading
@@ -537,91 +431,6 @@ public class Issue implements Cloneable {
 	 */
 	public void setHeading(String heading) {
 		this.heading = heading;
-	}
-
-	/**
-	 * Toggles a day of week, i.e. if the given day of week is contained in
-	 * daysOfWeek it will be removed, if not, it will be added.
-	 * 
-	 * @param dayOfWeek
-	 *            An int representing the day of week (1 = monday … 7 = sunday)
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleDayOfWeek(int dayOfWeek) {
-		if (daysOfWeek.contains(dayOfWeek))
-			return removeDayOfWeek(dayOfWeek);
-		else
-			return addDayOfWeek(dayOfWeek);
-	}
-
-	/**
-	 * Toggles monday, i.e. removes it from daysOfWeek if it is contained, adds
-	 * it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleMonday() {
-		return toggleDayOfWeek(DateTimeConstants.MONDAY);
-	}
-
-	/**
-	 * Toggles tuesday, i.e. removes it from daysOfWeek if it is contained, adds
-	 * it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleTuesday() {
-		return toggleDayOfWeek(DateTimeConstants.TUESDAY);
-	}
-
-	/**
-	 * Toggles wednesday, i.e. removes it from daysOfWeek if it is contained,
-	 * adds it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleWednesday() {
-		return toggleDayOfWeek(DateTimeConstants.WEDNESDAY);
-	}
-
-	/**
-	 * Toggles thursday, i.e. removes it from daysOfWeek if it is contained,
-	 * adds it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleThursday() {
-		return toggleDayOfWeek(DateTimeConstants.THURSDAY);
-	}
-
-	/**
-	 * Toggles friday, i.e. removes it from daysOfWeek if it is contained, adds
-	 * it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleFriday() {
-		return toggleDayOfWeek(DateTimeConstants.FRIDAY);
-	}
-
-	/**
-	 * Toggles saturday, i.e. removes it from daysOfWeek if it is contained,
-	 * adds it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleSaturday() {
-		return toggleDayOfWeek(DateTimeConstants.SATURDAY);
-	}
-
-	/**
-	 * Toggles sunday, i.e. removes it from daysOfWeek if it is contained, adds
-	 * it otherwise.
-	 * 
-	 * @return true if the Set was changed
-	 */
-	public boolean toggleSunday() {
-		return toggleDayOfWeek(DateTimeConstants.SUNDAY);
 	}
 
 	/**

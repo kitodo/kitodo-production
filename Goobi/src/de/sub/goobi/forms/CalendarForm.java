@@ -49,9 +49,10 @@ import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.DateFuncs;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -62,17 +63,26 @@ import de.sub.goobi.helper.DateFuncs;
 public class CalendarForm {
 
 	/**
-	 * These are the colours used to represent the issues in the calendar
-	 * editor. The presets are samples. Arbitrary colours can be definded in
-	 * goobi_config.properties by setting the property "issue.colours".
+	 * The constant field DATE_FORMATTER provides a DateTimeFormatter that is
+	 * used to convert between LocalDate objects and String in common German
+	 * notation.
 	 */
-	protected static final String[] ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
-			"#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000").split(";");
+	protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
 
 	/**
-	 * An empty list of IssueOption. We can use the same one everywhere.
+	 * The constant field EMPTY_LIST_OF_ISSUE_OPTIONS holds empty list of
+	 * IssueOption. It is used to prevent null pointer exceptions, however one
+	 * can use the same object everywhere.
 	 */
 	protected static final List<IssueOption> EMPTY_LIST_OF_ISSUE_OPTIONS = new ArrayList<IssueOption>(0);
+
+	/**
+	 * The constant field ISSUE_COLOURS holds the colours used to represent the
+	 * issues in the calendar editor. It is populated on form bean creation, so
+	 * changing the configuration should take effect without need to restart the
+	 * servlet container.
+	 */
+	protected static String[] ISSUE_COLOURS;
 
 	/**
 	 * The field course holds the course of appearance currently under edit by
@@ -95,7 +105,7 @@ public class CalendarForm {
 	protected Title titleShowing;
 
 	/**
-	 * The field updateAllowed is of importance only during the update model
+	 * The field titlePickerUnchanged is of importance during the update model
 	 * values phase of the JSF life-cycle. During that phase several setter
 	 * methods are sequentially called. The first method called is
 	 * setTitlePickerSelected(). If the user chose a different title block to be
@@ -103,49 +113,53 @@ public class CalendarForm {
 	 * calls to other setter methods to overwrite the values in the newly
 	 * selected title block with the values of the previously displayed block
 	 * which come back in in the form that is submitted by the browser if this
-	 * is not blocked. Therefore setTitlePickerSelected() sets updateAllowed to
-	 * control whether the other setter methods shall or shall not write the
-	 * incoming data to the respective fields.
+	 * is not blocked. Therefore setTitlePickerSelected() sets
+	 * titlePickerUnchanged to control whether the other setter methods shall or
+	 * shall not write the incoming data into the respective fields.
 	 */
-	protected boolean updateAllowed = true;
+	protected boolean titlePickerUnchanged = true;
 
 	/**
 	 * The field yearShowing tells the year currently showing in this calendar
 	 * instance.
 	 */
-	protected int yearShowing = 1979; // cf. 42
+	protected int yearShowing = 1979; // Cf. 42
 
 	/**
 	 * The class IssueController backs the control elements that are necessary
-	 * to manage the properties of an issue for Faces, including the option to
-	 * delete it.
+	 * to manage the properties of an issue using Faces, including the option of
+	 * its deletion.
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class IssueController {
+	protected class IssueController {
 		/**
-		 * Issue the adapter is for
+		 * The field issue holds the issue that is managed by this controller.
 		 */
 		protected final Issue issue;
 
 		/**
-		 * Consecutive index to identify the issue in the HTML form
+		 * The field index holds a consecutive index representing its position
+		 * in the list of issues held by the title block.
 		 */
 		protected final int index;
 
 		/**
-		 * Constructor. Creates a new IssueAdapter which wraps the given issue.
+		 * Constructor. Creates a new IssueController for the given issue and
+		 * sets its index value.
 		 * 
 		 * @param issue
-		 *            Issue the adapter is for
+		 *            Issue that shall be managed by this controller
+		 * @param index
+		 *            consecutive index of the issue in the title block
 		 */
-		public IssueController(Issue issue, int index) {
+		protected IssueController(Issue issue, int index) {
 			this.issue = issue;
 			this.index = index;
 		}
 
 		/**
-		 * The method deleteClick() deletes the issue wrapped by this adapter
+		 * The method deleteClick() deletes the issue wrapped by this controller
 		 * from the set of issues held by the title currently showing.
 		 */
 		public void deleteClick() {
@@ -154,7 +168,7 @@ public class CalendarForm {
 
 		/**
 		 * The method getColour() returns a colour representative for optically
-		 * distinguishing the given issue
+		 * distinguishing the given issue as read-only property "colour".
 		 * 
 		 * @return the HTML colour code of the issue
 		 */
@@ -163,8 +177,9 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getFriday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Fridays as read-write property "friday".
+		 * The function getFriday() returns whether the issue held by this
+		 * controller regularly appears on Fridays as read-write property
+		 * "friday".
 		 * 
 		 * @return whether the issue appears on Fridays
 		 */
@@ -183,28 +198,18 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getIndex() returns the index of this issue in the list
-		 * of issue adapters as read-only property "index". This can be replaced
-		 * by &lt;t:dataList&gt;’s rowIndex-Attribute in future versions of JSF.
-		 * 
-		 * @return the list index of this issue
-		 */
-		public Issue getIndex() {
-			return issue;
-		}
-
-		/**
-		 * The function getIssue() returns the issue managed by this adapter.
+		 * The function getIssue() returns the issue held by this controller.
 		 * 
 		 * @return the issue managed by this adapter
 		 */
-		public Issue getIssue() {
+		protected Issue getIssue() {
 			return issue;
 		}
 
 		/**
-		 * The function getMonday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Mondays as read-write property "monday".
+		 * The function getMonday() returns whether the issue held by this
+		 * controller regularly appears on Mondays as read-write property
+		 * "monday".
 		 * 
 		 * @return whether the issue appears on Mondays
 		 */
@@ -213,8 +218,8 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getSaturday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Saturdays as read-write property
+		 * The function getSaturday() returns whether the issue held by this
+		 * controller regularly appears on Saturdays as read-write property
 		 * "saturday".
 		 * 
 		 * @return whether the issue appears on Saturdays
@@ -224,8 +229,9 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getSunday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Sundays as read-write property "sunday".
+		 * The function getSunday() returns whether the issue held by this
+		 * controller regularly appears on Sundays as read-write property
+		 * "sunday".
 		 * 
 		 * @return whether the issue appears on Sundays
 		 */
@@ -234,8 +240,8 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getThursday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Thursdays as read-write property
+		 * The function getThursday() returns whether the issue held by this
+		 * controller regularly appears on Thursdays as read-write property
 		 * "thursday".
 		 * 
 		 * @return whether the issue appears on Thursdays
@@ -245,8 +251,8 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getTuesday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Tuesdays as read-write property
+		 * The function getTuesday() returns whether the issue held by this
+		 * controller regularly appears on Tuesdays as read-write property
 		 * "tuesday".
 		 * 
 		 * @return whether the issue appears on Tuesdays
@@ -256,8 +262,8 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getWednesday() returns whether the issue wrapped by this
-		 * adapter regularly appears on Wednesdays as read-write property
+		 * The function getWednesday() returns whether the issue held by this
+		 * controller regularly appears on Wednesdays as read-write property
 		 * "wednesday".
 		 * 
 		 * @return whether the issue appears on Wednesdays
@@ -269,13 +275,13 @@ public class CalendarForm {
 		/**
 		 * The method setFriday() will be called by Faces to store a new value
 		 * of the read-write property "friday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Fridays.
+		 * issue held by this controller regularly appears on Fridays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Fridays
 		 */
 		public void setFriday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addFriday();
 				else
@@ -284,27 +290,27 @@ public class CalendarForm {
 
 		/**
 		 * The method setMonday() will be called by Faces to store a new value
-		 * of the read-write property "monday" which represents the issue’s
+		 * of the read-write property "heading" which represents the issue’s
 		 * name.
 		 * 
 		 * @param heading
 		 *            heading to be used
 		 */
 		public void setHeading(String heading) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				issue.setHeading(heading);
 		}
 
 		/**
 		 * The method setMonday() will be called by Faces to store a new value
 		 * of the read-write property "monday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Mondays.
+		 * issue held by this controller regularly appears on Mondays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Mondays
 		 */
 		public void setMonday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addMonday();
 				else
@@ -314,13 +320,13 @@ public class CalendarForm {
 		/**
 		 * The method setSaturday() will be called by Faces to store a new value
 		 * of the read-write property "saturday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Saturdays.
+		 * issue held by this controller regularly appears on Saturdays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Saturdays
 		 */
 		public void setSaturday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addSaturday();
 				else
@@ -330,13 +336,13 @@ public class CalendarForm {
 		/**
 		 * The method setSunday() will be called by Faces to store a new value
 		 * of the read-write property "sunday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Sundays.
+		 * issue held by this controller regularly appears on Sundays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Sundays
 		 */
 		public void setSunday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addSunday();
 				else
@@ -346,13 +352,13 @@ public class CalendarForm {
 		/**
 		 * The method setThursday() will be called by Faces to store a new value
 		 * of the read-write property "thursday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Thursdays.
+		 * issue held by this controller regularly appears on Thursdays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Thursdays
 		 */
 		public void setThursday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addThursday();
 				else
@@ -362,13 +368,13 @@ public class CalendarForm {
 		/**
 		 * The method setTuesday() will be called by Faces to store a new value
 		 * of the read-write property "tuesday" which represents whether the
-		 * issue wrapped by this adapter regularly appears on Tuesdays.
+		 * issue held by this controller regularly appears on Tuesdays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Tuesdays
 		 */
 		public void setTuesday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addTuesday();
 				else
@@ -378,13 +384,13 @@ public class CalendarForm {
 		/**
 		 * The method setWednesday() will be called by Faces to store a new
 		 * value of the read-write property "wednesday" which represents whether
-		 * the issue wrapped by this adapter regularly appears on Wednesdays.
+		 * the issue held by this controller regularly appears on Wednesdays.
 		 * 
 		 * @param appears
 		 *            whether the issue appears on Wednesdays
 		 */
 		public void setWednesday(boolean appears) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				if (appears)
 					issue.addWednesday();
 				else
@@ -393,24 +399,34 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The class Cell represents one single table cell on the calendar sheet.
+	 * The class Cell represents a single table cell on the calendar sheet.
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	public class Cell {
-
+		/**
+		 * The field date holds the date that this cell represents in the course
+		 * of time.
+		 */
 		protected LocalDate date = null;
+
+		/**
+		 * The field issues holds the possible issues for that day.
+		 */
 		protected List<IssueOption> issues = EMPTY_LIST_OF_ISSUE_OPTIONS;
-		protected boolean onTitle = true; // do not grey out dates which aren’t defined by the caledar system
+
+		/**
+		 * The field onTitle contains the statement, whether the day is covered
+		 * by the currently showing title block (or othewise needs to be
+		 * greyed-out in the front end).
+		 */
+		protected boolean onTitle = true; // do not grey out dates which aren’t defined by the calendar system
 
 		/**
 		 * The function getDay() returns the day of month (that is a number in
-		 * 1−31) of the date the cell represents, followed by a full stop.
-		 * 
-		 * <p>
-		 * For cells which are undefined by the calendar system, returns the
-		 * empty String.
-		 * </p>
+		 * 1−31) of the date the cell represents, followed by a full stop, as
+		 * read-only property "day". For cells which are undefined by the
+		 * calendar system, it returns the empty String.
 		 * 
 		 * @return the day of month in enumerative form
 		 */
@@ -422,7 +438,7 @@ public class CalendarForm {
 
 		/**
 		 * The function getIssues() returns the issues that may have appeared on
-		 * that day.
+		 * that day as read-only field “issues”.
 		 * 
 		 * @return the issues optionally appeared that day
 		 */
@@ -432,9 +448,10 @@ public class CalendarForm {
 
 		/**
 		 * The function getStyleClass returns the CSS class names to be printed
-		 * into the HTML to display the table cell state.
+		 * into the HTML to display the table cell state as read-only property
+		 * “styleClass”.
 		 * 
-		 * @return
+		 * @return the cell’s CSS style class name
 		 */
 		public String getStyleClass() {
 			if (date == null)
@@ -460,15 +477,38 @@ public class CalendarForm {
 			}
 		}
 
-		public void setDate(LocalDate date) {
+		/**
+		 * The method setDate() sets the date represented by this calendar sheet
+		 * cell.
+		 * 
+		 * @param date
+		 *            the date represented by this calendar sheet cell
+		 */
+		protected void setDate(LocalDate date) {
 			this.date = date;
 		}
 
-		public void setIssues(List<IssueOption> issues) {
+		/**
+		 * The method setIssues() sets the list of possible issues for the date
+		 * represented by this calendar sheet cell.
+		 * 
+		 * @param issues
+		 *            the list of issues possible in this cell
+		 */
+		protected void setIssues(List<IssueOption> issues) {
 			this.issues = issues;
 		}
 
-		public void setOnTitle(boolean onTitle) {
+		/**
+		 * The method setOnTitle() can be used to change the piece of
+		 * information whether the day is covered by the currently showing title
+		 * block or not.
+		 * 
+		 * @param onTitle
+		 *            whether the day is covered by the currently showing title
+		 *            block
+		 */
+		protected void setOnTitle(boolean onTitle) {
 			this.onTitle = onTitle;
 		}
 	}
@@ -479,9 +519,23 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class IssueOption {
+	protected class IssueOption {
+		/**
+		 * The field date holds the date of this possible issue in the course of
+		 * time.
+		 */
 		protected final LocalDate date;
+
+		/**
+		 * The field colour holds the colour representative for optically
+		 * distinguishing the given issue
+		 */
 		protected final String colour;
+
+		/**
+		 * The field issue holds the issue this that this possible issue would
+		 * be of.
+		 */
 		protected final Issue issue;
 
 		/**
@@ -500,7 +554,8 @@ public class CalendarForm {
 
 		/**
 		 * The function getColour() returns a colour representative for
-		 * optically distinguishing the given issue
+		 * optically distinguishing the given issue as read-only property
+		 * “colour”.
 		 * 
 		 * @return the HTML colour code of the issue
 		 */
@@ -509,7 +564,8 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The function getIssue() returns the issue’s name
+		 * The function getIssue() returns the issue’s name as read-only
+		 * property “issue”.
 		 * 
 		 * @return the issue’s name
 		 */
@@ -519,8 +575,9 @@ public class CalendarForm {
 
 		/**
 		 * The function getSelected() returns whether the issue appeared on the
-		 * given LocalDate, taking into consideration the daysOfWeek of regular
-		 * appearance, the Set of exclusions and the Set of additions.
+		 * given date as read-only property “selected”, taking into
+		 * consideration the daysOfWeek of regular appearance, the Set of
+		 * exclusions and the Set of additions.
 		 * 
 		 * @return whether the issue appeared that day
 		 */
@@ -556,16 +613,25 @@ public class CalendarForm {
 
 	/**
 	 * Empty constructor. Creates a new form without yet any data.
+	 * 
+	 * <p>
+	 * The issue colour presets are samples which have been chosen to provide
+	 * distinguishability also for users with red-green color vision deficiency.
+	 * Arbitrary colours can be defined in goobi_config.properties by setting
+	 * the property “issue.colours”.
+	 * </p>
 	 */
 	public CalendarForm() {
+		ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
+				"#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000").split(";");
 		course = new Course();
-		titleShowing = null;
 		titlePickerResolver = new HashMap<String, Title>();
+		titleShowing = null;
 	}
 
 	/**
-	 * The method addTitleClick() creates a copy of the currently showing title
-	 * block.
+	 * The method addTitleClick() creates and adds a copy of the currently
+	 * showing title block.
 	 */
 	public void addTitleClick() {
 		Title copy = titleShowing.clone();
@@ -594,7 +660,7 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The method forwardClick() flips the calendar sheet foreward one year in
+	 * The method forwardClick() flips the calendar sheet forward one year in
 	 * time.
 	 */
 	public void forwardClick() {
@@ -607,8 +673,8 @@ public class CalendarForm {
 	 * property “blank”.
 	 * 
 	 * <p>
-	 * Note: “empty” is a reserved word in JSP and cannot be used as property
-	 * name.
+	 * Side note: “empty” is a reserved word in JSP and cannot be used as
+	 * property name.
 	 * </p>
 	 * 
 	 * @return whether there is no title block yet
@@ -697,7 +763,7 @@ public class CalendarForm {
 	 */
 	public String getFirstAppearance() {
 		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
-			return DateFuncs.DATE_CONVERTER.print(titleShowing.getFirstAppearance());
+			return DATE_FORMATTER.print(titleShowing.getFirstAppearance());
 		else
 			return "";
 	}
@@ -725,7 +791,7 @@ public class CalendarForm {
 	 */
 	public String getLastAppearance() {
 		if (titleShowing != null && titleShowing.getLastAppearance() != null)
-			return DateFuncs.DATE_CONVERTER.print(titleShowing.getLastAppearance());
+			return DATE_FORMATTER.print(titleShowing.getLastAppearance());
 		else
 			return "";
 	}
@@ -759,7 +825,7 @@ public class CalendarForm {
 			titlePickerResolver.put(value, title);
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("value", value);
-			item.put("label", title.toString());
+			item.put("label", title.toString(DATE_FORMATTER));
 			result.add(item);
 		}
 		return result;
@@ -833,9 +899,9 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance = DATE_FORMATTER.parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
-			if (updateAllowed) {
+			if (titlePickerUnchanged) {
 				if (titleShowing.getFirstAppearance() == null
 						|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
 					titleShowing.setFirstAppearance(newFirstAppearance);
@@ -861,9 +927,9 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = DateFuncs.DATE_CONVERTER.parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance = DATE_FORMATTER.parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
-			if (updateAllowed) {
+			if (titlePickerUnchanged) {
 				if (titleShowing.getLastAppearance() == null
 						|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
 					titleShowing.setLastAppearance(newLastAppearance);
@@ -890,7 +956,7 @@ public class CalendarForm {
 	 */
 	public void setTitleHeading(String heading) {
 		if (titleShowing != null) {
-			if (updateAllowed)
+			if (titlePickerUnchanged)
 				titleShowing.setHeading(heading);
 		} else {
 			titleShowing = new Title(heading);
@@ -915,8 +981,8 @@ public class CalendarForm {
 	public void setTitlePickerSelected(String value) {
 		if (value == null)
 			return;
-		updateAllowed = value.equals(Integer.toHexString(titleShowing.hashCode()));
-		if (!updateAllowed) {
+		titlePickerUnchanged = value.equals(Integer.toHexString(titleShowing.hashCode()));
+		if (!titlePickerUnchanged) {
 			titleShowing = titlePickerResolver.get(value);
 			navigate();
 		}
