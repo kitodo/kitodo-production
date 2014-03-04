@@ -67,8 +67,7 @@ public class CalendarForm {
 	 * goobi_config.properties by setting the property "issue.colours".
 	 */
 	protected static final String[] ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
-			"#D1D1DB;#11FF75;#00B4DB;#FF0000;#0000BC;#934500;#000075;#D1D100;#00FFBC;#C25CDB;#2A5C00;#000000").split(
-			";");
+			"#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000").split(";");
 
 	/**
 	 * An empty list of IssueOption. We can use the same one everywhere.
