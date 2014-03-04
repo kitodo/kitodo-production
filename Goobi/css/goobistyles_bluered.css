@@ -719,3 +719,28 @@ a.metadataHeaderLinks {
 a.metadataHeaderLinks:hover {
     text-decoration: underline;
 }
+/*
+   ------------------------------------------------------------
+   Colours for calendar sheet
+   ------------------------------------------------------------
+*/
+.saturday {
+	background-color: #B0E0E6;
+}
+
+.sunday {
+	background-color: #FA8072;
+}
+
+.weekdayNoTitle {
+	background-color: #C0C0C0;
+}
+
+.saturdayNoTitle {
+	background-color: #778899;
+}
+
+.sundayNoTitle {
+	background-color: #BC8F8F;
+}
+
