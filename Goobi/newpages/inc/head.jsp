@@ -62,6 +62,7 @@
 <!-- 
 <script src="http://yui.yahooapis.com/2.8.1/build/tabview/tabview-min.js"></script>
  -->	
+	<x:stylesheet media="all" path="/css/goobi.css"/>
 	<x:stylesheet media="screen" path="#{LoginForm.myBenutzer == null?'/css/default.css':LoginForm.myBenutzer.css}"/>
 	<x:stylesheet media="print" path="/css/system/print.css"/>
 	<%--Styles für panelTabbedPane unter Menü Administration- Projekte --%>
