@@ -1,0 +1,148 @@
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support
+ * of mass digitization.
+ * 
+ * (c) 2013 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * 
+ * Visit the websites for more information.
+ *     		- http://www.goobi.org/en/
+ *     		- https://github.com/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a
+ * combined work based on this library. Thus, the terms and conditions of the
+ * GNU General Public License cover the whole combination. As a special
+ * exception, the copyright holders of this library give you permission to link
+ * this library with independent modules to produce an executable, regardless of
+ * the license terms of these independent modules, and to copy and distribute
+ * the resulting executable under terms of your choice, provided that you also
+ * meet, for each linked independent module, the terms and conditions of the
+ * license of that module. An independent module is a module which is not
+ * derived from or based on this library. If you modify this library, you may
+ * extend this exception to your version of the library, but you are not obliged
+ * to do so. If you do not wish to do so, delete this exception statement from
+ * your version.
+ */
+ 
+/**
+ * The file goobi.css contains general CSS formatting rules that, i.e. keep
+ * elements in place, care for their display size etc. These rules are user
+ * independently required for properly displaying of pages and are therefore
+ * collected in a general file.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
+ 
+/* ===================== calendar.jsp ===================== */
+ 
+ .titleManagement {
+	float: left;
+	margin-bottom: 5px;
+	margin-right: 12px;
+	width: 250px;
+}
+
+.titleManagement select {
+	margin-bottom: 4px;
+	width: 100%;
+}
+
+.titleManagement a {
+	margin: 5px;
+}
+
+.titleContents {
+	float: left;
+	max-width: 600px;
+	width: 100%;
+}
+
+.titleData {
+	margin-bottom: 10px;
+}
+
+.fullWideBox {
+	display: block;
+	overflow: hidden;
+	padding-left: 4px;
+}
+
+.fullWideLabel {
+	float: left;
+	padding-top: 5px;
+}
+
+.fullWideInput {
+	margin-bottom: 3px;
+	width: 100%;
+}
+
+.keepTogether {
+	display: inline-block;
+	margin-right: 6px;
+}
+
+.keepTogether input {
+	max-width: 100px;
+}
+
+.issue {
+	margin: 10px 0;
+}
+
+.bubble,.issueOption {
+	font-size: 15pt;
+	line-height: 8px;
+}
+
+.bubble {
+	padding-right: 3px;
+	vertical-align: sub;
+}
+
+.issueHeading {
+	margin: 0 4px;
+	width: 250px;
+}
+
+.deleteIssue {
+	float: right;
+	padding: 5px 0 0 5px;
+}
+
+.calendarSheet {
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+	clear: both;
+	width: 100%;
+}
+
+.calendarSheet caption {
+	font-size: larger;
+}
+
+.calendarSheet td,.calendarSheet th {
+	border: 1px solid;
+}
+
+.calendarSheet th {
+	border-top: none;
+}
+
+.issueOptions {
+	padding-left: 3px;
+}

@@ -50,126 +50,6 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
-		<style type="text/css">
-.titleManagement {
-	float: left;
-	margin-bottom: 5px;
-	margin-right: 12px;
-	width: 250px;
-}
-
-.titleManagement select {
-	margin-bottom: 4px;
-	width: 100%;
-}
-
-.titleManagement a {
-	margin: 5px;
-}
-
-.titleContents {
-	float: left;
-	max-width: 600px;
-	width: 100%;
-}
-
-.titleData {
-	margin-bottom: 10px;
-}
-
-.fullWideBox {
-	display: block;
-	overflow: hidden;
-	padding-left: 4px;
-}
-
-.fullWideLabel {
-	float: left;
-	padding-top: 5px;
-}
-
-.fullWideInput {
-	margin-bottom: 3px;
-	width: 100%;
-}
-
-.keepTogether {
-	display: inline-block;
-	margin-right: 6px;
-}
-
-.keepTogether input {
-	max-width: 100px;
-}
-
-.issue {
-	margin: 10px 0;
-}
-
-.bubble,.issueOption {
-	font-size: 15pt;
-	line-height: 8px;
-}
-
-.bubble {
-	padding-right: 3px;
-	vertical-align: sub;
-}
-
-.issueHeading {
-	margin: 0 4px;
-	width: 250px;
-}
-
-.deleteIssue {
-	float: right;
-	padding: 5px 0 0 5px;
-}
-
-.calendarSheet {
-	border-collapse: collapse;
-	table-layout: fixed;
-	width: 100%;
-	clear: both;
-	width: 100%;
-}
-
-.calendarSheet caption {
-	font-size: larger;
-}
-
-.calendarSheet td,.calendarSheet th {
-	border: 1px solid;
-}
-
-.calendarSheet th {
-	border-top: none;
-}
-
-.saturday {
-	background-color: #B0E0E6;
-}
-
-.sunday {
-	background-color: #FA8072;
-}
-
-.weekdayNoTitle {
-	background-color: #C0C0C0;
-}
-
-.saturdayNoTitle {
-	background-color: #778899;
-}
-
-.sundayNoTitle {
-	background-color: #BC8F8F;
-}
-
-.issueOptions {
-	padding-left: 3px;
-}
-</style>
 		<script type="text/javascript">
 			
 		<%--
@@ -216,7 +96,7 @@
 					alert("${msgs['calendar.title.remove.disabled']}");
 				return false;
 			}
-			<%--
+		<%--
 			 * The function showApplyLink() makes the apply changes link for an
 			 * issue name box show.
 			 * 
