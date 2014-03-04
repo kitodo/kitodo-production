@@ -40,16 +40,10 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-
-import de.sub.goobi.helper.DateFuncs;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * The class Title is a bean class that represents an interval of time in the
@@ -89,50 +83,7 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * Constructor for a title with a given heading and dates of appearance
-	 * 
-	 * @param heading
-	 *            the name of the title
-	 * @param firstAppearance
-	 *            the first day this title appeared
-	 * @param lastAppearance
-	 *            the last day this title appeared
-	 */
-	public Title(String heading, LocalDate firstAppearance, LocalDate lastAppearance) {
-		this.heading = heading;
-		this.firstAppearance = firstAppearance;
-		this.lastAppearance = lastAppearance;
-		this.issues = new ArrayList<Issue>();
-	}
-
-	/**
-	 * Fully qualified constructor for a title with all details
-	 * 
-	 * @param heading
-	 *            the name of the title
-	 * @param firstAppearance
-	 *            the first day this title appeared
-	 * @param lastAppearance
-	 *            the last day this title appeared
-	 * @param issues
-	 *            Issues to be held by this title
-	 */
-	public Title(String heading, LocalDate firstAppearance, LocalDate lastAppearance, List<Issue> issues) {
-		this.heading = heading;
-		this.firstAppearance = firstAppearance;
-		this.lastAppearance = lastAppearance;
-		this.issues = issues;
-	}
-
-	/**
 	 * Adds an Issue to this title if it is not already present.
-	 * <p>
-	 * The same Issue mustn’t be added to several blocks because optimise()ing
-	 * these blocks will delete the irregularities outside the block, which
-	 * means that all irregularities [in detail: all irregularities which aren’t
-	 * part of <em>all</em> blocks] will be forgotten, therefore the add method
-	 * does clone the issue object.
-	 * </p>
 	 * 
 	 * @param issue
 	 *            Issue to add
@@ -143,60 +94,21 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * Adds all of the Issues in the specified collection to this Title if they
-	 * are not already present.
-	 * 
-	 * @param issues
-	 *            collection containing Issues to be added
-	 * @return true if the set was changed
-	 */
-	public boolean addAllIssues(Collection<? extends Issue> issues) {
-		boolean result = false;
-		for (Issue issue : issues)
-			result |= addIssue(issue);
-		return result;
-	}
-
-	/**
-	 * Removes all of the Issues from this Title.
-	 */
-	public void clearIssues() {
-		issues.clear();
-	}
-
-	/**
 	 * Creates and returns a copy of this Title.
 	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public Title clone() {
-		Title result = new Title(heading, firstAppearance, lastAppearance);
-		result.setIssues(new ArrayList<Issue>(issues));
+		Title result = new Title();
+		result.heading = heading;
+		result.firstAppearance = firstAppearance;
+		result.lastAppearance = lastAppearance;
+		ArrayList<Issue> result_issues = new ArrayList<Issue>(issues.size());
+		for (Issue issue : issues)
+			result_issues.add(issue.clone());
+		result.issues = result_issues;
 		return result;
-	}
-
-	/**
-	 * Returns true if this Title contains the specified issue
-	 * 
-	 * @param issue
-	 *            Issue whose presence in this Title is to be tested
-	 * @return true if this set contains the specified element
-	 */
-	public boolean containsIssue(Issue issue) {
-		return issues.contains(issue);
-	}
-
-	/**
-	 * Returns true if this Title contains all of the Issues of the specified
-	 * collection.
-	 * 
-	 * @param issues
-	 *            collection to be checked for containment in this Title
-	 * @return true if this Title contains all elements of the collection
-	 */
-	public boolean containsAllIssues(Collection<? extends Issue> issues) {
-		return this.issues.containsAll(issues);
 	}
 
 	/**
@@ -239,16 +151,6 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * The function isEmptyIssues() returns true if this Title contains no
-	 * Issues.
-	 * 
-	 * @return true if this Title contains no Issues
-	 */
-	public boolean isEmptyIssues() {
-		return issues.isEmpty();
-	}
-
-	/**
 	 * The function isMatch() returns whether a given LocalDate comes within the
 	 * limits of this title.
 	 * 
@@ -261,126 +163,8 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * The function issuesIterator() returns an iterator over the Issues in this
-	 * Title. If the underlying Set contains more than Integer.MAX_VALUE
-	 * elements, Integer.MAX_VALUE is returned.
-	 * 
-	 * @return an iterator over the elements in the set of issues
-	 */
-	public Iterator<Issue> issuesIterator() {
-		return issues.iterator();
-	}
-
-	/**
-	 * The function issuesSize() returns the number of Issues in this Title.
-	 * 
-	 * @return the cardinality of the set of issues
-	 */
-	public int issuesSize() {
-		return issues.size();
-	}
-
-	/**
-	 * The function getRealFirstAppearance() returns the first date at least one
-	 * of the issues assigned to this Title was published, starting from the
-	 * given date. This can be used to correct the date of first appearance
-	 * forwardly to reduce the number of exclusions that need to be handled
-	 * separately.
-	 * 
-	 * <p>
-	 * The two main use cases are
-	 * <ul>
-	 * <li>to shrink the current date of first appearance:<br/>
-	 * <code>obj.setFirstAppearance(obj.getRealFirstAppearance(obj.getFirstAppearance(), obj.getLastAppearance()))</code>
-	 * </li>
-	 * <li>to initially set the date of first appearance, if unknown:<br/>
-	 * <code>obj.setFirstAppearance(obj.getRealFirstAppearance(new LocalDate(1582, DateTimeConstants.OCTOBER, 15), new LocalDate()))</code>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return the first date at least one issue was published
-	 */
-	public LocalDate getRealFirstAppearance(LocalDate from, LocalDate tillTo) {
-		for (LocalDate day = from; !day.isAfter(tillTo); day = day.plusDays(1))
-			for (Issue issue : issues)
-				if (issue.isMatch(day))
-					return day;
-		return null;
-	}
-
-	/**
-	 * The function getRealLastAppearance() returns the last date at least one
-	 * of the issues assigned to this Title was published, starting backwards
-	 * from the given date. This can be used to correct the date of last
-	 * appearance reversely to reduce the number of exclusions that need to be
-	 * handled separately.
-	 * 
-	 * <p>
-	 * The two main use cases are
-	 * <ul>
-	 * <li>to shrink the current date of last appearance:<br/>
-	 * <code>obj.setLastAppearance(obj.getRealLastAppearance(obj.getFirstAppearance(), obj.getLastAppearance()))</code>
-	 * </li>
-	 * <li>to initially set the date of first appearance, if unknown:<br/>
-	 * <code>obj.setLastAppearance(obj.getRealLastAppearance(new LocalDate(1582, DateTimeConstants.OCTOBER, 15), new LocalDate()))</code>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return the last date at least one issue was published
-	 */
-	public LocalDate getRealLastAppearance(LocalDate from, LocalDate tillTo) {
-		for (LocalDate day = tillTo; !day.isBefore(from); day = day.minusDays(1))
-			for (Issue issue : issues)
-				if (issue.isMatch(day))
-					return day;
-		return null;
-	}
-
-	/**
-	 * The method recalculateRegularityOfIssues() recalculates for each Issue
-	 * the daysOfWeek of its regular appearance within the interval of time of
-	 * the Title. This is especially sensible to detect the underlying
-	 * regularity after lots of issues whose existence is known have been added
-	 * one by one as additions to the underlying issue(s).
-	 */
-	public void recalculateRegularityOfIssues() {
-		final int APPEARED = 1;
-		final int NOT_APPEARED = 0;
-
-		for (Issue issue : issues) {
-
-			Set<LocalDate> remainingAdditions = new HashSet<LocalDate>();
-			Set<LocalDate> remainingExclusions = new HashSet<LocalDate>();
-
-			@SuppressWarnings("unchecked")
-			HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
-			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-				subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<LocalDate>();
-				subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
-			}
-
-			for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1))
-				subsets[day.getDayOfWeek() - 1][issue.isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
-
-			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-				if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
-					issue.addDayOfWeek(dayOfWeek);
-					remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
-				} else {
-					issue.removeDayOfWeek(dayOfWeek);
-					remainingAdditions.addAll(subsets[dayOfWeek - 1][APPEARED]);
-				}
-			}
-
-			issue.setAdditions(remainingAdditions);
-			issue.setExclusions(remainingExclusions);
-		}
-	}
-
-	/**
-	 * Removes the specified Issue from this Title if it is present.
+	 * The function removeIssue() removes the specified Issue from this Title if
+	 * it is present.
 	 * 
 	 * @param issue
 	 *            Issue to be removed from the set
@@ -388,30 +172,6 @@ public class Title implements Cloneable {
 	 */
 	public boolean removeIssue(Issue issue) {
 		return issues.remove(issue);
-	}
-
-	/**
-	 * The function removeAllIssues() removes all Issues that are contained in
-	 * the specified collection from this Title
-	 * 
-	 * @param issues
-	 *            collection containing elements to be removed
-	 * @return true if the set was changed
-	 */
-	public boolean removeAllIssues(Collection<? extends Issue> issues) {
-		return this.issues.removeAll(issues);
-	}
-
-	/**
-	 * The function retainAllIssues() removes all Issues from this Title that
-	 * are not contained in the specified collection
-	 * 
-	 * @param issues
-	 *            collection containing Issues to be retained
-	 * @return true if the set was changed
-	 */
-	public boolean retainAllIssues(Collection<? extends Issue> issues) {
-		return this.issues.retainAll(issues);
 	}
 
 	/**
@@ -447,16 +207,6 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * The method setIssues() allows to assign any Set of Issues to the Title
-	 * 
-	 * @param issues
-	 *            new Set to be subsequently used
-	 */
-	public void setIssues(List<Issue> issues) {
-		this.issues = issues;
-	}
-
-	/**
 	 * The function toString() provides returns a string that contains a concise
 	 * but informative representation of this title that is easy for a person to
 	 * read.
@@ -467,11 +217,40 @@ public class Title implements Cloneable {
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
+		result.append(heading);
+		result.append(" (");
 		if (firstAppearance != null)
-			result.append(DateFuncs.DATE_CONVERTER.print(firstAppearance));
+			result.append(firstAppearance.toString());
+		result.append(" - ");
+		if (lastAppearance != null)
+			result.append(lastAppearance.toString());
+		result.append(") [");
+		boolean first = true;
+		for (Issue issue : issues) {
+			if (!first)
+				result.append(", ");
+			result.append(issue.toString());
+			first = false;
+		}
+		result.append("]");
+		return result.toString();
+	}
+
+	/**
+	 * The function toString() provides returns a string that contains a textual
+	 * representation of this title that is easy for a person to read.
+	 * 
+	 * @param dateConverter
+	 *            a DateTimeFormatter for formatting the local dates
+	 * @return a string to identify the title
+	 */
+	public String toString(DateTimeFormatter dateConverter) {
+		StringBuilder result = new StringBuilder();
+		if (firstAppearance != null)
+			result.append(dateConverter.print(firstAppearance));
 		result.append(" − ");
 		if (lastAppearance != null)
-			result.append(DateFuncs.DATE_CONVERTER.print(lastAppearance));
+			result.append(dateConverter.print(lastAppearance));
 		result.append(", ");
 		result.append(heading);
 		return result.toString();

@@ -39,20 +39,8 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import de.sub.goobi.helper.XMLFuncs;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
@@ -68,86 +56,6 @@ import de.sub.goobi.helper.XMLFuncs;
  */
 public class Course extends ArrayList<Title> {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * List of IDs of stamping of issues which each do represent the first issue
-	 * in a process.
-	 */
-	protected List<String> breakIDs = new ArrayList<String>();
-
-	/**
-	 * Empty constructor. Creates a Course which doesn’t hold any Title yet with
-	 * an initial capacity of ten.
-	 */
-	public Course() {
-	}
-
-	/**
-	 * Creates a Course holding the elements of the specified collection, in the
-	 * order they are returned by the collection's iterator.
-	 * 
-	 * @param collection
-	 *            the collection whose elements are to be placed into this list
-	 * @throws NullPointerException
-	 *             if the specified collection is null
-	 */
-	public Course(Collection<? extends Title> collection) {
-		super(collection);
-	}
-
-	/**
-	 * Creates a Course which doesn’t hold any Title yet with the specified
-	 * initial capacity of the underlying ArrayList.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the list
-	 * @throws IllegalArgumentException
-	 *             if the specified initial capacity is negative
-	 */
-	public Course(int initialCapacity) {
-		super(initialCapacity);
-	}
-
-	/**
-	 * The method setBreaks() calculates and sets the break IDs depending on the
-	 * given BreakMode.
-	 * 
-	 * @param mode
-	 *            how the course shall be broken into issues
-	 */
-	public void setBreaks(BreakMode mode) {
-		breakIDs.clear();
-		Integer lastMark = null;
-		for (IndividualIssue issue : getIndividualIssues()) {
-			Integer mark = issue.getBreakMark(mode);
-			if (!mark.equals(lastMark) && lastMark != null)
-				breakIDs.add(issue.getId());
-			lastMark = mark;
-		}
-	}
-
-	/**
-	 * The method getIndividualIssues generates a list of IndividualIssue
-	 * objects, each of them representing a stamping of an (one physically
-	 * appeared) issue.
-	 * 
-	 * @return a SortedSet of IndividualIssue objects, each of them representing
-	 *         one physically appeared issue
-	 */
-	public Set<IndividualIssue> getIndividualIssues() {
-		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
-		for (Title title : this) {
-			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-				for (Issue issue : title.getIssues()) {
-					if (issue.isMatch(day)) {
-						result.add(new IndividualIssue(title.getHeading(), day, issue.getHeading()));
-					}
-				}
-			}
-		}
-		return result;
-	}
 
 	/**
 	 * The function getLastAppearance() returns the date the regularity of this
@@ -167,60 +75,6 @@ public class Course extends ArrayList<Title> {
 			}
 			return result;
 		}
-	}
-
-	/**
-	 * The function toXML() transforms a course of appearance to XML.
-	 * 
-	 * @param lang
-	 *            language to use for the “description”
-	 * @return XML as String
-	 * @throws ParserConfigurationException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested
-	 */
-	public Document toXML(Locale lang) throws ParserConfigurationException {
-		Document result = XMLFuncs.newDocument();
-		Element course = result.createElement("course");
-
-		Element description = result.createElement("description");
-		description.appendChild(result.createTextNode(StringUtils.join(verbalise(lang), "\n\n")));
-		course.appendChild(description);
-
-		Element appearances = result.createElement("appearances");
-		for (IndividualIssue issue : getIndividualIssues())
-			appearances.appendChild(issue.populate(result.createElement("appeared")));
-		course.appendChild(appearances);
-
-		Element processes = result.createElement("processes");
-		for (String breakID : breakIDs) {
-			Element process = result.createElement("process");
-			process.setAttribute("break", "#".concat(breakID));
-			processes.appendChild(process);
-		}
-		course.appendChild(processes);
-
-		result.appendChild(course);
-		return result;
-	}
-
-	/**
-	 * The function verbalise() returns a verbal description of the object in
-	 * the given language. If the lang parameter is null or the given language
-	 * is not available, the default is used.
-	 * 
-	 * @param lang
-	 *            language to verbalise in
-	 * @return verbal description as text
-	 */
-	protected List<String> verbalise(Locale lang) {
-		if (Locale.GERMAN.equals(lang))
-			return CourseToGerman.toString(this);
-		// add more languages here
-		// …
-
-		// default: - TODO change to English as soon as available
-		return CourseToGerman.toString(this);
 	}
 
 }
