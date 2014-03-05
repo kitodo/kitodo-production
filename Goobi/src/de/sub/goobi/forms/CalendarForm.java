@@ -39,6 +39,7 @@
 package de.sub.goobi.forms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,18 +64,19 @@ import de.sub.goobi.config.ConfigMain;
 public class CalendarForm {
 
 	/**
-	 * The constant field DATE_FORMATTER provides a DateTimeFormatter that is
-	 * used to convert between LocalDate objects and String in common German
-	 * notation.
+	 * The field DATE_FORMATTER provides a DateTimeFormatter that is used to
+	 * convert between LocalDate objects and String in common German notation.
+	 * 
+	 * <p>
+	 * We need a ThreadLocal here because DateTimeFormatter isn’t thread safe.
+	 * </p>
 	 */
-	protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
-
-	/**
-	 * The constant field EMPTY_LIST_OF_ISSUE_OPTIONS holds empty list of
-	 * IssueOption. It is used to prevent null pointer exceptions, however one
-	 * can use the same object everywhere.
-	 */
-	protected static final List<IssueOption> EMPTY_LIST_OF_ISSUE_OPTIONS = new ArrayList<IssueOption>(0);
+	private static ThreadLocal<DateTimeFormatter> DATE_FORMATTER = new ThreadLocal<DateTimeFormatter>() {
+		@Override
+		public DateTimeFormatter initialValue() {
+			return DateTimeFormat.forPattern("dd.MM.yyyy");
+		}
+	};
 
 	/**
 	 * The constant field ISSUE_COLOURS holds the colours used to represent the
@@ -413,7 +415,7 @@ public class CalendarForm {
 		/**
 		 * The field issues holds the possible issues for that day.
 		 */
-		protected List<IssueOption> issues = EMPTY_LIST_OF_ISSUE_OPTIONS;
+		protected List<IssueOption> issues = Collections.emptyList();
 
 		/**
 		 * The field onTitle contains the statement, whether the day is covered
@@ -763,7 +765,7 @@ public class CalendarForm {
 	 */
 	public String getFirstAppearance() {
 		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
-			return DATE_FORMATTER.print(titleShowing.getFirstAppearance());
+			return DATE_FORMATTER.get().print(titleShowing.getFirstAppearance());
 		else
 			return "";
 	}
@@ -791,7 +793,7 @@ public class CalendarForm {
 	 */
 	public String getLastAppearance() {
 		if (titleShowing != null && titleShowing.getLastAppearance() != null)
-			return DATE_FORMATTER.print(titleShowing.getLastAppearance());
+			return DATE_FORMATTER.get().print(titleShowing.getLastAppearance());
 		else
 			return "";
 	}
@@ -825,7 +827,7 @@ public class CalendarForm {
 			titlePickerResolver.put(value, title);
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("value", value);
-			item.put("label", title.toString(DATE_FORMATTER));
+			item.put("label", title.toString(DATE_FORMATTER.get()));
 			result.add(item);
 		}
 		return result;
@@ -899,7 +901,7 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = DATE_FORMATTER.parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance = DATE_FORMATTER.get().parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getFirstAppearance() == null
@@ -927,7 +929,7 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = DATE_FORMATTER.parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance = DATE_FORMATTER.get().parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getLastAppearance() == null
