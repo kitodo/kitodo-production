@@ -720,4 +720,57 @@ a.metadataHeaderLinks {
 a.metadataHeaderLinks:hover {
     text-decoration: underline;
 }
+/*Tabellen in ProjektBearbeiten -> Details*/
+table.tableDetails{
+	float: left;
+}
+table.tableCalcStat{
+	margin-left: 30px;
+	border: 1px solid #F4BBA5;
+}
+table.tableCalcStat .right{
+	padding-left: 5px;
+}
+table.tableCalcStat .left{
+	padding-right: 5px;
+}
+.jscalendar-DB-title-background-style {
+	/*background-color:  #F4BBA5;*/
+	background-image:url('gradient.php_30px_.png');
+}
+span.jscalendar-DB-title-control-normal-style:hover{
+	color: black !important;
+}
+
+.jscalendar-DB-title-control-normal-style{
+	border: 1px solid #F4BBA5;
+	color: black;
+}
+.monthYearRowClass{
+}
+
+/*
+   ------------------------------------------------------------
+   Language switch
+   ------------------------------------------------------------
+*/
+ 
+.languageSwitch span:before {
+    content: "•";
+    padding: 0 4px;
+    font-weight: normal;
+}
+
+.languageSwitch span:first-child:before {
+    content: "";
+    padding: 0;
+}
+
+.languageSwitch a:hover {
+    color: white;
+}
+
+.languageSwitch .currentLanguage {
+    font-weight: bold;
+}
 
