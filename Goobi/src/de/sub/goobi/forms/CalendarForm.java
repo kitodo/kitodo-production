@@ -134,7 +134,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	protected class IssueController {
+	public class IssueController {
 		/**
 		 * The field issue holds the issue that is managed by this controller.
 		 */
@@ -521,7 +521,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	protected class IssueOption {
+	public class IssueOption {
 		/**
 		 * The field date holds the date of this possible issue in the course of
 		 * time.
