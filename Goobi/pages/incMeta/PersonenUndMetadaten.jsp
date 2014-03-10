@@ -37,13 +37,13 @@
 
 	<%-- ########################################
 
-        Speichern der Metadaten und Überschrift
+        Speichern der Metadaten und Ueberschrift
         
  		#########################################--%>
 	<htm:table width="540">
 		<htm:tr>
 			<htm:td>
-				<%-- passende Überschrift --%>
+				<%-- passende Ueberschrift --%>
 				<htm:h3 style="margin-top:10px">
 					<h:outputText value="#{msgs.metadatenBearbeiten}" rendered="#{not Metadaten.nurLesenModus}" />
 					<h:outputText value="#{msgs.metadatenBetrachten}" rendered="#{Metadaten.nurLesenModus}" />
@@ -83,7 +83,7 @@
 
 	<%-- ########################################
 
-                                              Tabelle für die Personen
+                                              Tabelle fuer die Personen
 
     #########################################--%>
 	<h:panelGroup rendered="#{!empty Metadaten.myPersonen}">
@@ -94,7 +94,7 @@
 
 		<a4j:support event="onkeyup" requestDelay="1" />
 
-		<%-- öffnen der Tabelle --%>
+		<%-- oeffnen der Tabelle --%>
 		<h:dataTable value="#{Metadaten.myPersonen}" var="Item" style="background-color:#F0F0F0" styleClass="Tabelle"
 			columnClasses="TabelleSpalteLinks,TabelleSpalteLinks">
 
@@ -116,7 +116,7 @@
 				</h:panelGrid>
 			</h:column>
 
-			<%-- Link für Details --%>
+			<%-- Link fuer Details --%>
 			<h:column rendered="#{not Metadaten.nurLesenModus}">
 				<%-- Kopieren-Schaltknopf --%>
 				<h:commandLink id="l7" action="#{Metadaten.KopierenPerson}" title="#{msgs.personendatenKopieren}">
@@ -135,7 +135,7 @@
 						value="#{Item}" />
 				</h:commandLink>
 	--%>
-				<%-- Löschen-Schaltknopf --%>
+				<%-- Loeschen-Schaltknopf --%>
 				<h:commandLink id="l6" action="#{Metadaten.LoeschenPerson}" title="#{msgs.personendatenLoeschen}">
 					<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
 					<f:param name="ID" value="#{Item.identifier}" />
@@ -149,7 +149,7 @@
 
 	<%-- ########################################
 
-                                                 Tabelle für die Metadaten
+                                                 Tabelle fuer die Metadaten
 
  		#########################################--%>
 	<h:panelGroup rendered="#{!empty Metadaten.myMetadaten}" style="#{empty Metadaten.myPersonen ? 'margin-top:0px':'margin-top:15px;'}; display:block">
@@ -159,7 +159,7 @@
 
 		<a4j:support event="onkeyup" requestDelay="5" />
 
-		<%-- öffnen der Tabelle --%>
+		<%-- oeffnen der Tabelle --%>
 		<x:dataTable value="#{Metadaten.myMetadaten}" var="Item" rowClasses="metadatenGrauBackground" styleClass="Tabelle" headerClass="TabelleHeader"
 			columnClasses="TabelleSpalteLinks,TabelleSpalteLinks,TabelleSpalteLinks">
 
@@ -204,7 +204,7 @@
 
 
 
-			<%-- Link für Details --%>
+			<%-- Link fuer Details --%>
 			<h:column rendered="#{not Metadaten.nurLesenModus}">
 				<%-- Kopieren-Schaltknopf --%>
 				<h:commandLink id="l5" action="#{Metadaten.Kopieren}" title="#{msgs.metadatenKopieren}">
@@ -218,7 +218,7 @@
 					<f:param name="ID" value="#{Item.identifier}" />
 					<x:updateActionListener property="#{Metadaten.curMetadatum}" value="#{Item}" />
 				</h:commandLink>
-				<%-- Löschen-Schaltknopf --%>
+				<%-- Loeschen-Schaltknopf --%>
 				<h:commandLink id="l4" action="#{Metadaten.Loeschen}" title="#{msgs.metadatenLoeschen}">
 					<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
 					<f:param name="ID" value="#{Item.identifier}" />
@@ -231,7 +231,7 @@
 
 	<%-- ########################################
 
-                          Speichern der Metadaten oder neue hinzufügen
+                          Speichern der Metadaten oder neue hinzufuegen
 
  		#########################################--%>
 	<htm:table width="540">
@@ -239,7 +239,7 @@
 			<htm:td>
 				<h:panelGroup rendered="#{not Metadaten.modusHinzufuegen && not Metadaten.modusHinzufuegenPerson && not Metadaten.nurLesenModus}"
 					style="margin-top:10px">
-					<%-- Hinzufuegen-Schaltknopf für Person--%>
+					<%-- Hinzufuegen-Schaltknopf fuer Person--%>
 					<h:commandLink id="l2" action="#{Metadaten.HinzufuegenPerson}" style="margin-left:2px" title="#{msgs.neuePersonAnlegen}"
 						rendered="#{Metadaten.sizeOfRoles!=0}">
 
@@ -248,7 +248,7 @@
 						<h:outputText value="#{msgs.neuePersonHinzufuegen}" />
 					</h:commandLink>
 					<htm:br />
-					<%-- Hinzufuegen-Schaltknopf für Metadaten --%>
+					<%-- Hinzufuegen-Schaltknopf fuer Metadaten --%>
 					<h:commandLink id="l1" action="#{Metadaten.Hinzufuegen}" style="margin-left:2px" title="#{msgs.neuesMetadatumAnlegen}"
 						rendered="#{Metadaten.sizeOfMetadata!=0}">
 						<h:graphicImage value="/newpages/images/buttons/new.gif" style="border: 0px;vertical-align:middle" />
