@@ -146,3 +146,8 @@
 .issueOptions {
 	padding-left: 3px;
 }
+
+.continueButton {
+	text-align: right;
+	padding-top: 7px;
+}

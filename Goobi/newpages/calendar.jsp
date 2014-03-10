@@ -449,6 +449,11 @@
 										</t:dataList>
 									</htm:table>
 
+									<htm:div styleClass="continueButton">
+										<h:commandButton value="#{msgs['granularity.header']}"
+											action="ShowGranularityPicker" />
+									</htm:div>
+
 									<%-- ===================== End page main content ====================== --%>
 
 								</htm:td>

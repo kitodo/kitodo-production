@@ -281,6 +281,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>ShowGranularityPicker</from-outcome>
+			<to-view-id>/newpages/granularity.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- Aktuelle Schritte - Bearbeiten -->
 	<navigation-rule>
 		<navigation-case>
