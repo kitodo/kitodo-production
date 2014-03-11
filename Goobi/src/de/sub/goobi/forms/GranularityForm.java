@@ -10,38 +10,18 @@ public class GranularityForm {
 	private Course course;
 	private Long numberOfPages;
 
-	//	/**
-	//	 * The function getCourse() provides access to the course data model which
-	//	 * is passed as f:param name="course" by an h:commandButton in calendar.jsp.
-	//	 * The incoming object is cached to be available in case of JSF postbacks.
-	//	 * 
-	//	 * @return the course of appearance data model
-	//	 */
-	//	private Course getCourse() {
-	//		try {
-	//			Course updatedCourse = (Course) FacesContext.getCurrentInstance().getExternalContext().getRequestMap()
-	//					.get("course");
-	//			if (updatedCourse != null)
-	//				cachedCourse = updatedCourse;
-	//		} catch (NullPointerException e) {
-	//		}
-	//		return cachedCourse;
-	//	}
-
 	public String getGranularity() {
 		if (granularity == null)
 			return "null";
 		return granularity.toString().toLowerCase();
 	}
 
-	public String getIssueCount() {
-		return Integer.toString(course.getIndividualIssues().size());
+	public int getIssueCount() {
+		return course.getIndividualIssues().size();
 	}
 
-	public String getNumberOfPages() {
-		if (numberOfPages == null)
-			return "";
-		return numberOfPages.toString();
+	public Long getNumberOfPages() {
+		return numberOfPages;
 	}
 
 	public void issuesClick() {
@@ -52,7 +32,7 @@ public class GranularityForm {
 		granularity = BreakMode.MONTHS;
 	}
 
-	public void setNumberOfPages(String arg0) {
+	public void setNumberOfPages(Long arg0) {
 		numberOfPages = new Long(arg0);
 	}
 

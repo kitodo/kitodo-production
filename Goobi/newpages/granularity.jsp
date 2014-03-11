@@ -61,21 +61,15 @@
 		 --%>
 			function numberOfPagesValid() {
 				if (!document.getElementById("form1:numberOfPages").value
-						.match(/^\d+$/)) {
+						.match(/^[<h:outputText value="#{SpracheForm.groupingSeparator}"/>0-9]*$/)) {
 					alert("${msgs['granularity.numberOfPages.invalid']}");
 					document.getElementById("form1:numberOfPages").focus();
-					return false;
-				}
-				if (!document.getElementById("form1:lastAppearance").value
-						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
-					alert("${msgs['calendar.title.lastAppearance.invalid']}");
-					document.getElementById("form1:lastAppearance").focus();
 					return false;
 				}
 				return true;
 			}
 		<%--
-		 * The function showApplyLink() shows a link to apply an entered value.
+		 * The function showApplyLink() shows a link to apply the value entered.
 		 * 
 		 * @return always true
 		 --%>
@@ -134,20 +128,23 @@
 										<htm:div>
 											<h:outputText value="#{msgs['granularity.issueCount']} " />
 											<h:outputText value="#{GranularityForm.issueCount}">
-												<f:convertNumber/>
+												<f:convertNumber />
 											</h:outputText>
 										</htm:div>
 										<htm:div>
 											<h:outputLabel for="numberOfPages"
 												value="#{msgs['granularity.numberOfPages']}"
 												styleClass="fullWideLabel" />
+											<h:message for="numberOfPages" styleClass="deleteIssue" />
 											<h:commandLink value="#{msgs['granularity.apply']}"
 												id="applyLink" styleClass="deleteIssue"
 												style="display: none;" />
 											<htm:span styleClass="fullWideBox">
 												<h:inputText value="#{GranularityForm.numberOfPages}"
 													id="numberOfPages" onkeydown="showApplyLink();"
-													styleClass="fullWideInput" />
+													styleClass="fullWideInput">
+													<f:convertNumber />
+												</h:inputText>
 											</htm:span>
 										</htm:div>
 
