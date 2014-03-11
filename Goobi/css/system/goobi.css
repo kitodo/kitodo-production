@@ -151,3 +151,27 @@
 	text-align: right;
 	padding-top: 7px;
 }
+
+.centerRow {
+	text-align: center;
+}
+
+.granularityButton {
+	width: 24%;
+}
+
+.issuesSelected {
+	background-color: #ffcc00;
+}
+
+.weeksSelected {
+	background-color: #00cc00;
+}
+
+.monthsSelected {
+	background-color: #0066ff;
+}
+
+.yearsSelected {
+	background-color: #ff3300;
+}

@@ -33,7 +33,7 @@ public class GranularityForm {
 	}
 
 	public void setNumberOfPages(Long arg0) {
-		numberOfPages = new Long(arg0);
+		numberOfPages = arg0;
 	}
 
 	/**

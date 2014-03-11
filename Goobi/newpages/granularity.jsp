@@ -125,6 +125,8 @@
 									<%-- ===================== Page main content ====================== --%>
 
 									<htm:fieldset>
+
+										<%-- Information on issues & enter pages --%>
 										<htm:div>
 											<h:outputText value="#{msgs['granularity.issueCount']} " />
 											<h:outputText value="#{GranularityForm.issueCount}">
@@ -135,7 +137,6 @@
 											<h:outputLabel for="numberOfPages"
 												value="#{msgs['granularity.numberOfPages']}"
 												styleClass="fullWideLabel" />
-											<h:message for="numberOfPages" styleClass="deleteIssue" />
 											<h:commandLink value="#{msgs['granularity.apply']}"
 												id="applyLink" styleClass="deleteIssue"
 												style="display: none;" />
@@ -146,6 +147,23 @@
 													<f:convertNumber />
 												</h:inputText>
 											</htm:span>
+										</htm:div>
+
+										<%-- Buttons to choose granularity --%>
+										<h:outputText value="#{msgs['granularity.pick']} " />
+										<htm:div styleClass="centerRow">
+											<h:commandButton value="#{msgs['granularity.issues']}"
+												action="#{GranularityForm.issuesClick}"
+												styleClass="granularityButton #{GranularityForm.granularity=='issues'?'issuesSelected':''}" />
+											<h:commandButton value="#{msgs['granularity.weeks']}"
+												action="#{GranularityForm.weeksClick}"
+												styleClass="granularityButton #{GranularityForm.granularity=='weeks'?'weeksSelected':''}" />
+											<h:commandButton value="#{msgs['granularity.months']}"
+												action="#{GranularityForm.monthsClick}"
+												styleClass="granularityButton #{GranularityForm.granularity=='months'?'monthsSelected':''}" />
+											<h:commandButton value="#{msgs['granularity.years']}"
+												action="#{GranularityForm.yearsClick}"
+												styleClass="granularityButton #{GranularityForm.granularity=='years'?'yearsSelected':''}" />
 										</htm:div>
 
 									</htm:fieldset>
