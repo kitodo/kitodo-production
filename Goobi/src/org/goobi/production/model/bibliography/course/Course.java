@@ -39,6 +39,9 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.joda.time.LocalDate;
 
@@ -56,6 +59,54 @@ import org.joda.time.LocalDate;
  */
 public class Course extends ArrayList<Title> {
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * List of IDs of stamping of issues which each do represent the first issue
+	 * in a process.
+	 */
+	private final List<String> breakIDs = new ArrayList<String>();
+
+
+	/**
+	 * The method setBreaks() calculates and sets the break IDs depending on the
+	 * given BreakMode.
+	 * 
+	 * @param mode
+	 *            how the course shall be broken into issues
+	 */
+	private void setBreaks(BreakMode mode) {
+		breakIDs.clear();
+		Integer lastMark = null;
+		for (IndividualIssue issue : getIndividualIssues()) {
+			Integer mark = issue.getBreakMark(mode);
+			if (!mark.equals(lastMark) && lastMark != null)
+				breakIDs.add(issue.getId());
+			lastMark = mark;
+		}
+	}
+
+	/**
+	 * The method getIndividualIssues generates a list of IndividualIssue
+	 * objects, each of them representing a stamping of an (one physically
+	 * appeared) issue.
+	 * 
+	 * @return a SortedSet of IndividualIssue objects, each of them representing
+	 *         one physically appeared issue
+	 */
+	public Set<IndividualIssue> getIndividualIssues() {
+		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
+		for (Title title : this) {
+			LocalDate lastAppearance = title.getLastAppearance();
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+				for (Issue issue : title.getIssues()) {
+					if (issue.isMatch(day)) {
+						result.add(new IndividualIssue(title.getHeading(), day, issue.getHeading()));
+					}
+				}
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * The function getLastAppearance() returns the date the regularity of this

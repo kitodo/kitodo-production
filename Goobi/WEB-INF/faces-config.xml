@@ -541,11 +541,20 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- Bean for Calendar -->
+	<!-- Beans for Calendar -->
 	<managed-bean>
 		<managed-bean-name>CalendarForm</managed-bean-name>
 		<managed-bean-class> de.sub.goobi.forms.CalendarForm </managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>GranularityForm</managed-bean-name>
+		<managed-bean-class> de.sub.goobi.forms.GranularityForm </managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+      		<property-name>course</property-name>
+      		<value>#{CalendarForm.course}</value>
+      	</managed-property>
 	</managed-bean>
 	
 	<!-- Bean für Aktuelle Schritte -->

@@ -51,17 +51,39 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
-		<%-- script type="text/javascript">
+		<script type="text/javascript">
 			
 		<%--
-		 * The function bla()…
+		 * The function numberOfPagesValid() validates content of the form field
+		 * numberOfPages to make sure it consists of digits only.
 		 * 
-		 * @return always true
-		 --% ### >
-			function bla() {
+		 * @return whether the title data is valid
+		 --%>
+			function numberOfPagesValid() {
+				if (!document.getElementById("form1:numberOfPages").value
+						.match(/^\d+$/)) {
+					alert("${msgs['granularity.numberOfPages.invalid']}");
+					document.getElementById("form1:numberOfPages").focus();
+					return false;
+				}
+				if (!document.getElementById("form1:lastAppearance").value
+						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
+					alert("${msgs['calendar.title.lastAppearance.invalid']}");
+					document.getElementById("form1:lastAppearance").focus();
+					return false;
+				}
 				return true;
 			}
-		</script --%>
+		<%--
+		 * The function showApplyLink() shows a link to apply an entered value.
+		 * 
+		 * @return always true
+		 --%>
+			function showApplyLink() {
+				document.getElementById("form1:applyLink").style.display = "inline";
+				return true;
+			}
+		</script>
 		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
 			align="center">
 			<%@include file="/newpages/inc/tbl_Kopf.jsp"%>
@@ -71,7 +93,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1" onsubmit="return titleDataIsValid()">
+					<h:form id="form1" onsubmit="return numberOfPagesValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -108,7 +130,28 @@
 
 									<%-- ===================== Page main content ====================== --%>
 
-									Hello World!
+									<htm:fieldset>
+										<htm:div>
+											<h:outputText value="#{msgs['granularity.issueCount']} " />
+											<h:outputText value="#{GranularityForm.issueCount}">
+												<f:convertNumber/>
+											</h:outputText>
+										</htm:div>
+										<htm:div>
+											<h:outputLabel for="numberOfPages"
+												value="#{msgs['granularity.numberOfPages']}"
+												styleClass="fullWideLabel" />
+											<h:commandLink value="#{msgs['granularity.apply']}"
+												id="applyLink" styleClass="deleteIssue"
+												style="display: none;" />
+											<htm:span styleClass="fullWideBox">
+												<h:inputText value="#{GranularityForm.numberOfPages}"
+													id="numberOfPages" onkeydown="showApplyLink();"
+													styleClass="fullWideInput" />
+											</htm:span>
+										</htm:div>
+
+									</htm:fieldset>
 
 									<%-- ===================== End page main content ====================== --%>
 
