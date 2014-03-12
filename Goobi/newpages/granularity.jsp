@@ -124,7 +124,7 @@
 
 									<%-- ===================== Page main content ====================== --%>
 
-									<htm:fieldset>
+									<htm:fieldset styleClass="leftBox granularityMainCtl">
 
 										<%-- Information on issues & enter pages --%>
 										<htm:div>
@@ -202,12 +202,16 @@
 										<h:outputText
 											rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
 											value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
-											style="color: red; " />
-										<htm:div>
+											styleClass="granularityWarning" />
+												<h:outputText
+													value="#{GranularityForm.granularity}Selected"
+													binding="#{requestScope.granularityClass}"
+													rendered="false" />
+										<htm:div styleClass="granularityInfoTextbox #{requestScope.granularityInfoKey.value}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"
-												styleClass="granularityInfoGlyph" />
-											<htm:div>
+												styleClass="granularityInfoGlyph #{requestScope.granularityInfoKey.value}" />
+											<htm:div styleClass="granularityInfoTextbox" title="#{msgs['granularity.info.textbox.mouseOver']}">
 												<h:outputText
 													value="#{msgs['granularity.info.textbox.caption']}"
 													styleClass="granularityInfoCaption" />

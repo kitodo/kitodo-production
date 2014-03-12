@@ -36,7 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
- 
+
 /**
  * The file goobi.css contains general CSS formatting rules that, i.e. keep
  * elements in place, care for their display size etc. These rules are user
@@ -45,49 +45,52 @@
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
- 
-/* ===================== calendar.jsp ===================== */
- 
- .titleManagement {
+.leftBox {
 	float: left;
 	margin-bottom: 5px;
 	margin-right: 12px;
-	width: 250px;
 }
 
-.titleManagement select {
-	margin-bottom: 4px;
+.filling {
+	margin-bottom: 3px;
 	width: 100%;
 }
 
-.titleManagement a {
-	margin: 5px;
+.fillWrapper {
+	display: block;
+	overflow: hidden;
 }
 
-.titleContents {
+.leftText {
 	float: left;
-	max-width: 600px;
-	width: 100%;
+	margin-top: 5px;
+	margin-right: 5px;
 }
 
-.titleData {
+.rightText {
+	float: right;
+	padding: 5px 0 0 5px;
+}
+
+.actionLink {
+	display: inline-block;
+	margin-right: 4px;
+	margin-top: 3px;
+}
+
+.formRow {
 	margin-bottom: 10px;
 }
 
-.fullWideBox {
-	display: block;
-	overflow: hidden;
-	padding-left: 4px;
+/* ===================== calendar.jsp ===================== */
+.calendarTitleMgmt {
+	max-width: 350px;
+	min-width: 190px;
+	width: 25%;
 }
 
-.fullWideLabel {
-	float: left;
-	padding-top: 5px;
-}
-
-.fullWideInput {
-	margin-bottom: 3px;
-	width: 100%;
+.calendarTitleContent {
+	max-width: 700px;
 }
 
 .keepTogether {
@@ -97,10 +100,6 @@
 
 .keepTogether input {
 	max-width: 100px;
-}
-
-.issue {
-	margin: 10px 0;
 }
 
 .bubble,.issueOption {
@@ -116,11 +115,6 @@
 .issueHeading {
 	margin: 0 4px;
 	width: 250px;
-}
-
-.deleteIssue {
-	float: right;
-	padding: 5px 0 0 5px;
 }
 
 .calendarSheet {
@@ -152,6 +146,12 @@
 	padding-top: 7px;
 }
 
+/* ===================== granularity.jsp ===================== */
+.granularityMainCtl {
+	width: 60%;
+	max-width: 600px;
+}
+
 .centerRow {
 	text-align: center;
 }
@@ -174,4 +174,24 @@
 
 .yearsSelected {
 	background-color: #ff3300;
+}
+
+.granularityWarning {
+	color: red;
+}
+
+.granularityInfoChoice {
+	display: block;
+	font-size: larger;
+	font-weight: bold;
+	margin: 15px 0 17px;
+	text-align: center;
+}
+
+.grnaularityInfoGlyph {
+	border-radius: 15px;
+	display: block;
+	font-size: 18pt;
+	text-align: center;
+	width: 30px;
 }

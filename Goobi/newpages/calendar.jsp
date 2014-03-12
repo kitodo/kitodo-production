@@ -118,7 +118,7 @@
 		 --%>
 			function startEditTitle() {
 				if (document.getElementById("calendarForm:titlePicker").options.length > 0)
-					document.getElementById("calendarForm:applyChanges").style.display = "inline";
+					document.getElementById("calendarForm:applyChanges").style.display = "inline-block";
 				return true;
 			}
 		<%--
@@ -214,11 +214,11 @@
 
 									<%-- ===================== Page main content ====================== --%>
 
-									<htm:div styleClass="blocksAndIssues">
-										<htm:div styleClass="titleManagement">
+									<htm:div>
+										<htm:div styleClass="leftBox calendarTitleMgmt">
 
 											<%-- Select box to switch between already defined titles --%>
-											<h:selectOneListbox styleClass="titlePicker" size="7"
+											<h:selectOneListbox styleClass="filling" size="7"
 												value="#{CalendarForm.titlePickerSelected}"
 												onchange="if(titlePickerChangeQuery()){submit();}"
 												id="titlePicker">
@@ -229,26 +229,26 @@
 
 											<%-- Buttons to add and remove titles --%>
 											<h:commandLink value="#{msgs['calendar.title.add']}"
-												rendered="#{CalendarForm.blank}" />
+												rendered="#{CalendarForm.blank}" styleClass="actionLink" />
 											<h:commandLink value="#{msgs['calendar.title.add']}"
 												action="#{CalendarForm.addTitleClick}"
 												onclick="if(!addClickQuery()){return false;}"
-												rendered="#{not CalendarForm.blank}" />
+												rendered="#{not CalendarForm.blank}" styleClass="actionLink" />
 											<h:commandLink value="#{msgs['calendar.title.remove']}"
 												action="#{CalendarForm.removeTitleClick}"
-												onclick="if(!removeClickQuery()){return false;}" />
+												onclick="if(!removeClickQuery()){return false;}" styleClass="actionLink" />
 										</htm:div>
 
-										<htm:div styleClass="titleContents">
+										<htm:div styleClass="fillWrapper calendarTitleContent">
 											<%-- Input elements for base data --%>
-											<htm:div styleClass="titleData">
+											<htm:div styleClass="filling formRow">
 												<htm:div>
 													<h:outputLabel value="#{msgs['calendar.title.heading']}"
-														styleClass="fullWideLabel" for="titleHeading" />
-													<htm:span styleClass="fullWideBox">
+														styleClass="leftText" for="titleHeading" />
+													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{CalendarForm.titleHeading}"
 															onkeydown="startEditTitle()" id="titleHeading"
-															styleClass="fullWideInput" />
+															styleClass="filling" />
 													</htm:span>
 												</htm:div>
 
@@ -267,13 +267,13 @@
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													id="applyChanges" style="display: none;" />
+													id="applyChanges" style="display: none;" styleClass="actionLink" />
 											</htm:div>
 
 											<t:dataList layout="simple" var="issue"
 												value="#{CalendarForm.issues}">
-												<htm:div styleClass="issue">
-													<htm:span styleClass="fullWideLabel">
+												<htm:div styleClass="filling formRow">
+													<htm:span styleClass="leftText">
 														<%-- bubble --%>
 														<htm:span styleClass="bubble"
 															style="color: #{issue.colour}">
@@ -289,18 +289,18 @@
 													<h:commandLink value="#{msgs['calendar.issue.delete']}"
 														action="#{issue.deleteClick}"
 														onclick="if(!deleteClickQuery()){return false;}"
-														styleClass="deleteIssue" />
+														styleClass="rightText" />
 
 													<%-- Update button --%>
 													<h:commandLink value="#{msgs['calendar.applyChanges']}"
-														id="applyLink" styleClass="deleteIssue"
+														id="applyLink" styleClass="rightText"
 														style="display: none;" />
 
 													<%-- Issue name box --%>
-													<htm:span styleClass="fullWideBox">
+													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{issue.heading}" id="issueHeading"
 															onkeydown="showApplyLink(this);"
-															styleClass="fullWideInput" />
+															styleClass="filling" />
 													</htm:span>
 
 													<%-- Days of week --%>
