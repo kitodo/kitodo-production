@@ -85,6 +85,25 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * The method countIndividualIssues() determines how many stampings of
+	 * issues physically appeared without generating a list of IndividualIssue
+	 * objects.
+	 * 
+	 * @return the count of issues
+	 */
+	public long countIndividualIssues() {
+		long result = 0;
+		for (Title title : this) {
+			LocalDate lastAppearance = title.getLastAppearance();
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1))
+				for (Issue issue : title.getIssues())
+					if (issue.isMatch(day))
+						result += 1;
+		}
+		return result;
+	}
+
+	/**
 	 * The method getIndividualIssues generates a list of IndividualIssue
 	 * objects, each of them representing a stamping of an (one physically
 	 * appeared) issue.
