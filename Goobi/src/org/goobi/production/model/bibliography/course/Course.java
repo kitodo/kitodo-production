@@ -73,7 +73,7 @@ public class Course extends ArrayList<Title> {
 	 * @param mode
 	 *            how the course shall be broken into issues
 	 */
-	public void setBreaks(BreakMode mode) {
+	public void calculateBreaks(BreakMode mode) {
 		breakIDs.clear();
 		Integer lastMark = null;
 		for (IndividualIssue issue : getIndividualIssues()) {

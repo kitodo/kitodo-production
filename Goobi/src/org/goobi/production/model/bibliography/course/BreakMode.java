@@ -46,6 +46,8 @@ package org.goobi.production.model.bibliography.course;
  * <dl>
  * <dt>ISSUES</dt>
  * <dd>Each issue is scanned in an individual process.</dd>
+ * <dt>DAYS</dt>
+ * <dd>All issues of one day are scanned in one process.</dd>
  * <dt>WEEKS</dt>
  * <dd>All issues of a week are scanned in one process. A week starts on
  * Mondays. Keep in mind that week borders do not necessarily match month and
@@ -59,5 +61,5 @@ package org.goobi.production.model.bibliography.course;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public enum BreakMode {
-	ISSUES, WEEKS, MONTHS, YEARS
+	ISSUES, DAYS, WEEKS, MONTHS, YEARS
 }

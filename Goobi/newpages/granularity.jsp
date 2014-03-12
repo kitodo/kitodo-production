@@ -127,7 +127,7 @@
 
 									<htm:fieldset styleClass="leftBox granularityMainCtl">
 										<htm:legend>
-											<h:outputText value="#{msgs['granularity.pick']} " />
+											<h:outputText value="#{msgs['granularity.title']} " />
 										</htm:legend>
 
 										<%-- Information on issues & enter pages --%>
@@ -142,8 +142,7 @@
 												value="#{msgs['granularity.numberOfPages']}"
 												styleClass="leftText" />
 											<h:commandLink value="#{msgs['granularity.apply']}"
-												id="applyLink" styleClass="rightText"
-												style="display: none;" />
+												id="applyLink" styleClass="rightText" style="display: none;" />
 											<htm:span styleClass="fillWrapper">
 												<h:inputText value="#{GranularityForm.numberOfPages}"
 													id="numberOfPages" onkeydown="showApplyLink();"
@@ -155,19 +154,22 @@
 
 										<%-- Buttons to choose granularity --%>
 										<h:outputText value="#{msgs['granularity.pick']} " />
-										<htm:div styleClass="centerRow">
+										<htm:div styleClass="formRow centerRow">
 											<h:commandButton value="#{msgs['granularity.issues']}"
 												action="#{GranularityForm.issuesClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='issues'?'issuesSelected':''}" />
+												styleClass="granularityButton #{GranularityForm.granularity=='issues'?'granularityButtonSelected':''}" />
+											<h:commandButton value="#{msgs['granularity.days']}"
+												action="#{GranularityForm.daysClick}"
+												styleClass="granularityButton #{GranularityForm.granularity=='days'?'granularityButtonSelected':''}" />
 											<h:commandButton value="#{msgs['granularity.weeks']}"
 												action="#{GranularityForm.weeksClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='weeks'?'weeksSelected':''}" />
+												styleClass="granularityButton #{GranularityForm.granularity=='weeks'?'granularityButtonSelected':''}" />
 											<h:commandButton value="#{msgs['granularity.months']}"
 												action="#{GranularityForm.monthsClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='months'?'monthsSelected':''}" />
+												styleClass="granularityButton #{GranularityForm.granularity=='months'?'granularityButtonSelected':''}" />
 											<h:commandButton value="#{msgs['granularity.years']}"
 												action="#{GranularityForm.yearsClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='years'?'yearsSelected':''}" />
+												styleClass="granularityButton #{GranularityForm.granularity=='years'?'granularityButtonSelected':''}" />
 										</htm:div>
 									</htm:fieldset>
 
@@ -192,38 +194,39 @@
 											binding="#{requestScope.pagesPerProcess}" rendered="false">
 											<f:convertNumber maxFractionDigits="1" />
 										</h:outputText>
-										<h:outputFormat
-											value="#{msgs['granularity.info.noNumberOfPages']}"
-											rendered="#{GranularityForm.numberOfPages == null}">
-											<f:param value="#{requestScope.processesFormatted.value}" />
-										</h:outputFormat>
-										<h:outputFormat value="#{msgs['granularity.info.full']}"
-											rendered="#{GranularityForm.numberOfPages != null}">
-											<f:param value="#{requestScope.processesFormatted.value}" />
-											<f:param value="#{requestScope.pagesPerProcess.value}" />
-										</h:outputFormat>
-										<h:outputText
-											rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
-											value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
-											styleClass="granularityWarning" />
-										<h:outputText value="#{GranularityForm.granularity}Selected"
+										<h:outputText value="#{GranularityForm.granularity}I"
 											binding="#{requestScope.granularityClass}" rendered="false" />
-										<htm:div
-											styleClass="granularityInfoTextbox #{requestScope.granularityClass.value}"
-											rendered="#{GranularityForm.granularity!='null'}">
+										<htm:div styleClass="granularityInfoTextbox"
+											rendered="#{GranularityForm.granularity!='null'}"
+											title="#{msgs['granularity.info.textbox.mouseOver']}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"
 												styleClass="granularityInfoGlyph #{requestScope.granularityClass.value} leftText" />
-											<htm:div styleClass="granularityInfoTextbox fillWrapper"
-												title="#{msgs['granularity.info.textbox.mouseOver']}">
+											<htm:div styleClass="fillWrapper">
 												<h:outputText
 													value="#{msgs['granularity.info.textbox.caption']}"
 													styleClass="granularityInfoCaption filling" />
+												<h:outputFormat
+													value="#{msgs['granularity.info.noNumberOfPages']}"
+													rendered="#{GranularityForm.numberOfPages == null}"
+													styleClass="filling">
+													<f:param value="#{requestScope.processesFormatted.value}" />
+												</h:outputFormat>
+												<h:outputFormat value="#{msgs['granularity.info.full']}"
+													rendered="#{GranularityForm.numberOfPages != null}"
+													styleClass="filling">
+													<f:param value="#{requestScope.processesFormatted.value}" />
+													<f:param value="#{requestScope.pagesPerProcess.value}" />
+												</h:outputFormat>
+												<h:outputText
+													rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
+													value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
+													styleClass="granularityWarning filling" />
+
 												<h:outputText
 													value="granularity.info.textbox.#{GranularityForm.granularity}"
 													binding="#{requestScope.granularityInfoKey}"
-													rendered="false"
-													styleClass="filling" />
+													rendered="false" styleClass="filling" />
 												<h:outputText
 													value="#{msgs[requestScope.granularityInfoKey.value]}" />
 											</htm:div>

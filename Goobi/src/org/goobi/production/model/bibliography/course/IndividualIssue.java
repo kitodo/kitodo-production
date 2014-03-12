@@ -101,6 +101,8 @@ public class IndividualIssue {
 		switch (mode) {
 		case ISSUES:
 			return this.hashCode();
+		case DAYS:
+			return date.getDayOfMonth();
 		case WEEKS:
 			return date.getWeekOfWeekyear();
 		case MONTHS:

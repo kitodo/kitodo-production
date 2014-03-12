@@ -157,22 +157,30 @@
 }
 
 .granularityButton {
-	width: 24%;
+	width: 19%;
 }
 
-.issuesSelected {
+.granularityButtonSelected {
+	background-color: #A2C2D8;
+}
+
+.issuesI {
 	background-color: #ffcc00;
 }
 
-.weeksSelected {
+.daysI {
+	background-color: #CC66FF;
+}
+
+.weeksI {
 	background-color: #00cc00;
 }
 
-.monthsSelected {
+.monthsI {
 	background-color: #0066ff;
 }
 
-.yearsSelected {
+.yearsI {
 	background-color: #ff3300;
 }
 
@@ -189,25 +197,24 @@
 }
 
 .granularityInfoTextbox {
-	background-color: #E0E0E0;
-	margin-top: 8px;
-	padding: 3px;
+    background-color: #DDDDDD;
+    margin-top: 8px;
+    padding: 7px;
 }
 
 .granularityInfoGlyph {
-	border-radius: 15px;
-	margin-top: 18px;
-	margin-left: 5px;
-	display: block;
-	font-size: 18pt;
-	text-align: center;
-	width: 30px;
+    border-radius: 15px;
+    display: block;
+    font-size: 19pt;
+    height: 30px;
+    margin-top: 9px;
+    text-align: center;
+    width: 30px;
 }
 
 .granularityInfoCaption {
-	display: block;
-	font-weight: bold;
-	padding-bottom: 5px;
-	padding-left: 6px;
-	text-transform: uppercase;
+    display: block;
+    font-weight: bold;
+    padding-bottom: 2px;
+    text-transform: uppercase;
 }

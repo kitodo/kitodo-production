@@ -10,6 +10,11 @@ public class GranularityForm {
 	private Course course;
 	private Long numberOfPages;
 
+	public void daysClick() {
+		granularity = BreakMode.DAYS;
+		course.calculateBreaks(granularity);
+	}
+
 	public String getGranularity() {
 		if (granularity == null)
 			return "null";
@@ -30,12 +35,12 @@ public class GranularityForm {
 
 	public void issuesClick() {
 		granularity = BreakMode.ISSUES;
-		course.setBreaks(granularity);
+		course.calculateBreaks(granularity);
 	}
 
 	public void monthsClick() {
 		granularity = BreakMode.MONTHS;
-		course.setBreaks(granularity);
+		course.calculateBreaks(granularity);
 	}
 
 	public void setNumberOfPages(Long arg0) {
@@ -55,11 +60,11 @@ public class GranularityForm {
 
 	public void weeksClick() {
 		granularity = BreakMode.WEEKS;
-		course.setBreaks(granularity);
+		course.calculateBreaks(granularity);
 	}
 
 	public void yearsClick() {
 		granularity = BreakMode.YEARS;
-		course.setBreaks(granularity);
+		course.calculateBreaks(granularity);
 	}
 }
