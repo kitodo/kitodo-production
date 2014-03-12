@@ -135,19 +135,22 @@
 				if (!document.getElementById("calendarForm:titleHeading").value
 						.match(/\S/)) {
 					alert("${msgs['calendar.title.heading.invalid']}");
-					document.getElementById("calendarForm:titleHeading").focus();
+					document.getElementById("calendarForm:titleHeading")
+							.focus();
 					return false;
 				}
 				if (!document.getElementById("calendarForm:firstAppearance").value
 						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
-					document.getElementById("calendarForm:firstAppearance").focus();
+					document.getElementById("calendarForm:firstAppearance")
+							.focus();
 					return false;
 				}
 				if (!document.getElementById("calendarForm:lastAppearance").value
 						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.lastAppearance.invalid']}");
-					document.getElementById("calendarForm:lastAppearance").focus();
+					document.getElementById("calendarForm:lastAppearance")
+							.focus();
 					return false;
 				}
 				return true;
@@ -267,100 +270,96 @@
 													id="applyChanges" style="display: none;" />
 											</htm:div>
 
-											<htm:div styleClass="issues">
-												<t:dataList layout="simple" var="issue"
-													value="#{CalendarForm.issues}">
-													<htm:div styleClass="issue">
-														<htm:span styleClass="fullWideLabel">
-															<%-- bubble --%>
-															<htm:span styleClass="bubble"
-																style="color: #{issue.colour}">
-																<h:outputText value="●" />
-															</htm:span>
-
-															<%-- Prefix text --%>
-															<h:outputLabel value="#{msgs['calendar.issue']}"
-																for="issueHeading" />
+											<t:dataList layout="simple" var="issue"
+												value="#{CalendarForm.issues}">
+												<htm:div styleClass="issue">
+													<htm:span styleClass="fullWideLabel">
+														<%-- bubble --%>
+														<htm:span styleClass="bubble"
+															style="color: #{issue.colour}">
+															<h:outputText value="●" />
 														</htm:span>
 
-														<%-- Delete button --%>
-														<h:commandLink value="#{msgs['calendar.issue.delete']}"
-															action="#{issue.deleteClick}"
-															onclick="if(!deleteClickQuery()){return false;}"
-															styleClass="deleteIssue" />
+														<%-- Prefix text --%>
+														<h:outputLabel value="#{msgs['calendar.issue']}"
+															for="issueHeading" />
+													</htm:span>
 
-														<%-- Update button --%>
-														<h:commandLink value="#{msgs['calendar.applyChanges']}"
-															id="applyLink" styleClass="deleteIssue"
-															style="display: none;" />
+													<%-- Delete button --%>
+													<h:commandLink value="#{msgs['calendar.issue.delete']}"
+														action="#{issue.deleteClick}"
+														onclick="if(!deleteClickQuery()){return false;}"
+														styleClass="deleteIssue" />
 
-														<%-- Issue name box --%>
-														<htm:span styleClass="fullWideBox">
-															<h:inputText value="#{issue.heading}" id="issueHeading"
-																onkeydown="showApplyLink(this);"
-																styleClass="fullWideInput" />
-														</htm:span>
+													<%-- Update button --%>
+													<h:commandLink value="#{msgs['calendar.applyChanges']}"
+														id="applyLink" styleClass="deleteIssue"
+														style="display: none;" />
 
-														<%-- Days of week --%>
-														<htm:div styleClass="daysOfWeek">
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="monday"
-																	value="#{issue.monday}" onchange="submit()" />
-																<h:outputLabel value="#{msgs['calendar.issue.monday']}"
-																	for="monday" />
-															</htm:div>
+													<%-- Issue name box --%>
+													<htm:span styleClass="fullWideBox">
+														<h:inputText value="#{issue.heading}" id="issueHeading"
+															onkeydown="showApplyLink(this);"
+															styleClass="fullWideInput" />
+													</htm:span>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="tuesday"
-																	value="#{issue.tuesday}" onchange="submit()" />
-																<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
-																	for="tuesday" />
-															</htm:div>
+													<%-- Days of week --%>
+													<htm:div styleClass="daysOfWeek">
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="monday"
+																value="#{issue.monday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.monday']}"
+																for="monday" />
+														</htm:div>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="wednesday"
-																	value="#{issue.wednesday}" onchange="submit()" />
-																<h:outputLabel
-																	value="#{msgs['calendar.issue.wednesday']}"
-																	for="wednesday" />
-															</htm:div>
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="tuesday"
+																value="#{issue.tuesday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
+																for="tuesday" />
+														</htm:div>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="thursday"
-																	value="#{issue.thursday}" onchange="submit()" />
-																<h:outputLabel
-																	value="#{msgs['calendar.issue.thursday']}"
-																	for="thursday" />
-															</htm:div>
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="wednesday"
+																value="#{issue.wednesday}" onchange="submit()" />
+															<h:outputLabel
+																value="#{msgs['calendar.issue.wednesday']}"
+																for="wednesday" />
+														</htm:div>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="friday"
-																	value="#{issue.friday}" onchange="submit()" />
-																<h:outputLabel value="#{msgs['calendar.issue.friday']}"
-																	for="friday" />
-															</htm:div>
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="thursday"
+																value="#{issue.thursday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.thursday']}"
+																for="thursday" />
+														</htm:div>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="saturday"
-																	value="#{issue.saturday}" onchange="submit()" />
-																<h:outputLabel
-																	value="#{msgs['calendar.issue.saturday']}"
-																	for="saturday" />
-															</htm:div>
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="friday"
+																value="#{issue.friday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.friday']}"
+																for="friday" />
+														</htm:div>
 
-															<htm:div styleClass="keepTogether">
-																<h:selectBooleanCheckbox id="sunday"
-																	value="#{issue.sunday}" onchange="submit()" />
-																<h:outputLabel value="#{msgs['calendar.issue.sunday']}"
-																	for="sunday" />
-															</htm:div>
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="saturday"
+																value="#{issue.saturday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.saturday']}"
+																for="saturday" />
+														</htm:div>
+
+														<htm:div styleClass="keepTogether">
+															<h:selectBooleanCheckbox id="sunday"
+																value="#{issue.sunday}" onchange="submit()" />
+															<h:outputLabel value="#{msgs['calendar.issue.sunday']}"
+																for="sunday" />
 														</htm:div>
 													</htm:div>
-												</t:dataList>
-												<%-- Add button --%>
-												<h:commandLink value="#{msgs['calendar.issue.add']}"
-													action="#{CalendarForm.addIssueClick}" />
-											</htm:div>
+												</htm:div>
+											</t:dataList>
+											<%-- Add button --%>
+											<h:commandLink value="#{msgs['calendar.issue.add']}"
+												action="#{CalendarForm.addIssueClick}" />
 
 										</htm:div>
 									</htm:div>
