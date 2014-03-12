@@ -63,7 +63,8 @@
 				if (!document.getElementById("granularityForm:numberOfPages").value
 						.match(/^[<h:outputText value="#{SpracheForm.groupingSeparator}"/>0-9]*$/)) {
 					alert("${msgs['granularity.numberOfPages.invalid']}");
-					document.getElementById("granularityForm:numberOfPages").focus();
+					document.getElementById("granularityForm:numberOfPages")
+							.focus();
 					return false;
 				}
 				return true;
@@ -125,25 +126,28 @@
 									<%-- ===================== Page main content ====================== --%>
 
 									<htm:fieldset styleClass="leftBox granularityMainCtl">
+										<htm:legend>
+											<h:outputText value="#{msgs['granularity.pick']} " />
+										</htm:legend>
 
 										<%-- Information on issues & enter pages --%>
-										<htm:div>
+										<htm:div styleClass="formRow">
 											<h:outputText value="#{msgs['granularity.issueCount']} " />
 											<h:outputText value="#{GranularityForm.issueCount}">
 												<f:convertNumber />
 											</h:outputText>
 										</htm:div>
-										<htm:div>
+										<htm:div styleClass="formRow">
 											<h:outputLabel for="numberOfPages"
 												value="#{msgs['granularity.numberOfPages']}"
-												styleClass="fullWideLabel" />
+												styleClass="leftText" />
 											<h:commandLink value="#{msgs['granularity.apply']}"
-												id="applyLink" styleClass="deleteIssue"
+												id="applyLink" styleClass="rightText"
 												style="display: none;" />
-											<htm:span styleClass="fullWideBox">
+											<htm:span styleClass="fillWrapper">
 												<h:inputText value="#{GranularityForm.numberOfPages}"
 													id="numberOfPages" onkeydown="showApplyLink();"
-													styleClass="fullWideInput">
+													styleClass="filling">
 													<f:convertNumber />
 												</h:inputText>
 											</htm:span>
@@ -165,7 +169,6 @@
 												action="#{GranularityForm.yearsClick}"
 												styleClass="granularityButton #{GranularityForm.granularity=='years'?'yearsSelected':''}" />
 										</htm:div>
-
 									</htm:fieldset>
 
 									<htm:fieldset>
@@ -203,25 +206,26 @@
 											rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
 											value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
 											styleClass="granularityWarning" />
-												<h:outputText
-													value="#{GranularityForm.granularity}Selected"
-													binding="#{requestScope.granularityClass}"
-													rendered="false" />
-										<htm:div styleClass="granularityInfoTextbox #{requestScope.granularityInfoKey.value}">
+										<h:outputText value="#{GranularityForm.granularity}Selected"
+											binding="#{requestScope.granularityClass}" rendered="false" />
+										<htm:div
+											styleClass="granularityInfoTextbox #{requestScope.granularityClass.value}"
+											rendered="#{GranularityForm.granularity!='null'}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"
-												styleClass="granularityInfoGlyph #{requestScope.granularityInfoKey.value}" />
-											<htm:div styleClass="granularityInfoTextbox" title="#{msgs['granularity.info.textbox.mouseOver']}">
+												styleClass="granularityInfoGlyph #{requestScope.granularityClass.value} leftText" />
+											<htm:div styleClass="granularityInfoTextbox fillWrapper"
+												title="#{msgs['granularity.info.textbox.mouseOver']}">
 												<h:outputText
 													value="#{msgs['granularity.info.textbox.caption']}"
-													styleClass="granularityInfoCaption" />
+													styleClass="granularityInfoCaption filling" />
 												<h:outputText
 													value="granularity.info.textbox.#{GranularityForm.granularity}"
 													binding="#{requestScope.granularityInfoKey}"
-													rendered="false" />
+													rendered="false"
+													styleClass="filling" />
 												<h:outputText
-													value="#{msgs[requestScope.granularityInfoKey.value]}"
-													styleClass="granularityInfoChoice" />
+													value="#{msgs[requestScope.granularityInfoKey.value]}" />
 											</htm:div>
 										</htm:div>
 									</htm:fieldset>

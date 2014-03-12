@@ -79,7 +79,7 @@
 }
 
 .formRow {
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 
 /* ===================== calendar.jsp ===================== */
@@ -188,10 +188,26 @@
 	text-align: center;
 }
 
-.grnaularityInfoGlyph {
+.granularityInfoTextbox {
+	background-color: #E0E0E0;
+	margin-top: 8px;
+	padding: 3px;
+}
+
+.granularityInfoGlyph {
 	border-radius: 15px;
+	margin-top: 18px;
+	margin-left: 5px;
 	display: block;
 	font-size: 18pt;
 	text-align: center;
 	width: 30px;
+}
+
+.granularityInfoCaption {
+	display: block;
+	font-weight: bold;
+	padding-bottom: 5px;
+	padding-left: 6px;
+	text-transform: uppercase;
 }
