@@ -60,11 +60,10 @@
 		 * @return whether the title data is valid
 		 --%>
 			function numberOfPagesValid() {
-				if (!document.getElementById("granularityForm:numberOfPages").value
+				if (!document.getElementById("form1:numberOfPages").value
 						.match(/^[<h:outputText value="#{SpracheForm.groupingSeparator}"/>0-9]*$/)) {
 					alert("${msgs['granularity.numberOfPages.invalid']}");
-					document.getElementById("granularityForm:numberOfPages")
-							.focus();
+					document.getElementById("form1:numberOfPages").focus();
 					return false;
 				}
 				return true;
@@ -75,7 +74,7 @@
 		 * @return always true
 		 --%>
 			function showApplyLink() {
-				document.getElementById("granularityForm:applyLink").style.display = "inline";
+				document.getElementById("form1:applyLink").style.display = "inline";
 				return true;
 			}
 		</script>
@@ -88,7 +87,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="granularityForm" onsubmit="return numberOfPagesValid()">
+					<h:form id="form1" onsubmit="return numberOfPagesValid()">
 
 						<%-- Bread crumbs --%>
 
