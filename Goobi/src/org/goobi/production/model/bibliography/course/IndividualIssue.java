@@ -40,7 +40,6 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
-import org.w3c.dom.Element;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -81,7 +80,7 @@ public class IndividualIssue {
 	 * @param issue
 	 *            Name of the issue
 	 */
-	public IndividualIssue(String title, LocalDate date, String issue) {
+	IndividualIssue(String title, LocalDate date, String issue) {
 		this.title = title;
 		this.issue = issue;
 		this.date = date;
@@ -98,7 +97,7 @@ public class IndividualIssue {
 	 * @return an int which differs if two neighbouring individual issues belong
 	 *         to different processes
 	 */
-	public int getBreakMark(BreakMode mode) {
+	int getBreakMark(BreakMode mode) {
 		switch (mode) {
 		case ISSUES:
 			return this.hashCode();
@@ -114,34 +113,14 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function getDate() returns the day this issue appeared.
-	 * 
-	 * @return the date of appearance
-	 */
-	public LocalDate getDate() {
-		return date;
-	}
-
-	/**
 	 * The function getId() returns an identifier for the issue. Currently, the
 	 * identifier is the hexadecimal representation of the hashCode() of this
 	 * bean class.
 	 * 
 	 * @return an identifier for the issue
 	 */
-	public String getId() {
+	String getId() {
 		return Integer.toHexString(hashCode());
-	}
-
-	public Element populate(Element result) {
-		result.setAttribute("id", getId());
-		result.setIdAttribute("id", true);
-		if (title != null)
-			result.setAttribute("title", title);
-		if (issue != null)
-			result.setAttribute("issue", issue);
-		result.setAttribute("date", date.toString());
-		return result;
 	}
 
 	/**
