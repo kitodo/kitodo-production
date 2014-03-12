@@ -65,7 +65,7 @@
 				if (!titleDataIsValid()) {
 					return false;
 				}
-				if (document.getElementById("form1:applyChanges").style.display == "none") {
+				if (document.getElementById("calendarForm:applyChanges").style.display == "none") {
 					return true;
 				} else {
 					return confirm("${msgs['calendar.title.add.query']}");
@@ -91,7 +91,7 @@
 		 * @return whether a title block can be deleted
 		 --%>
 			function removeClickQuery() {
-				if (document.getElementById("form1:titlePicker").length >= 2) {
+				if (document.getElementById("calendarForm:titlePicker").length >= 2) {
 					return confirm("${msgs['calendar.title.remove.query']}");
 				} else
 					alert("${msgs['calendar.title.remove.disabled']}");
@@ -117,8 +117,8 @@
 		 * @return always true
 		 --%>
 			function startEditTitle() {
-				if (document.getElementById("form1:titlePicker").options.length > 0)
-					document.getElementById("form1:applyChanges").style.display = "inline";
+				if (document.getElementById("calendarForm:titlePicker").options.length > 0)
+					document.getElementById("calendarForm:applyChanges").style.display = "inline";
 				return true;
 			}
 		<%--
@@ -132,22 +132,22 @@
 		 * @return whether the title data is valid
 		 --%>
 			function titleDataIsValid() {
-				if (!document.getElementById("form1:titleHeading").value
+				if (!document.getElementById("calendarForm:titleHeading").value
 						.match(/\S/)) {
 					alert("${msgs['calendar.title.heading.invalid']}");
-					document.getElementById("form1:titleHeading").focus();
+					document.getElementById("calendarForm:titleHeading").focus();
 					return false;
 				}
-				if (!document.getElementById("form1:firstAppearance").value
+				if (!document.getElementById("calendarForm:firstAppearance").value
 						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
-					document.getElementById("form1:firstAppearance").focus();
+					document.getElementById("calendarForm:firstAppearance").focus();
 					return false;
 				}
-				if (!document.getElementById("form1:lastAppearance").value
+				if (!document.getElementById("calendarForm:lastAppearance").value
 						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.lastAppearance.invalid']}");
-					document.getElementById("form1:lastAppearance").focus();
+					document.getElementById("calendarForm:lastAppearance").focus();
 					return false;
 				}
 				return true;
@@ -161,7 +161,7 @@
 		 * @return whether the change request shall be processed
 		 --%>
 			function titlePickerChangeQuery() {
-				if (document.getElementById("form1:applyChanges").style.display == "none") {
+				if (document.getElementById("calendarForm:applyChanges").style.display == "none") {
 					return true;
 				} else {
 					return confirm("${msgs['calendar.title.alter.query']}");
@@ -177,7 +177,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1" onsubmit="return titleDataIsValid()">
+					<h:form id="calendarForm" onsubmit="return titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
