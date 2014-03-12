@@ -24,12 +24,18 @@ public class GranularityForm {
 		return numberOfPages;
 	}
 
+	public int getNumberOfProcesses() {
+		return course.getBreaksCount() + 1;
+	}
+
 	public void issuesClick() {
 		granularity = BreakMode.ISSUES;
+		course.setBreaks(granularity);
 	}
 
 	public void monthsClick() {
 		granularity = BreakMode.MONTHS;
+		course.setBreaks(granularity);
 	}
 
 	public void setNumberOfPages(Long arg0) {
@@ -49,9 +55,11 @@ public class GranularityForm {
 
 	public void weeksClick() {
 		granularity = BreakMode.WEEKS;
+		course.setBreaks(granularity);
 	}
 
 	public void yearsClick() {
 		granularity = BreakMode.YEARS;
+		course.setBreaks(granularity);
 	}
 }

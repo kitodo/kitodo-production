@@ -66,7 +66,6 @@ public class Course extends ArrayList<Title> {
 	 */
 	private final List<String> breakIDs = new ArrayList<String>();
 
-
 	/**
 	 * The method setBreaks() calculates and sets the break IDs depending on the
 	 * given BreakMode.
@@ -74,7 +73,7 @@ public class Course extends ArrayList<Title> {
 	 * @param mode
 	 *            how the course shall be broken into issues
 	 */
-	private void setBreaks(BreakMode mode) {
+	public void setBreaks(BreakMode mode) {
 		breakIDs.clear();
 		Integer lastMark = null;
 		for (IndividualIssue issue : getIndividualIssues()) {
@@ -126,6 +125,16 @@ public class Course extends ArrayList<Title> {
 			}
 			return result;
 		}
+	}
+
+	/**
+	 * The function getBreakCount() returns the number of process break points
+	 * at which the course of appearance will be split into Goobi processes.
+	 * 
+	 * @return the number of process breaks
+	 */
+	public int getBreaksCount() {
+		return breakIDs.size();
 	}
 
 }

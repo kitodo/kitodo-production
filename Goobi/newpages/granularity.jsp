@@ -168,6 +168,60 @@
 
 									</htm:fieldset>
 
+									<htm:fieldset>
+										<htm:legend>
+											<h:outputText value="#{msgs['granularity.info.legend']} " />
+										</htm:legend>
+										<h:outputText
+											value="granularity.#{GranularityForm.granularity}"
+											binding="#{requestScope.granularityChoiceKey}"
+											rendered="false" />
+										<h:outputText
+											value="#{msgs[requestScope.granularityChoiceKey.value]}"
+											styleClass="granularityInfoChoice" />
+
+										<h:outputText value="#{GranularityForm.numberOfProcesses}"
+											binding="#{requestScope.processesFormatted}" rendered="false">
+											<f:convertNumber />
+										</h:outputText>
+										<h:outputText
+											value="#{GranularityForm.numberOfPages / GranularityForm.numberOfProcesses}"
+											binding="#{requestScope.pagesPerProcess}" rendered="false">
+											<f:convertNumber maxFractionDigits="1" />
+										</h:outputText>
+										<h:outputFormat
+											value="#{msgs['granularity.info.noNumberOfPages']}"
+											rendered="#{GranularityForm.numberOfPages == null}">
+											<f:param value="#{requestScope.processesFormatted.value}" />
+										</h:outputFormat>
+										<h:outputFormat value="#{msgs['granularity.info.full']}"
+											rendered="#{GranularityForm.numberOfPages != null}">
+											<f:param value="#{requestScope.processesFormatted.value}" />
+											<f:param value="#{requestScope.pagesPerProcess.value}" />
+										</h:outputFormat>
+										<h:outputText
+											rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
+											value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
+											style="color: red; " />
+										<htm:div>
+											<h:outputText
+												value="#{msgs['granularity.info.textbox.glyph']}"
+												styleClass="granularityInfoGlyph" />
+											<htm:div>
+												<h:outputText
+													value="#{msgs['granularity.info.textbox.caption']}"
+													styleClass="granularityInfoCaption" />
+												<h:outputText
+													value="granularity.info.textbox.#{GranularityForm.granularity}"
+													binding="#{requestScope.granularityInfoKey}"
+													rendered="false" />
+												<h:outputText
+													value="#{msgs[requestScope.granularityInfoKey.value]}"
+													styleClass="granularityInfoChoice" />
+											</htm:div>
+										</htm:div>
+									</htm:fieldset>
+
 									<%-- ===================== End page main content ====================== --%>
 
 								</htm:td>
