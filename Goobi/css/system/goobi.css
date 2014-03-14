@@ -36,7 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
- 
+
 /**
  * The file goobi.css contains general CSS formatting rules that, i.e. keep
  * elements in place, care for their display size etc. These rules are user
@@ -45,49 +45,52 @@
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
- 
-/* ===================== calendar.jsp ===================== */
- 
- .titleManagement {
+.leftBox {
 	float: left;
 	margin-bottom: 5px;
 	margin-right: 12px;
-	width: 250px;
 }
 
-.titleManagement select {
-	margin-bottom: 4px;
-	width: 100%;
-}
-
-.titleManagement a {
-	margin: 5px;
-}
-
-.titleContents {
-	float: left;
-	max-width: 600px;
-	width: 100%;
-}
-
-.titleData {
-	margin-bottom: 10px;
-}
-
-.fullWideBox {
-	display: block;
-	overflow: hidden;
-	padding-left: 4px;
-}
-
-.fullWideLabel {
-	float: left;
-	padding-top: 5px;
-}
-
-.fullWideInput {
+.filling {
 	margin-bottom: 3px;
 	width: 100%;
+}
+
+.fillWrapper {
+	display: block;
+	overflow: hidden;
+}
+
+.leftText {
+	float: left;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+.rightText {
+	float: right;
+	padding: 5px 0 0 5px;
+}
+
+.actionLink {
+	display: inline-block;
+	margin-right: 4px;
+	margin-top: 3px;
+}
+
+.formRow {
+	margin-bottom: 6px;
+}
+
+/* ===================== calendar.jsp ===================== */
+.calendarTitleMgmt {
+	max-width: 350px;
+	min-width: 190px;
+	width: 25%;
+}
+
+.calendarTitleContent {
+	max-width: 700px;
 }
 
 .keepTogether {
@@ -97,10 +100,6 @@
 
 .keepTogether input {
 	max-width: 100px;
-}
-
-.issue {
-	margin: 10px 0;
 }
 
 .bubble,.issueOption {
@@ -116,11 +115,6 @@
 .issueHeading {
 	margin: 0 4px;
 	width: 250px;
-}
-
-.deleteIssue {
-	float: right;
-	padding: 5px 0 0 5px;
 }
 
 .calendarSheet {
@@ -145,4 +139,82 @@
 
 .issueOptions {
 	padding-left: 3px;
+}
+
+.continueButton {
+	text-align: right;
+	padding-top: 7px;
+}
+
+/* ===================== granularity.jsp ===================== */
+.granularityMainCtl {
+	width: 60%;
+	max-width: 600px;
+}
+
+.centerRow {
+	text-align: center;
+}
+
+.granularityButton {
+	width: 19%;
+}
+
+.granularityButtonSelected {
+	background-color: #A2C2D8;
+}
+
+.issuesI {
+	background-color: #ffcc00;
+}
+
+.daysI {
+	background-color: #CC66FF;
+}
+
+.weeksI {
+	background-color: #00cc00;
+}
+
+.monthsI {
+	background-color: #0066ff;
+}
+
+.yearsI {
+	background-color: #ff3300;
+}
+
+.granularityWarning {
+	color: red;
+}
+
+.granularityInfoChoice {
+	display: block;
+	font-size: larger;
+	font-weight: bold;
+	margin: 15px 0 17px;
+	text-align: center;
+}
+
+.granularityInfoTextbox {
+    background-color: #DDDDDD;
+    margin-top: 8px;
+    padding: 7px;
+}
+
+.granularityInfoGlyph {
+    border-radius: 15px;
+    display: block;
+    font-size: 19pt;
+    height: 30px;
+    margin-top: 9px;
+    text-align: center;
+    width: 30px;
+}
+
+.granularityInfoCaption {
+    display: block;
+    font-weight: bold;
+    padding-bottom: 2px;
+    text-transform: uppercase;
 }

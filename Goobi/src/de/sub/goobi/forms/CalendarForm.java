@@ -701,6 +701,16 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function getCourse() will return the course created with this editor
+	 * as read-only property "course" to pass it to the next form
+	 * 
+	 * @return the course of appearance data model
+	 */
+	public Course getCourse() {
+		return course;
+	}
+
+	/**
 	 * The function getEmptySheet() builds the empty calendar sheet with 31 rows
 	 * of twelve cells with empty objects of type Cell().
 	 * 
