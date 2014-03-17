@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 /**
  * The class XMLFuncs contains an omnium-gatherum of functions that perform
@@ -54,11 +55,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class FacesFuncs {
 
-	public static void sendDownload(byte[] data, String saveAsName, String contentType) throws IOException {
+	public static void sendDownload(byte[] data, String saveAsName) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.reset();
-		response.setContentType(contentType);
+		response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		response.setContentLength(data.length);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + saveAsName + '"');
 		response.getOutputStream().write(data);

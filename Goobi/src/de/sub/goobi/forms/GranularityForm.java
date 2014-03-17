@@ -43,7 +43,6 @@ package de.sub.goobi.forms;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -113,7 +112,7 @@ public class GranularityForm {
 	public void downloadClick() throws IOException, ParserConfigurationException, TransformerException {
 		Document courseXML = course.toXML(Locale.GERMAN);
 		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
-		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml", MediaType.TEXT_XML);
+		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml");
 	}
 
 	/**
