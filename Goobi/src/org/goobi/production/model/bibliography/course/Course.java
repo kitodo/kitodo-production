@@ -41,9 +41,17 @@ package org.goobi.production.model.bibliography.course;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import de.sub.goobi.helper.XMLFuncs;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
@@ -156,4 +164,57 @@ public class Course extends ArrayList<Title> {
 		return breakIDs.size();
 	}
 
+	/**
+	 * The function toXML() transforms a course of appearance to XML.
+	 * 
+	 * @param lang
+	 *            language to use for the “description”
+	 * @return XML as String
+	 * @throws ParserConfigurationException
+	 *             if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested
+	 */
+	public Document toXML(Locale lang) throws ParserConfigurationException {
+		Document result = XMLFuncs.newDocument();
+		Element course = result.createElement("course");
+
+		Element description = result.createElement("description");
+		description.appendChild(result.createTextNode(StringUtils.join(verbalise(lang), "\n\n")));
+		course.appendChild(description);
+
+		Element appearances = result.createElement("appearances");
+		for (IndividualIssue issue : getIndividualIssues())
+			appearances.appendChild(issue.populate(result.createElement("appeared")));
+		course.appendChild(appearances);
+
+		Element processes = result.createElement("processes");
+		for (String breakID : breakIDs) {
+			Element process = result.createElement("process");
+			process.setAttribute("break", "#".concat(breakID));
+			processes.appendChild(process);
+		}
+		course.appendChild(processes);
+
+		result.appendChild(course);
+		return result;
+	}
+
+	/**
+	 * The function verbalise() returns a verbal description of the object in
+	 * the given language. If the lang parameter is null or the given language
+	 * is not available, the default is used.
+	 * 
+	 * @param lang
+	 *            language to verbalise in
+	 * @return verbal description as text
+	 */
+	protected List<String> verbalise(Locale lang) {
+		if (Locale.GERMAN.equals(lang))
+			return CourseToGerman.toString(this);
+		// add more languages here
+		// …
+
+		// default: // TODO: change to English as soon as available
+		return CourseToGerman.toString(this);
+	}
 }

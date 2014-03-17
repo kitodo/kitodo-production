@@ -232,6 +232,9 @@
 										</htm:div>
 									</htm:fieldset>
 
+									<h:commandButton value="#{msgs['granularity.download']}"
+										action="#{GranularityForm.downloadClick}" />
+
 									<%-- ===================== End page main content ====================== --%>
 
 								</htm:td>

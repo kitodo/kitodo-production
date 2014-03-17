@@ -40,6 +40,7 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
+import org.w3c.dom.Element;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -56,11 +57,6 @@ import com.sharkysoft.util.UnreachableCodeException;
  */
 public class IndividualIssue {
 	/**
-	 * Labelling of the newspaper that this is an issue from
-	 */
-	protected final String title;
-
-	/**
 	 * Date of this issue
 	 */
 	protected final LocalDate date;
@@ -69,6 +65,11 @@ public class IndividualIssue {
 	 * Labelling of the kind of issue this is
 	 */
 	protected final String issue;
+
+	/**
+	 * Labelling of the newspaper that this is an issue from
+	 */
+	protected final String title;
 
 	/**
 	 * Constructor to create an IndividualIssue
@@ -123,6 +124,30 @@ public class IndividualIssue {
 	 */
 	String getId() {
 		return Integer.toHexString(hashCode());
+	}
+
+	/**
+	 * The function populate() populates an DOM tree element with three
+	 * attributes holding the ID, title name and issue name of this individual
+	 * issue.
+	 * 
+	 * @param result
+	 *            the DOM tree element to populate
+	 * @return the DOM tree element
+	 */
+	Element populate(Element result) {
+		final String ID_ATTRIBUTE_NAME = "id";
+		final String ISSUE_ATTRIBUTE_NAME = "issue";
+		final String TITLE_ATTRIBUTE_NAME = "title";
+
+		result.setAttribute(ID_ATTRIBUTE_NAME, getId());
+		result.setIdAttribute(ID_ATTRIBUTE_NAME, true);
+		if (title != null)
+			result.setAttribute(TITLE_ATTRIBUTE_NAME, title);
+		if (issue != null)
+			result.setAttribute(ISSUE_ATTRIBUTE_NAME, issue);
+		result.setAttribute("date", date.toString());
+		return result;
 	}
 
 	/**

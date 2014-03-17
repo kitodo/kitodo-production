@@ -40,8 +40,19 @@ package de.sub.goobi.forms;
 
 // import javax.faces.bean.ManagedProperty;
 
+import java.io.IOException;
+import java.util.Locale;
+
+import javax.ws.rs.core.MediaType;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.goobi.production.model.bibliography.course.BreakMode;
 import org.goobi.production.model.bibliography.course.Course;
+import org.w3c.dom.Document;
+
+import de.sub.goobi.helper.FacesFuncs;
+import de.sub.goobi.helper.XMLFuncs;
 
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
@@ -84,6 +95,25 @@ public class GranularityForm {
 	public void daysClick() {
 		granularity = BreakMode.DAYS;
 		course.calculateBreaks(granularity);
+	}
+
+	/**
+	 * The procedure downloadClick() is called if the user clicks the button to
+	 * download the course of appearance in XML format.
+	 * 
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws ParserConfigurationException
+	 *             if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested
+	 * @throws TransformerException
+	 *             If an unrecoverable error occurs during the course of the
+	 *             transformation.
+	 */
+	public void downloadClick() throws IOException, ParserConfigurationException, TransformerException {
+		Document courseXML = course.toXML(Locale.GERMAN);
+		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
+		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml", MediaType.TEXT_XML);
 	}
 
 	/**

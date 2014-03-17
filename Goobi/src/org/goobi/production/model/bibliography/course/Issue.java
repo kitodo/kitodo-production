@@ -236,6 +236,33 @@ public class Issue implements Cloneable {
 	}
 
 	/**
+	 * Getter function for the Set of additions.
+	 * 
+	 * @return the set of additions
+	 */
+	public Set<LocalDate> getAdditions() {
+		return additions;
+	}
+
+	/**
+	 * Getter function for the Set of days of week the issue regularly appears.
+	 * 
+	 * @return the set of days of week the issue regularly appears
+	 */
+	public Set<Integer> getDaysOfWeek() {
+		return daysOfWeek;
+	}
+
+	/**
+	 * Getter function for the Set of exclusions.
+	 * 
+	 * @return the set of exclusions
+	 */
+	public Set<LocalDate> getExclusions() {
+		return exclusions;
+	}
+
+	/**
 	 * Getter function for the issue’s name
 	 * 
 	 * @return the issue’s name
