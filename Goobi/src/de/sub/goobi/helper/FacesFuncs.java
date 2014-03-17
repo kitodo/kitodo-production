@@ -45,16 +45,30 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 /**
- * The class XMLFuncs contains an omnium-gatherum of functions that perform
+ * The class FacesFuncs contains an omnium-gatherum of functions that perform
  * recurring tasks related to JavaServer Faces.
  * 
- * Most of the static functions currently located in “Helper.java” do belong
- * here.
+ * TODO: Most of the static functions currently located in “Helper.java” do
+ * belong here.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FacesFuncs {
 
+	/**
+	 * The procedure sendDownload() sends a byte[] of data in the HTTP response
+	 * of a user interaction as a file download. Calling this procedure is only
+	 * sensible during the invoke application phase of the JSF life cycle, i.e.
+	 * in procedures that are designed to provide the action for a JSF command
+	 * link or command button.
+	 * 
+	 * @param data
+	 *            the content of the file
+	 * @param saveAsName
+	 *            a file name proposed to the user
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
 	public static void sendDownload(byte[] data, String saveAsName) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
