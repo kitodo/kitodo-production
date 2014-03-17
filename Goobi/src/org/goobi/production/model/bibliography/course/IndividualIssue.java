@@ -123,7 +123,7 @@ public class IndividualIssue {
 	 * @return an identifier for the issue
 	 */
 	String getId() {
-		return Integer.toHexString(hashCode());
+		return String.format("%08X", hashCode());
 	}
 
 	/**
