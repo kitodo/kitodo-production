@@ -195,9 +195,6 @@ public class CourseToGerman {
 		if (additionsSize > 0)
 			appendManyDates(buffer, issue.getAdditions(), true);
 		buffer.append(".");
-
-		buffer.append(Integer.toString(additionsSize + exclusionsSize));
-
 		return buffer.toString();
 	}
 
