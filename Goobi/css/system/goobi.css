@@ -147,9 +147,14 @@
 }
 
 /* ===================== granularity.jsp ===================== */
-.granularityMainCtl {
+
+.granularityMainCtlWrapper {
 	width: 60%;
 	max-width: 600px;
+}
+
+.granularityMainCtl {
+	width: 100%;
 }
 
 .centerRow {

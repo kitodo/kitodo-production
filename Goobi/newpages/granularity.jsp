@@ -124,53 +124,60 @@
 
 									<%-- ===================== Page main content ====================== --%>
 
-									<htm:fieldset styleClass="leftBox granularityMainCtl">
-										<htm:legend>
-											<h:outputText value="#{msgs['granularity.title']} " />
-										</htm:legend>
+									<htm:div styleClass="leftBox granularityMainCtlWrapper">
+										<htm:fieldset styleClass="granularityMainCtl">
+											<htm:legend>
+												<h:outputText value="#{msgs['granularity.title']} " />
+											</htm:legend>
 
-										<%-- Information on issues & enter pages --%>
-										<htm:div styleClass="formRow">
-											<h:outputText value="#{msgs['granularity.issueCount']} " />
-											<h:outputText value="#{GranularityForm.issueCount}">
-												<f:convertNumber />
-											</h:outputText>
-										</htm:div>
-										<htm:div styleClass="formRow">
-											<h:outputLabel for="numberOfPages"
-												value="#{msgs['granularity.numberOfPages']}"
-												styleClass="leftText" />
-											<h:commandLink value="#{msgs['granularity.apply']}"
-												id="applyLink" styleClass="rightText" style="display: none;" />
-											<htm:span styleClass="fillWrapper">
-												<h:inputText value="#{GranularityForm.numberOfPages}"
-													id="numberOfPages" onkeydown="showApplyLink();"
-													styleClass="filling">
+											<%-- Information on issues & enter pages --%>
+											<htm:div styleClass="formRow">
+												<h:outputText value="#{msgs['granularity.issueCount']} " />
+												<h:outputText value="#{GranularityForm.issueCount}">
 													<f:convertNumber />
-												</h:inputText>
-											</htm:span>
-										</htm:div>
+												</h:outputText>
+											</htm:div>
+											<htm:div styleClass="formRow">
+												<h:outputLabel for="numberOfPages"
+													value="#{msgs['granularity.numberOfPages']}"
+													styleClass="leftText" />
+												<h:commandLink value="#{msgs['granularity.apply']}"
+													id="applyLink" styleClass="rightText"
+													style="display: none;" />
+												<htm:span styleClass="fillWrapper">
+													<h:inputText value="#{GranularityForm.numberOfPages}"
+														id="numberOfPages" onkeydown="showApplyLink();"
+														styleClass="filling">
+														<f:convertNumber />
+													</h:inputText>
+												</htm:span>
+											</htm:div>
 
-										<%-- Buttons to choose granularity --%>
-										<h:outputText value="#{msgs['granularity.pick']} " />
-										<htm:div styleClass="formRow centerRow">
-											<h:commandButton value="#{msgs['granularity.issues']}"
-												action="#{GranularityForm.issuesClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='issues'?'granularityButtonSelected':''}" />
-											<h:commandButton value="#{msgs['granularity.days']}"
-												action="#{GranularityForm.daysClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='days'?'granularityButtonSelected':''}" />
-											<h:commandButton value="#{msgs['granularity.weeks']}"
-												action="#{GranularityForm.weeksClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='weeks'?'granularityButtonSelected':''}" />
-											<h:commandButton value="#{msgs['granularity.months']}"
-												action="#{GranularityForm.monthsClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='months'?'granularityButtonSelected':''}" />
-											<h:commandButton value="#{msgs['granularity.years']}"
-												action="#{GranularityForm.yearsClick}"
-												styleClass="granularityButton #{GranularityForm.granularity=='years'?'granularityButtonSelected':''}" />
-										</htm:div>
-									</htm:fieldset>
+											<%-- Buttons to choose granularity --%>
+											<h:outputText value="#{msgs['granularity.pick']} " />
+											<htm:div styleClass="formRow centerRow">
+												<h:commandButton value="#{msgs['granularity.issues']}"
+													action="#{GranularityForm.issuesClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='issues'?'granularityButtonSelected':''}" />
+												<h:commandButton value="#{msgs['granularity.days']}"
+													action="#{GranularityForm.daysClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='days'?'granularityButtonSelected':''}" />
+												<h:commandButton value="#{msgs['granularity.weeks']}"
+													action="#{GranularityForm.weeksClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='weeks'?'granularityButtonSelected':''}" />
+												<h:commandButton value="#{msgs['granularity.months']}"
+													action="#{GranularityForm.monthsClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='months'?'granularityButtonSelected':''}" />
+												<h:commandButton value="#{msgs['granularity.years']}"
+													action="#{GranularityForm.yearsClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='years'?'granularityButtonSelected':''}" />
+											</htm:div>
+										</htm:fieldset>
+
+										<%-- Button to download course of appearance as XML --%>
+										<h:commandButton value="#{msgs['granularity.download']}"
+											action="#{GranularityForm.downloadClick}" />
+									</htm:div>
 
 									<htm:fieldset>
 										<htm:legend>
@@ -231,9 +238,6 @@
 											</htm:div>
 										</htm:div>
 									</htm:fieldset>
-
-									<h:commandButton value="#{msgs['granularity.download']}"
-										action="#{GranularityForm.downloadClick}" />
 
 									<%-- ===================== End page main content ====================== --%>
 
