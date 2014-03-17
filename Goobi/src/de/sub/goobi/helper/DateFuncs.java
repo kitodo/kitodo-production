@@ -55,17 +55,8 @@ public class DateFuncs {
 	/**
 	 * The field DATE_FORMATTER provides a DateTimeFormatter that is used to
 	 * convert between LocalDate objects and String in common German notation.
-	 * 
-	 * <p>
-	 * We need a ThreadLocal here because DateTimeFormatter isn’t thread safe.
-	 * </p>
 	 */
-	private static ThreadLocal<DateTimeFormatter> DATE_FORMATTER = new ThreadLocal<DateTimeFormatter>() {
-		@Override
-		public DateTimeFormatter initialValue() {
-			return DateTimeFormat.forPattern("dd.MM.yyyy");
-		}
-	};
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
 
 	/**
 	 * The function sameMonth() compares two LocalDate objects in regard to the
@@ -126,6 +117,6 @@ public class DateFuncs {
 	 * @return a thread-safe DateTimeFormat.forPattern("dd.MM.yyyy")
 	 */
 	public static DateTimeFormatter getDATE_FORMATTER() {
-		return DATE_FORMATTER.get();
+		return DATE_FORMATTER;
 	}
 }
