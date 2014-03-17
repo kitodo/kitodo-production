@@ -32,7 +32,7 @@
 --%>
 <%-- ######################################## 
 				
-	zusätzliche Daten aus der Konfiguration
+	zusaetzliche Daten aus der Konfiguration
 					
 	#########################################--%>
 <h:panelGroup>
