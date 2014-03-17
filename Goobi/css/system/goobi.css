@@ -154,7 +154,7 @@
 }
 
 .granularityMainCtl {
-	width: 100%;
+	margin-bottom: 45px;
 }
 
 .centerRow {
@@ -202,24 +202,24 @@
 }
 
 .granularityInfoTextbox {
-    background-color: #DDDDDD;
-    margin-top: 8px;
-    padding: 7px;
+	background-color: #DDDDDD;
+	margin-top: 8px;
+	padding: 7px;
 }
 
 .granularityInfoGlyph {
-    border-radius: 15px;
-    display: block;
-    font-size: 19pt;
-    height: 30px;
-    margin-top: 9px;
-    text-align: center;
-    width: 30px;
+	border-radius: 15px;
+	display: block;
+	font-size: 19pt;
+	height: 30px;
+	margin-top: 9px;
+	text-align: center;
+	width: 30px;
 }
 
 .granularityInfoCaption {
-    display: block;
-    font-weight: bold;
-    padding-bottom: 2px;
-    text-transform: uppercase;
+	display: block;
+	font-weight: bold;
+	padding-bottom: 2px;
+	text-transform: uppercase;
 }

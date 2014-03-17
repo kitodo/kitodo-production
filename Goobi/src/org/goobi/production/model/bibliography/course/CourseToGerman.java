@@ -230,7 +230,7 @@ public class CourseToGerman {
 		int previousYear = Integer.MIN_VALUE;
 		boolean nextInSameMonth = false;
 		boolean nextBothInSameMonth = next != null ? DateFuncs.sameMonth(current, next) : false;
-		int lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, next.getYear());
+		int lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, current.getYear());
 
 		do {
 			nextInSameMonth = nextBothInSameMonth;

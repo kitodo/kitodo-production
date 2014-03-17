@@ -39,6 +39,8 @@
 package de.sub.goobi.helper;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -68,14 +70,18 @@ public class FacesFuncs {
 	 *            a file name proposed to the user
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @throws URISyntaxException
+	 *             if the URI string constructed from saveAsName violates RFC
+	 *             2396
 	 */
-	public static void sendDownload(byte[] data, String saveAsName) throws IOException {
+	public static void sendDownload(byte[] data, String saveAsName) throws IOException, URISyntaxException {
+		String disposition = "attachment; filename*=UTF-8''".concat(new URI(null, saveAsName, null).toASCIIString());
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.reset();
+		response.setHeader("Content-Disposition", disposition);
 		response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		response.setContentLength(data.length);
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + saveAsName + '"');
 		response.getOutputStream().write(data);
 		context.responseComplete();
 	}
