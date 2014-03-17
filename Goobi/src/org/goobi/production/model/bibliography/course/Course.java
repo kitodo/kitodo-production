@@ -47,6 +47,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -162,6 +163,30 @@ public class Course extends ArrayList<Title> {
 	 */
 	public int getBreaksCount() {
 		return breakIDs.size();
+	}
+
+	/**
+	 * The function guessTotalNumberOfPages() calculates a guessed number of
+	 * pages for a course of appearance of a newspaper, presuming each issue
+	 * having 40 pages and Sunday issues having six times that size because most
+	 * people buy the Sunday issue most often and therefore advertisers buy the
+	 * most space on that day.
+	 * 
+	 * @return a guessed total number of pages for the full course of appearance
+	 */
+	public long guessTotalNumberOfPages() {
+		long result = 0;
+		for (Title title : this) {
+			LocalDate lastAppearance = title.getLastAppearance();
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1))
+				for (Issue issue : title.getIssues())
+					if (issue.isMatch(day))
+						if (day.getDayOfWeek() != DateTimeConstants.SUNDAY)
+							result += 40;
+						else
+							result += 240;
+		}
+		return result;
 	}
 
 	/**

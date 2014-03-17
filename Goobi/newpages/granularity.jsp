@@ -196,18 +196,25 @@
 											<f:convertNumber />
 										</h:outputText>
 										<h:outputText
-											value="#{GranularityForm.numberOfPages / GranularityForm.numberOfProcesses}"
+											value="#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}"
 											binding="#{requestScope.pagesPerProcess}" rendered="false">
 											<f:convertNumber maxFractionDigits="1" />
 										</h:outputText>
-										<h:outputText value="#{GranularityForm.granularity}I"
-											binding="#{requestScope.granularityClass}" rendered="false" />
 										<htm:div styleClass="granularityInfoTextbox"
 											rendered="#{GranularityForm.granularity!='null'}"
 											title="#{msgs['granularity.info.textbox.mouseOver']}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"
-												styleClass="granularityInfoGlyph #{requestScope.granularityClass.value} leftText" />
+												styleClass="granularityInfoGlyph redI leftText"
+												rendered="#{GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses>1000}" />
+											<h:outputText
+												value="#{msgs['granularity.info.textbox.glyph']}"
+												styleClass="granularityInfoGlyph yellowI leftText"
+												rendered="#{GranularityForm.granularity!='days' and GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses<=1000}" />
+											<h:outputText
+												value="#{msgs['granularity.info.textbox.glyph']}"
+												styleClass="granularityInfoGlyph greenI leftText"
+												rendered="#{GranularityForm.granularity=='days' and GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses<=1000}" />
 											<htm:div styleClass="fillWrapper">
 												<h:outputText
 													value="#{msgs['granularity.info.textbox.caption']}"
@@ -225,10 +232,9 @@
 													<f:param value="#{requestScope.pagesPerProcess.value}" />
 												</h:outputFormat>
 												<h:outputText
-													rendered="#{GranularityForm.numberOfPages/GranularityForm.numberOfProcesses>1000}"
+													rendered="#{GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses>1000}"
 													value="#{msgs['granularity.info.largeNumberOfImagesWarning']}"
 													styleClass="granularityWarning filling" />
-
 												<h:outputText
 													value="granularity.info.textbox.#{GranularityForm.granularity}"
 													binding="#{requestScope.granularityInfoKey}"

@@ -158,6 +158,20 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getNumberOfPages returns the total number of pages of the
+	 * digitization project entered by the user or a guessed value as read-only
+	 * property “numberOfPagesOptionallyGuessed”
+	 * 
+	 * @return an (opitonally guessed) total number of pages
+	 */
+	public Long getNumberOfPagesOptionallyGuessed() {
+		if (numberOfPages == null)
+			return course.guessTotalNumberOfPages();
+		else
+			return numberOfPages;
+	}
+
+	/**
 	 * The function getNumberOfProcesses() returns the number of processes that
 	 * will be created if the currently set BreakMode is used as read-only
 	 * property “numberOfProcesses”.

@@ -154,7 +154,8 @@
 }
 
 .granularityMainCtl {
-	margin-bottom: 45px;
+    margin-bottom: 45px;
+    padding: 7px;
 }
 
 .centerRow {
@@ -169,24 +170,16 @@
 	background-color: #A2C2D8;
 }
 
-.issuesI {
+.redI {
+	background-color: #ff3300;
+}
+
+.yellowI {
 	background-color: #ffcc00;
 }
 
-.daysI {
-	background-color: #CC66FF;
-}
-
-.weeksI {
+.greenI {
 	background-color: #00cc00;
-}
-
-.monthsI {
-	background-color: #0066ff;
-}
-
-.yearsI {
-	background-color: #ff3300;
 }
 
 .granularityWarning {
