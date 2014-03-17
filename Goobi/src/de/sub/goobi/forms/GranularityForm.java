@@ -162,7 +162,7 @@ public class GranularityForm {
 	 * digitization project entered by the user or a guessed value as read-only
 	 * property “numberOfPagesOptionallyGuessed”
 	 * 
-	 * @return an (opitonally guessed) total number of pages
+	 * @return an (optionally guessed) total number of pages
 	 */
 	public Long getNumberOfPagesOptionallyGuessed() {
 		if (numberOfPages == null)
