@@ -89,9 +89,8 @@ public class IndividualIssue {
 
 	/**
 	 * Returns an integer which, for a given BreakMode, shall indicate for two
-	 * <strong>neighbouring</strong> individual issues whether they form the
-	 * same process (break mark is equal) or to different processes (break mark
-	 * differs).
+	 * neighbouring individual issues whether they form the same process (break
+	 * mark is equal) or to different processes (break mark differs).
 	 * 
 	 * @param mode
 	 *            how the course shall be broken into processes
@@ -99,17 +98,18 @@ public class IndividualIssue {
 	 *         to different processes
 	 */
 	int getBreakMark(BreakMode mode) {
+		final int prime = 31;
 		switch (mode) {
 		case ISSUES:
 			return this.hashCode();
 		case DAYS:
-			return date.getDayOfMonth();
+			return date.hashCode();
 		case WEEKS:
-			return date.getWeekOfWeekyear();
+			return prime * date.getYear() + date.getWeekOfWeekyear();
 		case MONTHS:
-			return date.getMonthOfYear();
+			return prime * date.getYear() + date.getMonthOfYear();
 		case QUARTERS:
-			return (date.getMonthOfYear() - 1) / 3;
+			return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
 		case YEARS:
 			return date.getYear();
 		default:
@@ -125,7 +125,7 @@ public class IndividualIssue {
 	 * @return an identifier for the issue
 	 */
 	String getId() {
-		return String.format("%08X", hashCode());
+		return String.format("%08x", hashCode());
 	}
 
 	/**
