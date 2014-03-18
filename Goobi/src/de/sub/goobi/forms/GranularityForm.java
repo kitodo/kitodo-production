@@ -41,10 +41,8 @@ package de.sub.goobi.forms;
 // import javax.faces.bean.ManagedProperty;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.goobi.production.model.bibliography.course.BreakMode;
@@ -103,18 +101,12 @@ public class GranularityForm {
 	 * 
 	 * @throws IOException
 	 *             if an I/O error occurs
-	 * @throws ParserConfigurationException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested
 	 * @throws TransformerException
-	 *             If an unrecoverable error occurs during the course of the
-	 *             transformation.
-	 * @throws URISyntaxException
-	 *             if the URI string constructed from saveAsName violates RFC
-	 *             2396
+	 *             when it is not possible to create a Transformer instance or
+	 *             if an unrecoverable error occurs during the course of the
+	 *             transformation
 	 */
-	public void downloadClick() throws IOException, ParserConfigurationException, TransformerException,
-			URISyntaxException {
+	public void downloadClick() throws IOException, TransformerException {
 		Document courseXML = course.toXML(Locale.GERMAN);
 		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
 		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml");

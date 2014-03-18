@@ -70,6 +70,7 @@ public class XMLFuncs {
 	 * @return the XML data as byte[]
 	 * 
 	 * @throws TransformerException
+	 *             when it is not possible to create a Transformer instance or
 	 *             if an unrecoverable error occurs during the course of the
 	 *             transformation
 	 */
@@ -86,15 +87,22 @@ public class XMLFuncs {
 	}
 
 	/**
-	 * Convenience method to obtain a new instance of a DOM Document object
+	 * The function newDocument() is a convenience method to obtain a new
+	 * instance of a DOM Document object.
 	 * 
 	 * @return A new DOM Document
-	 * @throws ParserConfigurationException
+	 * @throws RuntimeException
 	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested
+	 *             configuration requested—which never happens because we use
+	 *             the default configuration here and that is definitely
+	 *             supported
 	 */
-	public static Document newDocument() throws ParserConfigurationException {
-		return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+	public static Document newDocument() {
+		try {
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 }

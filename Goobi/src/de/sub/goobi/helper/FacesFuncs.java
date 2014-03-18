@@ -70,16 +70,19 @@ public class FacesFuncs {
 	 *            a file name proposed to the user
 	 * @throws IOException
 	 *             if an I/O error occurs
-	 * @throws URISyntaxException
-	 *             if the URI string constructed from saveAsName violates RFC
-	 *             2396
 	 */
-	public static void sendDownload(byte[] data, String saveAsName) throws IOException, URISyntaxException {
-		String disposition = "attachment; filename*=UTF-8''".concat(new URI(null, saveAsName, null).toASCIIString());
+	public static void sendDownload(byte[] data, String saveAsName) throws IOException {
+		String disposition;
+
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		response.reset();
-		response.setHeader("Content-Disposition", disposition);
+		try {
+			disposition = "attachment; filename*=UTF-8''".concat(new URI(null, saveAsName, null).toASCIIString());
+			response.setHeader("Content-Disposition", disposition);
+		} catch (URISyntaxException e) {
+			response.setHeader("Content-Disposition", "attachment; filename=Course.xml");
+		}
 		response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		response.setContentLength(data.length);
 		response.getOutputStream().write(data);

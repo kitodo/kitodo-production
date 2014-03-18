@@ -47,7 +47,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 /**
  * The class DateFuncs contains an omnium-gatherum of functions that work on
- * calendar dates.
+ * calendar dates. All functionality is realized using the org.joda.time.*
+ * library.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -57,6 +58,27 @@ public class DateFuncs {
 	 * convert between LocalDate objects and String in common German notation.
 	 */
 	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
+
+	/**
+	 * The function lastMonthForYear() returns from an ordered set of dates for
+	 * a given year the last month which a date can be found for in that year.
+	 * 
+	 * <p>
+	 * Example: Let the ordered data set contain: …, 5th May 1954, 20th May
+	 * 1954, 13th October 1954, 5th February 1955, 23th March 1955, 15th October
+	 * 1956, …. Then the function will return 10 (DateTimeConstants.OCTOBER) for
+	 * 1954 and 3 (DateTimeConstants.MARCH) for 1955.
+	 * </p>
+	 * 
+	 * @param data
+	 *            an ordered set of dates
+	 * @param year
+	 *            year in question
+	 * @return the last month which can be found up to the end of that year
+	 */
+	public static int lastMonthForYear(TreeSet<LocalDate> data, int year) {
+		return data.headSet(new LocalDate(year, DateTimeConstants.DECEMBER, 31), true).last().getMonthOfYear();
+	}
 
 	/**
 	 * The function sameMonth() compares two LocalDate objects in regard to the
@@ -92,31 +114,5 @@ public class DateFuncs {
 		if (next == null)
 			return false;
 		return current.getYear() == next.getYear();
-	}
-
-	/**
-	 * The function lastMonthForYear() returns for a given year the last month
-	 * which can be found in a date in an ordered set of dates.
-	 * 
-	 * @param data
-	 *            an ordered set of dates
-	 * @param year
-	 *            year in question
-	 * @return the last month which can be found up to the end of that year
-	 */
-	public static int lastMonthForYear(TreeSet<LocalDate> data, int year) {
-		return data.headSet(new LocalDate(year, DateTimeConstants.DECEMBER, 31), true).last().getMonthOfYear();
-	}
-
-	/**
-	 * The function getDATE_FORMATTER() returns a DateTimeFormatter that is used
-	 * to convert between LocalDate objects and String in common German
-	 * notation, “dd.MM.yyyy”. We need to use a ThreadLocal here because
-	 * DateTimeFormatter isn’t thread safe.
-	 * 
-	 * @return a thread-safe DateTimeFormat.forPattern("dd.MM.yyyy")
-	 */
-	public static DateTimeFormatter getDATE_FORMATTER() {
-		return DATE_FORMATTER;
 	}
 }

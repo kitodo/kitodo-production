@@ -44,8 +44,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -195,11 +193,8 @@ public class Course extends ArrayList<Title> {
 	 * @param lang
 	 *            language to use for the “description”
 	 * @return XML as String
-	 * @throws ParserConfigurationException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested
 	 */
-	public Document toXML(Locale lang) throws ParserConfigurationException {
+	public Document toXML(Locale lang) {
 		Document result = XMLFuncs.newDocument();
 		Element course = result.createElement("course");
 

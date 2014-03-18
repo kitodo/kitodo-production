@@ -80,19 +80,19 @@ public class CourseToGerman {
 			"Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
 
 	/**
-	 * Returns a verbal description of the course of appearance in German.
+	 * The function toString() returns a verbal description of the course of
+	 * appearance in German.
 	 * 
 	 * @return Verbal description of the course in German
 	 * @throws NoSuchElementException
 	 *             if the course doesn’t contain a Title
-	 * @see org.goobi.production.model.bibliography.course.Course#toString()
 	 */
 	public static List<String> toString(Course course) {
 		List<String> result = new ArrayList<String>();
 		Iterator<Title> blocks = course.iterator();
 		String previousTitle = null;
 		do {
-			Title title = blocks.next(); // throws NoSuchElementException if empty. This behaviour is intended
+			Title title = blocks.next(); // throws NoSuchElementException if course is empty
 			result.add(titleToString(title, previousTitle));
 			for (Issue issue : title.getIssues()) {
 				String irregularities = irregularitiesToString(issue);
@@ -105,42 +105,41 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The method appendTitle() formulates the regular appearance of a Title.
+	 * The function titleToString() formulates the regular appearance of a title
+	 * block in German language.
 	 * 
-	 * @param buffer
-	 *            buffer to write to
-	 * @param current
+	 * @param title
 	 *            Titel to formulate
 	 * @param previousTitle
-	 *            previous title (may be null)
+	 *            title of previous title block (may be null)
 	 */
-	protected static String titleToString(Title current, String previousTitle) {
+	private static String titleToString(Title title, String previousTitle) {
 		StringBuilder result = new StringBuilder(500);
-		int currentIssuesSize = current.getIssues().size();
+		int currentIssuesSize = title.getIssues().size();
 		if (previousTitle == null) {
 			result.append("Die Zeitung „");
-			result.append(current.getHeading());
+			result.append(title.getHeading());
 			result.append("“ erschien vom ");
-			appendDate(result, current.getFirstAppearance());
+			appendDate(result, title.getFirstAppearance());
 		} else {
 			result.append("Ab dem ");
-			appendDate(result, current.getFirstAppearance());
+			appendDate(result, title.getFirstAppearance());
 			result.append(" erschien die Zeitung „");
 			result.append(previousTitle);
 			result.append("“ unter dem ");
-			if (current.getHeading().equals(previousTitle))
+			if (title.getHeading().equals(previousTitle))
 				result.append("gleichen Titel");
 			else {
 				result.append("geänderten Titel „");
-				result.append(current.getHeading());
+				result.append(title.getHeading());
 				result.append("“");
 			}
 		}
 		result.append(" bis zum ");
-		appendDate(result, current.getLastAppearance());
+		appendDate(result, title.getLastAppearance());
 		result.append(" regelmäßig ");
 
-		Iterator<Issue> issueIterator = current.getIssues().iterator();
+		Iterator<Issue> issueIterator = title.getIssues().iterator();
 		for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
 			Issue issue = issueIterator.next();
 			result.append("an allen ");
@@ -169,13 +168,13 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The function irregularitiesToString() formulates the irregularities of
-	 * the individual issues.
+	 * The function irregularitiesToString() formulates the irregularities of a
+	 * given issue in German language.
 	 * 
 	 * @param issues
 	 *            issues whose irregularities shall be formulated
 	 */
-	protected static String irregularitiesToString(Issue issue) {
+	private static String irregularitiesToString(Issue issue) {
 		int additionsSize = issue.getAdditions().size();
 		int exclusionsSize = issue.getExclusions().size();
 		StringBuilder buffer = new StringBuilder((int) (Math.ceil(10.907 * (additionsSize + exclusionsSize)) + 500));
@@ -200,7 +199,7 @@ public class CourseToGerman {
 
 	/**
 	 * The method appendManyDates() converts a lot of date objects into readable
-	 * text.
+	 * text in German language.
 	 * 
 	 * @param buffer
 	 *            StringBuilder to write to
@@ -213,7 +212,7 @@ public class CourseToGerman {
 	 * @throws NullPointerException
 	 *             if buffer or dates is null
 	 */
-	protected static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
+	private static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
 		if (signum)
 			buffer.append("zusätzlich ");
 		else
@@ -268,7 +267,6 @@ public class CourseToGerman {
 					buffer.append(" und ");
 			}
 
-			// prepare for next iteration
 			previousYear = current.getYear();
 			current = next;
 			next = overNext;
@@ -284,43 +282,12 @@ public class CourseToGerman {
 	 * @param date
 	 *            Date to write
 	 */
-	protected static void appendDate(StringBuilder buffer, LocalDate date) {
+	private static void appendDate(StringBuilder buffer, LocalDate date) {
 		buffer.append(date.getDayOfMonth());
 		buffer.append(". ");
 		buffer.append(MONTH_NAMES[date.getMonthOfYear()]);
 		buffer.append(' ');
 		buffer.append(date.getYear());
-		return;
-	}
-
-	/**
-	 * The method prependDayOfWeek writes a day of week in prepended notation to
-	 * the buffer.
-	 * 
-	 * @param buffer
-	 *            Buffer to write to
-	 * @param date
-	 *            Date whose day of week is to write
-	 */
-	protected static void prependDayOfWeek(StringBuilder buffer, LocalDate date) {
-		buffer.append("am ");
-		buffer.append(DAYS_OF_WEEK_NAMES[date.getDayOfWeek()]);
-		buffer.append(", den ");
-		return;
-	}
-
-	/**
-	 * The method postpendDayOfWeek writes a day of week in postpended notation
-	 * to the buffer.
-	 * 
-	 * @param buffer
-	 *            Buffer to write to
-	 * @param date
-	 *            Date whose day of week is to write
-	 */
-	protected static void postpendDayOfWeek(StringBuilder buffer, LocalDate date) {
-		buffer.append(", einem ");
-		buffer.append(DAYS_OF_WEEK_NAMES[date.getDayOfWeek()]);
 		return;
 	}
 }
