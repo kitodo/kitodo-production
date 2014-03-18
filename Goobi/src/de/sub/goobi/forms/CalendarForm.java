@@ -50,10 +50,9 @@ import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.DateFuncs;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -62,21 +61,6 @@ import de.sub.goobi.config.ConfigMain;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CalendarForm {
-
-	/**
-	 * The field DATE_FORMATTER provides a DateTimeFormatter that is used to
-	 * convert between LocalDate objects and String in common German notation.
-	 * 
-	 * <p>
-	 * We need a ThreadLocal here because DateTimeFormatter isn’t thread safe.
-	 * </p>
-	 */
-	private static ThreadLocal<DateTimeFormatter> DATE_FORMATTER = new ThreadLocal<DateTimeFormatter>() {
-		@Override
-		public DateTimeFormatter initialValue() {
-			return DateTimeFormat.forPattern("dd.MM.yyyy");
-		}
-	};
 
 	/**
 	 * The constant field ISSUE_COLOURS holds the colours used to represent the
@@ -775,7 +759,7 @@ public class CalendarForm {
 	 */
 	public String getFirstAppearance() {
 		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
-			return DATE_FORMATTER.get().print(titleShowing.getFirstAppearance());
+			return DateFuncs.DATE_FORMATTER.print(titleShowing.getFirstAppearance());
 		else
 			return "";
 	}
@@ -803,7 +787,7 @@ public class CalendarForm {
 	 */
 	public String getLastAppearance() {
 		if (titleShowing != null && titleShowing.getLastAppearance() != null)
-			return DATE_FORMATTER.get().print(titleShowing.getLastAppearance());
+			return DateFuncs.DATE_FORMATTER.print(titleShowing.getLastAppearance());
 		else
 			return "";
 	}
@@ -837,7 +821,7 @@ public class CalendarForm {
 			titlePickerResolver.put(value, title);
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("value", value);
-			item.put("label", title.toString(DATE_FORMATTER.get()));
+			item.put("label", title.toString(DateFuncs.DATE_FORMATTER));
 			result.add(item);
 		}
 		return result;
@@ -911,7 +895,7 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = DATE_FORMATTER.get().parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance = DateFuncs.DATE_FORMATTER.parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getFirstAppearance() == null
@@ -939,7 +923,7 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = DATE_FORMATTER.get().parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance = DateFuncs.DATE_FORMATTER.parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getLastAppearance() == null

@@ -41,9 +41,16 @@ package org.goobi.production.model.bibliography.course;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import de.sub.goobi.helper.XMLFuncs;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
@@ -156,4 +163,78 @@ public class Course extends ArrayList<Title> {
 		return breakIDs.size();
 	}
 
+	/**
+	 * The function guessTotalNumberOfPages() calculates a guessed number of
+	 * pages for a course of appearance of a newspaper, presuming each issue
+	 * having 40 pages and Sunday issues having six times that size because most
+	 * people buy the Sunday issue most often and therefore advertisers buy the
+	 * most space on that day.
+	 * 
+	 * @return a guessed total number of pages for the full course of appearance
+	 */
+	public long guessTotalNumberOfPages() {
+		long result = 0;
+		for (Title title : this) {
+			LocalDate lastAppearance = title.getLastAppearance();
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1))
+				for (Issue issue : title.getIssues())
+					if (issue.isMatch(day))
+						if (day.getDayOfWeek() != DateTimeConstants.SUNDAY)
+							result += 40;
+						else
+							result += 240;
+		}
+		return result;
+	}
+
+	/**
+	 * The function toXML() transforms a course of appearance to XML.
+	 * 
+	 * @param lang
+	 *            language to use for the “description”
+	 * @return XML as String
+	 */
+	public Document toXML(Locale lang) {
+		Document result = XMLFuncs.newDocument();
+		Element course = result.createElement("course");
+
+		Element description = result.createElement("description");
+		description.appendChild(result.createTextNode(StringUtils.join(verbalise(lang), "\n\n")));
+		course.appendChild(description);
+
+		Element appearances = result.createElement("appearances");
+		for (IndividualIssue issue : getIndividualIssues())
+			appearances.appendChild(issue.populate(result.createElement("appeared")));
+		course.appendChild(appearances);
+
+		Element processes = result.createElement("processes");
+		for (String breakID : breakIDs) {
+			Element process = result.createElement("process");
+			process.setAttribute("break", "#".concat(breakID));
+			processes.appendChild(process);
+		}
+		course.appendChild(processes);
+
+		result.appendChild(course);
+		return result;
+	}
+
+	/**
+	 * The function verbalise() returns a verbal description of the object in
+	 * the given language. If the lang parameter is null or the given language
+	 * is not available, the default is used.
+	 * 
+	 * @param lang
+	 *            language to verbalise in
+	 * @return verbal description as text
+	 */
+	protected List<String> verbalise(Locale lang) {
+		if (Locale.GERMAN.equals(lang))
+			return CourseToGerman.toString(this);
+		// add more languages here
+		// …
+
+		// default: // TODO: change to English as soon as available
+		return CourseToGerman.toString(this);
+	}
 }

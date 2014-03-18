@@ -40,8 +40,18 @@ package de.sub.goobi.forms;
 
 // import javax.faces.bean.ManagedProperty;
 
+import java.io.IOException;
+import java.util.Locale;
+
+import javax.xml.transform.TransformerException;
+
 import org.goobi.production.model.bibliography.course.BreakMode;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.Title;
+import org.w3c.dom.Document;
+
+import de.sub.goobi.helper.FacesFuncs;
+import de.sub.goobi.helper.XMLFuncs;
 
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
@@ -87,6 +97,25 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The procedure downloadClick() is called if the user clicks the button to
+	 * download the course of appearance in XML format.
+	 * 
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws TransformerException
+	 *             when it is not possible to create a Transformer instance or
+	 *             if an unrecoverable error occurs during the course of the
+	 *             transformation
+	 */
+	public void downloadClick() throws IOException, TransformerException {
+		for (Title title : course)
+			title.recalculateRegularityOfIssues();
+		Document courseXML = course.toXML(Locale.GERMAN);
+		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
+		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml");
+	}
+
+	/**
 	 * The function getGranularity() returns the granularity level chosen by the
 	 * user in lower case as read-only property “granularity”. If it is
 	 * null—indicating that the user didn’t choose anything yet—it literally
@@ -124,6 +153,20 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getNumberOfPages returns the total number of pages of the
+	 * digitization project entered by the user or a guessed value as read-only
+	 * property “numberOfPagesOptionallyGuessed”
+	 * 
+	 * @return an (optionally guessed) total number of pages
+	 */
+	public Long getNumberOfPagesOptionallyGuessed() {
+		if (numberOfPages == null)
+			return course.guessTotalNumberOfPages();
+		else
+			return numberOfPages;
+	}
+
+	/**
 	 * The function getNumberOfProcesses() returns the number of processes that
 	 * will be created if the currently set BreakMode is used as read-only
 	 * property “numberOfProcesses”.
@@ -153,6 +196,17 @@ public class GranularityForm {
 	 */
 	public void monthsClick() {
 		granularity = BreakMode.MONTHS;
+		course.calculateBreaks(granularity);
+	}
+
+	/**
+	 * The procedure monthsClick() is called if the user clicks the button to
+	 * select the granularity level “quarters”. It sets the granularity to
+	 * BreakMode.MONTHS and triggers the recalculation of the breaks in the
+	 * course of appearance data model.
+	 */
+	public void quartersClick() {
+		granularity = BreakMode.QUARTERS;
 		course.calculateBreaks(granularity);
 	}
 

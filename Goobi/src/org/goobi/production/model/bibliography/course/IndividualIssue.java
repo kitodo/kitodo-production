@@ -40,6 +40,7 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
+import org.w3c.dom.Element;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -56,11 +57,6 @@ import com.sharkysoft.util.UnreachableCodeException;
  */
 public class IndividualIssue {
 	/**
-	 * Labelling of the newspaper that this is an issue from
-	 */
-	protected final String title;
-
-	/**
 	 * Date of this issue
 	 */
 	protected final LocalDate date;
@@ -69,6 +65,11 @@ public class IndividualIssue {
 	 * Labelling of the kind of issue this is
 	 */
 	protected final String issue;
+
+	/**
+	 * Labelling of the newspaper that this is an issue from
+	 */
+	protected final String title;
 
 	/**
 	 * Constructor to create an IndividualIssue
@@ -88,9 +89,8 @@ public class IndividualIssue {
 
 	/**
 	 * Returns an integer which, for a given BreakMode, shall indicate for two
-	 * <strong>neighbouring</strong> individual issues whether they form the
-	 * same process (break mark is equal) or to different processes (break mark
-	 * differs).
+	 * neighbouring individual issues whether they form the same process (break
+	 * mark is equal) or to different processes (break mark differs).
 	 * 
 	 * @param mode
 	 *            how the course shall be broken into processes
@@ -98,19 +98,22 @@ public class IndividualIssue {
 	 *         to different processes
 	 */
 	int getBreakMark(BreakMode mode) {
+		final int prime = 31;
 		switch (mode) {
 		case ISSUES:
 			return this.hashCode();
 		case DAYS:
-			return date.getDayOfMonth();
+			return date.hashCode();
 		case WEEKS:
-			return date.getWeekOfWeekyear();
+			return prime * date.getYear() + date.getWeekOfWeekyear();
 		case MONTHS:
-			return date.getMonthOfYear();
+			return prime * date.getYear() + date.getMonthOfYear();
+		case QUARTERS:
+			return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
 		case YEARS:
 			return date.getYear();
 		default:
-			throw new UnreachableCodeException();
+			throw new UnreachableCodeException("default case in complete switch statement");
 		}
 	}
 
@@ -122,7 +125,31 @@ public class IndividualIssue {
 	 * @return an identifier for the issue
 	 */
 	String getId() {
-		return Integer.toHexString(hashCode());
+		return String.format("%08x", hashCode());
+	}
+
+	/**
+	 * The function populate() populates an DOM tree element with three
+	 * attributes holding the ID, title name and issue name of this individual
+	 * issue.
+	 * 
+	 * @param result
+	 *            the DOM tree element to populate
+	 * @return the DOM tree element
+	 */
+	Element populate(Element result) {
+		final String ID_ATTRIBUTE_NAME = "id";
+		final String ISSUE_ATTRIBUTE_NAME = "issue";
+		final String TITLE_ATTRIBUTE_NAME = "title";
+
+		result.setAttribute(ID_ATTRIBUTE_NAME, getId());
+		result.setIdAttribute(ID_ATTRIBUTE_NAME, true);
+		if (title != null)
+			result.setAttribute(TITLE_ATTRIBUTE_NAME, title);
+		if (issue != null)
+			result.setAttribute(ISSUE_ATTRIBUTE_NAME, issue);
+		result.setAttribute("date", date.toString());
+		return result;
 	}
 
 	/**

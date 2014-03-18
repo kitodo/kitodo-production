@@ -36,32 +36,56 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+package de.sub.goobi.helper;
 
-package org.goobi.production.model.bibliography.course;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 /**
- * The BreakMode indicates one out of four options how a course of appearance of
- * a newspaper can be broken into processes. These are as follows:
+ * The class FacesFuncs contains an omnium-gatherum of functions that perform
+ * recurring tasks related to JavaServer Faces.
  * 
- * <dl>
- * <dt>ISSUES</dt>
- * <dd>Each issue is scanned in an individual process.</dd>
- * <dt>DAYS</dt>
- * <dd>All issues of one day are scanned in one process.</dd>
- * <dt>WEEKS</dt>
- * <dd>All issues of a week are scanned in one process. A week starts on
- * Mondays. Keep in mind that week borders do not necessarily match month and
- * not even year borders.</dd>
- * <dt>MONTHS</dt>
- * <dd>All issues of a month are scanned in one process.</dd>
- * <dt>MONTHS</dt>
- * <dd>All issues of a quarter of a year are scanned in one process.</dd>
- * <dt>YEARS</dt>
- * <dd>All issues of a year are scanned in one process.</dd>
- * </dl>
+ * TODO: Most of the static functions currently located in “Helper.java” do
+ * belong here.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public enum BreakMode {
-	ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS
+public class FacesFuncs {
+
+	/**
+	 * The procedure sendDownload() sends a byte[] of data in the HTTP response
+	 * of a user interaction as a file download. Calling this procedure is only
+	 * sensible during the invoke application phase of the JSF life cycle, i.e.
+	 * in procedures that are designed to provide the action for a JSF command
+	 * link or command button.
+	 * 
+	 * @param data
+	 *            the content of the file
+	 * @param saveAsName
+	 *            a file name proposed to the user
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public static void sendDownload(byte[] data, String saveAsName) throws IOException {
+		String disposition;
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		response.reset();
+		try {
+			disposition = "attachment; filename*=UTF-8''".concat(new URI(null, saveAsName, null).toASCIIString());
+			response.setHeader("Content-Disposition", disposition);
+		} catch (URISyntaxException e) {
+			response.setHeader("Content-Disposition", "attachment; filename=Course.xml");
+		}
+		response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		response.setContentLength(data.length);
+		response.getOutputStream().write(data);
+		context.responseComplete();
+	}
 }
