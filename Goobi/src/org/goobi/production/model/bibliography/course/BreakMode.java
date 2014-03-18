@@ -54,6 +54,8 @@ package org.goobi.production.model.bibliography.course;
  * not even year borders.</dd>
  * <dt>MONTHS</dt>
  * <dd>All issues of a month are scanned in one process.</dd>
+ * <dt>MONTHS</dt>
+ * <dd>All issues of a quarter of a year are scanned in one process.</dd>
  * <dt>YEARS</dt>
  * <dd>All issues of a year are scanned in one process.</dd>
  * </dl>
@@ -61,5 +63,5 @@ package org.goobi.production.model.bibliography.course;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public enum BreakMode {
-	ISSUES, DAYS, WEEKS, MONTHS, YEARS
+	ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS
 }

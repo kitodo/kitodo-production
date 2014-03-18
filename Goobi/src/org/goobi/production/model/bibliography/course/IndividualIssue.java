@@ -108,10 +108,12 @@ public class IndividualIssue {
 			return date.getWeekOfWeekyear();
 		case MONTHS:
 			return date.getMonthOfYear();
+		case QUARTERS:
+			return (date.getMonthOfYear() - 1) / 3;
 		case YEARS:
 			return date.getYear();
 		default:
-			throw new UnreachableCodeException();
+			throw new UnreachableCodeException("default case in complete switch statement");
 		}
 	}
 

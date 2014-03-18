@@ -168,6 +168,9 @@
 												<h:commandButton value="#{msgs['granularity.months']}"
 													action="#{GranularityForm.monthsClick}"
 													styleClass="granularityButton #{GranularityForm.granularity=='months'?'granularityButtonSelected':''}" />
+												<h:commandButton value="#{msgs['granularity.quarters']}"
+													action="#{GranularityForm.quartersClick}"
+													styleClass="granularityButton #{GranularityForm.granularity=='quarters'?'granularityButtonSelected':''}" />
 												<h:commandButton value="#{msgs['granularity.years']}"
 													action="#{GranularityForm.yearsClick}"
 													styleClass="granularityButton #{GranularityForm.granularity=='years'?'granularityButtonSelected':''}" />

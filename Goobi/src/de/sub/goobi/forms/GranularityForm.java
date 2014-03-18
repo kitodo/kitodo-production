@@ -197,6 +197,17 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The procedure monthsClick() is called if the user clicks the button to
+	 * select the granularity level “quarters”. It sets the granularity to
+	 * BreakMode.MONTHS and triggers the recalculation of the breaks in the
+	 * course of appearance data model.
+	 */
+	public void quartersClick() {
+		granularity = BreakMode.QUARTERS;
+		course.calculateBreaks(granularity);
+	}
+
+	/**
 	 * The procedure setNumberOfPages() is called by Faces on postbacks to save
 	 * the received value of the read-write property “numberOfPages”.
 	 * 

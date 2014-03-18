@@ -163,7 +163,9 @@
 }
 
 .granularityButton {
-	width: 19%;
+	width: 16%;
+	min-width: 75px;
+	margin: 2px 0;
 }
 
 .granularityButtonSelected {
