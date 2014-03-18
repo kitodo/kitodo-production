@@ -133,7 +133,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	private boolean addDayOfWeek(int dayOfWeek) {
+	boolean addDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.add(dayOfWeek);
 	}
 
@@ -374,7 +374,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	private boolean removeDayOfWeek(int dayOfWeek) {
+	boolean removeDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.remove(dayOfWeek);
 	}
 
@@ -448,6 +448,26 @@ public class Issue implements Cloneable {
 	 */
 	public boolean removeSunday() {
 		return removeDayOfWeek(DateTimeConstants.SUNDAY);
+	}
+
+	/**
+	 * Setter method for the set of additions
+	 * 
+	 * @param additions
+	 *            set to be used
+	 */
+	void setAdditions(Set<LocalDate> additions) {
+		this.additions = additions;
+	}
+
+	/**
+	 * Setter method for the set of exclusions
+	 * 
+	 * @param exclusions
+	 *            set to be used
+	 */
+	void setExclusions(Set<LocalDate> exclusions) {
+		this.exclusions = exclusions;
 	}
 
 	/**

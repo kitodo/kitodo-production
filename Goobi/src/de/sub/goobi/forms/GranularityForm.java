@@ -47,6 +47,7 @@ import javax.xml.transform.TransformerException;
 
 import org.goobi.production.model.bibliography.course.BreakMode;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
 
 import de.sub.goobi.helper.FacesFuncs;
@@ -107,6 +108,8 @@ public class GranularityForm {
 	 *             transformation
 	 */
 	public void downloadClick() throws IOException, TransformerException {
+		for (Title title : course)
+			title.recalculateRegularityOfIssues();
 		Document courseXML = course.toXML(Locale.GERMAN);
 		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
 		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml");
