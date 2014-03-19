@@ -230,11 +230,11 @@ public class Course extends ArrayList<Title> {
 	 */
 	protected List<String> verbalise(Locale lang) {
 		if (Locale.GERMAN.equals(lang))
-			return CourseToGerman.toString(this);
+			return CourseToGerman.asReadableText(this);
 		// add more languages here
 		// …
 
 		// default: // TODO: change to English as soon as available
-		return CourseToGerman.toString(this);
+		return CourseToGerman.asReadableText(this);
 	}
 }

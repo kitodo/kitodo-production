@@ -84,15 +84,15 @@ public class CourseToGerman {
 	 * appearance in German.
 	 * 
 	 * @return Verbal description of the course in German
-	 * @throws NoSuchElementException
-	 *             if the course doesn’t contain a Title
 	 */
-	public static List<String> toString(Course course) {
+	public static List<String> asReadableText(Course course) {
 		List<String> result = new ArrayList<String>();
+		if (course.isEmpty())
+			return result;
 		Iterator<Title> blocks = course.iterator();
 		String previousTitle = null;
 		do {
-			Title title = blocks.next(); // throws NoSuchElementException if course is empty
+			Title title = blocks.next();
 			result.add(titleToString(title, previousTitle));
 			for (Issue issue : title.getIssues()) {
 				String irregularities = irregularitiesToString(issue);
