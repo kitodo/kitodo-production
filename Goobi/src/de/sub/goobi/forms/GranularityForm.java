@@ -50,8 +50,8 @@ import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
 
-import de.sub.goobi.helper.FacesFuncs;
-import de.sub.goobi.helper.XMLFuncs;
+import de.sub.goobi.helper.FacesUtils;
+import de.sub.goobi.helper.XMLUtils;
 
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
@@ -121,8 +121,8 @@ public class GranularityForm {
 		for (Title title : course)
 			title.recalculateRegularityOfIssues();
 		Document courseXML = course.toXML(Locale.GERMAN);
-		byte[] data = XMLFuncs.documentToByteArray(courseXML, 4);
-		FacesFuncs.sendDownload(data, course.get(0).getHeading() + ".xml");
+		byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
+		FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
 	}
 
 	/**

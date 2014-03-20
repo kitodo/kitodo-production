@@ -53,11 +53,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 /**
- * The class XMLFuncs contains an omnium-gatherum of functions that work on XML.
+ * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class XMLFuncs {
+public class XMLUtils {
 
 	/**
 	 * The method documentToByteArray() converts an org.w3c.dom.Document to a

@@ -49,7 +49,7 @@ import java.util.TreeSet;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
-import de.sub.goobi.helper.DateFuncs;
+import de.sub.goobi.helper.DateUtils;
 
 /**
  * The static class CourseToGerman provides a toString() method to convert a
@@ -228,12 +228,12 @@ public class CourseToGerman {
 		LocalDate overNext = datesIterator.hasNext() ? datesIterator.next() : null;
 		int previousYear = Integer.MIN_VALUE;
 		boolean nextInSameMonth = false;
-		boolean nextBothInSameMonth = next != null ? DateFuncs.sameMonth(current, next) : false;
-		int lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, current.getYear());
+		boolean nextBothInSameMonth = next != null ? DateUtils.sameMonth(current, next) : false;
+		int lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, current.getYear());
 
 		do {
 			nextInSameMonth = nextBothInSameMonth;
-			nextBothInSameMonth = DateFuncs.sameMonth(next, overNext);
+			nextBothInSameMonth = DateUtils.sameMonth(next, overNext);
 
 			if (previousYear != current.getYear())
 				buffer.append("am ");
@@ -246,11 +246,11 @@ public class CourseToGerman {
 				buffer.append(MONTH_NAMES[current.getMonthOfYear()]);
 			}
 
-			if (!DateFuncs.sameYear(current, next)) {
+			if (!DateUtils.sameYear(current, next)) {
 				buffer.append(' ');
 				buffer.append(current.getYear());
 				if (next != null)
-					if (!DateFuncs.sameYear(next, orderedDates.last()))
+					if (!DateUtils.sameYear(next, orderedDates.last()))
 						buffer.append(", ");
 					else {
 						buffer.append(" und ebenfalls ");
@@ -258,7 +258,7 @@ public class CourseToGerman {
 							buffer.append("nicht ");
 					}
 				if (next != null)
-					lastMonthOfYear = DateFuncs.lastMonthForYear(orderedDates, next.getYear());
+					lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
 			} else if (next != null) {
 				if (nextInSameMonth && nextBothInSameMonth || !nextInSameMonth
 						&& next.getMonthOfYear() != lastMonthOfYear)

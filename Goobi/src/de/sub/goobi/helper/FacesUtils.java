@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 /**
- * The class FacesFuncs contains an omnium-gatherum of functions that perform
+ * The class FacesUtils contains an omnium-gatherum of functions that perform
  * recurring tasks related to JavaServer Faces.
  * 
  * TODO: Most of the static functions currently located in “Helper.java” do
@@ -55,7 +55,7 @@ import javax.ws.rs.core.MediaType;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class FacesFuncs {
+public class FacesUtils {
 
 	/**
 	 * The procedure sendDownload() sends a byte[] of data in the HTTP response

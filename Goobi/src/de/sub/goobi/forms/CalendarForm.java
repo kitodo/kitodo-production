@@ -52,7 +52,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.DateFuncs;
+import de.sub.goobi.helper.DateUtils;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -759,7 +759,7 @@ public class CalendarForm {
 	 */
 	public String getFirstAppearance() {
 		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
-			return DateFuncs.DATE_FORMATTER.print(titleShowing.getFirstAppearance());
+			return DateUtils.DATE_FORMATTER.print(titleShowing.getFirstAppearance());
 		else
 			return "";
 	}
@@ -787,7 +787,7 @@ public class CalendarForm {
 	 */
 	public String getLastAppearance() {
 		if (titleShowing != null && titleShowing.getLastAppearance() != null)
-			return DateFuncs.DATE_FORMATTER.print(titleShowing.getLastAppearance());
+			return DateUtils.DATE_FORMATTER.print(titleShowing.getLastAppearance());
 		else
 			return "";
 	}
@@ -821,7 +821,7 @@ public class CalendarForm {
 			titlePickerResolver.put(value, title);
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("value", value);
-			item.put("label", title.toString(DateFuncs.DATE_FORMATTER));
+			item.put("label", title.toString(DateUtils.DATE_FORMATTER));
 			result.add(item);
 		}
 		return result;
@@ -895,7 +895,7 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = DateFuncs.DATE_FORMATTER.parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(firstAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getFirstAppearance() == null
@@ -923,7 +923,7 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = DateFuncs.DATE_FORMATTER.parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(lastAppearance);
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getLastAppearance() == null

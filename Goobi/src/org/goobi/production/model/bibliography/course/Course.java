@@ -50,7 +50,7 @@ import org.joda.time.LocalDate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.sub.goobi.helper.XMLFuncs;
+import de.sub.goobi.helper.XMLUtils;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
@@ -210,7 +210,7 @@ public class Course extends ArrayList<Title> {
 	 * @return XML as String
 	 */
 	public Document toXML(Locale lang) {
-		Document result = XMLFuncs.newDocument();
+		Document result = XMLUtils.newDocument();
 		Element course = result.createElement("course");
 
 		Element description = result.createElement("description");

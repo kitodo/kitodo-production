@@ -46,13 +46,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * The class DateFuncs contains an omnium-gatherum of functions that work on
+ * The class DateUtils contains an omnium-gatherum of functions that work on
  * calendar dates. All functionality is realized using the org.joda.time.*
  * library.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class DateFuncs {
+public class DateUtils {
 	/**
 	 * The field DATE_FORMATTER provides a DateTimeFormatter that is used to
 	 * convert between LocalDate objects and String in common German notation.

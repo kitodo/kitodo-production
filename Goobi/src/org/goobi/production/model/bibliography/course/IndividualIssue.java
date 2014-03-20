@@ -62,12 +62,12 @@ public class IndividualIssue {
 	protected final LocalDate date;
 
 	/**
-	 * Labelling of the kind of issue this is
+	 * The issue this is an issue from
 	 */
 	protected final Issue issue;
 
 	/**
-	 * Labelling of the newspaper that this is an issue from
+	 * Title block that the issue this is an issue from is in
 	 */
 	protected final Title title;
 
@@ -115,6 +115,20 @@ public class IndividualIssue {
 		default:
 			throw new UnreachableCodeException("default case in complete switch statement");
 		}
+	}
+
+	/**
+	 * The function indexIn() returns the index of the first occurrence of the
+	 * title of this issue in the given course, or -1 if the course does not
+	 * contain the element.
+	 * 
+	 * @param course
+	 *            course to find the title in
+	 * @return the index of the first occurrence of the title of this issue in
+	 *         the course, or -1 if the course does not contain the element
+	 */
+	int indexIn(Course course) {
+		return course.indexOf(title);
 	}
 
 	/**
@@ -193,9 +207,5 @@ public class IndividualIssue {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
-	}
-
-	public int indexIn(Course course) {
-		return course.indexOf(title);
 	}
 }
