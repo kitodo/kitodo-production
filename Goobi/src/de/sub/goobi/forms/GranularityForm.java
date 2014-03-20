@@ -45,8 +45,8 @@ import java.util.Locale;
 
 import javax.xml.transform.TransformerException;
 
-import org.goobi.production.model.bibliography.course.BreakMode;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
 
@@ -66,7 +66,7 @@ public class GranularityForm {
 	 * The field granularity holds the granularity chosen by the user. It is
 	 * null initially indicating that the user didn’t choose anything yet.
 	 */
-	protected BreakMode granularity;
+	protected Granularity granularity;
 
 	/**
 	 * The field course holds the course of appearance previously created by the
@@ -86,14 +86,24 @@ public class GranularityForm {
 	protected Long numberOfPages;
 
 	/**
+	 * The procedure breakModeClick() is called from the procedures which are
+	 * called if the user clicks one of the button to select the granularity
+	 * level. It sets the granularity to the given BreakMode and triggers the
+	 * recalculation of the processes in the course of appearance data model.
+	 */
+	private void alterGranularityClick(Granularity granularity) {
+		this.granularity = granularity;
+		course.splitInto(granularity);
+	}
+
+	/**
 	 * The procedure daysClick() is called if the user clicks the button to
 	 * select the granularity level “days”. It sets the granularity to
 	 * BreakMode.DAYS and triggers the recalculation of the breaks in the course
 	 * of appearance data model.
 	 */
 	public void daysClick() {
-		granularity = BreakMode.DAYS;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.DAYS);
 	}
 
 	/**
@@ -174,7 +184,7 @@ public class GranularityForm {
 	 * @return the number of processes that will be created
 	 */
 	public int getNumberOfProcesses() {
-		return course.getBreaksCount() + 1;
+		return course.getNumberOfProcesses();
 	}
 
 	/**
@@ -184,8 +194,7 @@ public class GranularityForm {
 	 * course of appearance data model.
 	 */
 	public void issuesClick() {
-		granularity = BreakMode.ISSUES;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.ISSUES);
 	}
 
 	/**
@@ -195,8 +204,7 @@ public class GranularityForm {
 	 * course of appearance data model.
 	 */
 	public void monthsClick() {
-		granularity = BreakMode.MONTHS;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.MONTHS);
 	}
 
 	/**
@@ -206,8 +214,7 @@ public class GranularityForm {
 	 * course of appearance data model.
 	 */
 	public void quartersClick() {
-		granularity = BreakMode.QUARTERS;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.QUARTERS);
 	}
 
 	/**
@@ -239,8 +246,7 @@ public class GranularityForm {
 	 * course of appearance data model.
 	 */
 	public void weeksClick() {
-		granularity = BreakMode.WEEKS;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.WEEKS);
 	}
 
 	/**
@@ -250,7 +256,6 @@ public class GranularityForm {
 	 * course of appearance data model.
 	 */
 	public void yearsClick() {
-		granularity = BreakMode.YEARS;
-		course.calculateBreaks(granularity);
+		alterGranularityClick(Granularity.YEARS);
 	}
 }

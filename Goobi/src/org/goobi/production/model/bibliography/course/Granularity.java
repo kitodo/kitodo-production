@@ -40,8 +40,8 @@
 package org.goobi.production.model.bibliography.course;
 
 /**
- * The BreakMode indicates one out of four options how a course of appearance of
- * a newspaper can be broken into processes. These are as follows:
+ * The Granularity indicates one out of six options how a course of appearance
+ * of a newspaper can be broken into processes. These are as follows:
  * 
  * <dl>
  * <dt>ISSUES</dt>
@@ -62,6 +62,6 @@ package org.goobi.production.model.bibliography.course;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public enum BreakMode {
+public enum Granularity {
 	ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS
 }

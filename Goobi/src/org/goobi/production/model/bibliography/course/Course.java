@@ -68,28 +68,9 @@ public class Course extends ArrayList<Title> {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * List of IDs of stamping of issues which each do represent the first issue
-	 * in a process.
+	 * List of Lists of Issues, each representing a process.
 	 */
-	private final List<String> breakIDs = new ArrayList<String>();
-
-	/**
-	 * The method setBreaks() calculates and sets the break IDs depending on the
-	 * given BreakMode.
-	 * 
-	 * @param mode
-	 *            how the course shall be broken into issues
-	 */
-	public void calculateBreaks(BreakMode mode) {
-		breakIDs.clear();
-		Integer lastMark = null;
-		for (IndividualIssue issue : getIndividualIssues()) {
-			Integer mark = issue.getBreakMark(mode);
-			if (!mark.equals(lastMark) && lastMark != null)
-				breakIDs.add(issue.getId());
-			lastMark = mark;
-		}
-	}
+	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
 
 	/**
 	 * The method countIndividualIssues() determines how many stampings of
@@ -102,10 +83,12 @@ public class Course extends ArrayList<Title> {
 		long result = 0;
 		for (Title title : this) {
 			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1))
-				for (Issue issue : title.getIssues())
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+				for (Issue issue : title.getIssues()) {
 					if (issue.isMatch(day))
 						result += 1;
+				}
+			}
 		}
 		return result;
 	}
@@ -125,7 +108,7 @@ public class Course extends ArrayList<Title> {
 			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 				for (Issue issue : title.getIssues()) {
 					if (issue.isMatch(day)) {
-						result.add(new IndividualIssue(title.getHeading(), day, issue.getHeading()));
+						result.add(new IndividualIssue(title, issue, day));
 					}
 				}
 			}
@@ -154,13 +137,13 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
-	 * The function getBreakCount() returns the number of process break points
-	 * at which the course of appearance will be split into Goobi processes.
+	 * The function getNumberOfProcesses() returns the number of processes into
+	 * which the course of appearance will be split.
 	 * 
-	 * @return the number of process breaks
+	 * @return the number of processes
 	 */
-	public int getBreaksCount() {
-		return breakIDs.size();
+	public int getNumberOfProcesses() {
+		return processes.size();
 	}
 
 	/**
@@ -173,18 +156,50 @@ public class Course extends ArrayList<Title> {
 	 * @return a guessed total number of pages for the full course of appearance
 	 */
 	public long guessTotalNumberOfPages() {
+		final int WEEKDAY_PAGES = 40;
+		final int SUNDAY_PAGES = 240;
+
 		long result = 0;
 		for (Title title : this) {
 			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1))
-				for (Issue issue : title.getIssues())
+			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+				for (Issue issue : title.getIssues()) {
 					if (issue.isMatch(day))
-						if (day.getDayOfWeek() != DateTimeConstants.SUNDAY)
-							result += 40;
-						else
-							result += 240;
+						result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES : SUNDAY_PAGES;
+				}
+			}
 		}
 		return result;
+	}
+
+	/**
+	 * The method splitInto() calculates the processes depending on the given
+	 * BreakMode.
+	 * 
+	 * @param mode
+	 *            how the course shall be broken into issues
+	 */
+
+	public void splitInto(Granularity mode) {
+		int initialCapacity = 10;
+		Integer lastMark = null;
+		List<IndividualIssue> process = null;
+
+		processes.clear();
+		for (IndividualIssue issue : getIndividualIssues()) {
+			Integer mark = issue.getBreakMark(mode);
+			if (!mark.equals(lastMark) && process != null) {
+				initialCapacity = (int) Math.round(1.1 * process.size());
+				processes.add(process);
+				process = null;
+			}
+			if (process == null)
+				process = new ArrayList<IndividualIssue>(initialCapacity);
+			process.add(issue);
+			lastMark = mark;
+		}
+		if (process != null)
+			processes.add(process);
 	}
 
 	/**
@@ -202,18 +217,30 @@ public class Course extends ArrayList<Title> {
 		description.appendChild(result.createTextNode(StringUtils.join(verbalise(lang), "\n\n")));
 		course.appendChild(description);
 
-		Element appearances = result.createElement("appearances");
-		for (IndividualIssue issue : getIndividualIssues())
-			appearances.appendChild(issue.populate(result.createElement("appeared")));
-		course.appendChild(appearances);
-
-		Element processes = result.createElement("processes");
-		for (String breakID : breakIDs) {
-			Element process = result.createElement("process");
-			process.setAttribute("break", "#".concat(breakID));
-			processes.appendChild(process);
+		Element processesNode = result.createElement("processes");
+		for (List<IndividualIssue> process : processes) {
+			Element processNode = result.createElement("process");
+			Element title = null;
+			int previous = -1;
+			for (IndividualIssue issue : process) {
+				int index = issue.indexIn(this);
+				if (index != previous && title != null) {
+					processNode.appendChild(title);
+					title = null;
+				}
+				if (title == null) {
+					title = result.createElement("title");
+					title.setAttribute("heading", get(index).getHeading());
+					title.setAttribute("index", Integer.toString(index + 1));
+				}
+				title.appendChild(issue.populate(result.createElement("appeared")));
+				previous = index;
+			}
+			if (title != null)
+				processNode.appendChild(title);
+			processesNode.appendChild(processNode);
 		}
-		course.appendChild(processes);
+		course.appendChild(processesNode);
 
 		result.appendChild(course);
 		return result;

@@ -64,24 +64,24 @@ public class IndividualIssue {
 	/**
 	 * Labelling of the kind of issue this is
 	 */
-	protected final String issue;
+	protected final Issue issue;
 
 	/**
 	 * Labelling of the newspaper that this is an issue from
 	 */
-	protected final String title;
+	protected final Title title;
 
 	/**
 	 * Constructor to create an IndividualIssue
 	 * 
 	 * @param title
-	 *            Name of the newspaper
+	 *            Title block this issue is in
+	 * @param issue
+	 *            Issue type that this issue is of
 	 * @param date
 	 *            Date of appearance
-	 * @param issue
-	 *            Name of the issue
 	 */
-	IndividualIssue(String title, LocalDate date, String issue) {
+	IndividualIssue(Title title, Issue issue, LocalDate date) {
 		this.title = title;
 		this.issue = issue;
 		this.date = date;
@@ -97,7 +97,7 @@ public class IndividualIssue {
 	 * @return an int which differs if two neighbouring individual issues belong
 	 *         to different processes
 	 */
-	int getBreakMark(BreakMode mode) {
+	int getBreakMark(Granularity mode) {
 		final int prime = 31;
 		switch (mode) {
 		case ISSUES:
@@ -118,17 +118,6 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function getId() returns an identifier for the issue. Currently, the
-	 * identifier is the hexadecimal representation of the hashCode() of this
-	 * bean class.
-	 * 
-	 * @return an identifier for the issue
-	 */
-	String getId() {
-		return String.format("%08x", hashCode());
-	}
-
-	/**
 	 * The function populate() populates an DOM tree element with three
 	 * attributes holding the ID, title name and issue name of this individual
 	 * issue.
@@ -138,16 +127,8 @@ public class IndividualIssue {
 	 * @return the DOM tree element
 	 */
 	Element populate(Element result) {
-		final String ID_ATTRIBUTE_NAME = "id";
-		final String ISSUE_ATTRIBUTE_NAME = "issue";
-		final String TITLE_ATTRIBUTE_NAME = "title";
-
-		result.setAttribute(ID_ATTRIBUTE_NAME, getId());
-		result.setIdAttribute(ID_ATTRIBUTE_NAME, true);
-		if (title != null)
-			result.setAttribute(TITLE_ATTRIBUTE_NAME, title);
 		if (issue != null)
-			result.setAttribute(ISSUE_ATTRIBUTE_NAME, issue);
+			result.setAttribute("issue", issue.getHeading());
 		result.setAttribute("date", date.toString());
 		return result;
 	}
@@ -212,5 +193,9 @@ public class IndividualIssue {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
+	}
+
+	public int indexIn(Course course) {
+		return course.indexOf(title);
 	}
 }
