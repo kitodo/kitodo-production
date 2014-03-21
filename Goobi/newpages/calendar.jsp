@@ -98,11 +98,35 @@
 				return false;
 			}
 		<%--
-			 * The function showApplyLink() makes the apply changes link for an
-			 * issue name box show.
-			 * 
-			 * @return always true
-			 --%>
+		 * The function setSelectSelectedByValue() sets the selected element of a
+		 * select box to the first option whose submit value is given.
+		 * 
+		 * @param id
+		 *            id of the select box to set
+		 * @param value
+		 *            form value of the option to select
+		 * @throws NoSuchElementException
+		 *             if no option with the given value was found
+		 --%>
+			function setSelectSelectedByValue(id, value) {
+				var select = document.getElementById('form1:titlePicker');
+				for (var i = 0; i < select.options.length; i++) {
+					if (select.options[i].value == value) {
+						select.selectedIndex = i;
+						return;
+					}
+				}
+				throw "NoSuchElementException";
+			}
+		<%--
+		 * The function showApplyLink() makes the apply changes link for an issue
+		 * name box show.
+		 * 
+		 * @param o
+		 *            object who triggered the execution of the function (pass
+		 *            “this” on call)
+		 * @return always true
+		 --%>
 			function showApplyLink(o) {
 				document.getElementById(o.id.replace(/issueHeading/,
 						"applyLink")).style.display = "inline";
@@ -154,18 +178,24 @@
 			}
 		<%--
 		 * The function titlePickerChangeQuery() checks whether silently changing
-		 * the title block is possible. In the rare case that there are uncommited
+		 * the title block is possible. In the rare case that there are unsubmitted
 		 * changes to the title block, the user is presented with a query whether it
-		 * wants to continue, which implies that the changes will be lost.
+		 * wants to continue, which implies that the changes will be lost. In case
+		 * that the user decides not to continue the selected option in the title
+		 * picker is restored so that a subsequent form submission results in the
+		 * correct behaviour.
 		 * 
+		 * @param originValue
+		 *            form value of the option that was selected in the title picker
+		 *            on page load
 		 * @return whether the change request shall be processed
 		 --%>
-			function titlePickerChangeQuery() {
-				if (document.getElementById("form1:applyChanges").style.display == "none") {
+			function titlePickerChangeQuery(originValue) {
+				if (document.getElementById("form1:applyChanges").style.display == "none"
+						|| confirm("${msgs['calendar.title.alter.query']}"))
 					return true;
-				} else {
-					return confirm("${msgs['calendar.title.alter.query']}");
-				}
+				setSelectSelectedByValue("form1:titlePicker", originValue);
+				return false;
 			}
 		</script>
 		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
@@ -217,7 +247,7 @@
 											<%-- Select box to switch between already defined titles --%>
 											<h:selectOneListbox styleClass="filling" size="7"
 												value="#{CalendarForm.titlePickerSelected}"
-												onchange="if(titlePickerChangeQuery()){submit();}"
+												onchange="if(titlePickerChangeQuery('#{CalendarForm.titlePickerSelected}')){submit();}"
 												id="titlePicker">
 												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
 													var="item" itemLabel="#{item.label}"
@@ -233,7 +263,8 @@
 												rendered="#{not CalendarForm.blank}" styleClass="actionLink" />
 											<h:commandLink value="#{msgs['calendar.title.remove']}"
 												action="#{CalendarForm.removeTitleClick}"
-												onclick="if(!removeClickQuery()){return false;}" styleClass="actionLink" />
+												onclick="if(!removeClickQuery()){return false;}"
+												styleClass="actionLink" />
 										</htm:div>
 
 										<htm:div styleClass="fillWrapper calendarTitleContent">
@@ -264,7 +295,8 @@
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													id="applyChanges" style="display: none;" styleClass="actionLink" />
+													id="applyChanges" style="display: none;"
+													styleClass="actionLink" />
 											</htm:div>
 
 											<t:dataList layout="simple" var="issue"
@@ -296,8 +328,7 @@
 													<%-- Issue name box --%>
 													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{issue.heading}" id="issueHeading"
-															onkeydown="showApplyLink(this);"
-															styleClass="filling" />
+															onkeydown="showApplyLink(this);" styleClass="filling" />
 													</htm:span>
 
 													<%-- Days of week --%>
