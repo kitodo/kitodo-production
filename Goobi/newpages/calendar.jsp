@@ -52,7 +52,13 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<script type="text/javascript">
-			
+		<%--
+		 * The variable skip indicates whether the form validation must be skipped.
+		 * This is the case if the upload button is clicked because the user should
+		 * be allowed to upload a file without being forced to manually enter the
+		 * data he wants to upload beforehand. 
+		 --%>
+			var skip = false;
 		<%--
 		 * The function addClickQuery() checks whether adding a title block can be
 		 * performed without unexpected side effects. In the rare case that there
@@ -207,7 +213,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1" onsubmit="return titleDataIsValid()">
+					<h:form id="form1" onsubmit="return skip || titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -255,16 +261,23 @@
 											</h:selectOneListbox>
 
 											<%-- Buttons to add and remove titles --%>
-											<h:commandLink value="#{msgs['calendar.title.add']}"
-												rendered="#{CalendarForm.blank}" styleClass="actionLink" />
-											<h:commandLink value="#{msgs['calendar.title.add']}"
-												action="#{CalendarForm.addTitleClick}"
-												onclick="if(!addClickQuery()){return false;}"
-												rendered="#{not CalendarForm.blank}" styleClass="actionLink" />
-											<h:commandLink value="#{msgs['calendar.title.remove']}"
-												action="#{CalendarForm.removeTitleClick}"
-												onclick="if(!removeClickQuery()){return false;}"
-												styleClass="actionLink" />
+											<htm:div styleClass="formRow">		
+												<h:commandLink value="#{msgs['calendar.title.add']}"
+													rendered="#{CalendarForm.blank}" styleClass="actionLink" />
+												<h:commandLink value="#{msgs['calendar.title.add']}"
+													action="#{CalendarForm.addTitleClick}"
+													onclick="if(!addClickQuery()){return false;}"
+													rendered="#{not CalendarForm.blank}"
+													styleClass="actionLink" />
+												<h:commandLink value="#{msgs['calendar.title.remove']}"
+													action="#{CalendarForm.removeTitleClick}"
+													onclick="if(!removeClickQuery()){return false;}"
+													styleClass="actionLink" />
+											</htm:div>
+											<h:commandLink value="#{msgs['calendar.upload']}"
+													action="#{CalendarForm.uploadClick}"
+													onclick="skip=true;"
+													styleClass="actionLink" />
 										</htm:div>
 
 										<htm:div styleClass="fillWrapper calendarTitleContent">
