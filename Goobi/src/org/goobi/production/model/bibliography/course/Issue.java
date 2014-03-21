@@ -133,7 +133,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	private boolean addDayOfWeek(int dayOfWeek) {
+	boolean addDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.add(dayOfWeek);
 	}
 
@@ -233,6 +233,33 @@ public class Issue implements Cloneable {
 		copy.daysOfWeek = new HashSet<Integer>(daysOfWeek);
 		copy.exclusions = new HashSet<LocalDate>(exclusions);
 		return copy;
+	}
+
+	/**
+	 * Getter function for the Set of additions.
+	 * 
+	 * @return the set of additions
+	 */
+	public Set<LocalDate> getAdditions() {
+		return additions;
+	}
+
+	/**
+	 * Getter function for the Set of days of week the issue regularly appears.
+	 * 
+	 * @return the set of days of week the issue regularly appears
+	 */
+	public Set<Integer> getDaysOfWeek() {
+		return daysOfWeek;
+	}
+
+	/**
+	 * Getter function for the Set of exclusions.
+	 * 
+	 * @return the set of exclusions
+	 */
+	public Set<LocalDate> getExclusions() {
+		return exclusions;
 	}
 
 	/**
@@ -347,7 +374,7 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	private boolean removeDayOfWeek(int dayOfWeek) {
+	boolean removeDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.remove(dayOfWeek);
 	}
 
@@ -421,6 +448,26 @@ public class Issue implements Cloneable {
 	 */
 	public boolean removeSunday() {
 		return removeDayOfWeek(DateTimeConstants.SUNDAY);
+	}
+
+	/**
+	 * Setter method for the set of additions
+	 * 
+	 * @param additions
+	 *            set to be used
+	 */
+	void setAdditions(Set<LocalDate> additions) {
+		this.additions = additions;
+	}
+
+	/**
+	 * Setter method for the set of exclusions
+	 * 
+	 * @param exclusions
+	 *            set to be used
+	 */
+	void setExclusions(Set<LocalDate> exclusions) {
+		this.exclusions = exclusions;
 	}
 
 	/**

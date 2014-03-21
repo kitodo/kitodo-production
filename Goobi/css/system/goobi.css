@@ -147,9 +147,15 @@
 }
 
 /* ===================== granularity.jsp ===================== */
-.granularityMainCtl {
+
+.granularityMainCtlWrapper {
 	width: 60%;
 	max-width: 600px;
+}
+
+.granularityMainCtl {
+    margin-bottom: 45px;
+    padding: 7px;
 }
 
 .centerRow {
@@ -157,31 +163,25 @@
 }
 
 .granularityButton {
-	width: 19%;
+	width: 16%;
+	min-width: 75px;
+	margin: 2px 0;
 }
 
 .granularityButtonSelected {
 	background-color: #A2C2D8;
 }
 
-.issuesI {
+.redI {
+	background-color: #ff3300;
+}
+
+.yellowI {
 	background-color: #ffcc00;
 }
 
-.daysI {
-	background-color: #CC66FF;
-}
-
-.weeksI {
+.greenI {
 	background-color: #00cc00;
-}
-
-.monthsI {
-	background-color: #0066ff;
-}
-
-.yearsI {
-	background-color: #ff3300;
 }
 
 .granularityWarning {
@@ -197,24 +197,24 @@
 }
 
 .granularityInfoTextbox {
-    background-color: #DDDDDD;
-    margin-top: 8px;
-    padding: 7px;
+	background-color: #DDDDDD;
+	margin-top: 8px;
+	padding: 7px;
 }
 
 .granularityInfoGlyph {
-    border-radius: 15px;
-    display: block;
-    font-size: 19pt;
-    height: 30px;
-    margin-top: 9px;
-    text-align: center;
-    width: 30px;
+	border-radius: 15px;
+	display: block;
+	font-size: 19pt;
+	height: 30px;
+	margin-top: 9px;
+	text-align: center;
+	width: 30px;
 }
 
 .granularityInfoCaption {
-    display: block;
-    font-weight: bold;
-    padding-bottom: 2px;
-    text-transform: uppercase;
+	display: block;
+	font-weight: bold;
+	padding-bottom: 2px;
+	text-transform: uppercase;
 }

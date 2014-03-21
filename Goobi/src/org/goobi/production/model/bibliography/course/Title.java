@@ -40,8 +40,11 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -160,6 +163,46 @@ public class Title implements Cloneable {
 	 */
 	public boolean isMatch(LocalDate date) {
 		return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+	}
+
+	/**
+	 * The method recalculateRegularityOfIssues() recalculates for each Issue
+	 * the daysOfWeek of its regular appearance within the interval of time of
+	 * the Title. This is especially sensible to detect the underlying
+	 * regularity after lots of issues whose existence is known have been added
+	 * one by one as additions to the underlying issue(s).
+	 */
+	public void recalculateRegularityOfIssues() {
+		final int APPEARED = 1;
+		final int NOT_APPEARED = 0;
+
+		for (Issue issue : issues) {
+			Set<LocalDate> remainingAdditions = new HashSet<LocalDate>();
+			Set<LocalDate> remainingExclusions = new HashSet<LocalDate>();
+
+			@SuppressWarnings("unchecked")
+			HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
+			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+				subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<LocalDate>();
+				subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
+			}
+
+			for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1))
+				subsets[day.getDayOfWeek() - 1][issue.isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
+
+			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+				if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
+					issue.addDayOfWeek(dayOfWeek);
+					remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
+				} else {
+					issue.removeDayOfWeek(dayOfWeek);
+					remainingAdditions.addAll(subsets[dayOfWeek - 1][APPEARED]);
+				}
+			}
+
+			issue.setAdditions(remainingAdditions);
+			issue.setExclusions(remainingExclusions);
+		}
 	}
 
 	/**
