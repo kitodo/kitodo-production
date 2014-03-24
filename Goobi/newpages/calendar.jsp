@@ -52,13 +52,14 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 	<body>
 		<script type="text/javascript">
+			
 		<%--
-		 * The variable skip indicates whether the form validation must be skipped.
+		 * The variable uploadWindow indicates whether the form validation must be skipped.
 		 * This is the case if the upload button is clicked because the user should
 		 * be allowed to upload a file without being forced to manually enter the
 		 * data he wants to upload beforehand. 
 		 --%>
-			var skip = false;
+			var uploadWindow = false;
 		<%--
 		 * The function addClickQuery() checks whether adding a title block can be
 		 * performed without unexpected side effects. In the rare case that there
@@ -213,7 +214,8 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1" onsubmit="return skip || titleDataIsValid()">
+					<h:form id="form1"
+						onsubmit="return uploadWindow || titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -261,7 +263,7 @@
 											</h:selectOneListbox>
 
 											<%-- Buttons to add and remove titles --%>
-											<htm:div styleClass="formRow">		
+											<htm:div styleClass="formRow">
 												<h:commandLink value="#{msgs['calendar.title.add']}"
 													rendered="#{CalendarForm.blank}" styleClass="actionLink" />
 												<h:commandLink value="#{msgs['calendar.title.add']}"
@@ -275,9 +277,8 @@
 													styleClass="actionLink" />
 											</htm:div>
 											<h:commandLink value="#{msgs['calendar.upload']}"
-													action="#{CalendarForm.uploadClick}"
-													onclick="skip=true;"
-													styleClass="actionLink" />
+												action="#{CalendarForm.showUploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
 										</htm:div>
 
 										<htm:div styleClass="fillWrapper calendarTitleContent">
@@ -402,6 +403,26 @@
 											<h:commandLink value="#{msgs['calendar.issue.add']}"
 												action="#{CalendarForm.addIssueClick}" />
 
+										</htm:div>
+									</htm:div>
+
+									<%-- File upload dialogue --%>
+
+									<htm:div styleClass="calendarUploadBox"
+										rendered="#{CalendarForm.uploadShowing}">
+										<htm:h3>
+											<h:outputText value="#{msgs['calendar.upload']}" />
+										</htm:h3>
+										<htm:div styleClass="formRow">
+											<t:inputFileUpload value="#{CalendarForm.uploadedFile}" />
+										</htm:div>
+										<htm:div styleClass="formRow">
+											<h:commandLink value="#{msgs['calendar.upload.submit']}"
+												action="#{CalendarForm.uploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
+											<h:commandLink value="#{msgs.abbrechen}"
+												action="#{CalendarForm.hideUploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
 										</htm:div>
 									</htm:div>
 

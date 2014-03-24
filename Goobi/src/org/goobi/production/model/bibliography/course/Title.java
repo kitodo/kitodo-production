@@ -154,15 +154,31 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The function isEmpty() returns whether the title is in an empty state or
+	 * not.
+	 * 
+	 * @return whether the title is dataless
+	 */
+	public boolean isEmpty() {
+		return (heading == null || heading.equals("")) && firstAppearance == null && lastAppearance == null
+				&& (issues == null || issues.isEmpty());
+	}
+
+	/**
 	 * The function isMatch() returns whether a given LocalDate comes within the
-	 * limits of this title.
+	 * limits of this title. Defaults to false if either the argument or one of
+	 * the fields to compare against is null.
 	 * 
 	 * @param date
 	 *            a LocalDate to examine
 	 * @return whether the date is within the limits of this title block
 	 */
 	public boolean isMatch(LocalDate date) {
-		return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+		try {
+			return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	/**

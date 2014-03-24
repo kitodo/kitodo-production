@@ -38,21 +38,28 @@
  */
 package de.sub.goobi.forms;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.DateUtils;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.XMLUtils;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -61,6 +68,7 @@ import de.sub.goobi.helper.DateUtils;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CalendarForm {
+	private static final Logger logger = Logger.getLogger(CalendarForm.class);
 
 	/**
 	 * The constant field ISSUE_COLOURS holds the colours used to represent the
@@ -104,6 +112,14 @@ public class CalendarForm {
 	 * shall not write the incoming data into the respective fields.
 	 */
 	protected boolean titlePickerUnchanged = true;
+
+	/**
+	 * The field uploadShowing indicates whether the dialogue box to upload a
+	 * course of appearance XML description is showing or not.
+	 */
+	protected boolean uploadShowing = false;
+
+	protected UploadedFile uploadedFile;
 
 	/**
 	 * The field yearShowing tells the year currently showing in this calendar
@@ -840,6 +856,16 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function getUploadedFile() is the getter method for the property
+	 * "uploadedFile" which is write-only, however Faces requires is.
+	 * 
+	 * @return always null
+	 */
+	public UploadedFile getUploadedFile() {
+		return null;
+	}
+
+	/**
 	 * The function getYear() returns the year to be shown in the calendar sheet
 	 * as read-only property "year".
 	 * 
@@ -847,6 +873,15 @@ public class CalendarForm {
 	 */
 	public String getYear() {
 		return Integer.toString(yearShowing);
+	}
+
+	public boolean getUploadShowing() {
+		return uploadShowing;
+	}
+
+	public void hideUploadClick() {
+		neglectEmptyTitle();
+		uploadShowing = false;
 	}
 
 	/**
@@ -861,6 +896,13 @@ public class CalendarForm {
 			if (yearShowing < titleShowing.getFirstAppearance().getYear())
 				yearShowing = titleShowing.getFirstAppearance().getYear();
 		} catch (NullPointerException e) {
+		}
+	}
+
+	protected void neglectEmptyTitle() {
+		if (titleShowing != null && titleShowing.isEmpty()) {
+			course.remove(titleShowing);
+			titleShowing = null;
 		}
 	}
 
@@ -895,7 +937,12 @@ public class CalendarForm {
 	 *            new date of first appearance
 	 */
 	public void setFirstAppearance(String firstAppearance) {
-		LocalDate newFirstAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(firstAppearance);
+		LocalDate newFirstAppearance;
+		try {
+			newFirstAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(firstAppearance);
+		} catch (IllegalArgumentException e) {
+			newFirstAppearance = titleShowing != null ? titleShowing.getFirstAppearance() : null;
+		}
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getFirstAppearance() == null
@@ -923,7 +970,12 @@ public class CalendarForm {
 	 *            new date of last appearance
 	 */
 	public void setLastAppearance(String lastAppearance) {
-		LocalDate newLastAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(lastAppearance);
+		LocalDate newLastAppearance;
+		try {
+			newLastAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(lastAppearance);
+		} catch (IllegalArgumentException e) {
+			newLastAppearance = titleShowing != null ? titleShowing.getLastAppearance() : null;
+		}
 		if (titleShowing != null) {
 			if (titlePickerUnchanged) {
 				if (titleShowing.getLastAppearance() == null
@@ -952,7 +1004,7 @@ public class CalendarForm {
 	 */
 	public void setTitleHeading(String heading) {
 		if (titleShowing != null) {
-			if (titlePickerUnchanged)
+			if (titlePickerUnchanged && heading != null && !heading.isEmpty())
 				titleShowing.setHeading(heading);
 		} else {
 			titleShowing = new Title(heading);
@@ -981,6 +1033,36 @@ public class CalendarForm {
 		if (!titlePickerUnchanged) {
 			titleShowing = titlePickerResolver.get(value);
 			navigate();
+		}
+	}
+
+	public void setUploadedFile(UploadedFile data) {
+		uploadedFile = data;
+	}
+
+	/**
+	 * 
+	 */
+	public void showUploadClick() {
+		neglectEmptyTitle();
+		uploadShowing = true;
+	}
+
+	public void uploadClick() {
+		try {
+			Document courseXML = XMLUtils.load(uploadedFile.getInputStream());
+			course = new Course(courseXML);
+			titleShowing = course.get(0);
+			navigate();
+		} catch (SAXException e) {
+			Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
+			logger.error(e.getMessage(), e);
+		} finally {
+			uploadedFile = null;
+			uploadShowing = false;
 		}
 	}
 }

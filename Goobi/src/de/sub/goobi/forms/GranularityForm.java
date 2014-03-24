@@ -45,12 +45,14 @@ import java.util.Locale;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
 
 import de.sub.goobi.helper.FacesUtils;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 
 /**
@@ -61,6 +63,7 @@ import de.sub.goobi.helper.XMLUtils;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class GranularityForm {
+	private static final Logger logger = Logger.getLogger(GranularityForm.class);
 
 	/**
 	 * The field granularity holds the granularity chosen by the user. It is
@@ -117,12 +120,20 @@ public class GranularityForm {
 	 *             if an unrecoverable error occurs during the course of the
 	 *             transformation
 	 */
-	public void downloadClick() throws IOException, TransformerException {
+	public void downloadClick() {
+		try {
 		for (Title title : course)
 			title.recalculateRegularityOfIssues();
 		Document courseXML = course.toXML(Locale.GERMAN);
 		byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
 		FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
+		} catch (TransformerException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	/**

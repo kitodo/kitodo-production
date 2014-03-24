@@ -73,6 +73,25 @@ public class Course extends ArrayList<Title> {
 	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
 
 	/**
+	 * Default constructor, creates an empty course. Must be made explicit since
+	 * we offer other constructors, too.
+	 */
+	public Course() {
+		super();
+	}
+
+	/**
+	 * Creates a course from an XML document
+	 * 
+	 * @param data
+	 *            XML document to parse
+	 */
+	public Course(Document data) {
+		super();
+		// TODO
+	}
+
+	/**
 	 * The method countIndividualIssues() determines how many stampings of
 	 * issues physically appeared without generating a list of IndividualIssue
 	 * objects.

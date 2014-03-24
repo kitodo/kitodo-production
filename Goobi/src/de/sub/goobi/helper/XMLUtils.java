@@ -40,6 +40,8 @@
 package de.sub.goobi.helper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,6 +53,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
@@ -84,6 +87,31 @@ public class XMLUtils {
 		}
 		transformer.transform(new DOMSource(data), new StreamResult(result));
 		return result.toByteArray();
+	}
+
+	/**
+	 * The function load() is a convenience method load a DOM Document object
+	 * from an input stream.
+	 * 
+	 * @param data
+	 *            InputStream to read from
+	 * @return the DOM Document encoded in the input stream’s data
+	 * @throws SAXException
+	 *             if any parse errors occur
+	 * @throws IOException
+	 *             if any IO errors occur
+	 * @throws RuntimeException
+	 *             if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested—which never happens because we use
+	 *             the default configuration here and that is definitely
+	 *             supported
+	 */
+	public static Document load(InputStream data) throws SAXException, IOException {
+		try {
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(data);
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	/**
