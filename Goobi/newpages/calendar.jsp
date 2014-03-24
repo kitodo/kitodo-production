@@ -408,6 +408,7 @@
 
 									<%-- File upload dialogue --%>
 
+									<htm:div styleClass="calendarUploadBackground" rendered="#{CalendarForm.uploadShowing}"/>
 									<htm:div styleClass="calendarUploadBox"
 										rendered="#{CalendarForm.uploadShowing}">
 										<htm:h3>

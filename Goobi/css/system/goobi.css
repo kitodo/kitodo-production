@@ -137,6 +137,17 @@
 	border-top: none;
 }
 
+.calendarUploadBackground {
+    background-color: appworkspace;
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+    
 .calendarUploadBox {
     background-color: #FFFFFF;
     border: 1px solid #0083E2;
