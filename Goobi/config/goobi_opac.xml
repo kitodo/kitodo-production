@@ -32,4 +32,7 @@
 	<catalogue title="GBV">
 		<config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" iktlist="IKTLIST-GBV.xml" port="80" ucnf="UCNF=NFC" />
 	</catalogue>
+	<catalogue title="ZDB">
+		<config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" iktlist="IKTLIST-ZDB.xml" port="80" />
+	</catalogue>
 </opacCatalogues>
