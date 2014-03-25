@@ -214,7 +214,7 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1"
+					<h:form id="form1" enctype="multipart/form-data"
 						onsubmit="return uploadWindow || titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
