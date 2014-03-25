@@ -48,6 +48,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.CourseXML;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
@@ -1050,8 +1051,8 @@ public class CalendarForm {
 
 	public void uploadClick() {
 		try {
-			Document courseXML = XMLUtils.load(uploadedFile.getInputStream());
-			course = new Course(courseXML);
+			Document xml = XMLUtils.load(uploadedFile.getInputStream());
+			course = CourseXML.parseCourse(xml);
 			titleShowing = course.get(0);
 			navigate();
 		} catch (SAXException e) {

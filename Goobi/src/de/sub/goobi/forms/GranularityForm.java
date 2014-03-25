@@ -41,12 +41,12 @@ package de.sub.goobi.forms;
 // import javax.faces.bean.ManagedProperty;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.CourseXML;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
@@ -122,11 +122,11 @@ public class GranularityForm {
 	 */
 	public void downloadClick() {
 		try {
-		for (Title title : course)
-			title.recalculateRegularityOfIssues();
-		Document courseXML = course.toXML(Locale.GERMAN);
-		byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
-		FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
+			for (Title title : course)
+				title.recalculateRegularityOfIssues();
+			Document courseXML = CourseXML.toXML(course);
+			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
+			FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
 		} catch (TransformerException e) {
 			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
 			logger.error(e.getMessage(), e);

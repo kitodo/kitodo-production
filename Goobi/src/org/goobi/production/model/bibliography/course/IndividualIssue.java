@@ -40,7 +40,6 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
-import org.w3c.dom.Element;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -117,6 +116,14 @@ public class IndividualIssue {
 		}
 	}
 
+	LocalDate getDate() {
+		return date;
+	}
+
+	String getHeading() {
+		return issue.getHeading();
+	}
+
 	/**
 	 * The function indexIn() returns the index of the first occurrence of the
 	 * title of this issue in the given course, or -1 if the course does not
@@ -129,22 +136,6 @@ public class IndividualIssue {
 	 */
 	int indexIn(Course course) {
 		return course.indexOf(title);
-	}
-
-	/**
-	 * The function populate() populates an DOM tree element with three
-	 * attributes holding the ID, title name and issue name of this individual
-	 * issue.
-	 * 
-	 * @param result
-	 *            the DOM tree element to populate
-	 * @return the DOM tree element
-	 */
-	Element populate(Element result) {
-		if (issue != null)
-			result.setAttribute(Course.ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
-		result.setAttribute(Course.ATTRIBUTE_DATE, date.toString());
-		return result;
 	}
 
 	/**
