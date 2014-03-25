@@ -142,8 +142,8 @@ public class IndividualIssue {
 	 */
 	Element populate(Element result) {
 		if (issue != null)
-			result.setAttribute("issue", issue.getHeading());
-		result.setAttribute("date", date.toString());
+			result.setAttribute(Course.ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+		result.setAttribute(Course.ATTRIBUTE_DATE, date.toString());
 		return result;
 	}
 

@@ -134,6 +134,21 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The function getIssue() returns an issue from the Title by the issue’s
+	 * heading, or null if the title doesn’t contain an issue with that heading.
+	 * 
+	 * @param heading
+	 *            Heading of the issue to look for
+	 * @return Issue with that heading
+	 */
+	public Issue getIssue(String heading) {
+		for (Issue issue : issues)
+			if (heading.equals(issue.getHeading()))
+				return issue;
+		return null;
+	}
+
+	/**
 	 * The function getFirstAppearance() returns the date the regularity of this
 	 * title begins with.
 	 * 
