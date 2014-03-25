@@ -1095,6 +1095,9 @@ public class CalendarForm {
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
 			logger.error(e.getMessage(), e);
+		} catch (NoSuchFieldException e) {
+			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
+			logger.error(e.getMessage(), e);
 		} finally {
 			uploadedFile = null;
 			uploadShowing = false;

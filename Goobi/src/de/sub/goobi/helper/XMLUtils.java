@@ -90,14 +90,23 @@ public class XMLUtils {
 		return result.toByteArray();
 	}
 
-	public static Node getChildNodeByNodeName(Node data, String nodeName) {
-		Node result = null;
+	/**
+	 * The function getChildNodeByNodeName() returns the first child node from a
+	 * node, identified by its node name
+	 * 
+	 * @param data
+	 *            node whose children shall be examined
+	 * @param nodeName
+	 *            name of the node to find
+	 * @return first child node with that node name
+	 * @throws NoSuchFieldException
+	 *             if no child node with that name can be found
+	 */
+	public static Node getChildNodeByNodeName(Node data, String nodeName) throws NoSuchFieldException {
 		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling())
-			if (element.getNodeName().equals(nodeName)) {
-				result = element;
-				break;
-			}
-		return result;
+			if (element.getNodeName().equals(nodeName))
+				return element;
+		throw new NoSuchFieldException(nodeName);
 	}
 
 	/**

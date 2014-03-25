@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -185,7 +184,7 @@ public class CourseXML extends Course {
 	 * @throws NoSuchFieldException
 	 *             if a field expected in the XML document wasn’t found
 	 */
-	public static Course parseCourse(Document data) throws NoSuchElementException {
+	public static Course parseCourse(Document data) throws NoSuchFieldException {
 		Course result = new Course();
 		Map<String, Title> unordered = new HashMap<String, Title>();
 		Map<Title, String> indexes = new HashMap<Title, String>();
@@ -242,13 +241,20 @@ public class CourseXML extends Course {
 	 * @param data
 	 *            XML document loaded into memory
 	 * @return a list appeared issues
+	 * @throws NoSuchFieldException
+	 *             if no node named as defined by ELEMENT_PROCESSES could be
+	 *             found
 	 */
-	private static List<AppearedIssue> getAppearedIssues(Document data) {
+	private static List<AppearedIssue> getAppearedIssues(Document data) throws NoSuchFieldException {
 		List<AppearedIssue> result = new ArrayList<AppearedIssue>();
-		for (Node processNode = XMLUtils.getChildNodeByNodeName(data, ELEMENT_PROCESSES).getFirstChild(); processNode != null; processNode = processNode
+		Node processesNode = XMLUtils.getChildNodeByNodeName(XMLUtils.getChildNodeByNodeName(data, ELEMENT_COURSE),
+				ELEMENT_PROCESSES);
+		for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
 				.getNextSibling()) {
 			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
 					.getNextSibling()) {
+				if (!ELEMENT_TITLE.equals(titleNode.getNodeName()))
+					continue;
 				String titleHeading = ((Element) titleNode).getAttribute(ATTRIBUTE_TITLE_HEADING);
 				String index = ((Element) titleNode).getAttribute(ATTRIBUTE_INDEX);
 				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
