@@ -104,7 +104,7 @@ public class Title implements Cloneable {
 	 * @return true if the set was changed
 	 */
 	public boolean addIssue(Issue issue) {
-		return issues.add(issue.clone());
+		return issues.add(issue);
 	}
 
 	/**

@@ -209,6 +209,8 @@ public class Course extends ArrayList<Title> {
 		int capacity = 10;
 		for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
 				.getNextSibling()) {
+			if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS))
+				continue;
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(capacity);
 			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
 					.getNextSibling()) {
@@ -218,12 +220,12 @@ public class Course extends ArrayList<Title> {
 				String variant = ((Element) titleNode).getAttribute(ATTRIBUTE_VARIANT);
 				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
 						.getNextSibling()) {
-					if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_APPEARED))
+					if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED))
 						continue;
-					String issue = ((Element) titleNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
+					String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
 					if (issue == null)
 						issue = "";
-					String date = ((Element) titleNode).getAttribute(ATTRIBUTE_DATE);
+					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
 					IndividualIssue individualIssue = addAddition(title, variant, issue, LocalDate.parse(date));
 					process.add(individualIssue);
 				}
@@ -237,7 +239,12 @@ public class Course extends ArrayList<Title> {
 	/**
 	 * Adds a LocalDate to the set of additions of the issue identified by
 	 * issueHeading in the title block identified by titleHeading
-	 * and—optionally—variant.
+	 * and—optionally—variant. Note that in case that the date is outside the
+	 * time range of the described title block, the time range will be expanded.
+	 * Do not use this function in contexts where there is one or more issues in
+	 * the block that have a regular appearance set, because in this case the
+	 * regularly appeared issues in the expanded block will show up later, too,
+	 * which is probably not what you want.
 	 * 
 	 * @param titleHeading
 	 *            heading of the title this issue is in
@@ -253,11 +260,19 @@ public class Course extends ArrayList<Title> {
 		Title title = get(titleHeading, variant);
 		if (title == null) {
 			title = new Title(titleHeading, variant);
+			title.setFirstAppearance(date);
+			title.setLastAppearance(date);
 			add(title);
+		} else {
+			if (title.getFirstAppearance().isAfter(date))
+				title.setFirstAppearance(date);
+			if (title.getLastAppearance().isBefore(date))
+				title.setLastAppearance(date);
 		}
 		Issue issue = title.getIssue(issueHeading);
 		if (issue == null) {
 			issue = new Issue(issueHeading);
+			title.addIssue(issue);
 		}
 		issue.addAddition(date);
 		return new IndividualIssue(title, issue, date);
