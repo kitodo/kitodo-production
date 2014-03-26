@@ -136,14 +136,16 @@ public class GranularityForm {
 	/**
 	 * The function getGranularity() returns the granularity level chosen by the
 	 * user in lower case as read-only property “granularity”. If it is
-	 * null—indicating that the user didn’t choose anything yet—it literally
-	 * returns “null” as String.
+	 * null—indicating that the user didn’t choose anything yet—and there are no
+	 * processes loaded from a foreign source, it literally returns “null” as
+	 * String. If there are processes loaded from a foreign source, it returns
+	 * “foreign”.
 	 * 
 	 * @return the granularity level chosen by the user
 	 */
 	public String getGranularity() {
 		if (granularity == null)
-			return "null";
+			return course.getNumberOfProcesses() == 0 ? "null" : "foreign";
 		return granularity.toString().toLowerCase();
 	}
 

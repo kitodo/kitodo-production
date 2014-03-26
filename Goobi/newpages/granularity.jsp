@@ -204,7 +204,7 @@
 											<f:convertNumber maxFractionDigits="1" />
 										</h:outputText>
 										<htm:div styleClass="granularityInfoTextbox"
-											rendered="#{GranularityForm.granularity!='null'}"
+											rendered="#{GranularityForm.numberOfProcesses>0}"
 											title="#{msgs['granularity.info.textbox.mouseOver']}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"
