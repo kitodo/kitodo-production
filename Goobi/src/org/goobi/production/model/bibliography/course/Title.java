@@ -58,6 +58,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class Title implements Cloneable {
 	protected String heading;
+	protected String variant;
 	protected LocalDate firstAppearance;
 	protected LocalDate lastAppearance;
 	protected List<Issue> issues;
@@ -67,6 +68,7 @@ public class Title implements Cloneable {
 	 */
 	public Title() {
 		this.heading = "";
+		this.variant = null;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
 		this.issues = new ArrayList<Issue>();
@@ -80,6 +82,15 @@ public class Title implements Cloneable {
 	 */
 	public Title(String heading) {
 		this.heading = heading;
+		this.variant = null;
+		this.firstAppearance = null;
+		this.lastAppearance = null;
+		this.issues = new ArrayList<Issue>();
+	}
+
+	public Title(String heading, String variant) {
+		this.heading = heading;
+		this.variant = variant;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
 		this.issues = new ArrayList<Issue>();
@@ -177,6 +188,10 @@ public class Title implements Cloneable {
 	public boolean isEmpty() {
 		return (heading == null || heading.equals("")) && firstAppearance == null && lastAppearance == null
 				&& (issues == null || issues.isEmpty());
+	}
+
+	public boolean isIdentifiedBy(String title, String variant) {
+		return heading.equals(title) && (variant == null && this.variant == null || this.variant.equals(variant));
 	}
 
 	/**

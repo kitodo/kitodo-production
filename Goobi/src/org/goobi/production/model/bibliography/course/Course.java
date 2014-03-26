@@ -39,12 +39,20 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import de.sub.goobi.helper.XMLUtils;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
@@ -62,9 +70,121 @@ public class Course extends ArrayList<Title> {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Attribute <code>date="…"</code> used in the XML representation of a
+	 * course of appearance.
+	 */
+	static final String ATTRIBUTE_DATE = "date";
+	/**
+	 * Attribute <code>heading="…"</code> used in the XML representation of a
+	 * course of appearance.
+	 */
+	private static final String ATTRIBUTE_TITLE_HEADING = "heading";
+
+	/**
+	 * Attribute <code>index="…"</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * The attribute <code>index="…"</code> is optional. It may be used to
+	 * distinguish different title block with the same title (value from
+	 * <code>heading="…"</code> attribute).
+	 * </p>
+	 */
+	private static final String ATTRIBUTE_VARIANT = "index";
+
+	/**
+	 * Attribute <code>issue="…"</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * The attribute <code>issue="…"</code> holds the name of the issue.
+	 * Newspapers, especially bigger ones, can have several issues that, e.g.,
+	 * may differ in time of publication (morning issue, evening issue, …) or
+	 * geographic distribution (Edinburgh issue, London issue, …).
+	 * </p>
+	 */
+	static final String ATTRIBUTE_ISSUE_HEADING = "issue";
+
+	/**
+	 * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * Each <code>&lt;appeared&gt;</code> element represents one issue that
+	 * physically appeared. It has the attributes <code>issue="…"</code>
+	 * (required, may be empty) and <code>date="…"</code> (required) and cannot
+	 * hold child elements.
+	 * </p>
+	 */
+	private static final String ELEMENT_APPEARED = "appeared";
+
+	/**
+	 * Element <code>&lt;course&gt;</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * <code>&lt;course&gt;</code> is the root element of the XML
+	 * representation. It can hold two children,
+	 * <code>&lt;description&gt;</code> (output only, optional) and
+	 * <code>&lt;processes&gt;</code> (required).
+	 * </p>
+	 */
+	private static final String ELEMENT_COURSE = "course";
+
+	/**
+	 * Element <code>&lt;description&gt;</code> used in the XML representation
+	 * of a course of appearance.
+	 * 
+	 * <p>
+	 * <code>&lt;description&gt;</code> holds a verbal, human-readable
+	 * description of the course of appearance, which is generated only and
+	 * doesn’t have an effect on input.
+	 * </p>
+	 */
+	private static final String ELEMENT_DESCRIPTION = "description";
+
+	/**
+	 * Element <code>&lt;process&gt;</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * Each <code>&lt;process&gt;</code> element represents one process to be
+	 * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
+	 * elements (of any quantity).
+	 * </p>
+	 */
+	private static final String ELEMENT_PROCESS = "process";
+
+	/**
+	 * Element <code>&lt;processes&gt;</code> used in the XML representation of
+	 * a course of appearance.
+	 * 
+	 * <p>
+	 * Each <code>&lt;processes&gt;</code> element represents the processes to
+	 * be generated in Goobi Production. It can hold
+	 * <code>&lt;process&gt;</code> elements (of any quantity).
+	 * </p>
+	 */
+	private static final String ELEMENT_PROCESSES = "processes";
+
+	/**
+	 * Element <code>&lt;title&gt;</code> used in the XML representation of a
+	 * course of appearance.
+	 * 
+	 * <p>
+	 * Each <code>&lt;title&gt;</code> element represents the title block the
+	 * appeared issues belong to. It has the attributes <code>heading="…"</code>
+	 * (required, must not be empty) and <code>index="…"</code> (optional) and
+	 * can hold <code>&lt;appeared&gt;</code> elements (of any quantity).
+	 * </p>
+	 */
+	private static final String ELEMENT_TITLE = "title";
+
+	/**
 	 * List of Lists of Issues, each representing a process.
 	 */
-	final List<List<IndividualIssue>> processes;
+	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
+	private final Map<String, Title> resolveByTitleVariantCache = new HashMap<String, Title>();
 
 	/**
 	 * Default constructor, creates an empty course. Must be made explicit since
@@ -72,16 +192,75 @@ public class Course extends ArrayList<Title> {
 	 */
 	public Course() {
 		super();
-		processes = new ArrayList<List<IndividualIssue>>();
 	}
 
 	/**
-	 * Copy constructor, required for constructor CourseXML(Course). Doesn’t
-	 * deep copy.
+	 * Constructor to create a course from an xml source
+	 * 
+	 * @param xml
+	 *            XML document data structure
+	 * @throws NoSuchFieldException
+	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
 	 */
-	protected Course(Course course) {
-		super(course);
-		processes = course.processes;
+	public Course(Document xml) throws NoSuchFieldException {
+		super();
+		Element processesNode = XMLUtils.getFirstChildByTagName(XMLUtils.getFirstChildByTagName(xml, ELEMENT_COURSE),
+				ELEMENT_PROCESSES);
+		int capacity = 10;
+		for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
+				.getNextSibling()) {
+			List<IndividualIssue> process = new ArrayList<IndividualIssue>(capacity);
+			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
+					.getNextSibling()) {
+				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE))
+					continue;
+				String title = ((Element) titleNode).getAttribute(ATTRIBUTE_TITLE_HEADING);
+				String variant = ((Element) titleNode).getAttribute(ATTRIBUTE_VARIANT);
+				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
+						.getNextSibling()) {
+					if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_APPEARED))
+						continue;
+					String issue = ((Element) titleNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
+					if (issue == null)
+						issue = "";
+					String date = ((Element) titleNode).getAttribute(ATTRIBUTE_DATE);
+					IndividualIssue individualIssue = addAddition(title, variant, issue, LocalDate.parse(date));
+					process.add(individualIssue);
+				}
+			}
+			processes.add(process);
+			capacity = Math.max(capacity, process.size());
+		}
+		recalculateRegularityOfIssues();
+	}
+
+	/**
+	 * Adds a LocalDate to the set of additions of the issue identified by
+	 * issueHeading in the title block identified by titleHeading
+	 * and—optionally—variant.
+	 * 
+	 * @param titleHeading
+	 *            heading of the title this issue is in
+	 * @param variant
+	 *            variant of the title heading (may be null)
+	 * @param issueHeading
+	 *            heading of the issue this issue is of
+	 * @param date
+	 *            date to add
+	 * @return an IndividualIssue representing the added issue
+	 */
+	private IndividualIssue addAddition(String titleHeading, String variant, String issueHeading, LocalDate date) {
+		Title title = get(titleHeading, variant);
+		if (title == null) {
+			title = new Title(titleHeading, variant);
+			add(title);
+		}
+		Issue issue = title.getIssue(issueHeading);
+		if (issue == null) {
+			issue = new Issue(issueHeading);
+		}
+		issue.addAddition(date);
+		return new IndividualIssue(title, issue, date);
 	}
 
 	/**
@@ -103,6 +282,35 @@ public class Course extends ArrayList<Title> {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the title identified by the given title and—optionally—variant,
+	 * or null if no title with the given combination can be found.
+	 * 
+	 * @param title
+	 *            the heading of the title to be returned
+	 * @param variant
+	 *            the variant of the title (may be null)
+	 * @return the title identified by the given title and—optionally—variant,
+	 *         or null if no title with the given combination can be found
+	 */
+	private Title get(String title, String variant) {
+		String key = variant == null ? title : title + '\u001E' + variant;
+		if (resolveByTitleVariantCache.containsKey(key)) {
+			Title potentialResult = resolveByTitleVariantCache.get(key);
+			if (potentialResult.isIdentifiedBy(title, variant))
+				return potentialResult;
+			else
+				resolveByTitleVariantCache.remove(key);
+		}
+		for (Title candidate : this) {
+			if (candidate.isIdentifiedBy(title, variant)) {
+				resolveByTitleVariantCache.put(key, candidate);
+				return candidate;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -185,6 +393,42 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * The method recalculateRegularityOfIssues() recalculates for all Title
+	 * objects of this Course for each Issue the daysOfWeek of its regular
+	 * appearance within the interval of time of the Title. This is especially
+	 * sensible to detect the underlying regularity after lots of issues whose
+	 * existence is known have been added one by one as additions to the
+	 * underlying issue(s).
+	 */
+	public void recalculateRegularityOfIssues() {
+		for (Title title : this)
+			title.recalculateRegularityOfIssues();
+	}
+
+	/**
+	 * The function remove() removes the element at the specified position in
+	 * this list. Shifts any subsequent elements to the left (subtracts one from
+	 * their indices). Additionally, any references to the object held in the
+	 * map used for resolving are being removed so that the object can be
+	 * garbage-collected.
+	 * 
+	 * @param index
+	 *            the index of the element to be removed
+	 * @return the element that was removed from the list
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is out of range (index < 0 || index >= size())
+	 * @see java.util.ArrayList#remove(int)
+	 */
+	@Override
+	public Title remove(int index) {
+		Title title = super.remove(index);
+		for (Map.Entry<String, Title> entry : resolveByTitleVariantCache.entrySet())
+			if (entry.getValue() == title) // pointer equality
+				resolveByTitleVariantCache.remove(entry.getKey());
+		return title;
+	}
+
+	/**
 	 * The method splitInto() calculates the processes depending on the given
 	 * BreakMode.
 	 * 
@@ -212,5 +456,53 @@ public class Course extends ArrayList<Title> {
 		}
 		if (process != null)
 			processes.add(process);
+	}
+
+	/**
+	 * The function toXML() transforms a course of appearance to XML.
+	 * 
+	 * @param lang
+	 *            language to use for the “description”
+	 * @return XML as String
+	 */
+	public Document toXML() {
+		Document result = XMLUtils.newDocument();
+		Element courseNode = result.createElement(ELEMENT_COURSE);
+
+		Element description = result.createElement(ELEMENT_DESCRIPTION);
+		description.appendChild(result.createTextNode(StringUtils.join(CourseToGerman.asReadableText(this), "\n\n")));
+		courseNode.appendChild(description);
+
+		Element processesNode = result.createElement(ELEMENT_PROCESSES);
+		for (List<IndividualIssue> process : processes) {
+			Element processNode = result.createElement(ELEMENT_PROCESS);
+			Element titleNode = null;
+			int previous = -1;
+			for (IndividualIssue issue : process) {
+				int index = issue.indexIn(this);
+				if (index != previous && titleNode != null) {
+					processNode.appendChild(titleNode);
+					titleNode = null;
+				}
+				if (titleNode == null) {
+					titleNode = result.createElement(ELEMENT_TITLE);
+					titleNode.setAttribute(ATTRIBUTE_TITLE_HEADING, get(index).getHeading());
+					titleNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
+				}
+				Element issueNode = result.createElement(ELEMENT_APPEARED);
+				if (issue != null)
+					issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+				issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
+				titleNode.appendChild(issueNode);
+				previous = index;
+			}
+			if (titleNode != null)
+				processNode.appendChild(titleNode);
+			processesNode.appendChild(processNode);
+		}
+		courseNode.appendChild(processesNode);
+
+		result.appendChild(courseNode);
+		return result;
 	}
 }

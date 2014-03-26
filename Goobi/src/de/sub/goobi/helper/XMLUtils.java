@@ -53,6 +53,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -95,18 +96,21 @@ public class XMLUtils {
 	 * node, identified by its node name
 	 * 
 	 * @param data
-	 *            node whose children shall be examined
-	 * @param nodeName
+	 *            Document or Element whose children shall be examined
+	 * @param tagName
 	 *            name of the node to find
 	 * @return first child node with that node name
 	 * @throws NoSuchFieldException
 	 *             if no child node with that name can be found
 	 */
-	public static Node getChildNodeByNodeName(Node data, String nodeName) throws NoSuchFieldException {
-		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling())
-			if (element.getNodeName().equals(nodeName))
-				return element;
-		throw new NoSuchFieldException(nodeName);
+	public static Element getFirstChildByTagName(Node data, String tagName) throws NoSuchFieldException {
+		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
+			if (!(element instanceof Element))
+				continue;
+			if (element.getNodeName().equals(tagName))
+				return (Element) element;
+		}
+		throw new NoSuchFieldException(tagName);
 	}
 
 	/**
