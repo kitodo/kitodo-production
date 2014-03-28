@@ -126,6 +126,24 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The method countIndividualIssues() determines how many stampings of
+	 * issues physically appeared without generating a list of IndividualIssue
+	 * objects.
+	 * 
+	 * @return the count of issues
+	 */
+	public long countIndividualIssues() {
+		long result = 0;
+		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+			for (Issue issue : getIssues()) {
+				if (issue.isMatch(day))
+					result += 1;
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * The function getIssues() returns the list of issues contained in this
 	 * Title.
 	 * 
@@ -142,6 +160,24 @@ public class Title implements Cloneable {
 	 */
 	public String getHeading() {
 		return heading;
+	}
+
+	/**
+	 * The function getIndividualIssues() generates a list of IndividualIssue
+	 * objects for a given day, each of them representing a stamping of one
+	 * physically appeared issue.
+	 * 
+	 * @return a List of IndividualIssue objects, each of them representing one
+	 *         physically appeared issue
+	 */
+	public List<IndividualIssue> getIndividualIssues(LocalDate date) {
+		ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
+		for (Issue issue : getIssues()) {
+			if (issue.isMatch(date)) {
+				result.add(new IndividualIssue(this, issue, date));
+			}
+		}
+		return null;
 	}
 
 	/**

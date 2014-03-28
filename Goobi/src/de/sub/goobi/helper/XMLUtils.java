@@ -103,7 +103,7 @@ public class XMLUtils {
 	 * @throws NoSuchFieldException
 	 *             if no child node with that name can be found
 	 */
-	public static Element getFirstChildByTagName(Node data, String tagName) throws NoSuchFieldException {
+	public static Element getFirstChildWithTagName(Node data, String tagName) throws NoSuchFieldException {
 		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
 			if (!(element instanceof Element))
 				continue;

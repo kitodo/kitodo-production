@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
@@ -73,7 +72,7 @@ public class Course extends ArrayList<Title> {
 	 * Attribute <code>date="…"</code> used in the XML representation of a
 	 * course of appearance.
 	 */
-	static final String ATTRIBUTE_DATE = "date";
+	private static final String ATTRIBUTE_DATE = "date";
 	/**
 	 * Attribute <code>heading="…"</code> used in the XML representation of a
 	 * course of appearance.
@@ -103,7 +102,7 @@ public class Course extends ArrayList<Title> {
 	 * geographic distribution (Edinburgh issue, London issue, …).
 	 * </p>
 	 */
-	static final String ATTRIBUTE_ISSUE_HEADING = "issue";
+	private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
 	/**
 	 * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
@@ -204,14 +203,14 @@ public class Course extends ArrayList<Title> {
 	 */
 	public Course(Document xml) throws NoSuchFieldException {
 		super();
-		Element processesNode = XMLUtils.getFirstChildByTagName(XMLUtils.getFirstChildByTagName(xml, ELEMENT_COURSE),
-				ELEMENT_PROCESSES);
-		int capacity = 10;
+		Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
+		Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);
+		int initialCapacity = 10;
 		for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
 				.getNextSibling()) {
 			if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS))
 				continue;
-			List<IndividualIssue> process = new ArrayList<IndividualIssue>(capacity);
+			List<IndividualIssue> process = new ArrayList<IndividualIssue>(initialCapacity);
 			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
 					.getNextSibling()) {
 				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE))
@@ -231,7 +230,7 @@ public class Course extends ArrayList<Title> {
 				}
 			}
 			processes.add(process);
-			capacity = Math.max(capacity, process.size());
+			initialCapacity = (int) Math.round(1.1 * process.size());
 		}
 		recalculateRegularityOfIssues();
 	}
@@ -287,15 +286,8 @@ public class Course extends ArrayList<Title> {
 	 */
 	public long countIndividualIssues() {
 		long result = 0;
-		for (Title title : this) {
-			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-				for (Issue issue : title.getIssues()) {
-					if (issue.isMatch(day))
-						result += 1;
-				}
-			}
-		}
+		for (Title title : this)
+			result += title.countIndividualIssues();
 		return result;
 	}
 
@@ -329,24 +321,38 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
-	 * The method getIndividualIssues generates a list of IndividualIssue
-	 * objects, each of them representing a stamping of an (one physically
-	 * appeared) issue.
+	 * The function getIndividualIssues() generates a list of IndividualIssue
+	 * objects, each of them representing a stamping of one physically appeared
+	 * issue.
 	 * 
-	 * @return a SortedSet of IndividualIssue objects, each of them representing
-	 *         one physically appeared issue
+	 * @return a LinkedHashSet of IndividualIssue objects, each of them
+	 *         representing one physically appeared issue
 	 */
-	public Set<IndividualIssue> getIndividualIssues() {
+	public LinkedHashSet<IndividualIssue> getIndividualIssues() {
 		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
-		for (Title title : this) {
-			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-				for (Issue issue : title.getIssues()) {
-					if (issue.isMatch(day)) {
-						result.add(new IndividualIssue(title, issue, day));
-					}
-				}
+		LocalDate lastAppearance = getLastAppearance();
+		for (LocalDate day = getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+			for (Title title : this) {
+				result.addAll(title.getIndividualIssues(day));
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * The function getFirstAppearance() returns the date the regularity of this
+	 * course of appearance starts with.
+	 * 
+	 * @return the date of first appearance
+	 */
+	private LocalDate getFirstAppearance() {
+		if (super.isEmpty())
+			return null;
+		LocalDate result = super.get(0).getFirstAppearance();
+		for (int index = 1; index < super.size(); index++) {
+			LocalDate firstAppearance = super.get(index).getFirstAppearance();
+			if (firstAppearance.isBefore(result))
+				result = firstAppearance;
 		}
 		return result;
 	}
@@ -360,15 +366,13 @@ public class Course extends ArrayList<Title> {
 	public LocalDate getLastAppearance() {
 		if (super.isEmpty())
 			return null;
-		else {
-			LocalDate result = super.get(0).getLastAppearance();
-			for (int index = 1; index < super.size(); index++) {
-				LocalDate lastAppearance = super.get(index).getLastAppearance();
-				if (lastAppearance.isAfter(result))
-					result = lastAppearance;
-			}
-			return result;
+		LocalDate result = super.get(0).getLastAppearance();
+		for (int index = 1; index < super.size(); index++) {
+			LocalDate lastAppearance = super.get(index).getLastAppearance();
+			if (lastAppearance.isAfter(result))
+				result = lastAppearance;
 		}
+		return result;
 	}
 
 	/**
