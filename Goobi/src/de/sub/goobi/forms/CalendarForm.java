@@ -637,7 +637,7 @@ public class CalendarForm {
 	 * showing title block.
 	 */
 	public void addTitleClick() {
-		Title copy = titleShowing.clone();
+		Title copy = titleShowing.clone(course);
 		LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
 		copy.setFirstAppearance(firstAppearance);
 		copy.setLastAppearance(firstAppearance);
@@ -651,7 +651,7 @@ public class CalendarForm {
 	 * the title currently showing.
 	 */
 	public void addIssueClick() {
-		titleShowing.addIssue(new Issue());
+		titleShowing.addIssue(new Issue(course));
 	}
 
 	/**
@@ -969,7 +969,7 @@ public class CalendarForm {
 				}
 			}
 		} else {
-			titleShowing = new Title();
+			titleShowing = new Title(course);
 			titleShowing.setFirstAppearance(newFirstAppearance);
 			course.add(titleShowing);
 		}
@@ -1002,7 +1002,7 @@ public class CalendarForm {
 				}
 			}
 		} else {
-			titleShowing = new Title();
+			titleShowing = new Title(course);
 			titleShowing.setLastAppearance(newLastAppearance);
 			course.add(titleShowing);
 		}
@@ -1024,7 +1024,7 @@ public class CalendarForm {
 			if (titlePickerUnchanged && heading != null && !heading.isEmpty())
 				titleShowing.setHeading(heading);
 		} else {
-			titleShowing = new Title(heading);
+			titleShowing = new Title(course, heading);
 			course.add(titleShowing);
 		}
 	}

@@ -67,7 +67,9 @@ import org.joda.time.LocalDate;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Issue implements Cloneable {
+public class Issue {
+
+	private final Course course;
 
 	/**
 	 * Dates with issue on days of week without regular appearance
@@ -77,7 +79,7 @@ public class Issue implements Cloneable {
 	 * Equals and cannot be used in a sensible way here.
 	 * </p>
 	 */
-	protected Set<LocalDate> additions;
+	private Set<LocalDate> additions;
 
 	/**
 	 * Days of week of regular appearance. JodaTime uses int in [1 = monday … 7
@@ -88,7 +90,7 @@ public class Issue implements Cloneable {
 	 * Equals and cannot be used in a sensible way here.
 	 * </p>
 	 */
-	protected Set<Integer> daysOfWeek;
+	private Set<Integer> daysOfWeek;
 
 	/**
 	 * Dates of days without issue on days of regular appearance (i.e. holidays)
@@ -98,28 +100,30 @@ public class Issue implements Cloneable {
 	 * Equals and cannot be used in a sensible way here.
 	 * </p>
 	 */
-	protected Set<LocalDate> exclusions;
+	private Set<LocalDate> exclusions;
 
 	/**
 	 * Issue name, i.e. “Evening issue”
 	 */
-	protected String heading;
+	private String heading;
 
 	/**
 	 * Empty issue constructor
 	 */
-	public Issue() {
-		heading = "";
-		additions = new HashSet<LocalDate>();
-		daysOfWeek = new HashSet<Integer>();
-		exclusions = new HashSet<LocalDate>();
+	public Issue(Course course) {
+		this.course = course;
+		this.heading = "";
+		this.additions = new HashSet<LocalDate>();
+		this.daysOfWeek = new HashSet<Integer>();
+		this.exclusions = new HashSet<LocalDate>();
 	}
 
-	public Issue(String heading) {
+	public Issue(Course course, String heading) {
+		this.course = course;
 		this.heading = heading;
-		additions = new HashSet<LocalDate>();
-		daysOfWeek = new HashSet<Integer>();
-		exclusions = new HashSet<LocalDate>();
+		this.additions = new HashSet<LocalDate>();
+		this.daysOfWeek = new HashSet<Integer>();
+		this.exclusions = new HashSet<LocalDate>();
 	}
 
 	/**
@@ -130,6 +134,7 @@ public class Issue implements Cloneable {
 	 * @return true if the set was changed
 	 */
 	public boolean addAddition(LocalDate addition) {
+		course.clearProcesses();
 		return additions.add(addition);
 	}
 
@@ -140,7 +145,8 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	boolean addDayOfWeek(int dayOfWeek) {
+	private boolean addDayOfWeek(int dayOfWeek) {
+		course.clearProcesses();
 		return daysOfWeek.add(dayOfWeek);
 	}
 
@@ -152,6 +158,7 @@ public class Issue implements Cloneable {
 	 * @return true if the set was changed
 	 */
 	public boolean addExclusion(LocalDate exclusion) {
+		course.clearProcesses();
 		return exclusions.add(exclusion);
 	}
 
@@ -222,24 +229,34 @@ public class Issue implements Cloneable {
 	 * Creates a copy of the object. All instance variables will be copied—this
 	 * is done in the getter methods—so that modifications to the copied object
 	 * will not impact to the copy master.
-	 * 
-	 * <p>
-	 * Implementors note: java.lang.Object.clone() is “protected”, it must be
-	 * made public here. In addition the clone() method is defined so that it
-	 * throws an exception if it is called on an object which doesn’t implement
-	 * the Cloneable interface.
-	 * </p>
-	 * 
-	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Issue clone() {
-		Issue copy = new Issue();
+	public Issue clone(Course course) {
+		Issue copy = new Issue(course);
 		copy.heading = heading;
 		copy.additions = new HashSet<LocalDate>(additions);
 		copy.daysOfWeek = new HashSet<Integer>(daysOfWeek);
 		copy.exclusions = new HashSet<LocalDate>(exclusions);
 		return copy;
+	}
+
+	/**
+	 * The function countIndividualIssues() determines how many stampings of
+	 * this issue physically appeared without generating a list of
+	 * IndividualIssue objects.
+	 * 
+	 * @param firstAppearance
+	 *            first day of the time range to inspect
+	 * @param lastAppearance
+	 *            last day of the time range to inspect
+	 * @return the count of issues
+	 */
+	long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
+		long result = 0;
+		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+			if (isMatch(day))
+				result += 1;
+		}
+		return result;
 	}
 
 	/**
@@ -366,11 +383,50 @@ public class Issue implements Cloneable {
 	}
 
 	/**
+	 * The method recalculateRegularityOfIssues() recalculates for each Issue
+	 * the daysOfWeek of its regular appearance within the given interval of
+	 * time. This is especially sensible to detect the underlying regularity
+	 * after lots of individual issues whose existence is known have been added
+	 * one by one as additions.
+	 */
+	void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
+		final int APPEARED = 1;
+		final int NOT_APPEARED = 0;
+		Set<LocalDate> remainingAdditions = new HashSet<LocalDate>();
+		Set<LocalDate> remainingExclusions = new HashSet<LocalDate>();
+
+		@SuppressWarnings("unchecked")
+		HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
+		for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+			subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<LocalDate>();
+			subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
+		}
+
+		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1))
+			subsets[day.getDayOfWeek() - 1][isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
+
+		for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+			if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
+				daysOfWeek.add(dayOfWeek);
+				remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
+			} else {
+				daysOfWeek.remove(dayOfWeek);
+				remainingAdditions.addAll(subsets[dayOfWeek - 1][APPEARED]);
+			}
+		}
+
+		additions = remainingAdditions;
+		exclusions = remainingExclusions;
+
+	}
+
+	/**
 	 * Removes the given LocalDate from the set of addition
 	 * 
 	 * @return true if the Set was changed
 	 */
 	public boolean removeAddition(LocalDate addition) {
+		course.clearProcesses();
 		return additions.remove(addition);
 	}
 
@@ -381,7 +437,8 @@ public class Issue implements Cloneable {
 	 *            An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
-	boolean removeDayOfWeek(int dayOfWeek) {
+	private boolean removeDayOfWeek(int dayOfWeek) {
+		course.clearProcesses();
 		return daysOfWeek.remove(dayOfWeek);
 	}
 
@@ -391,6 +448,7 @@ public class Issue implements Cloneable {
 	 * @return true if the Set was changed
 	 */
 	public boolean removeExclusion(LocalDate exclusion) {
+		course.clearProcesses();
 		return exclusions.remove(exclusion);
 	}
 
@@ -458,32 +516,14 @@ public class Issue implements Cloneable {
 	}
 
 	/**
-	 * Setter method for the set of additions
-	 * 
-	 * @param additions
-	 *            set to be used
-	 */
-	void setAdditions(Set<LocalDate> additions) {
-		this.additions = additions;
-	}
-
-	/**
-	 * Setter method for the set of exclusions
-	 * 
-	 * @param exclusions
-	 *            set to be used
-	 */
-	void setExclusions(Set<LocalDate> exclusions) {
-		this.exclusions = exclusions;
-	}
-
-	/**
 	 * Setter method for the issue’s name
 	 * 
 	 * @param heading
 	 *            heading to be used
 	 */
 	public void setHeading(String heading) {
+		if (this.heading == null && heading != null || !this.heading.equals(heading))
+			course.clearProcesses();
 		this.heading = heading;
 	}
 
@@ -544,9 +584,10 @@ public class Issue implements Cloneable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((additions == null) ? 0 : additions.hashCode());
+		result = prime * result + ((course == null) ? 0 : course.hashCode());
+		result = prime * result + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
 		result = prime * result + ((exclusions == null) ? 0 : exclusions.hashCode());
 		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
-		result = prime * result + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
 		return result;
 	}
 
@@ -576,6 +617,16 @@ public class Issue implements Cloneable {
 				return false;
 		} else if (!additions.equals(other.additions))
 			return false;
+		if (course == null) {
+			if (other.course != null)
+				return false;
+		} else if (!course.equals(other.course))
+			return false;
+		if (daysOfWeek == null) {
+			if (other.daysOfWeek != null)
+				return false;
+		} else if (!daysOfWeek.equals(other.daysOfWeek))
+			return false;
 		if (exclusions == null) {
 			if (other.exclusions != null)
 				return false;
@@ -585,11 +636,6 @@ public class Issue implements Cloneable {
 			if (other.heading != null)
 				return false;
 		} else if (!heading.equals(other.heading))
-			return false;
-		if (daysOfWeek == null) {
-			if (other.daysOfWeek != null)
-				return false;
-		} else if (!daysOfWeek.equals(other.daysOfWeek))
 			return false;
 		return true;
 	}

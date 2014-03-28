@@ -237,6 +237,22 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * Appends the specified Title to the end of this course.
+	 * 
+	 * @param title
+	 *            title to be appended to this course
+	 * @return true (as specified by Collection.add(E))
+	 * @see java.util.ArrayList#add(java.lang.Object)
+	 */
+	@Override
+	public boolean add(Title title) {
+		super.add(title);
+		if (title.countIndividualIssues() > 0)
+			processes.clear();
+		return true;
+	}
+
+	/**
 	 * Adds a LocalDate to the set of additions of the issue identified by
 	 * issueHeading in the title block identified by titleHeading
 	 * and—optionally—variant. Note that in case that the date is outside the
@@ -259,7 +275,7 @@ public class Course extends ArrayList<Title> {
 	private IndividualIssue addAddition(String titleHeading, String variant, String issueHeading, LocalDate date) {
 		Title title = get(titleHeading, variant);
 		if (title == null) {
-			title = new Title(titleHeading, variant);
+			title = new Title(this, titleHeading, variant);
 			title.setFirstAppearance(date);
 			title.setLastAppearance(date);
 			add(title);
@@ -271,11 +287,15 @@ public class Course extends ArrayList<Title> {
 		}
 		Issue issue = title.getIssue(issueHeading);
 		if (issue == null) {
-			issue = new Issue(issueHeading);
+			issue = new Issue(this, issueHeading);
 			title.addIssue(issue);
 		}
 		issue.addAddition(date);
 		return new IndividualIssue(title, issue, date);
+	}
+
+	void clearProcesses() {
+		processes.clear();
 	}
 
 	/**
@@ -346,7 +366,7 @@ public class Course extends ArrayList<Title> {
 	 * 
 	 * @return the date of first appearance
 	 */
-	private LocalDate getFirstAppearance() {
+	public LocalDate getFirstAppearance() {
 		if (super.isEmpty())
 			return null;
 		LocalDate result = super.get(0).getFirstAppearance();
@@ -445,6 +465,8 @@ public class Course extends ArrayList<Title> {
 		for (Map.Entry<String, Title> entry : resolveByTitleVariantCache.entrySet())
 			if (entry.getValue() == title) // pointer equality
 				resolveByTitleVariantCache.remove(entry.getKey());
+		if (title.countIndividualIssues() > 0)
+			processes.clear();
 		return title;
 	}
 
