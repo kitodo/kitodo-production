@@ -147,7 +147,7 @@
 												<htm:span styleClass="fillWrapper">
 													<h:inputText value="#{GranularityForm.numberOfPages}"
 														id="numberOfPages" onkeydown="showApplyLink();"
-														styleClass="filling">
+														onchange="showApplyLink();" styleClass="filling">
 														<f:convertNumber />
 													</h:inputText>
 												</htm:span>

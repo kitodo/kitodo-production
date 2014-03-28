@@ -289,8 +289,8 @@
 														styleClass="leftText" for="titleHeading" />
 													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{CalendarForm.titleHeading}"
-															onkeydown="startEditTitle()" id="titleHeading"
-															styleClass="filling" />
+															onkeydown="startEditTitle()" onchange="startEditTitle()"
+															id="titleHeading" styleClass="filling" />
 													</htm:span>
 												</htm:div>
 
@@ -298,14 +298,16 @@
 													<h:outputText
 														value="#{msgs['calendar.title.firstAppearance']}" />
 													<h:inputText value="#{CalendarForm.firstAppearance}"
-														onkeydown="startEditTitle()" id="firstAppearance" />
+														onkeydown="startEditTitle()" onchange="startEditTitle()"
+														id="firstAppearance" />
 												</htm:div>
 
 												<htm:div styleClass="keepTogether">
 													<h:outputText
 														value="#{msgs['calendar.title.lastAppearance']}" />
 													<h:inputText value="#{CalendarForm.lastAppearance}"
-														onkeydown="startEditTitle()" id="lastAppearance" />
+														onkeydown="startEditTitle()" onchange="startEditTitle()"
+														id="lastAppearance" />
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
@@ -342,7 +344,8 @@
 													<%-- Issue name box --%>
 													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{issue.heading}" id="issueHeading"
-															onkeydown="showApplyLink(this);" styleClass="filling" />
+															onkeydown="showApplyLink(this);"
+															onchange="showApplyLink(this);" styleClass="filling" />
 													</htm:span>
 
 													<%-- Days of week --%>
@@ -408,7 +411,8 @@
 
 									<%-- File upload dialogue --%>
 
-									<htm:div styleClass="calendarUploadBackground" rendered="#{CalendarForm.uploadShowing}"/>
+									<htm:div styleClass="calendarUploadBackground"
+										rendered="#{CalendarForm.uploadShowing}" />
 									<htm:div styleClass="calendarUploadBox"
 										rendered="#{CalendarForm.uploadShowing}">
 										<htm:h3>
