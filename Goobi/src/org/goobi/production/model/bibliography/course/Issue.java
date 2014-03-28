@@ -584,7 +584,6 @@ public class Issue {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((additions == null) ? 0 : additions.hashCode());
-		result = prime * result + ((course == null) ? 0 : course.hashCode());
 		result = prime * result + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
 		result = prime * result + ((exclusions == null) ? 0 : exclusions.hashCode());
 		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
@@ -616,11 +615,6 @@ public class Issue {
 			if (other.additions != null)
 				return false;
 		} else if (!additions.equals(other.additions))
-			return false;
-		if (course == null) {
-			if (other.course != null)
-				return false;
-		} else if (!course.equals(other.course))
 			return false;
 		if (daysOfWeek == null) {
 			if (other.daysOfWeek != null)

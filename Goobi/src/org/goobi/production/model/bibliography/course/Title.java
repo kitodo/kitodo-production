@@ -184,6 +184,8 @@ public class Title {
 	 * @return the count of issues
 	 */
 	public long countIndividualIssues() {
+		if (firstAppearance == null || lastAppearance == null)
+			return 0;
 		long result = 0;
 		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 			for (Issue issue : getIssues()) {
@@ -346,8 +348,13 @@ public class Title {
 	 *            date of first appearance
 	 */
 	public void setFirstAppearance(LocalDate firstAppearance) {
-		if (this.firstAppearance == null && firstAppearance != null || !this.firstAppearance.equals(firstAppearance))
-			course.clearProcesses();
+		try {
+			if (!this.firstAppearance.equals(firstAppearance))
+				course.clearProcesses();
+		} catch (NullPointerException e) {
+			if (this.firstAppearance == null ^ firstAppearance == null)
+				course.clearProcesses();
+		}
 		this.firstAppearance = firstAppearance;
 	}
 
@@ -359,8 +366,13 @@ public class Title {
 	 *            date of last appearance
 	 */
 	public void setLastAppearance(LocalDate lastAppearance) {
-		if (this.lastAppearance == null && lastAppearance != null || !this.lastAppearance.equals(lastAppearance))
-			course.clearProcesses();
+		try {
+			if (!this.lastAppearance.equals(lastAppearance))
+				course.clearProcesses();
+		} catch (NullPointerException e) {
+			if (this.lastAppearance == null ^ lastAppearance == null)
+				course.clearProcesses();
+		}
 		this.lastAppearance = lastAppearance;
 	}
 
@@ -431,7 +443,6 @@ public class Title {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((course == null) ? 0 : course.hashCode());
 		result = prime * result + ((firstAppearance == null) ? 0 : firstAppearance.hashCode());
 		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		result = prime * result + ((issues == null) ? 0 : issues.hashCode());
@@ -461,11 +472,6 @@ public class Title {
 		if (!(obj instanceof Title))
 			return false;
 		Title other = (Title) obj;
-		if (course == null) {
-			if (other.course != null)
-				return false;
-		} else if (!course.equals(other.course))
-			return false;
 		if (firstAppearance == null) {
 			if (other.firstAppearance != null)
 				return false;
