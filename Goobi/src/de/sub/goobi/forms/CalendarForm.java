@@ -1091,12 +1091,15 @@ public class CalendarForm {
 		} catch (SAXException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");
 			logger.error(e.getMessage(), e);
+			neglectEmptyTitle();
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
 			logger.error(e.getMessage(), e);
+			neglectEmptyTitle();
 		} catch (NoSuchFieldException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
 			logger.error(e.getMessage(), e);
+			neglectEmptyTitle();
 		} finally {
 			uploadedFile = null;
 			uploadShowing = false;
