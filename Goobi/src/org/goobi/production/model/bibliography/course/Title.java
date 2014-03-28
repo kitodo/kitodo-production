@@ -58,14 +58,49 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Title implements Cloneable {
+	/**
+	 * The field heading holds the Title of the nusepaper during the period of
+	 * time represented by this title block
+	 */
 	protected String heading;
+
+	/**
+	 * The field variant may hold a variant identifer that can be used to
+	 * distinguish different title blocks with equal heading during the buildup
+	 * of a course of appearance from individual issues.
+	 * 
+	 * Given a newspaper appeared three times a week for a period of time, and
+	 * then changed to being published six times a week without changing its
+	 * heading, and this change shall be represented by different title blocks,
+	 * the variant identifier can be used to distinguish the blocks. Otherwise,
+	 * both time ranges would be represented in one combined block, what would
+	 * be factual correct but would result in a multitude of exceptions, which
+	 * could be undesired.
+	 */
 	protected String variant;
+
+	/**
+	 * The field firstAppearance holds the date representing the first day of
+	 * the period of time represented by this title block. The date is treated
+	 * as inclusive.
+	 */
 	protected LocalDate firstAppearance;
+
+	/**
+	 * The field lastAppearance holds the date representing the last day of the
+	 * period of time represented by this title block. The date is treated as
+	 * inclusive.
+	 */
 	protected LocalDate lastAppearance;
+
+	/**
+	 * The field issues holds the issues that have appeared during the period of
+	 * time represented by this title block.
+	 */
 	protected List<Issue> issues;
 
 	/**
-	 * Constructor for a Title object without any data.
+	 * Default constructor. Creates a Title object without any data.
 	 */
 	public Title() {
 		this.heading = "";
@@ -89,6 +124,14 @@ public class Title implements Cloneable {
 		this.issues = new ArrayList<Issue>();
 	}
 
+	/**
+	 * Constructor for a title with a given heading and variant identifier.
+	 * 
+	 * @param heading
+	 *            the name of the title
+	 * @param variant
+	 *            a variant identifier (may be null)
+	 */
 	public Title(String heading, String variant) {
 		this.heading = heading;
 		this.variant = variant;
@@ -98,7 +141,8 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * Adds an Issue to this title if it is not already present.
+	 * The function addIssue() adds an Issue to this title if it is not already
+	 * present.
 	 * 
 	 * @param issue
 	 *            Issue to add
@@ -109,25 +153,25 @@ public class Title implements Cloneable {
 	}
 
 	/**
-	 * Creates and returns a copy of this Title.
+	 * The function clone() creates and returns a copy of this Title.
 	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public Title clone() {
-		Title result = new Title();
-		result.heading = heading;
-		result.firstAppearance = firstAppearance;
-		result.lastAppearance = lastAppearance;
-		ArrayList<Issue> result_issues = new ArrayList<Issue>(issues.size());
+		Title copy = new Title();
+		copy.heading = heading;
+		copy.firstAppearance = firstAppearance;
+		copy.lastAppearance = lastAppearance;
+		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
 		for (Issue issue : issues)
-			result_issues.add(issue.clone());
-		result.issues = result_issues;
-		return result;
+			copiedIssues.add(issue.clone());
+		copy.issues = copiedIssues;
+		return copy;
 	}
 
 	/**
-	 * The method countIndividualIssues() determines how many stampings of
+	 * The function countIndividualIssues() determines how many stampings of
 	 * issues physically appeared without generating a list of IndividualIssue
 	 * objects.
 	 * 
@@ -405,6 +449,7 @@ public class Title implements Cloneable {
 		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		result = prime * result + ((issues == null) ? 0 : issues.hashCode());
 		result = prime * result + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
+		result = prime * result + ((variant == null) ? 0 : variant.hashCode());
 		return result;
 	}
 
@@ -448,6 +493,11 @@ public class Title implements Cloneable {
 			if (other.lastAppearance != null)
 				return false;
 		} else if (!lastAppearance.equals(other.lastAppearance))
+			return false;
+		if (variant == null) {
+			if (other.variant != null)
+				return false;
+		} else if (!variant.equals(other.variant))
 			return false;
 		return true;
 	}

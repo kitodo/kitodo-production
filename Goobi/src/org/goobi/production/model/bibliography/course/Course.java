@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
@@ -198,10 +199,10 @@ public class Course extends ArrayList<Title> {
 	 * 
 	 * @param xml
 	 *            XML document data structure
-	 * @throws NoSuchFieldException
+	 * @throws NoSuchElementException
 	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
 	 */
-	public Course(Document xml) throws NoSuchFieldException {
+	public Course(Document xml) throws NoSuchElementException {
 		super();
 		Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
 		Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);

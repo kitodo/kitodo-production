@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -1096,7 +1097,7 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
 			logger.error(e.getMessage(), e);
 			neglectEmptyTitle();
-		} catch (NoSuchFieldException e) {
+		} catch (NoSuchElementException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
 			logger.error(e.getMessage(), e);
 			neglectEmptyTitle();
