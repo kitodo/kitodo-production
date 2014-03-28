@@ -146,8 +146,10 @@ public class Issue {
 	 * @return true if the Set was changed
 	 */
 	private boolean addDayOfWeek(int dayOfWeek) {
-		course.clearProcesses();
-		return daysOfWeek.add(dayOfWeek);
+		boolean result = daysOfWeek.add(dayOfWeek);
+		if (result)
+			course.clearProcesses();
+		return result;
 	}
 
 	/**
@@ -438,8 +440,10 @@ public class Issue {
 	 * @return true if the Set was changed
 	 */
 	private boolean removeDayOfWeek(int dayOfWeek) {
-		course.clearProcesses();
-		return daysOfWeek.remove(dayOfWeek);
+		boolean result = daysOfWeek.remove(dayOfWeek);
+		if (result)
+			course.clearProcesses();
+		return result;
 	}
 
 	/**

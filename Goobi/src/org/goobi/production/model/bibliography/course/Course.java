@@ -186,6 +186,8 @@ public class Course extends ArrayList<Title> {
 	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
 	private final Map<String, Title> resolveByTitleVariantCache = new HashMap<String, Title>();
 
+	private boolean processesAreVolatile = true;
+
 	/**
 	 * Default constructor, creates an empty course. Must be made explicit since
 	 * we offer other constructors, too.
@@ -204,6 +206,7 @@ public class Course extends ArrayList<Title> {
 	 */
 	public Course(Document xml) throws NoSuchElementException {
 		super();
+		processesAreVolatile = false;
 		Element rootNode = XMLUtils.getFirstChildWithTagName(xml, ELEMENT_COURSE);
 		Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);
 		int initialCapacity = 10;
@@ -234,6 +237,7 @@ public class Course extends ArrayList<Title> {
 			initialCapacity = (int) Math.round(1.1 * process.size());
 		}
 		recalculateRegularityOfIssues();
+		processesAreVolatile = true;
 	}
 
 	/**
@@ -295,7 +299,8 @@ public class Course extends ArrayList<Title> {
 	}
 
 	void clearProcesses() {
-		processes.clear();
+		if (processesAreVolatile)
+			processes.clear();
 	}
 
 	/**
