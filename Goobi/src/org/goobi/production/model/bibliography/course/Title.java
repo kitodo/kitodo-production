@@ -40,6 +40,7 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -171,13 +172,15 @@ public class Title implements Cloneable {
 	 *         physically appeared issue
 	 */
 	public List<IndividualIssue> getIndividualIssues(LocalDate date) {
+		if (!isMatch(date))
+			return Collections.emptyList();
 		ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
 		for (Issue issue : getIssues()) {
 			if (issue.isMatch(date)) {
 				result.add(new IndividualIssue(this, issue, date));
 			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
