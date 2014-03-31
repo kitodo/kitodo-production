@@ -145,10 +145,8 @@ public class GranularityForm {
 	 * @return the granularity level chosen by the user
 	 */
 	public String getGranularity() {
-		if (course.getNumberOfProcesses() == 0)
-			return "null";
 		if (granularity == null)
-			return "foreign";
+			return course.getNumberOfProcesses() == 0 ? "null" : "foreign";
 		return granularity.toString().toLowerCase();
 	}
 
@@ -191,12 +189,15 @@ public class GranularityForm {
 
 	/**
 	 * The function getNumberOfProcesses() returns the number of processes that
-	 * will be created if the currently set BreakMode is used as read-only
-	 * property “numberOfProcesses”.
+	 * will be created. If the course had to condemn its processes because the
+	 * user changed the course, the recalculation of the processes will be
+	 * re-initiated here.
 	 * 
 	 * @return the number of processes that will be created
 	 */
 	public int getNumberOfProcesses() {
+		if (course.getNumberOfProcesses() == 0 && granularity != null)
+			course.splitInto(granularity);
 		return course.getNumberOfProcesses();
 	}
 

@@ -41,11 +41,8 @@ package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -57,12 +54,14 @@ import org.joda.time.format.DateTimeFormatter;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Title implements Cloneable {
+public class Title {
+	private final Course course;
+
 	/**
 	 * The field heading holds the Title of the nusepaper during the period of
 	 * time represented by this title block
 	 */
-	protected String heading;
+	private String heading;
 
 	/**
 	 * The field variant may hold a variant identifer that can be used to
@@ -77,32 +76,35 @@ public class Title implements Cloneable {
 	 * be factual correct but would result in a multitude of exceptions, which
 	 * could be undesired.
 	 */
-	protected String variant;
+	private final String variant;
 
 	/**
 	 * The field firstAppearance holds the date representing the first day of
 	 * the period of time represented by this title block. The date is treated
 	 * as inclusive.
 	 */
-	protected LocalDate firstAppearance;
+	private LocalDate firstAppearance;
 
 	/**
 	 * The field lastAppearance holds the date representing the last day of the
 	 * period of time represented by this title block. The date is treated as
 	 * inclusive.
 	 */
-	protected LocalDate lastAppearance;
+	private LocalDate lastAppearance;
 
 	/**
 	 * The field issues holds the issues that have appeared during the period of
 	 * time represented by this title block.
 	 */
-	protected List<Issue> issues;
+	private List<Issue> issues;
 
 	/**
 	 * Default constructor. Creates a Title object without any data.
+	 * 
+	 * @param course
 	 */
-	public Title() {
+	public Title(Course course) {
+		this.course = course;
 		this.heading = "";
 		this.variant = null;
 		this.firstAppearance = null;
@@ -116,7 +118,8 @@ public class Title implements Cloneable {
 	 * @param heading
 	 *            the name of the title
 	 */
-	public Title(String heading) {
+	public Title(Course course, String heading) {
+		this.course = course;
 		this.heading = heading;
 		this.variant = null;
 		this.firstAppearance = null;
@@ -132,7 +135,8 @@ public class Title implements Cloneable {
 	 * @param variant
 	 *            a variant identifier (may be null)
 	 */
-	public Title(String heading, String variant) {
+	public Title(Course course, String heading, String variant) {
+		this.course = course;
 		this.heading = heading;
 		this.variant = variant;
 		this.firstAppearance = null;
@@ -149,23 +153,25 @@ public class Title implements Cloneable {
 	 * @return true if the set was changed
 	 */
 	public boolean addIssue(Issue issue) {
+		if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0)
+			course.clearProcesses();
 		return issues.add(issue);
 	}
 
 	/**
 	 * The function clone() creates and returns a copy of this Title.
 	 * 
-	 * @see java.lang.Object#clone()
+	 * @param course
+	 *            Course this title belongs to
 	 */
-	@Override
-	public Title clone() {
-		Title copy = new Title();
+	public Title clone(Course course) {
+		Title copy = new Title(course);
 		copy.heading = heading;
 		copy.firstAppearance = firstAppearance;
 		copy.lastAppearance = lastAppearance;
 		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
 		for (Issue issue : issues)
-			copiedIssues.add(issue.clone());
+			copiedIssues.add(issue.clone(course));
 		copy.issues = copiedIssues;
 		return copy;
 	}
@@ -178,6 +184,8 @@ public class Title implements Cloneable {
 	 * @return the count of issues
 	 */
 	public long countIndividualIssues() {
+		if (firstAppearance == null || lastAppearance == null)
+			return 0;
 		long result = 0;
 		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 			for (Issue issue : getIssues()) {
@@ -302,36 +310,8 @@ public class Title implements Cloneable {
 	 * one by one as additions to the underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
-		final int APPEARED = 1;
-		final int NOT_APPEARED = 0;
-
-		for (Issue issue : issues) {
-			Set<LocalDate> remainingAdditions = new HashSet<LocalDate>();
-			Set<LocalDate> remainingExclusions = new HashSet<LocalDate>();
-
-			@SuppressWarnings("unchecked")
-			HashSet<LocalDate>[][] subsets = new HashSet[DateTimeConstants.SUNDAY][APPEARED + 1];
-			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-				subsets[dayOfWeek - 1][NOT_APPEARED] = new HashSet<LocalDate>();
-				subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
-			}
-
-			for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1))
-				subsets[day.getDayOfWeek() - 1][issue.isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
-
-			for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-				if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
-					issue.addDayOfWeek(dayOfWeek);
-					remainingExclusions.addAll(subsets[dayOfWeek - 1][NOT_APPEARED]);
-				} else {
-					issue.removeDayOfWeek(dayOfWeek);
-					remainingAdditions.addAll(subsets[dayOfWeek - 1][APPEARED]);
-				}
-			}
-
-			issue.setAdditions(remainingAdditions);
-			issue.setExclusions(remainingExclusions);
-		}
+		for (Issue issue : issues)
+			issue.recalculateRegularity(firstAppearance, lastAppearance);
 	}
 
 	/**
@@ -343,6 +323,8 @@ public class Title implements Cloneable {
 	 * @return true if the set was changed
 	 */
 	public boolean removeIssue(Issue issue) {
+		if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0)
+			course.clearProcesses();
 		return issues.remove(issue);
 	}
 
@@ -353,6 +335,8 @@ public class Title implements Cloneable {
 	 *            Title for the Title
 	 */
 	public void setHeading(String heading) {
+		if (this.heading == null && heading != null || !this.heading.equals(heading))
+			course.clearProcesses();
 		this.heading = heading;
 	}
 
@@ -364,6 +348,13 @@ public class Title implements Cloneable {
 	 *            date of first appearance
 	 */
 	public void setFirstAppearance(LocalDate firstAppearance) {
+		try {
+			if (!this.firstAppearance.equals(firstAppearance))
+				course.clearProcesses();
+		} catch (NullPointerException e) {
+			if (this.firstAppearance == null ^ firstAppearance == null)
+				course.clearProcesses();
+		}
 		this.firstAppearance = firstAppearance;
 	}
 
@@ -375,6 +366,13 @@ public class Title implements Cloneable {
 	 *            date of last appearance
 	 */
 	public void setLastAppearance(LocalDate lastAppearance) {
+		try {
+			if (!this.lastAppearance.equals(lastAppearance))
+				course.clearProcesses();
+		} catch (NullPointerException e) {
+			if (this.lastAppearance == null ^ lastAppearance == null)
+				course.clearProcesses();
+		}
 		this.lastAppearance = lastAppearance;
 	}
 
