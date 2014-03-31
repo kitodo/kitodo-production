@@ -147,7 +147,7 @@
 												<htm:span styleClass="fillWrapper">
 													<h:inputText value="#{GranularityForm.numberOfPages}"
 														id="numberOfPages" onkeydown="showApplyLink();"
-														styleClass="filling">
+														onchange="showApplyLink();" styleClass="filling">
 														<f:convertNumber />
 													</h:inputText>
 												</htm:span>
@@ -204,7 +204,7 @@
 											<f:convertNumber maxFractionDigits="1" />
 										</h:outputText>
 										<htm:div styleClass="granularityInfoTextbox"
-											rendered="#{GranularityForm.granularity!='null'}"
+											rendered="#{GranularityForm.numberOfProcesses>0}"
 											title="#{msgs['granularity.info.textbox.mouseOver']}">
 											<h:outputText
 												value="#{msgs['granularity.info.textbox.glyph']}"

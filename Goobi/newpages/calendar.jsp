@@ -54,6 +54,13 @@
 		<script type="text/javascript">
 			
 		<%--
+		 * The variable uploadWindow indicates whether the form validation must be skipped.
+		 * This is the case if the upload button is clicked because the user should
+		 * be allowed to upload a file without being forced to manually enter the
+		 * data he wants to upload beforehand. 
+		 --%>
+			var uploadWindow = false;
+		<%--
 		 * The function addClickQuery() checks whether adding a title block can be
 		 * performed without unexpected side effects. In the rare case that there
 		 * could be confusion the user will be prompted with an explainatory message
@@ -207,7 +214,8 @@
 
 					<%-- ===================== Page main frame ===================== --%>
 
-					<h:form id="form1" onsubmit="return titleDataIsValid()">
+					<h:form id="form1" enctype="multipart/form-data"
+						onsubmit="return uploadWindow || titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -255,16 +263,22 @@
 											</h:selectOneListbox>
 
 											<%-- Buttons to add and remove titles --%>
-											<h:commandLink value="#{msgs['calendar.title.add']}"
-												rendered="#{CalendarForm.blank}" styleClass="actionLink" />
-											<h:commandLink value="#{msgs['calendar.title.add']}"
-												action="#{CalendarForm.addTitleClick}"
-												onclick="if(!addClickQuery()){return false;}"
-												rendered="#{not CalendarForm.blank}" styleClass="actionLink" />
-											<h:commandLink value="#{msgs['calendar.title.remove']}"
-												action="#{CalendarForm.removeTitleClick}"
-												onclick="if(!removeClickQuery()){return false;}"
-												styleClass="actionLink" />
+											<htm:div styleClass="formRow">
+												<h:commandLink value="#{msgs['calendar.title.add']}"
+													rendered="#{CalendarForm.blank}" styleClass="actionLink" />
+												<h:commandLink value="#{msgs['calendar.title.add']}"
+													action="#{CalendarForm.addTitleClick}"
+													onclick="if(!addClickQuery()){return false;}"
+													rendered="#{not CalendarForm.blank}"
+													styleClass="actionLink" />
+												<h:commandLink value="#{msgs['calendar.title.remove']}"
+													action="#{CalendarForm.removeTitleClick}"
+													onclick="if(!removeClickQuery()){return false;}"
+													styleClass="actionLink" />
+											</htm:div>
+											<h:commandLink value="#{msgs['calendar.upload']}"
+												action="#{CalendarForm.showUploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
 										</htm:div>
 
 										<htm:div styleClass="fillWrapper calendarTitleContent">
@@ -275,8 +289,8 @@
 														styleClass="leftText" for="titleHeading" />
 													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{CalendarForm.titleHeading}"
-															onkeydown="startEditTitle()" id="titleHeading"
-															styleClass="filling" />
+															onkeydown="startEditTitle()" onchange="startEditTitle()"
+															id="titleHeading" styleClass="filling" />
 													</htm:span>
 												</htm:div>
 
@@ -284,14 +298,16 @@
 													<h:outputText
 														value="#{msgs['calendar.title.firstAppearance']}" />
 													<h:inputText value="#{CalendarForm.firstAppearance}"
-														onkeydown="startEditTitle()" id="firstAppearance" />
+														onkeydown="startEditTitle()" onchange="startEditTitle()"
+														id="firstAppearance" />
 												</htm:div>
 
 												<htm:div styleClass="keepTogether">
 													<h:outputText
 														value="#{msgs['calendar.title.lastAppearance']}" />
 													<h:inputText value="#{CalendarForm.lastAppearance}"
-														onkeydown="startEditTitle()" id="lastAppearance" />
+														onkeydown="startEditTitle()" onchange="startEditTitle()"
+														id="lastAppearance" />
 												</htm:div>
 
 												<h:commandLink value="#{msgs['calendar.applyChanges']}"
@@ -328,7 +344,8 @@
 													<%-- Issue name box --%>
 													<htm:span styleClass="fillWrapper">
 														<h:inputText value="#{issue.heading}" id="issueHeading"
-															onkeydown="showApplyLink(this);" styleClass="filling" />
+															onkeydown="showApplyLink(this);"
+															onchange="showApplyLink(this);" styleClass="filling" />
 													</htm:span>
 
 													<%-- Days of week --%>
@@ -389,6 +406,28 @@
 											<h:commandLink value="#{msgs['calendar.issue.add']}"
 												action="#{CalendarForm.addIssueClick}" />
 
+										</htm:div>
+									</htm:div>
+
+									<%-- File upload dialogue --%>
+
+									<htm:div styleClass="calendarUploadBackground"
+										rendered="#{CalendarForm.uploadShowing}" />
+									<htm:div styleClass="calendarUploadBox"
+										rendered="#{CalendarForm.uploadShowing}">
+										<htm:h3>
+											<h:outputText value="#{msgs['calendar.upload']}" />
+										</htm:h3>
+										<htm:div styleClass="formRow">
+											<t:inputFileUpload value="#{CalendarForm.uploadedFile}" />
+										</htm:div>
+										<htm:div styleClass="formRow">
+											<h:commandLink value="#{msgs['calendar.upload.submit']}"
+												action="#{CalendarForm.uploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
+											<h:commandLink value="#{msgs.abbrechen}"
+												action="#{CalendarForm.hideUploadClick}"
+												onclick="uploadWindow=true" styleClass="actionLink" />
 										</htm:div>
 									</htm:div>
 

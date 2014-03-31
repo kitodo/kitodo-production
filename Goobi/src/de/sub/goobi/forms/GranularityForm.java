@@ -41,16 +41,16 @@ package de.sub.goobi.forms;
 // import javax.faces.bean.ManagedProperty;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
-import org.goobi.production.model.bibliography.course.Title;
 import org.w3c.dom.Document;
 
 import de.sub.goobi.helper.FacesUtils;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 
 /**
@@ -61,6 +61,7 @@ import de.sub.goobi.helper.XMLUtils;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class GranularityForm {
+	private static final Logger logger = Logger.getLogger(GranularityForm.class);
 
 	/**
 	 * The field granularity holds the granularity chosen by the user. It is
@@ -117,25 +118,37 @@ public class GranularityForm {
 	 *             if an unrecoverable error occurs during the course of the
 	 *             transformation
 	 */
-	public void downloadClick() throws IOException, TransformerException {
-		for (Title title : course)
-			title.recalculateRegularityOfIssues();
-		Document courseXML = course.toXML(Locale.GERMAN);
-		byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
-		FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
+	public void downloadClick() {
+		try {
+			course.recalculateRegularityOfIssues();
+			Document courseXML = course.toXML();
+			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
+			FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
+		} catch (TransformerException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	/**
 	 * The function getGranularity() returns the granularity level chosen by the
-	 * user in lower case as read-only property “granularity”. If it is
-	 * null—indicating that the user didn’t choose anything yet—it literally
-	 * returns “null” as String.
+	 * user in lower case as read-only property “granularity”. If there are no
+	 * processes—indicating that the user didn’t choose anything yet or didn’t
+	 * choose anything again after clicking back in the bread crumbs and
+	 * altering the course of appearance in a way that the processes need to be
+	 * recalculated—it literally returns “null” as String. If there are
+	 * processes loaded from a foreign source, it returns “foreign”.
 	 * 
 	 * @return the granularity level chosen by the user
 	 */
 	public String getGranularity() {
-		if (granularity == null)
+		if (course.getNumberOfProcesses() == 0)
 			return "null";
+		if (granularity == null)
+			return "foreign";
 		return granularity.toString().toLowerCase();
 	}
 

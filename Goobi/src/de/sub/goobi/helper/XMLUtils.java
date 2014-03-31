@@ -40,6 +40,9 @@
 package de.sub.goobi.helper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.NoSuchElementException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,6 +54,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
@@ -84,6 +90,53 @@ public class XMLUtils {
 		}
 		transformer.transform(new DOMSource(data), new StreamResult(result));
 		return result.toByteArray();
+	}
+
+	/**
+	 * The function getFirstChildWithTagName() returns the first child node from
+	 * a node, identified by its node name
+	 * 
+	 * @param data
+	 *            Document or Element whose children shall be examined
+	 * @param tagName
+	 *            name of the node to find
+	 * @return first child node with that node name
+	 * @throws NoSuchElementException
+	 *             if no child node with that name can be found
+	 */
+	public static Element getFirstChildWithTagName(Node data, String tagName) throws NoSuchElementException {
+		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
+			if (!(element instanceof Element))
+				continue;
+			if (element.getNodeName().equals(tagName))
+				return (Element) element;
+		}
+		throw new NoSuchElementException(tagName);
+	}
+
+	/**
+	 * The function load() is a convenience method load a DOM Document object
+	 * from an input stream.
+	 * 
+	 * @param data
+	 *            InputStream to read from
+	 * @return the DOM Document encoded in the input stream’s data
+	 * @throws SAXException
+	 *             if any parse errors occur
+	 * @throws IOException
+	 *             if any IO errors occur
+	 * @throws RuntimeException
+	 *             if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested—which never happens because we use
+	 *             the default configuration here and that is definitely
+	 *             supported
+	 */
+	public static Document load(InputStream data) throws SAXException, IOException {
+		try {
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(data);
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	/**

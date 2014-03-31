@@ -115,6 +115,13 @@ public class Issue implements Cloneable {
 		exclusions = new HashSet<LocalDate>();
 	}
 
+	public Issue(String heading) {
+		this.heading = heading;
+		additions = new HashSet<LocalDate>();
+		daysOfWeek = new HashSet<Integer>();
+		exclusions = new HashSet<LocalDate>();
+	}
+
 	/**
 	 * Adds a LocalDate to the set of exclusions.
 	 * 

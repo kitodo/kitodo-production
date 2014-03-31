@@ -40,6 +40,7 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,16 +58,53 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Title implements Cloneable {
+	/**
+	 * The field heading holds the Title of the nusepaper during the period of
+	 * time represented by this title block
+	 */
 	protected String heading;
+
+	/**
+	 * The field variant may hold a variant identifer that can be used to
+	 * distinguish different title blocks with equal heading during the buildup
+	 * of a course of appearance from individual issues.
+	 * 
+	 * Given a newspaper appeared three times a week for a period of time, and
+	 * then changed to being published six times a week without changing its
+	 * heading, and this change shall be represented by different title blocks,
+	 * the variant identifier can be used to distinguish the blocks. Otherwise,
+	 * both time ranges would be represented in one combined block, what would
+	 * be factual correct but would result in a multitude of exceptions, which
+	 * could be undesired.
+	 */
+	protected String variant;
+
+	/**
+	 * The field firstAppearance holds the date representing the first day of
+	 * the period of time represented by this title block. The date is treated
+	 * as inclusive.
+	 */
 	protected LocalDate firstAppearance;
+
+	/**
+	 * The field lastAppearance holds the date representing the last day of the
+	 * period of time represented by this title block. The date is treated as
+	 * inclusive.
+	 */
 	protected LocalDate lastAppearance;
+
+	/**
+	 * The field issues holds the issues that have appeared during the period of
+	 * time represented by this title block.
+	 */
 	protected List<Issue> issues;
 
 	/**
-	 * Constructor for a Title object without any data.
+	 * Default constructor. Creates a Title object without any data.
 	 */
 	public Title() {
 		this.heading = "";
+		this.variant = null;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
 		this.issues = new ArrayList<Issue>();
@@ -80,37 +118,73 @@ public class Title implements Cloneable {
 	 */
 	public Title(String heading) {
 		this.heading = heading;
+		this.variant = null;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
 		this.issues = new ArrayList<Issue>();
 	}
 
 	/**
-	 * Adds an Issue to this title if it is not already present.
+	 * Constructor for a title with a given heading and variant identifier.
+	 * 
+	 * @param heading
+	 *            the name of the title
+	 * @param variant
+	 *            a variant identifier (may be null)
+	 */
+	public Title(String heading, String variant) {
+		this.heading = heading;
+		this.variant = variant;
+		this.firstAppearance = null;
+		this.lastAppearance = null;
+		this.issues = new ArrayList<Issue>();
+	}
+
+	/**
+	 * The function addIssue() adds an Issue to this title if it is not already
+	 * present.
 	 * 
 	 * @param issue
 	 *            Issue to add
 	 * @return true if the set was changed
 	 */
 	public boolean addIssue(Issue issue) {
-		return issues.add(issue.clone());
+		return issues.add(issue);
 	}
 
 	/**
-	 * Creates and returns a copy of this Title.
+	 * The function clone() creates and returns a copy of this Title.
 	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public Title clone() {
-		Title result = new Title();
-		result.heading = heading;
-		result.firstAppearance = firstAppearance;
-		result.lastAppearance = lastAppearance;
-		ArrayList<Issue> result_issues = new ArrayList<Issue>(issues.size());
+		Title copy = new Title();
+		copy.heading = heading;
+		copy.firstAppearance = firstAppearance;
+		copy.lastAppearance = lastAppearance;
+		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
 		for (Issue issue : issues)
-			result_issues.add(issue.clone());
-		result.issues = result_issues;
+			copiedIssues.add(issue.clone());
+		copy.issues = copiedIssues;
+		return copy;
+	}
+
+	/**
+	 * The function countIndividualIssues() determines how many stampings of
+	 * issues physically appeared without generating a list of IndividualIssue
+	 * objects.
+	 * 
+	 * @return the count of issues
+	 */
+	public long countIndividualIssues() {
+		long result = 0;
+		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+			for (Issue issue : getIssues()) {
+				if (issue.isMatch(day))
+					result += 1;
+			}
+		}
 		return result;
 	}
 
@@ -134,6 +208,41 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The function getIndividualIssues() generates a list of IndividualIssue
+	 * objects for a given day, each of them representing a stamping of one
+	 * physically appeared issue.
+	 * 
+	 * @return a List of IndividualIssue objects, each of them representing one
+	 *         physically appeared issue
+	 */
+	public List<IndividualIssue> getIndividualIssues(LocalDate date) {
+		if (!isMatch(date))
+			return Collections.emptyList();
+		ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
+		for (Issue issue : getIssues()) {
+			if (issue.isMatch(date)) {
+				result.add(new IndividualIssue(this, issue, date));
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * The function getIssue() returns an issue from the Title by the issue’s
+	 * heading, or null if the title doesn’t contain an issue with that heading.
+	 * 
+	 * @param heading
+	 *            Heading of the issue to look for
+	 * @return Issue with that heading
+	 */
+	public Issue getIssue(String heading) {
+		for (Issue issue : issues)
+			if (heading.equals(issue.getHeading()))
+				return issue;
+		return null;
+	}
+
+	/**
 	 * The function getFirstAppearance() returns the date the regularity of this
 	 * title begins with.
 	 * 
@@ -154,15 +263,35 @@ public class Title implements Cloneable {
 	}
 
 	/**
+	 * The function isEmpty() returns whether the title is in an empty state or
+	 * not.
+	 * 
+	 * @return whether the title is dataless
+	 */
+	public boolean isEmpty() {
+		return (heading == null || heading.equals("")) && firstAppearance == null && lastAppearance == null
+				&& (issues == null || issues.isEmpty());
+	}
+
+	public boolean isIdentifiedBy(String title, String variant) {
+		return heading.equals(title) && (variant == null && this.variant == null || this.variant.equals(variant));
+	}
+
+	/**
 	 * The function isMatch() returns whether a given LocalDate comes within the
-	 * limits of this title.
+	 * limits of this title. Defaults to false if either the argument or one of
+	 * the fields to compare against is null.
 	 * 
 	 * @param date
 	 *            a LocalDate to examine
 	 * @return whether the date is within the limits of this title block
 	 */
 	public boolean isMatch(LocalDate date) {
-		return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+		try {
+			return !date.isBefore(firstAppearance) && !date.isAfter(lastAppearance);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -320,6 +449,7 @@ public class Title implements Cloneable {
 		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		result = prime * result + ((issues == null) ? 0 : issues.hashCode());
 		result = prime * result + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
+		result = prime * result + ((variant == null) ? 0 : variant.hashCode());
 		return result;
 	}
 
@@ -363,6 +493,11 @@ public class Title implements Cloneable {
 			if (other.lastAppearance != null)
 				return false;
 		} else if (!lastAppearance.equals(other.lastAppearance))
+			return false;
+		if (variant == null) {
+			if (other.variant != null)
+				return false;
+		} else if (!variant.equals(other.variant))
 			return false;
 		return true;
 	}
