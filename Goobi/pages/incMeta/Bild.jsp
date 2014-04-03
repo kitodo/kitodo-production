@@ -233,7 +233,7 @@
 
 
 
-<h:form id="formularOrdner" rendered="#{Metadaten.bildNummer != '-1'}" style="margin-top:15px">
+<h:form id="formularOrdner" style="margin-top:15px">
 	<h:panelGrid columns="3">
 
 		<h:outputText value="#{msgs.aktuellerOrdner}: " />
