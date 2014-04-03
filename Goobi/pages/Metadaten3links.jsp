@@ -132,7 +132,7 @@
 									style="margin-right:2px;vertical-align:middle" />
 								<h:graphicImage value="/newpages/images/document.png"
 									rendered="#{!item.node.hasChildren}"
-									style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17};" />
+									style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17}px;" />
 
 							</x:popup>
 
