@@ -42,10 +42,6 @@ import de.sub.goobi.config.ConfigMain;
 
 public class PluginLoader {
 	
-	private final static boolean useDevelopmentPath = false;
-	
-	private final static String developmentPath = "/Users/steffen/Documents/workspace/ORKAFileManImportPlugin/bin";
-
 	public static List<IPlugin> getPluginList(PluginType inType) {
 		PluginManagerUtil pmu = initialize(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
@@ -62,8 +58,6 @@ public class PluginLoader {
 		}
 		return null;
 	}
-	
-
 
 	@Deprecated
 	public static IPlugin getPlugin(PluginType inType, String inTitle) {
@@ -80,10 +74,6 @@ public class PluginLoader {
 	private static PluginManagerUtil initialize(PluginType inType) {
 		PluginManager pm = PluginManagerFactory.createPluginManager();
 		String path = ConfigMain.getParameter("pluginFolder") + inType.getName() + File.separator;
-		// switch here to development path for development of special plugin
-		if (useDevelopmentPath){
-			path = developmentPath;
-		}
 		pm.addPluginsFrom(new File(path).toURI());
 		return new PluginManagerUtil(pm);
 	}
