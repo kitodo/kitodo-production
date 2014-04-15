@@ -1,4 +1,5 @@
 package org.goobi.production.plugin;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -31,37 +32,81 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.sub.goobi.config.ConfigMain;
 
+/**
+ * The class PluginLoader provides for the loading of plug-ins at runtime.
+ * 
+ * @author unknown
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class PluginLoader {
-	
+	private static final Logger logger = Logger.getLogger(PluginLoader.class);
+
+	/**
+	 * The function getPluginList() loads the plugins of the given PluginType
+	 * and returns them as an array list.
+	 * 
+	 * @param inType
+	 * @return
+	 */
+	@Deprecated
 	public static List<IPlugin> getPluginList(PluginType inType) {
-		PluginManagerUtil pmu = initialize(inType);
+		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
 		return new ArrayList<IPlugin>(plugins);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
+		PluginType type = UnspecificPlugin.typeOf(clazz);
+		PluginManagerUtil pluginLoader = getPluginLoader(type);
+		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
+		ArrayList<T> result = new ArrayList<T>(plugins.size());
+		for (Plugin plugin : plugins) {
+			try {
+				result.add((T) UnspecificPlugin.create(type, plugin));
+			} catch (NoSuchMethodException e) {
+				logger.warn("Bad implementation of " + type.getName() + " plugin " + plugin.getClass().getName(), e);
+			} catch (SecurityException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+		return result;
+	}
+
+	@Deprecated
 	public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
-		PluginManagerUtil pmu = initialize(inType);
+		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
 		for (IPlugin p : plugins) {
 			if (p.getTitle().equals(inTitle)) {
 				return p;
 			}
 		}
+		return null;
+	}
+
+	public static <T extends UnspecificPlugin> T getPluginByTitle(Class<T> clazz, String title) {
+		for (T plugin : getPlugins(clazz))
+			if (plugin.getTitle().equals(title))
+				return plugin;
 		return null;
 	}
 
 	@Deprecated
 	public static IPlugin getPlugin(PluginType inType, String inTitle) {
-		PluginManagerUtil pmu = initialize(inType);
+		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
 		for (IPlugin p : plugins) {
 			if (p.getTitle().equals(inTitle)) {
@@ -70,11 +115,19 @@ public class PluginLoader {
 		}
 		return null;
 	}
-	
-	private static PluginManagerUtil initialize(PluginType inType) {
-		PluginManager pm = PluginManagerFactory.createPluginManager();
-		String path = ConfigMain.getParameter("pluginFolder") + inType.getName() + File.separator;
-		pm.addPluginsFrom(new File(path).toURI());
-		return new PluginManagerUtil(pm);
+
+	/**
+	 * The function getPluginLoader() returns a PluginManagerUtil suitable for
+	 * loading plugins from the subdirectory defined by the given PluginType
+	 * 
+	 * @param type
+	 *            plugin type specifying the plugin subdirectory to scan
+	 * @return a PluginManagerUtil to load plugins from that directory
+	 */
+	private static PluginManagerUtil getPluginLoader(PluginType type) {
+		PluginManager pluginManager = PluginManagerFactory.createPluginManager();
+		File path = new File(FilenameUtils.concat(ConfigMain.getParameter(ConfigMain.PLUGIN_FOLDER), type.getName()));
+		pluginManager.addPluginsFrom(path.toURI());
+		return new PluginManagerUtil(pluginManager);
 	}
 }

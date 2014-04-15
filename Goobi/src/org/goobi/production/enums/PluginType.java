@@ -34,7 +34,7 @@ import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
-
+	// TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“ 
 	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation", IValidatorPlugin.class), 
 	Command(4, "command", ICommandPlugin.class), Opac(5,"opac" ,IOpacPlugin.class);
 	

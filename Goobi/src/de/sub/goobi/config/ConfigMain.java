@@ -28,7 +28,6 @@ package de.sub.goobi.config;
  * exception statement from your version.
  */
 import java.io.File;
-import java.io.Serializable;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -41,32 +40,48 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
-public class ConfigMain implements Serializable {
-	private static final long serialVersionUID = -7167854300981799440L;
+public class ConfigMain {
+	private static final Logger logger = Logger.getLogger(ConfigMain.class);
+	private static final String CONFIG_FILE = "goobi_config.properties";
 
-	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
-
-	static ConfigMain configMain = new ConfigMain();
-	private static PropertiesConfiguration config;
-	private static String configPfad;
-	private static String imagesPath = null;
+	/*
+	 * ======================================================================
+	 * CONFIGURATION ENTRIES
+	 * ======================================================================
+	 * These constants define configuration entries usable in the configuration
+	 * file. TODO: Make all string literals throughout the code constants here.
+	 */
 
 	/**
-	 * @throws ConfigurationException
+	 * Points to a folder on the file system that contains Production plugin
+	 * jars. In the folder, there must be subfolders named as defined in enum
+	 * PluginType (currently: “import”, “step”, “validation”, “command” and
+	 * “opac”) in which the plugin jars must be stored.
+	 * 
+	 * <p>
+	 * Must be terminated by the file separator.
+	 * </p>
+	 * 
+	 * @see org.goobi.production.enums.PluginType
 	 */
-	private ConfigMain() {
+	// TODO: Some of the old code doesn’t yet use
+	// org.apache.commons.io.FilenameUtils for path management which causes
+	// paths not ending in the file separator not to work. Use the library
+	// for any path handling. It does it less error prone.
+	public static final String PLUGIN_FOLDER = "pluginFolder";
+
+	private static PropertiesConfiguration config;
+	private static String imagesPath = null;
+
+	static {
 		PropertiesConfiguration.setDefaultListDelimiter('&');
-		if (configPfad == null) {
-			configPfad = "goobi_config.properties";
-		}
 		try {
-			config = new PropertiesConfiguration(configPfad);
+			config = new PropertiesConfiguration(CONFIG_FILE);
 		} catch (ConfigurationException e) {
+			logger.warn("Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
 			config = new PropertiesConfiguration();
 		}
-		// config.setDelimiterParsingDisabled(true);
 		config.setListDelimiter('|');
-
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 	}
 
@@ -93,7 +108,7 @@ public class ConfigMain implements Serializable {
 			try {
 				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
-				myLogger.error("IO error: " + ioe);
+				logger.error("IO error: " + ioe);
 				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
@@ -113,7 +128,7 @@ public class ConfigMain implements Serializable {
 		try {
 			return config.getString(inParameter);
 		} catch (RuntimeException e) {
-			myLogger.error(e);
+			logger.error(e);
 			return "- keine Konfiguration gefunden -";
 		}
 	}
