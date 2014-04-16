@@ -1,6 +1,8 @@
 package org.goobi.production.plugin;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
@@ -13,11 +15,15 @@ public abstract class UnspecificPlugin {
 	protected static final Class<?>[] NO_ARGS = new Class<?>[] {};
 
 	protected final Object plugin;
+
+	private final Method configure;
 	private final Method getTitle;
 	private final Method getDescription;
 
-	public UnspecificPlugin(Object implementation) throws SecurityException, NoSuchMethodException {
+	protected UnspecificPlugin(Object implementation) throws SecurityException, NoSuchMethodException {
 		plugin = implementation;
+
+		configure = getDeclaredMethod("configure", new Class[] { Map.class }, null);
 		getDescription = getDeclaredMethod("getDescription", NO_ARGS, String.class);
 		getTitle = getDeclaredMethod("getTitle", NO_ARGS, String.class);
 	}
@@ -42,6 +48,10 @@ public abstract class UnspecificPlugin {
 		default:
 			throw new UnreachableCodeException();
 		}
+	}
+
+	public void configure(HashMap<String, String> configuration) {
+		invokeQuietly(plugin, configure, configuration, null);
 	}
 
 	protected final Method getDeclaredMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)

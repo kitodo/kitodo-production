@@ -46,4 +46,6 @@ public class Parameters {
 	// for any path handling. It does it less error prone.
 	public static final String PLUGIN_FOLDER = "pluginFolder";
 
+	public static final String PLUGIN_TEMP_DIR = "debugFolder";
+
 }

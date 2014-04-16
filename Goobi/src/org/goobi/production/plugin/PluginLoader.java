@@ -30,6 +30,7 @@ package org.goobi.production.plugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.xeoh.plugins.base.Plugin;
@@ -112,17 +113,33 @@ public class PluginLoader {
 		return null;
 	}
 
+	/**
+	 * The function getPluginConfiguration() creates a HashMap that is passed to
+	 * the plugins upon creation to configure them.
+	 * 
+	 * @return a HashMap to configure the plugins
+	 */
+	private static HashMap<String, String> getPluginConfiguration() {
+		HashMap<String, String> conf = new HashMap<String, String>(3);
+		conf.put("configDir", ConfigMain.getParameter(Parameters.CONFIG_DIR));
+		conf.put("tempDir", ConfigMain.getParameter(Parameters.PLUGIN_TEMP_DIR));
+		return conf;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
 		PluginType type = UnspecificPlugin.typeOf(clazz);
 		PluginManagerUtil pluginLoader = getPluginLoader(type);
 		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
 		ArrayList<T> result = new ArrayList<T>(plugins.size());
-		for (Plugin plugin : plugins) {
+		for (Plugin implementation : plugins) {
 			try {
-				result.add((T) UnspecificPlugin.create(type, plugin));
+				T plugin = (T) UnspecificPlugin.create(type, implementation);
+				plugin.configure(getPluginConfiguration());
+				result.add(plugin);
 			} catch (NoSuchMethodException e) {
-				logger.warn("Bad implementation of " + type.getName() + " plugin " + plugin.getClass().getName(), e);
+				logger.warn("Bad implementation of " + type.getName() + " plugin "
+						+ implementation.getClass().getName(), e);
 			} catch (SecurityException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}

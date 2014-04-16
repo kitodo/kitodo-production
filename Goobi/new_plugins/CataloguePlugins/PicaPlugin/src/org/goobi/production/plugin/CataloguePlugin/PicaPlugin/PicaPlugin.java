@@ -5,12 +5,26 @@ import java.util.Map;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.Fileformat;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 
 @PluginImplementation
 public class PicaPlugin {
-	// @see org.goobi.production.plugin.CataloguePlugin#find(String, long)
-	public static Object find(String query, long timeout) {
+	private static String tempDir;
+	private static String configDir;
 
+	public void configure(Map<String, String> configuration) {
+		configDir = configuration.get("configDir");
+		tempDir = configuration.get("tempDir");
+	}
+
+	// @see org.goobi.production.plugin.CataloguePlugin#find(String, long)
+	public Object find(String query, long timeout) {
+		ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(catalogue);
+	}
+
+	public static String getConfigDir() {
+		return configDir;
 	}
 
 	// @see org.goobi.production.plugin.UnspecificPlugin#getDescription()
@@ -42,18 +56,24 @@ public class PicaPlugin {
 
 	}
 
+	public static String getTempDir() {
+		return tempDir;
+	}
+
 	// @see org.goobi.production.plugin.UnspecificPlugin#getTitle()
 	public static String getTitle() {
 		return "PICA Catalogue Plugin";
 	}
 
+	private String catalogue;
+
 	// @see org.goobi.production.plugin.CataloguePlugin#supportsCatalogue(String)
-	public boolean supportsCatalogue(String catalogue) {
+	public supportsCatalogue(String catalogue) {
 
 	}
 
 	// @see org.goobi.production.plugin.CataloguePlugin#useCatalogue(String)
 	public void useCatalogue(String catalogue) {
-
+		this.catalogue = catalogue;
 	}
 }
