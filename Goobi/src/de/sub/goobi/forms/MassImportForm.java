@@ -54,7 +54,6 @@ import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
-import org.goobi.production.plugin.ImportPluginLoader;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.properties.ImportProperty;
@@ -86,7 +85,6 @@ public class MassImportForm {
     private List<String> usablePluginsForIDs = new ArrayList<String>();
     private List<String> usablePluginsForFiles = new ArrayList<String>();
     private List<String> usablePluginsForFolder = new ArrayList<String>();
-    private final ImportPluginLoader ipl = new ImportPluginLoader();
     private String currentPlugin = "";
     private IImportPlugin plugin;
 
@@ -99,13 +97,10 @@ public class MassImportForm {
     private List<Prozess> processList;
 
     public MassImportForm() {
-
-        // usablePlugins = ipl.getTitles();
-        this.usablePluginsForRecords = this.ipl.getPluginsForType(ImportType.Record);
-        this.usablePluginsForIDs = this.ipl.getPluginsForType(ImportType.ID);
-        this.usablePluginsForFiles = this.ipl.getPluginsForType(ImportType.FILE);
-        this.usablePluginsForFolder = this.ipl.getPluginsForType(ImportType.FOLDER);
-
+		usablePluginsForRecords = PluginLoader.getImportPluginsForType(ImportType.Record);
+		usablePluginsForIDs = PluginLoader.getImportPluginsForType(ImportType.ID);
+		usablePluginsForFiles = PluginLoader.getImportPluginsForType(ImportType.FILE);
+		usablePluginsForFolder = PluginLoader.getImportPluginsForType(ImportType.FOLDER);
     }
 
     public String Prepare() {

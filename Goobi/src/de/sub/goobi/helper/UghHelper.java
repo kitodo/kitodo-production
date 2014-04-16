@@ -28,17 +28,22 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.FileNames;
+import org.goobi.production.constants.Parameters;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -61,7 +66,7 @@ public class UghHelper {
 	 * @return MetadataType
 	 * @throws UghHelperException
 	 */
-	public MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
+	public static MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
 		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
 		return getMetadataType(myPrefs, inName);
 	}
@@ -74,7 +79,7 @@ public class UghHelper {
 	 * @return MetadataType
 	 * @throws UghHelperException
 	 */
-	public MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
+	public static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
 		MetadataType mdt = inPrefs.getMetadataTypeByName(inName);
 		if (mdt == null) {
 			throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
@@ -89,7 +94,7 @@ public class UghHelper {
 	 * @param inMetadataType
 	 * @return Metadata
 	 */
-	public Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
+	public static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
 		if (inStruct != null && inMetadataType != null) {
 			List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
 			if (all.size() == 0) {
@@ -121,7 +126,8 @@ public class UghHelper {
 	 * @return Metadata
 	 * @throws UghHelperException
 	 */
-	public Metadata getMetadata(DocStruct inStruct, Prefs inPrefs, String inMetadataType) throws UghHelperException {
+	public static Metadata getMetadata(DocStruct inStruct, Prefs inPrefs, String inMetadataType)
+			throws UghHelperException {
 		MetadataType mdt = getMetadataType(inPrefs, inMetadataType);
 		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
 		if (all.size() > 0) {
@@ -146,7 +152,8 @@ public class UghHelper {
 	 * @return Metadata
 	 * @throws UghHelperException
 	 */
-	public Metadata getMetadata(DocStruct inStruct, Prozess inProzess, String inMetadataType) throws UghHelperException {
+	public static Metadata getMetadata(DocStruct inStruct, Prozess inProzess, String inMetadataType)
+			throws UghHelperException {
 		MetadataType mdt = getMetadataType(inProzess, inMetadataType);
 		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
 		if (all.size() > 0) {
@@ -163,7 +170,7 @@ public class UghHelper {
 		return all.get(0);
 	}
 
-	private void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
+	private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* wenn kein Wert vorhanden oder das DocStruct null, dann gleich raus */
 		if (inValue.equals("") || inStruct == null || inStruct.getType() == null) {
 			return;
@@ -189,7 +196,7 @@ public class UghHelper {
 		}
 	}
 
-	public void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
+	public static void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* vorhandenes Element löschen */
 		MetadataType mdt = inPrefs.getMetadataTypeByName(inMetadataType);
 		if (mdt == null) {
@@ -211,21 +218,10 @@ public class UghHelper {
 	 */
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
 
-	public String convertLanguage(String inLanguage) {
+	public static String convertLanguage(String inLanguage) {
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
-		FacesContext context = FacesContext.getCurrentInstance();
-		String filename;
 		try {
-			if (context != null) {
-				HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-				filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
-						+ "goobi_opacLanguages.txt";
-			} else {
-				filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_opacLanguages.txt";
-			}
-			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
-			BufferedReader in = new BufferedReader(isr);
+			BufferedReader in = open(FileNames.LANGUAGES_MAPPING_FILE);
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
@@ -234,7 +230,6 @@ public class UghHelper {
 				}
 			}
 			in.close();
-
 		} catch (IOException e) {
 		}
 		return inLanguage;
@@ -243,35 +238,51 @@ public class UghHelper {
 	/**
 	 * In einem String die Umlaute auf den Grundbuchstaben reduzieren ================================================================
 	 */
-	// TODO: Try to replace this with a external library
-	public String convertUmlaut(String inString) {
-		String temp = inString;
-		/* Pfad zur Datei ermitteln */
-		FacesContext context = FacesContext.getCurrentInstance();
-		String filename;
-
-		if (context != null) {
-			HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-			filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator + "goobi_opacUmlaut.txt";
-		} else {
-			filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_opacUmlaut.txt";
-		}
-		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
+	// TODO: Try to replace this with an external library
+	public static String convertUmlaut(String line) {
 		try {
-			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
-			BufferedReader in = new BufferedReader(isr);
+			BufferedReader in = open(FileNames.DIACRITICS_FILE);
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0) {
-					temp = temp.replaceAll(str.split(" ")[0], str.split(" ")[1]);
+					line = line.replaceAll(str.split(" ")[0], str.split(" ")[1]);
 				}
 			}
 			in.close();
 		} catch (IOException e) {
 			myLogger.error("IOException bei Umlautkonvertierung", e);
 		}
-		return temp;
+		return line;
+	}
+
+	/**
+	 * The function open() opens a file. In a user session context, the file is
+	 * taken from the web application’s deployment directory
+	 * (…/WEB-INF/classes), if not, it is taken from the CONFIG_DIR specified in
+	 * the CONFIG_FILE.
+	 * 
+	 * TODO: Community needs to decide: Is this behaviour really what we want?
+	 * Shouldn’t it <em>always</em> be the configured directory?
+	 * 
+	 * @param fileName
+	 *            File to open
+	 * @return a BufferedReader for reading the file
+	 * @throws FileNotFoundException
+	 *             if the file does not exist, is a directory rather than a
+	 *             regular file, or for some other reason cannot be opened for
+	 *             reading
+	 * @throws UnsupportedEncodingException
+	 *             If the named charset is not supported
+	 */
+	private static BufferedReader open(String fileName) throws IOException {
+		String path = ConfigMain.getParameter(Parameters.CONFIG_DIR);
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (context != null) {
+			HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+			path = FilenameUtils.concat(session.getServletContext().getRealPath("/WEB-INF"), "classes");
+		}
+		String file = FilenameUtils.concat(path, fileName);
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), CharEncoding.UTF_8));
 	}
 
 }

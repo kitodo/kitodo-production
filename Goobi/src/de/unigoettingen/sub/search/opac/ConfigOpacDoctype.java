@@ -38,6 +38,8 @@ import javax.xml.bind.annotation.XmlElement;
 import org.goobi.webapi.beans.Label;
 import org.goobi.webapi.beans.Label.KeyAttribute;
 
+import com.sharkysoft.util.NotImplementedException;
+
 public class ConfigOpacDoctype {
 	private String title = "";
 	private String rulesetType = "";
@@ -49,8 +51,8 @@ public class ConfigOpacDoctype {
 	private ArrayList<String> mappings;
 	private boolean newspaper;
 
-	public ConfigOpacDoctype() { // stupid Jersey API requires no-arg default constructor which is never used
-		throw new UnsupportedOperationException("Not yet implemented");
+	public ConfigOpacDoctype() {
+		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
 	}
 	
 	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,

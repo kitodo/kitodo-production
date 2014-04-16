@@ -3,6 +3,7 @@ package org.goobi.production.plugin;
 import java.lang.reflect.Method;
 
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 
 import com.sharkysoft.util.NotImplementedException;
 import com.sharkysoft.util.UnreachableCodeException;
@@ -47,7 +48,7 @@ public abstract class UnspecificPlugin {
 			throws SecurityException, NoSuchMethodException {
 		Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
 		if (!resultType.isAssignableFrom(result.getReturnType()))
-			throw new NoSuchMethodException("Bad return type of method " + result.toString() + "("
+			throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
 					+ parameterTypes.toString() + "), must be " + resultType.toString());
 		return result;
 	}

@@ -39,18 +39,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.constants.FileNames;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
+import org.goobi.production.plugin.opac.Hit;
+import org.goobi.production.plugin.opac.QueryBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -78,6 +85,9 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
+
+import com.sharkysoft.util.NotImplementedException;
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -108,16 +118,51 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
+
+	// CONSTANTS
+
+	public final static String DIRECTORY_SUFFIX = "_tif";
+
+	/**
+	 * The constant field THIRTY_MINUTES holds the milliseconds value
+	 * representing 30 minutes. This is the default for catalogue operations
+	 * timeout. Note that on large, database-backed catalogues, searches for
+	 * common title terms may take more than 15 minutes, so 30 minutes is a fair
+	 * deal for an internal default value here.
+	 */
+	private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
+
+	// FIELDS
+
 	private final Helper help = new Helper();
 	UghHelper ughHelper = new UghHelper();
 	private final BeanHelper bHelper = new BeanHelper();
+
+	/**
+	 * The field hitlist holds some reference to the hitlist retrieved from a
+	 * library catalogue. The internals of this object are subject to the plugin
+	 * implementation and are not to be accessed directly.
+	 */
+	private Object hitlist;
+
+	/**
+	 * The field hits holds the number of hits in the hitlist last retrieved
+	 * from a library catalogue.
+	 */
+	private long hits;
+
+	/**
+	 * The field importCatalogue holds the catalogue plugin used to access the
+	 * library catalogue.
+	 */
+	private CataloguePlugin importCatalogue;
+
 	private Fileformat myRdf;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private IOpacPlugin myImportOpac = null;
 	private ConfigOpac co;
 	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
@@ -136,8 +181,6 @@ public class ProzesskopieForm {
 	private List<String> possibleDigitalCollection;
 	private Integer guessedImages = 0;
 	private String addToWikiField = "";
-
-	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	public String Prepare() {
 	    atstsl = "";
@@ -299,31 +342,83 @@ public class ProzesskopieForm {
 		return myProzessTemplates;
 	}
 
-	/* =============================================================== */
+
+
+	/**
+	 * The function findClick() is executed if a user clicks the command link to
+	 * start a catalogue search. It performs the search and loads the hit, if it
+	 * is unique. Otherwise, it will cause a hit list to show up for the user to
+	 * select a hit.
+	 * 
+	 * @return always "", telling JSF to stay on that page
+	 */
+	public String findClick() {
+		try {
+			clearValues(); // TODO: What does this? Do we need it?
+			readProjectConfigs(); // TODO: What does this? Do we need it?
+			if (importCatalogue == null || !importCatalogue.supportsCatalogue(opacKatalog))
+				importCatalogue = PluginLoader.getCataloguePluginForCatalogue(opacKatalog);
+			if (importCatalogue == null) {
+				Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", opacKatalog);
+				return "";
+			}
+			importCatalogue.useCatalogue(opacKatalog);
+			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
+			long timeout = ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
+			hitlist = importCatalogue.find(query, timeout);
+			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
+			if (hits == 1) // Cannot switch on long (only int or enum)
+				importHit(0);
+			else if (hits == 0)
+				Helper.setFehlerMeldung("No hit found", "");
+			else
+				showHitSelect();
+			return "";
+		} catch (Exception e) {
+			Helper.setFehlerMeldung("Error on reading opac ", e);
+			return "";
+		}
+	}
+
+	private void importHit(int index) throws PreferencesException {
+		long timeout = ConfigMain.getLongParameter("catalogue.timeout", THIRTY_MINUTES);
+		Hit hit = new Hit(importCatalogue.getHit(hitlist, 0, timeout));
+		myRdf = hit.getFileformat();
+		docType = hit.getDocType();
+		fillFieldsFromMetadataFile();
+		atstsl = createAtstsl(hit.getTitle(), hit.getAuthor());
+	}
+
+	private void showHitSelect() {
+		throw new NotImplementedException(); // TODO		
+	}
 
 	/**
 	 * OpacAnfrage
 	 */
+	@Deprecated
+	// will be replaced by findClick()
 	public String OpacAuswerten() {
 		clearValues();
 		readProjectConfigs();
 		try {
 		    ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
 		    
-		    myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
+			IOpacPlugin myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
 		    
 			/* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = this.myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie.getRegelsatz().getPreferences());
-			if (this.myImportOpac.getOpacDocType() != null) {
-				this.docType = this.myImportOpac.getOpacDocType().getTitle();
+			this.myRdf = myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie
+					.getRegelsatz().getPreferences());
+			if (myImportOpac.getOpacDocType() != null) {
+				this.docType = myImportOpac.getOpacDocType().getTitle();
 			}
-			this.atstsl = this.myImportOpac.getAtstsl();
+			this.atstsl = myImportOpac.getAtstsl();
 			fillFieldsFromMetadataFile();
 			/* über die Treffer informieren */
-			if (this.myImportOpac.getHitcount() == 0) {
+			if (myImportOpac.getHitcount() == 0) {
 				Helper.setFehlerMeldung("No hit found", "");
 			}
-			if (this.myImportOpac.getHitcount() > 1) {
+			if (myImportOpac.getHitcount() > 1) {
 				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
 			}
 		} catch (Exception e) {
@@ -1076,7 +1171,8 @@ public class ProzesskopieForm {
 		this.possibleDigitalCollection = new ArrayList<String>();
 		ArrayList<String> defaultCollections = new ArrayList<String>();
 
-		String filename = this.help.getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+				FileNames.DIGITAL_COLLECTIONS_FILE);
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
@@ -1526,6 +1622,10 @@ public class ProzesskopieForm {
 	 * @return true or false
 	 */
 	public boolean isCalendarButtonShowing() {
-		return this.co.getDoctypeByName(this.docType).isNewspaper();
+		try {
+			return co.getDoctypeByName(docType).isNewspaper();
+		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of the servlet container
+			return false;
+		}
 	}
 }

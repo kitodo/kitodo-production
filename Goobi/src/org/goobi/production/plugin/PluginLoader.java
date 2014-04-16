@@ -39,7 +39,11 @@ import net.xeoh.plugins.base.util.PluginManagerUtil;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.Parameters;
+import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.sub.goobi.config.ConfigMain;
@@ -53,6 +57,16 @@ import de.sub.goobi.config.ConfigMain;
 public class PluginLoader {
 	private static final Logger logger = Logger.getLogger(PluginLoader.class);
 
+	public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
+		CataloguePlugin result = null;
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class))
+			if (plugin.supportsCatalogue(catalogue)) {
+				result = plugin;
+				break;
+			}
+		return result;
+	}
+
 	/**
 	 * The function getPluginList() loads the plugins of the given PluginType
 	 * and returns them as an array list.
@@ -65,24 +79,6 @@ public class PluginLoader {
 		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
 		return new ArrayList<IPlugin>(plugins);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
-		PluginType type = UnspecificPlugin.typeOf(clazz);
-		PluginManagerUtil pluginLoader = getPluginLoader(type);
-		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
-		ArrayList<T> result = new ArrayList<T>(plugins.size());
-		for (Plugin plugin : plugins) {
-			try {
-				result.add((T) UnspecificPlugin.create(type, plugin));
-			} catch (NoSuchMethodException e) {
-				logger.warn("Bad implementation of " + type.getName() + " plugin " + plugin.getClass().getName(), e);
-			} catch (SecurityException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}
-		}
-		return result;
 	}
 
 	@Deprecated
@@ -116,6 +112,36 @@ public class PluginLoader {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
+		PluginType type = UnspecificPlugin.typeOf(clazz);
+		PluginManagerUtil pluginLoader = getPluginLoader(type);
+		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
+		ArrayList<T> result = new ArrayList<T>(plugins.size());
+		for (Plugin plugin : plugins) {
+			try {
+				result.add((T) UnspecificPlugin.create(type, plugin));
+			} catch (NoSuchMethodException e) {
+				logger.warn("Bad implementation of " + type.getName() + " plugin " + plugin.getClass().getName(), e);
+			} catch (SecurityException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+		return result;
+	}
+
+	public static List<String> getImportPluginsForType(ImportType type) {
+		List<String> pluginList = new ArrayList<String>();
+
+		for (IPlugin p : PluginLoader.getPluginList(PluginType.Import)) {
+			IImportPlugin ip = (IImportPlugin) p;
+			if (ip.getImportTypes().contains(type)) {
+				pluginList.add(p.getTitle());
+			}
+		}
+		return pluginList;
+	}
+
 	/**
 	 * The function getPluginLoader() returns a PluginManagerUtil suitable for
 	 * loading plugins from the subdirectory defined by the given PluginType
@@ -126,7 +152,7 @@ public class PluginLoader {
 	 */
 	private static PluginManagerUtil getPluginLoader(PluginType type) {
 		PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-		File path = new File(FilenameUtils.concat(ConfigMain.getParameter(ConfigMain.PLUGIN_FOLDER), type.getName()));
+		File path = new File(FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER), type.getName()));
 		pluginManager.addPluginsFrom(path.toURI());
 		return new PluginManagerUtil(pluginManager);
 	}

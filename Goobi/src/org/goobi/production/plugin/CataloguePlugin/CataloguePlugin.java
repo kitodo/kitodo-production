@@ -1,23 +1,26 @@
-package org.goobi.production.plugin;
+package org.goobi.production.plugin.CataloguePlugin;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Map;
 
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.UnspecificPlugin;
 
 public class CataloguePlugin extends UnspecificPlugin {
 
-	private final Method find, getHit_Object_int_long, getHit_Object_int_Collection_long, getNumberOfHits;
+	private final Method find;
+	private final Method getHit;
+	private final Method getNumberOfHits;
+	private final Method supportsCatalogue;
+	private final Method useCatalogue;
 
 	public CataloguePlugin(Object implementation) throws SecurityException, NoSuchMethodException {
 		super(implementation);
 		find = getDeclaredMethod("find", new Class[] { String.class, long.class }, Object.class);
-		getHit_Object_int_long = getDeclaredMethod("getHit", new Class[] { Object.class, int.class, long.class },
-				Map.class);
-		getHit_Object_int_Collection_long = getDeclaredMethod("getHit", new Class[] { Object.class, int.class,
-				Collection.class, long.class }, Map.class);
+		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, int.class, long.class }, Map.class);
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
+		supportsCatalogue = getDeclaredMethod("supportsCatalogue", new Class[] { String.class }, boolean.class);
+		useCatalogue = getDeclaredMethod("useCatalogue", new Class[] { String.class }, null);
 	}
 
 	/**
@@ -55,34 +58,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getHit(Object searchResult, int index, long timeout) {
-		return invokeQuietly(plugin, getHit_Object_int_long, new Object[] { searchResult, index, timeout }, Map.class);
-	}
-
-	/**
-	 * The function getHit() shall return the hit identified by its index. The
-	 * hit shall contain at most the fields named. This method shall be favoured
-	 * on both sides. It may unburden the database from looking up relations
-	 * that are never processed in the application, and it may unburden the
-	 * application from keeping large records in memory (i.e. the full OCR data
-	 * from a book) which is never used. The method shall ensure that it returns
-	 * after the given timeout and shall throw a
-	 * javax.persistence.QueryTimeoutException in that case. The method may
-	 * throw exceptions.
-	 * 
-	 * @param searchResult
-	 *            an object identifying the search result
-	 * @param index
-	 *            zero-based index of the object to retrieve
-	 * @param fields
-	 *            fields to return in the result
-	 * @param timeout
-	 *            timeout in milliseconds
-	 * @return A map with the fields of the hit
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, Object> getHit(Object searchResult, int index, Collection<String> fields, long timeout) {
-		return invokeQuietly(plugin, getHit_Object_int_Collection_long, new Object[] { searchResult, index, fields,
-				timeout }, Map.class);
+		return invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout }, Map.class);
 	}
 
 	/**
@@ -101,5 +77,33 @@ public class CataloguePlugin extends UnspecificPlugin {
 	@Override
 	public PluginType getType() {
 		return PluginType.Opac;
+	}
+
+	/**
+	 * The function supportsCatalogue() returns whether the plugin has
+	 * sufficient knowledge to query a catalogue identified by the given String
+	 * literal.
+	 * 
+	 * @param catalogue
+	 *            catalogue in question
+	 * @return whether the plugin supports that catalogue
+	 */
+	public boolean supportsCatalogue(String catalogue) {
+		return invokeQuietly(plugin, supportsCatalogue, catalogue, boolean.class);
+	}
+
+	/**
+	 * The function useCatalogue() shall tell the plugin to use a catalogue
+	 * connection identified by the given String literal. If the plugin doesn’t
+	 * support the given catalogue (supportsCatalogue() would return false) the
+	 * behaviour is unspecified (throwing an unchecked exception is a good
+	 * option).
+	 * 
+	 * @param catalogue
+	 *            catalogue in question
+	 * @return whether the plugin supports that catalogue
+	 */
+	public void useCatalogue(String catalogue) {
+		invokeQuietly(plugin, useCatalogue, catalogue, null);
 	}
 }

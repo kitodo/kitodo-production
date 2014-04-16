@@ -73,7 +73,7 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- Katalog auswählen --------------------------------
          */
         coc = catalogue;
-        if (this.coc == null) {
+		if (this.coc == null) { // FIXME: This will always throw NullPointerException
             throw new IOException("Catalogue not found: " + coc.getTitle() + ", please check Configuration in goobi_opac.xml");
         }
         Catalogue cat =

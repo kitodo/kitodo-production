@@ -65,6 +65,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
+import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 import org.jdom.Element;
 
@@ -128,7 +129,7 @@ public class Helper implements Serializable, Observer {
 
 	public String getGoobiConfigDirectory() {
 		if (this.myConfigVerzeichnis == null) {
-			this.myConfigVerzeichnis = ConfigMain.getParameter("KonfigurationVerzeichnis");
+			this.myConfigVerzeichnis = ConfigMain.getParameter(Parameters.CONFIG_DIR);
 		}
 		return this.myConfigVerzeichnis;
 	}
