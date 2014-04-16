@@ -100,7 +100,6 @@ public class CopyProcess extends ProzesskopieForm {
 	private String opacKatalog;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private ConfigOpac co;
 	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
 	private boolean useTemplates;
@@ -130,10 +129,10 @@ public class CopyProcess extends ProzesskopieForm {
 
 		clearValues();
 		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			new ConfigOpac();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return null;
 		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
@@ -180,10 +179,10 @@ public class CopyProcess extends ProzesskopieForm {
 
 		clearValues();
 		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			new ConfigOpac();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return null;
 		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
@@ -231,7 +230,8 @@ public class CopyProcess extends ProzesskopieForm {
 			return;
 		}
 
-		this.docType = cp.getParamString("createNewProcess.defaultdoctype", this.co.getAllDoctypes().get(0).getTitle());
+		this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
+				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
 		this.naviFirstPage = "ProzessverwaltungKopie1";
@@ -1188,10 +1188,11 @@ public class CopyProcess extends ProzesskopieForm {
 	@Override
 	public List<String> getAllOpacCatalogues() {
 		try {
-			return new ConfigOpac().getAllCatalogueTitles();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			new ConfigOpac();
+			return ConfigOpac.getAllCatalogueTitles();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<String>();
 		}
 	}
@@ -1199,10 +1200,11 @@ public class CopyProcess extends ProzesskopieForm {
 	@Override
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-			return new ConfigOpac().getAllDoctypes();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			new ConfigOpac();
+			return ConfigOpac.getAllDoctypes();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<ConfigOpacDoctype>();
 		}
 	}

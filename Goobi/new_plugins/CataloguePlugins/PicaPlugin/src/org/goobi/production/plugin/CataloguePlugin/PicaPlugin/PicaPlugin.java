@@ -18,8 +18,8 @@ public class PicaPlugin {
 		return "The PICA plugin can be used to access PICA library catalogue systems.";
 	}
 
-	// @see org.goobi.production.plugin.CataloguePlugin#getHit(Object, int, long)
-	public static Map<String, Object> getHit(Object searchResult, int index, long timeout) {
+	// @see org.goobi.production.plugin.CataloguePlugin#getHit(Object, long, long)
+	public static Map<String, Object> getHit(Object searchResult, long index, long timeout) {
 		// get hit from hit list
 		String author = null; // TODO
 		String bibliographicCitation = null; // TODO

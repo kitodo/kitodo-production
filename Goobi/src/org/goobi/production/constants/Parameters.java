@@ -10,17 +10,24 @@ package org.goobi.production.constants;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Parameters {
-
 	/**
 	 * Milliseconds. Indicates the maximum duration an interaction with a
 	 * library catalogue may take. Defaults to 30 minutes.
 	 */
 	public static final String CATALOGUE_TIMEOUT = "catalogue.timeout";
+
 	/**
 	 * Points to a folder on the file system that contains Production
 	 * configuration files.
 	 */
 	public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
+
+	/**
+	 * Integer. Number of hits to show per page on the hitlist when multiple
+	 * hits were found on a catalogue search.
+	 */
+	public static final String HITLIST_PAGE_SIZE = "catalogue.hitlist.pageSize";
+
 	/**
 	 * Points to a folder on the file system that contains Production plugin
 	 * jars. In the folder, there must be subfolders named as defined in enum

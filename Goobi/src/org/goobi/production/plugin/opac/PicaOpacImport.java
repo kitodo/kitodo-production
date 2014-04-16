@@ -285,7 +285,6 @@ public class PicaOpacImport implements IOpacPlugin {
      */
 
     private void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
-        UghHelper ughhelp = new UghHelper();
         DocStruct topstruct = inDigDoc.getLogicalDocStruct();
         DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
         DocStruct topstructChild = null;
@@ -307,11 +306,11 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- vorhandene PPN als digitale oder analoge einsetzen --------------------------------
          */
         String ppn = getElementFieldValue(myFirstHit, "003@", "0");
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
         if (this.gattung.toLowerCase().startsWith("o")) {
-            ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
+			UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
         } else {
-            ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
+			UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
         }
 
         /*
@@ -319,11 +318,11 @@ public class PicaOpacImport implements IOpacPlugin {
          */
         if (topstructChild != null && mySecondHit != null) {
             String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
+			UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
             if (this.gattung.toLowerCase().startsWith("o")) {
-                ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
+				UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
             } else {
-                ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
+				UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
             }
         }
 
@@ -337,7 +336,7 @@ public class PicaOpacImport implements IOpacPlugin {
         if (myTitle == null || myTitle.length() == 0) {
             myTitle = getElementFieldValue(myFirstHit, "021B", "a");
         }
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
         /*
          * -------------------------------- Sorting-Titel mit Umlaut-Konvertierung --------------------------------
@@ -345,14 +344,14 @@ public class PicaOpacImport implements IOpacPlugin {
         if (myTitle.indexOf("@") != -1) {
             myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
         }
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
         /*
          * -------------------------------- bei multivolumes den Main-Title bereinigen --------------------------------
          */
         if (topstructChild != null && mySecondHit != null) {
             String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
+			UghHelper.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
         }
 
         /*
@@ -363,7 +362,7 @@ public class PicaOpacImport implements IOpacPlugin {
             if (sortingTitleMulti.indexOf("@") != -1) {
                 sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
             }
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
+			UghHelper.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
             // sortingTitle = sortingTitleMulti;
         }
 
@@ -371,41 +370,41 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- Sprachen - Konvertierung auf zwei Stellen --------------------------------
          */
         String sprache = getElementFieldValue(myFirstHit, "010@", "a");
-        sprache = ughhelp.convertLanguage(sprache);
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
+		sprache = UghHelper.convertLanguage(sprache);
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
 
         /*
          * -------------------------------- bei multivolumes die Sprachen - Konvertierung auf zwei Stellen --------------------------------
          */
         if (topstructChild != null && mySecondHit != null) {
             String spracheMulti = getElementFieldValue(mySecondHit, "010@", "a");
-            spracheMulti = ughhelp.convertLanguage(spracheMulti);
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
+			spracheMulti = UghHelper.convertLanguage(spracheMulti);
+			UghHelper.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
         }
 
         /*
          * -------------------------------- ISSN --------------------------------
          */
         String issn = getElementFieldValue(myFirstHit, "005A", "0");
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
         /*
          * -------------------------------- Copyright --------------------------------
          */
         String copyright = getElementFieldValue(myFirstHit, "037I", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
+		UghHelper.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
         /*
          * -------------------------------- Format --------------------------------
          */
         String format = getElementFieldValue(myFirstHit, "034I", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
+		UghHelper.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
         /*
          * -------------------------------- Umfang --------------------------------
          */
         String umfang = getElementFieldValue(myFirstHit, "034D", "a");
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
+		UghHelper.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
 
         /*
          * -------------------------------- Signatur --------------------------------
@@ -416,7 +415,7 @@ public class PicaOpacImport implements IOpacPlugin {
         }
         sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
         sig += getElementFieldValue(myFirstHit, "209A", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+		UghHelper.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
         if (sig.trim().length() == 0) {
             myLogger.debug("Signatur part 1: " + sig);
             myLogger.debug(myFirstHit.getChildren());
@@ -430,7 +429,7 @@ public class PicaOpacImport implements IOpacPlugin {
                 sig += getElementFieldValue(mySecondHit, "209A", "f") + " ";
                 sig += getElementFieldValue(mySecondHit, "209A", "a");
             }
-            ughhelp.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+			UghHelper.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
         }
         myLogger.debug("Signatur full: " + sig);
 
@@ -548,65 +547,26 @@ public class PicaOpacImport implements IOpacPlugin {
         return this.atstsl;
     }
 
-    /*
-     * ##################################################### ##################################################### ## ## Publikationstypen aus der
-     * Konfiguration auslesen ## ##################################################### ####################################################
-     */
-
-    // public boolean isMonograph() {
-    // if (gattung != null && config.getParameter("docTypeMonograph",
-    // "").contains(gattung.substring(0, 2)))
-    // return true;
-    // else
-    // return false;
-    // }
-    // public boolean isPeriodical() {
-    // if (gattung != null && config.getParameter("docTypePeriodical",
-    // "").contains(gattung.substring(0, 2)))
-    // return true;
-    // else
-    // return false;
-    // }
-    //
-    // public boolean isMultivolume() {
-    // if (gattung != null && config.getParameter("docTypeMultivolume",
-    // "").contains(gattung.substring(0, 2)))
-    // return true;
-    // else
-    // return false;
-    // }
-    //
-    // public boolean isContainedWork() {
-    // if (gattung != null
-    // && config.getParameter("docTypeContainedWork",
-    // "").contains(gattung.substring(0, 2)))
-    // return true;
-    // else
-    // return false;
-    // }
-    /* (non-Javadoc)
-     * @see de.sub.goobi.Import.IOpac#getOpacDocType(boolean)
-     */
     @Override
     public ConfigOpacDoctype getOpacDocType() {
         try {
-            ConfigOpac co = new ConfigOpac();
-            ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
+			ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
             if (cod == null) {
                 if (verbose) {
                     Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType") + ": ", this.gattung);
                 }
-                cod = new ConfigOpac().getAllDoctypes().get(0);
+				new ConfigOpac();
+				cod = ConfigOpac.getAllDoctypes().get(0);
                 this.gattung = cod.getMappings().get(0);
                 if (verbose) {
                     Helper.setFehlerMeldung(Helper.getTranslation("CatalogueChangeDocType") + ": ", this.gattung + " - " + cod.getTitle());
                 }
             }
             return cod;
-        } catch (IOException e) {
-            myLogger.error("OpacDoctype unknown", e);
+		} catch (Throwable t) {
+			myLogger.error("OpacDoctype unknown", t);
             if (verbose) {
-                Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType"), e);
+				Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType"), t.getMessage());
             }
             return null;
         }

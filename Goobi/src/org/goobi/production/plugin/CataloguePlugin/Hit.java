@@ -1,4 +1,4 @@
-package org.goobi.production.plugin.opac;
+package org.goobi.production.plugin.CataloguePlugin;
 
 import java.util.Map;
 

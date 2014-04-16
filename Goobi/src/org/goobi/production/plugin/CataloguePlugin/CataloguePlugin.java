@@ -17,7 +17,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	public CataloguePlugin(Object implementation) throws SecurityException, NoSuchMethodException {
 		super(implementation);
 		find = getDeclaredMethod("find", new Class[] { String.class, long.class }, Object.class);
-		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, int.class, long.class }, Map.class);
+		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, long.class, long.class }, Map.class);
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", new Class[] { String.class }, boolean.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", new Class[] { String.class }, null);
@@ -57,8 +57,10 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * @return A map with the fields of the hit
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getHit(Object searchResult, int index, long timeout) {
-		return invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout }, Map.class);
+	public Hit getHit(Object searchResult, long index, long timeout) {
+		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
+				Map.class);
+		return new Hit(data);
 	}
 
 	/**

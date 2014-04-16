@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,9 +55,9 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.CataloguePlugin.Hit;
+import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
-import org.goobi.production.plugin.opac.Hit;
-import org.goobi.production.plugin.opac.QueryBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -84,9 +85,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
-
-import com.sharkysoft.util.NotImplementedException;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -118,8 +116,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
 
-	// CONSTANTS
-
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	/**
@@ -131,6 +127,13 @@ public class ProzesskopieForm {
 	 */
 	private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
+	private String addToWikiField = "";
+	private List<AdditionalField> additionalFields;
+	private String atstsl = "";
+	private List<String> digitalCollections;
+	private String docType;
+	private Integer guessedImages = 0;
+
 	/**
 	 * The field hitlist holds some reference to the hitlist retrieved from a
 	 * library catalogue. The internals of this object are subject to the plugin
@@ -138,6 +141,12 @@ public class ProzesskopieForm {
 	 */
 	private Object hitlist;
 
+	/**
+	 * The field hitlistPage holds the zero-based index of the page of the
+	 * hitlist currently showing. A negative value means that the hitlist is
+	 * hidden, otherwise it is showing the respective page.
+	 */
+	private long hitlistPage = -1;
 	/**
 	 * The field hits holds the number of hits in the hitlist last retrieved
 	 * from a library catalogue.
@@ -151,29 +160,40 @@ public class ProzesskopieForm {
 	private CataloguePlugin importCatalogue;
 
 	private Fileformat myRdf;
+	private String naviFirstPage;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
+	private List<String> possibleDigitalCollection;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private ConfigOpac co;
-	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
 	private boolean useTemplates;
-
+	private Integer auswahl;
 	private HashMap<String, Boolean> standardFields;
-	private List<AdditionalField> additionalFields;
-	private List<String> digitalCollections;
 	private String tifHeader_imagedescription = "";
 	private String tifHeader_documentname = "";
 
-	private String naviFirstPage;
-	private Integer auswahl;
-	private String docType;
-	private String atstsl = "";
-	private List<String> possibleDigitalCollection;
-	private Integer guessedImages = 0;
-	private String addToWikiField = "";
+	private class SelectableHit {
+		private final Hit hit;
+
+		public SelectableHit(Hit hit) {
+			this.hit = hit;
+		}
+
+		public String getBibliographicCitation() {
+			return hit.getBibliographicCitation();
+		}
+
+		public String selectClick() {
+			try {
+				importHit(hit);
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Error on reading opac ", e);
+			}
+			return "";
+		}
+	}
 
 	public String Prepare() {
 	    atstsl = "";
@@ -194,10 +214,10 @@ public class ProzesskopieForm {
 
 		clearValues();
 		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			new ConfigOpac();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return null;
 		}
 		readProjectConfigs();
@@ -236,7 +256,8 @@ public class ProzesskopieForm {
 			return;
 		}
 
-		this.docType = cp.getParamString("createNewProcess.defaultdoctype", this.co.getAllDoctypes().get(0).getTitle());
+		this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
+				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
 		this.naviFirstPage = "ProzessverwaltungKopie1";
@@ -335,8 +356,6 @@ public class ProzesskopieForm {
 		return myProzessTemplates;
 	}
 
-
-
 	/**
 	 * The function findClick() is executed if a user clicks the command link to
 	 * start a catalogue search. It performs the search and loads the hit, if it
@@ -357,33 +376,19 @@ public class ProzesskopieForm {
 			}
 			importCatalogue.useCatalogue(opacKatalog);
 			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
-			long timeout = ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
-			hitlist = importCatalogue.find(query, timeout);
-			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
+			hitlist = importCatalogue.find(query, getTimeout());
+			hits = importCatalogue.getNumberOfHits(hitlist, getTimeout());
 			if (hits == 1) // Cannot switch on long (only int or enum)
-				importHit(0);
+				importHit(importCatalogue.getHit(hitlist, 0, getTimeout()));
 			else if (hits == 0)
 				Helper.setFehlerMeldung("No hit found", "");
 			else
-				showHitSelect();
+				hitlistPage = 0; // show first page of hitlist
 			return "";
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
 			return "";
 		}
-	}
-
-	private void importHit(int index) throws PreferencesException {
-		long timeout = ConfigMain.getLongParameter("catalogue.timeout", THIRTY_MINUTES);
-		Hit hit = new Hit(importCatalogue.getHit(hitlist, 0, timeout));
-		myRdf = hit.getFileformat();
-		docType = hit.getDocType();
-		fillFieldsFromMetadataFile();
-		atstsl = createAtstsl(hit.getTitle(), hit.getAuthor());
-	}
-
-	private void showHitSelect() {
-		throw new NotImplementedException(); // TODO		
 	}
 
 	/**
@@ -395,7 +400,8 @@ public class ProzesskopieForm {
 		clearValues();
 		readProjectConfigs();
 		try {
-		    ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
+			new ConfigOpac();
+			ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(opacKatalog);
 		    
 			IOpacPlugin myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
 		    
@@ -423,7 +429,40 @@ public class ProzesskopieForm {
 	/* =============================================================== */
 
 	/**
-	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen
+	 * alle Konfigurationseigenschaften und Felder zurücksetzen
+	 * ================================================================
+	 */
+	private void clearValues() {
+		if (this.opacKatalog == null) {
+			this.opacKatalog = "";
+		}
+		this.standardFields = new HashMap<String, Boolean>();
+		this.standardFields.put("collections", true);
+		this.standardFields.put("doctype", true);
+		this.standardFields.put("regelsatz", true);
+		this.standardFields.put("images", true);
+		this.additionalFields = new ArrayList<AdditionalField>();
+		this.tifHeader_documentname = "";
+		this.tifHeader_imagedescription = "";
+	}
+
+	/**
+	 * The method importHit() loads a hit into the display.
+	 * 
+	 * @param hit
+	 *            Hit to load
+	 * @throws PreferencesException
+	 */
+	private void importHit(Hit hit) throws PreferencesException {
+		myRdf = hit.getFileformat();
+		docType = hit.getDocType();
+		fillFieldsFromMetadataFile();
+		atstsl = createAtstsl(hit.getTitle(), hit.getAuthor());
+	}
+
+	/**
+	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
+	 * füllen
 	 * 
 	 * @throws PreferencesException
 	 */
@@ -481,23 +520,6 @@ public class ProzesskopieForm {
 				} // end if ughbinding
 			}// end for
 		} // end if myrdf==null
-	}
-
-	/**
-	 * alle Konfigurationseigenschaften und Felder zurücksetzen ================================================================
-	 */
-	private void clearValues() {
-		if (this.opacKatalog == null) {
-			this.opacKatalog = "";
-		}
-		this.standardFields = new HashMap<String, Boolean>();
-		this.standardFields.put("collections", true);
-		this.standardFields.put("doctype", true);
-		this.standardFields.put("regelsatz", true);
-		this.standardFields.put("images", true);
-		this.additionalFields = new ArrayList<AdditionalField>();
-		this.tifHeader_documentname = "";
-		this.tifHeader_imagedescription = "";
 	}
 
 	/**
@@ -917,15 +939,17 @@ public class ProzesskopieForm {
 			dd.setPhysicalDocStruct(dsBoundBook);
 
 			/* Monographie */
-			if (!this.co.getDoctypeByName(this.docType).isPeriodical() && !this.co.getDoctypeByName(this.docType).isMultiVolume()) {
-				DocStructType dsty = myPrefs.getDocStrctTypeByName(this.co.getDoctypeByName(this.docType).getRulesetType());
+			if (!ConfigOpac.getDoctypeByName(this.docType).isPeriodical()
+					&& !ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
+				DocStructType dsty = myPrefs.getDocStrctTypeByName(ConfigOpac.getDoctypeByName(this.docType)
+						.getRulesetType());
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
 				this.myRdf = ff;
 			}
 
 			/* Zeitschrift */
-			else if (this.co.getDoctypeByName(this.docType).isPeriodical()) {
+			else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
 				DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
@@ -937,7 +961,7 @@ public class ProzesskopieForm {
 			}
 
 			/* MultivolumeBand */
-			else if (this.co.getDoctypeByName(this.docType).isMultiVolume()) {
+			else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
 				DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
@@ -1221,20 +1245,20 @@ public class ProzesskopieForm {
 
 	public List<String> getAllOpacCatalogues() {
 		try {
-			return new ConfigOpac().getAllCatalogueTitles();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			return ConfigOpac.getAllCatalogueTitles();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<String>();
 		}
 	}
 
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-			return new ConfigOpac().getAllDoctypes();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			return ConfigOpac.getAllDoctypes();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<ConfigOpacDoctype>();
 		}
 	}
@@ -1493,7 +1517,7 @@ public class ProzesskopieForm {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
 				/* wenn der Doctype angegeben werden soll */
-				this.tifHeader_imagedescription += this.co.getDoctypeByName(this.docType).getTifHeaderType();
+				this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
@@ -1602,9 +1626,49 @@ public class ProzesskopieForm {
 	 */
 	public boolean isCalendarButtonShowing() {
 		try {
-			return co.getDoctypeByName(docType).isNewspaper();
+			return ConfigOpac.getDoctypeByName(docType).isNewspaper();
 		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of the servlet container
 			return false;
 		}
+	}
+
+	/**
+	 * The function getHitlist returns the currenly showing page of the hitlist
+	 * as read-only property "hitlist".
+	 * 
+	 * @return a list of hits to render in the hitlist
+	 */
+	public List<SelectableHit> getHitlist() {
+		if (hitlistPage < 0)
+			return Collections.emptyList();
+		int pageSize = ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE);
+		List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
+		long firstHit = hitlistPage * pageSize;
+		long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
+		for (long index = firstHit; index <= lastHit; index++) {
+			Hit hit = importCatalogue.getHit(hitlist, index, getTimeout());
+			result.add(new SelectableHit(hit));
+		}
+		return result;
+	}
+
+	/**
+	 * The function getHitlistShowing returns whether the hitlist shall be
+	 * rendered or not as read-only property "hitlistShowing".
+	 * 
+	 * @return whether the hitlist is to be shown or not
+	 */
+	public boolean getHitlistShowing() {
+		return hitlistPage >= 0;
+	}
+
+	/**
+	 * The function getTimeout returns the timeout to be used in catalogue
+	 * access.
+	 * 
+	 * @return the timeout for catalogue access
+	 */
+	private long getTimeout() {
+		return ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
 	}
 }
