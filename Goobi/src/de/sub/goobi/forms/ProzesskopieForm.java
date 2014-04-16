@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -132,12 +131,6 @@ public class ProzesskopieForm {
 	 */
 	private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
-	// FIELDS
-
-	private final Helper help = new Helper();
-	UghHelper ughHelper = new UghHelper();
-	private final BeanHelper bHelper = new BeanHelper();
-
 	/**
 	 * The field hitlist holds some reference to the hitlist retrieved from a
 	 * library catalogue. The internals of this object are subject to the plugin
@@ -221,10 +214,10 @@ public class ProzesskopieForm {
 		/*
 		 *  Kopie der Prozessvorlage anlegen
 		 */
-		this.bHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
 
 		initializePossibleDigitalCollections();
 
@@ -470,8 +463,9 @@ public class ProzesskopieForm {
 							field.setWert(myautoren);
 						} else {
 							/* bei normalen Feldern die Inhalte auswerten */
-							MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), field.getMetadata());
-							Metadata md = this.ughHelper.getMetadata(myTempStruct, mdt);
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								field.setWert(md.getValue());
 								md.setValue(field.getWert().replace("&amp;", "&"));
@@ -754,8 +748,9 @@ public class ProzesskopieForm {
 						 * bis auf die Autoren alle additionals in die Metadaten übernehmen
 						 */
 						if (!field.getMetadata().equals("ListOfCreators")) {
-							MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), field.getMetadata());
-							Metadata md = this.ughHelper.getMetadata(myTempStruct, mdt);
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								md.setValue(field.getWert());
 							}
@@ -763,7 +758,7 @@ public class ProzesskopieForm {
 							 * wenn dem Topstruct und dem Firstchild der Wert gegeben werden soll
 							 */
 							if (myTempChild != null) {
-								md = this.ughHelper.getMetadata(myTempChild, mdt);
+								md = UghHelper.getMetadata(myTempChild, mdt);
 								if (md != null) {
 									md.setValue(field.getWert());
 								}
@@ -795,7 +790,7 @@ public class ProzesskopieForm {
 			 * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
 			 */
 			try {
-				MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+				MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
 				List<? extends Metadata> alleImagepfade = this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 				if (alleImagepfade != null && alleImagepfade.size() > 0) {
 					for (Metadata md : alleImagepfade) {
@@ -868,7 +863,8 @@ public class ProzesskopieForm {
 	private void addCollections(DocStruct colStruct) {
 		for (String s : this.digitalCollections) {
 			try {
-				Metadata md = new Metadata(this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection"));
+				Metadata md = new Metadata(UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+						"singleDigCollection"));
 				md.setValue(s);
 				md.setDocStruct(colStruct);
 				colStruct.addMetadata(md);
@@ -890,7 +886,8 @@ public class ProzesskopieForm {
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
-			MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection");
+			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
 			if (myCollections != null && myCollections.size() > 0) {
 				for (Metadata md : myCollections) {
@@ -999,34 +996,30 @@ public class ProzesskopieForm {
 			this.prozessKopie.setWerkstuecke(werkstuecke);
 		}
 
-		/*
-		 * -------------------------------- jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen --------------------------------
-		 */
-		BeanHelper bh = new BeanHelper();
 		for (AdditionalField field : this.additionalFields) {
 			if (field.getShowDependingOnDoctype()) {
 				if (field.getFrom().equals("werk")) {
-					bh.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
 				}
 				if (field.getFrom().equals("vorlage")) {
-					bh.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
 				}
 				if (field.getFrom().equals("prozess")) {
-					bh.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
 				}
 			}
 		}
 		
 		for (String col : digitalCollections) {
-			bh.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
+			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
 		}
 		/* Doctype */
-		bh.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+		BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
 		/* Tiffheader */
-		bh.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-		bh.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
-		bh.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
-		bh.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+		BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+		BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+		BeanHelper.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
+		BeanHelper.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
 	}
 
 	public String getDocType() {
@@ -1102,20 +1095,6 @@ public class ProzesskopieForm {
                 }
             }
         }
-	}
-
-	public Collection<SelectItem> getArtists() {
-		ArrayList<SelectItem> artisten = new ArrayList<SelectItem>();
-		StringTokenizer tokenizer = new StringTokenizer(ConfigMain.getParameter("TiffHeaderArtists"), "|");
-		boolean tempBol = true;
-		while (tokenizer.hasMoreTokens()) {
-			String tok = tokenizer.nextToken();
-			if (tempBol) {
-				artisten.add(new SelectItem(tok));
-			}
-			tempBol = !tempBol;
-		}
-		return artisten;
 	}
 
 	public Prozess getProzessVorlage() {
