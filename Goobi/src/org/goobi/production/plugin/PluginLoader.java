@@ -115,7 +115,9 @@ public class PluginLoader {
 
 	/**
 	 * The function getPluginConfiguration() creates a HashMap that is passed to
-	 * the plugins upon creation to configure them.
+	 * the plugins upon creation to configure them. This is to use for
+	 * <em>general</em> configuration (probably) suitable for all plugins. Use
+	 * setters on the plugins to set specific settings.
 	 * 
 	 * @return a HashMap to configure the plugins
 	 */

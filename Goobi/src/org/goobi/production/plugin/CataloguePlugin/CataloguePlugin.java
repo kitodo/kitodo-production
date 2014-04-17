@@ -6,11 +6,14 @@ import java.util.Map;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.UnspecificPlugin;
 
+import ugh.dl.Prefs;
+
 public class CataloguePlugin extends UnspecificPlugin {
 
 	private final Method find;
 	private final Method getHit;
 	private final Method getNumberOfHits;
+	final private Method setPreferences;
 	private final Method supportsCatalogue;
 	private final Method useCatalogue;
 
@@ -19,6 +22,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 		find = getDeclaredMethod("find", new Class[] { String.class, long.class }, Object.class);
 		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, long.class, long.class }, Map.class);
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
+		setPreferences = getDeclaredMethod("setPreferences", new Class[] { Prefs.class }, null);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", new Class[] { String.class }, boolean.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", new Class[] { String.class }, null);
 	}
@@ -79,6 +83,18 @@ public class CataloguePlugin extends UnspecificPlugin {
 	@Override
 	public PluginType getType() {
 		return PluginType.Opac;
+	}
+
+	/**
+	 * The method setPreferences() must be used to set the UGH preferences the
+	 * plugin shall use.
+	 * 
+	 * @param preferences
+	 *            UGH preferences
+	 * @see de.sub.goobi.beans.Regelsatz#getPreferences()
+	 */
+	public void setPreferences(Prefs preferences) {
+		invokeQuietly(plugin, setPreferences, preferences, null);
 	}
 
 	/**
