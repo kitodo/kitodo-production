@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -85,6 +86,8 @@ public class GetOpac {
 	public static final String PICA_FIELD_OCCURENCES = "occurrence";
 
 	public static final String PICA_SUBFIELD = "subfield";
+
+	private static final long HTTP_CONNECTION_TIMEOUT = TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS);
 
 	private static final String PICA_SUBFIELD_NAME = "code";
 
@@ -180,10 +183,12 @@ public class GetOpac {
 	// MANIPULATION (Manipulation - what the object does) ******************
 
 	/***********************************************************************
-	 * Gets the number of hits for the query in the specified field from the OPAC.
+	 * Gets the number of hits for the query in the specified field from the
+	 * OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
+	 * @param timeout
 	 * @return returns the number of hits.
 	 * @throws Exception
 	 *             If something is wrong with the query
@@ -192,8 +197,9 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
-		getResult(query);
+	public int getNumberOfHits(Query query, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
+		getResult(query, timeout);
 		return this.lastOpacResult.getNumberOfHits();
 	}
 
@@ -236,26 +242,31 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Gets the formatted picaplus data of the specified hits for the query in the specified field from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query in
+	 * the specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
 	 * @param fieldKey
-	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field where the query should be found.
+	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field
+	 *            where the query should be found.
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to 0 to return all hits.
+	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public Node retrievePicaNode(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
-		return retrievePicaNode(query, 0, numberOfHits);
+	public Node retrievePicaNode(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
+		return retrievePicaNode(query, 0, numberOfHits, timeout);
 	}
 
 	/************************************************************************
-	 * Gets the formatted picaplus data of the specified hits for the query from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query from
+	 * the OPAC.
 	 * 
 	 * @param query
 	 *            The query you are looking for.
@@ -263,51 +274,64 @@ public class GetOpac {
 	 *            The index of the first result to be returned
 	 * @param end
 	 *            The index of the first result NOT to be returned
+	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 ***********************************************************************/
-	public Node retrievePicaNode(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException {
-		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end)))).getDocumentElement();
+	public Node retrievePicaNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
+		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
+				.getDocumentElement();
 	}
 
 	/***********************************************************************
-	 * Gets the formatted picaplus data of the specified hits for the query in the specified field from the OPAC.
+	 * Gets the formatted picaplus data of the specified hits for the query in
+	 * the specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
 	 * @param fieldKey
-	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field where the query should be found.
+	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field
+	 *            where the query should be found.
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to 0 to return all hits.
+	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public String retrievePica(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
-		return retrievePica(query, 0, numberOfHits);
+	public String retrievePica(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
+		return retrievePica(query, 0, numberOfHits, timeout);
 	}
 
 	/***********************************************************************
-	 * Gets the raw picaplus data for the specified hits for the query in the specified field from the OPAC.
+	 * Gets the raw picaplus data for the specified hits for the query in the
+	 * specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query you are looking for.
 	 * @param start
 	 *            The index of the first result to be returned
 	 * @param end
-	 *            The index of the first result NOT to be returned. Set to zero to return all hits from the start.
-	 * @return returns the root node of the retrieved xml. Beware, it is raw and pretty messy! It is recommended that you use retrieveXMLPicaPlus()
+	 *            The index of the first result NOT to be returned. Set to zero
+	 *            to return all hits from the start.
+	 * @param timeout
+	 * @return returns the root node of the retrieved xml. Beware, it is raw and
+	 *         pretty messy! It is recommended that you use
+	 *         retrieveXMLPicaPlus()
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public String retrievePica(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException {
+	public String retrievePica(Query query, int start, int end, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
 		StringBuffer xmlResult = new StringBuffer();
 
 		// querySummary is used to check if cached result and sessionid
@@ -318,7 +342,7 @@ public class GetOpac {
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
-			getResult(query);
+			getResult(query, timeout);
 		}
 
 		// make sure that upper limit of requested hits is not to high
@@ -337,7 +361,7 @@ public class GetOpac {
 		// retrieve and append the requested hits
 		for (int i = start; i < end; i++) {
 
-			xmlResult.append(xmlFormatPica(retrievePicaTitle(i)));
+			xmlResult.append(xmlFormatPica(retrievePicaTitle(i, timeout)));
 		}
 		xmlResult.append("  </" + PICA_COLLECTION_RECORDS + ">\n");
 
@@ -347,22 +371,28 @@ public class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Gets the raw picaplus data for the specified hits for the query in the specified field from the OPAC.
+	 * Gets the raw picaplus data for the specified hits for the query in the
+	 * specified field from the OPAC.
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
 	 * @param start
 	 *            The index of the first result to be returned
 	 * @param end
-	 *            The index of the first result NOT to be returned. Set to zero to return all hits from the start.
-	 * @return returns the root node of the retrieved xml. Beware, it is raw and pretty messy! It is recommended that you use retrieveXMLPicaPlus()
+	 *            The index of the first result NOT to be returned. Set to zero
+	 *            to return all hits from the start.
+	 * @param timeout
+	 * @return returns the root node of the retrieved xml. Beware, it is raw and
+	 *         pretty messy! It is recommended that you use
+	 *         retrieveXMLPicaPlus()
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IllegalQueryException
 	 **********************************************************************/
-	public Node retrievePicaRawNode(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException,
+	public Node retrievePicaRawNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
+			ParserConfigurationException,
  IllegalArgumentException {
 		Node result = null;
 
@@ -374,7 +404,7 @@ public class GetOpac {
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
-			getResult(query);
+			getResult(query, timeout);
 		}
 
 		// this will be our new picaplus xml-document and its root
@@ -395,7 +425,7 @@ public class GetOpac {
 
 		// retrieve and append the requested hits
 		for (int i = start; i < end; i++) {
-			Node picaPlusLong = retrievePicaTitleNode(i);
+			Node picaPlusLong = retrievePicaTitleNode(i, timeout);
 			if (picaPlusLong != null) {
 				result.appendChild(picaPlusRaw.importNode(picaPlusLong, true));
 			} else {
@@ -410,7 +440,7 @@ public class GetOpac {
 		if (((Element) result).hasAttribute("error")) {
 			// if it was not an error because of no hits getNumberOfHits
 			// throws an exception
-			if (getNumberOfHits(query) == 0) {
+			if (getNumberOfHits(query, timeout) == 0) {
 				throw new IllegalArgumentException("No Hits");
 			}
 
@@ -424,14 +454,15 @@ public class GetOpac {
 	 * 
 	 * @param numberOfHit
 	 *            The index of the hit to return
+	 * @param timeout
 	 * @return The response as the root node of an xml tree
 	 * @throws IOException
 	 *             If the connection failed
 	 **********************************************************************/
-	private Node retrievePicaTitleNode(int numberOfHit) throws IOException {
+	private Node retrievePicaTitleNode(int numberOfHit, long timeout) throws IOException {
 		String resultString = null;
 		// get pica longtitle
-		resultString = retrievePicaTitle(numberOfHit);
+		resultString = retrievePicaTitle(numberOfHit, timeout);
 		// parse result as xml, append result to the root node
 		InputSource resultSource = new InputSource(new StringReader(resultString));
 		Document parsedDoc = getParsedDocument(resultSource);
@@ -446,22 +477,24 @@ public class GetOpac {
 	 * 
 	 * @param numberOfHits
 	 *            The index of the hit to return
+	 * @param timeout
 	 * @throws IOException
 	 *             If the connection failed
 	 **********************************************************************/
-	private String retrievePicaTitle(int numberOfHits) throws IOException {
+	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
 		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset
 				+ SET_ID_URL
 				+ this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
-				+ SHOW_LONGTITLE_NR_URL + retrieveNumber);
+				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List[] getResultLists(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
+	public List[] getResultLists(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
 		List[] result = new List[2];
-		OpacResponseHandler search = getResult(query);
+		OpacResponseHandler search = getResult(query, timeout);
 
 		// return all hits?
 		if (numberOfHits == 0) {
@@ -477,7 +510,8 @@ public class GetOpac {
 		// return more than the first 10 hits
 		for (int i = 10; i < numberOfHits; i += 10) {
 			String tmpSearch = retrieveDataFromOPAC("/XML=1.0" + DATABASE_URL + this.cat.getDataBase() + SET_ID_URL + search.getSet() + SESSIONID_URL
-					+ search.getSessionId() + "/TTL=" + (i - 9) + SHOW_NEXT_HITS_URL + (i + 1));
+ + search.getSessionId() + "/TTL=" + (i - 9) + SHOW_NEXT_HITS_URL
+					+ (i + 1), timeout);
 			search = parseOpacResponse(tmpSearch);
 			result[0].addAll(search.getOpacResponseItemPpns());
 			result[1].addAll(search.getOpacResponseItemTitles());
@@ -491,13 +525,15 @@ public class GetOpac {
 	 * 
 	 * @param query
 	 *            The query you are looking for.
+	 * @param timeout
 	 * @return The search result as xml string.
 	 * @throws IOException
 	 *             If connection to catalogue system failed.
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
+	public OpacResponseHandler getResult(Query query, long timeout) throws IOException, SAXException,
+			ParserConfigurationException {
 		String result = null;
 
 		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
@@ -515,7 +551,7 @@ public class GetOpac {
 		}
 		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
 				+ this.charset
-				+ SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl());
+ + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
 
@@ -646,12 +682,13 @@ public class GetOpac {
 	 * Retrieves the content of the specified url from the serverAddress.
 	 * 
 	 * @param url
-	 *            The requested url as string. Note that the string needs to be already url encoded.
+	 *            The requested url as string. Note that the string needs to be
+	 *            already url encoded.
 	 * @return The response.
 	 * @throws IOException
 	 *             If the connection failed
 	 **********************************************************************/
-	private String retrieveDataFromOPAC(String url) throws IOException {
+	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
 
 		 if (verbose){
 			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
@@ -666,6 +703,8 @@ public class GetOpac {
 
         }
 		try {
+			opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT); // if no connection is established
+			opacClient.getParams().setParameter("http.socket.timeout", timeout); // if a connection is established but there is no response
 			this.opacClient.executeMethod(opacRequest);
 			return opacRequest.getResponseBodyAsString();
 		} finally {

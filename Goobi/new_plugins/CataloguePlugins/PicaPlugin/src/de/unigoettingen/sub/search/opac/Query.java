@@ -29,7 +29,12 @@ package de.unigoettingen.sub.search.opac;
  */
 import java.net.URLEncoder;
 
+import com.sharkysoft.util.UnreachableCodeException;
+
 public class Query {
+	private static final String FIELDLESS = "Fieldless query isn’t supported";
+	private static final String BRACKET = "Brackets aren’t supported";
+	private static final String INCOMPLETE = "Query is syntactically incomplete";
 
 	private String queryUrl;
 	private int queryTermNumber = 0;
@@ -39,7 +44,6 @@ public class Query {
 	public static final String NOT = "-";
 
 	private static final String FIRST_OPERATOR = "SRCH";
-	
 	
 	private static final String OPERATOR = "&ACT";
 	private static final String QUERY = "&TRM";
@@ -52,6 +56,102 @@ public class Query {
 	public Query(String query, String fieldNumber) {
 		super();
 		this.addQuery(null, query, fieldNumber);
+	}
+
+	public Query(String inString) {
+		int state = 0;
+		String operator = null;
+		StringBuilder field = new StringBuilder();
+		StringBuilder term = new StringBuilder(32);
+		for (int i = 0; i < inString.length(); i++) {
+			int c = inString.codePointAt(i);
+			switch (state) {
+			case 0:
+				switch (c) {
+				case ' ':
+					continue;
+				case '"':
+					throw new IllegalArgumentException(FIELDLESS);
+				case '(':
+					throw new IllegalArgumentException(BRACKET);
+				case '-':
+					operator = NOT;
+				default:
+					field.appendCodePoint(c);
+				}
+				state = 1;
+				break;
+			case 1:
+				switch (c) {
+				case ' ':
+					throw new IllegalArgumentException(FIELDLESS);
+				case ':':
+					state = 2;
+					break;
+				default:
+					field.appendCodePoint(c);
+				}
+				break;
+			case 2:
+				switch (c) {
+				case ' ':
+					continue;
+				case '"':
+					state = 4;
+					break;
+				case '(':
+					throw new IllegalArgumentException(BRACKET);
+				default:
+					term.appendCodePoint(c);
+					state = 3;
+				}
+				break;
+			case 3:
+				if (c == ' ') {
+					if (term.length() == 0)
+						throw new IllegalArgumentException(INCOMPLETE);
+					addQuery(operator, term.toString(), field.toString());
+					operator = AND;
+					field = new StringBuilder();
+					term = new StringBuilder(32);
+					state = 5;
+				} else
+					term.appendCodePoint(c);
+				break;
+			case 4:
+				if (c == '"') {
+					addQuery(operator, term.toString(), field.toString());
+					operator = AND;
+					field = new StringBuilder();
+					term = new StringBuilder(32);
+					state = 5;
+				} else
+					term.appendCodePoint(c);
+				break;
+			case 5:
+				switch (c) {
+				case ' ':
+					continue;
+				case '-':
+					operator = NOT;
+					break;
+				case '|':
+					operator = OR;
+					break;
+				default:
+					field.appendCodePoint(c);
+				}
+				state = 1;
+				break;
+			default:
+				throw new UnreachableCodeException();
+			}
+			if (state == 3) {
+				addQuery(operator, term.toString(), field.toString());
+			}
+			if (state != 3 && state != 5)
+				throw new IllegalArgumentException(INCOMPLETE);
+		}
 	}
 
 	//operation must be Query.AND, .OR, .NOT 

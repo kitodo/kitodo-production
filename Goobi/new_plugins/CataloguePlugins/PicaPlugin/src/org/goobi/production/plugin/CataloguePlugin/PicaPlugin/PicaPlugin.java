@@ -1,6 +1,5 @@
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,7 +55,9 @@ public class PicaPlugin {
 			Query queryObject = new Query(query);
 			int hits = accessor.getNumberOfHits(queryObject, timeout);
 			return new FindResult(configuration, catalogue, accessor, queryObject, hits);
-		} catch (IOException e) {
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
@@ -83,146 +84,147 @@ public class PicaPlugin {
 		String gattung;
 		Fileformat ff;
 		try {
-		/*
-		 * -------------------------------- Opac abfragen und erhaltenes
-		 * Dom-Dokument in JDom-Dokument umwandeln
-		 * --------------------------------
-		 */
-		Node myHitlist = myOpac.retrievePicaNode(myQuery, (int) index, (int) index);
-		/* Opac-Beautifier aufrufen */
-		myHitlist = coc.executeBeautifier(myHitlist);
-		Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
+			/*
+			 * -------------------------------- Opac abfragen und erhaltenes
+			 * Dom-Dokument in JDom-Dokument umwandeln
+			 * --------------------------------
+			 */
+			Node myHitlist = myOpac.retrievePicaNode(myQuery, (int) index, (int) index);
+			/* Opac-Beautifier aufrufen */
+			myHitlist = coc.executeBeautifier(myHitlist);
+			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 			myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
-		/* von dem Treffer den Dokumententyp ermitteln */
+			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
-		// ----- inlined: getConfigOpacDoctype()
-		ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
-		if (cod == null) {
-			cod = ConfigOpac.getAllDoctypes().get(0);
-			gattung = cod.getMappings().get(0);
-		}
+			// ----- inlined: getConfigOpacDoctype()
+			ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
+			if (cod == null) {
+				cod = ConfigOpac.getAllDoctypes().get(0);
+				gattung = cod.getMappings().get(0);
+			}
 
-		// ------ end of inlined function
+			// ------ end of inlined function
 
-		/*
-		 * -------------------------------- wenn der Treffer ein Volume eines
-		 * Multivolume-Bandes ist, dann das Sammelwerk überordnen
-		 * --------------------------------
-		 */
-		// if (isMultivolume()) {
-		if (cod.isMultiVolume()) {
-			/* Sammelband-PPN ermitteln */
-			String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
-			if (multiVolumePpn != "") {
-				/* Sammelband aus dem Opac holen */
+			/*
+			 * -------------------------------- wenn der Treffer ein Volume
+			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
+			 * --------------------------------
+			 */
+			// if (isMultivolume()) {
+			if (cod.isMultiVolume()) {
+				/* Sammelband-PPN ermitteln */
+				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
+				if (multiVolumePpn != "") {
+					/* Sammelband aus dem Opac holen */
 
-				myQuery = new Query(multiVolumePpn, "12");
-				/* wenn ein Treffer des Parents im Opac gefunden wurde */
-				if (myOpac.getNumberOfHits(myQuery) == 1) {
-					Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1);
-					/* Opac-Beautifier aufrufen */
-					myParentHitlist = coc.executeBeautifier(myParentHitlist);
-					/* Konvertierung in jdom-Elemente */
-					Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
+					myQuery = new Query(multiVolumePpn, "12");
+					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					if (myOpac.getNumberOfHits(myQuery, timeout) == 1) {
+						Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1, timeout);
+						/* Opac-Beautifier aufrufen */
+						myParentHitlist = coc.executeBeautifier(myParentHitlist);
+						/* Konvertierung in jdom-Elemente */
+						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
-					/* dem Rootelement den Volume-Treffer hinzufügen */
-					myFirstHit.getParent().removeContent(myFirstHit);
-					myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
+						/* Testausgabe */
+						// XMLOutputter outputter = new XMLOutputter();
+						// FileOutputStream output = new
+						// FileOutputStream("D:/fileParent.xml");
+						// outputter.output(myJdomDocMultivolumeband.getRootElement(),
+						// output);
+						/* dem Rootelement den Volume-Treffer hinzufügen */
+						myFirstHit.getParent().removeContent(myFirstHit);
+						myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
-					/* Testausgabe */
-					// output = new FileOutputStream("D:/fileFull.xml");
-					// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-					// output);
-					myJdomDoc = myJdomDocMultivolumeband;
-					myFirstHit = myJdomDoc.getRootElement().getChild("record");
+						/* Testausgabe */
+						// output = new FileOutputStream("D:/fileFull.xml");
+						// outputter.output(myJdomDocMultivolumeband.getRootElement(),
+						// output);
+						myJdomDoc = myJdomDocMultivolumeband;
+						myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
-					/* die Jdom-Element wieder zurück zu Dom konvertieren */
-					DOMOutputter doutputter = new DOMOutputter();
-					myHitlist = doutputter.output(myJdomDocMultivolumeband);
-					/*
-					 * dabei aber nicht das Document, sondern das erste Kind
-					 * nehmen
-					 */
-					myHitlist = myHitlist.getFirstChild();
+						/* die Jdom-Element wieder zurück zu Dom konvertieren */
+						DOMOutputter doutputter = new DOMOutputter();
+						myHitlist = doutputter.output(myJdomDocMultivolumeband);
+						/*
+						 * dabei aber nicht das Document, sondern das erste Kind
+						 * nehmen
+						 */
+						myHitlist = myHitlist.getFirstChild();
+					}
 				}
 			}
-		}
 
-		/*
-		 * -------------------------------- wenn der Treffer ein Contained Work
-		 * ist, dann übergeordnetes Werk --------------------------------
-		 */
-		// if (isContainedWork()) {
-		if (cod.isContainedWork()) {
-			/* PPN des übergeordneten Werkes ermitteln */
-			String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
-			if (ueberGeordnetePpn != "") {
-				/* Sammelband aus dem Opac holen */
-				myQuery = new Query(ueberGeordnetePpn, "12");
-				/* wenn ein Treffer des Parents im Opac gefunden wurde */
-				if (myOpac.getNumberOfHits(myQuery) == 1) {
-					Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1);
-					/* Opac-Beautifier aufrufen */
-					myParentHitlist = coc.executeBeautifier(myParentHitlist);
-					/* Konvertierung in jdom-Elemente */
-					Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
-					Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
-					/* Testausgabe */
-					// XMLOutputter outputter = new XMLOutputter();
-					// FileOutputStream output = new
-					// FileOutputStream("D:/fileParent.xml");
-					// outputter.output(myJdomDocParent.getRootElement(),
-					// output);
-					/*
-					 * alle Elemente des Parents übernehmen, die noch nicht
-					 * selbst vorhanden sind
-					 */
-					if (myFirstHitParent.getChildren() != null) {
+			/*
+			 * -------------------------------- wenn der Treffer ein Contained
+			 * Work ist, dann übergeordnetes Werk
+			 * --------------------------------
+			 */
+			// if (isContainedWork()) {
+			if (cod.isContainedWork()) {
+				/* PPN des übergeordneten Werkes ermitteln */
+				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
+				if (ueberGeordnetePpn != "") {
+					/* Sammelband aus dem Opac holen */
+					myQuery = new Query(ueberGeordnetePpn, "12");
+					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					if (myOpac.getNumberOfHits(myQuery, timeout) == 1) {
+						Node myParentHitlist = myOpac.retrievePicaNode(myQuery, 1, timeout);
+						/* Opac-Beautifier aufrufen */
+						myParentHitlist = coc.executeBeautifier(myParentHitlist);
+						/* Konvertierung in jdom-Elemente */
+						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
+						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
+						/* Testausgabe */
+						// XMLOutputter outputter = new XMLOutputter();
+						// FileOutputStream output = new
+						// FileOutputStream("D:/fileParent.xml");
+						// outputter.output(myJdomDocParent.getRootElement(),
+						// output);
+						/*
+						 * alle Elemente des Parents übernehmen, die noch nicht
+						 * selbst vorhanden sind
+						 */
+						if (myFirstHitParent.getChildren() != null) {
 
-						for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
-							Element ele = iter.next();
-							if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
-								myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
+							for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
+								Element ele = iter.next();
+								if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
+									myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		/*
-		 * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen
-		 * --------------------------------
-		 */
-		/* XML in Datei schreiben */
-		//		 XMLOutputter outputter = new XMLOutputter();
-		//		 FileOutputStream output = new
-		//		 FileOutputStream("/home/robert/temp_opac.xml");
-		//		 outputter.output(myJdomDoc.getRootElement(), output);
+			/*
+			 * -------------------------------- aus Opac-Ergebnis RDF-Datei
+			 * erzeugen --------------------------------
+			 */
+			/* XML in Datei schreiben */
+			//		 XMLOutputter outputter = new XMLOutputter();
+			//		 FileOutputStream output = new
+			//		 FileOutputStream("/home/robert/temp_opac.xml");
+			//		 outputter.output(myJdomDoc.getRootElement(), output);
 
-		/* myRdf temporär in Datei schreiben */
-		// myRdf.write("D:/temp.rdf.xml");
+			/* myRdf temporär in Datei schreiben */
+			// myRdf.write("D:/temp.rdf.xml");
 
-		/* zugriff auf ugh-Klassen */
-		PicaPlus pp = new PicaPlus(preferences);
-		pp.read(myHitlist);
-		DigitalDocument dd = pp.getDigitalDocument();
+			/* zugriff auf ugh-Klassen */
+			PicaPlus pp = new PicaPlus(preferences);
+			pp.read(myHitlist);
+			DigitalDocument dd = pp.getDigitalDocument();
 			ff = new XStream(preferences);
-		ff.setDigitalDocument(dd);
-		/* BoundBook hinzufügen */
-		DocStructType dst = preferences.getDocStrctTypeByName("BoundBook");
-		DocStruct dsBoundBook = dd.createDocStruct(dst);
-		dd.setPhysicalDocStruct(dsBoundBook);
-		/* Inhalt des RDF-Files überprüfen und ergänzen */
-		checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
-		// rdftemp.write("D:/PicaRdf.xml");
+			ff.setDigitalDocument(dd);
+			/* BoundBook hinzufügen */
+			DocStructType dst = preferences.getDocStrctTypeByName("BoundBook");
+			DocStruct dsBoundBook = dd.createDocStruct(dst);
+			dd.setPhysicalDocStruct(dsBoundBook);
+			/* Inhalt des RDF-Files überprüfen und ergänzen */
+			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
+			// rdftemp.write("D:/PicaRdf.xml");
 
 		} catch (RuntimeException e) {
 			throw e;
@@ -233,14 +235,13 @@ public class PicaPlugin {
 		String author = getElementFieldValue(myFirstHit, "028A", "a");
 		if (author == null || author.equals(""))
 			author = getElementFieldValue(myFirstHit, "028A", "8");
-		
+
 		String title = getElementFieldValue(myFirstHit, "021A", "a");
 		if (title == null || title.length() == 0)
 			title = getElementFieldValue(myFirstHit, "021B", "a");
-		
+
 		String bibliographicCitation = null; // TODO
-		
-		
+
 		// return hit
 		Map<String, Object> result = new HashMap<String, Object>(7);
 		result.put("bibliographicCitation", bibliographicCitation);
@@ -359,7 +360,6 @@ public class PicaPlugin {
 
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
 			ConfigOpacDoctype cod, String gattung) {
-		boolean verbose = false;
 		DocStruct topstruct = inDigDoc.getLogicalDocStruct();
 		DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
 		DocStruct topstructChild = null;
@@ -592,7 +592,7 @@ public class PicaPlugin {
 	}
 
 	// @see org.goobi.production.plugin.CataloguePlugin#supportsCatalogue(String)
-	public boolean supportsCatalogue(String catalogue) {
+	public static boolean supportsCatalogue(String catalogue) {
 		return ConfigOpac.getCatalogueByName(catalogue) != null;
 	}
 
