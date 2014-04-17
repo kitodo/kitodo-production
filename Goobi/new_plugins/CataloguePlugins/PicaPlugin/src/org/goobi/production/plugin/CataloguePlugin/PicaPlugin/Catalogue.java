@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class Catalogue {
+class Catalogue {
     private static final Logger logger = Logger.getLogger(Catalogue.class);
     //dir of local iktLists
     private static final String DIR = "";
@@ -73,21 +73,21 @@ public class Catalogue {
     private static final String IKT_LIST_FILE_TIB = "IKTLIST-TIB.xml";
     private static final String IKT_LIST_FILE_SBB = "IKTLIST-SBB.xml";
 
-    public static final String SUB_OPAC = "SUB";
-    public static final String VKI_OPAC = "VKI";
-    public static final String VKI_AALG_OPAC = "VKI_AALG";
-    public static final String VKI_AAC_OPAC = "VKI_AAC";
-    public static final String VKI_AAC_OLCOPAC = "VKI_AAC_OLC";
-    public static final String GBV_OPAC = "GBV";
-    public static final String JAL_OPAC = "JAL";
-    public static final String OLC_MATH_OPAC = "OLC_MATH";
-    public static final String HEBIS_OPAC = "HEBIS";
-    public static final String SWB_OPAC = "SWB";
-    public static final String DNB_OPAC = "DNB";
-    public static final String ZDB_OPAC = "ZDB";
-    public static final String GEO_GUIDE_OPAC = "GEO_GUIDE";
-    public static final String TIB_OPAC = "TIB";
-    public static final String SBB_OPAC = "SBB";
+	static final String SUB_OPAC = "SUB";
+	private static final String VKI_OPAC = "VKI";
+	private static final String VKI_AALG_OPAC = "VKI_AALG";
+	private static final String VKI_AAC_OPAC = "VKI_AAC";
+	private static final String VKI_AAC_OLCOPAC = "VKI_AAC_OLC";
+	private static final String GBV_OPAC = "GBV";
+	private static final String JAL_OPAC = "JAL";
+	private static final String OLC_MATH_OPAC = "OLC_MATH";
+	private static final String HEBIS_OPAC = "HEBIS";
+	private static final String SWB_OPAC = "SWB";
+	private static final String DNB_OPAC = "DNB";
+	private static final String ZDB_OPAC = "ZDB";
+	private static final String GEO_GUIDE_OPAC = "GEO_GUIDE";
+	private static final String TIB_OPAC = "TIB";
+	private static final String SBB_OPAC = "SBB";
 
     private String iktList;
     private String catalogue;
@@ -105,7 +105,7 @@ public class Catalogue {
 
     private boolean verbose = false;
 
-    public Catalogue(String opac) throws IOException {
+	Catalogue(String opac) throws IOException {
         super();
         this.picaToKey = new HashMap<String, String>();
         this.picaToDescription = new HashMap<String, String>();
@@ -144,7 +144,8 @@ public class Catalogue {
         this.parseIktList(this.retrieveIktList());
     }
 
-    public Catalogue(String description, String serverAddress, int port, String cbs, String database) throws IOException {
+	private Catalogue(String description, String serverAddress, int port, String cbs, String database)
+			throws IOException {
         this.picaToKey = new HashMap<String, String>();
         this.picaToDescription = new HashMap<String, String>();
         this.description = description;
@@ -156,7 +157,7 @@ public class Catalogue {
         this.parseIktList(this.retrieveIktList());
     }
 
-	public Catalogue(ConfigOpacCatalogue coc) throws IOException {
+	Catalogue(ConfigOpacCatalogue coc) throws IOException {
 		this.picaToKey = new HashMap<String, String>();
 		this.picaToDescription = new HashMap<String, String>();
 		this.description = coc.getDescription();
@@ -168,7 +169,8 @@ public class Catalogue {
 		this.parseIktList(this.retrieveIktList());
 	}
 
-    public Catalogue(String description, String serverAddress, int port, String charset, String cbs, String database) throws IOException {
+	private Catalogue(String description, String serverAddress, int port, String charset, String cbs, String database)
+			throws IOException {
         this(description, serverAddress, port, cbs, database);
         this.charset = charset;
 
@@ -373,35 +375,35 @@ public class Catalogue {
         this.description = "SBB";
     }
 
-    public String getCatalogue() {
+	private String getCatalogue() {
         return this.catalogue;
     }
 
-    public String getDataBase() {
+	String getDataBase() {
         return this.dataBase;
     }
 
-    public String getIktList() {
+	private String getIktList() {
         return this.iktList;
     }
 
-    public HashMap<String, String> getPicaToDescription() {
+	private HashMap<String, String> getPicaToDescription() {
         return this.picaToDescription;
     }
 
-    public HashMap<String, String> getPicaToKey() {
+	private HashMap<String, String> getPicaToKey() {
         return this.picaToKey;
     }
 
-    public int getPort() {
+	int getPort() {
         return this.port;
     }
 
-    public String getServerAddress() {
+	String getServerAddress() {
         return this.serverAddress;
     }
 
-    public String getCharset() {
+	private String getCharset() {
         return this.charset;
     }
 
@@ -410,7 +412,7 @@ public class Catalogue {
      * 
      * @return String of all search keys, their mnemonic and their description
      **********************************************************************/
-    public String iktListToString() {
+	private String iktListToString() {
 
         //get hashmap iterator
         Iterator<String> iktListIterator = this.picaToKey.keySet().iterator();
@@ -423,34 +425,34 @@ public class Catalogue {
         return result.toString();
     }
 
-    public String getDescription() {
+	private String getDescription() {
         return this.description;
     }
 
-    public boolean isVerbose() {
+	private boolean isVerbose() {
         return this.verbose;
     }
 
-    public void setVerbose(boolean verbose) {
+	private void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 
 	//eingefügt am 8.5.2007
-    public String getIktNr(String key) {
+	private String getIktNr(String key) {
         return this.picaToKey.get(key);
     }
 
     /**
      * @param cbs the cbs to set
      */
-    public void setCbs(String cbs) {
+	private void setCbs(String cbs) {
         this.cbs = cbs;
     }
 
     /**
      * @return the cbs
      */
-    public String getCbs() {
+	String getCbs() {
         return this.cbs;
     }
 

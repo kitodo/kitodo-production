@@ -40,7 +40,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 
-public class ConfigOpac {
+class ConfigOpac {
 	private static XMLConfiguration config;
 	static {
 		String configPfad = FilenameUtils.concat(PicaPlugin.getConfigDir(), "goobi_opac.xml");
@@ -63,7 +63,7 @@ public class ConfigOpac {
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
-	public static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
+	static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
 		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = config.getString("catalogue(" + i + ")[@title]");
@@ -121,7 +121,7 @@ public class ConfigOpac {
 	 * ================================================================
 	 */
 	@XmlElement(name = "interface")
-	public static ArrayList<String> getAllCatalogueTitles() {
+	private static ArrayList<String> getAllCatalogueTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
@@ -135,7 +135,7 @@ public class ConfigOpac {
 	 * return all configured Doctype-Titles from Configfile
 	 * ================================================================
 	 */
-	public static ArrayList<String> getAllDoctypeTitles() {
+	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		int countTypes = config.getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countTypes; i++) {
@@ -150,7 +150,7 @@ public class ConfigOpac {
 	 * ================================================================
 	 */
 	@XmlElement(name = "mediaType")
-	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
+	static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
 		for (String title : getAllDoctypeTitles()) {
 			myList.add(getDoctypeByName(title));
@@ -163,7 +163,7 @@ public class ConfigOpac {
 	 * special mapping for this
 	 * ================================================================
 	 */
-	public static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
+	static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
 		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = config.getString("catalogue(" + i + ")[@title]");
@@ -203,7 +203,7 @@ public class ConfigOpac {
 	 * ================================================================
 	 */
 	@SuppressWarnings("unchecked")
-	public static ConfigOpacDoctype getDoctypeByName(String inTitle) {
+	private static ConfigOpacDoctype getDoctypeByName(String inTitle) {
 		int countCatalogues = config.getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = config.getString("doctypes.type(" + i + ")[@title]");

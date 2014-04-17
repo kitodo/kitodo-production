@@ -35,20 +35,21 @@ import java.util.ArrayList;
  * Eigenschaft eines Wertes gesetzt werden, wenn bestimmte Werte in 
  * dem opac-Ergebnis auftreten. 
  * ================================================================*/
-public class ConfigOpacCatalogueBeautifier {
- private  ConfigOpacCatalogueBeautifierElement tagElementToChange;
-   private ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
+class ConfigOpacCatalogueBeautifier {
+ private final  ConfigOpacCatalogueBeautifierElement tagElementToChange;
+   private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
    
-   public ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement, ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
+	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
+			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
       this.tagElementToChange = inChangeElement;
       this.tagElementsToProof = inProofElements;
    }
 
-   public ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
+	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
       return this.tagElementToChange;
    }
 
-   public ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
+	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
       return this.tagElementsToProof;
    }
    

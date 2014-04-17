@@ -50,7 +50,7 @@ import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
-public class UghHelper {
+class UghHelper {
 	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
 
 	//	/**
@@ -61,7 +61,7 @@ public class UghHelper {
 	//	 * @return MetadataType
 	//	 * @throws UghHelperException
 	//	 */
-	//	public static MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
+	//	private static MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
 	//		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
 	//		return getMetadataType(myPrefs, inName);
 	//	}
@@ -74,7 +74,7 @@ public class UghHelper {
 	//	 * @return MetadataType
 	//	 * @throws UghHelperException
 	//	 */
-	//	public static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
+	//	private static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
 	//		MetadataType mdt = inPrefs.getMetadataTypeByName(inName);
 	//		if (mdt == null) {
 	//			throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
@@ -89,7 +89,7 @@ public class UghHelper {
 	 * @param inMetadataType
 	 * @return Metadata
 	 */
-	public static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
+	private static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
 		if (inStruct != null && inMetadataType != null) {
 			List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
 			if (all.size() == 0) {
@@ -121,7 +121,7 @@ public class UghHelper {
 	//	 * @return Metadata
 	//	 * @throws UghHelperException
 	//	 */
-	//	public static Metadata getMetadata(DocStruct inStruct, Prefs inPrefs, String inMetadataType)
+	//	private static Metadata getMetadata(DocStruct inStruct, Prefs inPrefs, String inMetadataType)
 	//			throws UghHelperException {
 	//		MetadataType mdt = getMetadataType(inPrefs, inMetadataType);
 	//		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
@@ -147,7 +147,7 @@ public class UghHelper {
 	//	 * @return Metadata
 	//	 * @throws UghHelperException
 	//	 */
-	//	public static Metadata getMetadata(DocStruct inStruct, Prozess inProzess, String inMetadataType)
+	//	private static Metadata getMetadata(DocStruct inStruct, Prozess inProzess, String inMetadataType)
 	//			throws UghHelperException {
 	//		MetadataType mdt = getMetadataType(inProzess, inMetadataType);
 	//		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
@@ -191,7 +191,7 @@ public class UghHelper {
 		}
 	}
 
-	public static void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
+	static void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* vorhandenes Element löschen */
 		MetadataType mdt = inPrefs.getMetadataTypeByName(inMetadataType);
 		if (mdt == null) {
@@ -213,7 +213,7 @@ public class UghHelper {
 	 */
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
 
-	public static String convertLanguage(String inLanguage) {
+	static String convertLanguage(String inLanguage) {
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
 		try {
 			BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE);
@@ -234,7 +234,7 @@ public class UghHelper {
 	//	 * In einem String die Umlaute auf den Grundbuchstaben reduzieren ================================================================
 	//	 */
 	//	// TODO: Try to replace this with an external library
-	//	public static String convertUmlaut(String line) {
+	//	private static String convertUmlaut(String line) {
 	//		try {
 	//			BufferedReader in = open(FileNames.DIACRITICS_FILE);
 	//			String str;

@@ -44,7 +44,7 @@ import org.jdom.output.DOMOutputter;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
-public class ConfigOpacCatalogue {
+class ConfigOpacCatalogue {
 	private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
 	private String title = "";
 	private String description = "";
@@ -57,7 +57,8 @@ public class ConfigOpacCatalogue {
 	private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
 	private String opacType;
 
-	public ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist, int port,
+	private ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+			int port,
 			ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		this.title = title;
 		this.description = desciption;
@@ -70,7 +71,8 @@ public class ConfigOpacCatalogue {
 	}
 
 	// Constructor that also takes a charset, a quick hack for DPD-81
-	public ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist, int port, String charset,
+	ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+			int port, String charset,
 			String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		// Call the contructor above
 		this(title, desciption, address, database, iktlist, port, inBeautifySetList, opacType);
@@ -78,36 +80,36 @@ public class ConfigOpacCatalogue {
 		this.setCbs(cbs);
 	}
 
-	public String getTitle() {
+	String getTitle() {
 		return this.title;
 	}
 
-	public String getDescription() {
+	String getDescription() {
 		return this.description;
 	}
 
-	public String getAddress() {
+	String getAddress() {
 		return this.address;
 	}
 
-	public String getDatabase() {
+	String getDatabase() {
 		return this.database;
 	}
 
-	public String getIktlist() {
+	private String getIktlist() {
 		return this.iktlist;
 	}
 
-	public int getPort() {
+	int getPort() {
 		return this.port;
 	}
 
-	public String getCharset() {
+	String getCharset() {
 		return this.charset;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Node executeBeautifier(Node myHitlist) {
+	Node executeBeautifier(Node myHitlist) {
 		/* Ausgabe des Opac-Ergebnissen in Datei */
 
 		if (!PicaPlugin.getTempDir().equals("") && new File(PicaPlugin.getTempDir()).canWrite()) {
@@ -215,22 +217,22 @@ public class ConfigOpacCatalogue {
 	 * @param cbs
 	 *            the cbs to set
 	 */
-	public void setCbs(String cbs) {
+	private void setCbs(String cbs) {
 		this.cbs = cbs;
 	}
 
 	/**
 	 * @return the cbs
 	 */
-	public String getCbs() {
+	String getCbs() {
 		return this.cbs;
 	}
 
-    public String getOpacType() {
+	private String getOpacType() {
         return opacType;
     }
 
-    public void setOpacType(String opacType) {
+	private void setOpacType(String opacType) {
         this.opacType = opacType;
     }
 

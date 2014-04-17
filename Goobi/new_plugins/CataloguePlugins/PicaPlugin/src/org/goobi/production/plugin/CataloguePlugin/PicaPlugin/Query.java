@@ -31,7 +31,7 @@ import java.net.URLEncoder;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
-public class Query {
+class Query {
 	private static final String FIELDLESS = "Fieldless query isn’t supported";
 	private static final String BRACKET = "Brackets aren’t supported";
 	private static final String INCOMPLETE = "Query is syntactically incomplete";
@@ -39,9 +39,9 @@ public class Query {
 	private String queryUrl;
 	private int queryTermNumber = 0;
 	
-	public static final String AND = "*";
-	public static final String OR = "%2B"; //URL-encoded +
-	public static final String NOT = "-";
+	private static final String AND = "*";
+	private static final String OR = "%2B"; //URL-encoded +
+	private static final String NOT = "-";
 
 	private static final String FIRST_OPERATOR = "SRCH";
 	
@@ -49,16 +49,14 @@ public class Query {
 	private static final String QUERY = "&TRM";
 	private static final String FIELD = "&IKT";
 	
-	public Query() {
-		super();
+	private Query() {
 	}
 
-	public Query(String query, String fieldNumber) {
-		super();
+	Query(String query, String fieldNumber) {
 		this.addQuery(null, query, fieldNumber);
 	}
 
-	public Query(String inString) {
+	Query(String inString) {
 		int state = 0;
 		String operator = null;
 		StringBuilder field = new StringBuilder();
@@ -155,7 +153,7 @@ public class Query {
 	}
 
 	//operation must be Query.AND, .OR, .NOT 
-	 public void addQuery(String operation, String query, String fieldNumber){
+	private void addQuery(String operation, String query, String fieldNumber) {
 		 
 		 //ignore boolean operation for first term
 		 if (this.queryTermNumber == 0){
@@ -177,7 +175,7 @@ public class Query {
 		 this.queryTermNumber++;
 	 }
 	 
-	 public String getQueryUrl(){
+	String getQueryUrl() {
 		 return this.queryUrl;
 	 }
 	 

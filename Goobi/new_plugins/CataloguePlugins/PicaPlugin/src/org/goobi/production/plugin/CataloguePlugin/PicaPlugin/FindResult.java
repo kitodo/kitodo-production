@@ -1,14 +1,14 @@
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 
-public class FindResult {
+class FindResult {
 	private final Catalogue catalogue;
 	private final GetOpac catalogueAccessor;
 	private final ConfigOpacCatalogue configuration;
 	private final long hits;
 	private final Query query;
 
-	public FindResult(ConfigOpacCatalogue configuration, Catalogue catalogue, GetOpac catalogueAccessor, Query query,
+	FindResult(ConfigOpacCatalogue configuration, Catalogue catalogue, GetOpac catalogueAccessor, Query query,
 			long hits) {
 		this.configuration = configuration;
 		this.catalogue = catalogue;
@@ -17,23 +17,23 @@ public class FindResult {
 		this.hits = hits;
 	}
 
-	public Catalogue getCatalogue() {
+	private Catalogue getCatalogue() {
 		return catalogue;
 	}
 
-	public GetOpac getCatalogueAccessor() {
+	GetOpac getCatalogueAccessor() {
 		return catalogueAccessor;
 	}
 
-	public ConfigOpacCatalogue getConfiguration() {
+	ConfigOpacCatalogue getConfiguration() {
 		return configuration;
 	}
 
-	public long getHits() {
+	long getHits() {
 		return hits;
 	}
 
-	public Query getQuery() {
+	Query getQuery() {
 		return query;
 	}
 
