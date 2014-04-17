@@ -49,8 +49,8 @@ import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
-class UghHelper {
-	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
+class UGHUtils {
+	private static final Logger myLogger = Logger.getLogger(UGHUtils.class);
 
 	private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* wenn kein Wert vorhanden oder das DocStruct null, dann gleich raus */

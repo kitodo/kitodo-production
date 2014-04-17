@@ -376,11 +376,11 @@ public class PicaPlugin {
 		 * analoge einsetzen --------------------------------
 		 */
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
 		if (gattung.toLowerCase().startsWith("o")) {
-			UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
+			UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
 		} else {
-			UghHelper.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
+			UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
 		}
 
 		/*
@@ -389,11 +389,11 @@ public class PicaPlugin {
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
-			UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
 			if (gattung.toLowerCase().startsWith("o")) {
-				UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
+				UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
 			} else {
-				UghHelper.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
+				UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
 			}
 		}
 
@@ -409,7 +409,7 @@ public class PicaPlugin {
 		if (myTitle == null || myTitle.length() == 0) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
 		}
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
 		/*
 		 * -------------------------------- Sorting-Titel mit
@@ -418,7 +418,7 @@ public class PicaPlugin {
 		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
 		}
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
 		/*
 		 * -------------------------------- bei multivolumes den Main-Title
@@ -426,7 +426,7 @@ public class PicaPlugin {
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
-			UghHelper.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
 		}
 
 		/*
@@ -438,7 +438,7 @@ public class PicaPlugin {
 			if (sortingTitleMulti.indexOf("@") != -1) {
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
 			}
-			UghHelper.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
 			// sortingTitle = sortingTitleMulti;
 		}
 
@@ -447,8 +447,8 @@ public class PicaPlugin {
 		 * Stellen --------------------------------
 		 */
 		String sprache = getElementFieldValue(myFirstHit, "010@", "a");
-		sprache = UghHelper.convertLanguage(sprache);
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
+		sprache = UGHUtils.convertLanguage(sprache);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
 
 		/*
 		 * -------------------------------- bei multivolumes die Sprachen -
@@ -456,8 +456,8 @@ public class PicaPlugin {
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String spracheMulti = getElementFieldValue(mySecondHit, "010@", "a");
-			spracheMulti = UghHelper.convertLanguage(spracheMulti);
-			UghHelper.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
+			spracheMulti = UGHUtils.convertLanguage(spracheMulti);
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
 		}
 
 		/*
@@ -465,28 +465,28 @@ public class PicaPlugin {
 		 * --------------------------------
 		 */
 		String issn = getElementFieldValue(myFirstHit, "005A", "0");
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
 		/*
 		 * -------------------------------- Copyright
 		 * --------------------------------
 		 */
 		String copyright = getElementFieldValue(myFirstHit, "037I", "a");
-		UghHelper.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
+		UGHUtils.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
 		/*
 		 * -------------------------------- Format
 		 * --------------------------------
 		 */
 		String format = getElementFieldValue(myFirstHit, "034I", "a");
-		UghHelper.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
+		UGHUtils.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
 		/*
 		 * -------------------------------- Umfang
 		 * --------------------------------
 		 */
 		String umfang = getElementFieldValue(myFirstHit, "034D", "a");
-		UghHelper.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
 
 		/*
 		 * -------------------------------- Signatur
@@ -498,7 +498,7 @@ public class PicaPlugin {
 		}
 		sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
 		sig += getElementFieldValue(myFirstHit, "209A", "a");
-		UghHelper.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+		UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
 		if (sig.trim().length() == 0) {
 			sig = getElementFieldValue(myFirstHit, "209A/01", "c");
 			if (sig.length() > 0) {
@@ -510,7 +510,7 @@ public class PicaPlugin {
 				sig += getElementFieldValue(mySecondHit, "209A", "f") + " ";
 				sig += getElementFieldValue(mySecondHit, "209A", "a");
 			}
-			UghHelper.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+			UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
 		}
 
 		/*
