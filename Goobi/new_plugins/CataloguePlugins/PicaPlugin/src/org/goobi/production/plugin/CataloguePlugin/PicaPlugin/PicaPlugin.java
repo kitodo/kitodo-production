@@ -47,7 +47,7 @@ public class PicaPlugin {
 			accessor.setCharset(configuration.getCharset());
 			Query queryObject = new Query(query);
 			int hits = accessor.getNumberOfHits(queryObject, timeout);
-			return new FindResult(configuration, catalogue, accessor, queryObject, hits);
+			return new FindResult(configuration, accessor, queryObject, hits);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {

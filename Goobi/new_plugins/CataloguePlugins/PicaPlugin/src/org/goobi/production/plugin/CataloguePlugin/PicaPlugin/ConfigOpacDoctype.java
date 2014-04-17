@@ -28,55 +28,19 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
  * exception statement from your version.
  */
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.faces.context.FacesContext;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-
-import com.sharkysoft.util.NotImplementedException;
 
 class ConfigOpacDoctype {
-	private String title = "";
-	private String rulesetType = "";
-	private String tifHeaderType = "";
-	private boolean periodical = false;
-	private boolean multiVolume = false;
-	private boolean containedWork = false;
-	private HashMap<String, String> labels;
-	private ArrayList<String> mappings;
-	private boolean newspaper;
-
-	private ConfigOpacDoctype() {
-		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
-	}
+	private final boolean periodical;
+	private final boolean multiVolume;
+	private final boolean containedWork;
+	private final ArrayList<String> mappings;
 	
-	ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
-			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
+	ConfigOpacDoctype(boolean inPeriodical, boolean inMultiVolume, boolean inContainedWork,
 			ArrayList<String> inMappings) {
-		this.title = inTitle;
-		this.rulesetType = inRulesetType;
-		this.tifHeaderType = inTifHeaderType;
 		this.periodical = inPeriodical;
 		this.multiVolume = inMultiVolume;
 		this.containedWork = inContainedWork;
-		this.newspaper = newspaper;
-		this.labels = inLabels;
 		this.mappings = inMappings;
-	}
-
-	@XmlAttribute(name="key")
-	private String getTitle() {
-		return this.title;
-	}
-
-	private String getRulesetType() {
-		return this.rulesetType;
-	}
-
-	@XmlElement(name="tiffHeaderTag")
-	private String getTifHeaderType() {
-		return this.tifHeaderType;
 	}
 
 	boolean isPeriodical() {
@@ -91,32 +55,8 @@ class ConfigOpacDoctype {
 		return this.containedWork;
 	}
 
-	private boolean isNewspaper() {
-		return this.newspaper;
-	}
-
-	private HashMap<String, String> getLabels() {
-		return this.labels;
-	}
-	
-	@XmlElement(name = "receivingValue")
 	ArrayList<String> getMappings() {
 		return this.mappings;
-	}
-
-	private void setMappings(ArrayList<String> mappings) {
-		this.mappings = mappings;
-	}
-
-	private String getLocalizedLabel() {
-		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-		if (currentLocale != null && !currentLocale.equals("")) {
-			String answer = this.labels.get(currentLocale);
-			if (answer != null && !answer.equals("")) {
-				return answer;
-			}
-		}
-		return this.labels.get(this.labels.keySet().iterator().next());
 	}
 
 }

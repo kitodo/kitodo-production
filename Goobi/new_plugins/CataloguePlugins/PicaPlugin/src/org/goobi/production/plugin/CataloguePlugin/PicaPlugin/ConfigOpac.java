@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -216,27 +215,15 @@ class ConfigOpac {
 					String value = config.getString("doctypes.type(" + i + ").label(" + j + ")");
 					labels.put(language, value);
 				}
-				String inRulesetType = config.getString("doctypes.type(" + i + ")[@rulesetType]");
-				String inTifHeaderType = config.getString("doctypes.type(" + i + ")[@tifHeaderType]");
 				boolean periodical = config.getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
 				boolean multiVolume = config.getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
 				boolean containedWork = config.getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
-				boolean newspaper;
-				try {
-					newspaper = config.getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
-				} catch (NoSuchElementException noParameterIsNewspaper) {
-					newspaper = false;
-				}
 				ArrayList<String> mappings = (ArrayList<String>) config.getList("doctypes.type(" + i + ").mapping");
 
-				ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical,
-						multiVolume, containedWork, newspaper, labels, mappings);
+				ConfigOpacDoctype cod = new ConfigOpacDoctype(periodical, multiVolume, containedWork, mappings);
 				return cod;
 			}
 		}
 		return null;
 	}
-
-
-
 }

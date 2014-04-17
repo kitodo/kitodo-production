@@ -162,24 +162,6 @@ class GetOpac {
 		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
-	/**********************************************************************
-	 * Default constructor for the sub goettingen opac.
-	 * 
-	 * Note that up to now the search item list is always retrieved and parsed. TODO check for local availability.
-	 * 
-	 * @throws IOException
-	 *             If connection to catalogue system failed
-	 * @since 0.1
-	 *********************************************************************/
-
-	private GetOpac() throws ParserConfigurationException, IOException {
-		super();
-		this.opacClient = new HttpClient();
-		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		// TODO: Remove this default catalogue.
-		this.cat = new Catalogue(Catalogue.SUB_OPAC);
-	}
-
 	// MANIPULATION (Manipulation - what the object does) ******************
 
 	/***********************************************************************

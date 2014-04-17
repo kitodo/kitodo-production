@@ -49,11 +49,8 @@ class Query {
 	private static final String QUERY = "&TRM";
 	private static final String FIELD = "&IKT";
 	
-	private Query() {
-	}
-
 	Query(String query, String fieldNumber) {
-		this.addQuery(null, query, fieldNumber);
+		addQuery(null, query, fieldNumber);
 	}
 
 	Query(String inString) {

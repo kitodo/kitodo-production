@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -53,118 +52,6 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 class UghHelper {
 	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
 
-	//	/**
-	//	 * MetadataType aus Preferences eines Prozesses ermitteln
-	//	 * 
-	//	 * @param inProzess
-	//	 * @param inName
-	//	 * @return MetadataType
-	//	 * @throws UghHelperException
-	//	 */
-	//	private static MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
-	//		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
-	//		return getMetadataType(myPrefs, inName);
-	//	}
-
-	//	/**
-	//	 * MetadataType aus Preferences ermitteln
-	//	 * 
-	//	 * @param inPrefs
-	//	 * @param inName
-	//	 * @return MetadataType
-	//	 * @throws UghHelperException
-	//	 */
-	//	private static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
-	//		MetadataType mdt = inPrefs.getMetadataTypeByName(inName);
-	//		if (mdt == null) {
-	//			throw new UghHelperException("MetadataType does not exist in current Preferences: " + inName);
-	//		}
-	//		return mdt;
-	//	}
-
-	/**
-	 * Metadata eines Docstructs ermitteln
-	 * 
-	 * @param inStruct
-	 * @param inMetadataType
-	 * @return Metadata
-	 */
-	private static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {
-		if (inStruct != null && inMetadataType != null) {
-			List<? extends Metadata> all = inStruct.getAllMetadataByType(inMetadataType);
-			if (all.size() == 0) {
-				try {
-					Metadata md = new Metadata(inMetadataType);
-					md.setDocStruct(inStruct);
-					inStruct.addMetadata(md);
-
-					return md;
-				} catch (MetadataTypeNotAllowedException e) {
-					myLogger.debug(e.getMessage());
-					return null;
-				}
-			}
-			if (all.size() != 0) {
-				return all.get(0);
-			} else {
-				return null;
-			}
-		}
-		return null;
-	}
-
-	//	/**
-	//	 * Metadata eines Docstructs ermitteln
-	//	 * 
-	//	 * @param inStruct
-	//	 * @param inMetadataTypeAsString
-	//	 * @return Metadata
-	//	 * @throws UghHelperException
-	//	 */
-	//	private static Metadata getMetadata(DocStruct inStruct, Prefs inPrefs, String inMetadataType)
-	//			throws UghHelperException {
-	//		MetadataType mdt = getMetadataType(inPrefs, inMetadataType);
-	//		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
-	//		if (all.size() > 0) {
-	//			try {
-	//				Metadata md = new Metadata(mdt);
-	//				md.setDocStruct(inStruct);
-	//				inStruct.addMetadata(md);
-	//
-	//				return md;
-	//			} catch (MetadataTypeNotAllowedException e) {
-	//				myLogger.error(e);
-	//			}
-	//		}
-	//		return all.get(0);
-	//	}
-
-	//	/**
-	//	 * Metadata eines Docstructs ermitteln
-	//	 * 
-	//	 * @param inStruct
-	//	 * @param inMetadataTypeAsString
-	//	 * @return Metadata
-	//	 * @throws UghHelperException
-	//	 */
-	//	private static Metadata getMetadata(DocStruct inStruct, Prozess inProzess, String inMetadataType)
-	//			throws UghHelperException {
-	//		MetadataType mdt = getMetadataType(inProzess, inMetadataType);
-	//		List<? extends Metadata> all = inStruct.getAllMetadataByType(mdt);
-	//		if (all.size() > 0) {
-	//			try {
-	//				Metadata md = new Metadata(mdt);
-	//				md.setDocStruct(inStruct);
-	//				inStruct.addMetadata(md);
-	//
-	//				return md;
-	//			} catch (MetadataTypeNotAllowedException e) {
-	//				myLogger.error(e);
-	//			}
-	//		}
-	//		return all.get(0);
-	//	}
-
 	private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* wenn kein Wert vorhanden oder das DocStruct null, dann gleich raus */
 		if (inValue.equals("") || inStruct == null || inStruct.getType() == null) {
@@ -178,15 +65,10 @@ class UghHelper {
 			md.setValue(inValue);
 			inStruct.addMetadata(md);
 		} catch (DocStructHasNoTypeException e) {
-			//			Helper.setMeldung(null, "DocStructHasNoTypeException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue,
-			//					e.getMessage());
 			myLogger.error(e);
 		} catch (MetadataTypeNotAllowedException e) {
-			//			Helper.setMeldung(null, "MetadataTypeNotAllowedException: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue,
-			//					e.getMessage());
 			myLogger.error(e);
 		} catch (Exception e) {
-			//			Helper.setMeldung(null, "Exception: " + inStruct.getType().getName() + " - " + inMetadataType + " - " + inValue, e.getMessage());
 			myLogger.error(e);
 		}
 	}
@@ -229,26 +111,6 @@ class UghHelper {
 		}
 		return inLanguage;
 	}
-
-	//	/**
-	//	 * In einem String die Umlaute auf den Grundbuchstaben reduzieren ================================================================
-	//	 */
-	//	// TODO: Try to replace this with an external library
-	//	private static String convertUmlaut(String line) {
-	//		try {
-	//			BufferedReader in = open(FileNames.DIACRITICS_FILE);
-	//			String str;
-	//			while ((str = in.readLine()) != null) {
-	//				if (str.length() > 0) {
-	//					line = line.replaceAll(str.split(" ")[0], str.split(" ")[1]);
-	//				}
-	//			}
-	//			in.close();
-	//		} catch (IOException e) {
-	//			myLogger.error("IOException bei Umlautkonvertierung", e);
-	//		}
-	//		return line;
-	//	}
 
 	/**
 	 * The function open() opens a file. In a user session context, the file is

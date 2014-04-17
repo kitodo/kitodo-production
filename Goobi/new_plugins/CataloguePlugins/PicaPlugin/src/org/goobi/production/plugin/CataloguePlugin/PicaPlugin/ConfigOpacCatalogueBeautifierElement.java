@@ -28,9 +28,9 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
  * exception statement from your version.
  */
 class ConfigOpacCatalogueBeautifierElement {
-   private String tag = "";
-   private String subtag = "";
-   private String value = "";
+	private final String tag;
+	private final String subtag;
+	private final String value;
    
 	ConfigOpacCatalogueBeautifierElement(String inTag, String inSubTag, String inValue) {
       this.tag = inTag;
@@ -42,27 +42,15 @@ class ConfigOpacCatalogueBeautifierElement {
       return this.tag;
    }
 
-	private void setTag(String tag) {
-      this.tag = tag;
-   }
-
 	String getSubtag() {
       return this.subtag;
-   }
-
-	private void setSubtag(String subtag) {
-      this.subtag = subtag;
    }
 
 	String getValue() {
       return this.value;
    }
 
-	private void setValue(String value) {
-      this.value = value;
-   }
-   
-   @Override
+	@Override
 	public String toString() {
     return this.tag + " - " + this.subtag + " : " + this.value;
    }
