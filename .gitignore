@@ -1,6 +1,6 @@
 /work
 /build
-dist/
+/dist/
 /WEB-INF/classes 
 build.properties
 deploy.properties
