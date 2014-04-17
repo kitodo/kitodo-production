@@ -51,13 +51,11 @@ import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
-import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -110,7 +108,6 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class ProzesskopieForm {
@@ -357,14 +354,14 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function findClick() is executed if a user clicks the command link to
-	 * start a catalogue search. It performs the search and loads the hit, if it
-	 * is unique. Otherwise, it will cause a hit list to show up for the user to
-	 * select a hit.
+	 * The function OpacAuswerten() is executed if a user clicks the command
+	 * link to start a catalogue search. It performs the search and loads the
+	 * hit, if it is unique. Otherwise, it will cause a hit list to show up for
+	 * the user to select a hit.
 	 * 
 	 * @return always "", telling JSF to stay on that page
 	 */
-	public String findClick() {
+	public String OpacAuswerten() {
 		try {
 			clearValues(); // TODO: What does this? Do we need it?
 			readProjectConfigs(); // TODO: What does this? Do we need it?
@@ -391,42 +388,42 @@ public class ProzesskopieForm {
 		}
 	}
 
-	/**
-	 * OpacAnfrage
-	 */
-	@Deprecated
-	// will be replaced by findClick()
-	public String OpacAuswerten() {
-		clearValues();
-		readProjectConfigs();
-		try {
-			new ConfigOpac();
-			ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(opacKatalog);
-		    
-			IOpacPlugin myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
-		    
-			/* den Opac abfragen und ein RDF draus bauen lassen */
-			this.myRdf = myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie
-					.getRegelsatz().getPreferences());
-			if (myImportOpac.getOpacDocType() != null) {
-				this.docType = myImportOpac.getOpacDocType().getTitle();
-			}
-			this.atstsl = myImportOpac.getAtstsl();
-			fillFieldsFromMetadataFile();
-			/* über die Treffer informieren */
-			if (myImportOpac.getHitcount() == 0) {
-				Helper.setFehlerMeldung("No hit found", "");
-			}
-			if (myImportOpac.getHitcount() > 1) {
-				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
-			}
-		} catch (Exception e) {
-			Helper.setFehlerMeldung("Error on reading opac ", e);
-		}
-		return "";
-	}
-
-	/* =============================================================== */
+	//	/**
+	//	 * OpacAnfrage
+	//	 */
+	//	@Deprecated
+	//	// will be replaced by findClick()
+	//	public String OpacAuswerten() {
+	//		clearValues();
+	//		readProjectConfigs();
+	//		try {
+	//			new ConfigOpac();
+	//			ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(opacKatalog);
+	//		    
+	//			IOpacPlugin myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
+	//		    
+	//			/* den Opac abfragen und ein RDF draus bauen lassen */
+	//			this.myRdf = myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie
+	//					.getRegelsatz().getPreferences());
+	//			if (myImportOpac.getOpacDocType() != null) {
+	//				this.docType = myImportOpac.getOpacDocType().getTitle();
+	//			}
+	//			this.atstsl = myImportOpac.getAtstsl();
+	//			fillFieldsFromMetadataFile();
+	//			/* über die Treffer informieren */
+	//			if (myImportOpac.getHitcount() == 0) {
+	//				Helper.setFehlerMeldung("No hit found", "");
+	//			}
+	//			if (myImportOpac.getHitcount() > 1) {
+	//				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
+	//			}
+	//		} catch (Exception e) {
+	//			Helper.setFehlerMeldung("Error on reading opac ", e);
+	//		}
+	//		return "";
+	//	}
+	//
+	//	/* =============================================================== */
 
 	/**
 	 * alle Konfigurationseigenschaften und Felder zurücksetzen
