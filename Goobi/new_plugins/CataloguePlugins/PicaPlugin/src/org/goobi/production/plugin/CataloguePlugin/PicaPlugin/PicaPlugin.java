@@ -22,13 +22,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
-import de.sub.goobi.helper.UghHelper;
-import de.unigoettingen.sub.search.opac.Catalogue;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-import de.unigoettingen.sub.search.opac.GetOpac;
-import de.unigoettingen.sub.search.opac.Query;
 
 @PluginImplementation
 public class PicaPlugin {

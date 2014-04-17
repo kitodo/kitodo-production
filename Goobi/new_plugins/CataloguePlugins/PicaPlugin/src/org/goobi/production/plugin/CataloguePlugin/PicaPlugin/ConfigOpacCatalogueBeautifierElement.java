@@ -1,4 +1,4 @@
-package de.unigoettingen.sub.search.opac;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -27,30 +27,38 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-
-/**
- * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was 
- * als Treffer einer Opacabfrage zurückgegeben wird. Dabei soll die 
- * Eigenschaft eines Wertes gesetzt werden, wenn bestimmte Werte in 
- * dem opac-Ergebnis auftreten. 
- * ================================================================*/
-public class ConfigOpacCatalogueBeautifier {
- private  ConfigOpacCatalogueBeautifierElement tagElementToChange;
-   private ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
+public class ConfigOpacCatalogueBeautifierElement {
+   private String tag = "";
+   private String subtag = "";
+   private String value = "";
    
-   public ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement, ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
-      this.tagElementToChange = inChangeElement;
-      this.tagElementsToProof = inProofElements;
-   }
-
-   public ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
-      return this.tagElementToChange;
-   }
-
-   public ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
-      return this.tagElementsToProof;
+   public ConfigOpacCatalogueBeautifierElement(String inTag, String inSubTag, String inValue) {
+      this.tag = inTag;
+      this.subtag = inSubTag;
+      this.value = inValue;
    }
    
-
+   public String getTag() {
+      return this.tag;
+   }
+   public void setTag(String tag) {
+      this.tag = tag;
+   }
+   public String getSubtag() {
+      return this.subtag;
+   }
+   public void setSubtag(String subtag) {
+      this.subtag = subtag;
+   }
+   public String getValue() {
+      return this.value;
+   }
+   public void setValue(String value) {
+      this.value = value;
+   }
+   
+   @Override
+   public String toString() {
+    return this.tag + " - " + this.subtag + " : " + this.value;
+   }
 }

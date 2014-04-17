@@ -1,4 +1,4 @@
-package de.unigoettingen.sub.search.opac;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

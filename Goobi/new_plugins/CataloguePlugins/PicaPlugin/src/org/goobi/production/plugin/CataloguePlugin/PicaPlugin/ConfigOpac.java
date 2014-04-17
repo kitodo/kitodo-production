@@ -1,4 +1,4 @@
-package de.unigoettingen.sub.search.opac;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -39,7 +39,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
-import org.goobi.production.plugin.CataloguePlugin.PicaPlugin.PicaPlugin;
 
 public class ConfigOpac {
 	private static XMLConfiguration config;

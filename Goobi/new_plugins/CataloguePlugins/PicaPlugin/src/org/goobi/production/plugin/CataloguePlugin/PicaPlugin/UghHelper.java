@@ -1,4 +1,4 @@
-package de.sub.goobi.helper;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
@@ -42,7 +42,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
-import org.goobi.production.plugin.CataloguePlugin.PicaPlugin.PicaPlugin;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;

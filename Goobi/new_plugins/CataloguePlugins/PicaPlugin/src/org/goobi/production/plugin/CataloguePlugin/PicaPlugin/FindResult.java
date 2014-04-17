@@ -1,9 +1,5 @@
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import de.unigoettingen.sub.search.opac.Catalogue;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
-import de.unigoettingen.sub.search.opac.GetOpac;
-import de.unigoettingen.sub.search.opac.Query;
 
 public class FindResult {
 	private final Catalogue catalogue;
