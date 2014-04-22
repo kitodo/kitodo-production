@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -46,12 +45,11 @@ public class ConfigOpacDoctype {
 	private String tifHeaderType = "";
 	private boolean periodical = false;
 	private boolean multiVolume = false;
-	private boolean containedWork = false;
 	private HashMap<String, String> labels;
 	private ArrayList<String> mappings;
 	private boolean newspaper;
 
-	private ConfigOpacDoctype() {
+	public ConfigOpacDoctype() {
 		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
 	}
 	
@@ -63,7 +61,6 @@ public class ConfigOpacDoctype {
 		this.tifHeaderType = inTifHeaderType;
 		this.periodical = inPeriodical;
 		this.multiVolume = inMultiVolume;
-		this.containedWork = inContainedWork;
 		this.newspaper = newspaper;
 		this.labels = inLabels;
 		this.mappings = inMappings;
@@ -91,41 +88,18 @@ public class ConfigOpacDoctype {
 		return this.multiVolume;
 	}
 
-	private boolean isContainedWork() {
-		return this.containedWork;
-	}
-
 	public boolean isNewspaper() {
 		return this.newspaper;
 	}
 
-	private HashMap<String, String> getLabels() {
-		return this.labels;
-	}
-	
 	@XmlElement(name = "label")
-	private List<Label> getLabelsForJerseyApi() {
+	public List<Label> getLabelsForJerseyApi() {
 		return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
 	}
 
 	@XmlElement(name = "receivingValue")
-	ArrayList<String> getMappings() {
+	public ArrayList<String> getMappings() {
 		return this.mappings;
-	}
-
-	private void setMappings(ArrayList<String> mappings) {
-		this.mappings = mappings;
-	}
-
-	private String getLocalizedLabel() {
-		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-		if (currentLocale != null && !currentLocale.equals("")) {
-			String answer = this.labels.get(currentLocale);
-			if (answer != null && !answer.equals("")) {
-				return answer;
-			}
-		}
-		return this.labels.get(this.labels.keySet().iterator().next());
 	}
 
 }

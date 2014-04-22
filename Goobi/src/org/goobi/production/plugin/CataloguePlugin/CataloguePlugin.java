@@ -2,13 +2,27 @@ package org.goobi.production.plugin.CataloguePlugin;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
 
+import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
+import de.sub.goobi.config.ConfigMain;
 
 public class CataloguePlugin extends UnspecificPlugin {
+
+	/**
+	 * The constant field THIRTY_MINUTES holds the milliseconds value
+	 * representing 30 minutes. This is the default for catalogue operations
+	 * timeout. Note that on large, database-backed catalogues, searches for
+	 * common title terms may take more than 15 minutes, so 30 minutes is a fair
+	 * deal for an internal default value here.
+	 */
+	private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
 	private final Method find;
 	private final Method getHit;
@@ -46,6 +60,23 @@ public class CataloguePlugin extends UnspecificPlugin {
 		return invokeQuietly(plugin, find, new Object[] { query, timeout }, Object.class);
 	}
 
+	public static Fileformat getFirstHit(String catalogue, String field, String term, Prefs preferences) {
+		try {
+			CataloguePlugin plugin = PluginLoader.getCataloguePluginForCatalogue(catalogue);
+			plugin.setPreferences(preferences);
+			plugin.useCatalogue(catalogue);
+			String query = QueryBuilder.buildSimpleFieldedQuery(field, term);
+			Object searchResult = plugin.find(query, getTimeout());
+			long hits = plugin.getNumberOfHits(searchResult, getTimeout());
+			if (hits > 0)
+				return plugin.getHit(searchResult, 0, getTimeout()).getFileformat();
+			else
+				return null;
+		} catch (RuntimeException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * The function getHit() shall return the hit identified by its index. The
 	 * method shall ensure that it returns after the given timeout and shall
@@ -78,6 +109,16 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 */
 	public long getNumberOfHits(Object searchResult, long timeout) {
 		return invokeQuietly(plugin, getNumberOfHits, new Object[] { searchResult, timeout }, long.class);
+	}
+
+	/**
+	 * The function getTimeout returns the timeout to be used in catalogue
+	 * access.
+	 * 
+	 * @return the timeout for catalogue access
+	 */
+	public static long getTimeout() {
+		return ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
 	}
 
 	@Override

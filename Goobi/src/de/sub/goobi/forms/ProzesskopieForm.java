@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
 
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
@@ -114,15 +113,6 @@ public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
-
-	/**
-	 * The constant field THIRTY_MINUTES holds the milliseconds value
-	 * representing 30 minutes. This is the default for catalogue operations
-	 * timeout. Note that on large, database-backed catalogues, searches for
-	 * common title terms may take more than 15 minutes, so 30 minutes is a fair
-	 * deal for an internal default value here.
-	 */
-	private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
 	private String addToWikiField = "";
 	private List<AdditionalField> additionalFields;
@@ -374,10 +364,10 @@ public class ProzesskopieForm {
 			importCatalogue.setPreferences(prozessKopie.getRegelsatz().getPreferences());
 			importCatalogue.useCatalogue(opacKatalog);
 			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
-			hitlist = importCatalogue.find(query, getTimeout());
-			hits = importCatalogue.getNumberOfHits(hitlist, getTimeout());
+			hitlist = importCatalogue.find(query, CataloguePlugin.getTimeout());
+			hits = importCatalogue.getNumberOfHits(hitlist, CataloguePlugin.getTimeout());
 			if (hits == 1) // Cannot switch on long (only int or enum)
-				importHit(importCatalogue.getHit(hitlist, 0, getTimeout()));
+				importHit(importCatalogue.getHit(hitlist, 0, CataloguePlugin.getTimeout()));
 			else if (hits == 0)
 				Helper.setFehlerMeldung("No hit found", "");
 			else
@@ -1644,7 +1634,7 @@ public class ProzesskopieForm {
 		long firstHit = hitlistPage * pageSize;
 		long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
 		for (long index = firstHit; index <= lastHit; index++) {
-			Hit hit = importCatalogue.getHit(hitlist, index, getTimeout());
+			Hit hit = importCatalogue.getHit(hitlist, index, CataloguePlugin.getTimeout());
 			result.add(new SelectableHit(hit));
 		}
 		return result;
@@ -1658,15 +1648,5 @@ public class ProzesskopieForm {
 	 */
 	public boolean getHitlistShowing() {
 		return hitlistPage >= 0;
-	}
-
-	/**
-	 * The function getTimeout returns the timeout to be used in catalogue
-	 * access.
-	 * 
-	 * @return the timeout for catalogue access
-	 */
-	private long getTimeout() {
-		return ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
 	}
 }

@@ -70,54 +70,12 @@ public class ConfigOpac {
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
-	public static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
+	public static String getOpacType(String inTitle) {
 		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = config.getString("catalogue(" + i + ")[@title]");
 			if (title.equals(inTitle)) {
-				String description = config.getString("catalogue(" + i + ").config[@description]");
-				String address = config.getString("catalogue(" + i + ").config[@address]");
-				String database = config.getString("catalogue(" + i + ").config[@database]");
-				String iktlist = config.getString("catalogue(" + i + ").config[@iktlist]");
-				String cbs = config.getString("catalogue(" + i + ").config[@ucnf]", "");
-				if (!cbs.equals("")) {
-					cbs = "&" + cbs;
-				}
-				int port = config.getInt("catalogue(" + i + ").config[@port]");
-				String charset = "iso-8859-1";
-				if (config.getString("catalogue(" + i + ").config[@charset]") != null) {
-					charset = config.getString("catalogue(" + i + ").config[@charset]");
-				}
-				String opacType = config.getString("catalogue(" + i + ").config[@opacType]", "PICA");
-				/*
-				 * --------------------- Opac-Beautifier einlesen und in Liste
-				 * zu jedem Catalogue packen -------------------
-				 */
-				ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<ConfigOpacCatalogueBeautifier>();
-				for (int j = 0; j <= config.getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
-					/* Element, dessen Wert geändert werden soll */
-					String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
-					ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
-							config.getString(tempJ + "[@tag]"), config.getString(tempJ + "[@subtag]"),
-							config.getString(tempJ + "[@value]"));
-					/*
-					 * Elemente, die bestimmte Werte haben müssen, als Prüfung,
-					 * ob das zu ändernde Element geändert werden soll
-					 */
-					ArrayList<ConfigOpacCatalogueBeautifierElement> proofElements = new ArrayList<ConfigOpacCatalogueBeautifierElement>();
-					for (int k = 0; k <= config.getMaxIndex(tempJ + ".condition"); k++) {
-						String tempK = tempJ + ".condition(" + k + ")";
-						ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
-								config.getString(tempK + "[@tag]"), config.getString(tempK + "[@subtag]"),
-								config.getString(tempK + "[@value]"));
-						proofElements.add(oteProof);
-					}
-					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
-				}
-
-				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, iktlist, port,
-						charset, cbs, beautyList, opacType);
-				return coc;
+				return config.getString("catalogue(" + i + ").config[@opacType]", "PICA");
 			}
 		}
 		return null;
@@ -163,46 +121,6 @@ public class ConfigOpac {
 			myList.add(getDoctypeByName(title));
 		}
 		return myList;
-	}
-
-	/**
-	 * get doctype from mapping of opac response first check if there is a
-	 * special mapping for this
-	 * ================================================================
-	 */
-	private static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
-		int countCatalogues = config.getMaxIndex("catalogue");
-		for (int i = 0; i <= countCatalogues; i++) {
-			String title = config.getString("catalogue(" + i + ")[@title]");
-			if (title.equals(inCatalogue)) {
-				/*
-				 * --------------------- alle speziell gemappten DocTypes eines
-				 * Kataloges einlesen -------------------
-				 */
-				HashMap<String, String> labels = new HashMap<String, String>();
-				int countLabels = config.getMaxIndex("catalogue(" + i + ").specialmapping");
-				for (int j = 0; j <= countLabels; j++) {
-					String type = config.getString("catalogue(" + i + ").specialmapping[@type]");
-					String value = config.getString("catalogue(" + i + ").specialmapping");
-					labels.put(value, type);
-				}
-				if (labels.containsKey(inMapping)) {
-					return getDoctypeByName(labels.get(inMapping));
-				}
-			}
-		}
-
-		/*
-		 * --------------------- falls der Katalog kein spezielles Mapping für
-		 * den Doctype hat, jetzt in den Doctypes suchen -------------------
-		 */
-		for (String title : getAllDoctypeTitles()) {
-			ConfigOpacDoctype tempType = getDoctypeByName(title);
-			if (tempType.getMappings().contains(inMapping)) {
-				return tempType;
-			}
-		}
-		return null;
 	}
 
 	/**
