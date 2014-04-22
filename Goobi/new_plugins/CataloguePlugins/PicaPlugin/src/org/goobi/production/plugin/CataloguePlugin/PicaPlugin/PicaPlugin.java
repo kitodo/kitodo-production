@@ -2,6 +2,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.xeoh.plugins.base.Plugin;
@@ -181,11 +182,13 @@ public class PicaPlugin implements Plugin {
 						 * selbst vorhanden sind
 						 */
 						if (myFirstHitParent.getChildren() != null) {
-
-							for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
+							for (@SuppressWarnings("unchecked")
+							Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
 								Element ele = iter.next();
 								if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
-									myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
+									@SuppressWarnings("unchecked")
+									List<Element> children = myFirstHit.getChildren();
+									children.add(getCopyFromJdomElement(ele));
 								}
 							}
 						}
