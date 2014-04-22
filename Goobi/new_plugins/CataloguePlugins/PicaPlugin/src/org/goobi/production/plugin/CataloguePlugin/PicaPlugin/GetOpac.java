@@ -78,7 +78,7 @@ class GetOpac {
 
 	private static final String PICA_SUBFIELD = "subfield";
 
-	private static final long HTTP_CONNECTION_TIMEOUT = TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS);
+	private static final int HTTP_CONNECTION_TIMEOUT = (int) TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS);
 
 	private static final String PICA_SUBFIELD_NAME = "code";
 
@@ -116,7 +116,6 @@ class GetOpac {
 
 	private final Catalogue cat;
 
-	private final boolean verbose = false;
 	private final String sorting = SORT_BY_YEAR_OF_PUBLISHING;
 
 	// for caching the last query and its result
@@ -316,19 +315,10 @@ class GetOpac {
 		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
 				+ this.cat.getPort() + this.cat.getCbs();
 
-		if (this.verbose) {
-			logger.info("Searching the opac for " + query.getQueryUrl());
-		}
-
-		if (this.lastQuery.equals(querySummary)) {
-			if (this.verbose) {
-				logger.info("Using cached result because last query was: " + querySummary);
-			}
+		if (this.lastQuery.equals(querySummary))
 			return this.lastOpacResult;
-		}
 		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
-				+ this.charset
- + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
+				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
 
@@ -437,32 +427,27 @@ class GetOpac {
 	 *             If the connection failed
 	 **********************************************************************/
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
+		String request = "http://" + cat.getServerAddress()
+				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getCbs();
 
-		 if (verbose){
-			 logger.info("Retrieving URL: http://" + this.cat.getServerAddress() + ":" + this.cat.getPort()  + url + this.cat.getCbs());
-		 }
+		// set timeout if no connection can be established
+		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
-        GetMethod opacRequest = null;
-        opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + url + this.cat.getCbs());
+		// set timeout if a connection is established but there is no response (= time the database needs to search)
+		if (timeout > 0 && timeout <= Integer.MAX_VALUE)
+			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
+		else
+			opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
 
-        if (this.cat.getPort() == 80) {
-        } else {
-            opacRequest = new GetMethod("http://" + this.cat.getServerAddress() + ":" + this.cat.getPort() + url + this.cat.getCbs());
-
-        }
+		GetMethod opacRequest = null;
 		try {
-			opacClient.getParams().setParameter("http.connection.timeout",
-					Long.valueOf(HTTP_CONNECTION_TIMEOUT).intValue()); // if no connection is established
-			if (timeout > 0 && timeout <= Integer.MAX_VALUE)
-				opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue()); // if a connection is established but there is no response
-			else
-				opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
-			this.opacClient.executeMethod(opacRequest);
+			opacRequest = new GetMethod(request);
+			opacClient.executeMethod(opacRequest);
 			return opacRequest.getResponseBodyAsString();
 		} finally {
-			opacRequest.releaseConnection();
+			if (opacRequest != null)
+				opacRequest.releaseConnection();
 		}
-
 	}
 
 	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
