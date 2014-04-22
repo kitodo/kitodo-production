@@ -30,27 +30,18 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -105,12 +96,9 @@ class GetOpac {
 	private static final String SESSIONID_URL = "/SID=";
 	/** The url part for searching in a specified key field */
 	private static final String SEARCH_URL_BEFORE_QUERY = "/CMD?ACT=SRCHM&";
-	private static final String SORT_BY_RELEVANCE = "SRT=RLV";
 	private static final String SORT_BY_YEAR_OF_PUBLISHING = "SRT=YOP";
 	/** the url part for getting the complete data set */
 	private static final String SHOW_LONGTITLE_NR_URL = "/SHW?FRST=";
-	private static final String SHOW_NEXT_HITS_URL = "/NXT?FRST=";
-
 	/**
 	 * Character encoding of the url. "utf-8" is w3c recommendation, but only "iso-8859-1" worked for me.
 	 */
@@ -126,10 +114,10 @@ class GetOpac {
 	// TODO: Check if this should really be query specific
 	private String charset = "iso-8859-1";
 
-	private Catalogue cat;
+	private final Catalogue cat;
 
-	private boolean verbose = false;
-	private String sorting = SORT_BY_YEAR_OF_PUBLISHING;
+	private final boolean verbose = false;
+	private final String sorting = SORT_BY_YEAR_OF_PUBLISHING;
 
 	// for caching the last query and its result
 	// TODO decide which result to cache (long or shortlist)? up to now its
@@ -185,44 +173,6 @@ class GetOpac {
 		return this.lastOpacResult.getNumberOfHits();
 	}
 
-	/************************************************************************
-	 * Retrieve the value of a specific field and subfield of a record.
-	 * 
-	 * @param picaRecord
-	 * @param field
-	 * @param subfield
-	 * @return
-	 ***********************************************************************/
-	private static String getDataFromPica(Element picaRecord, String field, String occurrence, String subfield) {
-		return getDataFromPica(picaRecord.getElementsByTagName(PICA_FIELD), field, occurrence, subfield);
-	}
-
-	/************************************************************************
-	 * Retrieve the value of a specific field and subfield of a list of nodes.
-	 * 
-	 * @param picaFields
-	 * @param field
-	 * @param subfield
-	 * @return
-	 ***********************************************************************/
-	private static String getDataFromPica(NodeList picaFields, String field, String occurrence, String subfield) {
-		String result = null;
-		for (int i = 0; i < picaFields.getLength(); i++) {
-			if ((picaFields.item(i).getNodeType() == Node.ELEMENT_NODE) && ((Element) picaFields.item(i)).hasAttribute(PICA_FIELD_NAME)
-					&& (((Element) picaFields.item(i)).getAttribute(PICA_FIELD_NAME).equals(field))
-					&& ((Element) picaFields.item(i)).hasAttribute(PICA_FIELD_OCCURENCES)
-					&& (((Element) picaFields.item(i)).getAttribute(PICA_FIELD_OCCURENCES).equals(occurrence))) {
-				NodeList values = ((Element) picaFields.item(i)).getElementsByTagName(PICA_SUBFIELD);
-				for (int j = 0; j < values.getLength(); j++) {
-					if (((Element) values.item(j)).getAttribute(PICA_SUBFIELD_NAME).equals(subfield)) {
-						result = values.item(j).getFirstChild().getNodeValue();
-					}
-				}
-			}
-		}
-		return result;
-	}
-
 	/***********************************************************************
 	 * Gets the formatted picaplus data of the specified hits for the query in
 	 * the specified field from the OPAC.
@@ -267,29 +217,6 @@ class GetOpac {
 			ParserConfigurationException {
 		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
 				.getDocumentElement();
-	}
-
-	/***********************************************************************
-	 * Gets the formatted picaplus data of the specified hits for the query in
-	 * the specified field from the OPAC.
-	 * 
-	 * @param query
-	 *            The query string you are looking for.
-	 * @param fieldKey
-	 *            The pica mnemonic key (PPN, THM, etc.) for the pica field
-	 *            where the query should be found.
-	 * @param numberOfHits
-	 *            the number of hits to return. Set to 0 to return all hits.
-	 * @param timeout
-	 * @return returns the root node of the retrieved and formatted xml.
-	 * @throws IOException
-	 *             If connection to catalogue system failed
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 **********************************************************************/
-	private String retrievePica(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
-		return retrievePica(query, 0, numberOfHits, timeout);
 	}
 
 	/***********************************************************************
@@ -353,108 +280,6 @@ class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Gets the raw picaplus data for the specified hits for the query in the
-	 * specified field from the OPAC.
-	 * 
-	 * @param query
-	 *            The query string you are looking for.
-	 * @param start
-	 *            The index of the first result to be returned
-	 * @param end
-	 *            The index of the first result NOT to be returned. Set to zero
-	 *            to return all hits from the start.
-	 * @param timeout
-	 * @return returns the root node of the retrieved xml. Beware, it is raw and
-	 *         pretty messy! It is recommended that you use
-	 *         retrieveXMLPicaPlus()
-	 * @throws IOException
-	 *             If connection to catalogue system failed
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IllegalQueryException
-	 **********************************************************************/
-	private Node retrievePicaRawNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
-			ParserConfigurationException,
- IllegalArgumentException {
-		Node result = null;
-
-		// querySummary is used to check if cached result and sessionid
-		// can be used again
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
-				+ this.cat.getPort() + this.cat.getCbs();
-
-		// if we can not use the cached result
-		if (!this.lastQuery.equals(querySummary)) {
-			// then we need a new sessionid and resultstring
-			getResult(query, timeout);
-		}
-
-		// this will be our new picaplus xml-document and its root
-		Document picaPlusRaw = getNewDocument();
-		result = picaPlusRaw.createElement("picaplusrawresults");
-		// formating
-		result.appendChild(picaPlusRaw.createTextNode("\n"));
-
-		// make sure that upper limit of requested hits is not to high
-		int maxNumberOfHits = this.lastOpacResult.getNumberOfHits() + 1;
-		if (end > maxNumberOfHits) {
-			end = maxNumberOfHits;
-		}
-		// return all hits if requested
-		if (end == 0) {
-			end = maxNumberOfHits;
-		}
-
-		// retrieve and append the requested hits
-		for (int i = start; i < end; i++) {
-			Node picaPlusLong = retrievePicaTitleNode(i, timeout);
-			if (picaPlusLong != null) {
-				result.appendChild(picaPlusRaw.importNode(picaPlusLong, true));
-			} else {
-				System.err.println("Could not retrieve data for hit nr:" + i);
-			}
-		}
-
-		// formating
-		result.appendChild(picaPlusRaw.createTextNode("\n"));
-
-		// check if we got an result
-		if (((Element) result).hasAttribute("error")) {
-			// if it was not an error because of no hits getNumberOfHits
-			// throws an exception
-			if (getNumberOfHits(query, timeout) == 0) {
-				throw new IllegalArgumentException("No Hits");
-			}
-
-		}
-
-		return result;
-	}
-
-	/***********************************************************************
-	 * Retrieves a single hit from the catalogue system.
-	 * 
-	 * @param numberOfHit
-	 *            The index of the hit to return
-	 * @param timeout
-	 * @return The response as the root node of an xml tree
-	 * @throws IOException
-	 *             If the connection failed
-	 **********************************************************************/
-	private Node retrievePicaTitleNode(int numberOfHit, long timeout) throws IOException {
-		String resultString = null;
-		// get pica longtitle
-		resultString = retrievePicaTitle(numberOfHit, timeout);
-		// parse result as xml, append result to the root node
-		InputSource resultSource = new InputSource(new StringReader(resultString));
-		Document parsedDoc = getParsedDocument(resultSource);
-		if (parsedDoc == null) {
-			return null;
-		}
-		return parsedDoc.getDocumentElement();
-	}
-
-	/***********************************************************************
 	 * Retrieves a single hit from the catalogue system.
 	 * 
 	 * @param numberOfHits
@@ -470,36 +295,6 @@ class GetOpac {
 				+ SET_ID_URL
 				+ this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List[] getResultLists(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
-		List[] result = new List[2];
-		OpacResponseHandler search = getResult(query, timeout);
-
-		// return all hits?
-		if (numberOfHits == 0) {
-			numberOfHits = search.getNumberOfHits();
-		}
-		// PPN list
-		result[0] = new ArrayList(numberOfHits);
-		// title list
-		result[1] = new ArrayList(numberOfHits);
-		result[0].addAll(search.getOpacResponseItemPpns());
-		result[1].addAll(search.getOpacResponseItemTitles());
-
-		// return more than the first 10 hits
-		for (int i = 10; i < numberOfHits; i += 10) {
-			String tmpSearch = retrieveDataFromOPAC("/XML=1.0" + DATABASE_URL + this.cat.getDataBase() + SET_ID_URL + search.getSet() + SESSIONID_URL
- + search.getSessionId() + "/TTL=" + (i - 9) + SHOW_NEXT_HITS_URL
-					+ (i + 1), timeout);
-			search = parseOpacResponse(tmpSearch);
-			result[0].addAll(search.getOpacResponseItemPpns());
-			result[1].addAll(search.getOpacResponseItemTitles());
-		}
-
-		return result;
 	}
 
 	/***********************************************************************
@@ -632,35 +427,6 @@ class GetOpac {
 	}
 
 	/***********************************************************************
-	 * Helper method that returns a new XML Document.
-	 * 
-	 * @return the nex Document
-	 **********************************************************************/
-	private Document getNewDocument() {
-
-		return this.docBuilder.newDocument();
-	}
-
-	/***********************************************************************
-	 * Helper method that prints a DOM Tree to .
-	 * 
-	 * @param source
-	 *            The DOMSource to print
-	 **********************************************************************/
-	private void outputXMLTreeToSysout(DOMSource source) {
-		try {
-			TransformerFactory tFac = TransformerFactory.newInstance();
-			Transformer transformer = tFac.newTransformer();
-			StreamResult output = new StreamResult();
-
-			transformer.setOutputProperty(OutputKeys.ENCODING, this.charset);
-			transformer.transform(source, output);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/***********************************************************************
 	 * Retrieves the content of the specified url from the serverAddress.
 	 * 
 	 * @param url
@@ -717,14 +483,6 @@ class GetOpac {
 		return ids;
 	}
 
-	private Catalogue getCat() {
-		return this.cat;
-	}
-
-	private void setCat(Catalogue opac) {
-		this.cat = opac;
-	}
-
 	/***********************************************************************
 	 * Set requested character encoding for the response of the catalogue
 	 * system. For goettingen iso-8859-1 and utf-8 work, the default is
@@ -736,25 +494,6 @@ class GetOpac {
 
 	void setCharset(String charset) {
 		this.charset = charset;
-	}
-
-	/***********************************************************************
-	 * Set verbose to true to get debug messages printed to .
-	 * 
-	 * @param verbose
-	 *            True will deliver debug messages to .
-	 **********************************************************************/
-
-	private void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-
-	private void sortByRelevance() {
-		this.sorting = SORT_BY_RELEVANCE;
-	}
-
-	private void sortByYearOfPublishing() {
-		this.sorting = SORT_BY_YEAR_OF_PUBLISHING;
 	}
 
 }
