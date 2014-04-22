@@ -70,21 +70,21 @@ import org.xml.sax.XMLReader;
  * CHANGELOG: 19.07.2005 Ludwig: first Version
  *************************************************************************/
 
-public class GetOpac {
+class GetOpac {
 	private static final Logger logger = Logger.getLogger(GetOpac.class);
 	
 	// the output xml
-	public static final String PICA_COLLECTION_RECORDS = "collection";
+	private static final String PICA_COLLECTION_RECORDS = "collection";
 
-	public static final String PICA_RECORD = "record";
+	private static final String PICA_RECORD = "record";
 
-	public static final String PICA_FIELD = "field";
+	private static final String PICA_FIELD = "field";
 
-	public static final String PICA_FIELD_NAME = "tag";
+	private static final String PICA_FIELD_NAME = "tag";
 
-	public static final String PICA_FIELD_OCCURENCES = "occurrence";
+	private static final String PICA_FIELD_OCCURENCES = "occurrence";
 
-	public static final String PICA_SUBFIELD = "subfield";
+	private static final String PICA_SUBFIELD = "subfield";
 
 	private static final String PICA_SUBFIELD_NAME = "code";
 
@@ -112,11 +112,11 @@ public class GetOpac {
 	 * Character encoding of the url. "utf-8" is w3c recommendation, but only "iso-8859-1" worked for me.
 	 */
 	// TODO: Check if this needed.
-	public static final String URL_CHARACTER_ENCODING = "iso-8859-1";
+	static final String URL_CHARACTER_ENCODING = "iso-8859-1";
 
 	// resources
-	private HttpClient opacClient;
-	private DocumentBuilder docBuilder;
+	private final HttpClient opacClient;
+	private final DocumentBuilder docBuilder;
 
 	// STATE (Instance variables) *****************************************
 	// This is now configured inside the Catalogue class.
@@ -152,7 +152,7 @@ public class GetOpac {
 	 * @since 0.1
 	 *********************************************************************/
 
-	public GetOpac(Catalogue opac) throws ParserConfigurationException {
+	private GetOpac(Catalogue opac) throws ParserConfigurationException {
 		super();
 		this.opacClient = new HttpClient();
 		this.cat = opac;
@@ -169,13 +169,13 @@ public class GetOpac {
 	 * @since 0.1
 	 *********************************************************************/
 
-	public GetOpac() throws ParserConfigurationException, IOException {
-		super();
-		this.opacClient = new HttpClient();
-		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		// TODO: Remove this default catalogue.
-		this.cat = new Catalogue(Catalogue.SUB_OPAC);
-	}
+	//	private GetOpac() throws ParserConfigurationException, IOException {
+	//		super();
+	//		this.opacClient = new HttpClient();
+	//		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	//		// TODO: Remove this default catalogue.
+	//		this.cat = new Catalogue(Catalogue.SUB_OPAC);
+	//	}
 
 	// MANIPULATION (Manipulation - what the object does) ******************
 
@@ -192,7 +192,7 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
+	private int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query);
 		return this.lastOpacResult.getNumberOfHits();
 	}
@@ -205,7 +205,7 @@ public class GetOpac {
 	 * @param subfield
 	 * @return
 	 ***********************************************************************/
-	public static String getDataFromPica(Element picaRecord, String field, String occurrence, String subfield) {
+	private static String getDataFromPica(Element picaRecord, String field, String occurrence, String subfield) {
 		return getDataFromPica(picaRecord.getElementsByTagName(PICA_FIELD), field, occurrence, subfield);
 	}
 
@@ -217,7 +217,7 @@ public class GetOpac {
 	 * @param subfield
 	 * @return
 	 ***********************************************************************/
-	public static String getDataFromPica(NodeList picaFields, String field, String occurrence, String subfield) {
+	private static String getDataFromPica(NodeList picaFields, String field, String occurrence, String subfield) {
 		String result = null;
 		for (int i = 0; i < picaFields.getLength(); i++) {
 			if ((picaFields.item(i).getNodeType() == Node.ELEMENT_NODE) && ((Element) picaFields.item(i)).hasAttribute(PICA_FIELD_NAME)
@@ -250,7 +250,8 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public Node retrievePicaNode(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
+	private Node retrievePicaNode(Query query, int numberOfHits) throws IOException, SAXException,
+			ParserConfigurationException {
 		return retrievePicaNode(query, 0, numberOfHits);
 	}
 
@@ -269,7 +270,8 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 ***********************************************************************/
-	public Node retrievePicaNode(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException {
+	private Node retrievePicaNode(Query query, int start, int end) throws IOException, SAXException,
+			ParserConfigurationException {
 		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end)))).getDocumentElement();
 	}
 
@@ -288,7 +290,8 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public String retrievePica(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
+	private String retrievePica(Query query, int numberOfHits) throws IOException, SAXException,
+			ParserConfigurationException {
 		return retrievePica(query, 0, numberOfHits);
 	}
 
@@ -307,7 +310,8 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public String retrievePica(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException {
+	private String retrievePica(Query query, int start, int end) throws IOException, SAXException,
+			ParserConfigurationException {
 		StringBuffer xmlResult = new StringBuffer();
 
 		// querySummary is used to check if cached result and sessionid
@@ -362,7 +366,8 @@ public class GetOpac {
 	 * @throws SAXException
 	 * @throws IllegalQueryException
 	 **********************************************************************/
-	public Node retrievePicaRawNode(Query query, int start, int end) throws IOException, SAXException, ParserConfigurationException,
+	private Node retrievePicaRawNode(Query query, int start, int end) throws IOException, SAXException,
+			ParserConfigurationException,
 			IllegalQueryException {
 		Node result = null;
 
@@ -458,7 +463,8 @@ public class GetOpac {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List[] getResultLists(Query query, int numberOfHits) throws IOException, SAXException, ParserConfigurationException {
+	private List[] getResultLists(Query query, int numberOfHits) throws IOException, SAXException,
+			ParserConfigurationException {
 		List[] result = new List[2];
 		OpacResponseHandler search = getResult(query);
 
@@ -496,7 +502,7 @@ public class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	public OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
+	private OpacResponseHandler getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
 		String querySummary = query.getQueryUrl() + this.data_character_encoding + this.cat.getDataBase() + this.cat.getServerAddress()
@@ -594,7 +600,7 @@ public class GetOpac {
 	 *            The InputSource to parse
 	 * @return The resulting document
 	 **********************************************************************/
-	public Document getParsedDocument(InputSource source) {
+	private Document getParsedDocument(InputSource source) {
 		try {
 			return this.docBuilder.parse(source);
 		} catch (SAXException e) {
@@ -627,7 +633,7 @@ public class GetOpac {
 	 * @param source
 	 *            The DOMSource to print
 	 **********************************************************************/
-	public void outputXMLTreeToSysout(DOMSource source) {
+	private void outputXMLTreeToSysout(DOMSource source) {
 		try {
 			TransformerFactory tFac = TransformerFactory.newInstance();
 			Transformer transformer = tFac.newTransformer();
@@ -672,7 +678,8 @@ public class GetOpac {
 
 	}
 
-	public OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException, ParserConfigurationException {
+	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
+			ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;").replace("&amp;lt;", "&lt;")
 				.replace("&amp;gt;", "&gt;");
 		
@@ -689,11 +696,11 @@ public class GetOpac {
 		return ids;
 	}
 
-	public Catalogue getCat() {
+	private Catalogue getCat() {
 		return this.cat;
 	}
 
-	public void setCat(Catalogue opac) {
+	private void setCat(Catalogue opac) {
 		this.cat = opac;
 	}
 
@@ -705,7 +712,7 @@ public class GetOpac {
 	 **********************************************************************/
 
 	// TODO: rename this Method to camelCase convention
-	public void setData_character_encoding(String data_character_encoding) {
+	private void setData_character_encoding(String data_character_encoding) {
 		this.data_character_encoding = data_character_encoding;
 	}
 
@@ -716,15 +723,15 @@ public class GetOpac {
 	 *            True will deliver debug messages to .
 	 **********************************************************************/
 
-	public void setVerbose(boolean verbose) {
+	private void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
 
-	public void sortByRelevance() {
+	private void sortByRelevance() {
 		this.sorting = SORT_BY_RELEVANCE;
 	}
 
-	public void sortByYearOfPublishing() {
+	private void sortByYearOfPublishing() {
 		this.sorting = SORT_BY_YEAR_OF_PUBLISHING;
 	}
 

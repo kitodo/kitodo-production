@@ -142,7 +142,7 @@ public class ConfigOpac {
 	 * return all configured Doctype-Titles from Configfile
 	 * ================================================================
 	 */
-	public static ArrayList<String> getAllDoctypeTitles() {
+	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		int countTypes = config.getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countTypes; i++) {
@@ -170,7 +170,7 @@ public class ConfigOpac {
 	 * special mapping for this
 	 * ================================================================
 	 */
-	public static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
+	private static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
 		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = config.getString("catalogue(" + i + ")[@title]");

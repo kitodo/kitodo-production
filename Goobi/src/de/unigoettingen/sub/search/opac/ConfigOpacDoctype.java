@@ -51,11 +51,11 @@ public class ConfigOpacDoctype {
 	private ArrayList<String> mappings;
 	private boolean newspaper;
 
-	public ConfigOpacDoctype() {
+	private ConfigOpacDoctype() {
 		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
 	}
 	
-	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
+	ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
 			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
 			ArrayList<String> inMappings) {
 		this.title = inTitle;
@@ -91,7 +91,7 @@ public class ConfigOpacDoctype {
 		return this.multiVolume;
 	}
 
-	public boolean isContainedWork() {
+	private boolean isContainedWork() {
 		return this.containedWork;
 	}
 
@@ -99,25 +99,25 @@ public class ConfigOpacDoctype {
 		return this.newspaper;
 	}
 
-	public HashMap<String, String> getLabels() {
+	private HashMap<String, String> getLabels() {
 		return this.labels;
 	}
 	
 	@XmlElement(name = "label")
-	public List<Label> getLabelsForJerseyApi() {
+	private List<Label> getLabelsForJerseyApi() {
 		return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
 	}
 
 	@XmlElement(name = "receivingValue")
-	public ArrayList<String> getMappings() {
+	ArrayList<String> getMappings() {
 		return this.mappings;
 	}
 
-	public void setMappings(ArrayList<String> mappings) {
+	private void setMappings(ArrayList<String> mappings) {
 		this.mappings = mappings;
 	}
 
-	public String getLocalizedLabel() {
+	private String getLocalizedLabel() {
 		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 		if (currentLocale != null && !currentLocale.equals("")) {
 			String answer = this.labels.get(currentLocale);

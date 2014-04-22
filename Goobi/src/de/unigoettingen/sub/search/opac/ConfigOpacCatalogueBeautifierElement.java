@@ -27,38 +27,43 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-public class ConfigOpacCatalogueBeautifierElement {
+class ConfigOpacCatalogueBeautifierElement {
    private String tag = "";
    private String subtag = "";
    private String value = "";
    
-   public ConfigOpacCatalogueBeautifierElement(String inTag, String inSubTag, String inValue) {
+	ConfigOpacCatalogueBeautifierElement(String inTag, String inSubTag, String inValue) {
       this.tag = inTag;
       this.subtag = inSubTag;
       this.value = inValue;
    }
    
-   public String getTag() {
+	String getTag() {
       return this.tag;
    }
-   public void setTag(String tag) {
+
+	private void setTag(String tag) {
       this.tag = tag;
    }
-   public String getSubtag() {
+
+	String getSubtag() {
       return this.subtag;
    }
-   public void setSubtag(String subtag) {
+
+	private void setSubtag(String subtag) {
       this.subtag = subtag;
    }
-   public String getValue() {
+
+	String getValue() {
       return this.value;
    }
-   public void setValue(String value) {
+
+	private void setValue(String value) {
       this.value = value;
    }
    
    @Override
-   public String toString() {
+	public String toString() {
     return this.tag + " - " + this.subtag + " : " + this.value;
    }
 }

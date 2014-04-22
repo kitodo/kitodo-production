@@ -55,10 +55,11 @@ public class ConfigOpacCatalogue {
 	private int port = 80;
 	private String cbs;
 	private String charset = "iso-8859-1";
-	private ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
+	private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
 	private String opacType;
 
-	public ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist, int port,
+	private ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+			int port,
 			ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		this.title = title;
 		this.description = desciption;
@@ -71,7 +72,8 @@ public class ConfigOpacCatalogue {
 	}
 
 	// Constructor that also takes a charset, a quick hack for DPD-81
-	public ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist, int port, String charset,
+	ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+			int port, String charset,
 			String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		// Call the contructor above
 		this(title, desciption, address, database, iktlist, port, inBeautifySetList, opacType);
@@ -79,36 +81,36 @@ public class ConfigOpacCatalogue {
 		this.setCbs(cbs);
 	}
 
-	public String getTitle() {
+	private String getTitle() {
 		return this.title;
 	}
 
-	public String getDescription() {
+	private String getDescription() {
 		return this.description;
 	}
 
-	public String getAddress() {
+	private String getAddress() {
 		return this.address;
 	}
 
-	public String getDatabase() {
+	private String getDatabase() {
 		return this.database;
 	}
 
-	public String getIktlist() {
+	private String getIktlist() {
 		return this.iktlist;
 	}
 
-	public int getPort() {
+	private int getPort() {
 		return this.port;
 	}
 
-	public String getCharset() {
+	private String getCharset() {
 		return this.charset;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Node executeBeautifier(Node myHitlist) {
+	private Node executeBeautifier(Node myHitlist) {
 		/* Ausgabe des Opac-Ergebnissen in Datei */
 
 		if (!ConfigMain.getParameter("debugFolder", "").equals("") && new File(ConfigMain.getParameter("debugFolder")).canWrite()) {
@@ -216,22 +218,22 @@ public class ConfigOpacCatalogue {
 	 * @param cbs
 	 *            the cbs to set
 	 */
-	public void setCbs(String cbs) {
+	private void setCbs(String cbs) {
 		this.cbs = cbs;
 	}
 
 	/**
 	 * @return the cbs
 	 */
-	public String getCbs() {
+	private String getCbs() {
 		return this.cbs;
 	}
 
-    public String getOpacType() {
+	public String getOpacType() {
         return opacType;
     }
 
-    public void setOpacType(String opacType) {
+	private void setOpacType(String opacType) {
         this.opacType = opacType;
     }
 

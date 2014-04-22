@@ -29,14 +29,14 @@ package de.unigoettingen.sub.search.opac;
  */
 import java.net.URLEncoder;
 
-public class Query {
+class Query {
 
 	private String queryUrl;
 	private int queryTermNumber = 0;
 	
-	public static final String AND = "*";
-	public static final String OR = "%2B"; //URL-encoded +
-	public static final String NOT = "-";
+	private static final String AND = "*";
+	private static final String OR = "%2B"; //URL-encoded +
+	private static final String NOT = "-";
 
 	private static final String FIRST_OPERATOR = "SRCH";
 	
@@ -45,17 +45,17 @@ public class Query {
 	private static final String QUERY = "&TRM";
 	private static final String FIELD = "&IKT";
 	
-	public Query() {
+	private Query() {
 		super();
 	}
 
-	public Query(String query, String fieldNumber) {
+	private Query(String query, String fieldNumber) {
 		super();
 		this.addQuery(null, query, fieldNumber);
 	}
 
 	//operation must be Query.AND, .OR, .NOT 
-	 public void addQuery(String operation, String query, String fieldNumber){
+	private void addQuery(String operation, String query, String fieldNumber) {
 		 
 		 //ignore boolean operation for first term
 		 if (this.queryTermNumber == 0){
@@ -77,7 +77,7 @@ public class Query {
 		 this.queryTermNumber++;
 	 }
 	 
-	 public String getQueryUrl(){
+	String getQueryUrl() {
 		 return this.queryUrl;
 	 }
 	 

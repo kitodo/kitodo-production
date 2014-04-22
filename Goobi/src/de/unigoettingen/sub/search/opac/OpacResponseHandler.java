@@ -27,15 +27,15 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class OpacResponseHandler extends DefaultHandler {
+class OpacResponseHandler extends DefaultHandler {
 
 	boolean readTitle = false;
 	boolean readSessionVar = false;
@@ -50,7 +50,7 @@ public class OpacResponseHandler extends DefaultHandler {
 	ArrayList<String> opacResponseItemTitles = new ArrayList<String>();
 
 	
-	public OpacResponseHandler() {
+	OpacResponseHandler() {
 		super();
 	}
 
@@ -60,7 +60,7 @@ public class OpacResponseHandler extends DefaultHandler {
 	 * @throws SAXException 
 	 */
 	@Override
-	public void startElement (String namespaceURI, String localName,
+	public void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException
 	{
 		//Eingefügt cm 8.5.2007
@@ -88,7 +88,7 @@ public class OpacResponseHandler extends DefaultHandler {
 	 *  SAX parser callback method.
 	 */
 	@Override
-	public void characters (char [] ch, int start, int length)
+	public void characters(char[] ch, int start, int length)
 	{
 		if(this.readTitle){
 			this.title += new String(ch, start, length);
@@ -111,7 +111,7 @@ public class OpacResponseHandler extends DefaultHandler {
 	 *  SAX parser callback method.
 	 */
 	@Override
-	public void endElement (String namespaceURI, String localName,
+	public void endElement(String namespaceURI, String localName,
 			String qName)
 	{
 		if(localName.equals("SHORTTITLE")){
@@ -124,16 +124,16 @@ public class OpacResponseHandler extends DefaultHandler {
 		}
 	}
 	
-	public ArrayList<String> getOpacResponseItemPpns() {
+	ArrayList<String> getOpacResponseItemPpns() {
 		return this.opacResponseItemPpns;
 	}
 	
-	public ArrayList<String> getOpacResponseItemTitles() {
+	ArrayList<String> getOpacResponseItemTitles() {
 		return this.opacResponseItemTitles;
 	}
 
 
-	public String getSessionId() throws UnsupportedEncodingException {
+	String getSessionId() throws UnsupportedEncodingException {
 		//TODO HACK
 		String sessionIdUrlencoded = URLEncoder.encode(sessionId, GetOpac.URL_CHARACTER_ENCODING);
 
@@ -145,12 +145,12 @@ public class OpacResponseHandler extends DefaultHandler {
 	}
 
 
-	public String getSet() {
+	String getSet() {
 		return this.set;
 	}
 
 
-	public int getNumberOfHits() {
+	int getNumberOfHits() {
 		return this.numberOfHits;
 	}
 	
