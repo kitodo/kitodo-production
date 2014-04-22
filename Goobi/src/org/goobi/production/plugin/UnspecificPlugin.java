@@ -1,5 +1,6 @@
 package org.goobi.production.plugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ public abstract class UnspecificPlugin {
 	protected UnspecificPlugin(Object implementation) throws SecurityException, NoSuchMethodException {
 		plugin = implementation;
 
-		configure = getDeclaredMethod("configure", new Class[] { Map.class }, null);
+		configure = getDeclaredMethod("configure", new Class[] { Map.class }, Void.TYPE);
 		getDescription = getDeclaredMethod("getDescription", NO_ARGS, String.class);
 		getTitle = getDeclaredMethod("getTitle", NO_ARGS, String.class);
 	}
@@ -85,8 +86,16 @@ public abstract class UnspecificPlugin {
 	protected <T> T invokeQuietly(Object object, Method method, Object[] args, Class<T> resultType) {
 		try {
 			return (T) method.invoke(object, args);
-		} catch (RuntimeException e) {
-			throw e;
+		} catch (RuntimeException toBeRethrown) {
+			throw toBeRethrown;
+		} catch (InvocationTargetException toBeUnwrapped) {
+			Throwable wrappedException = toBeUnwrapped.getTargetException();
+			if (wrappedException == null)
+				throw new RuntimeException(toBeUnwrapped.getMessage(), toBeUnwrapped);
+			if (wrappedException instanceof RuntimeException)
+				throw (RuntimeException) wrappedException;
+			else
+				throw new RuntimeException(wrappedException.getMessage(), wrappedException);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

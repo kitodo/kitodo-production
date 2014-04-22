@@ -685,8 +685,12 @@ class GetOpac {
 
         }
 		try {
-			opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT); // if no connection is established
-			opacClient.getParams().setParameter("http.socket.timeout", timeout); // if a connection is established but there is no response
+			opacClient.getParams().setParameter("http.connection.timeout",
+					Long.valueOf(HTTP_CONNECTION_TIMEOUT).intValue()); // if no connection is established
+			if (timeout > 0 && timeout <= Integer.MAX_VALUE)
+				opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue()); // if a connection is established but there is no response
+			else
+				opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
 			this.opacClient.executeMethod(opacRequest);
 			return opacRequest.getResponseBodyAsString();
 		} finally {

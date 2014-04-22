@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.jdom.Attribute;
@@ -24,7 +25,7 @@ import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 @PluginImplementation
-public class PicaPlugin {
+public class PicaPlugin implements Plugin {
 	public static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
 
 	private static String configDir;

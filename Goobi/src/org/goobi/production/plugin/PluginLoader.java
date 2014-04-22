@@ -130,11 +130,17 @@ public class PluginLoader {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
+		final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
+		final short INTERNAL_CLASSES_COUNT = 4;
+		ArrayList<T> result;
+
 		PluginType type = UnspecificPlugin.typeOf(clazz);
 		PluginManagerUtil pluginLoader = getPluginLoader(type);
 		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
-		ArrayList<T> result = new ArrayList<T>(plugins.size());
+		result = new ArrayList<T>(plugins.size() - INTERNAL_CLASSES_COUNT);
 		for (Plugin implementation : plugins) {
+			if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX))
+				continue; // Skip plugin API internal classes
 			try {
 				T plugin = (T) UnspecificPlugin.create(type, implementation);
 				plugin.configure(getPluginConfiguration());
@@ -171,8 +177,9 @@ public class PluginLoader {
 	 */
 	private static PluginManagerUtil getPluginLoader(PluginType type) {
 		PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-		File path = new File(FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER), type.getName()));
-		pluginManager.addPluginsFrom(path.toURI());
+		String path = FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER),
+				type.getName().concat(File.separator));
+		pluginManager.addPluginsFrom(new File(path).toURI());
 		return new PluginManagerUtil(pluginManager);
 	}
 }

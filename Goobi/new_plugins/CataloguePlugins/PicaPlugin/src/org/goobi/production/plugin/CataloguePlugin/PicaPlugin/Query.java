@@ -141,12 +141,12 @@ class Query {
 			default:
 				throw new UnreachableCodeException();
 			}
-			if (state == 3) {
-				addQuery(operator, term.toString(), field.toString());
-			}
-			if (state != 3 && state != 5)
-				throw new IllegalArgumentException(INCOMPLETE);
 		}
+		if (state == 3) {
+			addQuery(operator, term.toString(), field.toString());
+		}
+		if (state != 3 && state != 5)
+			throw new IllegalArgumentException(INCOMPLETE);
 	}
 
 	//operation must be Query.AND, .OR, .NOT 

@@ -5,10 +5,10 @@ public class QueryBuilder {
 	public static String buildSimpleFieldedQuery(String field, String query) {
 		StringBuilder result = new StringBuilder(2 * query.length());
 		String prefix = field.concat(":");
+		boolean addField = true;
+		boolean stringLiteral = false;
 		for (int index = 0; index < query.length(); index++) {
 			int codePoint = query.charAt(index);
-			boolean addField = true;
-			boolean stringLiteral = false;
 			switch (codePoint) {
 			case ' ':
 				if (!stringLiteral)
@@ -46,11 +46,12 @@ public class QueryBuilder {
 			default:
 				if (addField)
 					result.append(prefix);
+				addField = false;
 				result.appendCodePoint(codePoint);
 				break;
 			}
 
 		}
-		return null;
+		return result.toString();
 	}
 }

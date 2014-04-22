@@ -371,6 +371,7 @@ public class ProzesskopieForm {
 				Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", opacKatalog);
 				return "";
 			}
+			importCatalogue.setPreferences(prozessKopie.getRegelsatz().getPreferences());
 			importCatalogue.useCatalogue(opacKatalog);
 			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
 			hitlist = importCatalogue.find(query, getTimeout());

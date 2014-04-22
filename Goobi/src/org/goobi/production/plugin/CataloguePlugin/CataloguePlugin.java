@@ -22,9 +22,9 @@ public class CataloguePlugin extends UnspecificPlugin {
 		find = getDeclaredMethod("find", new Class[] { String.class, long.class }, Object.class);
 		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, long.class, long.class }, Map.class);
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
-		setPreferences = getDeclaredMethod("setPreferences", new Class[] { Prefs.class }, null);
+		setPreferences = getDeclaredMethod("setPreferences", new Class[] { Prefs.class }, Void.TYPE);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", new Class[] { String.class }, boolean.class);
-		useCatalogue = getDeclaredMethod("useCatalogue", new Class[] { String.class }, null);
+		useCatalogue = getDeclaredMethod("useCatalogue", new Class[] { String.class }, Void.TYPE);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * @return the number of hits in this search
 	 */
 	public long getNumberOfHits(Object searchResult, long timeout) {
-		return invokeQuietly(plugin, getNumberOfHits, searchResult, long.class);
+		return invokeQuietly(plugin, getNumberOfHits, new Object[] { searchResult, timeout }, long.class);
 	}
 
 	@Override
