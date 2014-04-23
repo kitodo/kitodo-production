@@ -18,7 +18,8 @@
  * 
  * Most of the code originates form the package <kbd>de.unigoettingen.sub.
  * search.opac</kbd>. The plugin classes can be compiled with the libraries
- * from /Goobi/WEB-INF/lib on the classpath. 
+ * from /Goobi/WEB-INF/lib and the Tomcat server runtime libraries on the
+ * classpath. 
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
