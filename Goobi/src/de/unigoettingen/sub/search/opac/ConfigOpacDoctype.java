@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -100,6 +101,17 @@ public class ConfigOpacDoctype {
 	@XmlElement(name = "receivingValue")
 	public ArrayList<String> getMappings() {
 		return this.mappings;
+	}
+
+	public String getLocalizedLabel() {
+		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+		if (currentLocale != null && !currentLocale.equals("")) {
+			String answer = this.labels.get(currentLocale);
+			if (answer != null && !answer.equals("")) {
+				return answer;
+			}
+		}
+		return this.labels.get(this.labels.keySet().iterator().next());
 	}
 
 }
