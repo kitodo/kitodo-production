@@ -445,7 +445,7 @@ public class ProzesskopieForm {
 		myRdf = hit.getFileformat();
 		docType = hit.getDocType();
 		fillFieldsFromMetadataFile();
-		atstsl = createAtstsl(hit.getTitle(), hit.getAuthor());
+		atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
 	}
 
 	/**
