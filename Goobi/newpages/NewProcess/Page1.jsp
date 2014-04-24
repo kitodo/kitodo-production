@@ -71,6 +71,49 @@
 									<%-- globale Warn- und Fehlermeldungen --%>
 									<h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
+									<%-- Show hit list if several results were found --%>
+
+									<htm:div styleClass="modalBackground"
+										rendered="#{ProzesskopieForm.hitlistShowing}" />
+									<htm:div styleClass="hitlistBox"
+										rendered="#{ProzesskopieForm.hitlistShowing}">
+										<htm:h3>
+											<h:outputText
+												value="#{msgs['newProcess.catalogueSearch.heading']}" />
+										</htm:h3>
+										<htm:p>
+											<h:outputFormat
+												value="#{msgs['newProcess.catalogueSearch.results']}">
+												<f:param value="#{ProzesskopieForm.numberOfHits}" />
+											</h:outputFormat>
+										</htm:p>
+										<x:dataList layout="unorderedList" var="hit"
+											value="#{ProzesskopieForm.hitlist}">
+											<h:commandLink action="#{hit.selectClick}" rendered="#{not hit.error}">
+												<h:outputText value="#{hit.bibliographicCitation}" escape="false" />
+											</h:commandLink>
+											<h:outputText value="#{msgs['newProcess.catalogueSearch.failed']} "
+												rendered="#{hit.error}" styleClass="text_red" />
+											<h:outputText value="#{hit.errorMessage}"
+												rendered="#{hit.error}" styleClass="text_red" />
+										</x:dataList>
+										<h:commandLink
+											value="#{msgs['newProcess.catalogueSearch.previousPage']}"
+											styleClass="leftText"
+											action="#{ProzesskopieForm.previousPageClick}"
+											rendered="#{!ProzesskopieForm.firstPage}" />
+										<h:commandLink
+											value="#{msgs['newProcess.catalogueSearch.leaveDisplay']}"
+											styleClass="leftText"
+											action="#{ProzesskopieForm.previousPageClick}"
+											rendered="#{ProzesskopieForm.firstPage}" />
+										<h:commandLink
+											value="#{msgs['newProcess.catalogueSearch.nextPage']}"
+											styleClass="rightText"
+											action="#{ProzesskopieForm.nextPageClick}"
+											rendered="#{!ProzesskopieForm.lastPage}" />
+									</htm:div>
+
 									<%-- ===================== Eingabe der Details ====================== --%>
 									<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
 

@@ -8,6 +8,58 @@ import org.joda.time.LocalDate;
 
 import ugh.dl.Fileformat;
 
+/**
+ * The class Hit represents a hit retrieved from the search plugin.
+ * 
+ * The class Hit unwraps the contents of a hit result of the basic java types
+ * <code>Map&lt;String, Object&gt;</code>. The map should contain a key
+ * <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
+ * the record data and a field <code>type</code> holding the DocType.
+ * 
+ * <p>
+ * The following additional basic bibliographic metadata entries in the map are
+ * supported and will be used to display a summary of the hit in bibliographic
+ * citation style. All of them must be String except for year where both Integer
+ * and String are supported. The field <kbd>format</kbd> is used to pick the
+ * appropriate citation formatting style.
+ * </p>
+ * 
+ * <p>
+ * <kbd>accessed</kbd> − Date and time of last access (for internet ressources
+ * and online journals)<br/>
+ * <kbd>article</kbd> − Title of an article<br/>
+ * <kbd>contributor</kbd> − Editors, compilers, translators … of an anthology<br/>
+ * <kbd>creator</kbd> − Author name(s), scheme: Lastname, Firstname ; Lastname,
+ * Firstname<br/>
+ * <kbd>date</kbd> − Date of publication, if year is insufficient<br/>
+ * <kbd>department</kbd> − Department (for academic writings)<br/>
+ * <kbd>edition</kbd> − Edition identifier<br/>
+ * <kbd>employer</kbd> − Employer of an academic writer, usually the name of the
+ * university<br/>
+ * <kbd>format</kbd> − Record type. Supported values are “monograph” (books),
+ * “thesis” (academic writings), “standard” (standards) and “internet” (online
+ * ressources) for physical media and “anthology” and “periodical” for articles
+ * from these two kinds of publishing. <kbd>number</kbd> − For monographs and
+ * antologies that appeared as part of a series the number in that series. For
+ * journals the number of the issue. For standards their identification number,
+ * i.e. “ICD-10”.<br/>
+ * <kbd>pages</kbd> − Page range of an article<br/>
+ * <kbd>part</kbd> − Part or parts of an article<br/>
+ * <kbd>place</kbd> − Place of publication<br/>
+ * <kbd>publisher</kbd> − Name of the publishing house<br/>
+ * <kbd>series</kbd> − Name of the series, if any<br/>
+ * <kbd>subseries</kbd> − Name of the series, if any<br/>
+ * <kbd>theses</kbd> − Kind of academic writing (i.e. “Diss.”)<br/>
+ * <kbd>title</kbd> − Main title<br/>
+ * <kbd>type</kbd> − The document type as used in PICA+ records <kbd>url</kbd> −
+ * URL (for internet ressources and online journals)<br/>
+ * <kbd>volume</kbd> − Number of the volume, if any<br/>
+ * <kbd>volumetitle</kbd> − Title of the volume, if any<br/>
+ * <kbd>year</kbd> − 4-digit year of publication
+ * </p>
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class Hit {
 
 	private final Map<String, Object> data;
@@ -21,7 +73,7 @@ public class Hit {
 	}
 
 	public String getBibliographicCitation() {
-		Citation result = new Citation(getDocType());
+		Citation result = new Citation(getFormat());
 		result.setAccessTime(getAccessTime());
 		result.setArticleTitle(getArticleTitle());
 		result.addMultipleAuthors(getAuthors(), ";");
@@ -98,12 +150,16 @@ public class Hit {
 		return getAs("employer", String.class);
 	}
 
+	private String getFormat() {
+		return getAs("format", String.class);
+	}
+
 	private String getPublisher() {
 		return getAs("publisher", String.class);
 	}
 
 	private String getNumber() {
-		return getAs("numbre", String.class);
+		return getAs("number", String.class);
 	}
 
 	private String getOverallTitle() {

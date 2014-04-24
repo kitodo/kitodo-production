@@ -1,5 +1,6 @@
 package org.goobi.production.model.bibliography;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -15,12 +16,12 @@ public class Citation {
 		MONOGRAPH, ANTHOLOGY, PERIODICAL, THESIS, STANDARD, INTERNET
 	}
 
-	private static final DateTimeFormatter accessTimeFormatter = DateTimeFormat.forPattern("d.MMMM.yyyy HH:mm ZZZ");
-	private static final DateTimeFormatter publicationTimeFormatter = DateTimeFormat.forPattern("d.MMMM.yyyy");
+	private static final DateTimeFormatter accessTimeFormatter = DateTimeFormat.forPattern("d. MMMM. yyyy HH:mm ZZ");
+	private static final DateTimeFormatter publicationTimeFormatter = DateTimeFormat.forPattern("d. MMMM. yyyy");
 	private final Type style;
 	private DateTime accessed;
-	private List<String> contributors;
-	private List<String> creators;
+	private final List<String> contributors = new ArrayList<String>();
+	private final List<String> creators = new ArrayList<String>();
 	private String department;
 	private String dependentTitle;
 	private String edition;
@@ -40,14 +41,16 @@ public class Citation {
 	private String volumetitle;
 	private Integer year;
 
-	public Citation(String type) {
-		Type formatAs;
+	public Citation(String format) {
+		Type type;
 		try {
-			formatAs = Type.valueOf(type.toUpperCase());
-		} catch (IllegalArgumentException notSupported) {
-			formatAs = Type.MONOGRAPH;
+			type = Type.valueOf(format.toUpperCase());
+		} catch (IllegalArgumentException formatCodeUnknown) {
+			type = Type.MONOGRAPH;
+		} catch (NullPointerException formatIsNull) {
+			type = Type.MONOGRAPH;
 		}
-		style = formatAs;
+		style = type;
 	}
 
 	public void addMultipleAuthors(String creators, String separatedBy) {
@@ -59,6 +62,8 @@ public class Citation {
 	}
 
 	private void addMultiple(String list, String separator, List<String> destination) {
+		if (list == null || list.trim().length() == 0)
+			return;
 		while (list.indexOf(separator) > -1) {
 			if (list.substring(0, list.indexOf(separator)).trim().length() > 0) {
 				destination.add(list.substring(0, list.indexOf(separator)).trim());
@@ -75,38 +80,56 @@ public class Citation {
 	}
 
 	public void setArticleTitle(String title) {
+		if ("".equals(title))
+			title = null;
 		this.dependentTitle = title;
 	}
 
 	public void setDepartment(String department) {
+		if ("".equals(department))
+			department = null;
 		this.department = department;
 	}
 
 	public void setEdition(String edition) {
+		if ("".equals(edition))
+			edition = null;
 		this.edition = edition;
 	}
 
 	public void setEmployer(String employer) {
+		if ("".equals(employer))
+			employer = null;
 		this.employer = employer;
 	}
 
 	public void setNumber(String number) {
+		if ("".equals(number))
+			number = null;
 		this.number = number;
 	}
 
 	public void setOverallTitle(String title) {
+		if ("".equals(title))
+			title = null;
 		this.overallTitle = title;
 	}
 
 	public void setPages(String pages) {
+		if ("".equals(pages))
+			pages = null;
 		this.pages = pages;
 	}
 
 	public void setPart(String part) {
+		if ("".equals(part))
+			part = null;
 		this.part = part;
 	}
 
 	public void setPlace(String place) {
+		if ("".equals(place))
+			place = null;
 		this.place = place;
 	}
 
@@ -115,30 +138,44 @@ public class Citation {
 	}
 
 	public void setPublisher(String publisher) {
+		if ("".equals(publisher))
+			publisher = null;
 		this.publisher = publisher;
 	}
 
 	public void setSubseries(String subseries) {
+		if ("".equals(subseries))
+			subseries = null;
 		this.subseries = subseries;
 	}
 
 	public void setTitle(String title) {
+		if ("".equals(title))
+			title = null;
 		this.title = title;
 	}
 
 	public void setType(String type) {
+		if ("".equals(type))
+			type = null;
 		this.type = type;
 	}
 
 	public void setURL(String url) {
+		if ("".equals(url))
+			url = null;
 		this.url = url;
 	}
 
 	public void setVolume(String volume) {
+		if ("".equals(volume))
+			volume = null;
 		this.volume = volume;
 	}
 
 	public void setVolumeTitle(String title) {
+		if ("".equals(title))
+			title = null;
 		this.volumetitle = title;
 	}
 
@@ -299,9 +336,19 @@ public class Citation {
 			lastname = s.substring(0, s.indexOf(",")).trim();
 			firstname = s.substring(s.indexOf(",") + 1).trim();
 		}
-		String result = colon ? "<span style=\"font-variant: small-caps; \">" + lastname + "</span>, " + firstname
-				: firstname + " <span style=\"font-variant: small-caps; \">" + lastname + "</span>";
-		return result;
+		StringBuilder result = new StringBuilder();
+		if (!colon && firstname.length() > 0) {
+			result.append(firstname);
+			result.append(' ');
+		}
+		result.append("<span style=\"font-variant: small-caps; \">");
+		result.append(lastname);
+		result.append("</span>");
+		if (colon && firstname.length() > 0) {
+			result.append(", ");
+			result.append(firstname);
+		}
+		return result.toString();
 	}
 
 	private void appendOverallTitleAndNumber(StringBuilder builder) {

@@ -82,6 +82,37 @@
 	margin-bottom: 6px;
 }
 
+.modalBackground {
+    background-color: appworkspace;
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/* ===================== Page1.jsp ===================== */
+
+.hitlistBox {
+	background-color: #FFFFFF;
+    border: 1px solid #0083E2;
+    bottom: 0;
+    height: 75%;
+    left: 0;
+    margin: auto;
+    padding: 15px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+}
+
+.hitlistBox li {
+    padding-bottom: 6px;
+}
+
 /* ===================== calendar.jsp ===================== */
 .calendarTitleMgmt {
 	max-width: 350px;
@@ -135,17 +166,6 @@
 
 .calendarSheet th {
 	border-top: none;
-}
-
-.calendarUploadBackground {
-    background-color: appworkspace;
-    bottom: 0;
-    left: 0;
-    opacity: 0.5;
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 0;
 }
     
 .calendarUploadBox {

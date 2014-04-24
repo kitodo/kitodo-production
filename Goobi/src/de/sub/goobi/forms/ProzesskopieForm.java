@@ -110,6 +110,44 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class ProzesskopieForm {
+	public class SelectableHit {
+		private final Hit hit;
+		private final String error;
+	
+		public SelectableHit(Hit hit) {
+			this.hit = hit;
+			error = null;
+		}
+	
+		public SelectableHit(String error) {
+			hit = null;
+			this.error = error;
+		}
+
+		public String getBibliographicCitation() {
+			return hit.getBibliographicCitation();
+		}
+
+		public String getErrorMessage() {
+			return error;
+		}
+
+		public boolean isError() {
+			return error != null;
+		}
+	
+		public String selectClick() {
+			try {
+				importHit(hit);
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Error on reading opac ", e);
+			} finally {
+				hitlistPage = -1;
+			}
+			return "";
+		}
+	}
+
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
@@ -160,27 +198,6 @@ public class ProzesskopieForm {
 	private HashMap<String, Boolean> standardFields;
 	private String tifHeader_imagedescription = "";
 	private String tifHeader_documentname = "";
-
-	private class SelectableHit {
-		private final Hit hit;
-
-		public SelectableHit(Hit hit) {
-			this.hit = hit;
-		}
-
-		public String getBibliographicCitation() {
-			return hit.getBibliographicCitation();
-		}
-
-		public String selectClick() {
-			try {
-				importHit(hit);
-			} catch (Exception e) {
-				Helper.setFehlerMeldung("Error on reading opac ", e);
-			}
-			return "";
-		}
-	}
 
 	public String Prepare() {
 	    atstsl = "";
@@ -346,32 +363,34 @@ public class ProzesskopieForm {
 	/**
 	 * The function OpacAuswerten() is executed if a user clicks the command
 	 * link to start a catalogue search. It performs the search and loads the
-	 * hit, if it is unique. Otherwise, it will cause a hit list to show up for
+	 * hit if it is unique. Otherwise, it will cause a hit list to show up for
 	 * the user to select a hit.
 	 * 
 	 * @return always "", telling JSF to stay on that page
 	 */
 	public String OpacAuswerten() {
+		long timeout = CataloguePlugin.getTimeout();
 		try {
-			clearValues(); // TODO: What does this? Do we need it?
-			readProjectConfigs(); // TODO: What does this? Do we need it?
-			if (importCatalogue == null || !importCatalogue.supportsCatalogue(opacKatalog))
-				importCatalogue = PluginLoader.getCataloguePluginForCatalogue(opacKatalog);
-			if (importCatalogue == null) {
-				Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", opacKatalog);
+			clearValues();
+			readProjectConfigs();
+			if (!pluginAvailableFor(opacKatalog))
 				return "";
-			}
-			importCatalogue.setPreferences(prozessKopie.getRegelsatz().getPreferences());
-			importCatalogue.useCatalogue(opacKatalog);
+
 			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
-			hitlist = importCatalogue.find(query, CataloguePlugin.getTimeout());
-			hits = importCatalogue.getNumberOfHits(hitlist, CataloguePlugin.getTimeout());
-			if (hits == 1) // Cannot switch on long (only int or enum)
-				importHit(importCatalogue.getHit(hitlist, 0, CataloguePlugin.getTimeout()));
-			else if (hits == 0)
+			hitlist = importCatalogue.find(query, timeout);
+			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
+
+			switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
+			case 0:
 				Helper.setFehlerMeldung("No hit found", "");
-			else
+				break;
+			case 1:
+				importHit(importCatalogue.getHit(hitlist, 0, timeout));
+				break;
+			default:
 				hitlistPage = 0; // show first page of hitlist
+				break;
+			}
 			return "";
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
@@ -379,42 +398,33 @@ public class ProzesskopieForm {
 		}
 	}
 
-	//	/**
-	//	 * OpacAnfrage
-	//	 */
-	//	@Deprecated
-	//	// will be replaced by findClick()
-	//	public String OpacAuswerten() {
-	//		clearValues();
-	//		readProjectConfigs();
-	//		try {
-	//			new ConfigOpac();
-	//			ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(opacKatalog);
-	//		    
-	//			IOpacPlugin myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
-	//		    
-	//			/* den Opac abfragen und ein RDF draus bauen lassen */
-	//			this.myRdf = myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie
-	//					.getRegelsatz().getPreferences());
-	//			if (myImportOpac.getOpacDocType() != null) {
-	//				this.docType = myImportOpac.getOpacDocType().getTitle();
-	//			}
-	//			this.atstsl = myImportOpac.getAtstsl();
-	//			fillFieldsFromMetadataFile();
-	//			/* über die Treffer informieren */
-	//			if (myImportOpac.getHitcount() == 0) {
-	//				Helper.setFehlerMeldung("No hit found", "");
-	//			}
-	//			if (myImportOpac.getHitcount() > 1) {
-	//				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
-	//			}
-	//		} catch (Exception e) {
-	//			Helper.setFehlerMeldung("Error on reading opac ", e);
-	//		}
-	//		return "";
-	//	}
-	//
-	//	/* =============================================================== */
+	/**
+	 * The function pluginAvailableFor(catalogue) verifies that a plugin
+	 * suitable for accessing the library catalogue identified by the given
+	 * String is available in the global variable importCatalogue. If
+	 * importCatalogue is empty or the current plugin doesn’t support the given
+	 * catalogue, the function will try to load a suitable plugin. Upon success
+	 * the preferences and the catalogue to use will be configured in the
+	 * plugin, otherwise an error message will be set to be shown.
+	 * 
+	 * @param catalogue
+	 *            identifier string for the catalogue that the plugin shall
+	 *            support
+	 * @return whether a plugin is available in the global varibale
+	 *         importCatalogue
+	 */
+	private boolean pluginAvailableFor(String catalogue) {
+		if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue))
+			importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
+		if (importCatalogue == null) {
+			Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", catalogue);
+			return false;
+		} else {
+			importCatalogue.setPreferences(prozessKopie.getRegelsatz().getPreferences());
+			importCatalogue.useCatalogue(catalogue);
+			return true;
+		}
+	}
 
 	/**
 	 * alle Konfigurationseigenschaften und Felder zurücksetzen
@@ -441,7 +451,7 @@ public class ProzesskopieForm {
 	 *            Hit to load
 	 * @throws PreferencesException
 	 */
-	private void importHit(Hit hit) throws PreferencesException {
+	protected void importHit(Hit hit) throws PreferencesException {
 		myRdf = hit.getFileformat();
 		docType = hit.getDocType();
 		fillFieldsFromMetadataFile();
@@ -1607,6 +1617,64 @@ public class ProzesskopieForm {
 	}
 
 	/**
+	 * The function getHitlist returns the hits for the currenly showing page of
+	 * the hitlist as read-only property "hitlist".
+	 * 
+	 * @return a list of hits to render in the hitlist
+	 */
+	public List<SelectableHit> getHitlist() {
+		if (hitlistPage < 0)
+			return Collections.emptyList();
+		int pageSize = getPageSize();
+		List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
+		long firstHit = hitlistPage * pageSize;
+		long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
+		for (long index = firstHit; index <= lastHit; index++) {
+			try {
+			Hit hit = importCatalogue.getHit(hitlist, index, CataloguePlugin.getTimeout());
+			result.add(new SelectableHit(hit));
+			} catch (RuntimeException e) {
+				result.add(new SelectableHit(e.getMessage()));
+			}
+		}
+		return result;
+	}
+
+	public long getNumberOfHits() {
+		return hits;
+	}
+
+	private int getPageSize() {
+		return ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE, 10);
+	}
+
+	public boolean isFirstPage() {
+		return hitlistPage == 0;
+	}
+
+	/**
+	 * The function getHitlistShowing returns whether the hitlist shall be
+	 * rendered or not as read-only property "hitlistShowing".
+	 * 
+	 * @return whether the hitlist is to be shown or not
+	 */
+	public boolean isHitlistShowing() {
+		return hitlistPage >= 0;
+	}
+
+	public boolean isLastPage() {
+		return hitlistPage * (getPageSize() + 1) > hits - 1;
+	}
+
+	public void nextPageClick() {
+		hitlistPage++;
+	}
+
+	public void previousPageClick() {
+		hitlistPage--;
+	}
+
+	/**
 	 * Tells the ProzesskopieForm whether it shall show the calendar button or
 	 * not
 	 * 
@@ -1618,35 +1686,5 @@ public class ProzesskopieForm {
 		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of the servlet container
 			return false;
 		}
-	}
-
-	/**
-	 * The function getHitlist returns the currenly showing page of the hitlist
-	 * as read-only property "hitlist".
-	 * 
-	 * @return a list of hits to render in the hitlist
-	 */
-	public List<SelectableHit> getHitlist() {
-		if (hitlistPage < 0)
-			return Collections.emptyList();
-		int pageSize = ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE);
-		List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
-		long firstHit = hitlistPage * pageSize;
-		long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
-		for (long index = firstHit; index <= lastHit; index++) {
-			Hit hit = importCatalogue.getHit(hitlist, index, CataloguePlugin.getTimeout());
-			result.add(new SelectableHit(hit));
-		}
-		return result;
-	}
-
-	/**
-	 * The function getHitlistShowing returns whether the hitlist shall be
-	 * rendered or not as read-only property "hitlistShowing".
-	 * 
-	 * @return whether the hitlist is to be shown or not
-	 */
-	public boolean getHitlistShowing() {
-		return hitlistPage >= 0;
 	}
 }

@@ -13,6 +13,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -28,7 +30,6 @@ import ugh.fileformats.opac.PicaPlus;
 @PluginImplementation
 public class PicaPlugin implements Plugin {
 	public static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
-
 	private static String configDir;
 	private static String tempDir;
 	private String catalogue;
@@ -84,7 +85,7 @@ public class PicaPlugin implements Plugin {
 			 * Dom-Dokument in JDom-Dokument umwandeln
 			 * --------------------------------
 			 */
-			Node myHitlist = myOpac.retrievePicaNode(myQuery, (int) index, (int) index);
+			Node myHitlist = myOpac.retrievePicaNode(myQuery, (int) index, (int) index, timeout);
 			/* Opac-Beautifier aufrufen */
 			myHitlist = coc.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
@@ -93,7 +94,8 @@ public class PicaPlugin implements Plugin {
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
 			// ----- inlined: getConfigOpacDoctype()
-			ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(gattung.substring(0, 2), coc.getTitle());
+			ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2)
+					: gattung, coc.getTitle());
 			if (cod == null) {
 				cod = ConfigOpac.getAllDoctypes().get(0);
 				gattung = cod.getMappings().get(0);
@@ -122,20 +124,10 @@ public class PicaPlugin implements Plugin {
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
-						/* Testausgabe */
-						// XMLOutputter outputter = new XMLOutputter();
-						// FileOutputStream output = new
-						// FileOutputStream("D:/fileParent.xml");
-						// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-						// output);
 						/* dem Rootelement den Volume-Treffer hinzufügen */
 						myFirstHit.getParent().removeContent(myFirstHit);
 						myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
-						/* Testausgabe */
-						// output = new FileOutputStream("D:/fileFull.xml");
-						// outputter.output(myJdomDocMultivolumeband.getRootElement(),
-						// output);
 						myJdomDoc = myJdomDocMultivolumeband;
 						myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
@@ -171,12 +163,6 @@ public class PicaPlugin implements Plugin {
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
-						/* Testausgabe */
-						// XMLOutputter outputter = new XMLOutputter();
-						// FileOutputStream output = new
-						// FileOutputStream("D:/fileParent.xml");
-						// outputter.output(myJdomDocParent.getRootElement(),
-						// output);
 						/*
 						 * alle Elemente des Parents übernehmen, die noch nicht
 						 * selbst vorhanden sind
@@ -200,14 +186,6 @@ public class PicaPlugin implements Plugin {
 			 * -------------------------------- aus Opac-Ergebnis RDF-Datei
 			 * erzeugen --------------------------------
 			 */
-			/* XML in Datei schreiben */
-			//		 XMLOutputter outputter = new XMLOutputter();
-			//		 FileOutputStream output = new
-			//		 FileOutputStream("/home/robert/temp_opac.xml");
-			//		 outputter.output(myJdomDoc.getRootElement(), output);
-
-			/* myRdf temporär in Datei schreiben */
-			// myRdf.write("D:/temp.rdf.xml");
 
 			/* zugriff auf ugh-Klassen */
 			PicaPlus pp = new PicaPlus(preferences);
@@ -221,32 +199,12 @@ public class PicaPlugin implements Plugin {
 			dd.setPhysicalDocStruct(dsBoundBook);
 			/* Inhalt des RDF-Files überprüfen und ergänzen */
 			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
-			// rdftemp.write("D:/PicaRdf.xml");
-
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-
-		String author = getElementFieldValue(myFirstHit, "028A", "a");
-		if (author == null || author.equals(""))
-			author = getElementFieldValue(myFirstHit, "028A", "8");
-
-		String title = getElementFieldValue(myFirstHit, "021A", "a");
-		if (title == null || title.length() == 0)
-			title = getElementFieldValue(myFirstHit, "021B", "a");
-
-		String bibliographicCitation = null; // TODO
-
-		// return hit
-		Map<String, Object> result = new HashMap<String, Object>(7);
-		result.put("bibliographicCitation", bibliographicCitation);
-		result.put("creator", author);
-		result.put("docType", gattung);
-		result.put("fileformat", ff);
-		result.put("title", title);
-		return result;
+		return createResult(gattung, myFirstHit, ff);
 	}
 
 	/**
@@ -257,7 +215,8 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getGattung(Element inHit) {
-
+		if (inHit == null)
+			return "";
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
@@ -564,6 +523,93 @@ public class PicaPlugin implements Plugin {
 			}
 		}
 		return rueckgabe;
+	}
+
+	private Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
+		final LocalTime DAYEND = new LocalTime(23, 59, 59, 999);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		LocalDate today = new LocalDate();
+
+		result.put("type", docType);
+		if (docType.startsWith("O"))
+			result.put("format", "internet");
+		result.put("fileformat", fileformat);
+
+		// add some basic metadata
+		String accessed = getElementFieldValue(hit, "208@", "a");
+		try {
+			LocalDate date = toRecentLocalDate(accessed, today);
+			result.put("accessed", date.toDateTime(date.isEqual(today) ? new LocalTime() : DAYEND).toString());
+		} catch (RuntimeException r) {
+		}
+
+		String lastName = getElementFieldValue(hit, "028A", "a");
+		if (lastName.equals(""))
+			lastName = getElementFieldValue(hit, "028A", "l");
+		String firstName = getElementFieldValue(hit, "028A", "d");
+		if (firstName.equals(""))
+			lastName = getElementFieldValue(hit, "028A", "P");
+		String middleTitle = getElementFieldValue(hit, "028A", "c");
+		String author = lastName + (!firstName.equals("") ? ", " : "") + firstName
+				+ (!middleTitle.equals("") ? " " : "") + middleTitle;
+		if (author.equals(""))
+			author = getElementFieldValue(hit, "028A", "8");
+		if (author.equals("")) {
+			String lastName2 = getElementFieldValue(hit, "028C", "a");
+			if (lastName2.equals(""))
+				lastName2 = getElementFieldValue(hit, "028C", "l");
+			String firstName2 = getElementFieldValue(hit, "028C", "d");
+			if (firstName2.equals(""))
+				firstName2 = getElementFieldValue(hit, "028C", "P");
+			String middleTitle2 = getElementFieldValue(hit, "028C", "c");
+			author = lastName2 + (!firstName2.equals("") ? ", " : "") + firstName2
+					+ (!middleTitle2.equals("") ? " " : "") + middleTitle2;
+		}
+		result.put("creator", author);
+
+		String date = getElementFieldValue(hit, "201B", "0");
+		try {
+			LocalDate localDate = toRecentLocalDate(date, today);
+			result.put("date", localDate.toString());
+		} catch (RuntimeException r) {
+		}
+
+		result.put("edition", getElementFieldValue(hit, "032@", "a"));
+		result.put("number", getElementFieldValue(hit, "036E", "l"));
+		result.put("place", getElementFieldValue(hit, "033A", "p"));
+		result.put("publisher", getElementFieldValue(hit, "033A", "n"));
+		result.put("series", getElementFieldValue(hit, "036E", "a"));
+
+		String subseries = getElementFieldValue(hit, "021A", "d");
+		if (subseries == null || subseries.length() == 0)
+			subseries = getElementFieldValue(hit, "021B", "d");
+		if (subseries == null || subseries.length() == 0)
+			subseries = getElementFieldValue(hit, "027D", "d");
+		result.put("subseries", subseries);
+
+		String title = getElementFieldValue(hit, "021A", "a");
+		if (title == null || title.length() == 0)
+			title = getElementFieldValue(hit, "021B", "a");
+		if (title == null || title.length() == 0)
+			title = getElementFieldValue(hit, "027D", "a");
+		String titleLong = getElementFieldValue(hit, "021A", "d");
+		if (titleLong != null && titleLong.length() > 0)
+			title = title + " : " + titleLong;
+		result.put("title", title.replaceAll("@", ""));
+
+		result.put("url", getElementFieldValue(hit, "209R", "a"));
+		result.put("year", getElementFieldValue(hit, "011@", "a"));
+		return result;
+	}
+
+	private LocalDate toRecentLocalDate(String dd_mm_yy, LocalDate today) {
+		int centuryPrefix = today.getYear() / 100;
+		String[] fields = dd_mm_yy.split("-");
+		int year = (100 * centuryPrefix) + Integer.parseInt(fields[2]);
+		if (year > today.getYear())
+			year -= 100;
+		return new LocalDate(year, Integer.parseInt(fields[1]), Integer.parseInt(fields[0]));
 	}
 
 	// @see org.goobi.production.plugin.CataloguePlugin#getNumberOfHits(Object, long)
