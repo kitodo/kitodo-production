@@ -549,7 +549,7 @@ public class PicaPlugin implements Plugin {
 			lastName = getElementFieldValue(hit, "028A", "l");
 		String firstName = getElementFieldValue(hit, "028A", "d");
 		if (firstName.equals(""))
-			lastName = getElementFieldValue(hit, "028A", "P");
+			firstName = getElementFieldValue(hit, "028A", "P");
 		String middleTitle = getElementFieldValue(hit, "028A", "c");
 		String author = lastName + (!firstName.equals("") ? ", " : "") + firstName
 				+ (!middleTitle.equals("") ? " " : "") + middleTitle;
