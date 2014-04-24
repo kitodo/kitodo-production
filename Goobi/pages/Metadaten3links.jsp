@@ -62,7 +62,7 @@
 						action="Metadaten3links" style="color:#E7C342;display:none">
 					</x:commandButton>
 
-	<h:graphicImage id="veid3" alt="print" url="print.png" onclick="self.window.print()" styleClass="action" style="position:absolute;right:5px"></h:graphicImage>
+					<h:graphicImage id="veid3" alt="print" url="/newpages/images/print.png" onclick="self.window.print()" styleClass="action" style="position:absolute;right:5px"></h:graphicImage>
 
 					<x:dataTable id="tabelle" forceId="true"
 						value="#{Metadaten.strukturBaum3}" var="item" cellpadding="0"
