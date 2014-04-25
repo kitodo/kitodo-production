@@ -2,6 +2,8 @@ package org.goobi.production.model.bibliography;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -10,14 +12,16 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
+import de.sub.goobi.helper.Helper;
+
 public class Citation {
 
 	private enum Type {
 		MONOGRAPH, ANTHOLOGY, PERIODICAL, THESIS, STANDARD, INTERNET
 	}
 
-	private static final DateTimeFormatter accessTimeFormatter = DateTimeFormat.forPattern("d. MMMM. yyyy HH:mm ZZ");
-	private static final DateTimeFormatter publicationTimeFormatter = DateTimeFormat.forPattern("d. MMMM. yyyy");
+	private static final DateTimeFormatter ACCESS_TIME_FORMAT = DateTimeFormat.forPattern("d. MMMM yyyy HH:mm ZZ");
+	private static final DateTimeFormatter PUBLICATION_DATE_FORMAT = DateTimeFormat.forPattern("d. MMMM yyyy");
 	private final Type style;
 	private DateTime accessed;
 	private final List<String> contributors = new ArrayList<String>();
@@ -199,7 +203,7 @@ public class Citation {
 			appendNames(creators, result);
 			appendYear(result);
 			appendArticle(result);
-			result.append(" In: ");
+			appendContainedIn(result);
 			appendNames(contributors, result);
 			appendTitle(result);
 			appendVolumeInformation(result);
@@ -216,7 +220,7 @@ public class Citation {
 				result.append(' ');
 				result.append(part);
 			}
-			result.append(" In: ");
+			appendContainedIn(result);
 			appendTitle(result);
 			if (subseries != null) {
 				result.append(' ');
@@ -228,7 +232,7 @@ public class Citation {
 			}
 			if (published != null) {
 				result.append(" (");
-				result.append(published.toString(publicationTimeFormatter));
+				result.append(published.toString(PUBLICATION_DATE_FORMAT));
 				result.append(')');
 			}
 			if (number != null) {
@@ -237,8 +241,8 @@ public class Citation {
 			}
 			appendPagerange(result);
 			if (accessed != null) {
-				result.append(" (Zugriff: ");
-				result.append(accessed.toString(accessTimeFormatter));
+				result.append(" (");
+				appendAccessed(result);
 				result.append(')');
 			}
 			appendURL(result);
@@ -280,16 +284,12 @@ public class Citation {
 			appendTitle(result);
 			if (published != null || accessed != null) {
 				result.append(" (");
-				if (published != null) {
-					result.append("Stand: ");
-					result.append(published.toString(publicationTimeFormatter));
-				}
+				if (published != null)
+					appendPublished(result);
 				if (published != null && accessed != null)
 					result.append(", ");
-				if (accessed != null) {
-					result.append("Zugriff: ");
-					result.append(accessed.toString(accessTimeFormatter));
-				}
+				if (accessed != null)
+					appendAccessed(result);
 				result.append(')');
 			}
 			appendURL(result);
@@ -300,6 +300,20 @@ public class Citation {
 		return result.toString();
 	}
 
+	private void appendAccessed(StringBuilder builder) {
+		final Pattern LOOK_FOR = Pattern.compile("(?<= )([+\\-]\\d{2}:\\d{2}$)");
+		builder.append(Helper.getTranslation("citation.accessTimestamp"));
+		builder.append(' ');
+		StringBuffer result = new StringBuffer();
+		String formatted = accessed.toString(ACCESS_TIME_FORMAT);
+		Matcher scanner = LOOK_FOR.matcher(formatted);
+		while (scanner.find())
+			scanner.appendReplacement(result,
+					Helper.getTranslation("timeZone.".concat(scanner.group(1)), scanner.group(1)));
+		scanner.appendTail(result);
+		builder.append(result);
+	}
+
 	private void appendArticle(StringBuilder builder) {
 		if (dependentTitle != null) {
 			builder.append(": „");
@@ -308,6 +322,12 @@ public class Citation {
 				builder.append(".");
 			builder.append('“');
 		}
+	}
+
+	private void appendContainedIn(StringBuilder builder) {
+		builder.append(' ');
+		builder.append(Helper.getTranslation("citation.containedIn"));
+		builder.append(' ');
 	}
 
 	private void appendEdition(StringBuilder builder, boolean sentenceMark) {
@@ -382,6 +402,12 @@ public class Citation {
 			builder.append(' ');
 			builder.append(publisher);
 		}
+	}
+
+	private void appendPublished(StringBuilder builder) {
+		builder.append(Helper.getTranslation("citation.versionDate"));
+		builder.append(' ');
+		builder.append(published.toString(PUBLICATION_DATE_FORMAT));
 	}
 
 	private void appendTitle(StringBuilder builder) {

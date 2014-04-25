@@ -424,6 +424,11 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	public static String getTranslation(String inParameter, String inDefaultIfNull) {
+		String result = getTranslation(inParameter);
+		return result != null && !result.equals(inParameter) ? result : inDefaultIfNull;
+	}
+
 	public static String getTranslation(String dbTitel, List<String> parameterList) {
 		String value = "";
 		Locale desiredLanguage = null;
