@@ -111,7 +111,7 @@
 											value="#{msgs['newProcess.catalogueSearch.nextPage']}"
 											styleClass="rightText"
 											action="#{ProzesskopieForm.nextPageClick}"
-											rendered="#{!ProzesskopieForm.lastPage}" />
+											rendered="#{not ProzesskopieForm.lastPage}" />
 									</htm:div>
 
 									<%-- ===================== Eingabe der Details ====================== --%>

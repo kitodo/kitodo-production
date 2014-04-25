@@ -1663,7 +1663,7 @@ public class ProzesskopieForm {
 	}
 
 	public boolean isLastPage() {
-		return hitlistPage * (getPageSize() + 1) > hits - 1;
+		return (hitlistPage + 1) * getPageSize() > hits - 1;
 	}
 
 	public void nextPageClick() {

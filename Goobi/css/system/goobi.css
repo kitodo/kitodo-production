@@ -96,12 +96,14 @@
 /* ===================== Page1.jsp ===================== */
 
 .hitlistBox {
-	background-color: #FFFFFF;
+    background-color: #FFFFFF;
     border: 1px solid #0083E2;
     bottom: 0;
     height: 75%;
     left: 0;
     margin: auto;
+    max-width: 800px;
+    min-width: 550px;
     padding: 15px;
     position: absolute;
     right: 0;
