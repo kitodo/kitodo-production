@@ -1,3 +1,41 @@
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support
+ * of mass digitization.
+ * 
+ * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * 
+ * Visit the websites for more information.
+ *     		- http://www.goobi.org/en/
+ *     		- https://github.com/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a
+ * combined work based on this library. Thus, the terms and conditions of the
+ * GNU General Public License cover the whole combination. As a special
+ * exception, the copyright holders of this library give you permission to link
+ * this library with independent modules to produce an executable, regardless of
+ * the license terms of these independent modules, and to copy and distribute
+ * the resulting executable under terms of your choice, provided that you also
+ * meet, for each linked independent module, the terms and conditions of the
+ * license of that module. An independent module is a module which is not
+ * derived from or based on this library. If you modify this library, you may
+ * extend this exception to your version of the library, but you are not obliged
+ * to do so. If you do not wish to do so, delete this exception statement from
+ * your version.
+ */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.util.HashMap;
@@ -27,15 +65,52 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
+/**
+ * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
+ * implementation. It provides the public methods
+ * 
+ *    void    configure(Map) [*]
+ *    Object  find(String, long)
+ *    String  getDescription() [*]
+ *    Map     getHit(Object, long, long)
+ *    long    getNumberOfHits(Object, long)
+ *    String  getTitle() [*]
+ *    void    setPreferences(Prefs)
+ *    boolean supportsCatalogue(String)
+ *    void    useCatalogue(String)
+ * 
+ * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
+ * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 @PluginImplementation
 public class PicaPlugin implements Plugin {
-	public static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
+	/**
+	 * 
+	 */
+	static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
+	static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
 	private static String configDir;
 	private static String tempDir;
 	private String catalogue;
 	private Prefs preferences;
 
-	// @see org.goobi.production.plugin.UnspecificPlugin#configure(HashMap<String, String>)
+	/**
+	 * The method configure() accepts a Map with configuration parameters. Two
+	 * entries, "configDir" and "tempDir", are expcted.
+	 * 
+	 * configDir must point to a directory on the local file system where the
+	 * plug-in can read individual configuration files from. The files
+	 * "goobi_opac.xml" and "goobi_opacLanguages.txt" are expected in that
+	 * directory.
+	 * 
+	 * @param configuration
+	 *            a Map with configuration parameters
+	 * @see {@link
+	 *      org.goobi.production.plugin.UnspecificPlugin#configure(HashMap<
+	 *      String, String>)}
+	 */
 	public void configure(Map<String, String> configuration) {
 		configDir = configuration.get("configDir");
 		tempDir = configuration.get("tempDir");
@@ -58,7 +133,7 @@ public class PicaPlugin implements Plugin {
 		}
 	}
 
-	public static String getConfigDir() {
+	static String getConfigDir() {
 		return configDir;
 	}
 
@@ -620,7 +695,7 @@ public class PicaPlugin implements Plugin {
 			throw new ClassCastException();
 	}
 
-	public static String getTempDir() {
+	static String getTempDir() {
 		return tempDir;
 	}
 
