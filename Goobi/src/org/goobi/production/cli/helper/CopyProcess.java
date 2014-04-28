@@ -1172,24 +1172,12 @@ public class CopyProcess extends ProzesskopieForm {
 
 	@Override
 	public List<String> getAllOpacCatalogues() {
-		try {
-			return ConfigOpac.getAllCatalogueTitles();
-		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
-			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return new ArrayList<String>();
-		}
+		return ConfigOpac.getAllCatalogueTitles();
 	}
 
 	@Override
 	public List<ConfigOpacDoctype> getAllDoctypes() {
-		try {
-			return ConfigOpac.getAllDoctypes();
-		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
-			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return new ArrayList<ConfigOpacDoctype>();
-		}
+		return ConfigOpac.getAllDoctypes();
 	}
 
 	/*
