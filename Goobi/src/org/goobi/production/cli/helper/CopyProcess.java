@@ -93,7 +93,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 public class CopyProcess extends ProzesskopieForm {
 
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
-	UghHelper ughHelp = new UghHelper();
 	private Fileformat myRdf;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
@@ -128,13 +127,6 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		clearValues();
-		try {
-			new ConfigOpac();
-		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
-			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return null;
-		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
@@ -178,13 +170,6 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		clearValues();
-		try {
-			new ConfigOpac();
-		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
-			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return null;
-		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
@@ -1188,7 +1173,6 @@ public class CopyProcess extends ProzesskopieForm {
 	@Override
 	public List<String> getAllOpacCatalogues() {
 		try {
-			new ConfigOpac();
 			return ConfigOpac.getAllCatalogueTitles();
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
@@ -1200,7 +1184,6 @@ public class CopyProcess extends ProzesskopieForm {
 	@Override
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-			new ConfigOpac();
 			return ConfigOpac.getAllDoctypes();
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);

@@ -55,6 +55,7 @@ import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -1868,7 +1869,8 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog, opacSuchfeld, tok, myPrefs);
+				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog,
+						QueryBuilder.restrictToField(opacSuchfeld, tok), myPrefs);
 				if (addrdf != null) {
 					this.myDocStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
 					MetadatenalsTree3Einlesen1();
@@ -1890,7 +1892,8 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog, opacSuchfeld, tok, myPrefs);
+				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog,
+						QueryBuilder.restrictToField(opacSuchfeld, tok), myPrefs);
 				if (addrdf != null) {
 
 					/* die Liste aller erlaubten Metadatenelemente erstellen */

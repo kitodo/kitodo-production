@@ -28,6 +28,7 @@ package de.sub.goobi.forms;
  * exception statement from your version.
  */
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -376,7 +377,7 @@ public class ProzesskopieForm {
 			if (!pluginAvailableFor(opacKatalog))
 				return "";
 
-			String query = QueryBuilder.buildSimpleFieldedQuery(opacSuchfeld, opacSuchbegriff);
+			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			hitlist = importCatalogue.find(query, timeout);
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 
@@ -986,6 +987,9 @@ public class ProzesskopieForm {
 			myLogger.error(e);
 		} catch (PreferencesException e) {
 			myLogger.error(e);
+		} catch (FileNotFoundException e) {
+			myLogger.error("Error while reading von opac-config", e);
+			Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
 		}
 	}
 
@@ -1515,7 +1519,12 @@ public class ProzesskopieForm {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
 				/* wenn der Doctype angegeben werden soll */
-				this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+				try {
+					this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+				} catch (Throwable t) {
+					myLogger.error("Error while reading von opac-config", t);
+					Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
@@ -1684,6 +1693,10 @@ public class ProzesskopieForm {
 		try {
 			return ConfigOpac.getDoctypeByName(docType).isNewspaper();
 		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of the servlet container
+			return false;
+		} catch (FileNotFoundException e) {
+			myLogger.error("Error while reading von opac-config", e);
+			Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
 			return false;
 		}
 	}

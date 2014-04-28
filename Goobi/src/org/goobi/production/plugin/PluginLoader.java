@@ -1,37 +1,49 @@
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support
+ * of mass digitization.
+ * 
+ * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * 
+ * Visit the websites for more information.
+ *     		- http://www.goobi.org/en/
+ *     		- https://github.com/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a
+ * combined work based on this library. Thus, the terms and conditions of the
+ * GNU General Public License cover the whole combination. As a special
+ * exception, the copyright holders of this library give you permission to link
+ * this library with independent modules to produce an executable, regardless of
+ * the license terms of these independent modules, and to copy and distribute
+ * the resulting executable under terms of your choice, provided that you also
+ * meet, for each linked independent module, the terms and conditions of the
+ * license of that module. An independent module is a module which is not
+ * derived from or based on this library. If you modify this library, you may
+ * extend this exception to your version of the library, but you are not obliged
+ * to do so. If you do not wish to do so, delete this exception statement from
+ * your version.
+ */
 package org.goobi.production.plugin;
 
-/**
- * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
- * 		    - http://gdz.sub.uni-goettingen.de
- * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
- * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
- * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
- * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
- * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
- * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
- * exception statement from your version.
- */
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.PluginManager;
@@ -52,28 +64,31 @@ import de.sub.goobi.config.ConfigMain;
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
  * 
- * @author unknown
+ * @author Based on preceding works from authors not named
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class PluginLoader {
 	private static final Logger logger = Logger.getLogger(PluginLoader.class);
 
+	/**
+	 * The function getCataloguePluginForCatalogue() returns a redirection class
+	 * to handle the first plug-in implementation object that positively
+	 * responds to <code>supportsCatalogue(catalogue)</code>.
+	 * 
+	 * @param catalogue
+	 *            catalogue in question
+	 * @return the first plug-in that supports the given catalogue
+	 */
 	public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
-		CataloguePlugin result = null;
 		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class))
-			if (plugin.supportsCatalogue(catalogue)) {
-				result = plugin;
-				break;
-			}
-		return result;
+			if (plugin.supportsCatalogue(catalogue))
+				return plugin;
+		return null;
 	}
 
 	/**
-	 * The function getPluginList() loads the plugins of the given PluginType
-	 * and returns them as an array list.
-	 * 
-	 * @param inType
-	 * @return
+	 * @deprecated Using this function is discouraged. Use
+	 *             <code>getPlugins(Class)</code> instead.
 	 */
 	@Deprecated
 	public static List<IPlugin> getPluginList(PluginType inType) {
@@ -82,6 +97,10 @@ public class PluginLoader {
 		return new ArrayList<IPlugin>(plugins);
 	}
 
+	/**
+	 * @deprecated Using this function is discouraged. Use
+	 *             <code>getPluginByTitle(Class, String, Locale)</code> instead.
+	 */
 	@Deprecated
 	public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
 		PluginManagerUtil pmu = getPluginLoader(inType);
@@ -94,9 +113,29 @@ public class PluginLoader {
 		return null;
 	}
 
-	public static <T extends UnspecificPlugin> T getPluginByTitle(Class<T> clazz, String title) {
+	/**
+	 * The function getPluginByTitle() loads all plug-ins implementing the given
+	 * UnspecificPlugin class type and returns a redirection class to handle the
+	 * first plug-in implementation object that responds to
+	 * <code>getTitle(language)</code> with the given title.
+	 * 
+	 * <p>
+	 * Currently, this method is not referenced from within the Production code,
+	 * but this may change in future. The function is provided to show how the
+	 * old plug-in API can be replaced in future.
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            UnspecificPlugin class type of the plug-ins to load
+	 * @param title
+	 *            title the plug-in implementation object shall respond with
+	 * @param language
+	 *            language the title is in (may be null)
+	 * @return the first plug-in that responds with the given title
+	 */
+	public static <T extends UnspecificPlugin> T getPluginByTitle(Class<T> clazz, String title, Locale language) {
 		for (T plugin : getPlugins(clazz))
-			if (plugin.getTitle().equals(title))
+			if (plugin.getTitle(language).equals(title))
 				return plugin;
 		return null;
 	}
@@ -115,19 +154,34 @@ public class PluginLoader {
 
 	/**
 	 * The function getPluginConfiguration() creates a HashMap that is passed to
-	 * the plugins upon creation to configure them. This is to use for
-	 * <em>general</em> configuration (probably) suitable for all plugins. Use
-	 * setters on the plugins to set specific settings.
+	 * the plug-ins upon creation to configure them. The plug-ins may or may not
+	 * make use of the configuration provided.
 	 * 
-	 * @return a HashMap to configure the plugins
+	 * <p>
+	 * This is intended to be used for <em>general</em> configuration (probably)
+	 * suitable for all plug-in types. Use setters on the plug-ins to set
+	 * type-specific settings.
+	 * </p>
+	 * 
+	 * @return a HashMap to configure the plug-ins
 	 */
 	private static HashMap<String, String> getPluginConfiguration() {
-		HashMap<String, String> conf = new HashMap<String, String>(3);
+		short ENRIES = 2;
+		HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
 		conf.put("configDir", ConfigMain.getParameter(Parameters.CONFIG_DIR));
 		conf.put("tempDir", ConfigMain.getParameter(Parameters.PLUGIN_TEMP_DIR));
 		return conf;
 	}
 
+	/**
+	 * The function getPlugins() loads all plug-ins implementing the given
+	 * UnspecificPlugin class type and returns a Collection of redirection
+	 * classes, each to handle one plug-in implementation object.
+	 * 
+	 * @param clazz
+	 *            UnspecificPlugin class type of the plug-ins to load
+	 * @return a Collection of plug-in redirection classes
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends UnspecificPlugin> Collection<T> getPlugins(Class<T> clazz) {
 		final String INTERNAL_CLASSES_PREFIX = "net.xeoh.plugins.";
@@ -149,12 +203,21 @@ public class PluginLoader {
 				logger.warn("Bad implementation of " + type.getName() + " plugin "
 						+ implementation.getClass().getName(), e);
 			} catch (SecurityException e) {
-				throw new RuntimeException(e.getMessage(), e);
+				logger.warn("Bad implementation of " + type.getName() + " plugin "
+						+ implementation.getClass().getName(), e);
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * The function getImportPluginsForType() returns a list of titles of import
+	 * plug-ins matching the given ImportType.
+	 * 
+	 * @param type
+	 *            ImportType of plug-ins to look for
+	 * @return a list of titles of import plug-ins matching
+	 */
 	public static List<String> getImportPluginsForType(ImportType type) {
 		List<String> pluginList = new ArrayList<String>();
 
@@ -169,16 +232,15 @@ public class PluginLoader {
 
 	/**
 	 * The function getPluginLoader() returns a PluginManagerUtil suitable for
-	 * loading plugins from the subdirectory defined by the given PluginType
+	 * loading plug-ins from the subdirectory defined by the given PluginType
 	 * 
 	 * @param type
-	 *            plugin type specifying the plugin subdirectory to scan
-	 * @return a PluginManagerUtil to load plugins from that directory
+	 *            plug-in type specifying the plug-in subdirectory to scan
+	 * @return a PluginManagerUtil to load plug-ins from that directory
 	 */
 	private static PluginManagerUtil getPluginLoader(PluginType type) {
 		PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-		String path = FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER),
-				type.getName().concat(File.separator));
+		String path = FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER), type.getName());
 		pluginManager.addPluginsFrom(new File(path).toURI());
 		return new PluginManagerUtil(pluginManager);
 	}

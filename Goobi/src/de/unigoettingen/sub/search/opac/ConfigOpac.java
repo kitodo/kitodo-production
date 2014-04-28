@@ -40,21 +40,27 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
+	private static final Logger myLogger = Logger.getLogger(ConfigOpac.class);
+
 	private static XMLConfiguration config;
-	static {
+
+	private static XMLConfiguration getConfig() throws FileNotFoundException {
+		if (config != null)
+			return config;
 		String configPfad = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
 				FileNames.OPAC_CONFIGURATION_FILE);
 
 		if (!new File(configPfad).exists()) {
-			throw new RuntimeException("File not found: " + configPfad, new FileNotFoundException("File not found: "
-					+ configPfad));
+			throw new FileNotFoundException("File not found: " + configPfad);
 		}
 		try {
 			config = new XMLConfiguration(configPfad);
@@ -64,18 +70,19 @@ public class ConfigOpac {
 		}
 		config.setListDelimiter('&');
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+		return config;
 	}
 
 	/**
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
-	public static String getOpacType(String inTitle) {
-		int countCatalogues = config.getMaxIndex("catalogue");
+	private static String getOpacType(String inTitle) throws FileNotFoundException {
+		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
-			String title = config.getString("catalogue(" + i + ")[@title]");
+			String title = getConfig().getString("catalogue(" + i + ")[@title]");
 			if (title.equals(inTitle)) {
-				return config.getString("catalogue(" + i + ").config[@opacType]", "PICA");
+				return getConfig().getString("catalogue(" + i + ").config[@opacType]", "PICA");
 			}
 		}
 		return null;
@@ -88,10 +95,15 @@ public class ConfigOpac {
 	@XmlElement(name = "interface")
 	public static ArrayList<String> getAllCatalogueTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
-		int countCatalogues = config.getMaxIndex("catalogue");
+		try {
+		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
-			String title = config.getString("catalogue(" + i + ")[@title]");
+			String title = getConfig().getString("catalogue(" + i + ")[@title]");
 			myList.add(title);
+		}
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;
 	}
@@ -102,10 +114,15 @@ public class ConfigOpac {
 	 */
 	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
-		int countTypes = config.getMaxIndex("doctypes.type");
+		try {
+		int countTypes = getConfig().getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countTypes; i++) {
-			String title = config.getString("doctypes.type(" + i + ")[@title]");
+			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
 			myList.add(title);
+		}
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;
 	}
@@ -117,8 +134,13 @@ public class ConfigOpac {
 	@XmlElement(name = "mediaType")
 	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
+		try {
 		for (String title : getAllDoctypeTitles()) {
 			myList.add(getDoctypeByName(title));
+		}
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;
 	}
@@ -128,31 +150,32 @@ public class ConfigOpac {
 	 * ================================================================
 	 */
 	@SuppressWarnings("unchecked")
-	public static ConfigOpacDoctype getDoctypeByName(String inTitle) {
-		int countCatalogues = config.getMaxIndex("doctypes.type");
+	public static ConfigOpacDoctype getDoctypeByName(String inTitle) throws FileNotFoundException {
+		int countCatalogues = getConfig().getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countCatalogues; i++) {
-			String title = config.getString("doctypes.type(" + i + ")[@title]");
+			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
 			if (title.equals(inTitle)) {
 				/* Sprachen erfassen */
 				HashMap<String, String> labels = new HashMap<String, String>();
-				int countLabels = config.getMaxIndex("doctypes.type(" + i + ").label");
+				int countLabels = getConfig().getMaxIndex("doctypes.type(" + i + ").label");
 				for (int j = 0; j <= countLabels; j++) {
-					String language = config.getString("doctypes.type(" + i + ").label(" + j + ")[@language]");
-					String value = config.getString("doctypes.type(" + i + ").label(" + j + ")");
+					String language = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")[@language]");
+					String value = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")");
 					labels.put(language, value);
 				}
-				String inRulesetType = config.getString("doctypes.type(" + i + ")[@rulesetType]");
-				String inTifHeaderType = config.getString("doctypes.type(" + i + ")[@tifHeaderType]");
-				boolean periodical = config.getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
-				boolean multiVolume = config.getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
-				boolean containedWork = config.getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+				String inRulesetType = getConfig().getString("doctypes.type(" + i + ")[@rulesetType]");
+				String inTifHeaderType = getConfig().getString("doctypes.type(" + i + ")[@tifHeaderType]");
+				boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
+				boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
+				boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
 				boolean newspaper;
 				try {
-					newspaper = config.getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
+					newspaper = getConfig().getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
 				} catch (NoSuchElementException noParameterIsNewspaper) {
 					newspaper = false;
 				}
-				ArrayList<String> mappings = (ArrayList<String>) config.getList("doctypes.type(" + i + ").mapping");
+				ArrayList<String> mappings = (ArrayList<String>) getConfig()
+						.getList("doctypes.type(" + i + ").mapping");
 
 				ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical,
 						multiVolume, containedWork, newspaper, labels, mappings);

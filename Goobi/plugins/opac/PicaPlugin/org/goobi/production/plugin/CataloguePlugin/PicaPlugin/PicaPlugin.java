@@ -41,6 +41,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.xeoh.plugins.base.Plugin;
@@ -137,8 +138,8 @@ public class PicaPlugin implements Plugin {
 		return configDir;
 	}
 
-	// @see org.goobi.production.plugin.UnspecificPlugin#getDescription()
-	public static String getDescription() {
+	// @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
+	public static String getDescription(Locale language) {
 		return "The PICA plugin can be used to access PICA library catalogue systems.";
 	}
 
@@ -699,8 +700,8 @@ public class PicaPlugin implements Plugin {
 		return tempDir;
 	}
 
-	// @see org.goobi.production.plugin.UnspecificPlugin#getTitle()
-	public static String getTitle() {
+	// @see org.goobi.production.plugin.UnspecificPlugin#getTitle(Locale)
+	public static String getTitle(Locale language) {
 		return "PICA Catalogue Plugin";
 	}
 
