@@ -190,7 +190,7 @@ public class ProzesskopieForm {
 		 * @return whether an error occurred when retrieving that hit
 		 */
 		public boolean isError() {
-			return error != null;
+			return hit == null;
 		}
 	
 		/**
@@ -217,7 +217,7 @@ public class ProzesskopieForm {
 	 * that yielded more than one result, if none is configured in the
 	 * Production configuration file.
 	 */
-	private static final int DEFAULT_HITLIST_PAGE_SIZE = 12;
+	private static final int DEFAULT_HITLIST_PAGE_SIZE = 10;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 

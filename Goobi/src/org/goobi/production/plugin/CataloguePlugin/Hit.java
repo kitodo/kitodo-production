@@ -338,13 +338,15 @@ public class Hit {
 	private String getPages() {
 		final Pattern pageRange = Pattern.compile("(\\d+)(\\s*-\\s*)(\\d+)");
 		String pages = getAs("pages", String.class);
-		Matcher pageRangeMatcher = pageRange.matcher(pages);
-		if (pageRangeMatcher.matches() && pageRangeMatcher.group(3).length() < pageRangeMatcher.group(1).length())
-			pages = pageRangeMatcher.group(1)
-					+ pageRangeMatcher.group(2)
-					+ pageRangeMatcher.group(1).substring(0,
-							pageRangeMatcher.group(1).length() - pageRangeMatcher.group(3).length())
-					+ pageRangeMatcher.group(3);
+		if (pages != null) {
+			Matcher pageRangeMatcher = pageRange.matcher(pages);
+			if (pageRangeMatcher.matches() && pageRangeMatcher.group(3).length() < pageRangeMatcher.group(1).length())
+				pages = pageRangeMatcher.group(1)
+						+ pageRangeMatcher.group(2)
+						+ pageRangeMatcher.group(1).substring(0,
+								pageRangeMatcher.group(1).length() - pageRangeMatcher.group(3).length())
+						+ pageRangeMatcher.group(3);
+		}
 		return pages;
 	}
 
