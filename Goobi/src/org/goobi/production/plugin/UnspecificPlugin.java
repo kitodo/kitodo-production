@@ -40,7 +40,6 @@ package org.goobi.production.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -202,7 +201,7 @@ public abstract class UnspecificPlugin {
 	 * @param configuration
 	 *            the configuration map created by the PluginLoader
 	 */
-	void configure(HashMap<String, String> configuration) {
+	void configure(Map<String, String> configuration) {
 		if (configure != null)
 			invokeQuietly(plugin, configure, configuration, null);
 	}

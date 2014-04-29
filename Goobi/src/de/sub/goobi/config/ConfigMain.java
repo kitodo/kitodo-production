@@ -42,20 +42,23 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
 public class ConfigMain {
-	private static final Logger logger = Logger.getLogger(ConfigMain.class);
+	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
 	private static PropertiesConfiguration config;
 	private static String imagesPath = null;
 
-	static {
+	private static PropertiesConfiguration getConfig() {
+		if (config != null)
+			return config;
 		PropertiesConfiguration.setDefaultListDelimiter('&');
 		try {
 			config = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 		} catch (ConfigurationException e) {
-			logger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
+			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
 			config = new PropertiesConfiguration();
 		}
 		config.setListDelimiter('|');
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+		return config;
 	}
 
 	/**
@@ -81,7 +84,7 @@ public class ConfigMain {
 			try {
 				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
-				logger.error("IO error: " + ioe);
+				myLogger.error("IO error: " + ioe);
 				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
@@ -99,9 +102,9 @@ public class ConfigMain {
 	 */
 	public static String getParameter(String inParameter) {
 		try {
-			return config.getString(inParameter);
+			return getConfig().getString(inParameter);
 		} catch (RuntimeException e) {
-			logger.error(e);
+			myLogger.error(e);
 			return "- keine Konfiguration gefunden -";
 		}
 	}
@@ -113,7 +116,7 @@ public class ConfigMain {
 	 */
 	public static String getParameter(String inParameter, String inDefaultIfNull) {
 		try {
-			return config.getString(inParameter, inDefaultIfNull);
+			return getConfig().getString(inParameter, inDefaultIfNull);
 			// return config.getProperty(inParameter).toString();
 		} catch (RuntimeException e) {
 			return inDefaultIfNull;
@@ -135,7 +138,7 @@ public class ConfigMain {
 	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
-		return config.getBoolean(inParameter, inDefault);
+		return getConfig().getBoolean(inParameter, inDefault);
 	}
 
 	/**
@@ -144,7 +147,7 @@ public class ConfigMain {
 	 * @return Parameter as Long
 	 */
 	public static long getLongParameter(String inParameter, long inDefault) {
-		return config.getLong(inParameter, inDefault);
+		return getConfig().getLong(inParameter, inDefault);
 	}
 
 	/**
@@ -163,7 +166,7 @@ public class ConfigMain {
 	 */
 	public static int getIntParameter(String inParameter, int inDefault) {
 		try {
-			return config.getInt(inParameter, inDefault);
+			return getConfig().getInt(inParameter, inDefault);
 		} catch (Exception e) {
 			return 0;
 		}

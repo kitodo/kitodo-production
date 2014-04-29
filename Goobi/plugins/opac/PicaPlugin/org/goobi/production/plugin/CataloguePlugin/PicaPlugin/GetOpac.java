@@ -21,20 +21,6 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- * Linking this library statically or dynamically with other modules is making a
- * combined work based on this library. Thus, the terms and conditions of the
- * GNU General Public License cover the whole combination. As a special
- * exception, the copyright holders of this library give you permission to link
- * this library with independent modules to produce an executable, regardless of
- * the license terms of these independent modules, and to copy and distribute
- * the resulting executable under terms of your choice, provided that you also
- * meet, for each linked independent module, the terms and conditions of the
- * license of that module. An independent module is a module which is not
- * derived from or based on this library. If you modify this library, you may
- * extend this exception to your version of the library, but you are not obliged
- * to do so. If you do not wish to do so, delete this exception statement from
- * your version.
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
@@ -57,25 +43,23 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-/*******************************************************************************
+/**
  * Connects to OPAC system.
  * 
  * TODO Talk with the GBV if the URLs are ok this way
- * TODO check if correct character encodings are returned 
+ * 
+ * TODO check if correct character encodings are returned
  * 
  * @author Ludwig
  * @version 0.1
- * @see
  * @since 0.1.1
- ******************************************************************************/
-
-/**************************************************************************
- * CHANGELOG: 19.07.2005 Ludwig: first Version
- *************************************************************************/
+ * 
+ *        CHANGELOG: 19.07.2005 Ludwig: first Version
+ */
 
 class GetOpac {
 	private static final Logger logger = Logger.getLogger(GetOpac.class);
-	
+
 	// the output xml
 	private static final String PICA_COLLECTION_RECORDS = "collection";
 
@@ -99,22 +83,27 @@ class GetOpac {
 	private static final String PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA = "/XML=1.0/CHARSET=";
 
 	/**
-	 * The url path part for retrieving picaplus as xml before the value of the response charset
+	 * The url path part for retrieving picaplus as xml before the value of the
+	 * response charset
 	 */
 	private static final String PICAPLUS_XML_URL = "/XML=1.0/PRS=PP%7F" + "/CHARSET=";
 	private static final String DATABASE_URL = "/DB=";
-	/** The url part for a session id */
+
+	/**
+	 * The url part for a session id
+	 */
 	private static final String SESSIONID_URL = "/SID=";
-	/** The url part for searching in a specified key field */
+
+	/**
+	 * The url part for searching in a specified key field
+	 */
 	private static final String SEARCH_URL_BEFORE_QUERY = "/CMD?ACT=SRCHM&";
 	private static final String SORT_BY_YEAR_OF_PUBLISHING = "SRT=YOP";
-	/** the url part for getting the complete data set */
-	private static final String SHOW_LONGTITLE_NR_URL = "/SHW?FRST=";
+
 	/**
-	 * Character encoding of the url. "utf-8" is w3c recommendation, but only "iso-8859-1" worked for me.
+	 * the url part for getting the complete data set
 	 */
-	// TODO: Check if this needed.
-	static final String URL_CHARACTER_ENCODING = "iso-8859-1";
+	private static final String SHOW_LONGTITLE_NR_URL = "/SHW?FRST=";
 
 	// resources
 	private final HttpClient opacClient;
@@ -139,19 +128,21 @@ class GetOpac {
 
 	// CREATION (Constructors, factory methods, static/inst init)
 
-	/**********************************************************************
+	/**
 	 * Constructor.
 	 * 
-	 * Note that up to now the search item list is always retrieved and parsed. TODO check for local availability.
+	 * Note that up to now the search item list is always retrieved and parsed.
+	 * TODO check for local availability.
 	 * 
 	 * @param serverAddress
 	 *            the serveraddress of the opac
 	 * @param port
 	 *            the port of the opac
-	 * @throws IOException
-	 *             If connection to catalogue system failed
 	 * @since 0.1
-	 *********************************************************************/
+	 * @throws ParserConfigurationException
+	 *             if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested
+	 */
 
 	GetOpac(Catalogue opac) throws ParserConfigurationException {
 		super();
@@ -177,8 +168,7 @@ class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 **********************************************************************/
-	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query, timeout);
 		return this.lastOpacResult.getNumberOfHits();
 	}
@@ -230,7 +220,7 @@ class GetOpac {
 				.getDocumentElement();
 	}
 
-	/***********************************************************************
+	/**
 	 * Gets the raw picaplus data for the specified hits for the query in the
 	 * specified field from the OPAC.
 	 * 
@@ -249,7 +239,7 @@ class GetOpac {
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
-	 **********************************************************************/
+	 */
 	private String retrievePica(Query query, int start, int end, long timeout) throws IOException, SAXException,
 			ParserConfigurationException {
 		StringBuffer xmlResult = new StringBuffer();
@@ -285,12 +275,10 @@ class GetOpac {
 		}
 		xmlResult.append("  </" + PICA_COLLECTION_RECORDS + ">\n");
 
-
-
 		return xmlResult.toString();
 	}
 
-	/***********************************************************************
+	/**
 	 * Retrieves a single hit from the catalogue system.
 	 * 
 	 * @param numberOfHits
@@ -298,17 +286,16 @@ class GetOpac {
 	 * @param timeout
 	 * @throws IOException
 	 *             If the connection failed
-	 **********************************************************************/
+	 */
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
 		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset
-				+ SET_ID_URL
-				+ this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
+				+ SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
 
-	/***********************************************************************
+	/**
 	 * Queries the catalogue system.
 	 * 
 	 * @param query
@@ -319,7 +306,7 @@ class GetOpac {
 	 *             If connection to catalogue system failed.
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
-	 **********************************************************************/
+	 */
 	private OpacResponseHandler getResult(Query query, long timeout) throws IOException, SAXException,
 			ParserConfigurationException {
 		String result = null;
@@ -389,28 +376,28 @@ class GetOpac {
 		if (indexOfFieldOccurence != -1) {
 			fieldName = fieldComponents[0].substring(0, indexOfFieldOccurence);
 			fieldOccurence = fieldComponents[0].substring(indexOfFieldOccurence + 1);
-			result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldName + "\" " + PICA_FIELD_OCCURENCES + "=\"" + fieldOccurence
-					+ "\">\n");
+			result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldName + "\" "
+					+ PICA_FIELD_OCCURENCES + "=\"" + fieldOccurence + "\">\n");
 		} else {
 			result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldComponents[0] + "\">\n");
 		}
 
 		for (int i = 1; i < fieldComponents.length; i++) {
-			result.append("      <" + PICA_SUBFIELD + " " + PICA_SUBFIELD_NAME + "=\"" + fieldComponents[i].charAt(0) + "\">"
-					+ fieldComponents[i].substring(1) + "</" + PICA_SUBFIELD + ">\n");
+			result.append("      <" + PICA_SUBFIELD + " " + PICA_SUBFIELD_NAME + "=\"" + fieldComponents[i].charAt(0)
+					+ "\">" + fieldComponents[i].substring(1) + "</" + PICA_SUBFIELD + ">\n");
 		}
 
 		result.append("    </" + PICA_FIELD + ">\n");
 		return result;
 	}
 
-	/***********************************************************************
+	/**
 	 * Helper method that parses an InputSource and returns a DOM Document.
 	 * 
 	 * @param source
 	 *            The InputSource to parse
 	 * @return The resulting document
-	 **********************************************************************/
+	 */
 	private Document getParsedDocument(InputSource source) {
 		try {
 			return this.docBuilder.parse(source);
@@ -428,7 +415,7 @@ class GetOpac {
 		return null;
 	}
 
-	/***********************************************************************
+	/**
 	 * Retrieves the content of the specified url from the serverAddress.
 	 * 
 	 * @param url
@@ -437,7 +424,7 @@ class GetOpac {
 	 * @return The response.
 	 * @throws IOException
 	 *             If the connection failed
-	 **********************************************************************/
+	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
 		String request = "http://" + cat.getServerAddress()
 				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getCbs();
@@ -464,9 +451,9 @@ class GetOpac {
 
 	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
 			ParserConfigurationException {
-		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;").replace("&amp;lt;", "&lt;")
-				.replace("&amp;gt;", "&gt;");
-		
+		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
+				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
+
 		XMLReader parser = null;
 		OpacResponseHandler ids = new OpacResponseHandler();
 		/* Use Java 1.4 methods to create default parser. */
@@ -480,14 +467,14 @@ class GetOpac {
 		return ids;
 	}
 
-	/***********************************************************************
+	/**
 	 * Set requested character encoding for the response of the catalogue
 	 * system. For goettingen iso-8859-1 and utf-8 work, the default is
 	 * iso-8859-1.
 	 * 
 	 * @param charset
 	 *            The character encoding to set.
-	 **********************************************************************/
+	 */
 
 	void setCharset(String charset) {
 		this.charset = charset;
