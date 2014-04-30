@@ -2925,7 +2925,7 @@ public class Metadaten {
                 File tempFileName = new File(imageDirectory + folder, fileToSort.getName() + "_bak");
                 File sortedName = new File(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
                 tempFileName.renameTo(sortedName);
-                mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.getName());
+                mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.toURI().toString());
             }
             try {
                 File ocr = new File(myProzess.getOcrDirectory());

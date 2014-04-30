@@ -32,14 +32,14 @@
 --%>
 <%-- ######################################## 
 				
-	Prozessdaten (für alle DocTypes)
+	Prozessdaten (fuer alle DocTypes)
 					
 	#########################################--%>
 
 <%--================== Daten aus einem anderen Prozess oder Opac laden ====================--%>
 <h:panelGrid columns="3" border="0" width="90%" align="center" rowClasses="rowMiddle"
 	rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
-	<%-- aus den bereits vorhandenen Prozessen einen auswählen --%>
+	<%-- aus den bereits vorhandenen Prozessen einen auswaehlen --%>
 	<h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.useTemplates}" />
 	<h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.useTemplates}"
 		style="margin-left:10px;margin-right:10px; width:200px">
@@ -50,7 +50,7 @@
 		<h:graphicImage value="/newpages/images/buttons/copy.gif" style="vertical-align:middle; margin-right:3px" />
 		<h:outputText value="#{msgs.uebernehmen}" />
 	</h:commandLink>
-	<%-- aus dem Opac auswählen --%>
+	<%-- aus dem Opac auswaehlen --%>
 	<h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
 		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
 

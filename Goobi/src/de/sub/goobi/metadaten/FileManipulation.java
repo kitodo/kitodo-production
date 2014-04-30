@@ -240,14 +240,15 @@ public class FileManipulation {
                     DocStruct currentPage = pageList.get(index);
                     // check if element is last element
                     currentPage.getAllMetadataByType(physicalPageNoType).get(0).setValue(String.valueOf(index + 2));
-                    if (index + 1 == pageList.size()) {
-                        currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue("uncounted");
-                    } else {
-                        DocStruct followingPage = pageList.get(index + 1);
-                        currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue(
-                                followingPage.getAllMetadataByType(logicalPageNoType).get(0).getValue());
+                    if (!insertMode.equalsIgnoreCase("uncounted")) {
+                        if (index + 1 == pageList.size()) {
+                            currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue("uncounted");
+                        } else {
+                            DocStruct followingPage = pageList.get(index + 1);
+                            currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue(
+                                    followingPage.getAllMetadataByType(logicalPageNoType).get(0).getValue());
+                        }
                     }
-
                 }
             }
             pageList.add(indexToImport, newPage);

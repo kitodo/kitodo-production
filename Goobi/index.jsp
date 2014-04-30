@@ -32,7 +32,7 @@
 			des Servlets
 
 			Fall das Servlet noch neu kompiliert werden muss, wird
-			währenddessen ein animiertes Gif angezeigt.
+			waehrenddessen ein animiertes Gif angezeigt.
 
 ######################################### -->
 

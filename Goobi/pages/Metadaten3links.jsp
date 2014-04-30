@@ -62,7 +62,7 @@
 						action="Metadaten3links" style="color:#E7C342;display:none">
 					</x:commandButton>
 
-	<h:graphicImage id="veid3" alt="print" url="print.png" onclick="self.window.print()" styleClass="action" style="position:absolute;right:5px"></h:graphicImage>
+					<h:graphicImage id="veid3" alt="print" url="/newpages/images/print.png" onclick="self.window.print()" styleClass="action" style="position:absolute;right:5px"></h:graphicImage>
 
 					<x:dataTable id="tabelle" forceId="true"
 						value="#{Metadaten.strukturBaum3}" var="item" cellpadding="0"
@@ -132,7 +132,7 @@
 									style="margin-right:2px;vertical-align:middle" />
 								<h:graphicImage value="/newpages/images/document.png"
 									rendered="#{!item.node.hasChildren}"
-									style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17};" />
+									style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17}px;" />
 
 							</x:popup>
 

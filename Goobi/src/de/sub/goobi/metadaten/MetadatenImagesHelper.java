@@ -368,7 +368,7 @@ public class MetadatenImagesHelper {
             tmpSize = 1;
         }
         logger.trace("tmpSize: " + tmpSize);
-        if (ConfigMain.getParameter("goobiContentServerUrl") == null) {
+        if (ConfigMain.getParameter("goobiContentServerUrl", "").equals("")) {
             logger.trace("api");
             ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
             logger.trace("im");
