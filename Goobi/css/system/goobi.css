@@ -82,6 +82,51 @@
 	margin-bottom: 6px;
 }
 
+.modalBackground {
+    background-color: appworkspace;
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/* ===================== Page1.jsp ===================== */
+
+.hitlistBoxWrapper {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+}
+
+.hitlistBoxWrapper:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.hitlistBox {
+    background-color: #FFFFFF;
+    border: 1px solid #0083E2;
+    display: inline-block;
+    max-width: 800px;
+    min-width: 550px;
+    padding: 15px;
+    text-align: left;
+    vertical-align: middle;
+    width: 70%;
+}
+
+.hitlistBox li {
+    padding-bottom: 6px;
+}
+
 /* ===================== calendar.jsp ===================== */
 .calendarTitleMgmt {
 	max-width: 350px;
@@ -135,17 +180,6 @@
 
 .calendarSheet th {
 	border-top: none;
-}
-
-.calendarUploadBackground {
-    background-color: appworkspace;
-    bottom: 0;
-    left: 0;
-    opacity: 0.5;
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 0;
 }
     
 .calendarUploadBox {

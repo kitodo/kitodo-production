@@ -41,10 +41,9 @@ import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.forms.ModuleServerForm;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
@@ -69,11 +68,9 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  * @author Steffen Hankiewicz
  */
 public class ExtendedDataImpl extends DataImpl {
-   BeanHelper beanhelp = new BeanHelper();
-
-   private String isProcess = "PROCESS";
-   private String isWorkpiece = "WORKPIECE";
-   private String isTemplate = "TEMPLATE";
+   private final String isProcess = "PROCESS";
+   private final String isWorkpiece = "WORKPIECE";
+   private final String isTemplate = "TEMPLATE";
    
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
@@ -81,7 +78,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
-   public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.add(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -108,7 +106,7 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
          if (p.getWerkstueckeSize() - 1 < count)
             throw new GoobiException(1500, "Workpiece does not exist");
-         Werkstueck w = (Werkstueck) p.getWerkstueckeList().get(count);
+         Werkstueck w = p.getWerkstueckeList().get(count);
          if (w.getEigenschaften() == null)
             w.setEigenschaften(new HashSet<Werkstueckeigenschaft>());
          Werkstueckeigenschaft we = new Werkstueckeigenschaft();
@@ -125,7 +123,7 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
          if (p.getVorlagenSize() - 1 < count)
             throw new GoobiException(1500, "Template does not exist");
-         Vorlage v = (Vorlage) p.getVorlagenList().get(count);
+         Vorlage v = p.getVorlagenList().get(count);
          if (v.getEigenschaften() == null)
             v.setEigenschaften(new HashSet<Vorlageeigenschaft>());
          Vorlageeigenschaft ve = new Vorlageeigenschaft();
@@ -149,7 +147,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
     * ================================================================*/
-   public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
+   @Override
+public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
       super.getData(sessionId, type, count);
 
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
@@ -172,7 +171,7 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
          if (p.getWerkstueckeSize() - 1 < count)
             throw new GoobiException(1500, "Workpiece does not exist");
-         Werkstueck w = (Werkstueck) p.getWerkstueckeList().get(count);
+         Werkstueck w = p.getWerkstueckeList().get(count);
          rueckgabe.put("id", String.valueOf(w.getId().intValue()));
       }
 
@@ -183,7 +182,7 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
          if (p.getVorlagenSize() - 1 < count)
             throw new GoobiException(1500, "Template does not exist");
-         Vorlage v = (Vorlage) p.getVorlagenList().get(count);
+         Vorlage v = p.getVorlagenList().get(count);
          rueckgabe.put("id", String.valueOf(v.getId().intValue()));
          rueckgabe.put("origin", (v.getHerkunft()==null?"":v.getHerkunft()));
       }
@@ -196,7 +195,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
     * ================================================================*/
-   public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
+   @Override
+public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
          throws GoobiException {
       super.getProperties(sessionId, type, count);
       ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
@@ -207,7 +207,7 @@ public class ExtendedDataImpl extends DataImpl {
       if (type.equals("") || type.equals(isProcess)) {
     	  //TODO: Use for loops
          for (Iterator<Prozesseigenschaft> it = p.getEigenschaftenList().iterator(); it.hasNext();) {
-            Prozesseigenschaft pe = (Prozesseigenschaft) it.next();
+            Prozesseigenschaft pe = it.next();
             if (!pe.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(pe.getTitel(), String.valueOf(pe.getId().intValue()), pe
                      .getWert()));
@@ -221,10 +221,10 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
          if (p.getWerkstueckeSize() - 1 < count)
             throw new GoobiException(1500, "Workpiece does not exist");
-         Werkstueck w = (Werkstueck) p.getWerkstueckeList().get(count);
+         Werkstueck w = p.getWerkstueckeList().get(count);
          //TODO: Use for loops
          for (Iterator<Werkstueckeigenschaft> it = w.getEigenschaftenList().iterator(); it.hasNext();) {
-            Werkstueckeigenschaft we = (Werkstueckeigenschaft) it.next();
+            Werkstueckeigenschaft we = it.next();
             if (!we.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(we.getTitel(), String.valueOf(we.getId().intValue()), we
                      .getWert()));
@@ -238,10 +238,10 @@ public class ExtendedDataImpl extends DataImpl {
          /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
          if (p.getVorlagenSize() - 1 < count)
             throw new GoobiException(1500, "Template does not exist");
-         Vorlage v = (Vorlage) p.getVorlagenList().get(count);
+         Vorlage v = p.getVorlagenList().get(count);
          //TODO: Use for loops
          for (Iterator<Vorlageeigenschaft> it = v.getEigenschaftenList().iterator(); it.hasNext();) {
-            Vorlageeigenschaft ve = (Vorlageeigenschaft) it.next();
+            Vorlageeigenschaft ve = it.next();
             if (!ve.getTitel().startsWith("#"))
                gpps.add(new GoobiProcessProperty(ve.getTitel(), String.valueOf(ve.getId().intValue()), ve
                      .getWert()));
@@ -256,7 +256,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/
-   public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.set(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -272,7 +273,7 @@ public class ExtendedDataImpl extends DataImpl {
       if (type.equals(isWorkpiece)) {
          if (p.getWerkstueckeSize() - 1 < count)
             throw new GoobiException(1500, "Workpiece does not exist");
-         Werkstueck w = (Werkstueck) p.getWerkstueckeList().get(count);
+         Werkstueck w = p.getWerkstueckeList().get(count);
          myquery = "from Werkstueckeigenschaft where werkstueck=" + w.getId().intValue();
 
       }
@@ -283,7 +284,7 @@ public class ExtendedDataImpl extends DataImpl {
       if (type.equals(isTemplate)) {
          if (p.getVorlagenSize() - 1 < count)
             throw new GoobiException(1500, "Template does not exist");
-         Vorlage v = (Vorlage) p.getVorlagenList().get(count);
+         Vorlage v = p.getVorlagenList().get(count);
          myquery = "from Vorlageeigenschaft where vorlage=" + v.getId().intValue();
       }
       myquery += " and titel='" + gpp.getName() + "' and id=" + gpp.getId();

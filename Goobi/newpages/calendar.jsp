@@ -411,7 +411,7 @@
 
 									<%-- File upload dialogue --%>
 
-									<htm:div styleClass="calendarUploadBackground"
+									<htm:div styleClass="modalBackground"
 										rendered="#{CalendarForm.uploadShowing}" />
 									<htm:div styleClass="calendarUploadBox"
 										rendered="#{CalendarForm.uploadShowing}">
