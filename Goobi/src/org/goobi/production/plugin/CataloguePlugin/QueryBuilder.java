@@ -38,6 +38,8 @@
  */
 package org.goobi.production.plugin.CataloguePlugin;
 
+import java.util.List;
+
 /**
  * The class QueryBuilder provides methods to create query strings to be passed
  * to library catalogue access plug-in implementation objects as argument to
@@ -90,6 +92,31 @@ package org.goobi.production.plugin.CataloguePlugin;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class QueryBuilder {
+
+	/**
+	 * The function appendAll() appends a list of query tokens to an initial
+	 * query by means of a StringBuilder.
+	 * 
+	 * @param query
+	 *            query to append to
+	 * @param tokens
+	 *            tokens to append
+	 * @return complete query
+	 */
+	public static String appendAll(String query, List<String> tokens) {
+		if (tokens.size() == 0)
+			return query;
+		int capacity = query.length();
+		for (String token : tokens)
+			capacity += token.length() + 1;
+		StringBuilder result = new StringBuilder(capacity);
+		result.append(query);
+		for (String token : tokens) {
+			result.append(' ');
+			result.append(token);
+		}
+		return result.toString();
+	}
 
 	/**
 	 * The function restrictToField() prefixes the tokens of a query by the
