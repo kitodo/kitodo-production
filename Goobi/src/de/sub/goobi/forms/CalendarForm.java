@@ -943,12 +943,13 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The method setTitleHeading() will be called by Faces to store a new value
-	 * of the read-write property "firstAppearance", which represents the the
-	 * date of first appearance of the Title block currently showing. The event
-	 * will be used to either alter the date of first appearance of the Title
-	 * block defined by the “titleShowing” field or, in case that a new title
-	 * block is under edit, to initially set its the date of first appearance.
+	 * The method setFirstAppearance() will be called by Faces to store a new
+	 * value of the read-write property "firstAppearance", which represents the
+	 * the date of first appearance of the Title block currently showing. The
+	 * event will be used to either alter the date of first appearance of the
+	 * Title block defined by the “titleShowing” field or, in case that a new
+	 * title block is under edit, to initially set its the date of first
+	 * appearance.
 	 * 
 	 * @param firstAppearance
 	 *            new date of first appearance
@@ -960,28 +961,33 @@ public class CalendarForm {
 		} catch (IllegalArgumentException e) {
 			newFirstAppearance = titleShowing != null ? titleShowing.getFirstAppearance() : null;
 		}
-		if (titleShowing != null) {
-			if (titlePickerUnchanged) {
-				if (titleShowing.getFirstAppearance() == null
-						|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
-					titleShowing.setFirstAppearance(newFirstAppearance);
-					navigate();
+		try {
+			if (titleShowing != null) {
+				if (titlePickerUnchanged) {
+					if (titleShowing.getFirstAppearance() == null
+							|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
+						titleShowing.setFirstAppearance(newFirstAppearance);
+						navigate();
+					}
 				}
+			} else {
+				titleShowing = new Title(course);
+				titleShowing.setFirstAppearance(newFirstAppearance);
+				course.add(titleShowing);
 			}
-		} else {
-			titleShowing = new Title(course);
-			titleShowing.setFirstAppearance(newFirstAppearance);
-			course.add(titleShowing);
+		} catch (IllegalArgumentException e) {
+			Helper.setFehlerMeldung("calendar.title.firstAppearance.rejected");
 		}
 	}
 
 	/**
-	 * The method setTitleHeading() will be called by Faces to store a new value
-	 * of the read-write property "lastAppearance", which represents the the
-	 * date of last appearance of the Title block currently showing. The event
-	 * will be used to either alter the date of last appearance of the Title
-	 * block defined by the “titleShowing” field or, in case that a new title
-	 * block is under edit, to initially set its the date of last appearance.
+	 * The method setLastAppearance() will be called by Faces to store a new
+	 * value of the read-write property "lastAppearance", which represents the
+	 * the date of last appearance of the Title block currently showing. The
+	 * event will be used to either alter the date of last appearance of the
+	 * Title block defined by the “titleShowing” field or, in case that a new
+	 * title block is under edit, to initially set its the date of last
+	 * appearance.
 	 * 
 	 * @param lastAppearance
 	 *            new date of last appearance
@@ -993,18 +999,22 @@ public class CalendarForm {
 		} catch (IllegalArgumentException e) {
 			newLastAppearance = titleShowing != null ? titleShowing.getLastAppearance() : null;
 		}
-		if (titleShowing != null) {
-			if (titlePickerUnchanged) {
-				if (titleShowing.getLastAppearance() == null
-						|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
-					titleShowing.setLastAppearance(newLastAppearance);
-					navigate();
+		try {
+			if (titleShowing != null) {
+				if (titlePickerUnchanged) {
+					if (titleShowing.getLastAppearance() == null
+							|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+						titleShowing.setLastAppearance(newLastAppearance);
+						navigate();
+					}
 				}
+			} else {
+				titleShowing = new Title(course);
+				titleShowing.setLastAppearance(newLastAppearance);
+				course.add(titleShowing);
 			}
-		} else {
-			titleShowing = new Title(course);
-			titleShowing.setLastAppearance(newLastAppearance);
-			course.add(titleShowing);
+		} catch (IllegalArgumentException e) {
+			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
 		}
 	}
 
