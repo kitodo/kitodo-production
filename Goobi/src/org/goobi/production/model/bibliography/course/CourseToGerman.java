@@ -90,16 +90,16 @@ public class CourseToGerman {
 		if (course.isEmpty())
 			return result;
 		Iterator<Title> blocks = course.iterator();
-		String previousTitle = null;
+		boolean hasPreviousBlock = false;
 		do {
 			Title title = blocks.next();
-			result.add(titleToString(title, previousTitle));
+			result.add(titleToString(title, hasPreviousBlock));
 			for (Issue issue : title.getIssues()) {
 				String irregularities = irregularitiesToString(issue);
 				if (irregularities != null)
 					result.add(irregularities);
 			}
-			previousTitle = title.getHeading();
+			hasPreviousBlock = true;
 		} while (blocks.hasNext());
 		return result;
 	}
@@ -110,30 +110,19 @@ public class CourseToGerman {
 	 * 
 	 * @param title
 	 *            Titel to formulate
-	 * @param previousTitle
-	 *            title of previous title block (may be null)
+	 * @param subsequentBlock
+	 *            false for the first block, true otherwise
 	 */
-	private static String titleToString(Title title, String previousTitle) {
+	private static String titleToString(Title title, boolean subsequentBlock) {
 		StringBuilder result = new StringBuilder(500);
 		int currentIssuesSize = title.getIssues().size();
-		if (previousTitle == null) {
-			result.append("Die Zeitung „");
-			result.append(title.getHeading());
-			result.append("“ erschien vom ");
+		if (subsequentBlock == false) {
+			result.append("Die Zeitung erschien vom ");
 			appendDate(result, title.getFirstAppearance());
 		} else {
 			result.append("Ab dem ");
 			appendDate(result, title.getFirstAppearance());
-			result.append(" erschien die Zeitung „");
-			result.append(previousTitle);
-			result.append("“ unter dem ");
-			if (title.getHeading().equals(previousTitle))
-				result.append("gleichen Titel");
-			else {
-				result.append("geänderten Titel „");
-				result.append(title.getHeading());
-				result.append("“");
-			}
+			result.append(" erschien die Zeitung unter dem gleichen Titel");
 		}
 		result.append(" bis zum ");
 		appendDate(result, title.getLastAppearance());

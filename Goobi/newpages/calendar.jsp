@@ -157,18 +157,11 @@
 		 * user.
 		 * 
 		 * The following requirements must be met:
-		 * 		• The title must not be empty.
 		 * 		• The dates must be well-formed.
 		 * 
 		 * @return whether the title data is valid
 		 --%>
 			function titleDataIsValid() {
-				if (!document.getElementById("form1:titleHeading").value
-						.match(/\S/)) {
-					alert("${msgs['calendar.title.heading.invalid']}");
-					document.getElementById("form1:titleHeading").focus();
-					return false;
-				}
 				if (!document.getElementById("form1:firstAppearance").value
 						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
@@ -284,16 +277,6 @@
 										<htm:div styleClass="fillWrapper calendarTitleContent">
 											<%-- Input elements for base data --%>
 											<htm:div styleClass="filling formRow">
-												<htm:div>
-													<h:outputLabel value="#{msgs['calendar.title.heading']}"
-														styleClass="leftText" for="titleHeading" />
-													<htm:span styleClass="fillWrapper">
-														<h:inputText value="#{CalendarForm.titleHeading}"
-															onkeydown="startEditTitle()" onchange="startEditTitle()"
-															id="titleHeading" styleClass="filling" />
-													</htm:span>
-												</htm:div>
-
 												<htm:div styleClass="keepTogether">
 													<h:outputText
 														value="#{msgs['calendar.title.firstAppearance']}" />

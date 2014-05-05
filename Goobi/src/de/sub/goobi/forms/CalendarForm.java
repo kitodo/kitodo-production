@@ -826,18 +826,6 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The function getTitleHeading() returns the heading of the Title block
-	 * currently showing as read-write property "titleHeading".
-	 * 
-	 * @return heading of currently showing title
-	 */
-	public String getTitleHeading() {
-		if (titleShowing == null)
-			return "";
-		return titleShowing.getHeading();
-	}
-
-	/**
 	 * The function getTitlePickerOptions() returns the elements for the title
 	 * picker list box as read only property "titlePickerOptions". It returns a
 	 * List of Map with each two entries: "value" and "label". "value" is the
@@ -1031,27 +1019,6 @@ public class CalendarForm {
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
-		}
-	}
-
-	/**
-	 * The method setTitleHeading() will be called by Faces to store a new value
-	 * of the read-write property "titleHeading", which represents the heading
-	 * of the Title block currently showing. The event will be used to either
-	 * alter the heading of the Title block defined by the “titleShowing” field
-	 * or, in case that a new title block is under edit, to initially set its
-	 * title.
-	 * 
-	 * @param heading
-	 *            new heading for the title block
-	 */
-	public void setTitleHeading(String heading) {
-		if (titleShowing != null) {
-			if (titlePickerUnchanged && heading != null && !heading.isEmpty())
-				titleShowing.setHeading(heading);
-		} else {
-			titleShowing = new Title(course, heading);
-			course.add(titleShowing);
 		}
 	}
 

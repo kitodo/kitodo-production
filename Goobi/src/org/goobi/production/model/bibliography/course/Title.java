@@ -65,12 +65,6 @@ public class Title {
 	private final Course course;
 
 	/**
-	 * The field heading holds the Title of the nusepaper during the period of
-	 * time represented by this title block
-	 */
-	private String heading;
-
-	/**
 	 * The field variant may hold a variant identifer that can be used to
 	 * distinguish different title blocks with equal heading during the buildup
 	 * of a course of appearance from individual issues.
@@ -112,22 +106,6 @@ public class Title {
 	 */
 	public Title(Course course) {
 		this.course = course;
-		this.heading = "";
-		this.variant = null;
-		this.firstAppearance = null;
-		this.lastAppearance = null;
-		this.issues = new ArrayList<Issue>();
-	}
-
-	/**
-	 * Constructor for a title with a given heading.
-	 * 
-	 * @param heading
-	 *            the name of the title
-	 */
-	public Title(Course course, String heading) {
-		this.course = course;
-		this.heading = heading;
 		this.variant = null;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
@@ -142,9 +120,8 @@ public class Title {
 	 * @param variant
 	 *            a variant identifier (may be null)
 	 */
-	public Title(Course course, String heading, String variant) {
+	public Title(Course course, String variant) {
 		this.course = course;
-		this.heading = heading;
 		this.variant = variant;
 		this.firstAppearance = null;
 		this.lastAppearance = null;
@@ -173,7 +150,6 @@ public class Title {
 	 */
 	public Title clone(Course course) {
 		Title copy = new Title(course);
-		copy.heading = heading;
 		copy.firstAppearance = firstAppearance;
 		copy.lastAppearance = lastAppearance;
 		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
@@ -211,15 +187,6 @@ public class Title {
 	 */
 	public List<Issue> getIssues() {
 		return new ArrayList<Issue>(issues);
-	}
-
-	/**
-	 * The function getHeading() returns the heading of the Title.
-	 * 
-	 * @return the name of the newspaper
-	 */
-	public String getHeading() {
-		return heading;
 	}
 
 	/**
@@ -284,12 +251,11 @@ public class Title {
 	 * @return whether the title is dataless
 	 */
 	public boolean isEmpty() {
-		return (heading == null || heading.equals("")) && firstAppearance == null && lastAppearance == null
-				&& (issues == null || issues.isEmpty());
+		return firstAppearance == null && lastAppearance == null && (issues == null || issues.isEmpty());
 	}
 
-	public boolean isIdentifiedBy(String title, String variant) {
-		return heading.equals(title) && (variant == null && this.variant == null || this.variant.equals(variant));
+	public boolean isIdentifiedBy(String variant) {
+		return variant == null && this.variant == null || this.variant.equals(variant);
 	}
 
 	/**
@@ -333,18 +299,6 @@ public class Title {
 		if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0)
 			course.clearProcesses();
 		return issues.remove(issue);
-	}
-
-	/**
-	 * The method setHeading() sets the title of the newspaper.
-	 * 
-	 * @param heading
-	 *            Title for the Title
-	 */
-	public void setHeading(String heading) {
-		if (this.heading == null && heading != null || !this.heading.equals(heading))
-			course.clearProcesses();
-		this.heading = heading;
 	}
 
 	/**
@@ -423,14 +377,12 @@ public class Title {
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append(heading);
-		result.append(" (");
 		if (firstAppearance != null)
 			result.append(firstAppearance.toString());
 		result.append(" - ");
 		if (lastAppearance != null)
 			result.append(lastAppearance.toString());
-		result.append(") [");
+		result.append(" [");
 		boolean first = true;
 		for (Issue issue : issues) {
 			if (!first)
@@ -457,8 +409,6 @@ public class Title {
 		result.append(" − ");
 		if (lastAppearance != null)
 			result.append(dateConverter.print(lastAppearance));
-		result.append(", ");
-		result.append(heading);
 		return result.toString();
 	}
 
@@ -480,7 +430,6 @@ public class Title {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((firstAppearance == null) ? 0 : firstAppearance.hashCode());
-		result = prime * result + ((heading == null) ? 0 : heading.hashCode());
 		result = prime * result + ((issues == null) ? 0 : issues.hashCode());
 		result = prime * result + ((lastAppearance == null) ? 0 : lastAppearance.hashCode());
 		result = prime * result + ((variant == null) ? 0 : variant.hashCode());
@@ -512,11 +461,6 @@ public class Title {
 			if (other.firstAppearance != null)
 				return false;
 		} else if (!firstAppearance.equals(other.firstAppearance))
-			return false;
-		if (heading == null) {
-			if (other.heading != null)
-				return false;
-		} else if (!heading.equals(other.heading))
 			return false;
 		if (issues == null) {
 			if (other.issues != null)

@@ -123,7 +123,7 @@ public class GranularityForm {
 			course.recalculateRegularityOfIssues();
 			Document courseXML = course.toXML();
 			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
-			FacesUtils.sendDownload(data, course.get(0).getHeading() + ".xml");
+			FacesUtils.sendDownload(data, "course.xml");
 		} catch (TransformerException e) {
 			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
 			logger.error(e.getMessage(), e);
