@@ -439,6 +439,8 @@ public class ProzesskopieForm {
 				return "";
 
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
+			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
+
 			hitlist = importCatalogue.find(query, timeout);
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 

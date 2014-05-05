@@ -31,12 +31,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
@@ -71,21 +74,6 @@ public class ConfigOpac {
 		config.setListDelimiter('&');
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 		return config;
-	}
-
-	/**
-	 * find Catalogue in Opac-Configurationlist
-	 * ================================================================
-	 */
-	private static String getOpacType(String inTitle) throws FileNotFoundException {
-		int countCatalogues = getConfig().getMaxIndex("catalogue");
-		for (int i = 0; i <= countCatalogues; i++) {
-			String title = getConfig().getString("catalogue(" + i + ")[@title]");
-			if (title.equals(inTitle)) {
-				return getConfig().getString("catalogue(" + i + ").config[@opacType]", "PICA");
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -185,6 +173,31 @@ public class ConfigOpac {
 		return null;
 	}
 
-
-
+	/**
+	 * The function getRestrictionsForCatalogue() returns the content of all
+	 * <kbd>&lt;restriction&gt;</kbd> elements from the
+	 * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
+	 * <kbd>goobi_opac.xml</kbd>.
+	 * 
+	 * The function will return an empty list if there are no such entries for
+	 * the given catalogue.
+	 * 
+	 * @param title
+	 *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
+	 *            examine
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
+		List<String> result = new LinkedList<String>();
+		@SuppressWarnings("unchecked")
+		List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt("catalogue");
+		for (HierarchicalConfiguration catalogue : catalogues)
+			if (title.equals(catalogue.getString("[@title]"))) {
+				for (String restriction : catalogue.getStringArray("restriction"))
+					result.add(restriction);
+				break;
+			}
+		return result;
+	}
 }
