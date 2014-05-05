@@ -74,11 +74,6 @@ public class Course extends ArrayList<Title> {
 	 * course of appearance.
 	 */
 	private static final String ATTRIBUTE_DATE = "date";
-	/**
-	 * Attribute <code>heading="…"</code> used in the XML representation of a
-	 * course of appearance.
-	 */
-	private static final String ATTRIBUTE_TITLE_HEADING = "heading";
 
 	/**
 	 * Attribute <code>index="…"</code> used in the XML representation of a
@@ -219,7 +214,6 @@ public class Course extends ArrayList<Title> {
 					.getNextSibling()) {
 				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE))
 					continue;
-				String title = ((Element) titleNode).getAttribute(ATTRIBUTE_TITLE_HEADING);
 				String variant = ((Element) titleNode).getAttribute(ATTRIBUTE_VARIANT);
 				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
 						.getNextSibling()) {
@@ -229,7 +223,7 @@ public class Course extends ArrayList<Title> {
 					if (issue == null)
 						issue = "";
 					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
-					IndividualIssue individualIssue = addAddition(title, variant, issue, LocalDate.parse(date));
+					IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
 					process.add(individualIssue);
 				}
 			}
@@ -276,10 +270,10 @@ public class Course extends ArrayList<Title> {
 	 *            date to add
 	 * @return an IndividualIssue representing the added issue
 	 */
-	private IndividualIssue addAddition(String titleHeading, String variant, String issueHeading, LocalDate date) {
-		Title title = get(titleHeading, variant);
+	private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
+		Title title = get(variant);
 		if (title == null) {
-			title = new Title(this, titleHeading, variant);
+			title = new Title(this, variant);
 			title.setFirstAppearance(date);
 			title.setLastAppearance(date);
 			add(title);
@@ -328,18 +322,17 @@ public class Course extends ArrayList<Title> {
 	 * @return the title identified by the given title and—optionally—variant,
 	 *         or null if no title with the given combination can be found
 	 */
-	private Title get(String title, String variant) {
-		String key = variant == null ? title : title + '\u001E' + variant;
-		if (resolveByTitleVariantCache.containsKey(key)) {
-			Title potentialResult = resolveByTitleVariantCache.get(key);
-			if (potentialResult.isIdentifiedBy(title, variant))
+	private Title get(String variant) {
+		if (resolveByTitleVariantCache.containsKey(variant)) {
+			Title potentialResult = resolveByTitleVariantCache.get(variant);
+			if (potentialResult.isIdentifiedBy(variant))
 				return potentialResult;
 			else
-				resolveByTitleVariantCache.remove(key);
+				resolveByTitleVariantCache.remove(variant);
 		}
 		for (Title candidate : this) {
-			if (candidate.isIdentifiedBy(title, variant)) {
-				resolveByTitleVariantCache.put(key, candidate);
+			if (candidate.isIdentifiedBy(variant)) {
+				resolveByTitleVariantCache.put(variant, candidate);
 				return candidate;
 			}
 		}
@@ -550,7 +543,6 @@ public class Course extends ArrayList<Title> {
 				}
 				if (titleNode == null) {
 					titleNode = result.createElement(ELEMENT_TITLE);
-					titleNode.setAttribute(ATTRIBUTE_TITLE_HEADING, get(index).getHeading());
 					titleNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
 				}
 				Element issueNode = result.createElement(ELEMENT_APPEARED);
