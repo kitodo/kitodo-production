@@ -438,6 +438,23 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * The function isMatch() iterates over the array of title blocks and
+	 * returns the first one that matches a given date. Since there shouldn’t be
+	 * overlapping blocks, there should be at most one block for which this is
+	 * true. If no matching block is found, it will return null.
+	 * 
+	 * @param date
+	 *            a LocalDate to examine
+	 * @return the title block on which this date is represented, if any
+	 */
+	public Title isMatch(LocalDate date) {
+		for (Title title : this)
+			if (title.isMatch(date))
+				return title;
+		return null;
+	}
+
+	/**
 	 * The method recalculateRegularityOfIssues() recalculates for all Title
 	 * objects of this Course for each Issue the daysOfWeek of its regular
 	 * appearance within the interval of time of the Title. This is especially

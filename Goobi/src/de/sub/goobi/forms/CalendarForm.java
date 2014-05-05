@@ -736,16 +736,22 @@ public class CalendarForm {
 	 *            calendar sheet to populate
 	 */
 	protected void populateByCalendar(List<List<Cell>> sheet) {
-		List<IssueController> issueControllersCreatedOnce = getIssues();
+		Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<Integer, List<IssueController>>();
+		Title currentTitle = null;
 		ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
 		for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
 				.plusDays(1)) {
 			Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
 			cell.setDate(date);
-			if (titleShowing == null || !titleShowing.isMatch(date)) {
+			if (currentTitle == null || !currentTitle.isMatch(date))
+				currentTitle = course.isMatch(date);
+			if (currentTitle == null) {
 				cell.setOnTitle(false);
 			} else {
-				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce, date));
+				Integer hashCode = Integer.valueOf(currentTitle.hashCode());
+				if (!issueControllersCreatedOnce.containsKey(hashCode))
+					issueControllersCreatedOnce.put(hashCode, getIssues(currentTitle));
+				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce.get(hashCode), date));
 			}
 		}
 	}
@@ -783,14 +789,24 @@ public class CalendarForm {
 
 	/**
 	 * The function getIssues() returns the list of issues held by the title
-	 * block currently showing read-only property "issues".
+	 * block currently showing as read-only property "issues".
 	 * 
 	 * @return the list of issues
 	 */
 	public List<IssueController> getIssues() {
+		return titleShowing != null ? getIssues(titleShowing) : new ArrayList<IssueController>();
+	}
+
+	/**
+	 * The function getIssues() returns the list of issues for a given title
+	 * block.
+	 * 
+	 * @return the list of issues
+	 */
+	private List<IssueController> getIssues(Title title) {
 		List<IssueController> result = new ArrayList<IssueController>();
-		if (titleShowing != null)
-			for (Issue issue : titleShowing.getIssues())
+		if (title != null)
+			for (Issue issue : title.getIssues())
 				result.add(new IssueController(issue, result.size()));
 		return result;
 	}
