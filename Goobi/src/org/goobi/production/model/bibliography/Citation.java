@@ -522,13 +522,22 @@ public class Citation {
 		StringBuilder result = new StringBuilder();
 		switch (style) {
 		case MONOGRAPH:
-			appendNames(creators, result);
-			appendYear(result);
-			appendTitle(result);
-			appendVolumeInformation(result);
-			appendEdition(result, true);
-			appendPlaceAndPublisher(result);
-			appendOverallTitleAndNumber(result);
+			if (creators.size() > 0) {
+				appendNames(creators, result);
+				appendYear(result);
+				appendTitle(result);
+				appendVolumeInformation(result);
+				appendEdition(result, true);
+				appendPlaceAndPublisher(result);
+				appendOverallTitleAndNumber(result);
+			} else {
+				appendTitle(result, null);
+				appendVolumeInformation(result);
+				appendEdition(result, true);
+				appendPlaceAndPublisher(result);
+				appendYearSimple(result);
+				appendOverallTitleAndNumber(result);
+			}
 			break;
 		case ANTHOLOGY:
 			appendNames(creators, result);
@@ -610,9 +619,14 @@ public class Citation {
 			appendTitle(result);
 			break;
 		case INTERNET:
-			appendNames(creators, result);
-			appendYear(result);
-			appendTitle(result);
+			if (creators.size() > 0) {
+				appendNames(creators, result);
+				appendYear(result);
+				appendTitle(result);
+			} else {
+				appendTitle(result, null);
+				appendYearSimple(result);
+			}
 			if (published != null || accessed != null) {
 				result.append(" (");
 				if (published != null)
@@ -840,8 +854,21 @@ public class Citation {
 	 *            StringBuilder to write to
 	 */
 	private void appendTitle(StringBuilder builder) {
+		appendTitle(builder, ": ");
+	}
+
+	/**
+	 * The method appendTitle() appends the main title to the given
+	 * StringBuilder. An unterminated phrase will be ended by a full stop.
+	 * 
+	 * @param builder
+	 *            StringBuilder to write to
+	 */
+	private void appendTitle(StringBuilder builder, String prespan) {
 		if (title != null) {
-			builder.append(": <span style=\"font-style: italic; \">");
+			if (prespan != null)
+				builder.append(prespan);
+			builder.append("<span style=\"font-style: italic; \">");
 			builder.append(title);
 			if (!(title.endsWith(".") || title.endsWith("?") || title.endsWith("!")))
 				builder.append(".");
@@ -898,6 +925,20 @@ public class Citation {
 			builder.append(" (");
 			builder.append(year);
 			builder.append(')');
+		}
+	}
+
+	/**
+	 * The method appendYear() appends information about the year of publishing
+	 * to the given StringBuilder.
+	 * 
+	 * @param builder
+	 *            StringBuilder to write to
+	 */
+	private void appendYearSimple(StringBuilder builder) {
+		if (year != null) {
+			builder.append(' ');
+			builder.append(year);
 		}
 	}
 
