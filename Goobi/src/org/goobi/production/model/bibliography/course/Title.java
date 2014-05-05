@@ -52,9 +52,16 @@ import org.joda.time.format.DateTimeFormatter;
  * didn’t change its name either. A Title instance handles one or more Issue
  * objects.
  * 
+ * TODO: Rename class. The name “Title” was chosen because the class was
+ * originally intended to reflect changes of the title of a newspaper. Now, it
+ * does only represent temporary blocks.
+ * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Title {
+	/**
+	 * The field course holds a reference to the course this Title block is in.
+	 */
 	private final Course course;
 
 	/**
@@ -346,8 +353,11 @@ public class Title {
 	 * 
 	 * @param firstAppearance
 	 *            date of first appearance
+	 * @throws IllegalArgumentException
+	 *             if the date would overlap with another block
 	 */
-	public void setFirstAppearance(LocalDate firstAppearance) {
+	public void setFirstAppearance(LocalDate firstAppearance) throws IllegalArgumentException {
+		prohibitOverlaps(firstAppearance, lastAppearance != null ? lastAppearance : firstAppearance);
 		try {
 			if (!this.firstAppearance.equals(firstAppearance))
 				course.clearProcesses();
@@ -364,8 +374,11 @@ public class Title {
 	 * 
 	 * @param lastAppearance
 	 *            date of last appearance
+	 * @throws IllegalArgumentException
+	 *             if the date would overlap with another block
 	 */
 	public void setLastAppearance(LocalDate lastAppearance) {
+		prohibitOverlaps(firstAppearance != null ? firstAppearance : lastAppearance, lastAppearance);
 		try {
 			if (!this.lastAppearance.equals(lastAppearance))
 				course.clearProcesses();
@@ -374,6 +387,29 @@ public class Title {
 				course.clearProcesses();
 		}
 		this.lastAppearance = lastAppearance;
+	}
+
+	/**
+	 * The method checkForOverlaps() tests an not yet set time range for this
+	 * title whether it doesn’t overlap with other titles in this course and can
+	 * be set. (Because this method is called prior to setting a new value as a
+	 * field value, it doesn’t take the values from the classes’ fields even
+	 * though it isn’t static.) If the given dates would cause an overlapping,
+	 * an IllegalArgumentException will be thrown.
+	 * 
+	 * @param from
+	 *            date of first appearance to check
+	 * @param until
+	 *            date of last appearance to check
+	 * @throws IllegalArgumentException
+	 *             if the check fails
+	 */
+	private void prohibitOverlaps(LocalDate from, LocalDate until) throws IllegalArgumentException {
+		for (Title title : course)
+			if (title != this
+					&& (title.getFirstAppearance().isBefore(until) && !title.getLastAppearance().isBefore(from) || (title
+							.getLastAppearance().isAfter(from) && !title.getFirstAppearance().isAfter(until))))
+				throw new IllegalArgumentException();
 	}
 
 	/**
