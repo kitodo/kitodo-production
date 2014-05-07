@@ -105,6 +105,7 @@ public class CreateProcessesTask extends LongRunningTask {
 	 */
 	public CreateProcessesTask(ProzesskopieForm processCreator, List<List<IndividualIssue>> processes) {
 		this.processCreator = processCreator;
+		setTitle(getClass().getSimpleName());
 		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
 		for (List<IndividualIssue> issues : processes) {
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
@@ -113,6 +114,7 @@ public class CreateProcessesTask extends LongRunningTask {
 		}
 		nextProcessToCreate = 0;
 		numberOfProcesses = processes.size();
+		setTitle(getClass().getSimpleName());
 	}
 
 	/**
@@ -128,7 +130,7 @@ public class CreateProcessesTask extends LongRunningTask {
 	 */
 	@Override
 	public void run() {
-		String currentTitle = "";
+		String currentTitle = null;
 		try {
 			while (nextProcessToCreate < numberOfProcesses) {
 				List<IndividualIssue> issues = processes.get(nextProcessToCreate);
@@ -143,7 +145,9 @@ public class CreateProcessesTask extends LongRunningTask {
 					return;
 				}
 				if (!"ProzessverwaltungKopie3".equals(processCreator.NeuenProzessAnlegen()))
-					throw new RuntimeException();
+					throw new RuntimeException(
+							"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result.");
+				currentTitle = null;
 				nextProcessToCreate++;
 				setStatusProgress(100 * nextProcessToCreate / numberOfProcesses);
 				if (isInterrupted()) {
@@ -153,7 +157,9 @@ public class CreateProcessesTask extends LongRunningTask {
 			}
 			setStatusMessage("done");
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException
-			setStatusMessage(e.getClass().getSimpleName() + " while creating " + currentTitle + ": " + e.getMessage());
+			setStatusMessage(e.getClass().getSimpleName()
+					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
+					+ e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
