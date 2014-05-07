@@ -431,6 +431,16 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
+	 * The function getProcesses() returns the processes to create from the
+	 * course of appearance.
+	 * 
+	 * @return the processes
+	 */
+	public List<List<IndividualIssue>> getProcesses() {
+		return processes;
+	}
+
+	/**
 	 * The function isMatch() iterates over the array of title blocks and
 	 * returns the first one that matches a given date. Since there shouldn’t be
 	 * overlapping blocks, there should be at most one block for which this is

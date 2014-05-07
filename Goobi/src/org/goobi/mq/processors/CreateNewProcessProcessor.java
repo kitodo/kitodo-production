@@ -270,11 +270,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             ProzesskopieForm object
 	 */
 	protected void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
-
 		for (String key : userFields.keySet()) {
-			setAdditionalField(form, key, userFields.get(key));
+			form.setAdditionalField(key, userFields.get(key), true);
 		}
-
 	}
 
 	/**
@@ -333,33 +331,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		}
 
 		return result;
-	}
-
-	/**
-	 * The method setAdditionalField() sets the value of an AdditionalField held
-	 * by a ProzesskopieForm object.
-	 * 
-	 * @param inputForm
-	 *            a ProzesskopieForm object
-	 * @param key
-	 *            the title of the AdditionalField whose value shall be modified
-	 * @param value
-	 *            the new value for the AdditionalField
-	 * @throws RuntimeException
-	 *             in case that no field with a matching title was found in the
-	 *             ProzesskopieForm object
-	 */
-	protected void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
-
-		boolean unknownField = true;
-		for (AdditionalField field : inputForm.getAdditionalFields()) {
-			if (key.equals(field.getTitel())) {
-				field.setWert(value);
-				unknownField = false;
-			}
-		}
-
-		if (unknownField) throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
 	}
 
 }

@@ -44,14 +44,19 @@ import java.io.IOException;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.w3c.dom.Document;
 
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
+import de.sub.goobi.helper.tasks.CreateProcessesTask;
+import de.sub.goobi.helper.tasks.LongRunningTask;
+import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
@@ -105,6 +110,29 @@ public class GranularityForm {
 	 */
 	public void daysClick() {
 		alterGranularityClick(Granularity.DAYS);
+	}
+
+	/**
+	 * The procedure createProcessesClick() is called if the user clicks the
+	 * button to create processes for the course of appearance. It prepares a
+	 * long running task to create processes. Then, the user is redirected to
+	 * the task manager page where it can run and observe the task.
+	 * 
+	 * <p>
+	 * If available, the meta data field "PublicationRun" is populated with the
+	 * course of appearance in text form. For each process, also the meta data
+	 * fields "Issue", "PublicationDay", "PublicationMonth" and
+	 * "PublicationYear" will—if they are available—be populated with the
+	 * value(s) relevant to the issue(s) contained in the process being created.
+	 * </p>
+	 */
+	public String createProcessesClick() {
+		ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
+		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
+		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
+		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses());
+		LongRunningTaskManager.getInstance().addTask(createProcesses);
+		return "taskmanager";
 	}
 
 	/**

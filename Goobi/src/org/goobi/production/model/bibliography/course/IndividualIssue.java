@@ -116,11 +116,22 @@ public class IndividualIssue {
 		}
 	}
 
-	LocalDate getDate() {
+	/**
+	 * The function getDate() returns the date of this issue.
+	 * 
+	 * @return the date of this issue
+	 */
+	public LocalDate getDate() {
 		return date;
 	}
 
-	String getHeading() {
+	/**
+	 * The function getHeading() returns the name of the issue this is an issue
+	 * from.
+	 * 
+	 * @return the issue’s name
+	 */
+	public String getHeading() {
 		return issue.getHeading();
 	}
 

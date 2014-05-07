@@ -1206,6 +1206,34 @@ public class ProzesskopieForm {
 		return this.additionalFields;
 	}
 
+	/**
+	 * The method setAdditionalField() sets the value of an AdditionalField held
+	 * by a ProzesskopieForm object.
+	 * 
+	 * @param inputForm
+	 *            a ProzesskopieForm object
+	 * @param key
+	 *            the title of the AdditionalField whose value shall be modified
+	 * @param value
+	 *            the new value for the AdditionalField
+	 * @param strict
+	 *            throw a RuntimeException if the field is unknown
+	 * @throws RuntimeException
+	 *             in case that no field with a matching title was found in the
+	 *             ProzesskopieForm object
+	 */
+	public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
+		boolean unknownField = true;
+		for (AdditionalField field : additionalFields) {
+			if (key.equals(field.getTitel())) {
+				field.setWert(value);
+				unknownField = false;
+			}
+		}
+		if (unknownField && strict)
+			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+	}
+
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
 	 * 
@@ -1403,10 +1431,20 @@ public class ProzesskopieForm {
 	 * Helper
 	 */
 
+	/* =============================================================== */
+
 	/**
 	 * Prozesstitel und andere Details generieren ================================================================
 	 */
 	public void CalcProzesstitel() {
+		try {
+			generateTitle();
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("IOException", e.getMessage());
+		}
+	}
+
+	public String generateTitle() throws IOException {
 		String currentAuthors = "";
 		String currentTitle = "";
 		int counter = 0;
@@ -1424,13 +1462,7 @@ public class ProzesskopieForm {
 		}
 		String newTitle = "";
 		String titeldefinition = "";
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
+		ConfigProjects cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 
 		int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
 		for (int i = 0; i < count; i++) {
@@ -1513,6 +1545,7 @@ public class ProzesskopieForm {
         String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
         prozessKopie.setTitel(filteredTitle);
 		CalcTiffheader();
+		return filteredTitle;
 	}
 
 	/* =============================================================== */
