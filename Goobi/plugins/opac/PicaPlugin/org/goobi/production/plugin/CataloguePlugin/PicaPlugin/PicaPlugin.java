@@ -219,6 +219,7 @@ public class PicaPlugin implements Plugin {
 
 		Element myFirstHit;
 		String gattung;
+		ConfigOpacDoctype cod;
 		Fileformat ff;
 		try {
 			/*
@@ -234,15 +235,12 @@ public class PicaPlugin implements Plugin {
 
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
-			// ----- inlined: getConfigOpacDoctype()
-			ConfigOpacDoctype cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2)
-					: gattung, configuration.getTitle());
+			cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
+					configuration.getTitle());
 			if (cod == null) {
 				cod = ConfigOpac.getAllDoctypes().get(0);
 				gattung = cod.getMappings().get(0);
 			}
-
-			// ------ end of inlined function
 
 			/*
 			 * -------------------------------- wenn der Treffer ein Volume
@@ -345,7 +343,7 @@ public class PicaPlugin implements Plugin {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-		return createResult(gattung, myFirstHit, ff);
+		return createResult(cod.getTitle(), myFirstHit, ff);
 	}
 
 	/**
