@@ -114,17 +114,11 @@ public class GranularityForm {
 
 	/**
 	 * The procedure createProcessesClick() is called if the user clicks the
-	 * button to create processes for the course of appearance. It prepares a
-	 * long running task to create processes. Then, the user is redirected to
-	 * the task manager page where it can run and observe the task.
-	 * 
-	 * <p>
-	 * If available, the meta data field "PublicationRun" is populated with the
-	 * course of appearance in text form. For each process, also the meta data
-	 * fields "Issue", "PublicationDay", "PublicationMonth" and
-	 * "PublicationYear" will—if they are available—be populated with the
-	 * value(s) relevant to the issue(s) contained in the process being created.
-	 * </p>
+	 * button to create processes for the course of appearance. If available,
+	 * the meta data field "PublicationRun" is populated with the course of
+	 * appearance in text form. Then, it prepares a long running task to create
+	 * processes and redirects the user to the task manager page where it can
+	 * run and observe the task.
 	 */
 	public String createProcessesClick() {
 		ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
