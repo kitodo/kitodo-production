@@ -1436,8 +1436,6 @@ public class ProzesskopieForm {
 	 * Helper
 	 */
 
-	/* =============================================================== */
-
 	/**
 	 * Prozesstitel und andere Details generieren ================================================================
 	 */

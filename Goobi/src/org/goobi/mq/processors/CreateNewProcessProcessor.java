@@ -134,8 +134,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             underlying layers
 	 */
 	private static void createNewProcessMain(String template, String opac, String field, String value, String id,
-			String docType,
-			Set<String> collections, Map<String, String> userFields) throws Exception {
+			String docType, Set<String> collections, Map<String, String> userFields) throws Exception {
 
 		try {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);

@@ -73,10 +73,16 @@ public class IndividualIssue {
 	private static final DateTimeFormatter MONTH = DateTimeFormat.forPattern("MM");
 
 	/**
-	 * The constant YEAR holds a DateTimeFormatter used to get the a four-digit
-	 * year of era (0001—9999, alsways positive) from the newspaper’s date.
+	 * The constant YEAR2 holds a DateTimeFormatter used to get the a four-digit
+	 * year of era (00—99, always positive) from the newspaper’s date.
 	 */
-	private static final DateTimeFormatter YEAR = DateTimeFormat.forPattern("YYYY");
+	private static final DateTimeFormatter YEAR2 = DateTimeFormat.forPattern("YY");
+
+	/**
+	 * The constant YEAR4 holds a DateTimeFormatter used to get the a four-digit
+	 * year of era (0001—9999, always positive) from the newspaper’s date.
+	 */
+	private static final DateTimeFormatter YEAR4 = DateTimeFormat.forPattern("YYYY");
 
 	/**
 	 * Date of this issue
@@ -149,27 +155,67 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function getGenericFields() returns a map with the generic fields
-	 * “#DAY” (two-digit day of month), “#ISSUE” (issue name), “#MONTH”
-	 * (two-digit month of year) and “#YEAR” (four-digit year) for process title
-	 * creation. In addition, the truncated fields “#I”, “#IS”, “#ISS” and
-	 * “#ISSU” will be provided which hold the first one up to four letters of
-	 * issue name.
+	 * The function getGenericFields() returns a map with generic fields that
+	 * can be configured for process title creation in goobi_projects.xml. It
+	 * provides the issue information in the following fields:
+	 * 
+	 * <dl>
+	 * <dt><code>#DAY</code></dt>
+	 * <dd>two-digit day of month</dd>
+	 * <dt><code>#Issue</code></dt>
+	 * <dd>issue name</dd>
+	 * <dt><code>#MONTH</code></dt>
+	 * <dd>two-digit month of year</dd>
+	 * <dt><code>#YEAR</code></dt>
+	 * <dd>four-digit year</dd>
+	 * 
+	 * </dl>
+	 * <p>
+	 * In addition, the following abbreviated fields are provided:
+	 * </p>
+	 * 
+	 * <dl>
+	 * <dt><code>#i</code></dt>
+	 * <dd>first letter of issue name in lower case</dd>
+	 * <dt><code>#I</code></dt>
+	 * <dd>first letter of issue name in upper case</dd>
+	 * <dt><code>#is</code></dt>
+	 * <dd>first two letters of issue name in lower case</dd>
+	 * <dt><code>#IS</code></dt>
+	 * <dd>first two letters of issue name in upper case</dd>
+	 * <dt><code>#iss</code></dt>
+	 * <dd>first three letters of issue name in lower case</dd>
+	 * <dt><code>#ISS</code></dt>
+	 * <dd>first three letters of issue name in upper case</dd>
+	 * <dt><code>#issu</code></dt>
+	 * <dd>first four letters of issue name in lower case</dd>
+	 * <dt><code>#ISSU</code></dt>
+	 * <dd>first four letters of issue name in upper case</dd>
+	 * <dt><code>#YR</code></dt>
+	 * <dd>two-digit year of century</dd>
+	 * </dl>
 	 * 
 	 * @return the generic fields for process title creation
 	 */
 	public Map<String, String> getGenericFields() {
-		Map<String, String> result = new HashMap<String, String>(11);
+		Map<String, String> result = new HashMap<String, String>(18);
 		String heading = issue.getHeading();
-		int headingLength = heading.length();
+		int length = heading.length();
+		String upperCase = heading.toUpperCase();
+		String lowerCase = heading.toLowerCase();
 		result.put("#DAY", DAY.print(date));
-		result.put("#I", headingLength > 1 ? heading.substring(0, 1) : heading);
-		result.put("#IS", headingLength > 2 ? heading.substring(0, 2) : heading);
-		result.put("#ISS", headingLength > 3 ? heading.substring(0, 3) : heading);
-		result.put("#ISSU", headingLength > 4 ? heading.substring(0, 4) : heading);
-		result.put("#ISSUE", heading);
+		result.put("#I", length > 1 ? upperCase.substring(0, 1) : upperCase);
+		result.put("#i", length > 1 ? lowerCase.substring(0, 1) : lowerCase);
+		result.put("#IS", length > 2 ? upperCase.substring(0, 2) : upperCase);
+		result.put("#is", length > 2 ? lowerCase.substring(0, 2) : lowerCase);
+		result.put("#ISS", length > 3 ? upperCase.substring(0, 3) : upperCase);
+		result.put("#iss", length > 3 ? lowerCase.substring(0, 3) : lowerCase);
+		result.put("#ISSU", length > 4 ? upperCase.substring(0, 4) : upperCase);
+		result.put("#issu", length > 4 ? lowerCase.substring(0, 4) : lowerCase);
+		result.put("#Issue", heading);
 		result.put("#MONTH", MONTH.print(date));
-		result.put("#YEAR", YEAR.print(date));
+		result.put("#YEAR", YEAR4.print(date));
+		result.put("#YR", YEAR2.print(date));
 		return result;
 	}
 
