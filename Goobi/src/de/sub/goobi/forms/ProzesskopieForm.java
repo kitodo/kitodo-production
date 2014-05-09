@@ -222,6 +222,8 @@ public class ProzesskopieForm {
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
+	static final String NAVI_FIRST_PAGE = "ProzessverwaltungKopie1";
+
 	private String addToWikiField = "";
 	private List<AdditionalField> additionalFields;
 	private String atstsl = "";
@@ -255,7 +257,6 @@ public class ProzesskopieForm {
 	private CataloguePlugin importCatalogue;
 
 	private Fileformat myRdf;
-	private String naviFirstPage;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
@@ -308,7 +309,7 @@ public class ProzesskopieForm {
 
 		initializePossibleDigitalCollections();
 
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	private void readProjectConfigs() {
@@ -327,7 +328,6 @@ public class ProzesskopieForm {
 				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-		this.naviFirstPage = "ProzessverwaltungKopie1";
 		if (this.opacKatalog.equals("")) {
 			this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
 		}
@@ -658,11 +658,14 @@ public class ProzesskopieForm {
 	 * 
 	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
 	 */
-	private boolean isContentValid() {
-		/*
-		 * -------------------------------- Vorbedingungen prüfen --------------------------------
-		 */
+	boolean isContentValid() {
+		return isContentValid(true);
+	}
+
+	boolean isContentValid(boolean criticiseEmptyTitle) {
 		boolean valide = true;
+
+		if (criticiseEmptyTitle) {
 
 		/*
 		 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
@@ -694,6 +697,8 @@ public class ProzesskopieForm {
 			}
 		}
 
+		}
+
 		/*
 		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
 		 */
@@ -721,14 +726,14 @@ public class ProzesskopieForm {
 	/* =============================================================== */
 
 	public String GoToSeite1() {
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	/* =============================================================== */
 
 	public String GoToSeite2() {
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		} else {
 			return "ProzessverwaltungKopie2";
 		}
@@ -747,7 +752,7 @@ public class ProzesskopieForm {
 
 		this.prozessKopie.setId(null);
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		}
 		EigenschaftenHinzufuegen();
 

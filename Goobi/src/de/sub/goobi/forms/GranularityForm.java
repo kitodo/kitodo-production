@@ -114,14 +114,22 @@ public class GranularityForm {
 
 	/**
 	 * The procedure createProcessesClick() is called if the user clicks the
-	 * button to create processes for the course of appearance. If available,
-	 * the meta data field "PublicationRun" is populated with the course of
-	 * appearance in text form. Then, it prepares a long running task to create
-	 * processes and redirects the user to the task manager page where it can
-	 * run and observe the task.
+	 * button to create processes for the course of appearance. If the
+	 * underlying ProzesskopieForm is incomplete, the user will be redirected
+	 * back to the page to fix the problems and nothing more happens. If
+	 * everything is fine, the meta data field “PublicationRun”—if available—is
+	 * populated with the course of appearance in text form. Then, a long
+	 * running task to create processes is prepared and the user will be
+	 * redirected to the task manager page where it can observe the task
+	 * progressing.
+	 * 
+	 * @return the next page to show as named in a &lt;from-outcome&gt; element
+	 *         in faces_config.xml
 	 */
 	public String createProcessesClick() {
 		ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
+		if (!prozesskopieForm.isContentValid(false))
+			return ProzesskopieForm.NAVI_FIRST_PAGE;
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
 		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses());
