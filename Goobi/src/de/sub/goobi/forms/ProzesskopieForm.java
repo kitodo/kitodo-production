@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -1234,6 +1235,10 @@ public class ProzesskopieForm {
 			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
 	}
 
+	public void setAdditionalFields(List<AdditionalField> additionalFields) {
+		this.additionalFields = additionalFields;
+	}
+
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
 	 * 
@@ -1438,13 +1443,13 @@ public class ProzesskopieForm {
 	 */
 	public void CalcProzesstitel() {
 		try {
-			generateTitle();
+			generateTitle(null);
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 		}
 	}
 
-	public String generateTitle() throws IOException {
+	public String generateTitle(Map<String, String> genericFields) throws IOException {
 		String currentAuthors = "";
 		String currentTitle = "";
 		int counter = 0;
@@ -1514,6 +1519,15 @@ public class ProzesskopieForm {
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'")) {
 				newTitle += myString.substring(1, myString.length() - 1);
+			} else if (myString.startsWith("#")) {
+				/*
+				 * resolve strings beginning with # from generic fields
+				 */
+				if (genericFields != null) {
+					String genericValue = genericFields.get(myString);
+					if (genericValue != null)
+						newTitle += genericValue;
+				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {

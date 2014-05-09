@@ -39,7 +39,12 @@
 
 package org.goobi.production.model.bibliography.course;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -55,6 +60,24 @@ import com.sharkysoft.util.UnreachableCodeException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class IndividualIssue {
+	/**
+	 * The constant DAY holds a DateTimeFormatter used to get the a two-digit
+	 * day (01—31) from the newspaper’s date.
+	 */
+	private static final DateTimeFormatter DAY = DateTimeFormat.forPattern("dd");
+
+	/**
+	 * The constant MONTH holds a DateTimeFormatter used to get the a two-digit
+	 * month (01—12) from the newspaper’s date.
+	 */
+	private static final DateTimeFormatter MONTH = DateTimeFormat.forPattern("MM");
+
+	/**
+	 * The constant YEAR holds a DateTimeFormatter used to get the a four-digit
+	 * year of era (0001—9999, alsways positive) from the newspaper’s date.
+	 */
+	private static final DateTimeFormatter YEAR = DateTimeFormat.forPattern("YYYY");
+
 	/**
 	 * Date of this issue
 	 */
@@ -126,6 +149,31 @@ public class IndividualIssue {
 	}
 
 	/**
+	 * The function getGenericFields() returns a map with the generic fields
+	 * “#DAY” (two-digit day of month), “#ISSUE” (issue name), “#MONTH”
+	 * (two-digit month of year) and “#YEAR” (four-digit year) for process title
+	 * creation. In addition, the truncated fields “#I”, “#IS”, “#ISS” and
+	 * “#ISSU” will be provided which hold the first one up to four letters of
+	 * issue name.
+	 * 
+	 * @return the generic fields for process title creation
+	 */
+	public Map<String, String> getGenericFields() {
+		Map<String, String> result = new HashMap<String, String>(11);
+		String heading = issue.getHeading();
+		int headingLength = heading.length();
+		result.put("#DAY", DAY.print(date));
+		result.put("#I", headingLength > 1 ? heading.substring(0, 1) : heading);
+		result.put("#IS", headingLength > 2 ? heading.substring(0, 2) : heading);
+		result.put("#ISS", headingLength > 3 ? heading.substring(0, 3) : heading);
+		result.put("#ISSU", headingLength > 4 ? heading.substring(0, 4) : heading);
+		result.put("#ISSUE", heading);
+		result.put("#MONTH", MONTH.print(date));
+		result.put("#YEAR", YEAR.print(date));
+		return result;
+	}
+
+	/**
 	 * The function getHeading() returns the name of the issue this is an issue
 	 * from.
 	 * 
@@ -147,6 +195,26 @@ public class IndividualIssue {
 	 */
 	int indexIn(Course course) {
 		return course.indexOf(title);
+	}
+
+	/**
+	 * The function toString() provides returns a string that contains a concise
+	 * but informative representation of this issue that is easy for a person to
+	 * read.
+	 * 
+	 * @return a string representation of the issue
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		try {
+			if (issue.getHeading().length() == 0)
+				return date.toString();
+			else
+				return date.toString() + ", " + issue.getHeading();
+		} catch (RuntimeException e) {
+			return super.toString();
+		}
 	}
 
 	/**

@@ -1,9 +1,9 @@
 package de.sub.goobi.helper.tasks;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 
 import de.sub.goobi.forms.ProzesskopieForm;
@@ -14,59 +14,7 @@ import de.sub.goobi.forms.ProzesskopieForm;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateProcessesTask extends LongRunningTask {
-
-	/**
-	 * FieldGetter instances are used to pass implementations to access data
-	 * fields on individual issues to the {@link #join()} function that
-	 * processes lists of individual issues.
-	 */
-	private interface FieldGetter {
-		public String getFrom(IndividualIssue issue);
-	}
-
-	/**
-	 * The YearGetter is the command to access the year of an individual issue.
-	 */
-	private class YearGetter implements FieldGetter {
-		@Override
-		public String getFrom(IndividualIssue issue) {
-			return Integer.toString(issue.getDate().getYear());
-		}
-	}
-
-	/**
-	 * The MonthGetter is the command to access the month of an individual
-	 * issue.
-	 */
-	private class MonthGetter implements FieldGetter {
-		@Override
-		public String getFrom(IndividualIssue issue) {
-			return Integer.toString(issue.getDate().getMonthOfYear());
-		}
-	}
-
-	/**
-	 * The DayGetter is the command to access the day of an individual issue.
-	 */
-	private class DayGetter implements FieldGetter {
-		@Override
-		public String getFrom(IndividualIssue issue) {
-			return Integer.toString(issue.getDate().getDayOfMonth());
-		}
-	}
-
-	/**
-	 * The IssueGetter is the command to access the issue name of an individual
-	 * issue.
-	 */
-	private class IssueGetter implements FieldGetter {
-		@Override
-		public String getFrom(IndividualIssue issue) {
-			return issue.getHeading();
-		}
-	}
-
+public class CreateProcessesTask extends CloneableLongRunningTask {
 	/**
 	 * The field nextProcessToCreate holds the index of the next process to
 	 * create. Because long running tasks are interruptible is a field so the
@@ -81,6 +29,12 @@ public class CreateProcessesTask extends LongRunningTask {
 	private final int numberOfProcesses;
 
 	/**
+	 * The field pattern holds a ProzesskopieForm instance that will be used as
+	 * pattern for the creation of processes.
+	 */
+	private final ProzesskopieForm pattern;
+
+	/**
 	 * The field processes holds a List of List of IndividualIssue objects that
 	 * processes will be created from. Each list object, which is a list itself,
 	 * represents a process to create. Each process can consist of many issues
@@ -89,22 +43,17 @@ public class CreateProcessesTask extends LongRunningTask {
 	private final List<List<IndividualIssue>> processes;
 
 	/**
-	 * The field processCreator holds a ProzesskopieForm instance that will be
-	 * used for the creation of processes.
-	 */
-	private final ProzesskopieForm processCreator;
-
-	/**
 	 * The class CreateProcessesTask is a LongRunningTask to create processes
 	 * from a course of appearance.
 	 * 
-	 * @param processCreator
+	 * @param pattern
 	 *            a ProzesskopieForm to use for creating processes
 	 * @param processes
 	 *            a list of processes to create
 	 */
-	public CreateProcessesTask(ProzesskopieForm processCreator, List<List<IndividualIssue>> processes) {
-		this.processCreator = processCreator;
+	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes) {
+		super();
+		this.pattern = pattern;
 		setTitle(getClass().getSimpleName());
 		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
 		for (List<IndividualIssue> issues : processes) {
@@ -118,13 +67,17 @@ public class CreateProcessesTask extends LongRunningTask {
 	}
 
 	/**
-	 * The function run() is the main function of this task, which is a thread.
-	 * It populates the the data fields "Issue", "PublicationDay",
-	 * "PublicationMonth" and "PublicationYear"—if they are available—with the
-	 * value(s) relevant to the issue(s) contained in the process being created,
-	 * triggers the calculation of the process title and then initiates the
-	 * process creation one by one. The statusProgress variable is being updated
-	 * to show the operator how far the task has proceeded.
+	 * The function run() is the main function of this task (which is a thread).
+	 * 
+	 * It will create a new process for each entry from the field “processes”.
+	 * 
+	 * Therefore it makes use of
+	 * CreateNewProcessProcessor.newProcessFromTemplate() to once again load a
+	 * ProzesskopieForm from Hibernate for each process to create, sets the
+	 * required fields accordingly, then triggers the calculation of the process
+	 * title and finally initiates the process creation one by one. The
+	 * statusProgress variable is being updated to show the operator how far the
+	 * task has proceeded.
 	 * 
 	 * @see java.lang.Thread#run()
 	 */
@@ -134,20 +87,29 @@ public class CreateProcessesTask extends LongRunningTask {
 		try {
 			while (nextProcessToCreate < numberOfProcesses) {
 				List<IndividualIssue> issues = processes.get(nextProcessToCreate);
-				processCreator.setAdditionalField("PublicationYear", join(new YearGetter(), issues, ", "), false);
-				processCreator.setAdditionalField("PublicationMonth", join(new MonthGetter(), issues, ", "), false);
-				processCreator.setAdditionalField("PublicationDay", join(new DayGetter(), issues, ", "), false);
-				processCreator.setAdditionalField("Issue", join(new IssueGetter(), issues, ", "), false);
-				currentTitle = processCreator.generateTitle();
-				processCreator.getProzessKopie().setTitel(currentTitle);
-				if (isInterrupted()) {
-					stopped();
-					return;
+				if (issues.size() > 0) {
+					ProzesskopieForm newProcess = CreateNewProcessProcessor.newProcessFromTemplate(pattern
+							.getProzessVorlage().getTitel());
+					newProcess.setDigitalCollections(pattern.getDigitalCollections());
+					newProcess.setDocType(pattern.getDocType());
+					newProcess.setAdditionalFields(pattern.getAdditionalFields());
+					currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
+					if (currentTitle == "") {
+						setStatusMessage("Couldn’t create process title for issue " + issues.get(0).toString());
+						setStatusProgress(-1);
+						return;
+					}
+					if (isInterrupted()) {
+						stopped();
+						return;
+					}
+					String state = newProcess.NeuenProzessAnlegen();
+					if (!state.equals("ProzessverwaltungKopie3"))
+						throw new RuntimeException(
+								"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result \"" + state
+										+ "\".");
+					currentTitle = null;
 				}
-				if (!"ProzessverwaltungKopie3".equals(processCreator.NeuenProzessAnlegen()))
-					throw new RuntimeException(
-							"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result.");
-				currentTitle = null;
 				nextProcessToCreate++;
 				setStatusProgress(100 * nextProcessToCreate / numberOfProcesses);
 				if (isInterrupted()) {
@@ -156,7 +118,7 @@ public class CreateProcessesTask extends LongRunningTask {
 				}
 			}
 			setStatusMessage("done");
-		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException
+		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
 			setStatusMessage(e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
 					+ e.getMessage());
@@ -165,38 +127,10 @@ public class CreateProcessesTask extends LongRunningTask {
 		}
 	}
 
-	/**
-	 * The function join() uses a getter function to get a value from each entry
-	 * of the given list of issues and returns all of the values as string,
-	 * separated by a given separator. Duplicate values will be skipped.
-	 * 
-	 * @param getter
-	 *            getter function to extract the given field
-	 * @param issues
-	 *            list of issues to examine
-	 * @param separator
-	 *            separator to use for joining the values
-	 * @return all values returned by the getter as string, without duplicates
-	 */
-	private static String join(FieldGetter getter, List<IndividualIssue> issues, String separator) {
-		int separatorLength = separator.length();
-		int capacity = -separatorLength;
-		LinkedHashSet<String> uniqueValues = new LinkedHashSet<String>();
-		String value;
-		for (IndividualIssue issue : issues) {
-			if (uniqueValues.add(value = getter.getFrom(issue)))
-				capacity += value.length() + separatorLength;
-		}
-		StringBuilder result = new StringBuilder(capacity);
-		boolean maiden = true;
-		for (String uniqueValue : uniqueValues) {
-			if (maiden) {
-				maiden = false;
-			} else {
-				result.append(separator);
-			}
-			result.append(uniqueValue);
-		}
-		return result.toString();
+	@Override
+	public CreateProcessesTask clone() {
+		CreateProcessesTask copy = new CreateProcessesTask(pattern, processes);
+		copy.nextProcessToCreate = nextProcessToCreate;
+		return copy;
 	}
 }
