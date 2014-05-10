@@ -180,6 +180,10 @@
 										<%-- Button to download course of appearance as XML --%>
 										<h:commandButton value="#{msgs['granularity.download']}"
 											action="#{GranularityForm.downloadClick}" />
+
+										<%-- Button to create a long running task to create processes --%>
+										<h:commandButton value="#{msgs['granularity.create']}"
+											action="#{GranularityForm.createProcessesClick}" />
 									</htm:div>
 
 									<htm:fieldset>

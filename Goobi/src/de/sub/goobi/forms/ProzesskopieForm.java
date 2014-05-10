@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -221,6 +222,8 @@ public class ProzesskopieForm {
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
+	static final String NAVI_FIRST_PAGE = "ProzessverwaltungKopie1";
+
 	private String addToWikiField = "";
 	private List<AdditionalField> additionalFields;
 	private String atstsl = "";
@@ -254,7 +257,6 @@ public class ProzesskopieForm {
 	private CataloguePlugin importCatalogue;
 
 	private Fileformat myRdf;
-	private String naviFirstPage;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
@@ -307,7 +309,7 @@ public class ProzesskopieForm {
 
 		initializePossibleDigitalCollections();
 
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	private void readProjectConfigs() {
@@ -326,7 +328,6 @@ public class ProzesskopieForm {
 				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-		this.naviFirstPage = "ProzessverwaltungKopie1";
 		if (this.opacKatalog.equals("")) {
 			this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
 		}
@@ -657,11 +658,14 @@ public class ProzesskopieForm {
 	 * 
 	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
 	 */
-	private boolean isContentValid() {
-		/*
-		 * -------------------------------- Vorbedingungen prüfen --------------------------------
-		 */
+	boolean isContentValid() {
+		return isContentValid(true);
+	}
+
+	boolean isContentValid(boolean criticiseEmptyTitle) {
 		boolean valide = true;
+
+		if (criticiseEmptyTitle) {
 
 		/*
 		 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
@@ -693,6 +697,8 @@ public class ProzesskopieForm {
 			}
 		}
 
+		}
+
 		/*
 		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
 		 */
@@ -720,14 +726,14 @@ public class ProzesskopieForm {
 	/* =============================================================== */
 
 	public String GoToSeite1() {
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	/* =============================================================== */
 
 	public String GoToSeite2() {
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		} else {
 			return "ProzessverwaltungKopie2";
 		}
@@ -746,7 +752,7 @@ public class ProzesskopieForm {
 
 		this.prozessKopie.setId(null);
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		}
 		EigenschaftenHinzufuegen();
 
@@ -1206,6 +1212,38 @@ public class ProzesskopieForm {
 		return this.additionalFields;
 	}
 
+	/**
+	 * The method setAdditionalField() sets the value of an AdditionalField held
+	 * by a ProzesskopieForm object.
+	 * 
+	 * @param inputForm
+	 *            a ProzesskopieForm object
+	 * @param key
+	 *            the title of the AdditionalField whose value shall be modified
+	 * @param value
+	 *            the new value for the AdditionalField
+	 * @param strict
+	 *            throw a RuntimeException if the field is unknown
+	 * @throws RuntimeException
+	 *             in case that no field with a matching title was found in the
+	 *             ProzesskopieForm object
+	 */
+	public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
+		boolean unknownField = true;
+		for (AdditionalField field : additionalFields) {
+			if (key.equals(field.getTitel())) {
+				field.setWert(value);
+				unknownField = false;
+			}
+		}
+		if (unknownField && strict)
+			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+	}
+
+	public void setAdditionalFields(List<AdditionalField> additionalFields) {
+		this.additionalFields = additionalFields;
+	}
+
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
 	 * 
@@ -1407,6 +1445,14 @@ public class ProzesskopieForm {
 	 * Prozesstitel und andere Details generieren ================================================================
 	 */
 	public void CalcProzesstitel() {
+		try {
+			generateTitle(null);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("IOException", e.getMessage());
+		}
+	}
+
+	public String generateTitle(Map<String, String> genericFields) throws IOException {
 		String currentAuthors = "";
 		String currentTitle = "";
 		int counter = 0;
@@ -1424,13 +1470,7 @@ public class ProzesskopieForm {
 		}
 		String newTitle = "";
 		String titeldefinition = "";
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
+		ConfigProjects cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 
 		int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
 		for (int i = 0; i < count; i++) {
@@ -1482,6 +1522,15 @@ public class ProzesskopieForm {
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'")) {
 				newTitle += myString.substring(1, myString.length() - 1);
+			} else if (myString.startsWith("#")) {
+				/*
+				 * resolve strings beginning with # from generic fields
+				 */
+				if (genericFields != null) {
+					String genericValue = genericFields.get(myString);
+					if (genericValue != null)
+						newTitle += genericValue;
+				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
@@ -1513,6 +1562,7 @@ public class ProzesskopieForm {
         String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
         prozessKopie.setTitel(filteredTitle);
 		CalcTiffheader();
+		return filteredTitle;
 	}
 
 	/* =============================================================== */

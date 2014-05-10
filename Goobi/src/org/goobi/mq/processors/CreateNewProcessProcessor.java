@@ -133,8 +133,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in various cases, such as bad parameters or errors in the
 	 *             underlying layers
 	 */
-	protected void createNewProcessMain(String template, String opac, String field, String value, String id, String docType,
-			Set<String> collections, Map<String, String> userFields) throws Exception {
+	private static void createNewProcessMain(String template, String opac, String field, String value, String id,
+			String docType, Set<String> collections, Map<String, String> userFields) throws Exception {
 
 		try {
 			ProzesskopieForm newProcess = newProcessFromTemplate(template);
@@ -166,7 +166,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws IllegalArgumentException
 	 *             if no suitable template is found
 	 */
-	protected ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
+	public static ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
 		ProzesskopieForm result = new ProzesskopieForm();
 
 		Prozess selectedTemplate = getTemplateByTitle(templateTitle);
@@ -186,7 +186,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             is thrown, if there is no template matching the given
 	 *             templateTitle
 	 */
-	protected Prozess getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
+	private static Prozess getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
 
 		Criteria request = Helper.getHibernateSession().createCriteria(Prozess.class);
 		request.add(Restrictions.eq("istTemplate", Boolean.TRUE));
@@ -216,7 +216,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that the given collection isn’t a valid subset of the
 	 *             digitalCollections possible here
 	 */
-	protected List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process) throws IllegalArgumentException {
+	private static List<String> validCollectionsForProcess(Set<String> collections, ProzesskopieForm process)
+			throws IllegalArgumentException {
 
 		HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
 		if (!possibleCollections.containsAll(collections))
@@ -239,7 +240,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             if a docType is not applicable to the template or the docType
 	 *             isn’t valid
 	 */
-	protected boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) throws IllegalArgumentException {
+	private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) throws IllegalArgumentException {
 		Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
 		if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE))
 			throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide the standard field “doctype”.");
@@ -269,12 +270,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             in case that no field with a matching title was found in the
 	 *             ProzesskopieForm object
 	 */
-	protected void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
-
+	private static void setUserFields(ProzesskopieForm form, Map<String, String> userFields) throws RuntimeException {
 		for (String key : userFields.keySet()) {
-			setAdditionalField(form, key, userFields.get(key));
+			form.setAdditionalField(key, userFields.get(key), true);
 		}
-
 	}
 
 	/**
@@ -300,7 +299,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * @throws RuntimeException
 	 *             is thrown if the search didn’t bring any results
 	 */
-	protected void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value) throws RuntimeException {
+	private static void getBibliorgaphicData(ProzesskopieForm inputForm, String opac, String field, String value)
+			throws RuntimeException {
 
 		inputForm.setOpacKatalog(opac);
 		inputForm.setOpacSuchfeld(field);
@@ -323,7 +323,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *            a ProzesskopieForm object to examine
 	 * @return the number of AdditionalFields populated
 	 */
-	protected int countPopulatedAdditionalFields(ProzesskopieForm form) {
+	private static int countPopulatedAdditionalFields(ProzesskopieForm form) {
 		int result = 0;
 
 		for (AdditionalField field : form.getAdditionalFields()) {
@@ -333,33 +333,6 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		}
 
 		return result;
-	}
-
-	/**
-	 * The method setAdditionalField() sets the value of an AdditionalField held
-	 * by a ProzesskopieForm object.
-	 * 
-	 * @param inputForm
-	 *            a ProzesskopieForm object
-	 * @param key
-	 *            the title of the AdditionalField whose value shall be modified
-	 * @param value
-	 *            the new value for the AdditionalField
-	 * @throws RuntimeException
-	 *             in case that no field with a matching title was found in the
-	 *             ProzesskopieForm object
-	 */
-	protected void setAdditionalField(ProzesskopieForm inputForm, String key, String value) throws RuntimeException {
-
-		boolean unknownField = true;
-		for (AdditionalField field : inputForm.getAdditionalFields()) {
-			if (key.equals(field.getTitel())) {
-				field.setWert(value);
-				unknownField = false;
-			}
-		}
-
-		if (unknownField) throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
 	}
 
 }
