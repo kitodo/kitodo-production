@@ -155,6 +155,15 @@
 		<filter-class>org.ajax4jsf.Filter</filter-class>
 	</filter>
 
+    <filter>
+        <filter-name>Proxy</filter-name>
+        <filter-class>net.sf.j2ep.ProxyFilter</filter-class>
+        <init-param>
+        	<param-name>dataUrl</param-name>
+        	<param-value>/WEB-INF/reverse-proxy.xml</param-value>
+        </init-param>
+    </filter>
+
 	<filter-mapping>
 		<filter-name>richfaces</filter-name>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -193,6 +202,11 @@
 		<filter-name>sessionCounterFilter</filter-name>
 		<url-pattern>*.jsf</url-pattern>
 	</filter-mapping>
+
+    <filter-mapping>
+        <filter-name>Proxy</filter-name>
+        <url-pattern>/gnd/*</url-pattern>
+    </filter-mapping>
 
     <!-- Listener for ImageIO initialization (Tomcat workaround) -->
 	<listener>
