@@ -1258,7 +1258,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void CalcMetadataAndImages(List<Prozess> inListe) throws IOException, InterruptedException, SwapException, DAOException {
-//		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
+
 		this.myAnzahlList = new ArrayList<ProcessCounterObject>();
 		int allMetadata = 0;
 		int allDocstructs = 0;
@@ -1312,11 +1312,6 @@ public class ProzessverwaltungForm extends BasisForm {
 			pco.setRelDocstructs(pco.getDocstructs() * 100 / maxDocstructs);
 		}
 
-		/* die Durchschnittsberechnung durchführen */
-//		int faktor = 1;
-//		if (this.myAnzahlList != null && this.myAnzahlList.size() > 0) {
-//			faktor = this.myAnzahlList.size();
-//		}
 		this.myAnzahlSummary = new HashMap<String, Integer>();
 		this.myAnzahlSummary.put("sumProcesses", this.myAnzahlList.size());
 		this.myAnzahlSummary.put("sumMetadata", allMetadata);
