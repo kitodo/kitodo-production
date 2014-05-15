@@ -1258,7 +1258,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void CalcMetadataAndImages(List<Prozess> inListe) throws IOException, InterruptedException, SwapException, DAOException {
-//		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
+
 		this.myAnzahlList = new ArrayList<ProcessCounterObject>();
 		int allMetadata = 0;
 		int allDocstructs = 0;
@@ -1271,7 +1271,11 @@ public class ProzessverwaltungForm extends BasisForm {
 		int countOfProcessesWithImages = 0;
 		int countOfProcessesWithMetadata = 0;
 		int countOfProcessesWithDocstructs = 0;
-		
+
+		int averageImages = 0;
+		int averageMetadata = 0;
+		int averageDocstructs = 0;
+
 		for (Prozess proz : inListe) {
 			int tempImg = proz.getSortHelperImages();
 			int tempMetadata = proz.getSortHelperMetadata();
@@ -1312,19 +1316,26 @@ public class ProzessverwaltungForm extends BasisForm {
 			pco.setRelDocstructs(pco.getDocstructs() * 100 / maxDocstructs);
 		}
 
-		/* die Durchschnittsberechnung durchführen */
-//		int faktor = 1;
-//		if (this.myAnzahlList != null && this.myAnzahlList.size() > 0) {
-//			faktor = this.myAnzahlList.size();
-//		}
+		if (countOfProcessesWithImages > 0) {
+			averageImages = allImages / countOfProcessesWithImages;
+		}
+
+		if (countOfProcessesWithMetadata > 0) {
+			averageMetadata = allMetadata / countOfProcessesWithMetadata;
+		}
+
+		if (countOfProcessesWithDocstructs > 0) {
+			averageDocstructs = allDocstructs / countOfProcessesWithDocstructs;
+		}
+
 		this.myAnzahlSummary = new HashMap<String, Integer>();
 		this.myAnzahlSummary.put("sumProcesses", this.myAnzahlList.size());
 		this.myAnzahlSummary.put("sumMetadata", allMetadata);
 		this.myAnzahlSummary.put("sumDocstructs", allDocstructs);
 		this.myAnzahlSummary.put("sumImages", allImages);
-		this.myAnzahlSummary.put("averageImages", allImages / countOfProcessesWithImages);
-		this.myAnzahlSummary.put("averageMetadata", allMetadata / countOfProcessesWithMetadata);
-		this.myAnzahlSummary.put("averageDocstructs", allDocstructs / countOfProcessesWithDocstructs);
+		this.myAnzahlSummary.put("averageImages", averageImages);
+		this.myAnzahlSummary.put("averageMetadata", averageMetadata);
+		this.myAnzahlSummary.put("averageDocstructs", averageDocstructs);
 	}
 
 	public HashMap<String, Integer> getMyAnzahlSummary() {
