@@ -1271,7 +1271,11 @@ public class ProzessverwaltungForm extends BasisForm {
 		int countOfProcessesWithImages = 0;
 		int countOfProcessesWithMetadata = 0;
 		int countOfProcessesWithDocstructs = 0;
-		
+
+		int averageImages = 0;
+		int averageMetadata = 0;
+		int averageDocstructs = 0;
+
 		for (Prozess proz : inListe) {
 			int tempImg = proz.getSortHelperImages();
 			int tempMetadata = proz.getSortHelperMetadata();
@@ -1312,14 +1316,26 @@ public class ProzessverwaltungForm extends BasisForm {
 			pco.setRelDocstructs(pco.getDocstructs() * 100 / maxDocstructs);
 		}
 
+		if (countOfProcessesWithImages > 0) {
+			averageImages = allImages / countOfProcessesWithImages;
+		}
+
+		if (countOfProcessesWithMetadata > 0) {
+			averageMetadata = allMetadata / countOfProcessesWithMetadata;
+		}
+
+		if (countOfProcessesWithDocstructs > 0) {
+			averageDocstructs = allDocstructs / countOfProcessesWithDocstructs;
+		}
+
 		this.myAnzahlSummary = new HashMap<String, Integer>();
 		this.myAnzahlSummary.put("sumProcesses", this.myAnzahlList.size());
 		this.myAnzahlSummary.put("sumMetadata", allMetadata);
 		this.myAnzahlSummary.put("sumDocstructs", allDocstructs);
 		this.myAnzahlSummary.put("sumImages", allImages);
-		this.myAnzahlSummary.put("averageImages", allImages / countOfProcessesWithImages);
-		this.myAnzahlSummary.put("averageMetadata", allMetadata / countOfProcessesWithMetadata);
-		this.myAnzahlSummary.put("averageDocstructs", allDocstructs / countOfProcessesWithDocstructs);
+		this.myAnzahlSummary.put("averageImages", averageImages);
+		this.myAnzahlSummary.put("averageMetadata", averageMetadata);
+		this.myAnzahlSummary.put("averageDocstructs", averageDocstructs);
 	}
 
 	public HashMap<String, Integer> getMyAnzahlSummary() {
