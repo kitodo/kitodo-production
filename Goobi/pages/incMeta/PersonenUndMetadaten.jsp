@@ -101,18 +101,21 @@
 			<%-- Metadaten --%>
 			<h:column>
 				<h:panelGrid columns="2">
-					<h:outputText value="#{msgs.vorname}" style="font-size: 11px" />
-					<h:inputText value="#{Item.vorname}" onchange="styleAnpassen(this)" styleClass="metadatenInput" style="width: 350px;"
-						readonly="#{Metadaten.nurLesenModus}" />
-					<h:outputText value="#{msgs.nachname}" style="font-size: 11px" />
-					<h:inputText value="#{Item.nachname}" onkeyup="astyleAnpassenPerson(this)" onchange="styleAnpassen(this)" styleClass="metadatenInput"
-						style="width: 350px;" readonly="#{Metadaten.nurLesenModus}" />
 					<h:outputText value="#{msgs.rolle}" style="font-size: 11px" />
 					<h:selectOneMenu value="#{Item.rolle}" styleClass="metadatenInput" style="width: 350px;" disabled="#{Metadaten.nurLesenModus}"
 						onchange="styleAnpassenPerson(this)" readonly="#{Metadaten.nurLesenModus}">
 						<f:selectItems value="#{Item.addableRollen}" />
 						<a4j:support event="onmouseup" requestDelay="1" />
 					</h:selectOneMenu>
+					<h:outputText value="#{msgs.normDataRecord}" style="font-size: 11px" />
+					<h:inputText value="#{Item.record}" onchange="styleAnpassen(this)" styleClass="metadatenInput" style="width: 350px;"
+						readonly="#{Metadaten.nurLesenModus}" />
+					<h:outputText value="#{msgs.vorname}" style="font-size: 11px" />
+					<h:inputText value="#{Item.vorname}" onchange="styleAnpassen(this)" styleClass="metadatenInput" style="width: 350px;"
+						readonly="#{Metadaten.nurLesenModus}" />
+					<h:outputText value="#{msgs.nachname}" style="font-size: 11px" />
+					<h:inputText value="#{Item.nachname}" onkeyup="astyleAnpassenPerson(this)" onchange="styleAnpassen(this)" styleClass="metadatenInput"
+						style="width: 350px;" readonly="#{Metadaten.nurLesenModus}" />
 				</h:panelGrid>
 			</h:column>
 

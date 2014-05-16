@@ -31,10 +31,13 @@ import java.util.ArrayList;
 
 import javax.faces.model.SelectItem;
 
+import org.goobi.production.constants.Parameters;
+
 import ugh.dl.DocStruct;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
+import de.sub.goobi.config.ConfigMain;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
@@ -47,9 +50,9 @@ import ugh.dl.Prefs;
 public class MetaPerson {
    private Person p;
    private int identifier;
-   private Prefs myPrefs;
-   private DocStruct myDocStruct;
-   private MetadatenHelper mdh;
+   private final Prefs myPrefs;
+   private final DocStruct myDocStruct;
+   private final MetadatenHelper mdh;
 
    
 
@@ -88,8 +91,6 @@ public class MetaPerson {
       this.p = p;
    }
 
-   
-
    public String getVorname() {
 	   if (this.p.getFirstname()==null) {
 		   return "";
@@ -104,8 +105,6 @@ public class MetaPerson {
       this.p.setFirstname(inVorname);
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
-
-   
 
    public String getNachname() {
 	   if (this.p.getLastname()==null) {
@@ -122,7 +121,17 @@ public class MetaPerson {
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
 
-   
+	public String getRecord() {
+		String authorityValue = this.p.getAuthorityValue();
+		if (authorityValue == null || authorityValue.isEmpty())
+			authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+		return authorityValue;
+	}
+
+	public void setRecord(String record) {
+		String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
+		this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+	}
 
    public String getRolle() {
       return this.p.getRole();
@@ -138,7 +147,4 @@ public class MetaPerson {
    public ArrayList<SelectItem> getAddableRollen() {
       return this.mdh.getAddablePersonRoles(this.myDocStruct, this.p.getRole());
    }
-
-   
-
 }

@@ -393,7 +393,7 @@ public class Metadaten {
 	 *            URI in an authority file
 	 * @return a String[] with authority, authorityURI and valueURI
 	 */
-	private static String[] parseAuthorityFileArgs(String valueURI) {
+	static String[] parseAuthorityFileArgs(String valueURI) {
 		String authority = null, authorityURI = null;
 		if (valueURI != null) {
 			int boundary = valueURI.indexOf('#');
