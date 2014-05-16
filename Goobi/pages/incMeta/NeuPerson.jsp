@@ -67,6 +67,7 @@
 							value="#{Metadaten.tempPersonRecord}" />
 						<x:message for="normDataRecord" style="color: red"
 							replaceIdWithLabel="true" />
+						<h:commandLink onclick="getNormDataNeuPerson(); return false;" value="#{msgs.getNormDataRecord}" />
 					</h:panelGroup>
 
 					<%-- first name --%>

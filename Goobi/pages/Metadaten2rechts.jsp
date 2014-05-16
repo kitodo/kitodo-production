@@ -38,6 +38,38 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 
 	<body style="margin: 0px 2px 2px 2px;" class="metadatenRechtsBody" onload="addableTypenAnzeigen();TreeReloaden()">
+	
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript">
+			function toAjaxUrl(url){
+				return url.replace(new RegExp("^.*?://[^/]+/(.*)$", ""), function($0, $1){
+					return "${pageContext.request.contextPath}/" + $1 + "/about/rdf";
+				});
+			}
+
+		    function setNameFromRecord(record, firstNameInput, lastNameInput){
+		    	var url = toAjaxUrl(record);
+				$.ajax({
+				    url: url,
+				    dataType: "xml",
+				    error: function(jqXHR, textStatus, errorThrown){
+				        alert("${msgs.getNormDataRecordFailed} " + errorThrown);
+				    }
+				})
+				    .done(function(data) {
+				        var preferredName = data.getElementsByTagName("gndo:preferredNameEntityForThePerson")[0];
+				        firstNameInput.value = preferredName.getElementsByTagName("gndo:forename")[0].textContent;
+				        lastNameInput.value = preferredName.getElementsByTagName("gndo:surname")[0].textContent;
+				    });
+		    }
+		    
+		    function getNormDataNeuPerson(){
+		    	var record = document.getElementById("formular2:normDataRecord").value;
+		    	var firstNameInput = document.getElementById("formular2:vorname");
+		    	var lastNameInput = document.getElementById("formular2:nachname");
+		    	setNameFromRecord(record, firstNameInput, lastNameInput);
+		    }
+		</script>
 
 		<a4j:status>
 			<f:facet name="start">
