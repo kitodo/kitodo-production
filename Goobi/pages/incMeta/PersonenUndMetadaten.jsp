@@ -109,13 +109,13 @@
 					</h:selectOneMenu>
 					<h:outputText value="#{msgs.normDataRecord}" style="font-size: 11px" />
 					<h:inputText value="#{Item.record}" onchange="styleAnpassen(this)" styleClass="metadatenInput" style="width: 350px;"
-						readonly="#{Metadaten.nurLesenModus}" />
+						readonly="#{Metadaten.nurLesenModus}" id="record" />
 					<h:outputText value="#{msgs.vorname}" style="font-size: 11px" />
 					<h:inputText value="#{Item.vorname}" onchange="styleAnpassen(this)" styleClass="metadatenInput" style="width: 350px;"
-						readonly="#{Metadaten.nurLesenModus}" />
+						readonly="#{Metadaten.nurLesenModus}" id="firstname" />
 					<h:outputText value="#{msgs.nachname}" style="font-size: 11px" />
 					<h:inputText value="#{Item.nachname}" onkeyup="astyleAnpassenPerson(this)" onchange="styleAnpassen(this)" styleClass="metadatenInput"
-						style="width: 350px;" readonly="#{Metadaten.nurLesenModus}" />
+						style="width: 350px;" readonly="#{Metadaten.nurLesenModus}" id="lastname" />
 				</h:panelGrid>
 			</h:column>
 
@@ -145,6 +145,9 @@
 					<x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}" />
 				</h:commandLink>
 
+				<h:commandLink
+					onclick="getNormDataPersonenUndMetadaten(this); return false;"
+					value="#{msgs.getNormDataRecord}" id="clicker" style="margin-left: 5px" />
 
 			</h:column>
 		</h:dataTable>

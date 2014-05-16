@@ -47,8 +47,8 @@
 				});
 			}
 
-		    function setNameFromRecord(record, firstNameInput, lastNameInput){
-		    	var url = toAjaxUrl(record);
+		    function setNameFromRecord(recordID, firstnameID, lastnameID){
+		    	var url = toAjaxUrl(document.getElementById(recordID).value);
 				$.ajax({
 				    url: url,
 				    dataType: "xml",
@@ -58,16 +58,21 @@
 				})
 				    .done(function(data) {
 				        var preferredName = data.getElementsByTagName("gndo:preferredNameEntityForThePerson")[0];
-				        firstNameInput.value = preferredName.getElementsByTagName("gndo:forename")[0].textContent;
-				        lastNameInput.value = preferredName.getElementsByTagName("gndo:surname")[0].textContent;
+				        document.getElementById(firstnameID).value = preferredName.getElementsByTagName("gndo:forename")[0].textContent;
+				        document.getElementById(lastnameID).value = preferredName.getElementsByTagName("gndo:surname")[0].textContent;
 				    });
 		    }
 		    
 		    function getNormDataNeuPerson(){
-		    	var record = document.getElementById("formular2:normDataRecord").value;
-		    	var firstNameInput = document.getElementById("formular2:vorname");
-		    	var lastNameInput = document.getElementById("formular2:nachname");
-		    	setNameFromRecord(record, firstNameInput, lastNameInput);
+		    	setNameFromRecord("formular2:normDataRecord", "formular2:vorname", "formular2:nachname");
+		    }
+		    
+		    function getNormDataPersonenUndMetadaten(actionLink){
+		    	var actionLinkID = actionLink.id;
+				var recordID = actionLinkID.replace(/:clicker$/, ":record");
+				var firstnameID = actionLinkID.replace(/:clicker$/, ":firstname");
+				var lastnameID = actionLinkID.replace(/:clicker$/, ":lastname");
+		    	setNameFromRecord(recordID, firstnameID, lastnameID);
 		    }
 		</script>
 
