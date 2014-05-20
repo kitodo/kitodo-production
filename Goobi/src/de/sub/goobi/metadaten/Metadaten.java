@@ -54,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 
@@ -115,6 +116,7 @@ public class Metadaten {
 	private String myBenutzerID;
 	private String tempTyp;
 	private String tempWert;
+	private String tempPersonRecord;
 	private String tempPersonVorname;
 	private String tempPersonNachname;
 	private String tempPersonRolle;
@@ -217,6 +219,7 @@ public class Metadaten {
 	public String HinzufuegenPerson() {
 		this.modusHinzufuegenPerson = true;
 		this.tempPersonNachname = "";
+		this.tempPersonRecord = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
 		this.tempPersonVorname = "";
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
@@ -356,9 +359,8 @@ public class Metadaten {
 			per.setFirstname(this.tempPersonVorname);
 			per.setLastname(this.tempPersonNachname);
 			per.setRole(this.tempPersonRolle);
-
-	
-
+			String[] authorityFile = parseAuthorityFileArgs(tempPersonRecord);
+			per.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
 			this.myDocStruct.addPerson(per);
 		} catch (IncompletePersonObjectException e) {
 			Helper.setFehlerMeldung("Incomplete data for person", "");
@@ -374,6 +376,39 @@ public class Metadaten {
 			return "SperrungAbgelaufen";
 		}
 		return "";
+	}
+
+	/**
+	 * The function parseAuthorityFileArgs() parses a valueURI (i.e.
+	 * “http://d-nb.info/gnd/117034592”) and returns the three arguments
+	 * authority, authorityURI and valueURI required to call
+	 * {@link ugh.dl.Metadata#setAutorityFile(String, String, String)}. The
+	 * authorityURI may end in # or / otherwise. The authority’s name id must be
+	 * configured in the main configuration file like referencing the
+	 * authorityURI (remember to escape colons):
+	 * 
+	 * <code>authority.http\://d-nb.info/gnd/.id=gnd</code>
+	 * 
+	 * @param an
+	 *            URI in an authority file
+	 * @return a String[] with authority, authorityURI and valueURI
+	 */
+	static String[] parseAuthorityFileArgs(String valueURI) {
+		String authority = null, authorityURI = null;
+		if (valueURI != null) {
+			int boundary = valueURI.indexOf('#');
+			if (boundary == -1)
+				boundary = valueURI.lastIndexOf('/');
+			if (boundary == -1) {
+				throw new IncompletePersonObjectException("URI_malformed");
+			} else {
+				authorityURI = valueURI.substring(0, boundary + 1);
+				if (!authorityURI.equals(valueURI))
+					authority = ConfigMain.getParameter(
+							Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+			}
+		}
+		return new String[] { authority, authorityURI, valueURI };
 	}
 
 	public String Loeschen() {
@@ -2369,6 +2404,14 @@ public class Metadaten {
 
 	public void setTempPersonNachname(String tempPersonNachname) {
 		this.tempPersonNachname = tempPersonNachname;
+	}
+
+	public String getTempPersonRecord() {
+		return tempPersonRecord;
+	}
+
+	public void setTempPersonRecord(String tempPersonRecord) {
+		this.tempPersonRecord = tempPersonRecord;
 	}
 
 	public String getTempPersonRolle() {

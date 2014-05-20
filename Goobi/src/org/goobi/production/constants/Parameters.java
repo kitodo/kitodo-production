@@ -48,6 +48,22 @@ package org.goobi.production.constants;
  */
 public class Parameters {
 	/**
+	 * Content to put in the URI field when adding a new metadata element of
+	 * type person. This should usually be your preferred norm data file’s URI
+	 * prefix as to the user doesn’t have to enter it over and over again.
+	 * 
+	 * Example: authority.default=http\://d-nb.info/gnd/
+	 */
+	public static final String AUTHORITY_DEFAULT = "authority.default";
+
+	/**
+	 * Which authority identifier to use for a given URI prefix.
+	 * 
+	 * Example: authority.http\://d-nb.info/gnd/.id=gnd
+	 */
+	public static final String AUTHORITY_ID_FROM_URI = "authority.{0}.id";
+
+	/**
 	 * Milliseconds. Indicates the maximum duration an interaction with a
 	 * library catalogue may take. Defaults to 30 minutes.
 	 */
@@ -88,5 +104,4 @@ public class Parameters {
 	 * temporary files.
 	 */
 	public static final String PLUGIN_TEMP_DIR = "debugFolder";
-
 }
