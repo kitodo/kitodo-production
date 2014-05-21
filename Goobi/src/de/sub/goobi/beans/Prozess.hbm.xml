@@ -48,7 +48,6 @@
 		<property name="sortHelperDocstructs" column="sortHelperDocstructs" type="integer"/>
 		<property name="sortHelperMetadata" column="sortHelperMetadata" type="integer"/>
 		<property name="erstellungsdatum" column="erstellungsdatum" type="timestamp"/>
-		<property name="batchID" column="batchID" type="integer"/>
 		<property name="wikifield" column="wikifield" type="text"/>
 		
 		<many-to-one name="projekt" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
