@@ -47,8 +47,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -97,14 +99,13 @@ public class Prozess implements Serializable {
 	private Set<Werkstueck> werkstuecke;
 	private Set<Vorlage> vorlagen;
 	private Set<Prozesseigenschaft> eigenschaften;
+	private Set<Batch> batches = new HashSet<Batch>(0);
 	private String sortHelperStatus;
 	private Integer sortHelperImages;
 	private Integer sortHelperArticles;
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
-	// private Batch batch;
-	private Integer batchID;
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
@@ -210,6 +211,14 @@ public class Prozess implements Serializable {
 
 	public void setWerkstuecke(Set<Werkstueck> werkstuecke) {
 		this.werkstuecke = werkstuecke;
+	}
+
+	public Set<Batch> getBatches() {
+		return this.batches;
+	}
+
+	public void setBatches(Set<Batch> batches) {
+		this.batches = batches;
 	}
 
 	public String getAusgabename() {
@@ -505,13 +514,13 @@ public class Prozess implements Serializable {
 		this.projekt = projekt;
 	}
 
-	public Integer getBatchID() {
-		return this.batchID;
-	}
-
-	public void setBatchID(Integer batch) {
-		this.batchID = batch;
-	}
+	//	public Integer getBatchID() {
+	//		return this.batchID;
+	//	}
+	//
+	//	public void setBatchID(Integer batch) {
+	//		this.batchID = batch;
+	//	}
 
 	public Regelsatz getRegelsatz() {
 		return this.regelsatz;
@@ -1177,4 +1186,38 @@ public class Prozess implements Serializable {
 	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
 		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
 	}
+
+	/**
+	 * The addMessageToWikiField() method is a helper method which composes the
+	 * new wiki field using a StringBuilder. The message is encoded using HTML
+	 * entities to prevent certain characters from playing merry havoc when the
+	 * message box shall be rendered in a browser later.
+	 * 
+	 * @param form
+	 *            the AktuelleSchritteForm which is the owner of the wiki field
+	 * @param message
+	 *            the message to append
+	 */
+	public void addToWikiField(String message) {
+		StringBuilder composer = new StringBuilder();
+		if (wikifield != null && wikifield.length() > 0) {
+			composer.append(wikifield);
+			composer.append("\r\n");
+		}
+		composer.append("<p>");
+		composer.append(StringEscapeUtils.escapeHtml(message));
+		composer.append("</p>");
+		wikifield = composer.toString();
+		return;
+	}
+
+	public void addToWikiField(String level, String message) {
+		wikifield = WikiFieldHelper.getWikiMessage(this, wikifield, level, message);
+	}
+
+	public void addToWikiField(Benutzer user, String message) {
+		String text = message + " (" + user.getNachVorname() + ")";
+		addToWikiField("user", text);
+	}
+
 }

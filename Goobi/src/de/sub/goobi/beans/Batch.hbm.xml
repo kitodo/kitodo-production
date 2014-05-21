@@ -40,20 +40,19 @@
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
  
 <hibernate-mapping>
 	<class name="de.sub.goobi.beans.Batch" table="batches">
 
 		<id name="id" column="BatchID" type="integer">
-			<generator class="native"/>
+			<generator class="native" />
 		</id>
 
-		<property name="title" column="title" type="string"/>
+		<property name="title" column="title" type="string" />
 
-		<set name="processes" table="batchesprocesses">
-			<key column="BatchID"/>
-			<many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess"/>
+		<set name="processes" table="batchesprozesse" lazy="true">
+			<key column="BatchID" />
+			<many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess" />
 		</set>
 	</class>
 </hibernate-mapping>

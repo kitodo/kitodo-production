@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -59,6 +60,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
@@ -100,7 +102,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	private String modusBearbeiten = "";
 	private Schritteigenschaft mySchrittEigenschaft;
-	private WebDav myDav = new WebDav();
+	private final WebDav myDav = new WebDav();
 	private int gesamtAnzahlImages = 0;
 	private int pageAnzahlImages = 0;
 	private boolean nurOffeneSchritte = false;
@@ -110,10 +112,10 @@ public class AktuelleSchritteForm extends BasisForm {
 	private HashMap<String, Boolean> anzeigeAnpassen;
 	private IEvaluableFilter myFilteredDataSource;
 	private String scriptPath;
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private String addToWikiField = "";
 	private static String DONEDIRECTORYNAME = "fertig/";
-	private ProzessDAO pdao;
+	private final ProzessDAO pdao;
 	private Boolean flagWait = false;
 	private BatchStepHelper batchHelper;
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
@@ -300,15 +302,21 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
-		if (batchNumber != null) {
+		Set<Batch> batches = mySchritt.getProzess().getBatches();
+		if (batches.size() > 1) {
+			Helper.setFehlerMeldung("multipleBatchesAssigned");
+			return "";
+		}
+		if (batches.size() != 0) {
+			Integer batchNumber = batches.iterator().next().getId();
 			// only steps with same title
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
 			// only steps with same batchid
 			crit.createCriteria("prozess", "proc");
-			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			crit.createCriteria("proc.batches", "bat");
+			crit.add(Restrictions.eq("bat.id", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
 			
 			currentStepsOfBatch = crit.list();
@@ -379,8 +387,13 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Integer batchNumber = this.mySchritt.getProzess().getBatchID();
-		if (batchNumber != null) {
+		Set<Batch> batches = mySchritt.getProzess().getBatches();
+		if (batches.size() > 1) {
+			Helper.setFehlerMeldung("multipleBatchesAssigned");
+			return "";
+		}
+		if (batches.size() != 0) {
+			Integer batchNumber = batches.iterator().next().getId();
 			// only steps with same title
 		
 			Session session = Helper.getHibernateSession();
@@ -388,7 +401,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.add(Restrictions.eq("titel", steptitle));
 			// only steps with same batchid
 			crit.createCriteria("prozess", "proc");
-			crit.add(Restrictions.eq("proc.batchID", batchNumber));
+			crit.createCriteria("proc.batches", "bat");
+			crit.add(Restrictions.eq("bat.id", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
 
 			currentStepsOfBatch = crit.list();
@@ -1083,9 +1097,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void addToWikiField() {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "user", message));
+			this.mySchritt.getProzess().addToWikiField(user, this.addToWikiField);
 			this.addToWikiField = "";
 			try {
 				this.pdao.save(this.mySchritt.getProzess());

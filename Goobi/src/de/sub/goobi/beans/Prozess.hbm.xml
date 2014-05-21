@@ -82,6 +82,10 @@
 			<one-to-many class="de.sub.goobi.beans.HistoryEvent"/>
 		</set>
 		
+        <set name="batches" table="batchesprozesse" inverse="true" lazy="true">
+            <key column="ProzesseID" />
+            <many-to-many column="BatchID" class="de.sub.goobi.beans.Batch" />
+        </set>		
 	</class>
 
 </hibernate-mapping>

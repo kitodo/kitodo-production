@@ -32,12 +32,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -45,8 +47,8 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class BatchProcessHelper {
 
-	private List<Prozess> processes;
-	private ProzessDAO pdao = new ProzessDAO();
+	private final Set<Prozess> processes;
+	private final ProzessDAO pdao = new ProzessDAO();
 	private static final Logger logger = Logger.getLogger(BatchProcessHelper.class);
 	private Prozess currentProcess;
 	private List<ProcessProperty> processPropertyList;
@@ -54,13 +56,13 @@ public class BatchProcessHelper {
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 
-	public BatchProcessHelper(List<Prozess> processes) {
-		this.processes = processes;
+	public BatchProcessHelper(Batch batch) {
+		this.processes = batch.getProcesses();
 		for (Prozess p : processes) {
 
 			this.processNameList.add(p.getTitel());
 		}
-		this.currentProcess = processes.get(0);
+		this.currentProcess = processes.iterator().next();
 		this.processName = this.currentProcess.getTitel();
 		loadProcessProperties(this.currentProcess);
 	}
@@ -71,14 +73,6 @@ public class BatchProcessHelper {
 
 	public void setCurrentProcess(Prozess currentProcess) {
 		this.currentProcess = currentProcess;
-	}
-
-	public List<Prozess> getProcesses() {
-		return this.processes;
-	}
-
-	public void setProcesses(List<Prozess> processes) {
-		this.processes = processes;
 	}
 
 	public List<ProcessProperty> getProcessPropertyList() {

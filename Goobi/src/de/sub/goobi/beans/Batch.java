@@ -38,7 +38,9 @@
  */
 package de.sub.goobi.beans;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.sub.goobi.helper.Helper;
@@ -46,9 +48,6 @@ import de.sub.goobi.helper.Helper;
 /**
  * The class Batch represents a user-definable, unordered collection of
  * processes that methods can be applied on in batch processing.
- * 
- * This is a pure bean class except for a bit sophisticated toString() method
- * which shall generate a description presentable to the user.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -69,31 +68,104 @@ public class Batch {
 	private Set<Prozess> processes;
 
 	public Batch() {
-		processes = Collections.emptySet();
+		processes = new HashSet<Prozess>();
 	}
 
+	public Batch(String title) {
+		this.title = title;
+	}
+
+	public Batch(Collection<Prozess> processes) {
+		this.processes = new HashSet<Prozess>(processes);
+	}
+
+	public Batch(String title, Collection<Prozess> processes) {
+		this.title = title;
+		this.processes = new HashSet<Prozess>(processes);
+	}
+
+	public boolean addAll(List<Prozess> processes) {
+		return this.processes.addAll(processes);
+	}
+
+	public boolean contains(String s) {
+		return title != null && title.contains(s) || getNumericLabel().contains(s);
+	}
+
+	/**
+	 * Field getter, required by Hibernate.
+	 * 
+	 * @return
+	 */
 	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	/**
+	 * The function getLabel() returns a readable label for the batch, which is
+	 * either its title, if defined, or, for batches not having a title (in
+	 * recent versions of Production, batches didn’t support titles) its ancient
+	 * label, consisting of the prefix “Batch ” together with its id number.
+	 * 
+	 * @return a readable label for the batch
+	 */
+	public String getLabel() {
+		if (title != null)
+			return title;
+		return getNumericLabel();
 	}
 
-	public String getTitle() {
-		return title;
+	private String getNumericLabel() {
+		return Helper.getTranslation("batch", "Batch") + ' ' + id;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
+	/**
+	 * Field getter, required by Hibernate.
+	 * 
+	 * @return
+	 */
 	public Set<Prozess> getProcesses() {
 		return processes;
 	}
 
+	/**
+	 * Field getter, required by Hibernate.
+	 * 
+	 * @return
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	public boolean removeAll(List<Prozess> processes) {
+		return this.processes.removeAll(processes);
+	}
+
+	/**
+	 * Field setter, required by Hibernate.
+	 * 
+	 * @param id
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	 * Field setter, required by Hibernate.
+	 * 
+	 * @param processes
+	 */
 	public void setProcesses(Set<Prozess> processes) {
 		this.processes = processes;
+	}
+
+	/**
+	 * Field setter, required by Hibernate.
+	 * 
+	 * @param title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	@Override

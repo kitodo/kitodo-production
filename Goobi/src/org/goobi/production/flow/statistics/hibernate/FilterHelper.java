@@ -44,7 +44,6 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -749,7 +748,7 @@ public class FilterHelper {
 					conjProcesses = Restrictions.conjunction();
 				}
 				int value = Integer.valueOf(tok.substring(tok.indexOf(":") + 1));
-				conjProcesses.add(Restrictions.eq("batchID", value));
+				conjProcesses.add(Restrictions.eq("batchID", value)); // FIXME column was removed
 			} else if (tok.toLowerCase().startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
