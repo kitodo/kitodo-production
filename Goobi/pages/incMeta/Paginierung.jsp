@@ -177,19 +177,6 @@
 					<htm:br />
 					<htm:br />
 
-
-						<a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=5}" title="#{msgs.seitenzaehlungrectoverso}"
-							reRender="PaginierungActionBox,myMessages,mygrid10">
-							<h:graphicImage value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.png"
-								style="margin-left:4px;margin-right:6px;vertical-align:middle" />
-							<x:updateActionListener value="5" property="#{Metadaten.paginierungSeitenProImage}" />
-						</a4j:commandLink>
-						<h:graphicImage rendered="#{Metadaten.paginierungSeitenProImage==5}" value="/newpages/images/buttons/paginierung_seite_rectoverso.png"
-							style="margin-left:4px;margin-right:6px;vertical-align:middle" title="#{msgs.seitenzaehlungrectoverso}" />
-
-						<htm:br />
-						<htm:br />
-
 						<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10">
 							<h:outputText value="#{msgs.nurDieMarkiertenSeiten}" />
 							<x:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="2" />
