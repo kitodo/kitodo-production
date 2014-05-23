@@ -44,8 +44,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.persistence.BatchDAO;
 
 /**
  * The class Batch represents a user-definable, unordered collection of
@@ -126,10 +128,18 @@ public class Batch {
 	/**
 	 * Field getter, required by Hibernate.
 	 * 
+	 * Do not use this. It’s just here for Hibernate. Use
+	 * BatchDAO.getProcesses(Batch)
+	 * 
 	 * @return
 	 */
 	public Set<Prozess> getProcesses() {
-		Hibernate.initialize(processes);
+		try {
+			Hibernate.initialize(processes);
+		} catch (HibernateException e) {
+			BatchDAO.reattach(this);
+			Hibernate.initialize(processes);
+		}
 		return processes;
 	}
 

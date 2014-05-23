@@ -26,6 +26,12 @@ public class BatchDAO extends BaseDAO {
 		parent.storeObj(a);
 	}
 
+	public static Batch reattach(Batch batch) {
+		Session session = Helper.getHibernateSession();
+		session.refresh(batch);
+		return batch;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static List<Batch> readAll() {
 		Session session = Helper.getHibernateSession();
