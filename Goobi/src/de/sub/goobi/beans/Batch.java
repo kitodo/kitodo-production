@@ -40,7 +40,6 @@ package de.sub.goobi.beans;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
@@ -57,51 +56,96 @@ import de.sub.goobi.persistence.BatchDAO;
  */
 public class Batch {
 	/**
-	 * Database record identifier. May be null in case that the Batch has not
-	 * yet been saved to hibernate.
+	 * The field id holds the database record identifier. It is null in case
+	 * that the Batch has not yet been saved by Hibernate.
 	 */
 	private Integer id;
 	/**
-	 * Batch title. Optional, may be null. If null, the id will be shown to the
-	 * user instead.
+	 * The field title holds the batch title. Using titles for batches is
+	 * optional, the field may be null. If so, the id will be shown to the user
+	 * instead.
 	 */
 	private String title;
 	/**
-	 * Processes that belong to the batch.
+	 * The field processes holds the processes that belong to the batch.
 	 */
 	private Set<Prozess> processes;
 
+	/**
+	 * Default constructor. Creates an empty batch object.
+	 */
 	public Batch() {
 		processes = new HashSet<Prozess>();
 	}
 
+	/**
+	 * Constructor to create an empty batch object with a given title.
+	 * 
+	 * @param title
+	 *            title for the batch
+	 */
 	public Batch(String title) {
 		this.title = title;
 	}
 
-	public Batch(Collection<Prozess> processes) {
+	/**
+	 * Constructor to create a batch that holds the given processes.
+	 * 
+	 * @param processes
+	 *            processes that go into the batch
+	 */
+	public Batch(Collection<? extends Prozess> processes) {
 		this.processes = new HashSet<Prozess>(processes);
 	}
 
-	public Batch(String title, Collection<Prozess> processes) {
+	/**
+	 * Constructor to create a batch with a given title that holds the given
+	 * processes.
+	 * 
+	 * @param title
+	 *            title for the batch
+	 * @param processes
+	 *            processes that go into the batch
+	 */
+	public Batch(String title, Collection<? extends Prozess> processes) {
 		this.title = title;
 		this.processes = new HashSet<Prozess>(processes);
 	}
 
-	public boolean addAll(List<Prozess> processes) {
+	/**
+	 * The function addAll() adds all of the elements in the given collection to
+	 * this batch if they're not already present.
+	 * 
+	 * @param processes
+	 *            collection containing elements to be added to this set
+	 * @returns true if this set changed as a result of the call
+	 */
+	public boolean addAll(Collection<? extends Prozess> processes) {
 		return getProcesses().addAll(processes);
 	}
 
-	public boolean contains(String s) {
+	/**
+	 * The function contains() returns true if the title (if set) or the
+	 * id-based label contain the specified sequence of char values.
+	 * 
+	 * @param s
+	 *            the sequence to search for
+	 * @return true if the title or label contain s, false otherwise
+	 */
+	public boolean contains(CharSequence s) {
 		if (s == null)
 			return true;
 		return title != null && title.contains(s) || getNumericLabel().contains(s);
 	}
 
 	/**
-	 * Field getter, required by Hibernate.
+	 * The function getId() returns the database record identifier for the
+	 * batch. In case that the Batch has not yet been saved by Hibernate it
+	 * returns null.
 	 * 
-	 * @return
+	 * This method is required by Hibernate.
+	 * 
+	 * @return the database record identifier for the batch
 	 */
 	public Integer getId() {
 		return id;
@@ -111,27 +155,34 @@ public class Batch {
 	 * The function getLabel() returns a readable label for the batch, which is
 	 * either its title, if defined, or, for batches not having a title (in
 	 * recent versions of Production, batches didn’t support titles) its ancient
-	 * label, consisting of the prefix “Batch ” together with its id number.
+	 * label, consisting of the prefix “Batch ” (in the desired translation)
+	 * together with its id number.
 	 * 
 	 * @return a readable label for the batch
 	 */
 	public String getLabel() {
-		if (title != null)
-			return title;
-		return getNumericLabel();
+		return title != null ? title : getNumericLabel();
 	}
 
+	/**
+	 * The function getNumericLabel() returns a readable label for the batch,
+	 * consisting of the prefix “Batch ” (in the desired translation) together
+	 * with its id number.
+	 * 
+	 * @return a readable label for the batch
+	 */
 	private String getNumericLabel() {
 		return Helper.getTranslation("batch", "Batch") + ' ' + id;
 	}
 
 	/**
-	 * Field getter, required by Hibernate.
+	 * The function getProcesses() return the processes that belong to the
+	 * batch.
 	 * 
-	 * Do not use this. It’s just here for Hibernate. Use
-	 * BatchDAO.getProcesses(Batch)
+	 * The internal logic is to make sure the collection has been populated from
+	 * Hibernate.
 	 * 
-	 * @return
+	 * @return the processes that are in the batch
 	 */
 	public Set<Prozess> getProcesses() {
 		try {
@@ -144,45 +195,73 @@ public class Batch {
 	}
 
 	/**
-	 * Field getter, required by Hibernate.
+	 * The function getTitle() returns the batch title. Using titles for batches
+	 * is optional, the field may be null. If so, the function returns null. Use
+	 * {@link #getLabel()} to get either the title or an alternative name.
 	 * 
-	 * @return
+	 * @return the batch title
 	 */
 	public String getTitle() {
 		return title;
 	}
 
-	public boolean removeAll(List<Prozess> processes) {
+	/**
+	 * The function removeAll() removes all elements that are contained in the
+	 * given collection from this batch.
+	 * 
+	 * @param processes
+	 *            collection containing elements to be removed from this set
+	 * @returns true if the set of processes was changed as a result of the call
+	 */
+	public boolean removeAll(Collection<?> processes) {
 		return getProcesses().removeAll(processes);
 	}
 
 	/**
-	 * Field setter, required by Hibernate.
+	 * The method setId() sets the database record identifier of this batch.
+	 * This method is solely intended to be called by Hibernate when creating
+	 * objects from the database. Do not use it in the code.
 	 * 
 	 * @param id
+	 *            database record identifier of this batch
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
-	 * Field setter, required by Hibernate.
+	 * The method setProcesses() sets the processes that belong to the batch.
+	 * 
+	 * This method is also required by Hibernate when creating objects from the
+	 * database.
 	 * 
 	 * @param processes
+	 *            processes that belong to the batch
 	 */
 	public void setProcesses(Set<Prozess> processes) {
 		this.processes = processes;
 	}
 
 	/**
-	 * Field setter, required by Hibernate.
+	 * The method setTitle() can be used to set a batch title.
+	 * 
+	 * This function is also required by Hibernate when creating objects from
+	 * the database.
 	 * 
 	 * @param title
+	 *            a title for the batch
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * The function toString() returns a concise but informative representation
+	 * that is easy for a person to read and that "textually represents" this
+	 * batch.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		try {
@@ -214,6 +293,11 @@ public class Batch {
 		}
 	}
 
+	/**
+	 * The function hashCode() RReturns a hash code value for the batch.
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -224,6 +308,16 @@ public class Batch {
 		return result;
 	}
 
+	/**
+	 * The function equals() indicates whether some other object is “equal to”
+	 * this one.
+	 * 
+	 * @param obj
+	 *            the reference object with which to compare
+	 * @return true if this object is the same as the obj argument; false
+	 *         otherwise
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

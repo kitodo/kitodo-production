@@ -515,14 +515,6 @@ public class Prozess implements Serializable {
 		this.projekt = projekt;
 	}
 
-	//	public Integer getBatchID() {
-	//		return this.batchID;
-	//	}
-	//
-	//	public void setBatchID(Integer batch) {
-	//		this.batchID = batch;
-	//	}
-
 	public Regelsatz getRegelsatz() {
 		return this.regelsatz;
 	}

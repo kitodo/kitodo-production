@@ -71,7 +71,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException
 	 */
 	@SuppressWarnings("rawtypes")
-	protected void removeObj(Class c, Integer id) throws DAOException {
+	protected static void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			// first load the object with the current session.
@@ -99,7 +99,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	protected Object retrieveObj(Class c, Integer id) throws DAOException {
+	protected static Object retrieveObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			if (session == null) {
@@ -161,7 +161,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @param obj
 	 * @throws DAOException
 	 */
-	protected void storeObj(Object obj) throws DAOException {
+	protected static void storeObj(Object obj) throws DAOException {
 		try {
 
 			Session session = Helper.getHibernateSession();
@@ -196,7 +196,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException
 	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
 	 */
-	protected void rollback() throws DAOException {
+	protected static void rollback() throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			if (session != null) {
