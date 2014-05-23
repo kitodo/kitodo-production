@@ -214,6 +214,7 @@ public class Prozess implements Serializable {
 	}
 
 	public Set<Batch> getBatches() {
+		Hibernate.initialize(batches);
 		return this.batches;
 	}
 

@@ -43,6 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
+
 import de.sub.goobi.helper.Helper;
 
 /**
@@ -85,10 +87,12 @@ public class Batch {
 	}
 
 	public boolean addAll(List<Prozess> processes) {
-		return this.processes.addAll(processes);
+		return getProcesses().addAll(processes);
 	}
 
 	public boolean contains(String s) {
+		if (s == null)
+			return true;
 		return title != null && title.contains(s) || getNumericLabel().contains(s);
 	}
 
@@ -125,6 +129,7 @@ public class Batch {
 	 * @return
 	 */
 	public Set<Prozess> getProcesses() {
+		Hibernate.initialize(processes);
 		return processes;
 	}
 
@@ -138,7 +143,7 @@ public class Batch {
 	}
 
 	public boolean removeAll(List<Prozess> processes) {
-		return this.processes.removeAll(processes);
+		return getProcesses().removeAll(processes);
 	}
 
 	/**
@@ -184,13 +189,13 @@ public class Batch {
 				}
 				result.append(" (");
 				String extent = Helper.getTranslation("numProzesse", "{0} processes");
-				String size = processes != null ? Integer.toString(processes.size()) : "−";
+				String size = getProcesses() != null ? Integer.toString(processes.size()) : "−";
 				result.append(extent.replaceFirst("\\{0\\}", size));
 			} catch (RuntimeException unexpected) {
 				result.setLength(0);
 				result.append(title != null ? title : id);
 				result.append(" (");
-				result.append(processes != null ? processes.size() : null);
+				result.append(getProcesses() != null ? processes.size() : null);
 			}
 			result.append(')');
 			return result.toString();
