@@ -47,7 +47,6 @@ import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -97,26 +96,19 @@ public class BatchForm extends BasisForm {
 		this.selectedBatches = new ArrayList<String>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadProcessData() {
-		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Prozess.class);
-		crit.setMaxResults(getBatchMaxSize());
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-		List<Integer> ids = new ArrayList<Integer>();
-		for (String s : this.selectedBatches) {
-			if (s != null && !s.equals("") && !s.equals("null")) {
-				ids.add(new Integer(s));
+		ArrayList<Prozess> prepare = new ArrayList<Prozess>();
+		try {
+			for (String b : selectedBatches) {
+				Set<Prozess> pcs = BatchDAO.read(Integer.parseInt(b)).getProcesses();
+				prepare.addAll(pcs);
 			}
+			currentProcesses = prepare;
+		} catch (Exception e) { // NumberFormatException, DAOException
+			logger.error(e);
+			Helper.setFehlerMeldung("fehlerBeimEinlesen");
+			return;
 		}
-		if (this.selectedBatches.size() > 0) {
-			if (this.selectedBatches.contains(null) || this.selectedBatches.contains("null")) {
-				crit.add(Restrictions.isNull("batchID"));
-			} else {
-				crit.add(Restrictions.in("batchID", ids));
-			}
-		}
-		this.currentProcesses = crit.list();
 	}
 
 	@SuppressWarnings("unchecked")

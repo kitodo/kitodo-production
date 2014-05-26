@@ -152,6 +152,17 @@ public class Batch {
 	}
 
 	/**
+	 * The function getIdString() returns the identifier for the batch as
+	 * read-only property "idString".
+	 * 
+	 * This method is required by Faces which silently fails if you try to use
+	 * the id Integer.
+	 */
+	public String getIdString() {
+		return id.toString();
+	}
+
+	/**
 	 * The function getLabel() returns a readable label for the batch, which is
 	 * either its title, if defined, or, for batches not having a title (in
 	 * recent versions of Production, batches didn’t support titles) its ancient

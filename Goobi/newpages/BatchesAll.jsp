@@ -95,7 +95,7 @@
 												</h:panelGroup>
 												
 												<h:selectManyListbox value="#{BatchForm.selectedBatches}" style="width:90%;margin-bottom:10px;display:block;" size="20">
-													<si:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch}" itemValue="#{batch.id}" />
+													<si:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch}" itemValue="#{batch.idString}" />
 												</h:selectManyListbox>
 									
 												<h:panelGrid columns="1" cellpadding="2px">
