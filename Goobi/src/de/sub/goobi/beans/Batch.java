@@ -294,7 +294,7 @@ public class Batch {
 	}
 
 	/**
-	 * The function hashCode() RReturns a hash code value for the batch.
+	 * The function hashCode() returns a hash code value for the batch.
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
