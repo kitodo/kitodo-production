@@ -527,6 +527,24 @@ public class Prozess implements Serializable {
 		this.projekt = projekt;
 	}
 
+	/**
+	 * The function getBatchID returns the batches the process is associated
+	 * with as readable text as read-only property "batchID".
+	 * 
+	 * @return the batches the process is in
+	 */
+	public String getBatchID() {
+		if (batches == null || batches.size() == 0)
+			return null;
+		StringBuilder result = new StringBuilder();
+		for (Batch batch : batches) {
+			if (result.length() > 0)
+				result.append(", ");
+			result.append(batch.getLabel());
+		}
+		return result.toString();
+	}
+
 	public Regelsatz getRegelsatz() {
 		return this.regelsatz;
 	}
