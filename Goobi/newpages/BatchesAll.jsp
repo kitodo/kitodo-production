@@ -104,6 +104,11 @@
 														<h:outputText value="#{msgs.loadProcessesOfBatch}" />
 													</h:commandLink>
 										
+													<h:commandLink action="#{BatchForm.filterProcesses}">
+														<h:graphicImage alt="reload" value="/newpages/images/buttons/reload_doc.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.loadAllProcesses}" />
+													</h:commandLink>
+										
 													<h:commandLink action="#{BatchForm.downloadDocket}">
 														<h:graphicImage alt="/newpages/images/buttons/laufzettel_wide.png" value="/newpages/images/buttons/laufzettel_wide.png"
 															style="vertical-align:middle" />
