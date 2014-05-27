@@ -258,7 +258,7 @@ public class AktuelleSchritteForm extends BasisForm {
 					}
 					this.mySchritt
 							.getProzess()
-							.getHistory()
+							.getHistoryInitialized()
 							.add(new HistoryEvent(this.mySchritt.getBearbeitungsbeginn(), this.mySchritt.getReihenfolge().doubleValue(),
 									this.mySchritt.getTitel(), HistoryEventType.stepInWork, this.mySchritt.getProzess()));
 					try {
@@ -302,7 +302,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Set<Batch> batches = mySchritt.getProzess().getBatches();
+		Set<Batch> batches = mySchritt.getProzess().getBatchesInitialized();
 		if (batches.size() > 1) {
 			Helper.setFehlerMeldung("multipleBatchesAssigned");
 			return "";
@@ -348,7 +348,7 @@ public class AktuelleSchritteForm extends BasisForm {
 					s.setBearbeitungsbeginn(myDate);
 				}
 				s.getProzess()
-						.getHistory()
+						.getHistoryInitialized()
 						.add(new HistoryEvent(s.getBearbeitungsbeginn(), s.getReihenfolge().doubleValue(), s.getTitel(), HistoryEventType.stepInWork,
 								s.getProzess()));
 
@@ -387,7 +387,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Set<Batch> batches = mySchritt.getProzess().getBatches();
+		Set<Batch> batches = mySchritt.getProzess().getBatchesInitialized();
 		if (batches.size() > 1) {
 			Helper.setFehlerMeldung("multipleBatchesAssigned");
 			return "";
@@ -595,7 +595,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			dao.save(temp);
 			this.mySchritt
 					.getProzess()
-					.getHistory()
+					.getHistoryInitialized()
 					.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp.getProzess()));
 			/*
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
@@ -1130,7 +1130,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Prozesseigenschaft pe = new Prozesseigenschaft();
                 pe.setProzess(this.mySchritt.getProzess());
                 pt.setProzesseigenschaft(pe);
-                this.mySchritt.getProzess().getEigenschaften().add(pe);
+                this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
                 pt.transfer();
             }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1163,18 +1163,18 @@ public class AktuelleSchritteForm extends BasisForm {
 					Prozesseigenschaft pe = new Prozesseigenschaft();
 					pe.setProzess(this.mySchritt.getProzess());
 					p.setProzesseigenschaft(pe);
-					this.mySchritt.getProzess().getEigenschaften().add(pe);
+					this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
 				}
 				p.transfer();
-				if (!this.mySchritt.getProzess().getEigenschaften().contains(p.getProzesseigenschaft())) {
-					this.mySchritt.getProzess().getEigenschaften().add(p.getProzesseigenschaft());
+				if (!this.mySchritt.getProzess().getEigenschaftenInitialized().contains(p.getProzesseigenschaft())) {
+					this.mySchritt.getProzess().getEigenschaftenInitialized().add(p.getProzesseigenschaft());
 				}
 			}
 			Prozess p = this.mySchritt.getProzess();
 			List<Prozesseigenschaft> props = p.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					p.getEigenschaften().remove(pe);
+					p.getEigenschaftenInitialized().remove(pe);
 				}
 			}
 
@@ -1204,18 +1204,18 @@ public class AktuelleSchritteForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.mySchritt.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
+				this.myProzess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
 			List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					this.mySchritt.getProzess().getEigenschaften().remove(pe);
+					this.mySchritt.getProzess().getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.mySchritt.getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.mySchritt.getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.mySchritt.getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.mySchritt.getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 				this.processProperty.getProzesseigenschaft().setProzess(this.mySchritt.getProzess());
 			}
 			try {
@@ -1253,14 +1253,14 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
 		// if (this.processProperty.getProzesseigenschaft().getId() != null) {
-		this.mySchritt.getProzess().getEigenschaften().remove(this.processProperty.getProzesseigenschaft());
+		this.mySchritt.getProzess().getEigenschaftenInitialized().remove(this.processProperty.getProzesseigenschaft());
 		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
 		// }
 
 		List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				this.mySchritt.getProzess().getEigenschaften().remove(pe);
+				this.mySchritt.getProzess().getEigenschaftenInitialized().remove(pe);
 			}
 		}
 		try {
@@ -1358,7 +1358,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.mySchritt.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.mySchritt.getProzess().getEigenschaften().add(pe);
+				this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 

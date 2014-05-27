@@ -843,7 +843,7 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		if (io.getBatches() != null) {
-			this.prozessKopie.getBatches().addAll(io.getBatches());
+			this.prozessKopie.getBatchesInitialized().addAll(io.getBatches());
 		}
 		try {
 			ProzessDAO dao = new ProzessDAO();
@@ -1494,7 +1494,7 @@ public class CopyProcess extends ProzesskopieForm {
 		eig.setContainer(property.getContainer());
 		eig.setType(property.getType());
 		eig.setProzess(inProcess);
-		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaften();
+		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaftenInitialized();
 		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Prozesseigenschaft>();
 		}

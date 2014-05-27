@@ -180,6 +180,10 @@ public class Prozess implements Serializable {
 	}
 
 	public Set<HistoryEvent> getHistory() {
+		return this.history;
+	}
+
+	public Set<HistoryEvent> getHistoryInitialized() {
 		try {
 			@SuppressWarnings("unused")
 			Session s = Helper.getHibernateSession();
@@ -214,6 +218,10 @@ public class Prozess implements Serializable {
 	}
 
 	public Set<Batch> getBatches() {
+		return this.batches;
+	}
+
+	public Set<Batch> getBatchesInitialized() {
 		Hibernate.initialize(batches);
 		return this.batches;
 	}
@@ -231,6 +239,10 @@ public class Prozess implements Serializable {
 	}
 
 	public Set<Prozesseigenschaft> getEigenschaften() {
+		return this.eigenschaften;
+	}
+
+	public Set<Prozesseigenschaft> getEigenschaftenInitialized() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
 		} catch (HibernateException e) {

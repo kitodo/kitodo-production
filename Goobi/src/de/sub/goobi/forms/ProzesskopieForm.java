@@ -623,7 +623,7 @@ public class ProzesskopieForm {
 		}
 
 		if (tempProzess.getEigenschaftenSize() > 0) {
-			for (Prozesseigenschaft pe : tempProzess.getEigenschaften()) {
+			for (Prozesseigenschaft pe : tempProzess.getEigenschaftenInitialized()) {
 				if (pe.getTitel().equals("digitalCollection")) {
 					digitalCollections.add(pe.getWert());
 				}

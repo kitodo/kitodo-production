@@ -90,13 +90,13 @@ public int add(String sessionId, String type, int count, HashMap pp) throws Goob
        * Prozesseigenschaft
       * --------------------------------*/
       if (type.equals("") || type.equals(isProcess)) {
-         if (p.getEigenschaften() == null)
+         if (p.getEigenschaftenInitialized() == null)
             p.setEigenschaften(new HashSet<Prozesseigenschaft>());
          Prozesseigenschaft pe = new Prozesseigenschaft();
          pe.setProzess(p);
          pe.setTitel(gpp.getName());
          pe.setWert(gpp.getValue());
-         p.getEigenschaften().add(pe);
+         p.getEigenschaftenInitialized().add(pe);
       }
 
       /* --------------------------------
