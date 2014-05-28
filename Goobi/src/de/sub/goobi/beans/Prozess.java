@@ -1234,10 +1234,43 @@ public class Prozess implements Serializable {
 		return;
 	}
 
+	/**
+	 * The method addToWikiField() adds a message with a given level to the wiki
+	 * field of the process. Four level strings will be recognized and result in
+	 * different colors:
+	 * 
+	 * <dl>
+	 * <dt><code>debug</code></dt>
+	 * <dd>gray</dd>
+	 * <dt><code>error</code></dt>
+	 * <dd>red</dd>
+	 * <dt><code>user</code></dt>
+	 * <dd>green</dd>
+	 * <dt><code>warn</code></dt>
+	 * <dd>orange</dd>
+	 * <dt><i>any other value</i></dt>
+	 * <dd>blue</dd>
+	 * <dt>
+	 * 
+	 * @param level
+	 *            message colour, one of: "debug", "error", "info", "user" or
+	 *            "warn"
+	 * @param message
+	 *            message text
+	 */
 	public void addToWikiField(String level, String message) {
 		wikifield = WikiFieldHelper.getWikiMessage(this, wikifield, level, message);
 	}
 
+	/**
+	 * The method addToWikiField() adds a message signed by the given user to
+	 * the wiki field of the process.
+	 * 
+	 * @param user
+	 *            user to sign the message with
+	 * @param message
+	 *            message to print
+	 */
 	public void addToWikiField(Benutzer user, String message) {
 		String text = message + " (" + user.getNachVorname() + ")";
 		addToWikiField("user", text);
