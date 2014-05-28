@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,18 +93,25 @@ public class BatchForm extends BasisForm {
 	}
 
 	public void loadBatchData() {
-		this.currentBatches = BatchDAO.readAll();
-		this.selectedBatches = new ArrayList<String>();
+		if (selectedProcesses == null || selectedProcesses.size() == 0) {
+			this.currentBatches = BatchDAO.readAll();
+			this.selectedBatches = new ArrayList<String>();
+		} else {
+			selectedBatches = new ArrayList<String>();
+			HashSet<Batch> batchesToSelect = new HashSet<Batch>();
+			for (Prozess process : selectedProcesses)
+				batchesToSelect.addAll(process.getBatchesInitialized());
+			for (Batch batch : batchesToSelect)
+				selectedBatches.add(batch.getIdString());
+		}
 	}
 
 	public void loadProcessData() {
-		ArrayList<Prozess> prepare = new ArrayList<Prozess>();
+		Set<Prozess> processes = new HashSet<Prozess>();
 		try {
-			for (String b : selectedBatches) {
-				Set<Prozess> pcs = BatchDAO.read(Integer.parseInt(b)).getProcesses();
-				prepare.addAll(pcs);
-			}
-			currentProcesses = prepare;
+			for (String b : selectedBatches)
+				processes.addAll(BatchDAO.read(Integer.parseInt(b)).getProcesses());
+			currentProcesses = new ArrayList<Prozess>(processes);
 		} catch (Exception e) { // NumberFormatException, DAOException
 			logger.error(e);
 			Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -151,6 +159,14 @@ public class BatchForm extends BasisForm {
 
 	public void setBatchfilter(String batchfilter) {
 		this.batchfilter = batchfilter;
+	}
+
+	public String getBatchName() {
+		return batchTitle;
+	}
+
+	public void setBatchName(String batchName) {
+		batchTitle = batchName;
 	}
 
 	public String getProcessfilter() {
@@ -313,6 +329,26 @@ public class BatchForm extends BasisForm {
 			return;
 		}
 		FilterAlleStart();
+	}
+
+	public void renameBatch() {
+		if (this.selectedBatches.size() == 0) {
+			Helper.setFehlerMeldung("noBatchSelected");
+			return;
+		} else if (this.selectedBatches.size() > 1) {
+			Helper.setFehlerMeldung("tooManyBatchesSelected");
+			return;
+		} else {
+			try {
+				Batch batch = BatchDAO.read(Integer.valueOf(selectedBatches.get(0)));
+				batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
+				BatchDAO.save(batch);
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
+				logger.error(e);
+				return;
+			}
+		}
 	}
 
 	public void createNewBatch() {
