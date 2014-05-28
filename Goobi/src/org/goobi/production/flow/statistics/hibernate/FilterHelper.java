@@ -612,6 +612,7 @@ public class FilterHelper {
 		Conjunction conjUsers = null;
 		Conjunction conjStepProperties = null;
 		Conjunction conjProcessProperties = null;
+		Conjunction conjBatches = null;
 
 		// this is needed if we filter processes
 		if (flagProcesses) {
@@ -744,11 +745,11 @@ public class FilterHelper {
 				}
 				conjProcesses.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
 			} else if (tok.toLowerCase().startsWith(FilterString.BATCH) || tok.toLowerCase().startsWith(FilterString.GRUPPE)) {
-				if (conjProcesses == null) {
-					conjProcesses = Restrictions.conjunction();
+				if (conjBatches == null) {
+					conjBatches = Restrictions.conjunction();
 				}
 				int value = Integer.valueOf(tok.substring(tok.indexOf(":") + 1));
-				conjProcesses.add(Restrictions.eq("batchID", value)); // FIXME column was removed
+				conjBatches.add(Restrictions.eq("bat.id", value));
 			} else if (tok.toLowerCase().startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
@@ -945,6 +946,15 @@ public class FilterHelper {
 			} else {
 				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
 				inCrit.add(conjUsers);
+			}
+		}
+		if (conjBatches != null) {
+			if (flagSteps) {
+				critProcess.createCriteria("batches", "bat");
+				critProcess.add(conjBatches);
+			} else {
+				crit.createCriteria("batches", "bat");
+				inCrit.add(conjBatches);
 			}
 		}
 		return message;
