@@ -59,14 +59,24 @@ import ugh.fileformats.opac.PicaPlus;
  * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
  * implementation. It provides the public methods
  * 
- * void configure(Map) [*] Object find(String, long) String getDescription() [*]
- * Map getHit(Object, long, long) long getNumberOfHits(Object, long) String
- * getTitle() [*] void setPreferences(Prefs) boolean supportsCatalogue(String)
- * void useCatalogue(String)
+ *    void    configure(Map) [*]
+ *    Object  find(String, long)
+ *    String  getDescription() [*]
+ *    Map     getHit(Object, long, long)
+ *    long    getNumberOfHits(Object, long)
+ *    String  getTitle() [*]
+ *    void    setPreferences(Prefs)
+ *    boolean supportsCatalogue(String)
+ *    void    useCatalogue(String)
  * 
  * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
  * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
  * 
+ * Parts of the code of this class have been ported from ancient class
+ * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
+ * 
+ * @author Partly based on previous works of other authors who didn’t leave
+ *         their names
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @PluginImplementation
