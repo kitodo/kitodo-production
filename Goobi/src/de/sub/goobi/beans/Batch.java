@@ -113,6 +113,18 @@ public class Batch {
 	}
 
 	/**
+	 * The function add() adds the given process to this batch if it is not
+	 * already present.
+	 * 
+	 * @param process
+	 *            process to add
+	 * @return true if this batch did not already contain the specified process
+	 */
+	public boolean add(Prozess process) {
+		return getProcesses().add(process);
+	}
+
+	/**
 	 * The function addAll() adds all of the elements in the given collection to
 	 * this batch if they're not already present.
 	 * 
@@ -196,12 +208,13 @@ public class Batch {
 	 * @return the processes that are in the batch
 	 */
 	public Set<Prozess> getProcesses() {
-		try {
-			Hibernate.initialize(processes);
-		} catch (HibernateException e) {
-			BatchDAO.reattach(this);
-			Hibernate.initialize(processes);
-		}
+		if (id != null)
+			try {
+				Hibernate.initialize(processes);
+			} catch (HibernateException e) {
+				BatchDAO.reattach(this);
+				Hibernate.initialize(processes);
+			}
 		return processes;
 	}
 
