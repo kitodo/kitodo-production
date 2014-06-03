@@ -179,10 +179,29 @@ public class Prozess implements Serializable {
 		this.schritte = schritte;
 	}
 
+	/**
+	 * The function getHistory() returns the history events for a process or
+	 * some Hibernate proxy object which may be uninitialized if its contents
+	 * have not been accessed yet. However, this function is also called by
+	 * Hibernate itself when its updating the database and in this case it is
+	 * absolutely fine to return a proxy object uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getHistoryInitialized()} instead.
+	 * 
+	 * @return the history field of the process which may be not yet loaded
+	 */
 	public Set<HistoryEvent> getHistory() {
 		return this.history;
 	}
 
+	/**
+	 * The function getHistoryInitialized() returns the history events for a
+	 * process and takes care that the object is initialized from Hibernate
+	 * already and will not be bothered if the Hibernate session ends.
+	 * 
+	 * @return the history field of the process which is loaded
+	 */
 	public Set<HistoryEvent> getHistoryInitialized() {
 		try {
 			@SuppressWarnings("unused")
@@ -217,15 +236,43 @@ public class Prozess implements Serializable {
 		this.werkstuecke = werkstuecke;
 	}
 
+	/**
+	 * The function getBatches() returns the batches for a process or some
+	 * Hibernate proxy object which may be uninitialized if its contents have
+	 * not been accessed yet. However, this function is also called by Hibernate
+	 * itself when its updating the database and in this case it is absolutely
+	 * fine to return a proxy object uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getBatchesInitialized()} instead.
+	 * 
+	 * @return the batches field of the process which may be not yet loaded
+	 */
 	public Set<Batch> getBatches() {
 		return this.batches;
 	}
 
+	/**
+	 * The function getBatchesInitialized() returns the batches for a process
+	 * and takes care that the object is initialized from Hibernate already and
+	 * will not be bothered if the Hibernate session ends.
+	 * 
+	 * @return the history field of the process which is loaded
+	 */
 	public Set<Batch> getBatchesInitialized() {
-		Hibernate.initialize(batches);
+		if (id != null)
+			Hibernate.initialize(batches);
 		return this.batches;
 	}
 
+	/**
+	 * The function setBatches() is intended to be called by Hibernate to inject
+	 * the batches into the process object. To associate a batch with a process,
+	 * use {@link Batch#add(Prozess)}.
+	 * 
+	 * @param batches
+	 *            set to inject
+	 */
 	public void setBatches(Set<Batch> batches) {
 		this.batches = batches;
 	}
@@ -238,10 +285,31 @@ public class Prozess implements Serializable {
 		this.ausgabename = ausgabename;
 	}
 
+	/**
+	 * The function getEigenschaften() returns the descriptive fields
+	 * (“properties”) for a process or some Hibernate proxy object which may be
+	 * uninitialized if its contents have not been accessed yet. However, this
+	 * function is also called by Hibernate itself when its updating the
+	 * database and in this case it is absolutely fine to return a proxy object
+	 * uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getEigenschaftenInitialized()} instead.
+	 * 
+	 * @return the properties field of the process which may be not yet loaded
+	 */
 	public Set<Prozesseigenschaft> getEigenschaften() {
 		return this.eigenschaften;
 	}
 
+	/**
+	 * The function getEigenschaftenInitialized() returns the descriptive fields
+	 * (“properties”) for a process and takes care that the object is
+	 * initialized from Hibernate already and will not be bothered if the
+	 * Hibernate session ends.
+	 * 
+	 * @return the properties field of the process which is loaded
+	 */
 	public Set<Prozesseigenschaft> getEigenschaftenInitialized() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
@@ -1254,7 +1322,7 @@ public class Prozess implements Serializable {
 	 * 
 	 * @param level
 	 *            message colour, one of: "debug", "error", "info", "user" or
-	 *            "warn"
+	 *            "warn"; any other value defaults to "info"
 	 * @param message
 	 *            message text
 	 */
