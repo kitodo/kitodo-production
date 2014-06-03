@@ -43,6 +43,73 @@
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="inc/head.jsp"%>
 	<body>
+		<script type="text/javascript">
+			
+		<%--
+		 * The function newNameBox() opens a prompt to ask the user for the name of
+		 * the batch. The name is written to the hidden form field "batchName" from
+		 * where it is passed to the field batchTitle in BatchForm where it can be
+		 * picked up by the method createNewBatch() later. If everything is ready
+		 * the function returns true. If no processes have been selected, the user
+		 * is alerted and the function returns false. It will also return false if
+		 * the user clicks the cancel button in the prompt opening up.
+		 * 
+		 * @return true if we are ready to create a batch, false otherwise
+		 --%>
+			function newNameBox() {
+				var selectBatches = document.getElementById('mytaskform:selectProcesses');
+				var size = 0;
+				for (var i = 0; i < selectBatches.length; i++) {
+				  if (selectBatches.options[i].selected) size++;
+				}
+				if(size == 0){
+					alert("${msgs['noProcessSelected']}");
+					return false;
+				}
+				var batchName = prompt("${msgs['enterBatchName']}", "");
+				if(batchName != null){
+					document.getElementById('mytaskform:batchName').value = batchName;
+					return true;
+				}else{
+					return false;
+				}
+			}
+		<%--
+		 * The function renameBox() opens a prompt to ask the user for the new name
+		 * of the batch. The new name is written to the hidden form field
+		 * "batchName" from where it is passed to the field batchTitle in BatchForm
+		 * where it can be picked up by the method renameBatch() later. If
+		 * everything is ready the function returns true. If none or several batches
+		 * have been selected, the user is alerted and the function returns false.
+		 * It will also return false if the user clicks the cancel button in the
+		 * prompt opening up.
+		 * 
+		 * @return true if we are ready to rename, false otherwise
+		 --%>
+			function renameBox() {
+				var selectBatches = document.getElementById('mytaskform:selectBatches');
+				var size = 0;
+				for (var i = 0; i < selectBatches.length; i++) {
+				  if (selectBatches.options[i].selected) size++;
+				}
+				if(size == 0){
+					alert("${msgs['noBatchSelected']}");
+					return false;
+				}
+				if(size > 1){
+					alert("${msgs['tooManyBatchesSelected']}");
+					return false;
+				}
+				var text = selectBatches.options[selectBatches.selectedIndex].text;
+				var newName = prompt("${msgs['enterBatchName']}", text.replace(/ \(.*?\)$/, ""));
+				if(newName != null){
+					document.getElementById('mytaskform:batchName').value = newName;
+					return true;
+				}else{
+					return false;
+				}
+			}
+		</script>
 
 		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
 			<%@include file="inc/tbl_Kopf.jsp"%>
@@ -94,14 +161,19 @@
 													<h:commandButton action="#{BatchForm.filterBatches}" title="#{msgs.filter}" value="#{msgs.filter}" />
 												</h:panelGroup>
 												
-												<h:selectManyListbox value="#{BatchForm.selectedBatches}" style="width:90%;margin-bottom:10px;display:block;" size="20">
-													<si:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch.batchLabel}" itemValue="#{batch.batchId}" />
+												<h:selectManyListbox value="#{BatchForm.selectedBatches}" style="width:90%;margin-bottom:10px;display:block;" size="20" id="selectBatches">
+													<si:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch}" itemValue="#{batch.idString}" />
 												</h:selectManyListbox>
 									
 												<h:panelGrid columns="1" cellpadding="2px">
 													<h:commandLink action="#{BatchForm.loadProcessData}">
 														<h:graphicImage alt="reload" value="/newpages/images/buttons/reload_doc.gif" style="vertical-align:middle" />
 														<h:outputText value="#{msgs.loadProcessesOfBatch}" />
+													</h:commandLink>
+										
+													<h:commandLink action="#{BatchForm.filterProcesses}">
+														<h:graphicImage alt="reload" value="/newpages/images/buttons/reload_doc.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.loadAllProcesses}" />
 													</h:commandLink>
 										
 													<h:commandLink action="#{BatchForm.downloadDocket}">
@@ -133,7 +205,7 @@
 													<h:commandButton action="#{BatchForm.filterProcesses}" value="#{msgs.filter}" title="#{msgs.filter}" />
 												</h:panelGroup>
 												
-												<h:selectManyListbox value="#{BatchForm.selectedProcesses}" converter="ProcessConverter"  style="width:90%;margin-bottom:10px;display:block;" size="20">
+												<h:selectManyListbox value="#{BatchForm.selectedProcesses}" converter="ProcessConverter"  style="width:90%;margin-bottom:10px;display:block;" size="20" id="selectProcesses">
 													<f:selectItems value="#{BatchForm.currentProcessesAsSelectItems}" />
 												</h:selectManyListbox>
 								
@@ -153,7 +225,13 @@
 														<h:outputText value="#{msgs.removeFromAssociatedBatch}" />
 													</h:commandLink>
 													
-													<h:commandLink action="#{BatchForm.createNewBatch}">
+													<h:inputHidden value="#{BatchForm.batchName}" id="batchName" />
+													<h:commandLink action="#{BatchForm.renameBatch}" onclick="if(!renameBox())return false">
+														<h:graphicImage alt="new" value="/newpages/images/buttons/edit.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.renameBatch}" />
+													</h:commandLink>
+													
+													<h:commandLink action="#{BatchForm.createNewBatch}" onclick="if(!newNameBox())return false">
 														<h:graphicImage alt="new" value="/newpages/images/buttons/star_blue.gif" style="vertical-align:middle" />
 														<h:outputText value="#{msgs.createNewBatchFromSelectedProcesses}" />
 													</h:commandLink>

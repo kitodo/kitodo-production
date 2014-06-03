@@ -40,11 +40,17 @@ package de.sub.goobi.helper.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.BatchDAO;
 
 /**
  * The class CreateProcessesTask is a LongRunningTask to create processes from a
@@ -53,6 +59,11 @@ import de.sub.goobi.forms.ProzesskopieForm;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateProcessesTask extends CloneableLongRunningTask {
+	private Batch annualBatch = new Batch();
+	private Integer annualBatchYear;
+
+	private Batch fullBatch = new Batch();
+
 	/**
 	 * The field nextProcessToCreate holds the index of the next process to
 	 * create. Because long running tasks are interruptible is a field so the
@@ -146,15 +157,20 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 						throw new RuntimeException(
 								"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result \"" + state
 										+ "\".");
+					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
 					currentTitle = null;
 				}
 				nextProcessToCreate++;
-				setStatusProgress(100 * nextProcessToCreate / numberOfProcesses);
+				setStatusProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
 				if (isInterrupted()) {
 					stopped();
 					return;
 				}
 			}
+			flushAnnualBatch(currentTitle);
+			setStatusProgress((100 * nextProcessToCreate + 1) / (numberOfProcesses + 2));
+			saveFullBatch(currentTitle);
+			setStatusProgress(100);
 			setStatusMessage("done");
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
 			setStatusMessage(e.getClass().getSimpleName()
@@ -163,6 +179,84 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 			setStatusProgress(-1);
 			return;
 		}
+	}
+
+	/**
+	 * The method addToBatches() adds a given process to the allover and the
+	 * annual batch. If the year changes, the annual batch will be flushed and
+	 * the process will be added to a new annual batch.
+	 * 
+	 * @param process
+	 *            process to add
+	 * @param issues
+	 *            list of individual issues in the process
+	 * @param theProcessTitle
+	 *            the title of the process
+	 * @throws DAOException
+	 *             if the current session can't be retrieved or an exception is
+	 *             thrown while performing the rollback
+	 */
+	private void addToBatches(Prozess process, List<IndividualIssue> issues, String theProcessTitle)
+			throws DAOException {
+		int year = issues.get(issues.size() - 1).getDate().getYear();
+		if (annualBatchYear != null && year > annualBatchYear)
+			flushAnnualBatch(theProcessTitle);
+		fullBatch.add(process);
+		annualBatch.add(process);
+		annualBatchYear = year;
+	}
+
+	/**
+	 * The method flushAnnualBatch() sets the title for the annual batch, saves
+	 * it to hibernate and then populates the global variable with a new, empty
+	 * batch.
+	 * 
+	 * @param theProcessTitle
+	 *            the title of the process
+	 * @throws DAOException
+	 *             if the current session can't be retrieved or an exception is
+	 *             thrown while performing the rollback
+	 */
+	private void flushAnnualBatch(String theProcessTitle) throws DAOException {
+		annualBatch.setTitle(firstGroupFrom(theProcessTitle) + " (" + annualBatchYear + ')');
+		BatchDAO.save(annualBatch);
+		annualBatch = new Batch();
+		annualBatchYear = null;
+	}
+
+	/**
+	 * The method saveFullBatch() sets the title for the allover batch and saves
+	 * it to hibernate.
+	 * 
+	 * @param theProcessTitle
+	 *            the title of the process
+	 * @throws DAOException
+	 *             if the current session can't be retrieved or an exception is
+	 *             thrown while performing the rollback
+	 */
+	private void saveFullBatch(String theProcessTitle) throws DAOException {
+		fullBatch.setTitle(firstGroupFrom(theProcessTitle));
+		BatchDAO.save(fullBatch);
+	}
+
+	/**
+	 * The function firstGroupFrom() extracts the first sequence of charachters
+	 * that are no punctuation characters
+	 * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the
+	 * given string.
+	 * 
+	 * @param s
+	 *            string to parse
+	 * @return the first sequence of characters that are no punctuation
+	 *         characters
+	 */
+	private String firstGroupFrom(String s) {
+		final Pattern p = Pattern.compile("^[\\p{Punct}\\p{Space}]*([^\\p{Punct}]+)");
+		Matcher m = p.matcher(s);
+		if (m.find())
+			return m.group(1).trim();
+		else
+			return s.trim();
 	}
 
 	/**
@@ -175,6 +269,9 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	@Override
 	public CloneableLongRunningTask clone() {
 		CreateProcessesTask copy = new CreateProcessesTask(pattern, processes);
+		copy.annualBatch = annualBatch;
+		copy.annualBatchYear = annualBatchYear;
+		copy.fullBatch = fullBatch;
 		copy.nextProcessToCreate = nextProcessToCreate;
 		return copy;
 	}
