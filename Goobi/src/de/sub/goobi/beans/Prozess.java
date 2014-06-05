@@ -47,6 +47,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
 import org.goobi.production.export.ExportDocket;
@@ -1110,11 +1111,12 @@ public class Prozess implements Serializable {
 				ExportDocket ern = new ExportDocket();
 				ern.startExport(this, out, xsltfile.getAbsolutePath());
 				out.flush();
-			} catch (IOException e) {
-				myLogger.error("IOException while exporting run note", e);
+				facesContext.responseComplete();
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Exception while exporting run note.", e.getMessage());
+				response.reset();
 			}
 
-			facesContext.responseComplete();
 		}
 		return "";
 	}
