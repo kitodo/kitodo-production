@@ -38,21 +38,47 @@
  */
 package de.sub.goobi.helper.tasks;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.joda.time.LocalDate;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
 
 import com.sharkysoft.util.NotImplementedException;
 
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 public class ExportBatchTask extends CloneableLongRunningTask {
+	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
 
 	/**
 	 * The field batch holds the batch whose processes are to export.
 	 */
 	private final Batch batch;
+
+	/**
+	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
+	 * day, issue) into which the issues are aggregated.
+	 */
+	private ArrayListMap<org.joda.time.LocalDate, String> aggregation;
 
 	/**
 	 * The field action holds the number of the action the task currently is in.
@@ -95,6 +121,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	public ExportBatchTask(Batch batch) throws HibernateException {
 		this.batch = batch;
 		action = 1;
+		aggregation = new ArrayListMap<LocalDate, String>();
 		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
 		divisor = batch.getProcesses().size();
@@ -106,54 +133,174 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * processes with the recombined data. The statusProgress variable is being
 	 * updated to show the operator how far the task has proceeded.
 	 * 
-	 * @throws HibernateException
-	 *             if the batch isn’t attached to a Hibernate session and cannot
-	 *             be reattached either
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
-	public void run() throws HibernateException {
-		if (action == 1) {
-			while (processesIterator.hasNext()) {
-				if (isInterrupted()) {
-					stopped();
-					return;
+	public void run() {
+		Prozess process = null;
+		try {
+			if (action == 1) {
+				while (processesIterator.hasNext()) {
+					if (isInterrupted()) {
+						stopped();
+						return;
+					}
+					process = processesIterator.next();
+					DigitalDocument act = process.getDigitalDocument();
+					aggregation.addAll(getIssueDates(act), getMetsPointerURL(process, act));
+					setStatusProgress(50 * ++dividend / divisor);
 				}
-				aggregateDataFromProcess(processesIterator.next());
-				setStatusProgress(50 * ++dividend / divisor);
+				action = 2;
+				processesIterator = batch.getProcesses().iterator();
+				dividend = 0;
 			}
-			action = 2;
-			processesIterator = batch.getProcesses().iterator();
-			dividend = 0;
+			if (action == 2)
+				while (processesIterator.hasNext()) {
+					if (isInterrupted()) {
+						stopped();
+						return;
+					}
+					exportProcess(process = processesIterator.next(), aggregation);
+					setStatusProgress(50 + 50 * ++dividend / divisor);
+				}
+		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
+			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
+					+ (process != null ? process.getTitel() : "") + ": " + e.getMessage();
+			logger.error(message, e);
+			setStatusMessage(message);
+			setStatusProgress(-1);
+			return;
 		}
-		if (action == 2)
-			while (processesIterator.hasNext()) {
-				if (isInterrupted()) {
-					stopped();
-					return;
+	}
+
+	/**
+	 * The function getIssueDates() returns a list with all the dates of the
+	 * issues contained in this process. The function relies on the assumption
+	 * that the child elements descending from the topmost logical structure
+	 * entity of the process represent year, month and day of appearance and
+	 * that the immediate children of the day level represent issues. The levels
+	 * year, month and day must have meta data elements named "PublicationYear",
+	 * "PublicationMonth" and "PublicationDay" associated whose value can be
+	 * interpreted as an integer.
+	 * 
+	 * @return a list with the dates of all issues in this process
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set used
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
+	 */
+	private static List<LocalDate> getIssueDates(DigitalDocument act) throws PreferencesException, ReadException,
+			SwapException, DAOException, IOException, InterruptedException {
+		final String METADATA_ELEMENT_YEAR = "PublicationYear";
+		final String METADATA_ELEMENT_MONTH = "PublicationMonth";
+		final String METADATA_ELEMENT_DAY = "PublicationDay";
+		List<LocalDate> result = new LinkedList<LocalDate>();
+		DocStruct logicalDocStruct = act.getLogicalDocStruct();
+		for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
+			int year = getMetadataIntValueByName(annualNode, METADATA_ELEMENT_YEAR);
+			for (DocStruct monthNode : skipIfNull(annualNode.getAllChildren())) {
+				int monthOfYear = getMetadataIntValueByName(monthNode, METADATA_ELEMENT_MONTH);
+				for (DocStruct dayNode : skipIfNull(monthNode.getAllChildren())) {
+					LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
+							METADATA_ELEMENT_DAY));
+					for (@SuppressWarnings("unused")
+					DocStruct entry : skipIfNull(dayNode.getAllChildren()))
+						result.add(appeared);
 				}
-				exportProcess(processesIterator.next());
-				setStatusProgress(50 + 50 * ++dividend / divisor);
 			}
+		}
+		return result;
 	}
 
 	/**
-	 * The function aggregateDataFromProcess() extracts …
+	 * The function skipIfNull() returns the list passed in, or
+	 * Collections.emptyList() if the list is null.
+	 * {@link DocStruct#getAllChildren()} does return null if no children are
+	 * contained. This would throw a NullPointerException if passed into a loop.
+	 * Replacing null by Collections.emptyList() results in the loop to be
+	 * silently skipped, so that the outer code continues normally.
 	 * 
-	 * @param process
-	 *            process to examine
+	 * @param list
+	 *            list to check for being null
+	 * @return the list, Collections.emptyList() if the list is null
 	 */
-	private static void aggregateDataFromProcess(Prozess process) {
-		/* TODO */throw new NotImplementedException();
+	private static <T> List<T> skipIfNull(List<T> list) {
+		if (list == null)
+			list = Collections.emptyList();
+		return list;
 	}
 
 	/**
-	 * The method exportProcess() …
+	 * The function getMetadataIntValueByName() returns the value of a named
+	 * meta data entry associated with a structure entity as int.
+	 * 
+	 * @param structureEntity
+	 *            structureEntity to get the meta data value from
+	 * @param name
+	 *            name of the meta data element whose value is to obtain
+	 * @return value of a meta data element with the given name
+	 * @throws NoSuchElementException
+	 *             if there is no such element
+	 * @throws NumberFormatException
+	 *             if the value cannot be parsed to int
+	 */
+	private static int getMetadataIntValueByName(DocStruct structureEntity, String name) throws NoSuchElementException,
+			NumberFormatException {
+		List<MetadataType> metadataTypes = structureEntity.getType().getAllMetadataTypes();
+		for (MetadataType metadataType : metadataTypes)
+			if (name.equals(metadataType.getName()))
+				return Integer.parseInt(new HashSet<Metadata>(structureEntity.getAllMetadataByType(metadataType))
+						.iterator().next().getValue());
+		throw new NoSuchElementException();
+	}
+
+	/**
+	 * The function getMetsPointerURL investigates the METS pointer URL of the
+	 * process.
 	 * 
 	 * @param process
-	 *            process to export
+	 *            process to take values for path variables from
+	 * @param act
+	 *            act to take values for meta data variables from
+	 * @return the METS pointer URL of the process
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set used
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
 	 */
-	private static void exportProcess(Prozess process) {
+	private static String getMetsPointerURL(Prozess process, DigitalDocument act) throws PreferencesException,
+			ReadException, SwapException, DAOException, IOException, InterruptedException {
+		VariableReplacer replacer = new VariableReplacer(act, process.getRegelsatz().getPreferences(), process, null);
+		return replacer.replace(process.getProjekt().getMetsPointerPath());
+	}
+
+	private static void exportProcess(Prozess process, ArrayListMap<LocalDate, String> aggregation) {
 		/* TODO */throw new NotImplementedException();
 	}
 
@@ -168,6 +315,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	public CloneableLongRunningTask clone() {
 		ExportBatchTask copy = new ExportBatchTask(batch);
 		copy.action = action;
+		copy.aggregation = aggregation;
 		copy.processesIterator = processesIterator;
 		copy.dividend = dividend;
 		copy.divisor = divisor;
