@@ -58,6 +58,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.jdom.JDOMException;
 
+import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -942,8 +943,8 @@ public class Prozess implements Serializable {
 		return getProcessDataDirectory() + "fulltext.xml";
 	}
 
-	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-			WriteException {
+	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException,
+			SwapException, DAOException {
 		if (!checkForMetadataFile()) {
 			throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath());
 		}
@@ -993,20 +994,7 @@ public class Prozess implements Serializable {
 		}
 	}
 
-	// private void renameMetadataFile(String oldFileName, String newFileName) {
-	// File oldFile;
-	// File newFile;
-	// // Long lastModified;
-	// if (oldFileName != null && newFileName != null) {
-	// oldFile = new File(oldFileName);
-	// // lastModified = oldFile.lastModified();
-	// newFile = new File(newFileName);
-	// oldFile.renameTo(newFile);
-	// // newFile.setLastModified(lastModified);
-	// }
-	// }
-
-	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException,
 			PreferencesException {
 		boolean result = true;
 		File f = new File(getMetadataFilePath());
@@ -1364,4 +1352,31 @@ public class Prozess implements Serializable {
 			
 	}
 
+	/**
+	 * The function getDigitalDocument() returns the digital act of this
+	 * process.
+	 * 
+	 * @return the digital act of this process
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set configured
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
+	 */
+	public DigitalDocument getDigitalDocument() throws PreferencesException, ReadException, SwapException,
+			DAOException, IOException, InterruptedException {
+		return readMetadataFile().getDigitalDocument();
+	}
 }
