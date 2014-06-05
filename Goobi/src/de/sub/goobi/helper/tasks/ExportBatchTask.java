@@ -38,19 +38,123 @@
  */
 package de.sub.goobi.helper.tasks;
 
+import java.util.Iterator;
+
+import org.hibernate.HibernateException;
+
+import com.sharkysoft.util.NotImplementedException;
+
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Prozess;
 
 public class ExportBatchTask extends CloneableLongRunningTask {
 
+	/**
+	 * The field batch holds the batch whose processes are to export.
+	 */
 	private final Batch batch;
 
-	public ExportBatchTask(Batch batch) {
+	/**
+	 * The field action holds the number of the action the task currently is in.
+	 * Valid values range from 1 to 2. This is to start up at the right position
+	 * after an interruption again.
+	 */
+	private int action;
+
+	/**
+	 * The field processesIterator holds an iterator object to walk though the
+	 * processes of the batch. The processes in a batch are a Set
+	 * implementation, so we use an iterator to walk through and do not use an
+	 * index.
+	 */
+	private Iterator<Prozess> processesIterator;
+
+	/**
+	 * The field dividend holds the number of processes that have been processed
+	 * in this action. The fields dividend and divisor are used to display a
+	 * progress bar.
+	 */
+	private int dividend;
+
+	/**
+	 * The field dividend holds the number of processes to process in each
+	 * action. The fields dividend and divisor are used to display a progress
+	 * bar.
+	 */
+	private int divisor;
+
+	/**
+	 * Constructor to create an ExportBatchTask.
+	 * 
+	 * @param batch
+	 *            batch to export
+	 * @throws HibernateException
+	 *             if the batch isn’t attached to a Hibernate session and cannot
+	 *             be reattached either
+	 */
+	public ExportBatchTask(Batch batch) throws HibernateException {
 		this.batch = batch;
+		action = 1;
+		processesIterator = batch.getProcesses().iterator();
+		dividend = 0;
+		divisor = batch.getProcesses().size();
 	}
 
+	/**
+	 * The function run() is the main function of this task (which is a thread).
+	 * It will aggregate the data from all processes and then export all
+	 * processes with the recombined data. The statusProgress variable is being
+	 * updated to show the operator how far the task has proceeded.
+	 * 
+	 * @throws HibernateException
+	 *             if the batch isn’t attached to a Hibernate session and cannot
+	 *             be reattached either
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
-	public void run() {
-		// TODO
+	public void run() throws HibernateException {
+		if (action == 1) {
+			while (processesIterator.hasNext()) {
+				if (isInterrupted()) {
+					stopped();
+					return;
+				}
+				aggregateDataFromProcess(processesIterator.next());
+				setStatusProgress(50 * ++dividend / divisor);
+			}
+			action = 2;
+			processesIterator = batch.getProcesses().iterator();
+			dividend = 0;
+		}
+		if (action == 2)
+			while (processesIterator.hasNext()) {
+				if (isInterrupted()) {
+					stopped();
+					return;
+				}
+				exportProcess(processesIterator.next());
+				setStatusProgress(50 + 50 * ++dividend / divisor);
+			}
+	}
+
+	/**
+	 * The function aggregateDataFromProcess() extracts …
+	 * 
+	 * @param process
+	 *            process to examine
+	 */
+	private static void aggregateDataFromProcess(Prozess process) {
+		/* TODO */throw new NotImplementedException();
+	}
+
+	/**
+	 * The method exportProcess() …
+	 * 
+	 * @param process
+	 *            process to export
+	 */
+	private static void exportProcess(Prozess process) {
+		/* TODO */throw new NotImplementedException();
 	}
 
 	/**
@@ -63,8 +167,10 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	@Override
 	public CloneableLongRunningTask clone() {
 		ExportBatchTask copy = new ExportBatchTask(batch);
-		// copy.field = field;
+		copy.action = action;
+		copy.processesIterator = processesIterator;
+		copy.dividend = dividend;
+		copy.divisor = divisor;
 		return copy;
 	}
-
 }
