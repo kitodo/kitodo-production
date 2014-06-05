@@ -47,7 +47,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
 import org.goobi.production.export.ExportDocket;
