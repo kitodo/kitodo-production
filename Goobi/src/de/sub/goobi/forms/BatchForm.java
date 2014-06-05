@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +58,8 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.tasks.ExportBatchTask;
+import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.persistence.BatchDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 
@@ -421,5 +424,36 @@ public class BatchForm extends BasisForm {
 
 	public void setModusBearbeiten(String modusBearbeiten) {
 		this.modusBearbeiten = modusBearbeiten;
+	}
+
+	/**
+	 * The function exportBatch() is called by Faces if the user clicks the
+	 * action link to DMS-export one or more batches. For each batch, a long
+	 * running task will be created and the user will be redirected to the long
+	 * running task manager page where it can observe the task progressing.
+	 * 
+	 * @return the next page to show as named in a &lt;from-outcome&gt; element
+	 *         in faces_config.xml
+	 */
+	public String exportBatch() {
+		if (this.selectedBatches.size() == 0) {
+			Helper.setFehlerMeldung("noBatchSelected");
+			return "";
+		}
+		LinkedList<ExportBatchTask> batches = new LinkedList<ExportBatchTask>();
+		for (String batchID : selectedBatches) {
+			try {
+				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
+				ExportBatchTask exportBatch = new ExportBatchTask(batch);
+				batches.add(exportBatch);
+			} catch (DAOException e) {
+				logger.error(e);
+				Helper.setFehlerMeldung("fehlerBeimEinlesen");
+				return "";
+			}
+		}
+		for (ExportBatchTask task : batches)
+			LongRunningTaskManager.getInstance().addTask(task);
+		return "taskmanager";
 	}
 }
