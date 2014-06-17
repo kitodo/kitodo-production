@@ -178,7 +178,7 @@ public class BatchStepHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentStep.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentStep.getProzess().getEigenschaften().add(pe);
+				this.currentStep.getProzess().getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -186,11 +186,11 @@ public class BatchStepHelper {
 			List<Prozesseigenschaft> props = p.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					p.getEigenschaften().remove(pe);
+					p.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.pdao.save(this.currentStep.getProzess());
@@ -215,7 +215,7 @@ public class BatchStepHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentStep.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentStep.getProzess().getEigenschaften().add(pe);
+				this.currentStep.getProzess().getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -247,19 +247,19 @@ public class BatchStepHelper {
 							p.setContainer(pe.getContainer());
 							p.setType(pe.getType());
 							p.setProzess(process);
-							process.getEigenschaften().add(p);
+							process.getEigenschaftenInitialized().add(p);
 						}
 					}
 				} else {
 					if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
-						process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+						process.getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 					}
 				}
 
 				List<Prozesseigenschaft> props = process.getEigenschaftenList();
 				for (Prozesseigenschaft peig : props) {
 					if (peig.getTitel() == null) {
-						process.getEigenschaften().remove(peig);
+						process.getEigenschaftenInitialized().remove(peig);
 					}
 				}
 
@@ -289,7 +289,7 @@ public class BatchStepHelper {
 	                Prozesseigenschaft pe = new Prozesseigenschaft();
 	                pe.setProzess(s.getProzess());
 	                pt.setProzesseigenschaft(pe);
-	                s.getProzess().getEigenschaften().add(pe);
+	                s.getProzess().getEigenschaftenInitialized().add(pe);
 	                pt.transfer();
 	            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -405,7 +405,7 @@ public class BatchStepHelper {
 		List<Prozesseigenschaft> props = p.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				p.getEigenschaften().remove(pe);
+				p.getEigenschaftenInitialized().remove(pe);
 			}
 		}
 		try {
@@ -516,7 +516,7 @@ public class BatchStepHelper {
 				this.stepDAO.save(temp);
 				this.currentStep
 						.getProzess()
-						.getHistory()
+						.getHistoryInitialized()
 						.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
 								.getProzess()));
 				/*

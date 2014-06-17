@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -98,7 +97,7 @@ public class ExportDocket implements IProcessDataExport {
 		os.write(pdfBytes);
 	}
 
-	public void startExport(List<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
+	public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

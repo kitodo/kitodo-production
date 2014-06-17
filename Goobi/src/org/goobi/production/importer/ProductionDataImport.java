@@ -800,27 +800,27 @@ public class ProductionDataImport {
 
 		for (Schritt s : stepList) {
 			if (s.getTitel().equals("Bibliographische Aufnahme")) {
-				p.getHistory().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
 			} else if (s.getTitel().equals("scannen")) {
-				p.getHistory().add(new HistoryEvent(pd.getWERKSCANDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesMasterDiff, p));
-				p.getHistory().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistory().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesMasterDiff, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
 			} else if (s.getTitel().equals("Qualitaetskontrolle")) {
-				p.getHistory().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesWorkDiff, p));
-				p.getHistory().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistory().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesWorkDiff, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
 			} else if (s.getTitel().equals("Imagenachbearbeitung")) {
-				p.getHistory().add(
+				p.getHistoryInitialized().add(
 						new HistoryEvent(pd.getImageNachbearbBitonalDatum(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistory().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
 				try {
-					p.getHistory().add(
+					p.getHistoryInitialized().add(
 							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.bitonal, p));
-					p.getHistory().add(
+					p.getHistoryInitialized().add(
 							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.grayScale, p));
-					p.getHistory().add(
+					p.getHistoryInitialized().add(
 							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.color, p));
 

@@ -1,5 +1,3 @@
-package de.unigoettingen.sub.search.opac;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,30 +25,33 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-/**
- * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was 
- * als Treffer einer Opacabfrage zurückgegeben wird. Dabei soll die 
- * Eigenschaft eines Wertes gesetzt werden, wenn bestimmte Werte in 
- * dem opac-Ergebnis auftreten. 
- * ================================================================*/
-public class ConfigOpacCatalogueBeautifier {
- private  ConfigOpacCatalogueBeautifierElement tagElementToChange;
-   private ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
-   
-   public ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement, ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
-      this.tagElementToChange = inChangeElement;
-      this.tagElementsToProof = inProofElements;
-   }
+class ConfigOpacCatalogueBeautifierElement {
+	private final String tag;
+	private final String subtag;
+	private final String value;
 
-   public ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
-      return this.tagElementToChange;
-   }
+	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value) {
+		this.tag = tag;
+		this.subtag = subtag;
+		this.value = value;
+	}
 
-   public ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
-      return this.tagElementsToProof;
-   }
-   
+	String getTag() {
+		return tag;
+	}
 
+	String getSubtag() {
+		return subtag;
+	}
+
+	String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return tag + " - " + subtag + " : " + value;
+	}
 }
