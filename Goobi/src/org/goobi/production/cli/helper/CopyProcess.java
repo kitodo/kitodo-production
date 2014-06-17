@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,15 +93,12 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 public class CopyProcess extends ProzesskopieForm {
 
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
-	UghHelper ughHelp = new UghHelper();
-	private BeanHelper bhelp = new BeanHelper();
 	private Fileformat myRdf;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private ConfigOpac co;
 	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
 	private boolean useTemplates;
@@ -117,9 +113,9 @@ public class CopyProcess extends ProzesskopieForm {
 	private String naviFirstPage;
 	private Integer auswahl;
 	private String docType;
-	private String atstsl = "";
+	private final String atstsl = "";
 	private List<String> possibleDigitalCollection;
-	private boolean updateData = false;
+	private final boolean updateData = false;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -131,13 +127,6 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		clearValues();
-		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
-			return null;
-		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
@@ -160,10 +149,10 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * -------------------------------- Kopie der Prozessvorlage anlegen --------------------------------
 		 */
-		this.bhelp.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
 
 
 		return this.naviFirstPage;
@@ -181,13 +170,6 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		clearValues();
-		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
-			return null;
-		}
 		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
 		try {
 			this.myRdf = new MetsMods(myPrefs);
@@ -209,10 +191,10 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * -------------------------------- Kopie der Prozessvorlage anlegen --------------------------------
 		 */
-		this.bhelp.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bhelp.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
 
 		initializePossibleDigitalCollections();
 
@@ -233,7 +215,8 @@ public class CopyProcess extends ProzesskopieForm {
 			return;
 		}
 
-		this.docType = cp.getParamString("createNewProcess.defaultdoctype", this.co.getAllDoctypes().get(0).getTitle());
+		this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
+				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
 		this.naviFirstPage = "ProzessverwaltungKopie1";
@@ -349,7 +332,6 @@ public class CopyProcess extends ProzesskopieForm {
 	 */
 	private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
 		if (myRdf != null) {
-			UghHelper ughHelp = new UghHelper();
 
 			for (AdditionalField field : this.additionalFields) {
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
@@ -385,8 +367,9 @@ public class CopyProcess extends ProzesskopieForm {
 							field.setWert(myautoren);
 						} else {
 							/* bei normalen Feldern die Inhalte auswerten */
-							MetadataType mdt = ughHelp.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), field.getMetadata());
-							Metadata md = ughHelp.getMetadata(myTempStruct, mdt);
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								field.setWert(md.getValue());
 							}
@@ -705,9 +688,10 @@ public class CopyProcess extends ProzesskopieForm {
 							 * bis auf die Autoren alle additionals in die Metadaten übernehmen
 							 */
 							if (!field.getMetadata().equals("ListOfCreators")) {
-								MetadataType mdt = this.ughHelp.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+								MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+										.getPreferences(),
 										field.getMetadata());
-								Metadata md = this.ughHelp.getMetadata(myTempStruct, mdt);
+								Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 								/*
 								 * wenn das Metadatum null ist, dann jetzt initialisieren
 								 */
@@ -721,7 +705,7 @@ public class CopyProcess extends ProzesskopieForm {
 								 * wenn dem Topstruct und dem Firstchild der Wert gegeben werden soll
 								 */
 								if (myTempChild != null) {
-									md = this.ughHelp.getMetadata(myTempChild, mdt);
+									md = UghHelper.getMetadata(myTempChild, mdt);
 
 									md.setValue(field.getWert());
 								}
@@ -761,8 +745,7 @@ public class CopyProcess extends ProzesskopieForm {
 					DocStruct dsBoundBook = dd.createDocStruct(dst);
 					dd.setPhysicalDocStruct(dsBoundBook);
 
-					UghHelper ughhelp = new UghHelper();
-					MetadataType mdt = ughhelp.getMetadataType(this.prozessKopie, "pathimagefiles");
+					MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
 
 					if (this.myRdf != null && this.myRdf.getDigitalDocument() != null
 							&& this.myRdf.getDigitalDocument().getPhysicalDocStruct() != null) {
@@ -859,8 +842,8 @@ public class CopyProcess extends ProzesskopieForm {
 
 		}
 
-		if (io.getBatchId()!=null){
-			this.prozessKopie.setBatchID(io.getBatchId());
+		if (io.getBatches() != null) {
+			this.prozessKopie.getBatchesInitialized().addAll(io.getBatches());
 		}
 		try {
 			ProzessDAO dao = new ProzessDAO();
@@ -916,7 +899,8 @@ public class CopyProcess extends ProzesskopieForm {
 	private void addCollections(DocStruct colStruct) {
 		for (String s : this.digitalCollections) {
 			try {
-				Metadata md = new Metadata(this.ughHelp.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection"));
+				Metadata md = new Metadata(UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+						"singleDigCollection"));
 				md.setValue(s);
 				md.setDocStruct(colStruct);
 				colStruct.addMetadata(md);
@@ -938,7 +922,8 @@ public class CopyProcess extends ProzesskopieForm {
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
-			MetadataType mdt = this.ughHelp.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection");
+			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
 			if (myCollections != null && myCollections.size() > 0) {
 				for (Metadata md : myCollections) {
@@ -1005,32 +990,30 @@ public class CopyProcess extends ProzesskopieForm {
 		/*
 		 * -------------------------------- jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen --------------------------------
 		 */
-		BeanHelper bh = new BeanHelper();
 		if (io == null) {
-
 			for (AdditionalField field : this.additionalFields) {
 				if (field.getShowDependingOnDoctype()) {
 					if (field.getFrom().equals("werk")) {
-						bh.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
+						BeanHelper.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
 					}
 					if (field.getFrom().equals("vorlage")) {
-						bh.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
+						BeanHelper.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
 					}
 					if (field.getFrom().equals("prozess")) {
-						bh.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
+						BeanHelper.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
 					}
 				}
 			}
 			/* Doctype */
-			bh.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+			BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
 			/* Tiffheader */
-			bh.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			bh.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
 		} else {
-			bh.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+			BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
 			/* Tiffheader */
-			bh.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			bh.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
 
 			for (Prozesseigenschaft pe : io.getProcessProperties()) {
 				addProperty(this.prozessKopie, pe);
@@ -1042,8 +1025,8 @@ public class CopyProcess extends ProzesskopieForm {
 			for (Vorlageeigenschaft ve : io.getTemplateProperties()) {
 				addProperty(vor, ve);
 			}
-			bh.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
-			bh.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
+			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
 		}
 	}
 
@@ -1055,21 +1038,6 @@ public class CopyProcess extends ProzesskopieForm {
 	@Override
 	public void setDocType(String docType) {
 		this.docType = docType;
-	}
-
-	@Override
-	public Collection<SelectItem> getArtists() {
-		ArrayList<SelectItem> artisten = new ArrayList<SelectItem>();
-		StringTokenizer tokenizer = new StringTokenizer(ConfigMain.getParameter("TiffHeaderArtists"), "|");
-		boolean tempBol = true;
-		while (tokenizer.hasMoreTokens()) {
-			String tok = tokenizer.nextToken();
-			if (tempBol) {
-				artisten.add(new SelectItem(tok));
-			}
-			tempBol = !tempBol;
-		}
-		return artisten;
 	}
 
 	@Override
@@ -1204,24 +1172,12 @@ public class CopyProcess extends ProzesskopieForm {
 
 	@Override
 	public List<String> getAllOpacCatalogues() {
-		try {
-			return new ConfigOpac().getAllCatalogueTitles();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
-			return new ArrayList<String>();
-		}
+		return ConfigOpac.getAllCatalogueTitles();
 	}
 
 	@Override
 	public List<ConfigOpacDoctype> getAllDoctypes() {
-		try {
-			return new ConfigOpac().getAllDoctypes();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
-			return new ArrayList<ConfigOpacDoctype>();
-		}
+		return ConfigOpac.getAllDoctypes();
 	}
 
 	/*
@@ -1538,7 +1494,7 @@ public class CopyProcess extends ProzesskopieForm {
 		eig.setContainer(property.getContainer());
 		eig.setType(property.getType());
 		eig.setProzess(inProcess);
-		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaften();
+		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaftenInitialized();
 		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Prozesseigenschaft>();
 		}

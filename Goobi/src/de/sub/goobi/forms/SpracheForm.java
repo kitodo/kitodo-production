@@ -27,6 +27,7 @@
  */
 package de.sub.goobi.forms;
 
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -146,5 +147,16 @@ public class SpracheForm {
 		} else {
 			return frame.getLocale();
 		}
+	}
+
+	/**
+	 * The function getGroupingSeparator() returns the character used for
+	 * thousands separator for the current locale as read-only property
+	 * "groupingSeparator".
+	 * 
+	 * @return the character used for thousands separator
+	 */
+	public char getGroupingSeparator() {
+		return DecimalFormatSymbols.getInstance(getLocale()).getGroupingSeparator();
 	}
 }

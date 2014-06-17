@@ -1,5 +1,3 @@
-package de.unigoettingen.sub.search.opac;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,58 +25,30 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.net.URLEncoder;
+package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-public class Query {
+import java.util.ArrayList;
 
-	private String queryUrl;
-	private int queryTermNumber = 0;
-	
-	public static final String AND = "*";
-	public static final String OR = "%2B"; //URL-encoded +
-	public static final String NOT = "-";
+/**
+ * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
+ * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
+ * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
+ */
+class ConfigOpacCatalogueBeautifier {
+	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
+	private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
 
-	private static final String FIRST_OPERATOR = "SRCH";
-	
-	
-	private static final String OPERATOR = "&ACT";
-	private static final String QUERY = "&TRM";
-	private static final String FIELD = "&IKT";
-	
-	public Query() {
-		super();
+	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
+			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
+		this.tagElementToChange = inChangeElement;
+		this.tagElementsToProof = inProofElements;
 	}
 
-	public Query(String query, String fieldNumber) {
-		super();
-		this.addQuery(null, query, fieldNumber);
+	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
+		return this.tagElementToChange;
 	}
 
-	//operation must be Query.AND, .OR, .NOT 
-	 public void addQuery(String operation, String query, String fieldNumber){
-		 
-		 //ignore boolean operation for first term
-		 if (this.queryTermNumber == 0){
-			 this.queryUrl = OPERATOR + this.queryTermNumber + "=" + FIRST_OPERATOR;
-		 }else{
-			 this.queryUrl += OPERATOR + this.queryTermNumber + "=" + operation;
-		 }
-		 
-		 
-		 this.queryUrl += FIELD + this.queryTermNumber + "=" + fieldNumber;
-		 
-		 try{
-			 this.queryUrl += QUERY + this.queryTermNumber + "=" + 
-			 	URLEncoder.encode(query , GetOpac.URL_CHARACTER_ENCODING);
-		 }catch (Exception e) {
-			 e.printStackTrace();
-		}
-		 
-		 this.queryTermNumber++;
-	 }
-	 
-	 public String getQueryUrl(){
-		 return this.queryUrl;
-	 }
-	 
+	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
+		return this.tagElementsToProof;
+	}
 }

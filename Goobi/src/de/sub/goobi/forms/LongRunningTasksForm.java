@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.tasks.CloneableLongRunningTask;
 import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 
@@ -61,15 +62,25 @@ public class LongRunningTasksForm {
 			LongRunningTaskManager.getInstance().executeTask(this.task);
 		} else {
 			/* Thread lief schon und wurde abgebrochen */
+			LongRunningTask lrt = null;
 			try {
-				LongRunningTask lrt = this.task.getClass().newInstance();
+				lrt = this.task.getClass().newInstance();
 				lrt.initialize(this.task.getProzess());
-				LongRunningTaskManager.getInstance().replaceTask(this.task, lrt);
-				LongRunningTaskManager.getInstance().executeTask(lrt);
 			} catch (InstantiationException e) {
-				logger.error(e);
+				/*
+				 * Some tasks need to pass more data than just a Prozess object.
+				 * They implement clone() to create their copy themselves.
+				 */
+				if (this.task instanceof CloneableLongRunningTask) {
+					lrt = ((CloneableLongRunningTask) this.task).clone();
+				} else
+					logger.error(e);
 			} catch (IllegalAccessException e) {
 				logger.error(e);
+			}
+			if (lrt != null) {
+				LongRunningTaskManager.getInstance().replaceTask(this.task, lrt);
+				LongRunningTaskManager.getInstance().executeTask(lrt);
 			}
 		}
 	}

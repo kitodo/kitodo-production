@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
+import org.goobi.production.constants.FileNames;
+import org.goobi.production.constants.Parameters;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -43,7 +46,8 @@ public class DigitalCollections {
 			Prozess process) throws JDOMException, IOException {
 		
 		List<String> result = new ArrayList<String>();
-		String filename = ConfigMain.getParameter("KonfigurationVerzeichnis") + "goobi_digitalCollections.xml";
+		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+				FileNames.DIGITAL_COLLECTIONS_FILE);
 		if (!(new File(filename).exists())) {
 			throw new FileNotFoundException("File not found: " + filename);
 		}
