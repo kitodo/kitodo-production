@@ -52,7 +52,7 @@ public class BeanHelper {
 		eig.setTitel(inTitel);
 		eig.setWert(inWert);
 		eig.setProzess(inProzess);
-		Set<Prozesseigenschaft> eigenschaften = inProzess.getEigenschaften();
+		Set<Prozesseigenschaft> eigenschaften = inProzess.getEigenschaftenInitialized();
 		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Prozesseigenschaft>();
 		}

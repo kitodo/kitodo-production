@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -57,13 +59,15 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.properties.ImportProperty;
-import org.hibernate.Session;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import ugh.dl.Prefs;
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
@@ -221,7 +225,7 @@ public class MassImportForm {
         }
         if (testForData()) {
             List<ImportObject> answer = new ArrayList<ImportObject>();
-            Integer batchId = null;
+			Batch batch = null;
 
             // found list with ids
             Prefs prefs = this.template.getRegelsatz().getPreferences();
@@ -274,20 +278,19 @@ public class MassImportForm {
 
             }
 
-            if (answer.size() > 1) {
-                Session session = Helper.getHibernateSession();
+			if (answer.size() > 1) {
+				if (importFile != null) {
+					List<String> args = Arrays.asList(new String[] {
+							FilenameUtils.getBaseName(importFile.getAbsolutePath()),
+							DateTimeFormat.shortDateTime().print(new DateTime()) });
+					batch = new Batch(Helper.getTranslation("importedBatchLabel", args));
+				} else
+					batch = new Batch();
+			}
 
-                batchId = 1;
-                try {
-                    batchId += (Integer) session.createQuery("select max(batchID) from Prozess").uniqueResult();
-                } catch (Exception e1) {
-                }
-
-            }
             for (ImportObject io : answer) {
-                if (batchId != null) {
-                    io.setBatchId(batchId);
-                }
+				if (batch != null)
+					io.getBatches().add(batch);
                 if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
                     Prozess p = JobCreation.generateProcess(io, this.template);
                     // int returnValue =
