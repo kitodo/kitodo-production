@@ -256,7 +256,7 @@ public class MetadatenVerifizierung {
 	}
 
 	private void checkDocStructsOhneSeiten(DocStruct inStruct) {
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+		if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
 			this.docStructsOhneSeiten.add(inStruct);
 		}
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
