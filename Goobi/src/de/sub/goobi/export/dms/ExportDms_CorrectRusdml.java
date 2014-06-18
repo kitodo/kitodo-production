@@ -113,7 +113,7 @@ public class ExportDms_CorrectRusdml {
 		RusdmlCheckMetadata(inStruct);
 
 		/* hat das Docstruct keine Bilder, wird es in die Liste genommen */
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+		if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
 			docStructsOhneSeiten.add(inStruct);
 		}
 

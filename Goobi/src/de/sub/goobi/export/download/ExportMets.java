@@ -49,15 +49,13 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -66,6 +64,7 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 public class ExportMets {
 	protected Helper help = new Helper();
@@ -198,7 +197,7 @@ public class ExportMets {
 		 * get the topstruct element of the digital document depending on anchor property
 		 */
 		DocStruct topElement = dd.getLogicalDocStruct();
-		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
+		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
 				throw new PreferencesException(myProzess.getTitel()
 						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
