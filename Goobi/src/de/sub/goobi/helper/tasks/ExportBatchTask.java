@@ -56,7 +56,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -167,7 +166,8 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 						return;
 					}
 					process = processesIterator.next();
-					Integer processesYear = Integer.valueOf(getYear(process.getDigitalDocument()));
+					Integer processesYear = Integer
+							.valueOf(getYear(process.getDigitalDocument().getLogicalDocStruct()));
 					if (!collectedYears.containsKey(processesYear))
 						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
 					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
@@ -215,8 +215,8 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * @throws ReadException
 	 *             if one of the preconditions fails
 	 */
-	private static int getYear(DigitalDocument act) throws ReadException {
-		List<DocStruct> children = act.getLogicalDocStruct().getAllChildren();
+	private static int getYear(DocStruct topLevel) throws ReadException {
+		List<DocStruct> children = topLevel.getAllChildren();
 		if (children == null)
 			throw new ReadException(
 					"Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of type "
@@ -447,21 +447,27 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		MetsModsImportExport result = new MetsModsImportExport(ruleSet);
 		((MetsMods) result).read(process.getMetadataFilePath());
 
-		DigitalDocument act = result.getDigitalDocument();
-		int ownYear = getMetadataIntValueByName(act.getLogicalDocStruct().getAllChildren().iterator().next(),
-				METADATA_FIELD_LABEL);
+		DocStruct logicalStructure = result.getDigitalDocument().getLogicalDocStruct();
+		int ownYear = getYear(logicalStructure);
 		String ownMetsPointerURL = getMetsPointerURL(process);
 
-		insertReferencesToYears(years, act, ruleSet);
-		insertReferencesToOtherIssuesInThisYear(issues, ownYear, ownMetsPointerURL, act, ruleSet);
+		insertReferencesToYears(logicalStructure, years, ruleSet);
+		insertReferencesToOtherIssuesInThisYear(logicalStructure, issues, ownYear, ownMetsPointerURL, ruleSet);
 		return result;
 	}
 
 	/**
+	 * The function insertReferencesToYears() inserts METS pointer references to
+	 * all years into the logical hierarchy of the document. For all but the
+	 * current year, an additional child node will be created.
+	 * 
+	 * @param yearLevel
+	 *            level of the logical document structure tree that holds years
+	 *            (that is the top level)
 	 * @param years
-	 * @param currentYear
-	 * @param act
+	 *            a map with all years and their pointer URLs
 	 * @param ruleSet
+	 *            the rule set this process is based on
 	 * @throws TypeNotAllowedForParentException
 	 *             is thrown, if this DocStruct is not allowed for a parent
 	 * @throws MetadataTypeNotAllowedException
@@ -472,12 +478,12 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static void insertReferencesToYears(HashMap<Integer, String> years, DigitalDocument act, Prefs ruleSet)
+	private static void insertReferencesToYears(DocStruct yearLevel, HashMap<Integer, String> years, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		for (Integer year : years.keySet()) {
-			DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
-					year.toString(), null, act, ruleSet);
-			docStruct_addMetadata(child, METADATA_FIELD_MPTR, years.get(year));
+			DocStruct child = getOrCreateChild(yearLevel, METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL, year.toString(),
+					null, ruleSet);
+			child.addMetadata(METADATA_FIELD_MPTR, years.get(year));
 		}
 	}
 
@@ -514,42 +520,53 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             member of this instance's DocStruct type
 	 */
 	private static DocStruct getOrCreateChild(DocStruct parent, String type, String identifierField, String identifier,
-			String optionalField, DigitalDocument act, Prefs ruleset) throws TypeNotAllowedForParentException,
+			String optionalField, Prefs ruleset) throws TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+
 		try {
-			return docStruct_getChild(parent, type, identifierField, identifier);
+			return parent.getChild(type, identifierField, identifier);
 		} catch (NoSuchElementException nose) {
-			DocStruct child = docStruct_createChild(parent, type, act, ruleset);
-			docStruct_addMetadata(child, identifierField, identifier);
+			DocStruct child = parent.createChild(type, ruleset);
+			child.addMetadata(identifierField, identifier);
 			if (optionalField != null)
-				docStruct_addMetadata(child, optionalField, identifier);
+				child.addMetadata(optionalField, identifier);
 			return child;
 		}
 	}
 
 	/**
+	 * The function insertReferencesToOtherIssuesInThisYear() inserts METS
+	 * pointer references to other issues which have been published in the same
+	 * year as this process contains data for, but which are contained in other
+	 * processes, into the logical document hierarchy of this process.
+	 * 
+	 * @param hierarchy
+	 *            the root of the logical document hierarchy to modify
 	 * @param issues
+	 *            a map of all issue dates along with their pointer URLs
 	 * @param currentYear
+	 *            the current year—issues of other years are skipped
 	 * @param ownMetsPointerURL
-	 * @param act
+	 *            my own METS pointer URL—issues that share the same URL are
+	 *            also skipped
 	 * @param ruleSet
+	 *            rule set the process is based on
 	 * @throws TypeNotAllowedForParentException
 	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
 	 * @throws MetadataTypeNotAllowedException
 	 *             if the DocStructType of this DocStruct instance does not
 	 *             allow the MetadataType or if the maximum number of Metadata
 	 *             (of this type) is already available
-	 * @throws TypeNotAllowedAsChildException
-	 *             if a child should be added, but it's DocStruct type isn't
-	 *             member of this instance's DocStruct type
-	 * @throws DocStructHasNoTypeException
 	 */
-	private static void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
-			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
+	private static void insertReferencesToOtherIssuesInThisYear(DocStruct hierarchy,
+			ArrayListMap<LocalDate, String> issues, int currentYear, String ownMetsPointerURL, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		for (int i = 0; i < issues.size(); i++)
 			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL))
-				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
+				insertIssueReference(hierarchy, ruleSet, issues.getKey(i), issues.getValue(i));
 		return;
 	}
 
@@ -566,128 +583,29 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * @param metsPointerURL
 	 *            URL of the issue
 	 * @throws TypeNotAllowedForParentException
-	 * @throws TypeNotAllowedAsChildException
-	 * @throws MetadataTypeNotAllowedException
-	 */
-	private static void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
-			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
-				Integer.toString(date.getYear()), null, act, ruleset);
-		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, act, ruleset);
-		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, act, ruleset);
-		DocStruct issue = docStruct_createChild(day, METADATA_ELEMENT_ISSUE, act, ruleset);
-		docStruct_addMetadata(issue, METADATA_FIELD_MPTR, metsPointerURL);
-	}
-
-	private void export(MetsModsImportExport extendedData) {
-		throw new NotImplementedException("Auto-generated method stub"); // TODO
-	}
-
-	/*
-	 * TODO: Refactor the functions below into UGHlib
-	 */
-
-	/**
-	 * The function addMetadata() adds a meta data field with the given name to
-	 * this DocStruct and sets it to the given value.
-	 * 
-	 * TODO move this function into ugh.dl.DocStruct class
-	 * 
-	 * @param obj
-	 *            object this function works on
-	 * @param fieldName
-	 *            name of the meta data field to add
-	 * @param value
-	 *            value to set the field to
-	 * @return the object to be able to write this in-line
-	 * @throws MetadataTypeNotAllowedException
-	 *             if no corresponding MetadataType object is returned by
-	 *             getAddableMetadataTypes()
-	 */
-	private static DocStruct docStruct_addMetadata(DocStruct obj, String fieldName, String value)
-			throws MetadataTypeNotAllowedException {
-		boolean success = false;
-		for (MetadataType fieldType : obj.getAddableMetadataTypes()) {
-			if (fieldType.getName().equals(fieldName)) {
-				Metadata field = new Metadata(fieldType);
-				field.setValue(value);
-				obj.addMetadata(field);
-				success = true;
-				break;
-			}
-		}
-		if (!success)
-			throw new MetadataTypeNotAllowedException("Couldn’t add " + fieldName + " to " + obj.getType().getName()
-					+ ": No corresponding MetadataType object in result of DocStruc.getAddableMetadataTypes().");
-		return obj;
-	}
-
-	/**
-	 * The function createChild() creates a child DocStruct below a DocStruct.
-	 * This is a convenience function to add a DocStruct by its type name
-	 * string.
-	 * 
-	 * TODO move this function into ugh.dl.DocStruct class; remove “act”
-	 * (available as “digdog”), and perhaps remove Prefs if available otherwise
-	 * 
-	 * @param obj
-	 *            object this function works on
-	 * @param type
-	 *            structural type of the child to create
-	 * @param fieldNames
-	 *            list of meta data fields to create in the child (may be empty)
-	 * @param value
-	 *            value to set the meta data fields to
-	 * @param act
-	 *            act to create the child in
-	 * @param ruleset
-	 *            rule set the act is based on
-	 * @return the child created
-	 * @throws TypeNotAllowedForParentException
 	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws MetadataTypeNotAllowedException
+	 *             if the DocStructType of this DocStruct instance does not
+	 *             allow the MetadataType or if the maximum number of Metadata
+	 *             (of this type) is already available
 	 * @throws TypeNotAllowedAsChildException
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static DocStruct docStruct_createChild(DocStruct obj, String type, DigitalDocument act, Prefs ruleset)
-			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-		DocStruct result = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
-		obj.addChild(result);
-		return result;
+	private static void insertIssueReference(DocStruct topLevel, Prefs ruleset, LocalDate date, String metsPointerURL)
+			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+		DocStruct year = getOrCreateChild(topLevel, METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
+				Integer.toString(date.getYear()), null, ruleset);
+		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH, METADATA_FIELD_ORDERLABEL,
+				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, ruleset);
+		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY, METADATA_FIELD_ORDERLABEL,
+				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, ruleset);
+		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, ruleset);
+		issue.addMetadata(METADATA_FIELD_MPTR, metsPointerURL);
 	}
 
-	/**
-	 * The function getChild() returns a child of a DocStruct, identified by its
-	 * type and an identifier in a meta data field of choice. More formally,
-	 * returns the first child matching the given conditions and does not work
-	 * recursively. If no matching child is found, throws
-	 * NoSuchElementException.
-	 * 
-	 * TODO move this function into ugh.dl.DocStruct class
-	 * 
-	 * @param obj
-	 *            object this function works on
-	 * @param type
-	 *            structural type of the child to locate
-	 * @param identifierField
-	 *            meta data field that holds the identifer to locate the child
-	 * @param identifier
-	 *            identifier of the child to locate
-	 * @return the child, if found
-	 * @throws NoSuchElementException
-	 *             if no matching child is found
-	 */
-	private static DocStruct docStruct_getChild(DocStruct obj, String type, String identifierField, String identifier)
-			throws NoSuchElementException {
-		for (DocStruct child : obj.getAllChildrenByTypeAndMetadataType(type, identifierField))
-			for (Metadata metadataElement : child.getAllMetadata())
-				if (metadataElement.getType().getName().equals(identifierField)
-						&& metadataElement.getValue().equals(identifier))
-					return child;
-		throw new NoSuchElementException("No child " + type + " with " + identifierField + " = " + identifier + " in "
-				+ obj + '.');
+	private void export(MetsModsImportExport extendedData) {
+		throw new NotImplementedException("Auto-generated method stub"); // TODO
 	}
 
 	/**
