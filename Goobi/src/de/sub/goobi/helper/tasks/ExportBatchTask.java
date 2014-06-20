@@ -597,9 +597,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		DocStruct year = getOrCreateChild(topLevel, METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
 				Integer.toString(date.getYear()), null, ruleset);
 		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, ruleset);
+				Integer.toString(date.getMonthOfYear()), METADATA_FIELD_LABEL, ruleset);
 		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, ruleset);
+				Integer.toString(date.getDayOfMonth()), METADATA_FIELD_LABEL, ruleset);
 		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, ruleset);
 		issue.addMetadata(METADATA_FIELD_MPTR, metsPointerURL);
 	}
