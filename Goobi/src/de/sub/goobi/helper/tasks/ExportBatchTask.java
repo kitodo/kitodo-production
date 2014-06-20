@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
 
@@ -63,12 +64,12 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
-
-import com.sharkysoft.util.NotImplementedException;
-
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -188,7 +189,8 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 							collectedYears, aggregation);
 					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 
-					export(extendedData);
+					new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
+							process, LoginForm.getCurrentUserHomeDir(), extendedData);
 					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
 
@@ -602,10 +604,6 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 				Integer.toString(date.getDayOfMonth()), METADATA_FIELD_LABEL, ruleset);
 		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, ruleset);
 		issue.addMetadata(METADATA_FIELD_MPTR, metsPointerURL);
-	}
-
-	private void export(MetsModsImportExport extendedData) {
-		throw new NotImplementedException("Auto-generated method stub"); // TODO
 	}
 
 	/**

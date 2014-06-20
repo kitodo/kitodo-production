@@ -76,6 +76,12 @@ public class Parameters {
 	public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
 	/**
+	 * Whether during an export to the DMS the images will be copied. Defaults
+	 * to true.
+	 */
+	public static final String EXPORT_WITH_IMAGES = "automaticExportWithImages";
+
+	/**
 	 * Integer. Number of hits to show per page on the hitlist when multiple
 	 * hits were found on a catalogue search.
 	 */
