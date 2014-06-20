@@ -75,4 +75,35 @@ public class ArrayListMap<K, V> {
 		return result;
 	}
 
+	/**
+	 * Returns the element at the specified position in the key list.
+	 * 
+	 * @param index
+	 *            index of the element to return
+	 * @return the element at the specified position in the key list
+	 */
+	public K getKey(int index) {
+		return keys.get(index);
+	}
+
+	/**
+	 * Returns the element at the specified position in the value list.
+	 * 
+	 * @param index
+	 *            index of the element to return
+	 * @return the element at the specified position in the value list
+	 */
+	public V getValue(int index) {
+		return values.get(index);
+	}
+
+	/**
+	 * Returns the number of elements in this list.
+	 * 
+	 * @return the number of elements in this list
+	 */
+	public int size() {
+		return keys.size();
+	}
+
 }

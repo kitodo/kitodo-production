@@ -40,6 +40,7 @@ package de.sub.goobi.helper.tasks;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -54,12 +55,20 @@ import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
+import ugh.dl.Prefs;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedAsChildException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.fileformats.mets.MetsMods;
+import ugh.fileformats.mets.MetsModsImportExport;
 
 import com.sharkysoft.util.NotImplementedException;
 
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.ArrayListMap;
 import de.sub.goobi.helper.VariableReplacer;
@@ -68,6 +77,15 @@ import de.sub.goobi.helper.exceptions.SwapException;
 
 public class ExportBatchTask extends CloneableLongRunningTask {
 	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
+
+	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
+	private static final String METADATA_ELEMENT_DAY = "PublicationDay";
+	private static final String METADATA_ELEMENT_ISSUE = "Issue";
+	private static final String METADATA_ELEMENT_MONTH = "PublicationMonth";
+	private static final String METADATA_ELEMENT_YEAR = "PublicationYear";
+	private static final String METADATA_FIELD_LABEL = "TitleDocMain";
+	private static final String METADATA_FIELD_MPTR = "MetsPointerURL";
+	private static final String METADATA_FIELD_ORDERLABEL = "TitleDocMainShort";
 
 	/**
 	 * The field batch holds the batch whose processes are to export.
@@ -107,7 +125,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * action. The fields dividend and divisor are used to display a progress
 	 * bar.
 	 */
-	private int divisor;
+	private double divisor;
+
+	private HashMap<Integer, String> collectedYears;
 
 	/**
 	 * Constructor to create an ExportBatchTask.
@@ -122,9 +142,10 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		this.batch = batch;
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
+		collectedYears = new HashMap<Integer, String>();
 		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
-		divisor = batch.getProcesses().size();
+		divisor = GAUGE_INCREMENT_PER_ACTION / batch.getProcesses().size();
 	}
 
 	/**
@@ -146,23 +167,31 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 						return;
 					}
 					process = processesIterator.next();
-					DigitalDocument act = process.getDigitalDocument();
-					aggregation.addAll(getIssueDates(act), getMetsPointerURL(process, act));
-					setStatusProgress(50 * ++dividend / divisor);
+					Integer processesYear = Integer.valueOf(getYear(process.getDigitalDocument()));
+					if (!collectedYears.containsKey(processesYear))
+						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
+					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
+					setStatusProgress(++dividend / divisor);
 				}
 				action = 2;
 				processesIterator = batch.getProcesses().iterator();
 				dividend = 0;
 			}
+
 			if (action == 2)
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
 						stopped();
 						return;
 					}
-					exportProcess(process = processesIterator.next(), aggregation);
-					setStatusProgress(50 + 50 * ++dividend / divisor);
+					MetsModsImportExport extendedData = buildExportableMetsMods(process = processesIterator.next(),
+							collectedYears, aggregation);
+					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
+
+					export(extendedData);
+					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
+
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
 					+ (process != null ? process.getTitel() : "") + ": " + e.getMessage();
@@ -171,6 +200,102 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 			setStatusProgress(-1);
 			return;
 		}
+	}
+
+	/**
+	 * The function getYear() returns the year that of issues are contained in
+	 * this act. The function relies on the assumption that the first level of
+	 * the logical structure tree of the act is of type METADATA_ELEMENT_YEAR,
+	 * is present exactly once and has a METADATA_FIELD_LABEL whose value
+	 * represents the year and can be parsed to integer.
+	 * 
+	 * @param act
+	 *            act to examine
+	 * @return the year
+	 * @throws ReadException
+	 *             if one of the preconditions fails
+	 */
+	private static int getYear(DigitalDocument act) throws ReadException {
+		List<DocStruct> children = act.getLogicalDocStruct().getAllChildren();
+		if (children == null)
+			throw new ReadException(
+					"Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of type "
+							+ METADATA_ELEMENT_YEAR + " is required.");
+		if (children.size() > 1)
+			throw new ReadException(
+					"Could not get date year: Logical structure has several elements. Exactly one element (of type "
+							+ METADATA_ELEMENT_YEAR + ") is required.");
+		try {
+			return getMetadataIntValueByName(children.get(0), METADATA_FIELD_LABEL);
+		} catch (NoSuchElementException nose) {
+			throw new ReadException("Could not get date year: " + METADATA_ELEMENT_YEAR + " has no meta data field "
+					+ METADATA_FIELD_LABEL + '.');
+		} catch (NumberFormatException uber) {
+			throw new ReadException("Could not get date year: " + METADATA_FIELD_LABEL + " value from "
+					+ METADATA_ELEMENT_YEAR + " cannot be interpeted as whole number.");
+		}
+	}
+
+	/**
+	 * The function getMetadataIntValueByName() returns the value of a named
+	 * meta data entry associated with a structure entity as int.
+	 * 
+	 * @param structureTypeName
+	 *            structureEntity to get the meta data value from
+	 * @param metaDataTypeName
+	 *            name of the meta data element whose value is to obtain
+	 * @return value of a meta data element with the given name
+	 * @throws NoSuchElementException
+	 *             if there is no such element
+	 * @throws NumberFormatException
+	 *             if the value cannot be parsed to int
+	 */
+	private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
+			throws NoSuchElementException, NumberFormatException {
+		List<MetadataType> metadataTypes = structureTypeName.getType().getAllMetadataTypes();
+		for (MetadataType metadataType : metadataTypes)
+			if (metaDataTypeName.equals(metadataType.getName()))
+				return Integer.parseInt(new HashSet<Metadata>(structureTypeName.getAllMetadataByType(metadataType))
+						.iterator().next().getValue());
+		throw new NoSuchElementException();
+	}
+
+	/**
+	 * The function getMetsYearAnchorPointerURL() returns the URL for a METS
+	 * pointer to retrieve the course of appearance data for the year the given
+	 * process is in.
+	 * 
+	 * @param process
+	 *            process whese year anchor pointer shall be returend
+	 * @return URL to retrieve the year data
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set configured
+	 * @throws ReadException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set configured
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
+	 */
+	private static String getMetsYearAnchorPointerURL(Prozess process) throws PreferencesException, ReadException,
+			SwapException, DAOException, IOException, InterruptedException {
+
+		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
+				.getPreferences(), process, null);
+		String metsPointerPathAnchor = process.getProjekt().getMetsPointerPathAnchor();
+		if (metsPointerPathAnchor.contains(Projekt.ANCHOR_SEPARATOR))
+			metsPointerPathAnchor = metsPointerPathAnchor.split(Projekt.ANCHOR_SEPARATOR)[1];
+		return replacer.replace(metsPointerPathAnchor);
 	}
 
 	/**
@@ -204,9 +329,6 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 */
 	private static List<LocalDate> getIssueDates(DigitalDocument act) throws PreferencesException, ReadException,
 			SwapException, DAOException, IOException, InterruptedException {
-		final String METADATA_ELEMENT_YEAR = "PublicationYear";
-		final String METADATA_ELEMENT_MONTH = "PublicationMonth";
-		final String METADATA_ELEMENT_DAY = "PublicationDay";
 		List<LocalDate> result = new LinkedList<LocalDate>();
 		DocStruct logicalDocStruct = act.getLogicalDocStruct();
 		for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
@@ -244,37 +366,11 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	}
 
 	/**
-	 * The function getMetadataIntValueByName() returns the value of a named
-	 * meta data entry associated with a structure entity as int.
-	 * 
-	 * @param structureEntity
-	 *            structureEntity to get the meta data value from
-	 * @param name
-	 *            name of the meta data element whose value is to obtain
-	 * @return value of a meta data element with the given name
-	 * @throws NoSuchElementException
-	 *             if there is no such element
-	 * @throws NumberFormatException
-	 *             if the value cannot be parsed to int
-	 */
-	private static int getMetadataIntValueByName(DocStruct structureEntity, String name) throws NoSuchElementException,
-			NumberFormatException {
-		List<MetadataType> metadataTypes = structureEntity.getType().getAllMetadataTypes();
-		for (MetadataType metadataType : metadataTypes)
-			if (name.equals(metadataType.getName()))
-				return Integer.parseInt(new HashSet<Metadata>(structureEntity.getAllMetadataByType(metadataType))
-						.iterator().next().getValue());
-		throw new NoSuchElementException();
-	}
-
-	/**
-	 * The function getMetsPointerURL investigates the METS pointer URL of the
+	 * The function getMetsPointerURL() investigates the METS pointer URL of the
 	 * process.
 	 * 
 	 * @param process
 	 *            process to take values for path variables from
-	 * @param act
-	 *            act to take values for meta data variables from
 	 * @return the METS pointer URL of the process
 	 * @throws PreferencesException
 	 *             if the no node corresponding to the file format is available
@@ -294,14 +390,304 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	private static String getMetsPointerURL(Prozess process, DigitalDocument act) throws PreferencesException,
-			ReadException, SwapException, DAOException, IOException, InterruptedException {
-		VariableReplacer replacer = new VariableReplacer(act, process.getRegelsatz().getPreferences(), process, null);
+	private static String getMetsPointerURL(Prozess process) throws PreferencesException, ReadException, SwapException,
+			DAOException, IOException, InterruptedException {
+		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
+				.getPreferences(), process, null);
 		return replacer.replace(process.getProjekt().getMetsPointerPath());
 	}
 
-	private static void exportProcess(Prozess process, ArrayListMap<LocalDate, String> aggregation) {
-		/* TODO */throw new NotImplementedException();
+	/**
+	 * The function buildExportableMetsMods() returns a MetsModsImportExport
+	 * object whose logical document structure tree has been enriched with all
+	 * nodes that have to be exported along with the data to make
+	 * cross-newspaper referencing work. References to both year data files and
+	 * other issues within the same year have been attached.
+	 * 
+	 * @param process
+	 *            process to get the METS/MODS data from
+	 * @param years
+	 *            a map with all years and their pointer URLs
+	 * @param issues
+	 *            a map with all issues and their pointer URLs
+	 * @return an enriched MetsModsImportExport object
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set used
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
+	 * @throws TypeNotAllowedForParentException
+	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws MetadataTypeNotAllowedException
+	 *             if the DocStructType of this DocStruct instance does not
+	 *             allow the MetadataType or if the maximum number of Metadata
+	 *             (of this type) is already available
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 */
+	private static MetsModsImportExport buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
+			ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
+			DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
+			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+
+		Prefs ruleSet = process.getRegelsatz().getPreferences();
+		MetsModsImportExport result = new MetsModsImportExport(ruleSet);
+		((MetsMods) result).read(process.getMetadataFilePath());
+
+		DigitalDocument act = result.getDigitalDocument();
+		int ownYear = getMetadataIntValueByName(act.getLogicalDocStruct().getAllChildren().iterator().next(),
+				METADATA_FIELD_LABEL);
+		String ownMetsPointerURL = getMetsPointerURL(process);
+
+		insertReferencesToYears(years, act, ruleSet);
+		insertReferencesToOtherIssuesInThisYear(issues, ownYear, ownMetsPointerURL, act, ruleSet);
+		return result;
+	}
+
+	/**
+	 * @param years
+	 * @param currentYear
+	 * @param act
+	 * @param ruleSet
+	 * @throws TypeNotAllowedForParentException
+	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws MetadataTypeNotAllowedException
+	 *             if the DocStructType of this DocStruct instance does not
+	 *             allow the MetadataType or if the maximum number of Metadata
+	 *             (of this type) is already available
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 */
+	private static void insertReferencesToYears(HashMap<Integer, String> years, DigitalDocument act, Prefs ruleSet)
+			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+		for (Integer year : years.keySet()) {
+			DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
+					year.toString(), null, act, ruleSet);
+			docStruct_addMetadata(child, METADATA_FIELD_MPTR, years.get(year));
+		}
+	}
+
+	/**
+	 * The function getOrCreateChild() returns a child of a DocStruct of the
+	 * given type and identified by an identifier in a meta data field of
+	 * choice. If no such child exists, it will be created.
+	 * 
+	 * @param parent
+	 *            DocStruct to get the child from or create it in.
+	 * @param type
+	 *            type of the DocStruct to return
+	 * @param identifierField
+	 *            field whose value identifies the DocStruct to return
+	 * @param identifier
+	 *            value that identifies the DocStruct to return
+	 * @param optionalField
+	 *            optionally, adds another meta data field with this name and
+	 *            the value used as identifier (may be null)
+	 * @param act
+	 *            act to create the child in
+	 * @param ruleset
+	 *            rule set the act is based on
+	 * @return the first child matching the given conditions, if any, or a newly
+	 *         created child with these properties otherwise
+	 * @throws TypeNotAllowedForParentException
+	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws MetadataTypeNotAllowedException
+	 *             if the DocStructType of this DocStruct instance does not
+	 *             allow the MetadataType or if the maximum number of Metadata
+	 *             (of this type) is already available
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 */
+	private static DocStruct getOrCreateChild(DocStruct parent, String type, String identifierField, String identifier,
+			String optionalField, DigitalDocument act, Prefs ruleset) throws TypeNotAllowedForParentException,
+			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+		try {
+			return docStruct_getChild(parent, type, identifierField, identifier);
+		} catch (NoSuchElementException nose) {
+			DocStruct child = docStruct_createChild(parent, type, act, ruleset);
+			docStruct_addMetadata(child, identifierField, identifier);
+			if (optionalField != null)
+				docStruct_addMetadata(child, optionalField, identifier);
+			return child;
+		}
+	}
+
+	/**
+	 * @param issues
+	 * @param currentYear
+	 * @param ownMetsPointerURL
+	 * @param act
+	 * @param ruleSet
+	 * @throws TypeNotAllowedForParentException
+	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws MetadataTypeNotAllowedException
+	 *             if the DocStructType of this DocStruct instance does not
+	 *             allow the MetadataType or if the maximum number of Metadata
+	 *             (of this type) is already available
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 * @throws DocStructHasNoTypeException
+	 */
+	private static void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
+			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
+			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+		for (int i = 0; i < issues.size(); i++)
+			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL))
+				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
+		return;
+	}
+
+	/**
+	 * Inserts a reference (METS pointer (mptr) URL) for an issue on a given
+	 * date into an act.
+	 * 
+	 * @param act
+	 *            act in whose logical structure the pointer is to create
+	 * @param ruleset
+	 *            rule set the act is based on
+	 * @param date
+	 *            date of the issue to create a pointer to
+	 * @param metsPointerURL
+	 *            URL of the issue
+	 * @throws TypeNotAllowedForParentException
+	 * @throws TypeNotAllowedAsChildException
+	 * @throws MetadataTypeNotAllowedException
+	 */
+	private static void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
+			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
+				Integer.toString(date.getYear()), null, act, ruleset);
+		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH, METADATA_FIELD_ORDERLABEL,
+				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, act, ruleset);
+		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY, METADATA_FIELD_ORDERLABEL,
+				Integer.toString(date.getYear()), METADATA_FIELD_LABEL, act, ruleset);
+		DocStruct issue = docStruct_createChild(day, METADATA_ELEMENT_ISSUE, act, ruleset);
+		docStruct_addMetadata(issue, METADATA_FIELD_MPTR, metsPointerURL);
+	}
+
+	private void export(MetsModsImportExport extendedData) {
+		throw new NotImplementedException("Auto-generated method stub"); // TODO
+	}
+
+	/*
+	 * TODO: Refactor the functions below into UGHlib
+	 */
+
+	/**
+	 * The function addMetadata() adds a meta data field with the given name to
+	 * this DocStruct and sets it to the given value.
+	 * 
+	 * TODO move this function into ugh.dl.DocStruct class
+	 * 
+	 * @param obj
+	 *            object this function works on
+	 * @param fieldName
+	 *            name of the meta data field to add
+	 * @param value
+	 *            value to set the field to
+	 * @return the object to be able to write this in-line
+	 * @throws MetadataTypeNotAllowedException
+	 *             if no corresponding MetadataType object is returned by
+	 *             getAddableMetadataTypes()
+	 */
+	private static DocStruct docStruct_addMetadata(DocStruct obj, String fieldName, String value)
+			throws MetadataTypeNotAllowedException {
+		boolean success = false;
+		for (MetadataType fieldType : obj.getAddableMetadataTypes()) {
+			if (fieldType.getName().equals(fieldName)) {
+				Metadata field = new Metadata(fieldType);
+				field.setValue(value);
+				obj.addMetadata(field);
+				success = true;
+				break;
+			}
+		}
+		if (!success)
+			throw new MetadataTypeNotAllowedException("Couldn’t add " + fieldName + " to " + obj.getType().getName()
+					+ ": No corresponding MetadataType object in result of DocStruc.getAddableMetadataTypes().");
+		return obj;
+	}
+
+	/**
+	 * The function createChild() creates a child DocStruct below a DocStruct.
+	 * This is a convenience function to add a DocStruct by its type name
+	 * string.
+	 * 
+	 * TODO move this function into ugh.dl.DocStruct class; remove “act”
+	 * (available as “digdog”), and perhaps remove Prefs if available otherwise
+	 * 
+	 * @param obj
+	 *            object this function works on
+	 * @param type
+	 *            structural type of the child to create
+	 * @param fieldNames
+	 *            list of meta data fields to create in the child (may be empty)
+	 * @param value
+	 *            value to set the meta data fields to
+	 * @param act
+	 *            act to create the child in
+	 * @param ruleset
+	 *            rule set the act is based on
+	 * @return the child created
+	 * @throws TypeNotAllowedForParentException
+	 *             is thrown, if this DocStruct is not allowed for a parent
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 */
+	private static DocStruct docStruct_createChild(DocStruct obj, String type, DigitalDocument act, Prefs ruleset)
+			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+		DocStruct result = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
+		obj.addChild(result);
+		return result;
+	}
+
+	/**
+	 * The function getChild() returns a child of a DocStruct, identified by its
+	 * type and an identifier in a meta data field of choice. More formally,
+	 * returns the first child matching the given conditions and does not work
+	 * recursively. If no matching child is found, throws
+	 * NoSuchElementException.
+	 * 
+	 * TODO move this function into ugh.dl.DocStruct class
+	 * 
+	 * @param obj
+	 *            object this function works on
+	 * @param type
+	 *            structural type of the child to locate
+	 * @param identifierField
+	 *            meta data field that holds the identifer to locate the child
+	 * @param identifier
+	 *            identifier of the child to locate
+	 * @return the child, if found
+	 * @throws NoSuchElementException
+	 *             if no matching child is found
+	 */
+	private static DocStruct docStruct_getChild(DocStruct obj, String type, String identifierField, String identifier)
+			throws NoSuchElementException {
+		for (DocStruct child : obj.getAllChildrenByTypeAndMetadataType(type, identifierField))
+			for (Metadata metadataElement : child.getAllMetadata())
+				if (metadataElement.getType().getName().equals(identifierField)
+						&& metadataElement.getValue().equals(identifier))
+					return child;
+		throw new NoSuchElementException("No child " + type + " with " + identifierField + " = " + identifier + " in "
+				+ obj + '.');
 	}
 
 	/**
@@ -316,6 +702,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		ExportBatchTask copy = new ExportBatchTask(batch);
 		copy.action = action;
 		copy.aggregation = aggregation;
+		copy.collectedYears = collectedYears;
 		copy.processesIterator = processesIterator;
 		copy.dividend = dividend;
 		copy.divisor = divisor;

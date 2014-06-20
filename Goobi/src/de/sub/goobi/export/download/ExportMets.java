@@ -51,6 +51,7 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
@@ -289,6 +290,8 @@ public class ExportMets {
 		mm.setMptrUrl(pointer);
 
 		String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
+		if (anchor.contains(Projekt.ANCHOR_SEPARATOR))
+			anchor = anchor.split(Projekt.ANCHOR_SEPARATOR)[0];
 		pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
