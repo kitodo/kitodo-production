@@ -125,6 +125,10 @@ public class LongRunningTask extends Thread {
 		this.statusProgress = statusProgress;
 	}
 
+	protected void setStatusProgress(double statusProgress) {
+		this.statusProgress = new Double(Math.ceil(statusProgress)).intValue();
+	}
+
 	/**
 	 * Setter für Statusmeldung nur für vererbte Klassen
 	 * ================================================================
