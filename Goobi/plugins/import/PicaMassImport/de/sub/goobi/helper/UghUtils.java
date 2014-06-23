@@ -43,8 +43,8 @@ import org.goobi.production.constants.Parameters;
 
 import de.sub.goobi.config.ConfigMain;
 
-public class UghHelper {
-	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
+public class UghUtils {
+	private static final Logger myLogger = Logger.getLogger(UghUtils.class);
 
 	/**
 	 * In einem String die Umlaute auf den Grundbuchstaben reduzieren ================================================================

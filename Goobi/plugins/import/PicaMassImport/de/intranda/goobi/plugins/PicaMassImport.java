@@ -52,7 +52,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
-
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -80,7 +79,7 @@ import de.intranda.goobi.plugins.sru.SRUHelper;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 
 @PluginImplementation
@@ -655,7 +654,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		}
 		/* im ATS-TSL die Umlaute ersetzen */
 		if (FacesContext.getCurrentInstance() != null) {
-			myAtsTsl = new UghHelper().convertUmlaut(myAtsTsl);
+			new UghUtils();
+			myAtsTsl = UghUtils.convertUmlaut(myAtsTsl);
 		}
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
