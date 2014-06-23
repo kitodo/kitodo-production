@@ -36,11 +36,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
@@ -92,7 +90,7 @@ public class Schritt implements Serializable {
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 	
 	private String stepPlugin;
 	private String validationPlugin;
@@ -786,25 +784,6 @@ public class Schritt implements Serializable {
 			batchStep = Boolean.valueOf(false);
 		}
 		this.batchStep = batchStep;
-	}
-
-	public boolean getBatchSize() {
-
-		Integer batchNumber = this.prozess.getBatchID();
-		if (batchNumber != null) {
-			// only steps with same title
-			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Schritt.class);
-			crit.add(Restrictions.eq("titel", this.titel));
-			// only steps with same batchid
-			crit.createCriteria("prozess", "proc");
-			crit.add(Restrictions.eq("proc.batchID", batchNumber));
-			crit.add(Restrictions.eq("batchStep", true));
-			if (crit.list().size() > 1) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

@@ -774,3 +774,27 @@ span.jscalendar-DB-title-control-normal-style:hover{
     font-weight: bold;
 }
 
+/*
+   ------------------------------------------------------------
+   Colours for calendar sheet
+   ------------------------------------------------------------
+*/
+.saturday {
+	background-color: #ACD1E3;
+}
+
+.sunday {
+	background-color: #E3ACAC;
+}
+
+.weekdayNoTitle {
+	background-color: #C9CACC;
+}
+
+.saturdayNoTitle {
+	background-color: #8AA8B6;
+}
+
+.sundayNoTitle {
+	background-color: #B68A8A;
+}
