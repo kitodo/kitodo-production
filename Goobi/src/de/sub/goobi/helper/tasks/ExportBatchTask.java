@@ -83,9 +83,6 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	private static final String METADATA_ELEMENT_ISSUE = "Issue";
 	private static final String METADATA_ELEMENT_MONTH = "PublicationMonth";
 	private static final String METADATA_ELEMENT_YEAR = "PublicationYear";
-	private static final String METADATA_FIELD_LABEL = "TitleDocMain";
-	private static final String METADATA_FIELD_MPTR = "MetsPointerURL";
-	private static final String METADATA_FIELD_ORDERLABEL = "TitleDocMainShort";
 
 	/**
 	 * The field batch holds the batch whose processes are to export.
@@ -228,13 +225,13 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 					"Could not get date year: Logical structure has several elements. Exactly one element (of type "
 							+ METADATA_ELEMENT_YEAR + ") is required.");
 		try {
-			return getMetadataIntValueByName(children.get(0), METADATA_FIELD_LABEL);
+			return getMetadataIntValueByName(children.get(0), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
 		} catch (NoSuchElementException nose) {
 			throw new ReadException("Could not get date year: " + METADATA_ELEMENT_YEAR + " has no meta data field "
-					+ METADATA_FIELD_LABEL + '.');
+					+ MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE + '.');
 		} catch (NumberFormatException uber) {
-			throw new ReadException("Could not get date year: " + METADATA_FIELD_LABEL + " value from "
-					+ METADATA_ELEMENT_YEAR + " cannot be interpeted as whole number.");
+			throw new ReadException("Could not get date year: " + MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE
+					+ " value from " + METADATA_ELEMENT_YEAR + " cannot be interpeted as whole number.");
 		}
 	}
 
@@ -483,9 +480,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	private static void insertReferencesToYears(DocStruct yearLevel, HashMap<Integer, String> years, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		for (Integer year : years.keySet()) {
-			DocStruct child = getOrCreateChild(yearLevel, METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL, year.toString(),
-					null, ruleSet);
-			child.addMetadata(METADATA_FIELD_MPTR, years.get(year));
+			DocStruct child = getOrCreateChild(yearLevel, METADATA_ELEMENT_YEAR,
+					MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, ruleSet);
+			child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
 		}
 	}
 
@@ -596,14 +593,16 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 */
 	private static void insertIssueReference(DocStruct topLevel, Prefs ruleset, LocalDate date, String metsPointerURL)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-		DocStruct year = getOrCreateChild(topLevel, METADATA_ELEMENT_YEAR, METADATA_FIELD_LABEL,
-				Integer.toString(date.getYear()), null, ruleset);
-		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getMonthOfYear()), METADATA_FIELD_LABEL, ruleset);
-		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY, METADATA_FIELD_ORDERLABEL,
-				Integer.toString(date.getDayOfMonth()), METADATA_FIELD_LABEL, ruleset);
+		DocStruct year = getOrCreateChild(topLevel, METADATA_ELEMENT_YEAR,
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, ruleset);
+		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH,
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, ruleset);
+		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY,
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, ruleset);
 		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, ruleset);
-		issue.addMetadata(METADATA_FIELD_MPTR, metsPointerURL);
+		issue.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
 	}
 
 	/**
