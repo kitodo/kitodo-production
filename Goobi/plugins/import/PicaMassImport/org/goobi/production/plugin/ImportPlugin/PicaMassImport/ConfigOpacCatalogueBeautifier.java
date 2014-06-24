@@ -1,4 +1,3 @@
-package org.goobi.production.plugin.interfaces;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -26,69 +25,30 @@ package org.goobi.production.plugin.interfaces;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.util.List;
+package org.goobi.production.plugin.ImportPlugin.PicaMassImport;
 
-import org.goobi.production.enums.ImportType;
-import org.goobi.production.importer.DocstructElement;
-import org.goobi.production.importer.ImportObject;
-import org.goobi.production.importer.Record;
-import org.goobi.production.properties.ImportProperty;
+import java.util.ArrayList;
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
+/**
+ * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
+ * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
+ * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
+ */
+class ConfigOpacCatalogueBeautifier {
+	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
+	private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
 
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
+			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
+		this.tagElementToChange = inChangeElement;
+		this.tagElementsToProof = inProofElements;
+	}
 
-public interface IImportPlugin extends IPlugin {
-	
-	public void setPrefs(Prefs prefs);
-	
-	public void setData(Record r);
-	
-	public Fileformat convertData() throws ImportPluginException;
-	
-	public String getImportFolder();
-	
-	public String getProcessTitle();
+	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
+		return this.tagElementToChange;
+	}
 
-	public List<ImportObject> generateFiles(List<Record> records);
-	
-	public void setImportFolder(String folder);
-	
-	public List<Record> splitRecords(String records);
-
-	public List<Record> generateRecordsFromFile();
-
-	public List<Record> generateRecordsFromFilenames(List<String> filenames);
-	
-	public void setFile(File importFile);
-	
-	public List<String> splitIds(String ids);
-	
-	public List<ImportType> getImportTypes();
-	
-	public List<ImportProperty> getProperties();
-	
-	public List<String> getAllFilenames();
-
-	public void deleteFiles(List<String> selectedFilenames);	
-	
-	public List<? extends DocstructElement> getCurrentDocStructs();
-	
-	public String deleteDocstruct();
-	
-	public String addDocstruct();
-	
-	public List<String> getPossibleDocstructs();
-	
-	public DocstructElement getDocstruct();
-	
-	public void setDocstruct(DocstructElement dse);
-	
-	public void setOpacCatalogue(String opacCatalogue);
-	
-	public void setGoobiConfigDirectory(String configDir);
-	
-	public void setTempDir(String tempDir);
+	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
+		return this.tagElementsToProof;
+	}
 }

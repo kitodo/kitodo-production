@@ -72,6 +72,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 public class MassImportForm {
     private static final Logger logger = Logger.getLogger(MassImportForm.class);
@@ -79,6 +80,8 @@ public class MassImportForm {
     private List<Prozess> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
+    private List<String> allOpacCatalgues;
+    private String opacCatalogue;
     // private List<String> recordList = new ArrayList<String>();
     private List<String> ids = new ArrayList<String>();
     private ImportFormat format = null;
@@ -232,7 +235,10 @@ public class MassImportForm {
             String tempfolder = ConfigMain.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
-
+            this.plugin.setOpacCatalogue(this.getOpacCatalogue()); 
+            this.plugin.setGoobiConfigDirectory(new Helper().getGoobiConfigDirectory());
+            this.plugin.setTempDir(ConfigMain.getParameter("debugFolder"));
+            
             if (StringUtils.isNotEmpty(this.idList)) {
                 // IImportPlugin plugin = (IImportPlugin)
                 // PluginLoader.getPlugin(PluginType.Import,
@@ -532,6 +538,36 @@ public class MassImportForm {
     public Prozess getTemplate() {
         return this.template;
     }
+    
+    /**
+     * @return the opac catalogues
+     */    
+    
+	public List<String> getAllOpacCatalogues() {
+		try {
+			return ConfigOpac.getAllCatalogueTitles();
+		} catch (Throwable t) {
+			//myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+			return new ArrayList<String>();
+		}
+	}   
+
+    /**
+     * @param opacCatalogues the opacCatalogues to set
+     */    
+    
+	public void setOpacCatalogue(String opacCatalogue) {
+		this.opacCatalogue = opacCatalogue;
+	}      
+    
+    /**
+     * @return the opac catalogues
+     */    
+    
+	public String getOpacCatalogue() {
+		return this.opacCatalogue;
+	}    
 
     /**
      * @param digitalCollections the digitalCollections to set

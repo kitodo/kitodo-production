@@ -64,10 +64,10 @@ public class SRUHelper {
     // private static final Namespace DIAG = Namespace.getNamespace("diag", "http://www.loc.gov/zing/srw/diagnostic/");
     // private static final Namespace XCQL = Namespace.getNamespace("xcql", "http://www.loc.gov/zing/cql/xcql/");
 
-    public static String search(String ppn) {
+    public static String search(String ppn, String address) {
         SRUClient client;
         try {
-            client = new SRUClient("http://sru.gbv.de/gvk", "picaxml", null, null);
+        		client = new SRUClient("http://"+address, "picaxml", null, null);
             //           client = new SRUClient("http://sru.gbv.de/opac-de-27", "picaxml", null, null);
 
             return client.getSearchResponse("pica.ppn=" + ppn);
