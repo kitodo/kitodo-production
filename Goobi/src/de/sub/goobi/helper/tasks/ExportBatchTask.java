@@ -71,6 +71,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -136,6 +137,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             be reattached either
 	 */
 	public ExportBatchTask(Batch batch) throws HibernateException {
+		setTitle(Helper.getTranslation("importDms"));
 		this.batch = batch;
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
