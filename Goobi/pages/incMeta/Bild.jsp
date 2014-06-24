@@ -255,3 +255,6 @@
 
 </h:form>
 
+<h:form id="imageform">
+	<x:inputHidden id="hiddenBildNummer" forceId="true" value=" #{Metadaten.bildNummer}" />
+</h:form>

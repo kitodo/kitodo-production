@@ -37,7 +37,7 @@
 					<h:outputLabel value="#{msgs.position}:" for="paginationSelection" rendered="#{Metadaten.alleSeiten != null}" />
 					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection" style="width:220px" rendered="#{Metadaten.alleSeiten != null}">
 						<f:selectItems value="#{Metadaten.alleSeiten}" />
-						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="#{msgs.lastPage}" />
+						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="lastPage" />
 					</h:selectOneMenu>
 	                
 	                <h:outputText value="#{msgs.newFileName}" />
@@ -154,7 +154,7 @@
 					<h:outputLabel value="#{msgs.position}:" for="paginationSelection2" rendered="#{Metadaten.alleSeiten != null}" />
 					<h:selectOneMenu value="#{Metadaten.fileManipulation.insertPage}" id="paginationSelection2" style="width:220px" rendered="#{Metadaten.alleSeiten != null}">
 						<f:selectItems value="#{Metadaten.alleSeiten}" />
-						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="#{msgs.lastPage}" />
+						<f:selectItem itemLabel="#{msgs.lastPage}" itemValue="lastPage" />
 					</h:selectOneMenu>
 
 					<h:outputText value="#{msgs.paginierung}:" />
