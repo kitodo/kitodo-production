@@ -272,7 +272,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							// renaming defined direcories
 							String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
 							for(String processDir : processDirs) {
-																
+								
 								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
 								
 								File dir = new File(processDirAbsolut);
@@ -280,7 +280,7 @@ public class ProzessverwaltungForm extends BasisForm {
 								{
 									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 								}
-							}					
+							}
 						}
 						
 					} catch (Exception e) {

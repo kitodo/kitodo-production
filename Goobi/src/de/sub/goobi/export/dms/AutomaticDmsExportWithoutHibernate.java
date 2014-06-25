@@ -309,7 +309,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					}
 					File[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						if(files[i].isFile())	{
+						if(files[i].isFile()) {
 							File target = new File(destination + File.separator + files[i].getName());
 							Helper.copyFile(files[i], target);
 						}
@@ -412,7 +412,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);
 				}
@@ -446,7 +446,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			File srcDir = new File(FilenameUtils.concat(fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitle())));
 			File dstDir = new File(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
 		
-			if(srcDir.isDirectory()) {			
+			if(srcDir.isDirectory()) {
 				Helper.copyDir(srcDir, dstDir);
 			}
 		}

@@ -920,13 +920,13 @@ public class ProzesskopieForm {
 		
 		// Create configured directories
 		
-		this.prozessKopie.createProcessDirs();		
+		this.prozessKopie.createProcessDirs();
 		
 		
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
-            return "";
+			return "";
 		} else {
 			try {
 				new ProzessDAO().save(this.prozessKopie);
