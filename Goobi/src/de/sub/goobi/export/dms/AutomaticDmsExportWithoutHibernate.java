@@ -30,6 +30,7 @@ package de.sub.goobi.export.dms;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -205,6 +206,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			} else if (this.exportFulltext) {
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
+			
+			directoryDownload(process, zielVerzeichnis);
+			
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
 			return false;
@@ -285,9 +289,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			}
 			File[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator
-						+ dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				if(dateien[i].isFile()) {
+					File meinZiel = new File(destination + File.separator
+							+ dateien[i].getName());
+					Helper.copyFile(dateien[i], meinZiel);
+				}
 			}
 		}
 		
@@ -303,8 +309,10 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					}
 					File[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						File target = new File(destination + File.separator + files[i].getName());
-						Helper.copyFile(files[i], target);
+						if(files[i].isFile()) {
+							File target = new File(destination + File.separator + files[i].getName());
+							Helper.copyFile(files[i], target);
+						}
 					}
 				}
 			}
@@ -404,7 +412,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);
 				}
@@ -414,10 +422,33 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				if(dateien[i].isFile()) {
+					File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
+					Helper.copyFile(dateien[i], meinZiel);
+				}
 			}
 		}
+	}
 
+	/**
+	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
+	 * 
+	 * @param myProzess the process object
+	 * @param zielVerzeichnis the destination directory
+	 * @throws IOException
+	 */		
+	private void directoryDownload(ProcessObject myProzess, String zielVerzeichnis) throws IOException{
+	
+		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+		
+		for(String processDir : processDirs) {
+		
+			File srcDir = new File(FilenameUtils.concat(fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitle())));
+			File dstDir = new File(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
+		
+			if(srcDir.isDirectory()) {
+				Helper.copyDir(srcDir, dstDir);
+			}
+		}
 	}
 }

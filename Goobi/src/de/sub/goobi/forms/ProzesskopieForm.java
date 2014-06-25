@@ -894,7 +894,7 @@ public class ProzesskopieForm {
 					newmd.setValue("file://" + this.prozessKopie.getImagesDirectory() + this.prozessKopie.getTitel().trim() + DIRECTORY_SUFFIX);
 				}
 				this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-
+								
 				/* Rdf-File schreiben */
 				this.prozessKopie.writeMetadataFile(this.myRdf);
 
@@ -917,11 +917,16 @@ public class ProzesskopieForm {
 			}
 
 		}
-
+		
+		// Create configured directories
+		
+		this.prozessKopie.createProcessDirs();
+		
+		
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
-            return "";
+			return "";
 		} else {
 			try {
 				new ProzessDAO().save(this.prozessKopie);

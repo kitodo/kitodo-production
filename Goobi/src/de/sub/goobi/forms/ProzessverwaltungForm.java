@@ -48,6 +48,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -267,6 +268,21 @@ public class ProzessverwaltungForm extends BasisForm {
 								}
 							}
 						}
+						{
+							// renaming defined direcories
+							String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+							for(String processDir : processDirs) {
+								
+								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
+								
+								File dir = new File(processDirAbsolut);
+								if(dir.isDirectory())
+								{
+									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+								}
+							}
+						}
+						
 					} catch (Exception e) {
 						logger.warn("could not rename folder", e);
 					}
@@ -2124,5 +2140,4 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
 	}
-
 }
