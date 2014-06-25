@@ -80,7 +80,6 @@ public class MassImportForm {
     private List<Prozess> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
-    private List<String> allOpacCatalgues;
     private String opacCatalogue;
     // private List<String> recordList = new ArrayList<String>();
     private List<String> ids = new ArrayList<String>();
@@ -554,7 +553,7 @@ public class MassImportForm {
 	}   
 
     /**
-     * @param opacCatalogues the opacCatalogues to set
+     * @param opacCatalogue the opacCatalogues to set
      */    
     
 	public void setOpacCatalogue(String opacCatalogue) {
@@ -562,7 +561,7 @@ public class MassImportForm {
 	}      
     
     /**
-     * @return the opac catalogues
+     * @return the opac catalogue
      */    
     
 	public String getOpacCatalogue() {
