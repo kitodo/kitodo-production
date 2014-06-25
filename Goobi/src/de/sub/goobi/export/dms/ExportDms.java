@@ -30,6 +30,7 @@ package de.sub.goobi.export.dms;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -228,6 +229,9 @@ public class ExportDms extends ExportMets {
 				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
 						DIRECTORY_SUFFIX);
 			}
+			
+			directoryDownload(myProzess, zielVerzeichnis);
+			
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(
 					"Export canceled, Process: " + myProzess.getTitel(), e);
@@ -346,9 +350,11 @@ public class ExportDms extends ExportMets {
 			}
 			File[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator
-						+ dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				if(dateien[i].isFile()) {
+					File meinZiel = new File(destination + File.separator
+							+ dateien[i].getName());
+					Helper.copyFile(dateien[i], meinZiel);
+				}
 			}
 		}
 		
@@ -364,8 +370,10 @@ public class ExportDms extends ExportMets {
 					}
 					File[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						File target = new File(destination + File.separator + files[i].getName());
-						Helper.copyFile(files[i], target);
+						if(files[i].isFile()) {
+							File target = new File(destination + File.separator + files[i].getName());
+							Helper.copyFile(files[i], target);
+						}
 					}
 				}
 			}
@@ -421,5 +429,31 @@ public class ExportDms extends ExportMets {
 			}
 		}
 
+	}
+	
+	/**
+	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
+	 * 
+	 * @param myProzess the process object
+	 * @param zielVerzeichnis the destination directory
+	 * @throws SwapException
+	 * @throws DAOException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * 
+	 */		
+	private void directoryDownload(Prozess myProzess, String zielVerzeichnis) throws SwapException, DAOException, IOException, InterruptedException{
+		
+		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+		
+		for(String processDir : processDirs) {
+			
+			File srcDir = new File(FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel())));
+			File dstDir = new File(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
+
+			if(srcDir.isDirectory()) {
+				Helper.copyDir(srcDir, dstDir);
+			}
+		}	
 	}
 }

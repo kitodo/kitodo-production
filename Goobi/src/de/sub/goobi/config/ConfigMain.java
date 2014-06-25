@@ -28,7 +28,6 @@ package de.sub.goobi.config;
  * exception statement from your version.
  */
 import java.io.File;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -158,7 +157,7 @@ public class ConfigMain {
 	public static int getIntParameter(String inParameter) {
 		return getIntParameter(inParameter, 0);
 	}
-
+	
 	/**
 	 * Request int-parameter from Configuration with default-value
 	 * 
@@ -170,5 +169,15 @@ public class ConfigMain {
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Request String[]-parameter from Configuration
+	 * 
+	 * @return Parameter as String[] 
+	 */
+	public static String[] getStringArrayParameter(String inParameter) {
+		
+		return getConfig().getStringArray(inParameter);
 	}
 }

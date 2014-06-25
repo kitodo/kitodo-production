@@ -62,6 +62,7 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
@@ -507,6 +508,29 @@ public class Helper implements Serializable, Observer {
 		out.close();
 	}
 
+	/**
+	 * copy directory 
+	 * 
+	 * @param srcDir the source directory
+	 * @param dstDir the destination directory
+	 * @throws IOException
+	 */	
+    public static void copyDir(File srcDir, File dstDir) throws IOException {
+  	
+    	File[] files = srcDir.listFiles();
+    	if(!dstDir.exists()) {
+    		dstDir.mkdirs();
+    	}
+        for (File file : files) {
+            if (file.isDirectory()) {
+                copyDir(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+            }
+            else {
+                copyFile(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+            }
+        }
+    } 	
+	
 	/**
 	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
 	 * to delete and returns false.

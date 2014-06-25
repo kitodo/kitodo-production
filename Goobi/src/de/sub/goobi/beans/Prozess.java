@@ -47,6 +47,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
@@ -1342,6 +1343,24 @@ public class Prozess implements Serializable {
 	public void addToWikiField(Benutzer user, String message) {
 		String text = message + " (" + user.getNachVorname() + ")";
 		addToWikiField("user", text);
+	}
+
+	/**
+	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 * @throws DAOException 
+	 * @throws SwapException 
+	 */
+	public void createProcessDirs() throws SwapException, DAOException, IOException, InterruptedException {
+		
+		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+		
+		for(String processDir : processDirs) {
+			
+			FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(), processDir.replace("(processtitle)", this.getTitel())));
+		}
+			
 	}
 
 }
