@@ -1014,22 +1014,19 @@ public class Prozess implements Serializable {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) throws IOException {
+	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
-		File temporaryAnchorFile;
-
-		String directoryPath = temporaryFile.getParentFile().getPath();
-		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
-
-		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
-
-		if (temporaryAnchorFile.exists()) {
-			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
-
-			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
-			anchorFileName = directoryPath + File.separator + anchorFileName;
-
-			FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+		File directoryPath = new File(temporaryFile.getParentFile().getPath());
+		for (File temporaryAnchorFile : directoryPath.listFiles()) {
+			String temporaryAnchorFileName = temporaryAnchorFile.toString();
+			if (temporaryAnchorFile.isFile()
+					&& FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
+				String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+						temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
+				temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+						temporaryAnchorFileName);
+				FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+			}
 		}
 	}
 
@@ -1069,7 +1066,7 @@ public class Prozess implements Serializable {
 		if (backupCondition) {
 			createBackupFile();
 			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
-			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
+			removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
 		}
 	}
 	
