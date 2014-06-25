@@ -56,94 +56,109 @@ import ugh.fileformats.opac.PicaPlus;
 import com.googlecode.fascinator.redbox.sru.SRUClient;
 
 public class SRUHelper {
-    private static final Namespace SRW = Namespace.getNamespace("srw", "http://www.loc.gov/zing/srw/");
+	private static final Namespace SRW = Namespace.getNamespace("srw",
+			"http://www.loc.gov/zing/srw/");
 
-    private static final Namespace PICA = Namespace.getNamespace("pica", "info:srw/schema/5/picaXML-v1.0");
+	private static final Namespace PICA = Namespace.getNamespace("pica",
+			"info:srw/schema/5/picaXML-v1.0");
 
-    // private static final Namespace DC = Namespace.getNamespace("dc", "http://purl.org/dc/elements/1.1/");
-    // private static final Namespace DIAG = Namespace.getNamespace("diag", "http://www.loc.gov/zing/srw/diagnostic/");
-    // private static final Namespace XCQL = Namespace.getNamespace("xcql", "http://www.loc.gov/zing/cql/xcql/");
+	// private static final Namespace DC = Namespace.getNamespace("dc",
+	// "http://purl.org/dc/elements/1.1/");
+	// private static final Namespace DIAG = Namespace.getNamespace("diag",
+	// "http://www.loc.gov/zing/srw/diagnostic/");
+	// private static final Namespace XCQL = Namespace.getNamespace("xcql",
+	// "http://www.loc.gov/zing/cql/xcql/");
 
-    public static String search(String ppn, String address) {
-        SRUClient client;
-        try {
-            client = new SRUClient("http://"+address, "picaxml", null, null);
-            return client.getSearchResponse("pica.ppn=" + ppn);
-        } catch (MalformedURLException e) {
-        }
-        return "";
-    }
-    
-    
-    public static Node parseResult(String resultString) throws IOException, JDOMException, ParserConfigurationException {
+	public static String search(String ppn, String address) {
+		SRUClient client;
+		try {
+			client = new SRUClient("http://" + address, "picaxml", null, null);
+			return client.getSearchResponse("pica.ppn=" + ppn);
+		} catch (MalformedURLException e) {
+		}
+		return "";
+	}
 
-        // removed validation against external dtd
-        SAXBuilder builder = new SAXBuilder(false);
-        builder.setValidation(false);
-        builder.setFeature("http://xml.org/sax/features/validation", false);
-        builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-        builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+	public static Node parseResult(String resultString) throws IOException,
+			JDOMException, ParserConfigurationException {
 
-        Document doc = builder.build(new StringReader(resultString));
-        // srw:searchRetrieveResponse
-        Element root = doc.getRootElement();
-        // <srw:records>
-        Element srw_records = root.getChild("records", SRW);
-        // <srw:record>
-        Element srw_record = srw_records.getChild("record", SRW);
-        // <srw:recordData>
-        if (srw_record != null) {
-            Element recordData = srw_record.getChild("recordData", SRW);
-            Element record = recordData.getChild("record", PICA);
+		// removed validation against external dtd
+		SAXBuilder builder = new SAXBuilder(false);
+		builder.setValidation(false);
+		builder.setFeature("http://xml.org/sax/features/validation", false);
+		builder.setFeature(
+				"http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+				false);
+		builder.setFeature(
+				"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+				false);
 
-            // generate an answer document
-            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-            org.w3c.dom.Document answer = docBuilder.newDocument();
-            org.w3c.dom.Element collection = answer.createElement("collection");
-            answer.appendChild(collection);
+		Document doc = builder.build(new StringReader(resultString));
+		// srw:searchRetrieveResponse
+		Element root = doc.getRootElement();
+		// <srw:records>
+		Element srw_records = root.getChild("records", SRW);
+		// <srw:record>
+		Element srw_record = srw_records.getChild("record", SRW);
+		// <srw:recordData>
+		if (srw_record != null) {
+			Element recordData = srw_record.getChild("recordData", SRW);
+			Element record = recordData.getChild("record", PICA);
 
-            org.w3c.dom.Element picaRecord = answer.createElement("record");
-            collection.appendChild(picaRecord);
+			// generate an answer document
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			org.w3c.dom.Document answer = docBuilder.newDocument();
+			org.w3c.dom.Element collection = answer.createElement("collection");
+			answer.appendChild(collection);
 
-            @SuppressWarnings("unchecked")
-            List<Element> data = record.getChildren();
-            for (Element datafield : data) {
-                if (datafield.getAttributeValue("tag") != null) {
-                    org.w3c.dom.Element field = answer.createElement("field");
-                    picaRecord.appendChild(field);
-                    if (datafield.getAttributeValue("occurrence") != null) {
-                        field.setAttribute("occurrence", datafield.getAttributeValue("occurrence"));
-                    }
-                    field.setAttribute("tag", datafield.getAttributeValue("tag"));
-                    @SuppressWarnings("unchecked")
-                    List<Element> subfields = datafield.getChildren();
-                    for (Element sub : subfields) {
-                        org.w3c.dom.Element subfield = answer.createElement("subfield");
-                        field.appendChild(subfield);
-                        subfield.setAttribute("code", sub.getAttributeValue("code"));
-                        Text text = answer.createTextNode(sub.getText());
-                        subfield.appendChild(text);
-                    }
-                }
-            }
-            return answer.getDocumentElement();
-        }
-        return null;
-    }
+			org.w3c.dom.Element picaRecord = answer.createElement("record");
+			collection.appendChild(picaRecord);
 
-    public static Fileformat parsePicaFormat(Node pica, Prefs prefs) throws ReadException, PreferencesException, TypeNotAllowedForParentException {
+			@SuppressWarnings("unchecked")
+			List<Element> data = record.getChildren();
+			for (Element datafield : data) {
+				if (datafield.getAttributeValue("tag") != null) {
+					org.w3c.dom.Element field = answer.createElement("field");
+					picaRecord.appendChild(field);
+					if (datafield.getAttributeValue("occurrence") != null) {
+						field.setAttribute("occurrence",
+								datafield.getAttributeValue("occurrence"));
+					}
+					field.setAttribute("tag",
+							datafield.getAttributeValue("tag"));
+					@SuppressWarnings("unchecked")
+					List<Element> subfields = datafield.getChildren();
+					for (Element sub : subfields) {
+						org.w3c.dom.Element subfield = answer
+								.createElement("subfield");
+						field.appendChild(subfield);
+						subfield.setAttribute("code",
+								sub.getAttributeValue("code"));
+						Text text = answer.createTextNode(sub.getText());
+						subfield.appendChild(text);
+					}
+				}
+			}
+			return answer.getDocumentElement();
+		}
+		return null;
+	}
 
-        PicaPlus pp = new PicaPlus(prefs);
-        pp.read(pica);
-        DigitalDocument dd = pp.getDigitalDocument();
-        Fileformat ff = new XStream(prefs);
-        ff.setDigitalDocument(dd);
-        /* BoundBook hinzufügen */
-        DocStructType dst = prefs.getDocStrctTypeByName("BoundBook");
-        DocStruct dsBoundBook = dd.createDocStruct(dst);
-        dd.setPhysicalDocStruct(dsBoundBook);
-        return ff;
+	public static Fileformat parsePicaFormat(Node pica, Prefs prefs)
+			throws ReadException, PreferencesException,
+			TypeNotAllowedForParentException {
 
-    }
+		PicaPlus pp = new PicaPlus(prefs);
+		pp.read(pica);
+		DigitalDocument dd = pp.getDigitalDocument();
+		Fileformat ff = new XStream(prefs);
+		ff.setDigitalDocument(dd);
+		/* BoundBook hinzufügen */
+		DocStructType dst = prefs.getDocStrctTypeByName("BoundBook");
+		DocStruct dsBoundBook = dd.createDocStruct(dst);
+		dd.setPhysicalDocStruct(dsBoundBook);
+		return ff;
+
+	}
 }
