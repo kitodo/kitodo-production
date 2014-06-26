@@ -164,8 +164,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 						return;
 					}
 					process = processesIterator.next();
-					Integer processesYear = Integer
-							.valueOf(getYear(process.getDigitalDocument().getLogicalDocStruct()));
+					Integer processesYear = Integer.valueOf(getYear(process.getDigitalDocument()));
 					if (!collectedYears.containsKey(processesYear))
 						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
 					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
@@ -214,8 +213,8 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * @throws ReadException
 	 *             if one of the preconditions fails
 	 */
-	private static int getYear(DocStruct topLevel) throws ReadException {
-		List<DocStruct> children = topLevel.getAllChildren();
+	private static int getYear(DigitalDocument act) throws ReadException {
+		List<DocStruct> children = act.getLogicalDocStruct().getAllChildren();
 		if (children == null)
 			throw new ReadException(
 					"Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of type "
@@ -331,12 +330,13 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		List<LocalDate> result = new LinkedList<LocalDate>();
 		DocStruct logicalDocStruct = act.getLogicalDocStruct();
 		for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
-			int year = getMetadataIntValueByName(annualNode, METADATA_ELEMENT_YEAR);
+			int year = getMetadataIntValueByName(annualNode, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
 			for (DocStruct monthNode : skipIfNull(annualNode.getAllChildren())) {
-				int monthOfYear = getMetadataIntValueByName(monthNode, METADATA_ELEMENT_MONTH);
+				int monthOfYear = getMetadataIntValueByName(monthNode,
+						MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE);
 				for (DocStruct dayNode : skipIfNull(monthNode.getAllChildren())) {
 					LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
-							METADATA_ELEMENT_DAY));
+							MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
 					for (@SuppressWarnings("unused")
 					DocStruct entry : skipIfNull(dayNode.getAllChildren()))
 						result.add(appeared);
@@ -446,12 +446,13 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		MetsModsImportExport result = new MetsModsImportExport(ruleSet);
 		((MetsMods) result).read(process.getMetadataFilePath());
 
-		DocStruct logicalStructure = result.getDigitalDocument().getLogicalDocStruct();
-		int ownYear = getYear(logicalStructure);
+		DigitalDocument caudexDigitalis = result.getDigitalDocument();
+		int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
+				.next(), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
 		String ownMetsPointerURL = getMetsPointerURL(process);
 
-		insertReferencesToYears(logicalStructure, years, ruleSet);
-		insertReferencesToOtherIssuesInThisYear(logicalStructure, issues, ownYear, ownMetsPointerURL, ruleSet);
+		insertReferencesToYears(years, caudexDigitalis, ruleSet);
+		insertReferencesToOtherIssuesInThisYear(issues, ownYear, ownMetsPointerURL, caudexDigitalis, ruleSet);
 		return result;
 	}
 
@@ -460,7 +461,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * all years into the logical hierarchy of the document. For all but the
 	 * current year, an additional child node will be created.
 	 * 
-	 * @param yearLevel
+	 * @param act
 	 *            level of the logical document structure tree that holds years
 	 *            (that is the top level)
 	 * @param years
@@ -477,11 +478,11 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static void insertReferencesToYears(DocStruct yearLevel, HashMap<Integer, String> years, Prefs ruleSet)
+	private static void insertReferencesToYears(HashMap<Integer, String> years, DigitalDocument act, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		for (Integer year : years.keySet()) {
-			DocStruct child = getOrCreateChild(yearLevel, METADATA_ELEMENT_YEAR,
-					MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, ruleSet);
+			DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR,
+					MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, act, ruleSet);
 			child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
 		}
 	}
@@ -519,13 +520,12 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             member of this instance's DocStruct type
 	 */
 	private static DocStruct getOrCreateChild(DocStruct parent, String type, String identifierField, String identifier,
-			String optionalField, Prefs ruleset) throws TypeNotAllowedForParentException,
+			String optionalField, DigitalDocument act, Prefs ruleset) throws TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
-
 		try {
 			return parent.getChild(type, identifierField, identifier);
 		} catch (NoSuchElementException nose) {
-			DocStruct child = parent.createChild(type, ruleset);
+			DocStruct child = parent.createChild(type, act, ruleset);
 			child.addMetadata(identifierField, identifier);
 			if (optionalField != null)
 				child.addMetadata(optionalField, identifier);
@@ -539,13 +539,13 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * year as this process contains data for, but which are contained in other
 	 * processes, into the logical document hierarchy of this process.
 	 * 
-	 * @param hierarchy
-	 *            the root of the logical document hierarchy to modify
 	 * @param issues
+	 *            the root of the logical document hierarchy to modify
+	 * @param ownYear
 	 *            a map of all issue dates along with their pointer URLs
-	 * @param currentYear
-	 *            the current year—issues of other years are skipped
 	 * @param ownMetsPointerURL
+	 *            the current year—issues of other years are skipped
+	 * @param caudexDigitalis
 	 *            my own METS pointer URL—issues that share the same URL are
 	 *            also skipped
 	 * @param ruleSet
@@ -560,12 +560,12 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             allow the MetadataType or if the maximum number of Metadata
 	 *             (of this type) is already available
 	 */
-	private static void insertReferencesToOtherIssuesInThisYear(DocStruct hierarchy,
-			ArrayListMap<LocalDate, String> issues, int currentYear, String ownMetsPointerURL, Prefs ruleSet)
+	private static void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
+			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		for (int i = 0; i < issues.size(); i++)
 			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL))
-				insertIssueReference(hierarchy, ruleSet, issues.getKey(i), issues.getValue(i));
+				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
 		return;
 	}
 
@@ -591,17 +591,17 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static void insertIssueReference(DocStruct topLevel, Prefs ruleset, LocalDate date, String metsPointerURL)
+	private static void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-		DocStruct year = getOrCreateChild(topLevel, METADATA_ELEMENT_YEAR,
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, ruleset);
+		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR,
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, act, ruleset);
 		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH,
-				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, ruleset);
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
 		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY,
-				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, ruleset);
-		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, ruleset);
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
+		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, act, ruleset);
 		issue.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
 	}
 

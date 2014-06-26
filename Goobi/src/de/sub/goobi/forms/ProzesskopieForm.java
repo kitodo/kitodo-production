@@ -82,6 +82,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.Benutzer;
@@ -806,6 +807,28 @@ public class ProzesskopieForm {
 		 * diese ergänzen 
 		 * --------------------------------*/
 		if (this.myRdf != null) {
+
+			// there must be at least one non-anchor level doc struct
+			// if missing, insert logical doc structs until you reach it
+			DocStruct populizer = null;
+			try {
+				populizer = myRdf.getDigitalDocument().getLogicalDocStruct();
+				if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
+					Prefs ruleset = prozessKopie.getRegelsatz().getPreferences();
+					while (populizer.getType().getAnchorClass() != null)
+						populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
+								myRdf.getDigitalDocument(), ruleset);
+				}
+			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
+						.getType().getName());
+			} catch (IndexOutOfBoundsException e) { // if getAllAllowedDocStructTypes() returns empty list
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
+						.getType().getName());
+			} catch (UGHException catchAll) {
+				Helper.setFehlerMeldung(catchAll.getMessage());
+			}
+
 			for (AdditionalField field : this.additionalFields) {
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
 					/* welches Docstruct */
