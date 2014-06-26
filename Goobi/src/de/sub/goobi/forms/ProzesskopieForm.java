@@ -817,7 +817,7 @@ public class ProzesskopieForm {
 					Prefs ruleset = prozessKopie.getRegelsatz().getPreferences();
 					while (populizer.getType().getAnchorClass() != null)
 						populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
-								ruleset);
+								myRdf.getDigitalDocument(), ruleset);
 				}
 			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
 				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
