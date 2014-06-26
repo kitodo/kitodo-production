@@ -682,7 +682,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	* @return the opac catalogue
 	*/	
-	public String getOpacCatalogue() {
+	private String getOpacCatalogue() {
 		return this.opacCatalogue;
 	}
 	
@@ -697,7 +697,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	* @return the goobi config directory
 	*/	
-	public String getGoobiConfigDirectory() {
+	private String getGoobiConfigDirectory() {
 		return configDir ;
 	}	
 	
@@ -705,7 +705,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	* @return the address of the opac catalogue
 	* @throws XPathExpressionException 
 	*/	
-	public String getOpacAddress() throws XPathExpressionException {
+	private String getOpacAddress() throws XPathExpressionException {
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
