@@ -29,6 +29,8 @@ package org.goobi.production.plugin.interfaces;
 import java.io.File;
 import java.util.List;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
@@ -36,7 +38,6 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
 
 import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 
@@ -46,13 +47,13 @@ public interface IImportPlugin extends IPlugin {
 	
 	public void setData(Record r);
 	
-	public Fileformat convertData() throws ImportPluginException;
+	public Fileformat convertData() throws ImportPluginException, XPathExpressionException;
 	
 	public String getImportFolder();
 	
 	public String getProcessTitle();
 
-	public List<ImportObject> generateFiles(List<Record> records);
+	public List<ImportObject> generateFiles(List<Record> records) throws XPathExpressionException;
 	
 	public void setImportFolder(String folder);
 	
@@ -85,4 +86,8 @@ public interface IImportPlugin extends IPlugin {
 	public DocstructElement getDocstruct();
 	
 	public void setDocstruct(DocstructElement dse);
+	
+	public void setOpacCatalogue(String opacCatalogue);
+
+	public void setGoobiConfigDirectory(String configDir);	
 }
