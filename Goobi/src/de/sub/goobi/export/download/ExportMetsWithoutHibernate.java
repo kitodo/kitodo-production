@@ -216,7 +216,7 @@ public class ExportMetsWithoutHibernate {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setFehlerMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
 				dd = null;
 				return false;
 			}

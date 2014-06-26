@@ -218,7 +218,7 @@ public class ExportMets {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setFehlerMeldung(myProzess.getTitel() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(myProzess.getTitel() + ": could not find any referenced images, export aborted");
 				dd = null;
 				return false;
 			}

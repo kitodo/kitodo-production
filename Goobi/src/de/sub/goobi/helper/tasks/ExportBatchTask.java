@@ -142,7 +142,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		collectedYears = new HashMap<Integer, String>();
 		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
-		divisor = GAUGE_INCREMENT_PER_ACTION / batch.getProcesses().size();
+		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
 	}
 
 	/**
@@ -189,6 +189,8 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 							process, LoginForm.getCurrentUserHomeDir(), extendedData);
 					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
+
+			setStatusMessage("done");
 
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
