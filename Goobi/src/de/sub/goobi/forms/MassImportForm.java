@@ -594,7 +594,6 @@ public class MassImportForm {
 		try {
 			return ConfigOpac.getAllCatalogueTitles();
 		} catch (Throwable t) {
-			// myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config",
 					t.getMessage());
 			return new ArrayList<String>();
