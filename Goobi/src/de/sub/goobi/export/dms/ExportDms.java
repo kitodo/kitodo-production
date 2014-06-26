@@ -279,10 +279,10 @@ public class ExportDms extends ExportMets {
 
 			Helper.setMeldung(null, myProzess.getTitel() + ": ",
 					"DMS-Export started");
+			if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 			DmsImportThread agoraThread = new DmsImportThread(myProzess,
 					atsPpnBand);
 			agoraThread.start();
-			if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 				try {
 					/* 30 Sekunden auf den Thread warten, evtl. killen */
 					agoraThread.join(myProzess.getProjekt()
