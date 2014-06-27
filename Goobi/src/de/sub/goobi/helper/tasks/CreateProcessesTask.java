@@ -201,6 +201,7 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 			setStatusProgress(100);
 			setStatusMessage("done");
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
+			logger.error(e);
 			setStatusMessage(e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
 					+ e.getMessage());
