@@ -196,7 +196,7 @@ public class ExportMetsWithoutHibernate {
 		 * get the topstruct element of the digital document depending on anchor property
 		 */
 		DocStruct topElement = dd.getLogicalDocStruct();
-		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
+		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
 				throw new PreferencesException(process.getTitle()
 						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
@@ -216,7 +216,7 @@ public class ExportMetsWithoutHibernate {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setFehlerMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
 				dd = null;
 				return false;
 			}

@@ -259,7 +259,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	private void checkDocStructsOhneSeiten(DocStruct inStruct) {
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+		if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
 			this.docStructsOhneSeiten.add(inStruct);
 		}
 		/* alle Kinder des aktuellen DocStructs durchlaufen */
@@ -542,7 +542,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	
 	public boolean validateIdentifier(DocStruct uppermostStruct) {
 		
-		if (uppermostStruct.getType().isAnchor()) {
+		if (uppermostStruct.getType().getAnchorClass() != null) {
 			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 
 			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {

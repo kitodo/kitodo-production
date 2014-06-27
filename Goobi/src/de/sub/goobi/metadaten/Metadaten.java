@@ -1257,7 +1257,7 @@ public class Metadaten {
 
 		// added new
 		DocStruct log = this.mydocument.getLogicalDocStruct();
-		if (log.getType().isAnchor()) {
+		if (log.getType().getAnchorClass() != null) {
 			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
 				log = log.getAllChildren().get(0);
 			} else {

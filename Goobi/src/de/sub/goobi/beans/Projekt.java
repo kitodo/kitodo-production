@@ -61,6 +61,15 @@ import de.sub.goobi.helper.enums.MetadataFormat;
 // referenced as "fieldConfig" here, not "field" as one might expect.
 public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
+
+	/**
+	 * The constant ANCHOR_SEPARATOR holds the character U+00A6
+	 * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
+	 * if several of them are needed in one project. The anchors must then be
+	 * listed the hierarchical order they have to be applied, that is the
+	 * topmost anchor in first place, followed by the second one and so on.
+	 */
+	public static final String ANCHOR_SEPARATOR = "\u00A6";
 	private Integer id;
 	private String titel;
 	private Set<Benutzer> benutzer;
