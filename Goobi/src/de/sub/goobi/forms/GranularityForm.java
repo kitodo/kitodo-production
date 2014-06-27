@@ -41,7 +41,10 @@ package de.sub.goobi.forms;
 // import javax.faces.bean.ManagedProperty;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +70,8 @@ import de.sub.goobi.helper.tasks.LongRunningTaskManager;
  */
 public class GranularityForm {
 	private static final Logger logger = Logger.getLogger(GranularityForm.class);
+
+	protected Granularity generateBatches;
 
 	/**
 	 * The field granularity holds the granularity chosen by the user. It is
@@ -128,8 +133,9 @@ public class GranularityForm {
 	 */
 	public String createProcessesClick() {
 		ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
-		if (!prozesskopieForm.isContentValid(false))
+		if (!prozesskopieForm.isContentValid(false)) {
 			return ProzesskopieForm.NAVI_FIRST_PAGE;
+		}
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
 		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses());
@@ -164,6 +170,44 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getBatchOptions() returns the granularity levels available
+	 * to summarize the processes to create in batches along with their verbal
+	 * description to be shown to the user. The available values depend on the
+	 * granularity value of the global variable &ldquo;granularity&rdquo;: Only
+	 * granularity values <i>broader than</i> the chosen option are available.
+	 * If the year level is chosen, or if &ldquo;granularity&rdquo; isn&rsquo;t
+	 * set, only the null value, indicating the function is in &ldquo;off&rdquo;
+	 * state, is returned along with a verbal description of the cause.
+	 * 
+	 * @return the granularity level chosen by the user
+	 */
+	@SuppressWarnings("incomplete-switch")
+	public List<SelectItem> getBatchOptions() {
+		List<SelectItem> result = new ArrayList<SelectItem>();
+		if (granularity == null) {
+			result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.noData")));
+		} else if (granularity == Granularity.YEARS) {
+			result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.notAvailable")));
+		} else {
+			result.add(new SelectItem("null", Helper.getTranslation("granularity.null")));
+			switch (granularity) {
+			case ISSUES:
+				result.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
+			case DAYS:
+				result.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
+			case WEEKS:
+				result.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
+			case MONTHS:
+				result.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
+			case QUARTERS:
+				result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * The function getGranularity() returns the granularity level chosen by the
 	 * user in lower case as read-only property “granularity”. If there are no
 	 * processes—indicating that the user didn’t choose anything yet or didn’t
@@ -175,8 +219,9 @@ public class GranularityForm {
 	 * @return the granularity level chosen by the user
 	 */
 	public String getGranularity() {
-		if (granularity == null)
+		if (granularity == null) {
 			return course.getNumberOfProcesses() == 0 ? "null" : "foreign";
+		}
 		return granularity.toString().toLowerCase();
 	}
 
@@ -211,10 +256,11 @@ public class GranularityForm {
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public Long getNumberOfPagesOptionallyGuessed() {
-		if (numberOfPages == null)
+		if (numberOfPages == null) {
 			return course.guessTotalNumberOfPages();
-		else
+		} else {
 			return numberOfPages;
+		}
 	}
 
 	/**
@@ -226,9 +272,20 @@ public class GranularityForm {
 	 * @return the number of processes that will be created
 	 */
 	public int getNumberOfProcesses() {
-		if (course.getNumberOfProcesses() == 0 && granularity != null)
+		if (course.getNumberOfProcesses() == 0 && granularity != null) {
 			course.splitInto(granularity);
+		}
 		return course.getNumberOfProcesses();
+	}
+
+	/**
+	 * The function getSelectedBatchOption() returns the level for which batches
+	 * will be created as read-write property “numberOfPagesOptionallyGuessed”
+	 * 
+	 * @return an (optionally guessed) total number of pages
+	 */
+	public String getSelectedBatchOption() {
+		return String.valueOf(generateBatches).toLowerCase();
 	}
 
 	/**
@@ -262,6 +319,17 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The method setCourse() is called by JSF to inject the course data model
+	 * into the form. This behaviour is configured in faces-config.xml
+	 * 
+	 * @param course
+	 *            Course of appearance data model to be used
+	 */
+	public void setCourse(Course course) {
+		this.course = course;
+	}
+
+	/**
 	 * The procedure setNumberOfPages() is called by Faces on postbacks to save
 	 * the received value of the read-write property “numberOfPages”.
 	 * 
@@ -273,14 +341,18 @@ public class GranularityForm {
 	}
 
 	/**
-	 * The method setCourse() is called by JSF to inject the course data model
-	 * into the form. This behaviour is configured in faces-config.xml
+	 * The procedure setSelectedBatchOption() is called by Faces on postbacks to
+	 * save the received value of the read-write property “selectedBatchOption”
 	 * 
-	 * @param course
-	 *            Course of appearance data model to be used
+	 * @param option
+	 *            Granularity level for which batches will be created
 	 */
-	public void setCourse(Course course) {
-		this.course = course;
+	public void setSelectedBatchOption(String option) {
+		try {
+			generateBatches = Granularity.valueOf(option.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			generateBatches = null;
+		}
 	}
 
 	/**
