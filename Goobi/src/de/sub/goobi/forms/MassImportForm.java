@@ -41,8 +41,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.xpath.XPathExpressionException;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -239,7 +237,7 @@ public class MassImportForm {
 		this.selectedFilenames = selectedFilenames;
 	}
 
-	public String convertData() throws XPathExpressionException {
+	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
 		if (StringUtils.isEmpty(currentPlugin)) {
 			Helper.setFehlerMeldung("missingPlugin");
