@@ -47,13 +47,13 @@ public interface IImportPlugin extends IPlugin {
 	
 	public void setData(Record r);
 	
-	public Fileformat convertData() throws ImportPluginException, XPathExpressionException;
+	public Fileformat convertData() throws ImportPluginException;
 	
 	public String getImportFolder();
 	
 	public String getProcessTitle();
 
-	public List<ImportObject> generateFiles(List<Record> records) throws XPathExpressionException;
+	public List<ImportObject> generateFiles(List<Record> records);
 	
 	public void setImportFolder(String folder);
 	

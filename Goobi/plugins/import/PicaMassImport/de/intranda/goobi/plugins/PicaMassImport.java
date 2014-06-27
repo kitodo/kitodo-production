@@ -146,7 +146,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 	@Override
-	public Fileformat convertData() throws ImportPluginException, XPathExpressionException {
+	public Fileformat convertData() throws ImportPluginException {
 
 		currentIdentifier = data;
 
@@ -360,7 +360,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 	@Override
-	public List<ImportObject> generateFiles(List<Record> records) throws XPathExpressionException {
+	public List<ImportObject> generateFiles(List<Record> records){
 		List<ImportObject> answer = new ArrayList<ImportObject>();
 
 		for (Record r : records) {
@@ -703,36 +703,39 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	
 	/**
 	* @return the address of the opac catalogue
-	* @throws XPathExpressionException 
+	* @throws ImportPluginException 
 	*/	
-	private String getOpacAddress() throws XPathExpressionException {
+	private String getOpacAddress() throws ImportPluginException {
 		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		
-		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();  
-		}
-		
-		Document xmlDocument = null;
+		String address = "";
 		
 		try {
-
-			xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
 			
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			Document xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
+			
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			
+			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);	
+
+			address = node.getAttributes().getNamedItem("address").getNodeValue();
+
+		} catch (ParserConfigurationException e) {
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
 		} catch (SAXException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error( e.getMessage(), e);
+			throw new ImportPluginException(e);
+		} catch (XPathExpressionException e) {
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
 		}
-		
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		
-		Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);	
-		
-		String address = node.getAttributes().getNamedItem("address").getNodeValue();
 		
 		return address;
 	}	
