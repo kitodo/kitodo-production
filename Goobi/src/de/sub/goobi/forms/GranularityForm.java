@@ -138,7 +138,8 @@ public class GranularityForm {
 		}
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
-		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses());
+		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
+				generateBatches);
 		LongRunningTaskManager.getInstance().addTask(createProcesses);
 		return "taskmanager";
 	}
