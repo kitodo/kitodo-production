@@ -75,12 +75,12 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 import de.intranda.goobi.plugins.sru.SRUHelper;
-
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
+import org.goobi.production.plugin.ImportPlugin.PicaMassImport.*;
 
 @PluginImplementation
 public class PicaMassImport implements IImportPlugin, IPlugin {
@@ -94,8 +94,11 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	private Prefs prefs;
 	private String currentIdentifier;
 	private List<String> currentCollectionList;
+	private String opacCatalogue;
+	private static String configDir;
+	private static String tempDir;
 	private static final String PPN_PATTERN = "\\d+X?";
-
+	
 	protected String ats;
 	protected List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
 	protected List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
@@ -139,9 +142,11 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	public Fileformat convertData() throws ImportPluginException {
 
 		currentIdentifier = data;
+		
+		ConfigOpacCatalogue coc = ConfigOpac.getCatalogueByName(this.getOpacCatalogue());
 
-		logger.debug("retrieving pica record for " + currentIdentifier);
-		String search = SRUHelper.search(currentIdentifier);
+		logger.debug("retrieving pica record for " + currentIdentifier + " with server address: " + coc.getAddress());
+		String search = SRUHelper.search(currentIdentifier, coc.getAddress());
 		logger.trace(search);
 		try {
 			Node pica = SRUHelper.parseResult(search);
@@ -660,4 +665,49 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
 	}
+
+	/**
+	 * @param the opac catalogue
+	 */	
+	@Override
+	public void setOpacCatalogue(String opacCatalogue) {
+		this.opacCatalogue = opacCatalogue ;
+	}
+	
+	/**
+	 * @return the opac catalogue
+	 */	
+	public String getOpacCatalogue() {
+		return this.opacCatalogue;
+	}
+	
+	/**
+	 * @param the goobi config directory
+	 */		
+	@Override
+	public void setGoobiConfigDirectory(String configDir) {
+		PicaMassImport.configDir = configDir ;
+	}
+
+	/**
+	 * @return the goobi config directory
+	 */	
+	public static String getGoobiConfigDirectory() {
+		return configDir ;
+	}
+
+	/**
+	 * @param the temp/debug folder
+	 */	
+	@Override
+	public void setTempDir(String tempDir) {
+		PicaMassImport.tempDir = tempDir ;
+	}
+
+	/**
+	 * @return the temp/debug folder
+	 */	
+	public static String getTempDir() {
+		return tempDir ;
+	}	
 }
