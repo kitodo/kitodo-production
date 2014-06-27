@@ -71,15 +71,21 @@
 		</navigation-case>
 	</navigation-rule>
 	
-  <!-- Taskmanager -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>taskmanager</from-outcome>
-      <to-view-id>/newpages/taskmanager.jsp</to-view-id>
-    </navigation-case>
-  </navigation-rule>
+	<!-- Taskmanager -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>taskmanager</from-outcome>
+			<to-view-id>/newpages/taskmanager.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
-
+	<!-- Modulemanager -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>modulemanager</from-outcome>
+			<to-view-id>/newpages/modulemanager.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 		<!-- Bearbeitung von Benutzern -->
 	<navigation-rule>

@@ -44,24 +44,22 @@ public class NavigationForm {
 	}
 	
 	public String JeniaPopupCloseAction(){       
-       return "jeniaClosePopupFrameWithAction";
-	}    
-    
-    public String BenutzerBearbeiten(){
-        return "BenutzerBearbeiten";
-    }
-    
+		return "jeniaClosePopupFrameWithAction";
+	}
 
-    /**
-     * 
-     * @return true if show_taskmanager in file goobi_config.properties is =true
-     */
-    public Boolean getShowTaskManager(){
-    	return ConfigMain.getBooleanParameter("show_taskmanager", false);	
-    }
-    
-    public Boolean getShowModuleManager(){
-    	return ConfigMain.getBooleanParameter("show_modulmanager", false);	
-    }
-    
+	public String BenutzerBearbeiten(){
+		return "BenutzerBearbeiten";
+	}
+
+	/**
+	* 
+	* @return true if show_taskmanager in file goobi_config.properties is =true
+	*/
+	public Boolean getShowTaskManager(){
+		return ConfigMain.getBooleanParameter("show_taskmanager", false);	
+	}
+
+	public Boolean getShowModuleManager(){
+		return ConfigMain.getBooleanParameter("show_modulemanager", false);	
+	}
 }
