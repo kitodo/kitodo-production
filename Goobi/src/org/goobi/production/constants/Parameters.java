@@ -110,4 +110,13 @@ public class Parameters {
 	 * temporary files.
 	 */
 	public static final String PLUGIN_TEMP_DIR = "debugFolder";
+
+	/**
+	 * Boolean. Set to true to enable the feature of automatic meta data
+	 * inheritance and enrichment. If this is enabled, all meta data elements
+	 * from a higher level of the logical document structure are automatically
+	 * inherited and lower levels are enriched with them upon process creation,
+	 * given they have the same meta data type addable. Defaults to false.
+	 */
+	public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
 }
