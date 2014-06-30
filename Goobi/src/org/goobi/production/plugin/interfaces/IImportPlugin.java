@@ -29,8 +29,6 @@ package org.goobi.production.plugin.interfaces;
 import java.io.File;
 import java.util.List;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
