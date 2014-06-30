@@ -818,54 +818,9 @@ public class ProzesskopieForm {
 				populizer = myRdf.getDigitalDocument().getLogicalDocStruct();
 				if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
 					Prefs ruleset = prozessKopie.getRegelsatz().getPreferences();
-					Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
 					while (populizer.getType().getAnchorClass() != null) {
-
-						if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
-							// save higher level metadata for lower enrichment
-							for (Metadata available : populizer.getAllMetadata()) {
-								try {
-									Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(available
-											.getType().getName()) ? higherLevelMetadata.get(available.getType()
-											.getName()) : new HashMap<String, Metadata>();
-									if (!availableMetadata.containsKey(available.getValue())) {
-										availableMetadata.put(available.getValue(), available);
-									}
-									higherLevelMetadata.put(available.getType().getName(), availableMetadata);
-								} catch (NullPointerException preconditionNotFulfilled) {
-									myLogger.debug(preconditionNotFulfilled);
-								}
-							}
-						}
-
 						populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
 								myRdf.getDigitalDocument(), ruleset);
-
-						// enrich element with inherited metadata
-						for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
-								.entrySet()) {
-							String enrichable = availableHigherMetadata.getKey();
-							boolean addable = false;
-							for (MetadataType addableMetadata : populizer.getAddableMetadataTypes()) {
-								if (addableMetadata.getName().equals(enrichable)) {
-									addable = true;
-									break;
-								}
-							}
-							if (!addable) {
-								continue;
-							}
-							there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
-									.entrySet()) {
-								for (Metadata existentMetadata : populizer.getAllMetadata()) {
-									if (existentMetadata.getType().getName().equals(enrichable)
-											&& existentMetadata.getValue().equals(higherElement.getKey())) {
-										continue there;
-									}
-								}
-								populizer.addMetadata(higherElement.getValue());
-							}
-						}
 					}
 				}
 			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
@@ -932,6 +887,63 @@ public class ProzesskopieForm {
 					}
 				} // end if ughbinding
 			}// end for
+
+			/*
+			 * -------------------------- Metadata inheritance and enrichment --------------------------
+			 */
+			if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+				DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
+				Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
+				while (enricher.getAllChildren() != null) {
+					// save higher level metadata for lower enrichment
+					for (Metadata available : enricher.getAllMetadata()) {
+						Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(available.getType()
+								.getName()) ? higherLevelMetadata.get(available.getType().getName())
+								: new HashMap<String, Metadata>();
+						if (!availableMetadata.containsKey(available.getValue())) {
+							availableMetadata.put(available.getValue(), available);
+						}
+						higherLevelMetadata.put(available.getType().getName(), availableMetadata);
+					}
+
+					// enrich children with inherited metadata
+					for (DocStruct nextChild : enricher.getAllChildren()) {
+						enricher = nextChild;
+						for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
+								.entrySet()) {
+							String enrichable = availableHigherMetadata.getKey();
+							boolean addable = false;
+							for (MetadataType addableMetadata : enricher.getAddableMetadataTypes()) {
+								if (addableMetadata.getName().equals(enrichable)) {
+									addable = true;
+									break;
+								}
+							}
+							if (!addable) {
+								continue;
+							}
+							there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
+									.entrySet()) {
+								List<Metadata> amNotNull = enricher.getAllMetadata();
+								if (amNotNull == null) {
+									amNotNull = Collections.emptyList();
+								}
+								for (Metadata existentMetadata : amNotNull) {
+									if (existentMetadata.getType().getName().equals(enrichable)
+											&& existentMetadata.getValue().equals(higherElement.getKey())) {
+										continue there;
+									}
+								}
+								try {
+									enricher.addMetadata(higherElement.getValue());
+								} catch (UGHException didNotWork) {
+									myLogger.info(didNotWork);
+								}
+							}
+						}
+					}
+				}
+			}
 
 			/*
 			 * -------------------------------- Collectionen hinzufügen --------------------------------
