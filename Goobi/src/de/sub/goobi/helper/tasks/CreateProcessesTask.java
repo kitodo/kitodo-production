@@ -129,8 +129,8 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes,
 			Granularity batchGranularity) {
 		super();
+		setTitle(Helper.getTranslation("granularity.create"));
 		this.pattern = pattern;
-		setTitle(getClass().getSimpleName());
 		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
 		this.createBatches = batchGranularity;
 		for (List<IndividualIssue> issues : processes) {
@@ -140,7 +140,6 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 		}
 		nextProcessToCreate = 0;
 		numberOfProcesses = processes.size();
-		setTitle(getClass().getSimpleName());
 	}
 
 	/**
@@ -187,7 +186,6 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 										+ "\". (Last message was: \"" + String.valueOf(Helper.getLastMessage()) + "\")");
 					}
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
-					currentTitle = null;
 				}
 				nextProcessToCreate++;
 				setStatusProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
