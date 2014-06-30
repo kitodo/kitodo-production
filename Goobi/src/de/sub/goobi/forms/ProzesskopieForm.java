@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -437,8 +438,9 @@ public class ProzesskopieForm {
 		try {
 			clearValues();
 			readProjectConfigs();
-			if (!pluginAvailableFor(opacKatalog))
+			if (!pluginAvailableFor(opacKatalog)) {
 				return "";
+			}
 
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
@@ -480,8 +482,9 @@ public class ProzesskopieForm {
 	 *         importCatalogue
 	 */
 	private boolean pluginAvailableFor(String catalogue) {
-		if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue))
+		if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
 			importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
+		}
 		if (importCatalogue == null) {
 			Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", catalogue);
 			return false;
@@ -815,9 +818,10 @@ public class ProzesskopieForm {
 				populizer = myRdf.getDigitalDocument().getLogicalDocStruct();
 				if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
 					Prefs ruleset = prozessKopie.getRegelsatz().getPreferences();
-					while (populizer.getType().getAnchorClass() != null)
+					while (populizer.getType().getAnchorClass() != null) {
 						populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
 								myRdf.getDigitalDocument(), ruleset);
+					}
 				}
 			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
 				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
@@ -883,6 +887,63 @@ public class ProzesskopieForm {
 					}
 				} // end if ughbinding
 			}// end for
+
+			/*
+			 * -------------------------- Metadata inheritance and enrichment --------------------------
+			 */
+			if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+				DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
+				Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
+				while (enricher.getAllChildren() != null) {
+					// save higher level metadata for lower enrichment
+					for (Metadata available : enricher.getAllMetadata()) {
+						Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(available.getType()
+								.getName()) ? higherLevelMetadata.get(available.getType().getName())
+								: new HashMap<String, Metadata>();
+						if (!availableMetadata.containsKey(available.getValue())) {
+							availableMetadata.put(available.getValue(), available);
+						}
+						higherLevelMetadata.put(available.getType().getName(), availableMetadata);
+					}
+
+					// enrich children with inherited metadata
+					for (DocStruct nextChild : enricher.getAllChildren()) {
+						enricher = nextChild;
+						for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
+								.entrySet()) {
+							String enrichable = availableHigherMetadata.getKey();
+							boolean addable = false;
+							for (MetadataType addableMetadata : enricher.getAddableMetadataTypes()) {
+								if (addableMetadata.getName().equals(enrichable)) {
+									addable = true;
+									break;
+								}
+							}
+							if (!addable) {
+								continue;
+							}
+							there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
+									.entrySet()) {
+								List<Metadata> amNotNull = enricher.getAllMetadata();
+								if (amNotNull == null) {
+									amNotNull = Collections.emptyList();
+								}
+								for (Metadata existentMetadata : amNotNull) {
+									if (existentMetadata.getType().getName().equals(enrichable)
+											&& existentMetadata.getValue().equals(higherElement.getKey())) {
+										continue there;
+									}
+								}
+								try {
+									enricher.addMetadata(higherElement.getValue());
+								} catch (UGHException didNotWork) {
+									myLogger.info(didNotWork);
+								}
+							}
+						}
+					}
+				}
+			}
 
 			/*
 			 * -------------------------------- Collectionen hinzufügen --------------------------------
@@ -1264,8 +1325,9 @@ public class ProzesskopieForm {
 				unknownField = false;
 			}
 		}
-		if (unknownField && strict)
+		if (unknownField && strict) {
 			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+		}
 	}
 
 	public void setAdditionalFields(List<AdditionalField> additionalFields) {
@@ -1556,8 +1618,9 @@ public class ProzesskopieForm {
 				 */
 				if (genericFields != null) {
 					String genericValue = genericFields.get(myString);
-					if (genericValue != null)
+					if (genericValue != null) {
 						newTitle += genericValue;
+					}
 				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
@@ -1773,8 +1836,9 @@ public class ProzesskopieForm {
 	 * @return a list of hits to render in the hitlist
 	 */
 	public List<SelectableHit> getHitlist() {
-		if (hitlistPage < 0)
+		if (hitlistPage < 0) {
 			return Collections.emptyList();
+		}
 		int pageSize = getPageSize();
 		List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
 		long firstHit = hitlistPage * pageSize;
