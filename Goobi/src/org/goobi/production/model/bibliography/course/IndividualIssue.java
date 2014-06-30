@@ -116,7 +116,7 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * Returns an integer which, for a given BreakMode, shall indicate for two
+	 * Returns an integer which, for a given Granularity, shall indicate for two
 	 * neighbouring individual issues whether they form the same process (break
 	 * mark is equal) or to different processes (break mark differs).
 	 * 
@@ -125,7 +125,7 @@ public class IndividualIssue {
 	 * @return an int which differs if two neighbouring individual issues belong
 	 *         to different processes
 	 */
-	int getBreakMark(Granularity mode) {
+	public int getBreakMark(Granularity mode) {
 		final int prime = 31;
 		switch (mode) {
 		case ISSUES:
@@ -254,10 +254,11 @@ public class IndividualIssue {
 	@Override
 	public String toString() {
 		try {
-			if (issue.getHeading().length() == 0)
+			if (issue.getHeading().length() == 0) {
 				return date.toString();
-			else
+			} else {
 				return date.toString() + ", " + issue.getHeading();
+			}
 		} catch (RuntimeException e) {
 			return super.toString();
 		}
@@ -300,28 +301,37 @@ public class IndividualIssue {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof IndividualIssue))
+		}
+		if (!(obj instanceof IndividualIssue)) {
 			return false;
+		}
 		IndividualIssue other = (IndividualIssue) obj;
 		if (date == null) {
-			if (other.date != null)
+			if (other.date != null) {
 				return false;
-		} else if (!date.equals(other.date))
+			}
+		} else if (!date.equals(other.date)) {
 			return false;
+		}
 		if (issue == null) {
-			if (other.issue != null)
+			if (other.issue != null) {
 				return false;
-		} else if (!issue.equals(other.issue))
+			}
+		} else if (!issue.equals(other.issue)) {
 			return false;
+		}
 		if (title == null) {
-			if (other.title != null)
+			if (other.title != null) {
 				return false;
-		} else if (!title.equals(other.title))
+			}
+		} else if (!title.equals(other.title)) {
 			return false;
+		}
 		return true;
 	}
 }

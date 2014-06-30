@@ -3,8 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t"%>
-<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi"
-	prefix="si"%>
 <%-- 
 	This file is part of the Goobi Application - a Workflow tool for the support
 	of mass digitization.
@@ -177,6 +175,16 @@
 											</htm:div>
 										</htm:fieldset>
 
+										<htm:div styleClass="granularityMainCtl">
+											<h:outputLabel for="batches"
+												value="#{msgs['granularity.batches.label']}" />
+											<t:selectOneMenu id="batches"
+												value="#{GranularityForm.selectedBatchOption}"
+												styleClass="granularityBatchOption" onchange="submit();">
+												<f:selectItems value="#{GranularityForm.batchOptions}" />
+											</t:selectOneMenu>
+										</htm:div>
+
 										<%-- Button to download course of appearance as XML --%>
 										<h:commandButton value="#{msgs['granularity.download']}"
 											action="#{GranularityForm.downloadClick}" />
@@ -248,6 +256,16 @@
 													rendered="false" styleClass="filling" />
 												<h:outputText
 													value="#{msgs[requestScope.granularityInfoKey.value]}" />
+												<h:outputText
+													value="granularity.#{GranularityForm.selectedBatchOption}"
+													binding="#{requestScope.selectedBatchOptionLabel}"
+													rendered="false" />
+												<h:outputFormat value="#{msgs['granularity.info.textbox.batches']}"
+													rendered="#{GranularityForm.selectedBatchOption ne 'null'}"
+													styleClass="filling">
+													<f:param
+														value="#{msgs[requestScope.selectedBatchOptionLabel.value]}" />
+												</h:outputFormat>
 											</htm:div>
 										</htm:div>
 									</htm:fieldset>

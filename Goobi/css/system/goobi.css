@@ -213,8 +213,12 @@
 }
 
 .granularityMainCtl {
-    margin-bottom: 45px;
+    margin-bottom: 7px;
     padding: 7px;
+}
+
+.granularityBatchOption {
+    margin-top: 4px;
 }
 
 .centerRow {

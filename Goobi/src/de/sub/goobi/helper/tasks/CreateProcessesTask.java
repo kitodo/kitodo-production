@@ -44,11 +44,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.goobi.mq.processors.CreateNewProcessProcessor;
+import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.BatchDAO;
 
@@ -59,10 +61,39 @@ import de.sub.goobi.persistence.BatchDAO;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateProcessesTask extends CloneableLongRunningTask {
-	private Batch annualBatch = new Batch();
-	private Integer annualBatchYear;
+	/**
+	 * The field batchLabel is set in addToBatches() on the first function call
+	 * which finds it to be null, and is used and set back to null in
+	 * flushLogisticsBatch() to create the batches’ specific part of the
+	 * identifier (put in parentheses behind the shared part).
+	 */
+	private String batchLabel;
 
+	/**
+	 * The field createBatches holds a granularity level that is used to create
+	 * batches out of the given processes. The field may be null which disables
+	 * the feature.
+	 */
+	private final Granularity createBatches;
+
+	/**
+	 * The field currentBreakMark holds an integer hash value which, for a given
+	 * Granularity, shall indicate for two neighboring processes whether they
+	 * form the same logistics batch (break mark is equal) or to different
+	 * processes (break mark differs).
+	 */
+	private Integer currentBreakMark;
+
+	/**
+	 * The field fullBatch holds a batch that all issues will be assigned to.
+	 */
 	private Batch fullBatch = new Batch();
+
+	/**
+	 * The field logisticsBatch holds a batch that all issues of the same
+	 * logistics unit will be assigned to.
+	 */
+	private Batch logisticsBatch = new Batch();
 
 	/**
 	 * The field nextProcessToCreate holds the index of the next process to
@@ -99,12 +130,16 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 *            a ProzesskopieForm to use for creating processes
 	 * @param processes
 	 *            a list of processes to create
+	 * @param batchGranularity
+	 *            a granularity level at which baches shall be created
 	 */
-	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes) {
+	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes,
+			Granularity batchGranularity) {
 		super();
+		setTitle(Helper.getTranslation("granularity.create"));
 		this.pattern = pattern;
-		setTitle(getClass().getSimpleName());
 		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
+		this.createBatches = batchGranularity;
 		for (List<IndividualIssue> issues : processes) {
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
 			process.addAll(issues);
@@ -112,7 +147,6 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 		}
 		nextProcessToCreate = 0;
 		numberOfProcesses = processes.size();
-		setTitle(getClass().getSimpleName());
 	}
 
 	/**
@@ -153,12 +187,10 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 						return;
 					}
 					String state = newProcess.NeuenProzessAnlegen();
-					if (!state.equals("ProzessverwaltungKopie3"))
-						throw new RuntimeException(
-								"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result \"" + state
-										+ "\".");
+					if (!state.equals("ProzessverwaltungKopie3")) {
+						throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
+					}
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
-					currentTitle = null;
 				}
 				nextProcessToCreate++;
 				setStatusProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
@@ -167,12 +199,13 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 					return;
 				}
 			}
-			flushAnnualBatch(currentTitle);
+			flushLogisticsBatch(currentTitle);
 			setStatusProgress((100 * nextProcessToCreate + 1) / (numberOfProcesses + 2));
 			saveFullBatch(currentTitle);
 			setStatusProgress(100);
 			setStatusMessage("done");
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
+			logger.error(e);
 			setStatusMessage(e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
 					+ e.getMessage());
@@ -183,45 +216,52 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 
 	/**
 	 * The method addToBatches() adds a given process to the allover and the
-	 * annual batch. If the year changes, the annual batch will be flushed and
-	 * the process will be added to a new annual batch.
+	 * annual batch. If the break mark changes, the logistics batch will be
+	 * flushed and the process will be added to a new logistics batch.
 	 * 
 	 * @param process
 	 *            process to add
 	 * @param issues
 	 *            list of individual issues in the process
-	 * @param theProcessTitle
+	 * @param processTitle
 	 *            the title of the process
 	 * @throws DAOException
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void addToBatches(Prozess process, List<IndividualIssue> issues, String theProcessTitle)
-			throws DAOException {
-		int year = issues.get(issues.size() - 1).getDate().getYear();
-		if (annualBatchYear != null && year > annualBatchYear)
-			flushAnnualBatch(theProcessTitle);
+	private void addToBatches(Prozess process, List<IndividualIssue> issues, String processTitle) throws DAOException {
+		if (createBatches != null) {
+			int lastIndex = issues.size() - 1;
+			int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
+			if (currentBreakMark != null && breakMark != currentBreakMark) {
+				flushLogisticsBatch(processTitle);
+			}
+			if (batchLabel == null) {
+				batchLabel = createBatches.format(issues.get(lastIndex).getDate());
+			}
+			logisticsBatch.add(process);
+			currentBreakMark = breakMark;
+		}
 		fullBatch.add(process);
-		annualBatch.add(process);
-		annualBatchYear = year;
 	}
 
 	/**
-	 * The method flushAnnualBatch() sets the title for the annual batch, saves
-	 * it to hibernate and then populates the global variable with a new, empty
-	 * batch.
+	 * The method flushLogisticsBatch() sets the title for the logistics batch,
+	 * saves it to hibernate and then populates the global variable with a new,
+	 * empty batch.
 	 * 
-	 * @param theProcessTitle
+	 * @param processTitle
 	 *            the title of the process
 	 * @throws DAOException
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void flushAnnualBatch(String theProcessTitle) throws DAOException {
-		annualBatch.setTitle(firstGroupFrom(theProcessTitle) + " (" + annualBatchYear + ')');
-		BatchDAO.save(annualBatch);
-		annualBatch = new Batch();
-		annualBatchYear = null;
+	private void flushLogisticsBatch(String processTitle) throws DAOException {
+		logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
+		BatchDAO.save(logisticsBatch);
+		logisticsBatch = new Batch();
+		currentBreakMark = null;
+		batchLabel = null;
 	}
 
 	/**
@@ -253,10 +293,11 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	private String firstGroupFrom(String s) {
 		final Pattern p = Pattern.compile("^[\\p{Punct}\\p{Space}]*([^\\p{Punct}]+)");
 		Matcher m = p.matcher(s);
-		if (m.find())
+		if (m.find()) {
 			return m.group(1).trim();
-		else
+		} else {
 			return s.trim();
+		}
 	}
 
 	/**
@@ -268,9 +309,10 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 */
 	@Override
 	public CloneableLongRunningTask clone() {
-		CreateProcessesTask copy = new CreateProcessesTask(pattern, processes);
-		copy.annualBatch = annualBatch;
-		copy.annualBatchYear = annualBatchYear;
+		CreateProcessesTask copy = new CreateProcessesTask(pattern, processes, createBatches);
+		copy.logisticsBatch = logisticsBatch;
+		copy.currentBreakMark = currentBreakMark;
+		copy.batchLabel = batchLabel;
 		copy.fullBatch = fullBatch;
 		copy.nextProcessToCreate = nextProcessToCreate;
 		return copy;
