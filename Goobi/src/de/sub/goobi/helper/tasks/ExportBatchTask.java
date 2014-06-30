@@ -71,6 +71,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -136,6 +137,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             be reattached either
 	 */
 	public ExportBatchTask(Batch batch) throws HibernateException {
+		setTitle(Helper.getTranslation("automatischerDmsImport"));
 		this.batch = batch;
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
@@ -165,8 +167,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 					}
 					process = processesIterator.next();
 					Integer processesYear = Integer.valueOf(getYear(process.getDigitalDocument()));
-					if (!collectedYears.containsKey(processesYear))
+					if (!collectedYears.containsKey(processesYear)) {
 						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
+					}
 					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
 					setStatusProgress(++dividend / divisor);
 				}
@@ -175,7 +178,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 				dividend = 0;
 			}
 
-			if (action == 2)
+			if (action == 2) {
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
 						stopped();
@@ -189,6 +192,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 							process, LoginForm.getCurrentUserHomeDir(), extendedData);
 					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
+			}
 
 			setStatusMessage("done");
 
@@ -217,14 +221,16 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 */
 	private static int getYear(DigitalDocument act) throws ReadException {
 		List<DocStruct> children = act.getLogicalDocStruct().getAllChildren();
-		if (children == null)
+		if (children == null) {
 			throw new ReadException(
 					"Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of type "
 							+ METADATA_ELEMENT_YEAR + " is required.");
-		if (children.size() > 1)
+		}
+		if (children.size() > 1) {
 			throw new ReadException(
 					"Could not get date year: Logical structure has several elements. Exactly one element (of type "
 							+ METADATA_ELEMENT_YEAR + ") is required.");
+		}
 		try {
 			return getMetadataIntValueByName(children.get(0), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
 		} catch (NoSuchElementException nose) {
@@ -253,10 +259,12 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	private static int getMetadataIntValueByName(DocStruct structureTypeName, String metaDataTypeName)
 			throws NoSuchElementException, NumberFormatException {
 		List<MetadataType> metadataTypes = structureTypeName.getType().getAllMetadataTypes();
-		for (MetadataType metadataType : metadataTypes)
-			if (metaDataTypeName.equals(metadataType.getName()))
+		for (MetadataType metadataType : metadataTypes) {
+			if (metaDataTypeName.equals(metadataType.getName())) {
 				return Integer.parseInt(new HashSet<Metadata>(structureTypeName.getAllMetadataByType(metadataType))
 						.iterator().next().getValue());
+			}
+		}
 		throw new NoSuchElementException();
 	}
 
@@ -293,8 +301,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
 				.getPreferences(), process, null);
 		String metsPointerPathAnchor = process.getProjekt().getMetsPointerPathAnchor();
-		if (metsPointerPathAnchor.contains(Projekt.ANCHOR_SEPARATOR))
+		if (metsPointerPathAnchor.contains(Projekt.ANCHOR_SEPARATOR)) {
 			metsPointerPathAnchor = metsPointerPathAnchor.split(Projekt.ANCHOR_SEPARATOR)[1];
+		}
 		return replacer.replace(metsPointerPathAnchor);
 	}
 
@@ -340,8 +349,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 					LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
 							MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
 					for (@SuppressWarnings("unused")
-					DocStruct entry : skipIfNull(dayNode.getAllChildren()))
+					DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
 						result.add(appeared);
+					}
 				}
 			}
 		}
@@ -361,8 +371,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * @return the list, Collections.emptyList() if the list is null
 	 */
 	private static <T> List<T> skipIfNull(List<T> list) {
-		if (list == null)
+		if (list == null) {
 			list = Collections.emptyList();
+		}
 		return list;
 	}
 
@@ -533,8 +544,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		} catch (NoSuchElementException nose) {
 			DocStruct child = parent.createChild(type, act, ruleset);
 			child.addMetadata(identifierField, identifier);
-			if (optionalField != null)
+			if (optionalField != null) {
 				child.addMetadata(optionalField, identifier);
+			}
 			return child;
 		}
 	}
@@ -569,9 +581,11 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	private static void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
 			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-		for (int i = 0; i < issues.size(); i++)
-			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL))
+		for (int i = 0; i < issues.size(); i++) {
+			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL)) {
 				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
+			}
+		}
 		return;
 	}
 
