@@ -181,9 +181,7 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 					}
 					String state = newProcess.NeuenProzessAnlegen();
 					if (!state.equals("ProzessverwaltungKopie3")) {
-						throw new RuntimeException(
-								"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result \"" + state
-										+ "\". (Last message was: \"" + String.valueOf(Helper.getLastMessage()) + "\")");
+						throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
 					}
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
 				}
