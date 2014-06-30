@@ -62,6 +62,21 @@ import de.sub.goobi.persistence.BatchDAO;
  */
 public class CreateProcessesTask extends CloneableLongRunningTask {
 	/**
+	 * The field batchLabel is set in addToBatches() on the first function call
+	 * which finds it to be null, and is used and set back to null in
+	 * flushLogisticsBatch() to create the batches’ specific part of the
+	 * identifier (put in parentheses behind the shared part).
+	 */
+	private String batchLabel;
+
+	/**
+	 * The field createBatches holds a granularity level that is used to create
+	 * batches out of the given processes. The field may be null which disables
+	 * the feature.
+	 */
+	private final Granularity createBatches;
+
+	/**
 	 * The field currentBreakMark holds an integer hash value which, for a given
 	 * Granularity, shall indicate for two neighboring processes whether they
 	 * form the same logistics batch (break mark is equal) or to different
@@ -106,14 +121,6 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 * which will be part of that process.
 	 */
 	private final List<List<IndividualIssue>> processes;
-
-	/**
-	 * The field createBatches holds a granularity level that is used to create
-	 * batches out of the given processes. The field may be null which disables
-	 * the feature.
-	 */
-	private final Granularity createBatches;
-	private String batchLabel;
 
 	/**
 	 * The class CreateProcessesTask is a LongRunningTask to create processes
@@ -209,8 +216,8 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 
 	/**
 	 * The method addToBatches() adds a given process to the allover and the
-	 * annual batch. If the year changes, the annual batch will be flushed and
-	 * the process will be added to a new annual batch.
+	 * annual batch. If the break mark changes, the logistics batch will be
+	 * flushed and the process will be added to a new logistics batch.
 	 * 
 	 * @param process
 	 *            process to add
