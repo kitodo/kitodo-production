@@ -166,7 +166,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 				boolean multivolue = false;
 				DocStruct logicalDS = dd.getLogicalDocStruct();
 				DocStruct child = null;
-				if (logicalDS.getType().isAnchor()) {
+				if (logicalDS.getType().getAnchorClass() != null) {
 					child = logicalDS.getAllChildren().get(0);
 					multivolue = true;
 				}
