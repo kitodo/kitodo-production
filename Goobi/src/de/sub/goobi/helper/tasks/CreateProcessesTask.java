@@ -50,6 +50,7 @@ import org.goobi.production.model.bibliography.course.IndividualIssue;
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.BatchDAO;
 
@@ -183,7 +184,7 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 					if (!state.equals("ProzessverwaltungKopie3")) {
 						throw new RuntimeException(
 								"ProzesskopieForm.NeuenProzessAnlegen() terminated with unexpected result \"" + state
-										+ "\".");
+										+ "\". (Last message was: \"" + String.valueOf(Helper.getLastMessage()) + "\")");
 					}
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
 					currentTitle = null;

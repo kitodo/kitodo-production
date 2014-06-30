@@ -103,6 +103,7 @@ public class Helper implements Serializable, Observer {
 	private static Map<Locale, ResourceBundle> localMessages = null;
 
 	public static Map<String, String> activeMQReporting = null;
+	private static String compoundMessage;
 
 	/**
 	 * Ermitteln eines bestimmten Parameters des Requests
@@ -218,7 +219,7 @@ public class Helper implements Serializable, Observer {
 			beschr = beschreibung;
 		}
 
-		String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
+		compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
 		if (activeMQReporting != null) {
 			new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"), nurInfo ? ReportLevel.INFO : ReportLevel.ERROR,
 					compoundMessage).send();
@@ -239,11 +240,13 @@ public class Helper implements Serializable, Observer {
 
 		if (localMessages.containsKey(language)) {
 			ResourceBundle languageLocal = localMessages.get(language);
-			if (languageLocal.containsKey(key))
+			if (languageLocal.containsKey(key)) {
 				return languageLocal.getString(key);
+			}
 			String lowKey = key.toLowerCase();
-			if (languageLocal.containsKey(lowKey))
+			if (languageLocal.containsKey(lowKey)) {
 				return languageLocal.getString(lowKey);
+			}
 		}
 		try {
 
@@ -680,4 +683,15 @@ public class Helper implements Serializable, Observer {
 			return fileOk;
 		}
 	};
+
+	/**
+	 * The function getLastMessage() returns the last message processed to be
+	 * shown to the user. This is a last resort only to show the user why
+	 * perhaps something didn’t work if no error message is available otherwise.
+	 * 
+	 * @return the most recent message created to be shown to the user
+	 */
+	public static String getLastMessage() {
+		return compoundMessage;
+	}
 }
