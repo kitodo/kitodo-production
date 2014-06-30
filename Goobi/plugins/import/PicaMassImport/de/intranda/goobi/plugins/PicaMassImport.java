@@ -35,10 +35,17 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -59,7 +66,9 @@ import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.properties.ImportProperty;
 import org.jdom.JDOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -75,7 +84,6 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 import de.intranda.goobi.plugins.sru.SRUHelper;
-
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
@@ -94,6 +102,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	private Prefs prefs;
 	private String currentIdentifier;
 	private List<String> currentCollectionList;
+	private String opacCatalogue;
+	private String configDir;
 	private static final String PPN_PATTERN = "\\d+X?";
 
 	protected String ats;
@@ -140,8 +150,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
 		currentIdentifier = data;
 
-		logger.debug("retrieving pica record for " + currentIdentifier);
-		String search = SRUHelper.search(currentIdentifier);
+		logger.debug("retrieving pica record for " + currentIdentifier  + " with server address: " + this.getOpacAddress());
+		String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
 		logger.trace(search);
 		try {
 			Node pica = SRUHelper.parseResult(search);
@@ -350,7 +360,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 	@Override
-	public List<ImportObject> generateFiles(List<Record> records) {
+	public List<ImportObject> generateFiles(List<Record> records){
 		List<ImportObject> answer = new ArrayList<ImportObject>();
 
 		for (Record r : records) {
@@ -660,4 +670,73 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
 	}
+	
+	/**
+	 * @param the opac catalogue
+	 */	
+	@Override
+	public void setOpacCatalogue(String opacCatalogue) {
+		this.opacCatalogue = opacCatalogue ;
+	}
+	
+	/**
+	* @return the opac catalogue
+	*/	
+	private String getOpacCatalogue() {
+		return this.opacCatalogue;
+	}
+	
+	/**
+	* @param the goobi config directory
+	*/	
+	@Override
+	public void setGoobiConfigDirectory(String configDir) {
+		this.configDir = configDir ;
+	}
+	
+	/**
+	* @return the goobi config directory
+	*/	
+	private String getGoobiConfigDirectory() {
+		return configDir ;
+	}	
+	
+	/**
+	* @return the address of the opac catalogue
+	* @throws ImportPluginException 
+	*/	
+	private String getOpacAddress() throws ImportPluginException {
+		
+		String address = "";
+		
+		try {
+			
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			Document xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
+			
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			
+			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);	
+
+			address = node.getAttributes().getNamedItem("address").getNodeValue();
+
+		} catch (ParserConfigurationException e) {
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
+		} catch (SAXException e) {
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
+		} catch (IOException e) {
+			logger.error( e.getMessage(), e);
+			throw new ImportPluginException(e);
+		} catch (XPathExpressionException e) {
+			logger.error(e.getMessage(), e);
+			throw new ImportPluginException(e);
+		}
+		
+		return address;
+	}	
 }
