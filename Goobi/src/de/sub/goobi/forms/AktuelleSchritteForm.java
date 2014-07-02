@@ -40,7 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
+import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -87,6 +91,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 public class AktuelleSchritteForm extends BasisForm {
 	private static final long serialVersionUID = 5841566727939692509L;
@@ -843,6 +848,32 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 	@Deprecated
 	public void executeModule() {
+		Helper.setMeldung("call module");
+		ModuleServerForm msf = (ModuleServerForm) Helper.getManagedBeanValue("#{ModuleServerForm}");
+		String url = null;
+		try {
+			url = msf.startShortSession(mySchritt);
+			Helper.setMeldung(url);
+		} catch (GoobiException e) {
+			Helper.setFehlerMeldung("GoobiException: " + e.getMessage());
+			return;
+		} catch (XmlRpcException e) {
+			Helper.setMeldung("XmlRpcException: " + e.getMessage());
+			return;
+		}
+		Helper.setMeldung("module called");
+		if (url != null && url.length() > 0) {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			if (!facesContext.getResponseComplete()) {
+				HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+				try {
+					response.sendRedirect(url);
+				} catch (IOException e) {
+					Helper.setFehlerMeldung("IOException: " + e.getMessage());
+				}
+				facesContext.responseComplete();
+			}
+		}
 	}
 
 	@Deprecated
