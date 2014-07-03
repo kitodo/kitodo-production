@@ -195,9 +195,7 @@
         <delete dir="${test.report.dir}"/>
         <mkdir dir="${test.report.dir}"/>
     	<mkdir dir="${build.dir.plugins.import}/PicaMassImport"/>
-    	<mkdir dir="${build.dist.dir.plugins.import}/PicaMassImport"/>
         <mkdir dir="${build.dir.plugins.opac}/PicaPlugin"/>
-        <mkdir dir="${build.dist.dir.plugins.opac}/PicaPlugin"/>
     </target>
 
     <!--==================================================
@@ -365,11 +363,11 @@
 	</target>
 	
 	<target name="create-PicaMassImport-jar" depends="compile-PicaMassImport">
-		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport/PicaMassImport.jar" basedir="${build.dir.plugins.import}/PicaMassImport" />
+		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport.jar" basedir="${build.dir.plugins.import}/PicaMassImport" />
 	</target>
 
 	<target name="create-PicaPlugin-jar" depends="compile-PicaPlugin">
-		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin/PicaPlugin.jar" basedir="${build.dir.plugins.opac}/PicaPlugin" />
+		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin.jar" basedir="${build.dir.plugins.opac}/PicaPlugin" />
 	</target>
 
     <!--==================================================
