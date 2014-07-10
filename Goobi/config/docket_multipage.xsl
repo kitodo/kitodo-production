@@ -30,7 +30,7 @@
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format"
 	xmlns:goobi="http://www.goobi.org/logfile" exclude-result-prefixes="fo">
 	<xsl:output method="xml" indent="yes" />
-	<xsl:template match="goobi:process">
+	<xsl:template match="goobi:processes">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="A5-landscape" page-width="14.8cm" page-height="21.0cm" margin-left="1cm" margin-top="1cm"
@@ -38,6 +38,10 @@
 					<fo:region-body />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
+			<xsl:apply-templates/>
+		</fo:root>
+	</xsl:template>
+	<xsl:template match="goobi:process">
 			<fo:page-sequence master-reference="A5-landscape">
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block font-family="sans-serif" font-weight="bold" font-size="16pt" margin-top="20pt">
@@ -352,6 +356,5 @@
 					</fo:block>
 				</fo:flow>
 			</fo:page-sequence>
-		</fo:root>
 	</xsl:template>
 </xsl:stylesheet>
