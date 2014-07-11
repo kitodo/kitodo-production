@@ -41,7 +41,7 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.helper.Helper;
 
 
-class AbstractTask extends Thread {
+public class AbstractTask extends Thread {
 	protected String detail = null; // a string telling details, which file is processed or which error occurred
 	protected Exception exception = null; // an exception caught
 	private int progress = 0; // a value from 0 to 100

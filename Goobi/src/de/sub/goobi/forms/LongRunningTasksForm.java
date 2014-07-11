@@ -27,75 +27,54 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.LinkedList;
-
-import org.apache.log4j.Logger;
+import java.util.List;
 
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.tasks.AbstractTask;
 import de.sub.goobi.helper.tasks.LongRunningTask;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
+import de.sub.goobi.helper.tasks.TaskManager;
 
 public class LongRunningTasksForm {
 	private Prozess prozess;
 	private LongRunningTask task;
-	private static final Logger logger = Logger.getLogger(LongRunningTask.class);
-
-	public LinkedList<LongRunningTask> getTasks() {
-		return LongRunningTaskManager.getInstance().getTasks();
+	public List<AbstractTask> getTasks() {
+		return TaskManager.getTaskList();
 	}
-
 
 	public void addNewMasterTask() {
 		Prozess p = new Prozess();
 		p.setTitel("hallo Titel " + System.currentTimeMillis());
 		this.task = new LongRunningTask();
 		this.task.initialize(p);
-		LongRunningTaskManager.getInstance().addTask(this.task);
+		TaskManager.addTask(this.task);
 	}
 
-	/**
-	 * Thread entweder starten oder restarten ================================================================
-	 */
 	public void executeTask() {
-		if (this.task.getStatusProgress() == 0) {
-			LongRunningTaskManager.getInstance().executeTask(this.task);
-		} else {
-			/* Thread lief schon und wurde abgebrochen */
-			try {
-				LongRunningTask lrt = this.task.getClass().newInstance();
-				lrt.initialize(this.task.getProzess());
-				LongRunningTaskManager.getInstance().replaceTask(this.task, lrt);
-				LongRunningTaskManager.getInstance().executeTask(lrt);
-			} catch (InstantiationException e) {
-				logger.error(e);
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-			}
-		}
+		this.task.run();
 	}
 
 	public void clearFinishedTasks() {
-		LongRunningTaskManager.getInstance().clearFinishedTasks();
+		TaskManager.removeAllFinishedTasks();
 	}
 
 	public void clearAllTasks() {
-		LongRunningTaskManager.getInstance().clearAllTasks();
+		TaskManager.stopAndDeleteAllTasks();
 	}
 
 	public void moveTaskUp() {
-		LongRunningTaskManager.getInstance().moveTaskUp(this.task);
+		TaskManager.runEarlier(this.task);
 	}
 
 	public void moveTaskDown() {
-		LongRunningTaskManager.getInstance().moveTaskDown(this.task);
+		TaskManager.runLater(this.task);
 	}
 
 	public void cancelTask() {
-		LongRunningTaskManager.getInstance().cancelTask(this.task);
+		TaskManager.stopTask(this.task, TaskManager.Action.PREPARE_FOR_RESTART);
 	}
 
 	public void removeTask() {
-		LongRunningTaskManager.getInstance().removeTask(this.task);
+		TaskManager.stopTask(this.task, TaskManager.Action.DELETE_ASAP);
 	}
 
 	public Prozess getProzess() {
@@ -115,10 +94,11 @@ public class LongRunningTasksForm {
 	}
 
 	public boolean isRunning() {
-		return LongRunningTaskManager.getInstance().isRunning();
+		return TaskManager.isAutoRunningThreads();
 	}
 
 	public void toggleRunning() {
-		LongRunningTaskManager.getInstance().setRunning(!LongRunningTaskManager.getInstance().isRunning());
+		boolean mode = !TaskManager.isAutoRunningThreads();
+		TaskManager.setAutoRunningThreads(mode);
 	}
 }

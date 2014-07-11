@@ -28,6 +28,7 @@ package de.sub.goobi.helper.tasks;
  */
 import java.util.LinkedList;
 
+@Deprecated
 public class LongRunningTaskManager {
    private static LongRunningTaskManager lrtm;
 
@@ -51,9 +52,10 @@ public class LongRunningTaskManager {
    /**
     * alle Tasks der Warteschlange zurückgeben
     * ================================================================*/
+	@SuppressWarnings("unchecked")
 	@Deprecated
    public LinkedList<LongRunningTask> getTasks() {
-		return TaskManager.getTaskList();
+		return new LinkedList(TaskManager.getTaskList());
    }
 
    /**

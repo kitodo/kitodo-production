@@ -38,13 +38,13 @@
  */
 package de.sub.goobi.helper.tasks;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class TaskManager {
 
-	enum Action {
+	public enum Action {
 		DELETE_ASAP, DO_NOTHING, PREPARE_FOR_RESTART
 	}
 
@@ -56,7 +56,7 @@ public class TaskManager {
 		executorService = Executors.newSingleThreadScheduledExecutor();
 	}
 
-	static void addTask(AbstractTask task) {
+	public static void addTask(AbstractTask task) {
 
 	}
 
@@ -95,7 +95,7 @@ public class TaskManager {
 
 	}
 
-	public static LinkedList<LongRunningTask> getTaskList() {
+	public static List<AbstractTask> getTaskList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
