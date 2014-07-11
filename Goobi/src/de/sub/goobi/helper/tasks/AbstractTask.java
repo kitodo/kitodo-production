@@ -39,13 +39,14 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.tasks.TaskManager.Action;
 
 
 public class AbstractTask extends Thread {
 	protected String detail = null; // a string telling details, which file is processed or which error occurred
 	protected Exception exception = null; // an exception caught
 	private int progress = 0; // a value from 0 to 100
-	protected boolean stoppedByUser = false; // set to true when user-stop thread. Enable restart
+	private Action behaviourAfterTermination;
 
 	public int getProgress() {
 		return progress;
@@ -59,7 +60,7 @@ public class AbstractTask extends Thread {
 			if (exception != null) {
 				return TaskState.CRASHED;
 			}
-			if (stoppedByUser) {
+			if (Action.PREPARE_FOR_RESTART.equals(behaviourAfterTermination)) {
 				return TaskState.STOPPED;
 			} else {
 				return TaskState.FINISHED;
@@ -97,5 +98,9 @@ public class AbstractTask extends Thread {
 
 	protected void setWorkDetail(String detail) {
 		this.detail = detail;
+	}
+
+	public void interrupt(Action mode) {
+		behaviourAfterTermination = mode;
 	}
 }

@@ -38,76 +38,115 @@
  */
 package de.sub.goobi.helper.tasks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import de.sub.goobi.config.ConfigMain;
 
 public class TaskManager {
 
 	public enum Action {
-		DELETE_ASAP, DO_NOTHING, PREPARE_FOR_RESTART
+		DELETE_ASAP, KEEP_SOME_TIME, PREPARE_FOR_RESTART
 	}
 
-	private static TaskManager instance;
+	public class Housekeeper implements Runnable {
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+		}
+	}
 
+	private int autoRunLimit;
 	private final ScheduledExecutorService executorService;
+	private static TaskManager instance;
+	private List<AbstractTask> taskList;
 
 	private TaskManager() {
 		executorService = Executors.newSingleThreadScheduledExecutor();
+		long yelay = ConfigMain.getLongParameter("taskManager.delay", 2000);
+		executorService.scheduleWithFixedDelay(new Housekeeper(), yelay, yelay, TimeUnit.MILLISECONDS);
+		setAutoRunningThreads(true);
 	}
 
 	public static void addTask(AbstractTask task) {
 
 	}
 
-	public static void stopTask(AbstractTask task, Action mode) {
-
-	}
-
-	public static void removeAllFinishedTasks() {
-
-	}
-
-	public static void shutdownNow() {
-		stopAndDeleteAllTasks();
-		getSingletonInstance().executorService.shutdownNow();
-	}
-
-	private synchronized static TaskManager getSingletonInstance() {
+	private synchronized static TaskManager getInstance() {
 		if (instance == null) {
 			instance = new TaskManager();
 		}
 		return instance;
 	}
 
-	public static void stopAndDeleteAllTasks() {
-		// TODO Auto-generated method stub
-
+	public static List<AbstractTask> getTaskList() {
+		return new ArrayList<AbstractTask>(getInstance().taskList);
 	}
 
 	public static boolean isAutoRunningThreads() {
-		// TODO Auto-generated method stub
-		return false;
+		return getInstance().autoRunLimit > 0;
 	}
 
-	public static void setAutoRunningThreads(boolean on) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static List<AbstractTask> getTaskList() {
-		// TODO Auto-generated method stub
-		return null;
+	public static void removeAllFinishedTasks() {
+		Iterator<AbstractTask> inspector = getInstance().taskList.iterator();
+		while (inspector.hasNext()) {
+			AbstractTask task = inspector.next();
+			if (task.getState().equals(Thread.State.TERMINATED)) {
+				inspector.remove();
+			}
+		}
 	}
 
 	public static void runEarlier(AbstractTask task) {
-		// TODO Auto-generated method stub
-
+		TaskManager theManager = getInstance();
+		int index = theManager.taskList.indexOf(task);
+		if (index > 0) {
+			Collections.swap(theManager.taskList, index - 1, index);
+		}
 	}
 
 	public static void runLater(AbstractTask task) {
-		// TODO Auto-generated method stub
+		TaskManager theManager = getInstance();
+		int index = theManager.taskList.indexOf(task);
+		if (index > -1 && index + 1 < theManager.taskList.size()) {
+			Collections.swap(theManager.taskList, index, index + 1);
+		}
+	}
 
+	public static void setAutoRunningThreads(boolean on) {
+		if (on) {
+			int cores = Runtime.getRuntime().availableProcessors();
+			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimitOverride", cores);
+			getInstance().autoRunLimit = newLimit;
+		} else {
+			getInstance().autoRunLimit = 0;
+		}
+	}
+
+	public static void shutdownNow() {
+		stopAndDeleteAllTasks();
+		getInstance().executorService.shutdownNow();
+	}
+
+	public static void stopAndDeleteAllTasks() {
+		Iterator<AbstractTask> inspector = getInstance().taskList.iterator();
+		while (inspector.hasNext()) {
+			AbstractTask task = inspector.next();
+			if (task.isAlive()) {
+				task.interrupt(Action.DELETE_ASAP);
+			} else {
+				inspector.remove();
+			}
+		}
+	}
+
+	public static void stopTask(AbstractTask task, Action mode) {
+		task.interrupt(mode);
 	}
 
 }
