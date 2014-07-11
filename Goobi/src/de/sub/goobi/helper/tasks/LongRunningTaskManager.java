@@ -27,18 +27,14 @@ package de.sub.goobi.helper.tasks;
  * exception statement from your version.
  */
 import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class LongRunningTaskManager {
-   static LinkedList<LongRunningTask> tasks = new LinkedList<LongRunningTask>();
    private static LongRunningTaskManager lrtm;
-   static boolean running = false;
-   Timer autoRunTimer;
 
    /**
     * Singleton-Zugriff
     * ================================================================*/
+	@Deprecated
    public static LongRunningTaskManager getInstance() {
       if (lrtm == null) {
          lrtm = new LongRunningTaskManager();
@@ -50,99 +46,61 @@ public class LongRunningTaskManager {
     * privater Konstruktor
     * ================================================================*/
    private LongRunningTaskManager() {
-      /* --------------------------------
-       * Nachrichtensystem initialisieren
-       * --------------------------------*/
-      int delay = 5000;
-      int period = 2000;
-      this.autoRunTimer = new Timer();
-      this.autoRunTimer.scheduleAtFixedRate(new TimerTask() {
-         @Override
-		public void run() {
-            LongRunningTaskManager.check_autoRunningTasks();
-         }
-      }, delay, period);
-   }
-
-   /**
-    * Diese Methode überprüft, ob wir was neues in unserem Container haben.
-    * ================================================================
-    */
-   private static void check_autoRunningTasks() {
-      if (!running) {
-		return;
-	}
-      for (LongRunningTask lrt : tasks) {
-         if (lrt.getStatusProgress() > 0 && lrt.getStatusProgress() < 100) {
-			return;
-		}
-      }
-      if (tasks.size() > 0) {
-         for (LongRunningTask lrt : tasks) {
-            if (lrt.getStatusProgress() == 0) {
-               lrt.execute();
-               return;
-            }
-         }
-      }
    }
 
    /**
     * alle Tasks der Warteschlange zurückgeben
     * ================================================================*/
+	@Deprecated
    public LinkedList<LongRunningTask> getTasks() {
-      return tasks;
+		return TaskManager.getTaskList();
    }
 
    /**
     * Reihenfolge eines Tasks nach oben
     * ================================================================*/
+	@Deprecated
    public void moveTaskUp(LongRunningTask inTask) {
-      if (tasks.getFirst() == inTask) {
-		return;
-	}
-      int id = tasks.indexOf(inTask) - 1;
-      removeTask(inTask);
-      tasks.add(id, inTask);
+		TaskManager.runEarlier(inTask);
    }
 
    /**
     * Reihenfolge eines Tasks nach unten
     * ================================================================*/
+	@Deprecated
    public void moveTaskDown(LongRunningTask inTask) {
-      if (tasks.getLast() == inTask) {
-		return;
-	}
-      int id = tasks.indexOf(inTask) + 1;
-      removeTask(inTask);
-      tasks.add(id, inTask);
+		TaskManager.runLater(inTask);
    }
 
    /**
     * LongRunningTask in Warteschlange einreihen
     * ================================================================*/
+	@Deprecated
    public void addTask(LongRunningTask inTask) {
-      tasks.add(inTask);
+		TaskManager.addTask(inTask);
    }
 
    /**
     * LongRunningTask aus der Warteschlange entfernen
     * ================================================================*/
+	@Deprecated
    public void removeTask(LongRunningTask inTask) {
-      tasks.remove(inTask);
+		TaskManager.stopTask(inTask, TaskManager.Action.DELETE_ASAP);
    }
 
    /**
     * LongRunningTask aus der Warteschlange entfernen
     * ================================================================*/
+	@Deprecated
+	// This is not needed any longer!
    public void replaceTask(LongRunningTask oldTask, LongRunningTask newTask) {
-      int id = tasks.indexOf(oldTask);
-      tasks.set(id, newTask);
    }
 
    /**
     * LongRunningTask als Thread ausführen
     * ================================================================*/
+	@Deprecated
+	// Accidental complexity: call run() on task
    public void executeTask(LongRunningTask inTask) {
       inTask.start();
    }
@@ -150,38 +108,35 @@ public class LongRunningTaskManager {
    /**
     * LongRunningTask abbrechen
     * ================================================================*/
+	@Deprecated
    public void cancelTask(LongRunningTask inTask) {
-      inTask.cancel();
+		TaskManager.stopTask(inTask, TaskManager.Action.PREPARE_FOR_RESTART);
    }
 
    /**
     * abgeschlossene Tasks aus der Liste entfernen
    * ================================================================*/
+	@Deprecated
    public void clearFinishedTasks() {
-      for (LongRunningTask lrt : new LinkedList<LongRunningTask>(tasks)) {
-         if (lrt.getStatusProgress() == 100) {
-			tasks.remove(lrt);
-		}
-      }
-   }
+		TaskManager.removeAllFinishedTasks();
+	}
    
    /**
     * alle Tasks aus der Liste entfernen
    * ================================================================*/
+	@Deprecated
    public void clearAllTasks() {
-      for (LongRunningTask lrt : new LinkedList<LongRunningTask>(tasks)) {
-         if (lrt.getStatusProgress() == 100 || lrt.getStatusProgress() < 1) {
-			tasks.remove(lrt);
-		}
-      }
+		TaskManager.stopAndDeleteAllTasks();
    }
 
+	@Deprecated
    public boolean isRunning() {
-      return running;
+		return TaskManager.isAutoRunningThreads();
    }
 
+	@Deprecated
     public void setRunning(boolean running) {
-      LongRunningTaskManager.running = running;
+		TaskManager.setAutoRunningThreads(running);
    }
 
 }

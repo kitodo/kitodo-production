@@ -38,6 +38,76 @@
  */
 package de.sub.goobi.helper.tasks;
 
-enum TaskState {
-	CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
+import java.util.LinkedList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+public class TaskManager {
+
+	enum Action {
+		DELETE_ASAP, DO_NOTHING, PREPARE_FOR_RESTART
+	}
+
+	private static TaskManager instance;
+
+	private final ScheduledExecutorService executorService;
+
+	private TaskManager() {
+		executorService = Executors.newSingleThreadScheduledExecutor();
+	}
+
+	static void addTask(AbstractTask task) {
+
+	}
+
+	public static void stopTask(AbstractTask task, Action mode) {
+
+	}
+
+	public static void removeAllFinishedTasks() {
+
+	}
+
+	public static void shutdownNow() {
+		stopAndDeleteAllTasks();
+		getSingletonInstance().executorService.shutdownNow();
+	}
+
+	private synchronized static TaskManager getSingletonInstance() {
+		if (instance == null) {
+			instance = new TaskManager();
+		}
+		return instance;
+	}
+
+	public static void stopAndDeleteAllTasks() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static boolean isAutoRunningThreads() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static void setAutoRunningThreads(boolean on) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static LinkedList<LongRunningTask> getTaskList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static void runEarlier(AbstractTask task) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static void runLater(AbstractTask task) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
