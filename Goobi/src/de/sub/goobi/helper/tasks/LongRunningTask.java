@@ -56,33 +56,6 @@ public class LongRunningTask extends AbstractTask {
 	protected void stopped() {
 	}
 
-	@Override
-	public void run() {
-		/*
-		 * --------------------- Simulation einer lang laufenden Aufgabe
-		 * -------------------
-		 */
-		for (int i = 0; i < 100; i++) {
-			/*
-			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
-			 */
-			if (this.isInterrupted()) {
-				stopped();
-				return;
-			}
-			/* Simulation of a long task */
-			try {
-				sleep(150);
-			} catch (InterruptedException e) {
-				return;
-			}
-
-			setStatusProgress(i);
-		}
-		setStatusMessage("done");
-		setStatusProgress(100);
-	}
-
 	/**
 	 * Prozess-Getter
 	 * ================================================================
@@ -156,11 +129,6 @@ public class LongRunningTask extends AbstractTask {
 	 */
 	protected void setProzess(Prozess prozess) {
 		this.prozess = prozess;
-	}
-
-	@Deprecated
-	public String getLongMessage() {
-		return super.getWorkDetail();
 	}
 
 	@Deprecated

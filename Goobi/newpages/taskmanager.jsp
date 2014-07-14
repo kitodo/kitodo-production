@@ -77,8 +77,9 @@
 										<%-- TaskManager start - stop --%>
 										<h:panelGroup id="id6">
 
-											<h:commandLink id="id7" value="add SampleTask"
-												action="#{LongRunningTasksForm.addNewMasterTask}" />
+											<h:commandLink id="id7" value="#{msgs.addDemoTask}"
+											rendered="#{LongRunningTasksForm.demoTasksLinkShowing}"
+												action="#{LongRunningTasksForm.addDemoTask}" />
 
 											<h:commandLink id="id8" action="#{NavigationForm.Reload}"
 												style="margin-right:15px">
@@ -147,7 +148,7 @@
 											<f:facet name="header">
 												<h:outputText id="id21" value="#{msgs.titel}" />
 											</f:facet>
-											<h:outputText id="id22" value="#{item.title}" />
+											<h:outputText id="id22" value="#{item.name}" />
 										</h:column>
 
 										<x:column id="id23" style="text-align:center">
@@ -160,16 +161,16 @@
 												rendered="true" />
 											<h:graphicImage id="id25"
 												value="/newpages/images/fortschritt/gr.gif"
-												style="width:#{item.statusProgress * 0.8}px;height:10px"
-												rendered="#{item.statusProgress!=-1}" />
+												style="width:#{item.progress * 0.8}px;height:10px"
+												rendered="#{item.progress!=-1}" />
 											<h:graphicImage id="id26"
 												value="/newpages/images/fortschritt/ge.gif"
-												style="width:#{(100 - item.statusProgress) * 0.8}px;height:10px"
-												rendered="#{item.statusProgress!=-1}" />
+												style="width:#{(100 - item.progress) * 0.8}px;height:10px"
+												rendered="#{item.progress!=-1}" />
 											<h:graphicImage id="id27"
 												value="/newpages/images/fortschritt/rt.gif"
 												style="width:#{100 * 0.8}px;height:10px"
-												rendered="#{item.statusProgress==-1}" />
+												rendered="#{item.progress==-1}" />
 											<h:graphicImage
 												value="/newpages/images/fortschritt/ende_rechts.gif"
 												rendered="true" />
@@ -196,7 +197,7 @@
 													value="/newpages/images/icons/exclamation.png" />
 											</x:popup>
 
-											<h:outputText id="id33" value="#{item.statusMessage}" />
+											<h:outputText id="id33" value="#{item.stateDescription}" />
 										</h:column>
 
 										<%-- Action --%>
@@ -229,7 +230,7 @@
 												<%-- start --%>
 												<h:commandLink id="id39"
 													action="#{LongRunningTasksForm.executeTask}"
-													title="#{msgs.start}" rendered="#{item.statusProgress<=0}">
+													title="#{msgs.start}" rendered="#{item.progress<=0}">
 													<h:graphicImage
 														value="/newpages/images/icons/start_task.gif" />
 													<x:updateActionListener value="#{item}"
@@ -240,7 +241,7 @@
 												<h:commandLink id="id40"
 													action="#{LongRunningTasksForm.cancelTask}"
 													title="#{msgs.stop}"
-													rendered="#{item.statusProgress>0 && item.statusProgress<100}">
+													rendered="#{item.progress>0 && item.progress<100}">
 													<h:graphicImage id="id41"
 														value="/newpages/images/icons/stop_task.gif" />
 													<x:updateActionListener value="#{item}"
@@ -253,7 +254,7 @@
 											<h:commandLink id="id42"
 												action="#{LongRunningTasksForm.removeTask}"
 												title="#{msgs.loeschen}"
-												rendered="#{item.statusProgress==100 || item.statusProgress<1}">
+												rendered="#{item.progress==100 || item.progress<1}">
 												<h:graphicImage
 													value="/newpages/images/icons/progress_rem.gif" />
 												<x:updateActionListener value="#{item}"

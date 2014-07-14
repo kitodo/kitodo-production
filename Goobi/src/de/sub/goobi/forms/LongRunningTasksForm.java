@@ -28,24 +28,19 @@
 package de.sub.goobi.forms;
 import java.util.List;
 
-import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.tasks.AbstractTask;
 import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
-import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
 public class LongRunningTasksForm {
-	private Prozess prozess;
-	private LongRunningTask task;
+	private AbstractTask task;
 	public List<AbstractTask> getTasks() {
 		return TaskManager.getTaskList();
 	}
 
-	public void addNewMasterTask() {
-		Prozess p = new Prozess();
-		p.setTitel("hallo Titel " + System.currentTimeMillis());
-		this.task = new LongRunningTask();
-		this.task.initialize(p);
+	public void addDemoTask() {
+		this.task = new AbstractTask();
 		TaskManager.addTask(this.task);
 	}
 
@@ -77,19 +72,11 @@ public class LongRunningTasksForm {
 		this.task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 	}
 
-	public Prozess getProzess() {
-		return this.prozess;
+	public boolean isDemoTasksLinkShowing() {
+		return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
 	}
 
-	public void setProzess(Prozess prozess) {
-		this.prozess = prozess;
-	}
-
-	public LongRunningTask getTask() {
-		return this.task;
-	}
-
-	public void setTask(LongRunningTask task) {
+	public void setTask(AbstractTask task) {
 		this.task = task;
 	}
 

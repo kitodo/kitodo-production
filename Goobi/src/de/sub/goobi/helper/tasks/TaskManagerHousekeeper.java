@@ -146,6 +146,7 @@ public class TaskManagerHousekeeper implements Runnable, ServletContextListener 
 						} else {
 							failedThreads.add(task);
 						}
+						break;
 					case PREPARE_FOR_RESTART:
 						AbstractTask replacement = null;
 						if (task instanceof LongRunningTask) {
@@ -175,7 +176,7 @@ public class TaskManagerHousekeeper implements Runnable, ServletContextListener 
 			launchableThreads.removeLast();
 		}
 		while ((task = launchableThreads.pollFirst()) != null) {
-			task.run();
+			task.start();
 		}
 	}
 

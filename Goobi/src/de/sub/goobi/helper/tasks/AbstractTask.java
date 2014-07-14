@@ -40,6 +40,7 @@ package de.sub.goobi.helper.tasks;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.Duration;
 
 import de.sub.goobi.helper.Helper;
@@ -72,11 +73,16 @@ public class AbstractTask extends Thread {
 
 	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
 
-	protected String detail = null; // a string telling details, which file is processed or which error occurred
-	protected Exception exception = null; // an exception caught
+	private String detail = null; // a string telling details, which file is processed
+	private Exception exception = null; // an exception caught
 	private Long passedAway = null;
 
 	private int progress = 0; // a value from 0 to 100
+
+	public AbstractTask() {
+		setNameDetail(null);
+	}
+
 	Behaviour getBehaviourAfterTermination() {
 		return behaviourAfterTermination;
 	}
@@ -95,6 +101,28 @@ public class AbstractTask extends Thread {
 
 	public int getProgress() {
 		return progress;
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	public String getStateDescription() {
+		TaskState state = getTaskState();
+		String label = Helper.getTranslation(state.toString().toLowerCase());
+		switch (state) {
+		case WORKING:
+			if (detail != null) {
+				return label + " (" + detail + ")";
+			}
+			break;
+		case CRASHED:
+			if (detail != null) {
+				return label + " (" + detail + ")";
+			} else if (exception.getMessage() != null) {
+				return label + " (" + exception.getMessage() + ")";
+			} else {
+				return label + " (" + exception.getClass().getSimpleName() + ")";
+			}
+		}
+		return label;
 	}
 
 	TaskState getTaskState() {
@@ -122,12 +150,54 @@ public class AbstractTask extends Thread {
 		}
 	}
 
-	public String getWorkDetail() {
-		return detail;
+	/**
+	 * The longMessage is shown in a popup window
+	 * 
+	 * @return
+	 */
+	public String getLongMessage() {
+		if (exception == null) {
+			return null;
+		}
+		return ExceptionUtils.getStackTrace(exception);
 	}
 
 	public void interrupt(Behaviour mode) {
 		behaviourAfterTermination = mode;
+	}
+
+	protected void leaveRestartable() {
+		behaviourAfterTermination = Behaviour.PREPARE_FOR_RESTART;
+	}
+
+	@Override
+	public void run() {
+		/*
+		 * --------------------- Simulation einer lang laufenden Aufgabe
+		 * -------------------
+		 */
+		for (int i = 0; i < 100; i++) {
+			/*
+			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
+			 */
+			if (this.isInterrupted()) {
+				leaveRestartable();
+				return;
+			}
+			/* Simulation of a long task */
+			try {
+				sleep(150);
+			} catch (InterruptedException e) {
+			}
+			setWorkDetail(Integer.toString(i));
+			setProgress(i);
+		}
+		setWorkDetail("done");
+		setProgress(100);
+	}
+
+	protected void setException(Exception exception) {
+		this.exception = exception;
 	}
 
 	protected void setNameDetail(String detail) {
