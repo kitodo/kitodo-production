@@ -29,6 +29,7 @@ package de.sub.goobi.config;
  */
 import java.io.File;
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -37,6 +38,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
+import org.joda.time.Duration;
 
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -157,6 +159,16 @@ public class ConfigMain implements Serializable {
 	 */
 	public static long getLongParameter(String inParameter, long inDefault) {
 		return config.getLong(inParameter, inDefault);
+	}
+
+	/**
+	 * Request Duration parameter from configuration
+	 * 
+	 * @return Parameter as Duration
+	 */
+	public static Duration getDurationParameter(String inParameter, TimeUnit timeUnit, long inDefault) {
+		long duration = getLongParameter(inParameter, inDefault);
+		return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
 	}
 
 	/**

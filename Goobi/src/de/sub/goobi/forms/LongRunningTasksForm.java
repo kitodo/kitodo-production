@@ -30,9 +30,9 @@ import java.util.List;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.tasks.AbstractTask;
+import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.helper.tasks.TaskManager.Actions;
 
 public class LongRunningTasksForm {
 	private Prozess prozess;
@@ -70,11 +70,11 @@ public class LongRunningTasksForm {
 	}
 
 	public void cancelTask() {
-		this.task.interrupt(Actions.PREPARE_FOR_RESTART);
+		this.task.interrupt(Behaviour.PREPARE_FOR_RESTART);
 	}
 
 	public void removeTask() {
-		this.task.interrupt(Actions.DELETE_IMMEDIATELY);
+		this.task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 	}
 
 	public Prozess getProzess() {

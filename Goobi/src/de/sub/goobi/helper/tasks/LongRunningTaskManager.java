@@ -28,7 +28,7 @@ package de.sub.goobi.helper.tasks;
  */
 import java.util.LinkedList;
 
-import de.sub.goobi.helper.tasks.TaskManager.Actions;
+import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 
 @Deprecated
 public class LongRunningTaskManager {
@@ -89,7 +89,7 @@ public class LongRunningTaskManager {
     * ================================================================*/
 	@Deprecated
    public void removeTask(LongRunningTask inTask) {
-		inTask.interrupt(Actions.DELETE_IMMEDIATELY);
+		inTask.interrupt(Behaviour.DELETE_IMMEDIATELY);
    }
 
    /**
@@ -114,7 +114,7 @@ public class LongRunningTaskManager {
     * ================================================================*/
 	@Deprecated
    public void cancelTask(LongRunningTask inTask) {
-		inTask.interrupt(Actions.PREPARE_FOR_RESTART);
+		inTask.interrupt(Behaviour.PREPARE_FOR_RESTART);
    }
 
    /**

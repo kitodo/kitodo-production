@@ -38,15 +38,51 @@
  */
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.tasks.TaskManager.Actions;
+import java.util.concurrent.TimeUnit;
 
+import org.joda.time.Duration;
+
+import de.sub.goobi.helper.Helper;
 
 public class AbstractTask extends Thread {
+	/**
+	 * The enum Actions lists the available instructions to the housekeeper what
+	 * to do with a terminated thread. These are:
+	 * 
+	 * <dl>
+	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
+	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
+	 * </dd>
+	 * <dt><code>KEEP_FOR_A_WHILE</code></dt>
+	 * <dd>The default behaviour: A thread that terminated either normally or
+	 * abnormally is kept around in memory for a while and then removed
+	 * automatically. Numeric and temporary limits can be configured.</dd>
+	 * <dt><code>PREPARE_FOR_RESTART</code></dt>
+	 * <dd>If the thread was interrupted by a user, replace it by a new one,
+	 * passing in the state of the old one to be able to coninue work.</dd>
+	 * </dl>
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 */
+	public enum Behaviour {
+		DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART
+	}
+
+	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
+
 	protected String detail = null; // a string telling details, which file is processed or which error occurred
 	protected Exception exception = null; // an exception caught
 	private int progress = 0; // a value from 0 to 100
-	private Actions behaviourAfterTermination;
+	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
+	private Long passedAway = null;
+
+	Duration getDurationDead() {
+		if (passedAway == null) {
+			return null;
+		}
+		long elapsed = System.nanoTime() - passedAway;
+		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+	}
 
 	public int getProgress() {
 		return progress;
@@ -57,10 +93,13 @@ public class AbstractTask extends Thread {
 		case NEW:
 			return TaskState.NEW;
 		case TERMINATED:
+			if (behaviourAfterTermination == null) {
+				behaviourAfterTermination = DEFAULT_BEHAVIOUR;
+			}
 			if (exception != null) {
 				return TaskState.CRASHED;
 			}
-			if (Actions.PREPARE_FOR_RESTART.equals(behaviourAfterTermination)) {
+			if (Behaviour.PREPARE_FOR_RESTART.equals(behaviourAfterTermination)) {
 				return TaskState.STOPPED;
 			} else {
 				return TaskState.FINISHED;
@@ -100,7 +139,20 @@ public class AbstractTask extends Thread {
 		this.detail = detail;
 	}
 
-	public void interrupt(Actions mode) {
+	public void interrupt(Behaviour mode) {
 		behaviourAfterTermination = mode;
 	}
+
+	Behaviour getBehaviourAfterTermination() {
+		return behaviourAfterTermination;
+	}
+
+	Exception getException() {
+		return exception;
+	}
+
+	void setTimeOfDeath() {
+		passedAway = System.nanoTime();
+	}
+
 }

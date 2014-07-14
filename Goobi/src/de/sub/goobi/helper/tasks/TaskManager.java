@@ -49,6 +49,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 
 /**
  * The class TaskManager serves to handle the execution of threads. It can be
@@ -60,48 +61,12 @@ import de.sub.goobi.config.ConfigMain;
 public class TaskManager {
 
 	/**
-	 * The enum Actions lists the available instructions to the housekeeper what
-	 * to do with a terminated thread. These are:
-	 * 
-	 * <dl>
-	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
-	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
-	 * </dd>
-	 * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-	 * <dd>The default behaviour: A thread that terminated either normally or
-	 * abnormally is kept around in memory for a while and then removed
-	 * automatically. Numeric and temporary limits can be configured.</dd>
-	 * <dt><code>PREPARE_FOR_RESTART</code></dt>
-	 * <dd>If the thread was interrupted by a user, replace it by a new one,
-	 * passing in the state of the old one to be able to coninue work.</dd>
-	 * </dl>
-	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
-	 */
-	public enum Actions {
-		DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART
-	}
-
-	/**
-	 * The class Housekeeper is a Runnable which implements the removing of old
-	 * threads and starting of new ones.
-	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
-	 */
-	public class Housekeeper implements Runnable {
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-		}
-	}
-
-	/**
 	 * The field autoRunLimit holds the number of threads which at most are
 	 * allowed to be started automatically. It is by default initialised by the
 	 * number of available processors of the runtime and set to 0 while the
 	 * feature is disabled.
 	 */
-	private int autoRunLimit;
+	protected int autoRunLimit;
 
 	/**
 	 * The field executorService holds a scheduled executor to repeatedly run
@@ -122,7 +87,7 @@ public class TaskManager {
 	/**
 	 * The field taskList holds the list of threads managed by the task manager.
 	 */
-	private final LinkedList<AbstractTask> taskList = new LinkedList<AbstractTask>();
+	protected final LinkedList<AbstractTask> taskList = new LinkedList<AbstractTask>();
 
 	/**
 	 * TaskManager is a singleton so its constructor is private. It will be
@@ -132,8 +97,8 @@ public class TaskManager {
 	private TaskManager() {
 		setAutoRunningThreads(true);
 		executorService = Executors.newSingleThreadScheduledExecutor();
-		long yelay = ConfigMain.getLongParameter("taskManager.delay", 2000);
-		executorService.scheduleWithFixedDelay(new Housekeeper(), yelay, yelay, TimeUnit.MILLISECONDS);
+		long yelay = ConfigMain.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
+		executorService.scheduleWithFixedDelay(new TaskManagerHousekeeper(), yelay, yelay, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -229,7 +194,7 @@ public class TaskManager {
 	public static void setAutoRunningThreads(boolean on) {
 		if (on) {
 			int cores = Runtime.getRuntime().availableProcessors();
-			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimitOverride", cores);
+			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
 			singleton().autoRunLimit = newLimit;
 		} else {
 			singleton().autoRunLimit = 0;
@@ -242,7 +207,7 @@ public class TaskManager {
 	 * 
 	 * @return the singleton TaskManager instance
 	 */
-	private synchronized static TaskManager singleton() {
+	synchronized static TaskManager singleton() {
 		if (singletonInstance == null) {
 			singletonInstance = new TaskManager();
 		}
@@ -273,7 +238,7 @@ public class TaskManager {
 				while (inspector.hasNext()) {
 					AbstractTask task = inspector.next();
 					if (task.isAlive()) {
-						task.interrupt(Actions.DELETE_IMMEDIATELY);
+						task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 					} else {
 						inspector.remove();
 					}
