@@ -70,11 +70,16 @@ public class AbstractTask extends Thread {
 
 	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
+	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
+
 	protected String detail = null; // a string telling details, which file is processed or which error occurred
 	protected Exception exception = null; // an exception caught
-	private int progress = 0; // a value from 0 to 100
-	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
 	private Long passedAway = null;
+
+	private int progress = 0; // a value from 0 to 100
+	Behaviour getBehaviourAfterTermination() {
+		return behaviourAfterTermination;
+	}
 
 	Duration getDurationDead() {
 		if (passedAway == null) {
@@ -82,6 +87,10 @@ public class AbstractTask extends Thread {
 		}
 		long elapsed = System.nanoTime() - passedAway;
 		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
+	}
+
+	Exception getException() {
+		return exception;
 	}
 
 	public int getProgress() {
@@ -117,6 +126,10 @@ public class AbstractTask extends Thread {
 		return detail;
 	}
 
+	public void interrupt(Behaviour mode) {
+		behaviourAfterTermination = mode;
+	}
+
 	protected void setNameDetail(String detail) {
 		StringBuilder composer = new StringBuilder(119);
 		composer.append(Helper.getTranslation(getClass().getSimpleName()));
@@ -135,24 +148,12 @@ public class AbstractTask extends Thread {
 		}
 	}
 
-	protected void setWorkDetail(String detail) {
-		this.detail = detail;
-	}
-
-	public void interrupt(Behaviour mode) {
-		behaviourAfterTermination = mode;
-	}
-
-	Behaviour getBehaviourAfterTermination() {
-		return behaviourAfterTermination;
-	}
-
-	Exception getException() {
-		return exception;
-	}
-
 	void setTimeOfDeath() {
 		passedAway = System.nanoTime();
+	}
+
+	protected void setWorkDetail(String detail) {
+		this.detail = detail;
 	}
 
 }

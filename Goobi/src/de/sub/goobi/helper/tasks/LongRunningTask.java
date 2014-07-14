@@ -70,9 +70,13 @@ public class LongRunningTask extends AbstractTask {
 				stopped();
 				return;
 			}
-			/* lang dauernde Schleife zur Simulierung einer langen Aufgabe */
-			for (double j = 0; j < 10000000; j++) {
+			/* Simulation of a long task */
+			try {
+				sleep(150);
+			} catch (InterruptedException e) {
+				return;
 			}
+
 			setStatusProgress(i);
 		}
 		setStatusMessage("done");
