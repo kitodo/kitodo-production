@@ -28,6 +28,8 @@ package de.sub.goobi.helper.tasks;
  */
 import java.util.LinkedList;
 
+import de.sub.goobi.helper.tasks.TaskManager.Actions;
+
 @Deprecated
 public class LongRunningTaskManager {
    private static LongRunningTaskManager lrtm;
@@ -87,7 +89,7 @@ public class LongRunningTaskManager {
     * ================================================================*/
 	@Deprecated
    public void removeTask(LongRunningTask inTask) {
-		TaskManager.stopTask(inTask, TaskManager.Action.DELETE_ASAP);
+		inTask.interrupt(Actions.DELETE_IMMEDIATELY);
    }
 
    /**
@@ -112,7 +114,7 @@ public class LongRunningTaskManager {
     * ================================================================*/
 	@Deprecated
    public void cancelTask(LongRunningTask inTask) {
-		TaskManager.stopTask(inTask, TaskManager.Action.PREPARE_FOR_RESTART);
+		inTask.interrupt(Actions.PREPARE_FOR_RESTART);
    }
 
    /**
