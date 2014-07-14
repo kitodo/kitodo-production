@@ -61,14 +61,6 @@ import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 public class TaskManager {
 
 	/**
-	 * The field autoRunLimit holds the number of threads which at most are
-	 * allowed to be started automatically. It is by default initialised by the
-	 * number of available processors of the runtime and set to 0 while the
-	 * feature is disabled.
-	 */
-	protected int autoRunLimit;
-
-	/**
 	 * The field executorService holds a scheduled executor to repeatedly run
 	 * the houskeeping task which will remove old threads and start new ones as
 	 * configured to do.
@@ -87,7 +79,7 @@ public class TaskManager {
 	/**
 	 * The field taskList holds the list of threads managed by the task manager.
 	 */
-	protected final LinkedList<AbstractTask> taskList = new LinkedList<AbstractTask>();
+	final LinkedList<AbstractTask> taskList = new LinkedList<AbstractTask>();
 
 	/**
 	 * TaskManager is a singleton so its constructor is private. It will be
@@ -129,7 +121,7 @@ public class TaskManager {
 	 * @return whether the TaskManager is auto-running threds or not
 	 */
 	public static boolean isAutoRunningThreads() {
-		return singleton().autoRunLimit > 0;
+		return TaskManagerHousekeeper.getAutoRunLimit() > 0;
 	}
 
 	/**
@@ -195,9 +187,9 @@ public class TaskManager {
 		if (on) {
 			int cores = Runtime.getRuntime().availableProcessors();
 			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
-			singleton().autoRunLimit = newLimit;
+			TaskManagerHousekeeper.setAutoRunLimit(newLimit);
 		} else {
-			singleton().autoRunLimit = 0;
+			TaskManagerHousekeeper.setAutoRunLimit(0);
 		}
 	}
 

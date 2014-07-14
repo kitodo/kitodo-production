@@ -225,7 +225,7 @@
 -->
 
 	<listener>
-		<listener-class>de.sub.goobi.helper.tasks.TaskManagerShutdownListener</listener-class>
+		<listener-class>de.sub.goobi.helper.tasks.TaskManagerHousekeeper</listener-class>
 	</listener>
 
 	<listener>

@@ -5,6 +5,10 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 
 import de.sub.goobi.config.ConfigMain;
@@ -15,19 +19,93 @@ import de.sub.goobi.config.ConfigMain;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class TaskManagerHousekeeper implements Runnable {
+public class TaskManagerHousekeeper implements Runnable, ServletContextListener {
+	private static final Logger logger = Logger.getLogger(TaskManagerHousekeeper.class);
+
 	private static final int KEEP_FAILED = 10;
 	private static final long KEEP_FAILED_MINS = 250;
 	private static final int KEEP_SUCCESSFUL = 3;
 	private static final long KEEP_SUCCESSFUL_MINS = 20;
 
 	/**
-	 * TODO
+	 * The field autoRunLimit holds the number of threads which at most are
+	 * allowed to be started automatically. It is by default initialised by the
+	 * number of available processors of the runtime and set to 0 while the
+	 * feature is disabled.
+	 */
+	private static int autoRunLimit;
+
+	/**
+	 * When the servlet is unloaded, i.e. on container shutdown, the TaskManager
+	 * shall be shutd down gracefully.
+	 * 
+	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+	 */
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		TaskManager.shutdownNow();
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+	}
+
+	static int getAutoRunLimit() {
+		return autoRunLimit;
+	}
+
+	/**
+	 * The function newLegacyTask() will clone a LongRunningTask implementation
+	 * for restart
+	 * 
+	 * @param legacyTask
+	 *            a LongRunningTask to clone
+	 * @return the clone of the LongRunningTask
+	 */
+	private AbstractTask newLegacyTask(LongRunningTask legacyTask) {
+		LongRunningTask lrt = null;
+		try {
+			lrt = legacyTask.getClass().newInstance();
+			lrt.initialize(legacyTask.getProzess());
+		} catch (InstantiationException e) {
+			logger.error(e);
+		} catch (IllegalAccessException e) {
+			logger.error(e);
+		}
+		return lrt;
+	}
+
+	/**
+	 * The function run() examines the task list, deletes threads that have
+	 * died, replaces threads that are to be restarted by new copies of
+	 * themselves and finally starts new threads up to the given limit.
+	 * 
+	 * Several limits are configurable: There are both limits in number and in
+	 * time for successfully finished or erroneous threads which can be set in
+	 * the configuration. The limit for auto starting threads can accessed using
+	 * getter and setter. There are internal default values for these too, which
+	 * will applied in case of missing configuration. Keep in mind that zombie
+	 * processes still occupy all their ressources and aren’t available for
+	 * garbage collection, so these values have been chosen rather restrictive.
+	 * 
+	 * If a ConcurrentModificationException arises during list examination, the
+	 * method will exit silently and do not do any more work. This is not a pity
+	 * because it is likely to be restarted every some seconds.
 	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run() {
+		TaskManager taskManager = TaskManager.singleton();
+		if (taskManager.taskList.size() == 0) {
+			return;
+		}
+
+		LinkedList<AbstractTask> launchableThreads = new LinkedList<AbstractTask>();
+		LinkedList<AbstractTask> finishedThreads = new LinkedList<AbstractTask>();
+		LinkedList<AbstractTask> failedThreads = new LinkedList<AbstractTask>();
+		int currentClearance = autoRunLimit;
+
 		int successfulMaxCount = ConfigMain
 				.getIntParameter("taskManager.keepThreads.successful.count", KEEP_SUCCESSFUL);
 		int failedMaxCount = ConfigMain.getIntParameter("taskManager.keepThreads.failed.count", KEEP_FAILED);
@@ -36,11 +114,6 @@ public class TaskManagerHousekeeper implements Runnable {
 		Duration failedMaxAge = ConfigMain.getDurationParameter("taskManager.keepThreads.failed.minutes",
 				TimeUnit.MINUTES, KEEP_FAILED_MINS);
 
-		TaskManager taskManager = TaskManager.singleton();
-		LinkedList<AbstractTask> launchableThreads = new LinkedList<AbstractTask>();
-		LinkedList<AbstractTask> finishedThreads = new LinkedList<AbstractTask>();
-		LinkedList<AbstractTask> failedThreads = new LinkedList<AbstractTask>();
-		int clearance = taskManager.autoRunLimit;
 		ListIterator<AbstractTask> position = taskManager.taskList.listIterator();
 		AbstractTask task;
 		try {
@@ -49,7 +122,7 @@ public class TaskManagerHousekeeper implements Runnable {
 				switch (task.getTaskState()) {
 				case WORKING:
 				case STOPPING:
-					clearance = Math.max(clearance - 1, 0);
+					currentClearance = Math.max(currentClearance - 1, 0);
 					break;
 				case NEW:
 					launchableThreads.addLast(task);
@@ -76,16 +149,7 @@ public class TaskManagerHousekeeper implements Runnable {
 					case PREPARE_FOR_RESTART:
 						AbstractTask replacement = null;
 						if (task instanceof LongRunningTask) {
-							LongRunningTask legacyTask = (LongRunningTask) task;
-							try {
-								LongRunningTask lrt = legacyTask.getClass().newInstance();
-								lrt.initialize(legacyTask.getProzess());
-								replacement = lrt;
-							} catch (InstantiationException e) {
-								throw new RuntimeException(e.getMessage(), e);
-							} catch (IllegalAccessException e) {
-								throw new RuntimeException(e.getMessage(), e);
-							}
+							replacement = newLegacyTask((LongRunningTask) task);
 						}
 						if (replacement != null) {
 							position.set(replacement);
@@ -95,7 +159,7 @@ public class TaskManagerHousekeeper implements Runnable {
 					}
 				}
 			}
-		} catch (ConcurrentModificationException come) {
+		} catch (ConcurrentModificationException e) {
 			return;
 		}
 
@@ -107,11 +171,15 @@ public class TaskManagerHousekeeper implements Runnable {
 			taskManager.taskList.remove(task);
 		}
 
-		while (launchableThreads.size() > clearance) {
+		while (launchableThreads.size() > currentClearance) {
 			launchableThreads.removeLast();
 		}
 		while ((task = launchableThreads.pollFirst()) != null) {
 			task.run();
 		}
+	}
+
+	static void setAutoRunLimit(int newLimit) {
+		autoRunLimit = newLimit;
 	}
 }
