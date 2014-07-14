@@ -225,6 +225,10 @@
 -->
 
 	<listener>
+		<listener-class>de.sub.goobi.helper.tasks.TaskManagerShutdownListener</listener-class>
+	</listener>
+
+	<listener>
 		<listener-class>org.goobi.production.GoobiVersionListener</listener-class>
 	</listener>
 
