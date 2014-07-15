@@ -69,12 +69,22 @@ public class AbstractTask extends Thread {
 		DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART
 	}
 
+	public static final Thread.UncaughtExceptionHandler CATCH_ALL = new Thread.UncaughtExceptionHandler() {
+		@Override
+		public void uncaughtException(Thread th, Throwable ex) {
+			if (th instanceof AbstractTask) {
+				AbstractTask that = (AbstractTask) th;
+				that.setException(ex);
+			}
+		}
+	};
+
 	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
 	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
 
 	private String detail = null; // a string telling details, which file is processed
-	private Exception exception = null; // an exception caught
+	private Throwable exception = null; // an exception caught
 	private Long passedAway = null;
 
 	private int progress = 0; // a value from 0 to 100
@@ -95,7 +105,25 @@ public class AbstractTask extends Thread {
 		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 	}
 
-	Exception getException() {
+	/**
+	 * Causes this thread to begin execution; the Java Virtual Machine calls the
+	 * run method of this thread. The result is that two threads are running
+	 * concurrently: the current thread which returns from the call to the start
+	 * method and the other thread which executes its run method. In addition,
+	 * this method override ensures that the thread is properly registered in
+	 * the task manager and that its uncaught exception handler has been
+	 * properly set.
+	 * 
+	 * @see java.lang.Thread#start()
+	 */
+	@Override
+	public void start() {
+		TaskManager.addTaskIfMissing(this);
+		setUncaughtExceptionHandler(CATCH_ALL);
+		super.start();
+	}
+
+	Throwable getException() {
 		return exception;
 	}
 
@@ -103,7 +131,12 @@ public class AbstractTask extends Thread {
 		return progress;
 	}
 
-	@SuppressWarnings("incomplete-switch")
+	/**
+	 * The function getStateDescription() returns a text string representing the
+	 * state of the current task as read-only property "stateDescription".
+	 * 
+	 * @return a string representing the state of the task
+	 */
 	public String getStateDescription() {
 		TaskState state = getTaskState();
 		String label = Helper.getTranslation(state.toString().toLowerCase());
@@ -111,8 +144,9 @@ public class AbstractTask extends Thread {
 		case WORKING:
 			if (detail != null) {
 				return label + " (" + detail + ")";
+			} else {
+				return label;
 			}
-			break;
 		case CRASHED:
 			if (detail != null) {
 				return label + " (" + detail + ")";
@@ -121,10 +155,35 @@ public class AbstractTask extends Thread {
 			} else {
 				return label + " (" + exception.getClass().getSimpleName() + ")";
 			}
+		default:
+			return label;
 		}
-		return label;
 	}
 
+	/**
+	 * The function getTaskState() returns the task state, which can be one of
+	 * the followings:
+	 * 
+	 * <dl>
+	 * <dt><code>CRASHED</code></dt>
+	 * <dd>The thread has terminated abnormally. The field “exception” is
+	 * holding the exception that occurred.</dd>
+	 * <dt><code>FINISHED</code></dt>
+	 * <dd>The thread has finished its work without errors.</dd>
+	 * <dt><code>NEW</code></dt>
+	 * <dd>The thread has not yet been started.</dd>
+	 * <dt><code>STOPPED</code></dt>
+	 * <dd>The thread was stopped and is able to restart after cloning and
+	 * replacing it. This state is reached if the thread performed a clean
+	 * interruption and called leaveRestartable() before terminating.</dd>
+	 * <dt><code>STOPPING</code></dt>
+	 * <dd>The thread has received a request to interrupt but didn’t stop yet.</dd>
+	 * <dt><code>WORKING</code></dt>
+	 * <dd>The thread is in operation.</dd>
+	 * </dl>
+	 * 
+	 * @return the task state
+	 */
 	TaskState getTaskState() {
 		switch (getState()) {
 		case NEW:
@@ -151,9 +210,10 @@ public class AbstractTask extends Thread {
 	}
 
 	/**
-	 * The longMessage is shown in a popup window
+	 * The function getLongMessage() returns the read-only field "longMessage"
+	 * which will be shown in a pop-up window.
 	 * 
-	 * @return
+	 * @return the stack trace of the exception, if any
 	 */
 	public String getLongMessage() {
 		if (exception == null) {
@@ -162,42 +222,65 @@ public class AbstractTask extends Thread {
 		return ExceptionUtils.getStackTrace(exception);
 	}
 
+	/**
+	 * The function interrupt() interrupts this thread and allows to set a
+	 * behaviour after interruption.
+	 * 
+	 * @param mode
+	 *            how to behave after interruption
+	 */
 	public void interrupt(Behaviour mode) {
 		behaviourAfterTermination = mode;
+		interrupt();
 	}
 
+	/**
+	 * The procedure leaveRestartable() sets a flag that the thread can be
+	 * restarted. The thread may call it when it has detected an interrupt to
+	 * notify the task manager that it can successfully be replaced for
+	 * restarting it. The function call will be ignored if a desired behaviour
+	 * already has been requested.
+	 */
 	protected void leaveRestartable() {
-		behaviourAfterTermination = Behaviour.PREPARE_FOR_RESTART;
+		if (behaviourAfterTermination == null) {
+			behaviourAfterTermination = Behaviour.PREPARE_FOR_RESTART;
+		}
 	}
 
+	/**
+	 * This is a sample implementation of run() which simulates a “long running
+	 * task” but does nothing and just fills up the percentage gauge. It isn’t
+	 * useful for anything but testing or demonstration purposes.
+	 * 
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
-		/*
-		 * --------------------- Simulation einer lang laufenden Aufgabe
-		 * -------------------
-		 */
-		for (int i = 0; i < 100; i++) {
-			/*
-			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
-			 */
-			if (this.isInterrupted()) {
-				leaveRestartable();
-				return;
-			}
-			/* Simulation of a long task */
+		for (int i = 1; i <= 100; i++) {
+
+			// tell user some details what you are currently working on
+			setWorkDetail(Integer.toString(i));
+
+			// do something …
 			try {
 				sleep(150);
 			} catch (InterruptedException e) {
 			}
-			setWorkDetail(Integer.toString(i));
+
+			// set progress
 			setProgress(i);
+
+			// The thread may have been signaled to stop. If so, leave
+			if (isInterrupted()) {
+				leaveRestartable(); // Mark this as not finished
+				return; // leave procedure
+			}
 		}
-		setWorkDetail("done");
-		setProgress(100);
+		// we’re done. There is nothing more to do.
 	}
 
-	protected void setException(Exception exception) {
-		this.exception = exception;
+	protected void setException(Throwable ex) {
+		this.exception = ex;
 	}
 
 	protected void setNameDetail(String detail) {

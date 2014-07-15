@@ -61,20 +61,20 @@ import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 public class TaskManager {
 
 	/**
-	 * The field executorService holds a scheduled executor to repeatedly run
-	 * the houskeeping task which will remove old threads and start new ones as
-	 * configured to do.
-	 */
-	private final ScheduledExecutorService executorService;
-
-	/**
-	 * The field instance holds the singelton instance of the TaskManager. Tough
-	 * the method signatures of TaskManager are static, it is implemented as
-	 * singleton internally. All accesses to the instance must be done by
-	 * calling the synchronized function singleton() or concurrency issues may
-	 * arise.
+	 * The field singletonInstance holds the singelton instance of the
+	 * TaskManager. Tough the method signatures of TaskManager are static, it is
+	 * implemented as singleton internally. All accesses to the instance must be
+	 * done by calling the synchronized function singleton() or concurrency
+	 * issues may arise.
 	 */
 	private static TaskManager singletonInstance;
+
+	/**
+	 * The field taskSitter holds a scheduled executor to repeatedly run the
+	 * TaskSitter task which will remove old threads and start new ones as
+	 * configured to do.
+	 */
+	private final ScheduledExecutorService taskSitter;
 
 	/**
 	 * The field taskList holds the list of threads managed by the task manager.
@@ -88,9 +88,9 @@ public class TaskManager {
 	 */
 	private TaskManager() {
 		setAutoRunningThreads(true);
-		executorService = Executors.newSingleThreadScheduledExecutor();
-		long yelay = ConfigMain.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
-		executorService.scheduleWithFixedDelay(new TaskManagerHousekeeper(), yelay, yelay, TimeUnit.MILLISECONDS);
+		taskSitter = Executors.newSingleThreadScheduledExecutor();
+		long delay = ConfigMain.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
+		taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -104,9 +104,38 @@ public class TaskManager {
 	}
 
 	/**
+	 * The procedure addTaskIfMissing() will add a task to the task list if it
+	 * has not yet been added right after the last task that is currently
+	 * executing. If this fails for some reason (i.e. the list got concurrently
+	 * modified) it will be added in the end.
+	 * 
+	 * This is a fallback method that is called by the overloaded start() method
+	 * of AbstractTask. Do not use it. Use TaskManager.addTask() to properly add
+	 * the tasks you created.
+	 * 
+	 * @param task
+	 *            task to add
+	 */
+	static void addTaskIfMissing(AbstractTask task) {
+		LinkedList<AbstractTask> tasks = singleton().taskList;
+		if (!tasks.contains(task)) {
+			int pos = lastIndexOf(TaskState.WORKING) + 1;
+			try {
+				tasks.add(pos, task);
+			} catch (IndexOutOfBoundsException e) {
+				tasks.addLast(task);
+			}
+		}
+	}
+
+	/**
 	 * The function getTaskList() returns a copy of the task list usable for
-	 * displaying. The result object cannot be used to modify the list. Use the
-	 * appropriate functions for this.
+	 * displaying. The result object cannot be used to modify the list. Use
+	 * removeAllFinishedTasks() to clean up the list or stopAndDeleteAllTasks()
+	 * if you wish to do so. To get rid of one specific task, call
+	 * abstractTask.interrupt(Behaviour.DELETE_IMMEDIATELY) which will cause it
+	 * to be removed by the TaskSitter as soon as it has terminated
+	 * successfully.
 	 * 
 	 * @return a copy of the task list
 	 */
@@ -121,7 +150,27 @@ public class TaskManager {
 	 * @return whether the TaskManager is auto-running threds or not
 	 */
 	public static boolean isAutoRunningThreads() {
-		return TaskManagerHousekeeper.getAutoRunLimit() > 0;
+		return TaskSitter.getAutoRunLimit() > 0;
+	}
+
+	/**
+	 * The function lastIndexOf() returns the index of the last task in the task
+	 * list that is in the given TaskState
+	 * 
+	 * @param state
+	 *            state of tasks to look for
+	 * @return the index of the last task in that state
+	 */
+	private static int lastIndexOf(TaskState state) {
+		int result = -1;
+		int pos = -1;
+		for (AbstractTask task : singleton().taskList) {
+			pos++;
+			if (task.getTaskState().equals(state)) {
+				result = pos;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -148,7 +197,7 @@ public class TaskManager {
 
 	/**
 	 * The function runEarlier() can be called to move a task by one forwards on
-	 * the queue
+	 * the queue.
 	 * 
 	 * @param task
 	 *            task to move forwards
@@ -163,7 +212,7 @@ public class TaskManager {
 
 	/**
 	 * The function runLater() can be called to move a task by one backwards on
-	 * the queue
+	 * the queue.
 	 * 
 	 * @param task
 	 *            task to move backwards
@@ -178,18 +227,18 @@ public class TaskManager {
 
 	/**
 	 * The function setAutoRunningThreads() turns the feature to auto-run tasks
-	 * on or off
+	 * on or off.
 	 * 
 	 * @param on
-	 *            whether the TaskManager shall autorun threads
+	 *            whether the TaskManager shall auto-run threads
 	 */
 	public static void setAutoRunningThreads(boolean on) {
 		if (on) {
 			int cores = Runtime.getRuntime().availableProcessors();
 			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
-			TaskManagerHousekeeper.setAutoRunLimit(newLimit);
+			TaskSitter.setAutoRunLimit(newLimit);
 		} else {
-			TaskManagerHousekeeper.setAutoRunLimit(0);
+			TaskSitter.setAutoRunLimit(0);
 		}
 	}
 
@@ -207,13 +256,13 @@ public class TaskManager {
 	}
 
 	/**
-	 * The function shutdownNow() will be called by the
-	 * TaskManagerShutdownListener to gracefully exit the task manager as well
-	 * as its managed threads during container shutdown.
+	 * The function shutdownNow() will be called by the TaskSitter to gracefully
+	 * exit the task manager as well as its managed threads during container
+	 * shutdown.
 	 */
 	static void shutdownNow() {
 		stopAndDeleteAllTasks();
-		singleton().executorService.shutdownNow();
+		singleton().taskSitter.shutdownNow();
 	}
 
 	/**

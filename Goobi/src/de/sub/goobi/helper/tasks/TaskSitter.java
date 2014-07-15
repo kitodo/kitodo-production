@@ -14,13 +14,13 @@ import org.joda.time.Duration;
 import de.sub.goobi.config.ConfigMain;
 
 /**
- * The class Housekeeper is a Runnable which implements the removing of old
+ * The class TaskSitter is a Runnable which implements the removing of old
  * threads and starting of new ones.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class TaskManagerHousekeeper implements Runnable, ServletContextListener {
-	private static final Logger logger = Logger.getLogger(TaskManagerHousekeeper.class);
+public class TaskSitter implements Runnable, ServletContextListener {
+	private static final Logger logger = Logger.getLogger(TaskSitter.class);
 
 	private static final int KEEP_FAILED = 10;
 	private static final long KEEP_FAILED_MINS = 250;
@@ -37,7 +37,7 @@ public class TaskManagerHousekeeper implements Runnable, ServletContextListener 
 
 	/**
 	 * When the servlet is unloaded, i.e. on container shutdown, the TaskManager
-	 * shall be shutd down gracefully.
+	 * shall be shut down gracefully.
 	 * 
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
 	 */
@@ -46,17 +46,29 @@ public class TaskManagerHousekeeper implements Runnable, ServletContextListener 
 		TaskManager.shutdownNow();
 	}
 
+	/**
+	 * Currently, there is nothing to do when the servlet is loading.
+	 * 
+	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 	}
 
+	/**
+	 * The function getAutoRunLimit() returns the number of threads that will be
+	 * automatically started in parallel.
+	 * 
+	 * @return the number of threads which at most are allowed to be started
+	 *         automatically
+	 */
 	static int getAutoRunLimit() {
 		return autoRunLimit;
 	}
 
 	/**
 	 * The function newLegacyTask() will clone a LongRunningTask implementation
-	 * for restart
+	 * for restart.
 	 * 
 	 * @param legacyTask
 	 *            a LongRunningTask to clone
@@ -82,11 +94,12 @@ public class TaskManagerHousekeeper implements Runnable, ServletContextListener 
 	 * 
 	 * Several limits are configurable: There are both limits in number and in
 	 * time for successfully finished or erroneous threads which can be set in
-	 * the configuration. The limit for auto starting threads can accessed using
-	 * getter and setter. There are internal default values for these too, which
+	 * the configuration. There are internal default values for these too, which
 	 * will applied in case of missing configuration. Keep in mind that zombie
-	 * processes still occupy all their ressources and aren’t available for
+	 * processes still occupy all their resources and aren’t available for
 	 * garbage collection, so these values have been chosen rather restrictive.
+	 * The limit for auto starting threads can be configured using its getter
+	 * and setter functions.
 	 * 
 	 * If a ConcurrentModificationException arises during list examination, the
 	 * method will exit silently and do not do any more work. This is not a pity

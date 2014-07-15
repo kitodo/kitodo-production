@@ -45,7 +45,7 @@ public class LongRunningTasksForm {
 	}
 
 	public void executeTask() {
-		this.task.run();
+		task.start();
 	}
 
 	public void clearFinishedTasks() {
