@@ -248,6 +248,46 @@ public class AbstractTask extends Thread {
 	}
 
 	/**
+	 * The function isStartable() returns wether the start button shall be shown
+	 * as read-only property "startable". A thread can be started as long as it
+	 * has not yet been started.
+	 * 
+	 * @return whether the start button shall show
+	 */
+	public boolean isStartable() {
+		return getState().equals(State.NEW);
+	}
+
+	/**
+	 * The function isStopable() returns wether the stop button shall be shown
+	 * as read-only property "stopable". A thread can be stopped if it is
+	 * working.
+	 * 
+	 * @return whether the stop button shall show
+	 */
+	public boolean isStopable() {
+		return getTaskState().equals(TaskState.WORKING);
+	}
+
+	/**
+	 * The function isDeleteable() returns whether the delete button shall be
+	 * shown as read-only property "deleteable". In our interpretation, a thread
+	 * is deleteable if it is either new or has terminated and is still lounging
+	 * around.
+	 * 
+	 * @return whether the delete button shall show
+	 */
+	public boolean isDeleteable() {
+		switch (getState()) {
+		case NEW:
+		case TERMINATED:
+			return !Behaviour.DELETE_IMMEDIATELY.equals(behaviourAfterTermination);
+		default:
+			return false;
+		}
+	}
+
+	/**
 	 * This is a sample implementation of run() which simulates a “long running
 	 * task” but does nothing and just fills up the percentage gauge. It isn’t
 	 * useful for anything but testing or demonstration purposes.

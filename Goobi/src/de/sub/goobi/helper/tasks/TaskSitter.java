@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 
 /**
  * The class TaskSitter is a Runnable which implements the removing of old
@@ -138,7 +139,11 @@ public class TaskSitter implements Runnable, ServletContextListener {
 					currentClearance = Math.max(currentClearance - 1, 0);
 					break;
 				case NEW:
-					launchableThreads.addLast(task);
+					if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviourAfterTermination())) {
+						position.remove();
+					} else {
+						launchableThreads.addLast(task);
+					}
 					break;
 				default: // cases STOPPED, FINISHED, CRASHED
 					switch (task.getBehaviourAfterTermination()) {
@@ -146,15 +151,15 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						position.remove();
 						break;
 					default: // case KEEP_FOR_A_WHILE 
-						boolean successful = task.getException() == null;
+						boolean taskFinishedSuccessfully = task.getException() == null;
 						Duration durationDead = task.getDurationDead();
 						if (durationDead == null) {
 							task.setTimeOfDeath();
-						} else if (durationDead.isLongerThan(successful ? successfulMaxAge : failedMaxAge)) {
+						} else if (durationDead.isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {
 							position.remove();
 							break;
 						}
-						if (successful) {
+						if (taskFinishedSuccessfully) {
 							finishedThreads.add(task);
 						} else {
 							failedThreads.add(task);
@@ -164,6 +169,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						AbstractTask replacement = null;
 						if (task instanceof LongRunningTask) {
 							replacement = newLegacyTask((LongRunningTask) task);
+						} else if (task.getClass() == AbstractTask.class) {
+							replacement = new AbstractTask();
 						}
 						if (replacement != null) {
 							position.set(replacement);

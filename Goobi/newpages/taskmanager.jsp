@@ -225,12 +225,10 @@
 													property="#{LongRunningTasksForm.task}" />
 											</h:commandLink>
 
-											<h:panelGroup id="id38"
-												rendered="#{LongRunningTasksForm.running}">
 												<%-- start --%>
 												<h:commandLink id="id39"
 													action="#{LongRunningTasksForm.executeTask}"
-													title="#{msgs.start}" rendered="#{item.progress<=0}">
+													title="#{msgs.start}" rendered="#{item.startable}">
 													<h:graphicImage
 														value="/newpages/images/icons/start_task.gif" />
 													<x:updateActionListener value="#{item}"
@@ -241,20 +239,18 @@
 												<h:commandLink id="id40"
 													action="#{LongRunningTasksForm.cancelTask}"
 													title="#{msgs.stop}"
-													rendered="#{item.progress>0 && item.progress<100}">
+													rendered="#{item.stopable}">
 													<h:graphicImage id="id41"
 														value="/newpages/images/icons/stop_task.gif" />
 													<x:updateActionListener value="#{item}"
 														property="#{LongRunningTasksForm.task}" />
 												</h:commandLink>
 
-
-											</h:panelGroup>
-											<%-- löschen --%>
+											<%-- delete --%>
 											<h:commandLink id="id42"
 												action="#{LongRunningTasksForm.removeTask}"
 												title="#{msgs.loeschen}"
-												rendered="#{item.progress==100 || item.progress<1}">
+												rendered="#{item.deleteable}">
 												<h:graphicImage
 													value="/newpages/images/icons/progress_rem.gif" />
 												<x:updateActionListener value="#{item}"
