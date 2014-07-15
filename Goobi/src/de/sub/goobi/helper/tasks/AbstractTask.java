@@ -305,6 +305,7 @@ public class AbstractTask extends Thread {
 			try {
 				sleep(150);
 			} catch (InterruptedException e) {
+				this.interrupt();
 			}
 
 			// set progress
@@ -319,7 +320,7 @@ public class AbstractTask extends Thread {
 		// we’re done. There is nothing more to do.
 	}
 
-	protected void setException(Throwable ex) {
+	public void setException(Throwable ex) {
 		this.exception = ex;
 	}
 
@@ -333,7 +334,7 @@ public class AbstractTask extends Thread {
 		super.setName(composer.toString());
 	}
 
-	protected void setProgress(int progress) {
+	public void setProgress(int progress) {
 		if (progress >= 0 || progress <= 100) {
 			this.progress = progress;
 		} else if (exception == null) {
@@ -345,7 +346,7 @@ public class AbstractTask extends Thread {
 		passedAway = System.nanoTime();
 	}
 
-	protected void setWorkDetail(String detail) {
+	public void setWorkDetail(String detail) {
 		this.detail = detail;
 	}
 

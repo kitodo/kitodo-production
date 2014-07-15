@@ -40,8 +40,8 @@ public class LongRunningTasksForm {
 	}
 
 	public void addDemoTask() {
-		this.task = new AbstractTask();
-		TaskManager.addTask(this.task);
+		task = new AbstractTask();
+		TaskManager.addTask(task);
 	}
 
 	public void executeTask() {
@@ -57,19 +57,20 @@ public class LongRunningTasksForm {
 	}
 
 	public void moveTaskUp() {
-		TaskManager.runEarlier(this.task);
+		TaskManager.runEarlier(task);
 	}
 
 	public void moveTaskDown() {
-		TaskManager.runLater(this.task);
+		TaskManager.runLater(task);
 	}
 
 	public void cancelTask() {
-		this.task.interrupt(Behaviour.PREPARE_FOR_RESTART);
+		TaskManager.setAutoRunningThreads(false);
+		task.interrupt(Behaviour.PREPARE_FOR_RESTART);
 	}
 
 	public void removeTask() {
-		this.task.interrupt(Behaviour.DELETE_IMMEDIATELY);
+		task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 	}
 
 	public boolean isDemoTasksLinkShowing() {

@@ -171,6 +171,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
 							replacement = newLegacyTask((LongRunningTask) task);
 						} else if (task.getClass() == AbstractTask.class) {
 							replacement = new AbstractTask();
+							replacement.setProgress(task.getProgress());
 						}
 						if (replacement != null) {
 							position.set(replacement);
