@@ -60,9 +60,9 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -269,12 +269,10 @@ public class GoobiScript {
      */
     private void swapOutProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapOutTask task = new ProcessSwapOutTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
-
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 
@@ -283,11 +281,10 @@ public class GoobiScript {
      */
     private void swapInProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapInTask task = new ProcessSwapInTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 

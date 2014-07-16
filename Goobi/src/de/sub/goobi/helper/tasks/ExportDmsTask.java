@@ -41,7 +41,7 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.export.dms.ExportDms;
 
-public class ExportDmsTask extends AbstractTask {
+public class ExportDmsTask extends EmptyTask {
 
 	private final ExportDms exportDms;
 	private final Prozess process;

@@ -29,19 +29,19 @@ package de.sub.goobi.forms;
 import java.util.List;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.tasks.AbstractTask;
-import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
 
 public class LongRunningTasksForm {
-	private AbstractTask task;
-	public List<AbstractTask> getTasks() {
+	private EmptyTask task;
+	public List<EmptyTask> getTasks() {
 		return TaskManager.getTaskList();
 	}
 
 	public void addDemoTask() {
-		task = new AbstractTask();
+		task = new EmptyTask();
 		TaskManager.addTask(task);
 	}
 
@@ -78,7 +78,7 @@ public class LongRunningTasksForm {
 		return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
 	}
 
-	public void setTask(AbstractTask task) {
+	public void setTask(EmptyTask task) {
 		this.task = task;
 	}
 

@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-public class LongRunningTask extends AbstractTask {
+public class LongRunningTask extends EmptyTask {
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
 	private Prozess prozess;
@@ -41,15 +41,27 @@ public class LongRunningTask extends AbstractTask {
 		this.prozess = inProzess;
 	}
 
-	public void execute() {
-		super.setProgress(1);
-		this.isSingleThread = false;
-		run();
+	public void setShowMessages(boolean showMessages) {
+		isSingleThread = !showMessages;
 	}
 
 	@Deprecated
 	public void cancel() {
 		this.interrupt();
+	}
+
+	@Override
+	public EmptyTask clone() {
+		LongRunningTask lrt = null;
+		try {
+			lrt = getClass().newInstance();
+			lrt.initialize(prozess);
+		} catch (InstantiationException e) {
+			logger.error(e);
+		} catch (IllegalAccessException e) {
+			logger.error(e);
+		}
+		return lrt;
 	}
 
 	@Deprecated
@@ -70,6 +82,9 @@ public class LongRunningTask extends AbstractTask {
 	 */
 	@Deprecated
 	public int getStatusProgress() {
+		if (super.getException() != null) {
+			return -1;
+		}
 		return super.getProgress();
 	}
 
@@ -105,7 +120,6 @@ public class LongRunningTask extends AbstractTask {
 	 * ================================================================
 	 */
 	@Deprecated
-	// setStatusMessage() has frequently been misused to set long messages
 	protected void setStatusMessage(String statusMessage) {
 		super.setWorkDetail(statusMessage);
 		if (!this.isSingleThread) {
@@ -134,28 +148,6 @@ public class LongRunningTask extends AbstractTask {
 	@Deprecated
 	public void setLongMessage(String inlongMessage) {
 		super.setWorkDetail(inlongMessage);
-	}
-
-	/**
-	 * The function clone() will clone a LongRunningTask implementation for
-	 * restart.
-	 * 
-	 * @param legacyTask
-	 *            a LongRunningTask to clone
-	 * @return the clone of the LongRunningTask
-	 */
-	@Override
-	public AbstractTask clone() {
-		LongRunningTask lrt = null;
-		try {
-			lrt = getClass().newInstance();
-			lrt.initialize(prozess);
-		} catch (InstantiationException e) {
-			logger.error(e);
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-		}
-		return lrt;
 	}
 
 }

@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
+import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * The class TaskSitter is a Runnable which implements the removing of old
@@ -96,9 +96,9 @@ public class TaskSitter implements Runnable, ServletContextListener {
 			return;
 		}
 
-		LinkedList<AbstractTask> launchableThreads = new LinkedList<AbstractTask>();
-		LinkedList<AbstractTask> finishedThreads = new LinkedList<AbstractTask>();
-		LinkedList<AbstractTask> failedThreads = new LinkedList<AbstractTask>();
+		LinkedList<EmptyTask> launchableThreads = new LinkedList<EmptyTask>();
+		LinkedList<EmptyTask> finishedThreads = new LinkedList<EmptyTask>();
+		LinkedList<EmptyTask> failedThreads = new LinkedList<EmptyTask>();
 		int currentClearance = autoRunLimit;
 
 		int successfulMaxCount = ConfigMain
@@ -109,8 +109,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
 		Duration failedMaxAge = ConfigMain.getDurationParameter("taskManager.keepThreads.failed.minutes",
 				TimeUnit.MINUTES, KEEP_FAILED_MINS);
 
-		ListIterator<AbstractTask> position = taskManager.taskList.listIterator();
-		AbstractTask task;
+		ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
+		EmptyTask task;
 		try {
 			while (position.hasNext()) {
 				task = position.next();
@@ -148,7 +148,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						}
 						break;
 					case PREPARE_FOR_RESTART:
-						AbstractTask replacement = task.clone();
+						EmptyTask replacement = task.clone();
 						if (replacement != null) {
 							position.set(replacement);
 							launchableThreads.addLast(replacement);

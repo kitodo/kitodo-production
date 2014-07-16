@@ -38,6 +38,7 @@
  */
 package de.sub.goobi.helper.tasks;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -45,7 +46,7 @@ import org.joda.time.Duration;
 
 import de.sub.goobi.helper.Helper;
 
-public class AbstractTask extends Thread implements Cloneable {
+public class EmptyTask extends Thread implements Cloneable {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
 	 * to do with a terminated thread. These are:
@@ -72,8 +73,8 @@ public class AbstractTask extends Thread implements Cloneable {
 	public static final Thread.UncaughtExceptionHandler CATCH_ALL = new Thread.UncaughtExceptionHandler() {
 		@Override
 		public void uncaughtException(Thread th, Throwable ex) {
-			if (th instanceof AbstractTask) {
-				AbstractTask that = (AbstractTask) th;
+			if (th instanceof EmptyTask) {
+				EmptyTask that = (EmptyTask) th;
 				that.setException(ex);
 			}
 		}
@@ -84,12 +85,12 @@ public class AbstractTask extends Thread implements Cloneable {
 	private Behaviour behaviour; // what to do if the thread crashed
 
 	private String detail = null; // a string telling details, which file is processed
-	private Throwable thrown = null; // an exception caught
+	private Exception exception = null; // an exception caught
 	private Long passedAway = null;
 
 	private int progress = 0; // a value from 0 to 100
 
-	public AbstractTask() {
+	public EmptyTask() {
 		setNameDetail(null);
 	}
 
@@ -99,10 +100,10 @@ public class AbstractTask extends Thread implements Cloneable {
 	 * @param master
 	 *            instance to make a copy from
 	 */
-	protected AbstractTask(AbstractTask master) {
+	protected EmptyTask(EmptyTask master) {
 		this.behaviour = master.behaviour;
 		this.detail = master.detail;
-		this.thrown = master.thrown;
+		this.exception = master.exception;
 		this.passedAway = master.passedAway;
 		this.progress = master.progress;
 		setName(master.getName());
@@ -117,8 +118,8 @@ public class AbstractTask extends Thread implements Cloneable {
 	 * @see java.lang.Thread#clone()
 	 */
 	@Override
-	public AbstractTask clone() {
-		return new AbstractTask(this);
+	public EmptyTask clone() {
+		return new EmptyTask(this);
 	}
 
 	/**
@@ -156,8 +157,8 @@ public class AbstractTask extends Thread implements Cloneable {
 		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 	}
 
-	Throwable getException() {
-		return thrown;
+	public Exception getException() {
+		return exception;
 	}
 
 	public int getProgress() {
@@ -183,10 +184,10 @@ public class AbstractTask extends Thread implements Cloneable {
 		case CRASHED:
 			if (detail != null) {
 				return label + " (" + detail + ")";
-			} else if (thrown.getMessage() != null) {
-				return label + " (" + thrown.getMessage() + ")";
+			} else if (exception.getMessage() != null) {
+				return label + " (" + exception.getMessage() + ")";
 			} else {
-				return label + " (" + thrown.getClass().getSimpleName() + ")";
+				return label + " (" + exception.getClass().getSimpleName() + ")";
 			}
 		default:
 			return label;
@@ -225,7 +226,7 @@ public class AbstractTask extends Thread implements Cloneable {
 			if (behaviour == null) {
 				behaviour = DEFAULT_BEHAVIOUR;
 			}
-			if (thrown != null) {
+			if (exception != null) {
 				return TaskState.CRASHED;
 			}
 			if (Behaviour.PREPARE_FOR_RESTART.equals(behaviour)) {
@@ -249,10 +250,10 @@ public class AbstractTask extends Thread implements Cloneable {
 	 * @return the stack trace of the exception, if any
 	 */
 	public String getLongMessage() {
-		if (thrown == null) {
+		if (exception == null) {
 			return null;
 		}
-		return ExceptionUtils.getStackTrace(thrown);
+		return ExceptionUtils.getStackTrace(exception);
 	}
 
 	/**
@@ -353,9 +354,13 @@ public class AbstractTask extends Thread implements Cloneable {
 		// we’re done. There is nothing more to do.
 	}
 
-	public void setException(Throwable thrown) {
-		if (!isInterrupted() || !(thrown instanceof InterruptedException)) {
-			this.thrown = thrown;
+	public void setException(Throwable exception) {
+		if (!isInterrupted() || !(exception instanceof InterruptedException)) {
+			if (exception instanceof Exception) {
+				this.exception = (Exception) exception;
+			} else {
+				this.exception = new ExecutionException(exception.getMessage(), exception);
+			}
 		}
 	}
 

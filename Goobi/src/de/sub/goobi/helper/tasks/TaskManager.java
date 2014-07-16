@@ -49,7 +49,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
+import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * The class TaskManager serves to handle the execution of threads. It can be
@@ -79,7 +79,7 @@ public class TaskManager {
 	/**
 	 * The field taskList holds the list of threads managed by the task manager.
 	 */
-	final LinkedList<AbstractTask> taskList = new LinkedList<AbstractTask>();
+	final LinkedList<EmptyTask> taskList = new LinkedList<EmptyTask>();
 
 	/**
 	 * TaskManager is a singleton so its constructor is private. It will be
@@ -98,7 +98,7 @@ public class TaskManager {
 	 * @param task
 	 *            task to add
 	 */
-	public static void addTask(AbstractTask task) {
+	public static void addTask(EmptyTask task) {
 		singleton().taskList.addLast(task);
 	}
 
@@ -115,8 +115,8 @@ public class TaskManager {
 	 * @param task
 	 *            task to add
 	 */
-	static void addTaskIfMissing(AbstractTask task) {
-		LinkedList<AbstractTask> tasks = singleton().taskList;
+	static void addTaskIfMissing(EmptyTask task) {
+		LinkedList<EmptyTask> tasks = singleton().taskList;
 		if (!tasks.contains(task)) {
 			int pos = lastIndexOf(TaskState.WORKING) + 1;
 			try {
@@ -138,8 +138,8 @@ public class TaskManager {
 	 * 
 	 * @return a copy of the task list
 	 */
-	public static List<AbstractTask> getTaskList() {
-		return new ArrayList<AbstractTask>(singleton().taskList);
+	public static List<EmptyTask> getTaskList() {
+		return new ArrayList<EmptyTask>(singleton().taskList);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class TaskManager {
 	private static int lastIndexOf(TaskState state) {
 		int result = -1;
 		int pos = -1;
-		for (AbstractTask task : singleton().taskList) {
+		for (EmptyTask task : singleton().taskList) {
 			pos++;
 			if (task.getTaskState().equals(state)) {
 				result = pos;
@@ -171,9 +171,9 @@ public class TaskManager {
 		do {
 			redo = false;
 			try {
-				Iterator<AbstractTask> inspector = singleton().taskList.iterator();
+				Iterator<EmptyTask> inspector = singleton().taskList.iterator();
 				while (inspector.hasNext()) {
-					AbstractTask task = inspector.next();
+					EmptyTask task = inspector.next();
 					if (task.getState().equals(Thread.State.TERMINATED)) {
 						inspector.remove();
 					}
@@ -191,7 +191,7 @@ public class TaskManager {
 	 * @param task
 	 *            task to move forwards
 	 */
-	public static void runEarlier(AbstractTask task) {
+	public static void runEarlier(EmptyTask task) {
 		TaskManager theManager = singleton();
 		int index = theManager.taskList.indexOf(task);
 		if (index > 0) {
@@ -206,7 +206,7 @@ public class TaskManager {
 	 * @param task
 	 *            task to move backwards
 	 */
-	public static void runLater(AbstractTask task) {
+	public static void runLater(EmptyTask task) {
 		TaskManager theManager = singleton();
 		int index = theManager.taskList.indexOf(task);
 		if (index > -1 && index + 1 < theManager.taskList.size()) {
@@ -247,9 +247,9 @@ public class TaskManager {
 		do {
 			redo = false;
 			try {
-				Iterator<AbstractTask> inspector = singleton().taskList.iterator();
+				Iterator<EmptyTask> inspector = singleton().taskList.iterator();
 				while (inspector.hasNext()) {
-					AbstractTask task = inspector.next();
+					EmptyTask task = inspector.next();
 					if (task.isAlive()) {
 						task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 					} else {
