@@ -46,6 +46,14 @@ import org.joda.time.Duration;
 
 import de.sub.goobi.helper.Helper;
 
+/**
+ * The class EmptyTask is the base class for worker threads that operate
+ * independently to do the work in the background. The name empty task points
+ * out that the task doesn’t do anything sensible yet. It is here to be
+ * extendet.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class EmptyTask extends Thread implements Cloneable {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
@@ -70,32 +78,80 @@ public class EmptyTask extends Thread implements Cloneable {
 		DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART
 	}
 
+	/**
+	 * The constant CATCH_ALL holds an UncaughtExceptionHandler implementation
+	 * which will automatically be attached to all task threads. Otherwise
+	 * exceptions might get lost or even bring the runtime to crash.
+	 */
 	public static final Thread.UncaughtExceptionHandler CATCH_ALL = new Thread.UncaughtExceptionHandler() {
+		/**
+		 * The function uncaughtException() will catch any uncaught exception
+		 * that might occur in the task and will store it in the
+		 * 
+		 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,
+		 *      java.lang.Throwable)
+		 */
 		@Override
-		public void uncaughtException(Thread th, Throwable ex) {
-			if (th instanceof EmptyTask) {
-				EmptyTask that = (EmptyTask) th;
-				that.setException(ex);
+		public void uncaughtException(Thread origin, Throwable exception) {
+			if (origin instanceof EmptyTask) {
+				EmptyTask task = (EmptyTask) origin;
+				task.setException(exception);
 			}
 		}
 	};
 
+	/**
+	 * The constant DEFAULT_BEHAVIOUR defines the default behaviour of the
+	 * TaskKeeper towards a task that terminated. The default behaviour is that
+	 * it will be kept in the front end as configured in the global
+	 * configuration file and then will be deleted.
+	 */
 	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
-	private Behaviour behaviour; // what to do if the thread crashed
+	/**
+	 * The field behaviour defines the behaviour of the TaskKeeper towards the
+	 * task if it has terminated. Setting this field to DELETE_IMMEDIATELY will
+	 * also result in the desired behaviour if the task has not yet been started
+	 * at all.
+	 */
+	private Behaviour behaviour;
 
-	private String detail = null; // a string telling details, which file is processed
-	private Exception exception = null; // an exception caught
+	/**
+	 * The field detail holds a string giving some details about what the thread
+	 * is doing that do not require translation, i.e. which file is currently
+	 * processed.
+	 */
+	private String detail = null;
+
+	/**
+	 * The field exception is designated to take an exception if one occurred.
+	 */
+	private Exception exception = null;
+
+	/**
+	 * The field passedAway will be initialised with a time stamp as the thread
+	 * dies to be able to remove it a defined timespan after it died.
+	 */
 	private Long passedAway = null;
 
-	private int progress = 0; // a value from 0 to 100
+	/**
+	 * The field progress holds one out of 101 values, ranging from 0 to 100 to
+	 * indicate the progress of the work. This will be shown as a progress bar
+	 * in the front end.
+	 */
+	private int progress = 0;
 
+	/**
+	 * Default constructor. Creates an empty thread and sets its name without a
+	 * detail.
+	 */
 	public EmptyTask() {
 		setNameDetail(null);
 	}
 
 	/**
-	 * Copy constructor
+	 * Copy constructor. Required for cloning tasks. Cloning is required to be
+	 * able to restart a task.
 	 * 
 	 * @param master
 	 *            instance to make a copy from
@@ -149,6 +205,12 @@ public class EmptyTask extends Thread implements Cloneable {
 		return behaviour;
 	}
 
+	/**
+	 * The function getDurationDead() returns the duration the task is dead. If
+	 * a time of death has not yet been recorded, null is returned.
+	 * 
+	 * @return the duration since the task died
+	 */
 	Duration getDurationDead() {
 		if (passedAway == null) {
 			return null;
@@ -157,10 +219,23 @@ public class EmptyTask extends Thread implements Cloneable {
 		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 	}
 
+	/**
+	 * The function getException() provides access to the exception that
+	 * occurred if the thread died abnormally. If no exception has occurred yet
+	 * or it wasn’t properly recorded, null is returned.
+	 * 
+	 * @return the exception occurred, or null if no exception occurred yet
+	 */
 	public Exception getException() {
 		return exception;
 	}
 
+	/**
+	 * The function getProgress() returns the progress of the task in percent,
+	 * i.e. in a range from 0 to 100.
+	 * 
+	 * @return the progress of the task
+	 */
 	public int getProgress() {
 		return progress;
 	}
@@ -168,6 +243,7 @@ public class EmptyTask extends Thread implements Cloneable {
 	/**
 	 * The function getStateDescription() returns a text string representing the
 	 * state of the current task as read-only property "stateDescription".
+	 * 
 	 * 
 	 * @return a string representing the state of the task
 	 */
@@ -201,15 +277,17 @@ public class EmptyTask extends Thread implements Cloneable {
 	 * <dl>
 	 * <dt><code>CRASHED</code></dt>
 	 * <dd>The thread has terminated abnormally. The field “exception” is
-	 * holding the exception that occurred.</dd>
+	 * holding the exception that has occurred.</dd>
 	 * <dt><code>FINISHED</code></dt>
-	 * <dd>The thread has finished its work without errors.</dd>
+	 * <dd>The thread has finished its work without errors and is available for
+	 * clean-up.</dd>
 	 * <dt><code>NEW</code></dt>
 	 * <dd>The thread has not yet been started.</dd>
 	 * <dt><code>STOPPED</code></dt>
-	 * <dd>The thread was stopped and is able to restart after cloning and
-	 * replacing it. This state is reached if the thread performed a clean
-	 * interruption and called leaveRestartable() before terminating.</dd>
+	 * <dd>The thread was stopped by a front end user—resulting in a call to its
+	 * {@link #interrupt(Behaviour)} method with {@link Behaviour}
+	 * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing
+	 * it.</dd>
 	 * <dt><code>STOPPING</code></dt>
 	 * <dd>The thread has received a request to interrupt but didn’t stop yet.</dd>
 	 * <dt><code>WORKING</code></dt>
@@ -269,19 +347,6 @@ public class EmptyTask extends Thread implements Cloneable {
 	}
 
 	/**
-	 * The procedure leaveRestartable() sets a flag that the thread can be
-	 * restarted. The thread may call it when it has detected an interrupt to
-	 * notify the task manager that it can successfully be replaced for
-	 * restarting it. The function call will be ignored if a desired behaviour
-	 * already has been requested.
-	 */
-	protected void leaveRestartable() {
-		if (behaviour == null) {
-			behaviour = Behaviour.PREPARE_FOR_RESTART;
-		}
-	}
-
-	/**
 	 * The function isStartable() returns wether the start button shall be shown
 	 * as read-only property "startable". A thread can be started as long as it
 	 * has not yet been started.
@@ -337,7 +402,7 @@ public class EmptyTask extends Thread implements Cloneable {
 
 			// do something …
 			try {
-				sleep(150);
+				sleep(1024);
 			} catch (InterruptedException e) {
 				this.interrupt();
 			}
@@ -347,15 +412,24 @@ public class EmptyTask extends Thread implements Cloneable {
 
 			// The thread may have been signaled to stop. If so, leave
 			if (isInterrupted()) {
-				leaveRestartable(); // Mark this as not finished
-				return; // leave procedure
+				return;
 			}
 		}
-		// we’re done. There is nothing more to do.
+		// We’re done. There is nothing more to do.
 	}
 
+	/**
+	 * The procedure setException can be used to save an exception that occurred
+	 * and show it in the front end. It will only record the first exception
+	 * (which is likely to be the source of all the misery) and it will not
+	 * record an InterruptedException if the thread has already been
+	 * interrupted.
+	 * 
+	 * @param exception
+	 *            exception to save
+	 */
 	public void setException(Throwable exception) {
-		if (!isInterrupted() || !(exception instanceof InterruptedException)) {
+		if (this.exception == null && (!isInterrupted() || !(exception instanceof InterruptedException))) {
 			if (exception instanceof Exception) {
 				this.exception = (Exception) exception;
 			} else {
@@ -364,6 +438,19 @@ public class EmptyTask extends Thread implements Cloneable {
 		}
 	}
 
+	/**
+	 * The procedure setNameDetail() may be used to set the task’s name along
+	 * with a detail that doesn’t require translation and is helpful when being
+	 * shown in the front end (such as the name of the entity the task is based
+	 * on). The name detail should be set once (in the constructor). You may
+	 * pass in null to reset the name and remove the detail.
+	 * 
+	 * I.e., if your task is about creation of OCR for a process, the detail
+	 * here could be the process title.
+	 * 
+	 * @param detail
+	 *            a name detail, may be null
+	 */
 	protected void setNameDetail(String detail) {
 		StringBuilder composer = new StringBuilder(119);
 		composer.append(Helper.getTranslation(getClass().getSimpleName()));
@@ -374,6 +461,13 @@ public class EmptyTask extends Thread implements Cloneable {
 		super.setName(composer.toString());
 	}
 
+	/**
+	 * The procedure setProgress() may be used to set the task’s progress in
+	 * percent (i.e., from 0 to 100).
+	 * 
+	 * @param progress
+	 *            the tasks progress
+	 */
 	public void setProgress(int progress) {
 		if (progress >= 0 || progress <= 100) {
 			this.progress = progress;
@@ -382,22 +476,38 @@ public class EmptyTask extends Thread implements Cloneable {
 		}
 	}
 
+	/**
+	 * Sets the time of death of the task now.
+	 */
 	void setTimeOfDeath() {
 		passedAway = System.nanoTime();
 	}
 
+	/**
+	 * The procedure setWorkDetail() may be used to set some detail information
+	 * that don’t require translation and are helpful when being shown in the
+	 * front end (such as the name of the entity that is currently being
+	 * processed by the task). The name detail should be set every time the
+	 * progress is determined. You may pass in null to remove the detail.
+	 * 
+	 * I.e., if your task is about creation of OCR for a process, the detail
+	 * here could be the image file being processed right now.
+	 * 
+	 * @param detail
+	 *            a work detail, may be null
+	 */
 	public void setWorkDetail(String detail) {
 		this.detail = detail;
 	}
 
 	/**
-	 * Causes this thread to begin execution; the Java Virtual Machine calls the
-	 * run method of this thread. The result is that two threads are running
-	 * concurrently: the current thread which returns from the call to the start
-	 * method and the other thread which executes its run method. In addition,
-	 * this method override ensures that the thread is properly registered in
-	 * the task manager and that its uncaught exception handler has been
-	 * properly set.
+	 * Causes this thread to begin execution; the Java Virtual Machine will
+	 * create a standalon thread and call the run method of this class. The
+	 * result is that two threads are running concurrently: the current thread
+	 * which returns from the call to the start method, and the other thread
+	 * which executes its run method. In addition, this method override ensures
+	 * that the thread is properly registered in the task manager and that its
+	 * uncaught exception handler has been properly set.
 	 * 
 	 * @see java.lang.Thread#start()
 	 */

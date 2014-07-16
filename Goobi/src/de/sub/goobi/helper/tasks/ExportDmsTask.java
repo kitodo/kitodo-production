@@ -41,12 +41,30 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.export.dms.ExportDms;
 
+/**
+ * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}
+ * for a process and provides the ability to run the export in the background
+ * this way. This is especially valuable if the export has a big load of images
+ * to copy.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class ExportDmsTask extends EmptyTask {
 
 	private final ExportDms exportDms;
 	private final Prozess process;
 	private final String userHome;
 
+	/**
+	 * ExportDmsTask constructor. Creates a ExportDmsTask.
+	 * 
+	 * @param exportDms
+	 *            ExportDMS configuration
+	 * @param process
+	 *            the process to export
+	 * @param userHome
+	 *            home directory of the user who started the export
+	 */
 	public ExportDmsTask(ExportDms exportDms, Prozess process, String userHome) {
 		this.exportDms = exportDms;
 		this.process = process;
@@ -54,6 +72,13 @@ public class ExportDmsTask extends EmptyTask {
 		setNameDetail(process.getTitel());
 	}
 
+	/**
+	 * Clone constructor. Provides the ability to restart an export that was
+	 * previously interrupted by the user.
+	 * 
+	 * @param source
+	 *            terminated thread
+	 */
 	private ExportDmsTask(ExportDmsTask source) {
 		super(source);
 		this.exportDms = source.exportDms;
@@ -61,6 +86,13 @@ public class ExportDmsTask extends EmptyTask {
 		this.userHome = source.userHome;
 	}
 
+	/**
+	 * If the task is started, it will execute this run() method which will
+	 * start the export on the ExportDms. This task instance is passed in
+	 * addition so that the ExportDms can update the task’s state.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#run()
+	 */
 	@Override
 	public void run() {
 		try {
@@ -70,6 +102,12 @@ public class ExportDmsTask extends EmptyTask {
 		}
 	}
 
+	/**
+	 * The function clone() provides the ability to copy the task object to
+	 * restart an export that was previously interrupted by the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 */
 	@Override
 	public ExportDmsTask clone() {
 		return new ExportDmsTask(this);

@@ -215,7 +215,7 @@ public class TaskManager {
 	}
 
 	/**
-	 * The synchronized function singleton() must be used to have singleton
+	 * The synchronized function singleton() must be used to obtain singleton
 	 * access to the TaskManager instance.
 	 * 
 	 * @return the singleton TaskManager instance
