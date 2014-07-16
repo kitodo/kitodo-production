@@ -333,7 +333,7 @@ public class Paginator {
 	}
 
 	/**
-	 * Determine weather arabic or roman numbers should be used when counting.
+	 * Determine whether arabic or roman numbers should be used when counting.
 	 * 
 	 * @param paginationType
 	 *            Set style of pagination numbers.

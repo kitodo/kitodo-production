@@ -37,7 +37,7 @@ public class Item {
 	 * 
 	 * @param label label of the item
 	 * @param value value of the item
-	 * @param selected indicates wether an item is preselected or not
+	 * @param selected indicates whether an item is preselected or not
 	 */
 	
 	public Item(String label, String value, Boolean selected ){
