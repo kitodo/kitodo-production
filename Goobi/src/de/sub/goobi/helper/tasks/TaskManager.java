@@ -87,7 +87,6 @@ public class TaskManager {
 	 * set up a housekeeping thread.
 	 */
 	private TaskManager() {
-		setAutoRunningThreads(true);
 		taskSitter = Executors.newSingleThreadScheduledExecutor();
 		long delay = ConfigMain.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
 		taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
@@ -141,16 +140,6 @@ public class TaskManager {
 	 */
 	public static List<AbstractTask> getTaskList() {
 		return new ArrayList<AbstractTask>(singleton().taskList);
-	}
-
-	/**
-	 * The function isAutoRunningThreads() returns whether the TaskManager’s
-	 * autorun mode is on or not.
-	 * 
-	 * @return whether the TaskManager is auto-running threds or not
-	 */
-	public static boolean isAutoRunningThreads() {
-		return TaskSitter.getAutoRunLimit() > 0;
 	}
 
 	/**
@@ -222,23 +211,6 @@ public class TaskManager {
 		int index = theManager.taskList.indexOf(task);
 		if (index > -1 && index + 1 < theManager.taskList.size()) {
 			Collections.swap(theManager.taskList, index, index + 1);
-		}
-	}
-
-	/**
-	 * The function setAutoRunningThreads() turns the feature to auto-run tasks
-	 * on or off.
-	 * 
-	 * @param on
-	 *            whether the TaskManager shall auto-run threads
-	 */
-	public static void setAutoRunningThreads(boolean on) {
-		if (on) {
-			int cores = Runtime.getRuntime().availableProcessors();
-			int newLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
-			TaskSitter.setAutoRunLimit(newLimit);
-		} else {
-			TaskSitter.setAutoRunLimit(0);
 		}
 	}
 

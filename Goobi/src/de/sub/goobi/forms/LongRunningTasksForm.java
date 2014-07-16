@@ -32,6 +32,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.tasks.AbstractTask;
 import de.sub.goobi.helper.tasks.AbstractTask.Behaviour;
 import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
 
 public class LongRunningTasksForm {
 	private AbstractTask task;
@@ -65,7 +66,7 @@ public class LongRunningTasksForm {
 	}
 
 	public void cancelTask() {
-		TaskManager.setAutoRunningThreads(false);
+		TaskSitter.setAutoRunningThreads(false);
 		task.interrupt(Behaviour.PREPARE_FOR_RESTART);
 	}
 
@@ -82,11 +83,11 @@ public class LongRunningTasksForm {
 	}
 
 	public boolean isRunning() {
-		return TaskManager.isAutoRunningThreads();
+		return TaskSitter.isAutoRunningThreads();
 	}
 
 	public void toggleRunning() {
-		boolean mode = !TaskManager.isAutoRunningThreads();
-		TaskManager.setAutoRunningThreads(mode);
+		boolean mode = !TaskSitter.isAutoRunningThreads();
+		TaskSitter.setAutoRunningThreads(mode);
 	}
 }

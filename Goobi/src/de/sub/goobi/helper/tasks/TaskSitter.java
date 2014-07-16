@@ -35,6 +35,9 @@ public class TaskSitter implements Runnable, ServletContextListener {
 	 * feature is disabled.
 	 */
 	private static int autoRunLimit;
+	{
+		setAutoRunningThreads(true);
+	}
 
 	/**
 	 * When the servlet is unloaded, i.e. on container shutdown, the TaskManager
@@ -57,35 +60,13 @@ public class TaskSitter implements Runnable, ServletContextListener {
 	}
 
 	/**
-	 * The function getAutoRunLimit() returns the number of threads that will be
-	 * automatically started in parallel.
+	 * The function isAutoRunningThreads() returns whether the TaskManager’s
+	 * autorun mode is on or not.
 	 * 
-	 * @return the number of threads which at most are allowed to be started
-	 *         automatically
+	 * @return whether the TaskManager is auto-running threads or not
 	 */
-	static int getAutoRunLimit() {
-		return autoRunLimit;
-	}
-
-	/**
-	 * The function newLegacyTask() will clone a LongRunningTask implementation
-	 * for restart.
-	 * 
-	 * @param legacyTask
-	 *            a LongRunningTask to clone
-	 * @return the clone of the LongRunningTask
-	 */
-	private AbstractTask newLegacyTask(LongRunningTask legacyTask) {
-		LongRunningTask lrt = null;
-		try {
-			lrt = legacyTask.getClass().newInstance();
-			lrt.initialize(legacyTask.getProzess());
-		} catch (InstantiationException e) {
-			logger.error(e);
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-		}
-		return lrt;
+	public static boolean isAutoRunningThreads() {
+		return autoRunLimit > 0;
 	}
 
 	/**
@@ -139,14 +120,14 @@ public class TaskSitter implements Runnable, ServletContextListener {
 					currentClearance = Math.max(currentClearance - 1, 0);
 					break;
 				case NEW:
-					if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviourAfterTermination())) {
+					if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviour())) {
 						position.remove();
 					} else {
 						launchableThreads.addLast(task);
 					}
 					break;
 				default: // cases STOPPED, FINISHED, CRASHED
-					switch (task.getBehaviourAfterTermination()) {
+					switch (task.getBehaviour()) {
 					case DELETE_IMMEDIATELY:
 						position.remove();
 						break;
@@ -155,7 +136,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						Duration durationDead = task.getDurationDead();
 						if (durationDead == null) {
 							task.setTimeOfDeath();
-						} else if (durationDead.isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {
+						} else if (durationDead
+								.isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {
 							position.remove();
 							break;
 						}
@@ -166,13 +148,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						}
 						break;
 					case PREPARE_FOR_RESTART:
-						AbstractTask replacement = null;
-						if (task instanceof LongRunningTask) {
-							replacement = newLegacyTask((LongRunningTask) task);
-						} else if (task.getClass() == AbstractTask.class) {
-							replacement = new AbstractTask();
-							replacement.setProgress(task.getProgress());
-						}
+						AbstractTask replacement = task.clone();
 						if (replacement != null) {
 							position.set(replacement);
 							launchableThreads.addLast(replacement);
@@ -201,7 +177,19 @@ public class TaskSitter implements Runnable, ServletContextListener {
 		}
 	}
 
-	static void setAutoRunLimit(int newLimit) {
-		autoRunLimit = newLimit;
+	/**
+	 * The function setAutoRunningThreads() turns the feature to auto-run tasks
+	 * on or off.
+	 * 
+	 * @param on
+	 *            whether the TaskManager shall auto-run threads
+	 */
+	public static void setAutoRunningThreads(boolean on) {
+		if (on) {
+			int cores = Runtime.getRuntime().availableProcessors();
+			autoRunLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
+		} else {
+			autoRunLimit = 0;
+		}
 	}
 }

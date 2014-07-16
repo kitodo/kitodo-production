@@ -51,15 +51,27 @@ public class ExportDmsTask extends AbstractTask {
 		this.exportDms = exportDms;
 		this.process = process;
 		this.userHome = userHome;
+		setNameDetail(process.getTitel());
+	}
+
+	private ExportDmsTask(ExportDmsTask source) {
+		super(source);
+		this.exportDms = source.exportDms;
+		this.process = source.process;
+		this.userHome = source.userHome;
 	}
 
 	@Override
 	public void run() {
-		exportDms.setAsynchronous(this);
 		try {
-			exportDms.startExport(process, userHome, true);
+			exportDms.startExport(process, userHome, this);
 		} catch (Exception e) {
 			setException(e);
 		}
+	}
+
+	@Override
+	public ExportDmsTask clone() {
+		return new ExportDmsTask(this);
 	}
 }

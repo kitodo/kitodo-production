@@ -45,7 +45,7 @@ import org.joda.time.Duration;
 
 import de.sub.goobi.helper.Helper;
 
-public class AbstractTask extends Thread {
+public class AbstractTask extends Thread implements Cloneable {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
 	 * to do with a terminated thread. These are:
@@ -60,7 +60,7 @@ public class AbstractTask extends Thread {
 	 * automatically. Numeric and temporary limits can be configured.</dd>
 	 * <dt><code>PREPARE_FOR_RESTART</code></dt>
 	 * <dd>If the thread was interrupted by a user, replace it by a new one,
-	 * passing in the state of the old one to be able to coninue work.</dd>
+	 * passing in the state of the old one to be able to continue work.</dd>
 	 * </dl>
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -81,10 +81,10 @@ public class AbstractTask extends Thread {
 
 	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
-	private Behaviour behaviourAfterTermination; // what to do if the thread crashed
+	private Behaviour behaviour; // what to do if the thread crashed
 
 	private String detail = null; // a string telling details, which file is processed
-	private Throwable exception = null; // an exception caught
+	private Throwable thrown = null; // an exception caught
 	private Long passedAway = null;
 
 	private int progress = 0; // a value from 0 to 100
@@ -93,8 +93,59 @@ public class AbstractTask extends Thread {
 		setNameDetail(null);
 	}
 
-	Behaviour getBehaviourAfterTermination() {
-		return behaviourAfterTermination;
+	/**
+	 * Copy constructor
+	 * 
+	 * @param master
+	 *            instance to make a copy from
+	 */
+	protected AbstractTask(AbstractTask master) {
+		this.behaviour = master.behaviour;
+		this.detail = master.detail;
+		this.thrown = master.thrown;
+		this.passedAway = master.passedAway;
+		this.progress = master.progress;
+		setName(master.getName());
+	}
+
+	/**
+	 * The method clone does call the copy constructor to create a copy of that
+	 * object. Every subclass that has fields must provide its own copy
+	 * constructor—which must call super(objectToCopy)—and overload this method
+	 * to call its own copy constructor.
+	 * 
+	 * @see java.lang.Thread#clone()
+	 */
+	@Override
+	public AbstractTask clone() {
+		return new AbstractTask(this);
+	}
+
+	/**
+	 * The function getBehaviour() returns the instruction how the TaskSitter
+	 * shall behave towards this task. Usually, the behaviour isn’t set while
+	 * the task is under normal execution. It can be set by calling
+	 * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
+	 * still new and wasn’t even started. The following instructions are
+	 * available:
+	 * 
+	 * <dl>
+	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
+	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
+	 * </dd>
+	 * <dt><code>KEEP_FOR_A_WHILE</code></dt>
+	 * <dd>The default behaviour: A thread that terminated either normally or
+	 * abnormally is kept around in memory for a while and then removed
+	 * automatically. Numeric and temporary limits can be configured.</dd>
+	 * <dt><code>PREPARE_FOR_RESTART</code></dt>
+	 * <dd>If the thread was interrupted by a user, replace it by a new one,
+	 * passing in the state of the old one to be able to continue work.</dd>
+	 * </dl>
+	 * 
+	 * @return how the TaskSitter shall behave towards this task
+	 */
+	Behaviour getBehaviour() {
+		return behaviour;
 	}
 
 	Duration getDurationDead() {
@@ -105,26 +156,8 @@ public class AbstractTask extends Thread {
 		return new Duration(TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS));
 	}
 
-	/**
-	 * Causes this thread to begin execution; the Java Virtual Machine calls the
-	 * run method of this thread. The result is that two threads are running
-	 * concurrently: the current thread which returns from the call to the start
-	 * method and the other thread which executes its run method. In addition,
-	 * this method override ensures that the thread is properly registered in
-	 * the task manager and that its uncaught exception handler has been
-	 * properly set.
-	 * 
-	 * @see java.lang.Thread#start()
-	 */
-	@Override
-	public void start() {
-		TaskManager.addTaskIfMissing(this);
-		setUncaughtExceptionHandler(CATCH_ALL);
-		super.start();
-	}
-
 	Throwable getException() {
-		return exception;
+		return thrown;
 	}
 
 	public int getProgress() {
@@ -150,10 +183,10 @@ public class AbstractTask extends Thread {
 		case CRASHED:
 			if (detail != null) {
 				return label + " (" + detail + ")";
-			} else if (exception.getMessage() != null) {
-				return label + " (" + exception.getMessage() + ")";
+			} else if (thrown.getMessage() != null) {
+				return label + " (" + thrown.getMessage() + ")";
 			} else {
-				return label + " (" + exception.getClass().getSimpleName() + ")";
+				return label + " (" + thrown.getClass().getSimpleName() + ")";
 			}
 		default:
 			return label;
@@ -189,13 +222,13 @@ public class AbstractTask extends Thread {
 		case NEW:
 			return TaskState.NEW;
 		case TERMINATED:
-			if (behaviourAfterTermination == null) {
-				behaviourAfterTermination = DEFAULT_BEHAVIOUR;
+			if (behaviour == null) {
+				behaviour = DEFAULT_BEHAVIOUR;
 			}
-			if (exception != null) {
+			if (thrown != null) {
 				return TaskState.CRASHED;
 			}
-			if (Behaviour.PREPARE_FOR_RESTART.equals(behaviourAfterTermination)) {
+			if (Behaviour.PREPARE_FOR_RESTART.equals(behaviour)) {
 				return TaskState.STOPPED;
 			} else {
 				return TaskState.FINISHED;
@@ -216,10 +249,10 @@ public class AbstractTask extends Thread {
 	 * @return the stack trace of the exception, if any
 	 */
 	public String getLongMessage() {
-		if (exception == null) {
+		if (thrown == null) {
 			return null;
 		}
-		return ExceptionUtils.getStackTrace(exception);
+		return ExceptionUtils.getStackTrace(thrown);
 	}
 
 	/**
@@ -230,7 +263,7 @@ public class AbstractTask extends Thread {
 	 *            how to behave after interruption
 	 */
 	public void interrupt(Behaviour mode) {
-		behaviourAfterTermination = mode;
+		behaviour = mode;
 		interrupt();
 	}
 
@@ -242,8 +275,8 @@ public class AbstractTask extends Thread {
 	 * already has been requested.
 	 */
 	protected void leaveRestartable() {
-		if (behaviourAfterTermination == null) {
-			behaviourAfterTermination = Behaviour.PREPARE_FOR_RESTART;
+		if (behaviour == null) {
+			behaviour = Behaviour.PREPARE_FOR_RESTART;
 		}
 	}
 
@@ -281,7 +314,7 @@ public class AbstractTask extends Thread {
 		switch (getState()) {
 		case NEW:
 		case TERMINATED:
-			return !Behaviour.DELETE_IMMEDIATELY.equals(behaviourAfterTermination);
+			return !Behaviour.DELETE_IMMEDIATELY.equals(behaviour);
 		default:
 			return false;
 		}
@@ -296,7 +329,7 @@ public class AbstractTask extends Thread {
 	 */
 	@Override
 	public void run() {
-		for (int i = 1; i <= 100; i++) {
+		for (int i = progress + 1; i <= 100; i++) {
 
 			// tell user some details what you are currently working on
 			setWorkDetail(Integer.toString(i));
@@ -320,8 +353,10 @@ public class AbstractTask extends Thread {
 		// we’re done. There is nothing more to do.
 	}
 
-	public void setException(Throwable ex) {
-		this.exception = ex;
+	public void setException(Throwable thrown) {
+		if (!isInterrupted() || !(thrown instanceof InterruptedException)) {
+			this.thrown = thrown;
+		}
 	}
 
 	protected void setNameDetail(String detail) {
@@ -337,8 +372,8 @@ public class AbstractTask extends Thread {
 	public void setProgress(int progress) {
 		if (progress >= 0 || progress <= 100) {
 			this.progress = progress;
-		} else if (exception == null) {
-			exception = new IllegalArgumentException(String.valueOf(progress));
+		} else {
+			throw new IndexOutOfBoundsException("Progress out of range: " + progress);
 		}
 	}
 
@@ -350,4 +385,21 @@ public class AbstractTask extends Thread {
 		this.detail = detail;
 	}
 
+	/**
+	 * Causes this thread to begin execution; the Java Virtual Machine calls the
+	 * run method of this thread. The result is that two threads are running
+	 * concurrently: the current thread which returns from the call to the start
+	 * method and the other thread which executes its run method. In addition,
+	 * this method override ensures that the thread is properly registered in
+	 * the task manager and that its uncaught exception handler has been
+	 * properly set.
+	 * 
+	 * @see java.lang.Thread#start()
+	 */
+	@Override
+	public void start() {
+		TaskManager.addTaskIfMissing(this);
+		setUncaughtExceptionHandler(CATCH_ALL);
+		super.start();
+	}
 }

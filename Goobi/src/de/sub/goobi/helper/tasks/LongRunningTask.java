@@ -136,4 +136,26 @@ public class LongRunningTask extends AbstractTask {
 		super.setWorkDetail(inlongMessage);
 	}
 
+	/**
+	 * The function clone() will clone a LongRunningTask implementation for
+	 * restart.
+	 * 
+	 * @param legacyTask
+	 *            a LongRunningTask to clone
+	 * @return the clone of the LongRunningTask
+	 */
+	@Override
+	public AbstractTask clone() {
+		LongRunningTask lrt = null;
+		try {
+			lrt = getClass().newInstance();
+			lrt.initialize(prozess);
+		} catch (InstantiationException e) {
+			logger.error(e);
+		} catch (IllegalAccessException e) {
+			logger.error(e);
+		}
+		return lrt;
+	}
+
 }

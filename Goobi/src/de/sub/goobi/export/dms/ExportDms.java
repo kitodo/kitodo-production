@@ -56,6 +56,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
 import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 public class ExportDms extends ExportMets {
@@ -63,7 +64,7 @@ public class ExportDms extends ExportMets {
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
-	private ExportDmsTask exportDmsTask;
+	private ExportDmsTask exportDmsTask = null;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -105,17 +106,20 @@ public class ExportDms extends ExportMets {
 
 		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
 			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
+			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
+					myProzess.getTitel());
 			return true;
 		} else {
-			return startExport(myProzess, inZielVerzeichnis, false);
+			return startExport(myProzess, inZielVerzeichnis, null);
 		}
 	}
 
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, boolean asynchronous) throws IOException,
-			InterruptedException, WriteException, PreferencesException, DocStructHasNoTypeException,
-			MetadataTypeNotAllowedException, ExportFileException, UghHelperException, SwapException, DAOException,
-			TypeNotAllowedForParentException {
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
+			throws IOException, InterruptedException, WriteException, PreferencesException,
+			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
+			SwapException, DAOException, TypeNotAllowedForParentException {
 
+		this.exportDmsTask = exportDmsTask;
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
@@ -470,15 +474,14 @@ public class ExportDms extends ExportMets {
 				Helper.copyFile(dateien[i], meinZiel);
 				if (exportDmsTask != null) {
 					exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+					if (exportDmsTask.isInterrupted()) {
+						throw new InterruptedException();
+					}
 				}
 			}
 			if (exportDmsTask != null) {
 				exportDmsTask.setWorkDetail(null);
 			}
 		}
-	}
-
-	public void setAsynchronous(ExportDmsTask exportDmsTask) {
-		this.exportDmsTask = exportDmsTask;
 	}
 }

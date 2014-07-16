@@ -135,12 +135,12 @@ public class LongRunningTaskManager {
 
 	@Deprecated
    public boolean isRunning() {
-		return TaskManager.isAutoRunningThreads();
+		return TaskSitter.isAutoRunningThreads();
    }
 
 	@Deprecated
     public void setRunning(boolean running) {
-		TaskManager.setAutoRunningThreads(running);
+		TaskSitter.setAutoRunningThreads(running);
    }
 
 }
