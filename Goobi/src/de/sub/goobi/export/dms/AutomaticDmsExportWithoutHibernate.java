@@ -53,6 +53,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.metadaten.MetadatenVerifizierungWithoutHibernate;
 import de.sub.goobi.persistence.apache.FolderInformation;
 import de.sub.goobi.persistence.apache.ProcessManager;
@@ -67,6 +68,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	private boolean exportFulltext = true;
 	private FolderInformation fi;
 	private ProjectObject project;
+	private EmptyTask task;
 	
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -137,6 +139,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			gdzfile = newfile;
 
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
@@ -192,6 +197,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			if (!benutzerHome.exists()) {
 				benutzerHome.mkdir();
 			}
+			if (task != null) {
+				task.setProgress(1);
+			}
 		}
 
 		/*
@@ -206,6 +214,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
 			return false;
 		}
@@ -217,6 +228,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * --------------------------------
 		 */
 		if (this.project.isUseDmsImport()) {
+			if (task != null) {
+				task.setWorkDetail(atsPpnBand + ".xml");
+			}
 			if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
 				writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
@@ -241,9 +255,10 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					Helper.deleteDir(successFile);
 				}
 			}
-			// return ;
 		}
-	
+		if (task != null) {
+			task.setProgress(100);
+		}
 		return true;
 	}
 
@@ -271,9 +286,6 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 	public void fulltextDownload(ProcessObject myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
-
-		// Helper help = new Helper();
-		// File tifOrdner = new File(myProzess.getImagesTifDirectory());
 
 		// download sources
 		File sources = new File(fi.getSourceDirectory());
@@ -309,78 +321,12 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				}
 			}
 		}
-		
-		
-//		File sources = new File(fi.getSourceDirectory());
-//		if (sources.exists()) {
-//			File destination = new File(benutzerHome + File.separator
-//					+ atsPpnBand + "_src");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = sources.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator
-//						+ dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//		
-//		
-//		File txtFolder = new File(this.fi.getTxtDirectory());
-//		if (txtFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = txtFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File wordFolder = new File(this.fi.getWordDirectory());
-//		if (wordFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = wordFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File pdfFolder = new File(this.fi.getPdfDirectory());
-//		if (pdfFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = pdfFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
 	}
 
 	public void imageDownload(ProcessObject myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 		/*
-		 * -------------------------------- erstmal alle Filter
-		 * --------------------------------
-		 */
-		// FilenameFilter filterTifDateien = new FilenameFilter() {
-		// public boolean accept(File dir, String name) {
-		// return name.endsWith(".tif");
-		// }
-		// };
-
-		/*
-		 * -------------------------------- dann den Ausgangspfad ermitteln
+		 * -------------------------------- den Ausgangspfad ermitteln
 		 * --------------------------------
 		 */
 		File tifOrdner = new File(this.fi.getImagesTifDirectory(true));
@@ -404,7 +350,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
+				} catch (Exception e) {
+					if (task != null) {
+						task.setException(e);
+					}
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);
 				}
@@ -414,10 +364,26 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
+				if (task != null) {
+					task.setWorkDetail(dateien[i].getName());
+				}
 				File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);
+				if (task != null) {
+					task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+					if (task.isInterrupted()) {
+						throw new InterruptedException();
+					}
+				}
+			}
+			if (task != null) {
+				task.setWorkDetail(null);
 			}
 		}
 
+	}
+
+	public void setTask(EmptyTask task) {
+		this.task = task;
 	}
 }

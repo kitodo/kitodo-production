@@ -272,6 +272,9 @@ public class ExportDms extends ExportMets {
 		 * --------------------------------
 		 */
 		if (myProzess.getProjekt().isUseDmsImport()) {
+			if (exportDmsTask != null) {
+				exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
+			}
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
