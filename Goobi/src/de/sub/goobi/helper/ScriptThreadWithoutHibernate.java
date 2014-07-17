@@ -44,8 +44,6 @@ import de.sub.goobi.persistence.apache.StepObject;
 public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private final StepObject step;
-	public String rueckgabe = "";
-	public boolean stop = false;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
 
 	public ScriptThreadWithoutHibernate(StepObject step) {
@@ -70,6 +68,14 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		hs.setTask(this);
 	}
 
+	public ScriptThreadWithoutHibernate(ScriptThreadWithoutHibernate origin) {
+		this.step = origin.step;
+		setDaemon(true);
+
+		setName(origin.getName());
+		hs.setTask(this);
+	}
+
 	@Override
 	public void run() {
 
@@ -90,8 +96,8 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		}
 	}
 
-	public void stopThread() {
-		this.rueckgabe = "Import wurde wegen Zeitüberschreitung abgebrochen";
-		this.stop = true;
+	@Override
+	public ScriptThreadWithoutHibernate clone() {
+		return new ScriptThreadWithoutHibernate(this);
 	}
 }
