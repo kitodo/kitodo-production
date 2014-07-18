@@ -28,12 +28,6 @@
 package de.sub.goobi.forms;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.tasks.CloneableLongRunningTask;
-import de.sub.goobi.helper.tasks.LongRunningTask;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;

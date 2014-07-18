@@ -28,8 +28,6 @@ package de.sub.goobi.config;
  * exception statement from your version.
  */
 import java.io.File;
-
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -42,7 +40,6 @@ import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 import org.joda.time.Duration;
 
-
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
@@ -52,8 +49,9 @@ public class ConfigMain {
 	private static String imagesPath = null;
 
 	private static PropertiesConfiguration getConfig() {
-		if (config != null)
+		if (config != null) {
 			return config;
+		}
 		PropertiesConfiguration.setDefaultListDelimiter('&');
 		try {
 			config = new PropertiesConfiguration(FileNames.CONFIG_FILE);
