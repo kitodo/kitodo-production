@@ -47,9 +47,12 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
 
 	public ScriptThreadWithoutHibernate(StepObject step) {
+		super(getNameDetail(step));
 		this.step = step;
-		setDaemon(true);
+		hs.setTask(this);
+	}
 
+	private final static String getNameDetail(StepObject step) {
 		String function = null;
 		if (StepManager.loadScripts(step.getId()).size() > 0) {
 			function = "executeAllScriptsForStep";
@@ -64,15 +67,12 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		} catch (SQLException e) {
 			parameterList.add(e.getMessage());
 		}
-		setNameDetail(function != null ? Helper.getTranslation(function, parameterList) : null);
-		hs.setTask(this);
+		return function != null ? Helper.getTranslation(function, parameterList) : null;
 	}
 
 	public ScriptThreadWithoutHibernate(ScriptThreadWithoutHibernate origin) {
-		this.step = origin.step;
-		setDaemon(true);
-
-		setName(origin.getName());
+		super(origin);
+		step = origin.step;
 		hs.setTask(this);
 	}
 

@@ -43,6 +43,13 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapInTask extends LongRunningTask {
 
+	public ProcessSwapInTask() {
+	}
+
+	public ProcessSwapInTask(ProcessSwapInTask processSwapInTask) {
+		super(processSwapInTask);
+	}
+
 	@Override
 	public void initialize(Prozess inProzess) {
 		super.initialize(inProzess);
@@ -198,6 +205,11 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusMessage("done");
 
 		setStatusProgress(100);
+	}
+
+	@Override
+	public EmptyTask clone() {
+		return new ProcessSwapInTask(this);
 	}
 
 }

@@ -58,7 +58,6 @@ import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 import de.sub.goobi.helper.tasks.CreateProcessesTask;
-import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
 /**
@@ -138,7 +137,7 @@ public class GranularityForm {
 		}
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
-		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
+		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
 				generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";

@@ -60,7 +60,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateProcessesTask extends CloneableLongRunningTask {
+public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
 	 * which finds it to be null, and is used and set back to null in
@@ -135,8 +135,7 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 */
 	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes,
 			Granularity batchGranularity) {
-		super();
-		setTitle(Helper.getTranslation("granularity.create"));
+		super(pattern.getProzessVorlageTitel());
 		this.pattern = pattern;
 		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
 		this.createBatches = batchGranularity;
@@ -147,6 +146,26 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 		}
 		nextProcessToCreate = 0;
 		numberOfProcesses = processes.size();
+	}
+
+	/**
+	 * The copy constructor creates a new thread from a given one. This is
+	 * required to call the copy constructor of the parent.
+	 * 
+	 * @param master
+	 *            copy master
+	 */
+	public CreateProcessesTask(CreateProcessesTask master) {
+		super(master);
+		this.pattern = master.pattern;
+		this.processes = master.processes;
+		this.createBatches = master.createBatches;
+		this.logisticsBatch = master.logisticsBatch;
+		this.currentBreakMark = master.currentBreakMark;
+		this.batchLabel = master.batchLabel;
+		this.fullBatch = master.fullBatch;
+		this.nextProcessToCreate = master.nextProcessToCreate;
+		this.numberOfProcesses = master.numberOfProcesses;
 	}
 
 	/**
@@ -178,12 +197,11 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 					newProcess.setAdditionalFields(pattern.getAdditionalFields());
 					currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
 					if (currentTitle == "") {
-						setStatusMessage("Couldn’t create process title for issue " + issues.get(0).toString());
-						setStatusProgress(-1);
+						setException(new RuntimeException("Couldn’t create process title for issue "
+								+ issues.get(0).toString()));
 						return;
 					}
 					if (isInterrupted()) {
-						stopped();
 						return;
 					}
 					String state = newProcess.NeuenProzessAnlegen();
@@ -193,23 +211,19 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
 				}
 				nextProcessToCreate++;
-				setStatusProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
+				setProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
 				if (isInterrupted()) {
-					stopped();
 					return;
 				}
 			}
 			flushLogisticsBatch(currentTitle);
-			setStatusProgress((100 * nextProcessToCreate + 1) / (numberOfProcesses + 2));
+			setProgress((100 * nextProcessToCreate + 1) / (numberOfProcesses + 2));
 			saveFullBatch(currentTitle);
-			setStatusProgress(100);
-			setStatusMessage("done");
+			setProgress(100);
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
-			logger.error(e);
-			setStatusMessage(e.getClass().getSimpleName()
+			setException(new RuntimeException(e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
-					+ e.getMessage());
-			setStatusProgress(-1);
+					+ e.getMessage(), e));
 			return;
 		}
 	}
@@ -308,13 +322,7 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
 	 */
 	@Override
-	public CloneableLongRunningTask clone() {
-		CreateProcessesTask copy = new CreateProcessesTask(pattern, processes, createBatches);
-		copy.logisticsBatch = logisticsBatch;
-		copy.currentBreakMark = currentBreakMark;
-		copy.batchLabel = batchLabel;
-		copy.fullBatch = fullBatch;
-		copy.nextProcessToCreate = nextProcessToCreate;
-		return copy;
+	public CreateProcessesTask clone() {
+		return new CreateProcessesTask(this);
 	}
 }

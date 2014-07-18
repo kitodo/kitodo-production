@@ -66,10 +66,10 @@ public class ExportDmsTask extends EmptyTask {
 	 *            home directory of the user who started the export
 	 */
 	public ExportDmsTask(ExportDms exportDms, Prozess process, String userHome) {
+		super(process.getTitel());
 		this.exportDms = exportDms;
 		this.process = process;
 		this.userHome = userHome;
-		setNameDetail(process.getTitel());
 	}
 
 	/**

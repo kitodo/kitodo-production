@@ -36,13 +36,14 @@ import de.sub.goobi.helper.tasks.TaskSitter;
 
 
 public class LongRunningTasksForm {
+	private static long demoTaskNo = 0;
 	private EmptyTask task;
 	public List<EmptyTask> getTasks() {
 		return TaskManager.getTaskList();
 	}
 
 	public void addDemoTask() {
-		task = new EmptyTask();
+		task = new EmptyTask("#".concat(Long.toString(++demoTaskNo)));
 		TaskManager.addTask(task);
 	}
 

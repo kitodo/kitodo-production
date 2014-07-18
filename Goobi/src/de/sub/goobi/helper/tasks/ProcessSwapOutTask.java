@@ -44,7 +44,14 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
-   @Override
+	public ProcessSwapOutTask() {
+	}
+
+	public ProcessSwapOutTask(ProcessSwapOutTask processSwapOutTask) {
+		super(processSwapOutTask);
+	}
+
+	@Override
    public void initialize(Prozess inProzess) {
       super.initialize(inProzess);
       setTitle("Auslagerung: " + inProzess.getTitel());
@@ -165,5 +172,10 @@ public void run() {
       setStatusMessage("done");
       setStatusProgress(100);
    }
+
+	@Override
+	public EmptyTask clone() {
+		return new ProcessSwapOutTask(this);
+	}
 
 }

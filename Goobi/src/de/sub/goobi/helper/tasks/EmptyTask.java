@@ -142,11 +142,14 @@ public class EmptyTask extends Thread implements Cloneable {
 	private int progress = 0;
 
 	/**
-	 * Default constructor. Creates an empty thread and sets its name without a
-	 * detail.
+	 * Default constructor. Creates an empty thread.
+	 * 
+	 * @param nameDetail
+	 *            a detail that is helpful when being shown, may be null
 	 */
-	public EmptyTask() {
-		setNameDetail(null);
+	public EmptyTask(String nameDetail) {
+		setDaemon(true);
+		setNameDetail(nameDetail);
 	}
 
 	/**
@@ -157,12 +160,13 @@ public class EmptyTask extends Thread implements Cloneable {
 	 *            instance to make a copy from
 	 */
 	protected EmptyTask(EmptyTask master) {
+		setDaemon(true);
+		setName(master.getName());
 		this.behaviour = master.behaviour;
 		this.detail = master.detail;
 		this.exception = master.exception;
 		this.passedAway = master.passedAway;
 		this.progress = master.progress;
-		setName(master.getName());
 	}
 
 	/**

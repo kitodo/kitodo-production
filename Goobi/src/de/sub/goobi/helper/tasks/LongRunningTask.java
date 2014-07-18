@@ -31,7 +31,17 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-public class LongRunningTask extends EmptyTask {
+@Deprecated
+public abstract class LongRunningTask extends EmptyTask {
+	public LongRunningTask() {
+		super((String) null);
+	}
+
+	public LongRunningTask(LongRunningTask master) {
+		super(master);
+		initialize(master.prozess);
+	}
+
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
 	private Prozess prozess;
@@ -51,18 +61,7 @@ public class LongRunningTask extends EmptyTask {
 	}
 
 	@Override
-	public EmptyTask clone() {
-		LongRunningTask lrt = null;
-		try {
-			lrt = getClass().newInstance();
-			lrt.initialize(prozess);
-		} catch (InstantiationException e) {
-			logger.error(e);
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-		}
-		return lrt;
-	}
+	public abstract EmptyTask clone();
 
 	@Deprecated
 	protected void stopped() {
@@ -148,6 +147,7 @@ public class LongRunningTask extends EmptyTask {
 	 */
 	protected void setProzess(Prozess prozess) {
 		this.prozess = prozess;
+		setNameDetail(prozess.getTitel());
 	}
 
 	@Deprecated

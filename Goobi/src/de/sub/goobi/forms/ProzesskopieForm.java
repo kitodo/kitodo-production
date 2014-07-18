@@ -1285,6 +1285,10 @@ public class ProzesskopieForm {
 		return this.prozessVorlage;
 	}
 
+	public String getProzessVorlageTitel() {
+		return prozessVorlage != null ? prozessVorlage.getTitel() : null;
+	}
+
 	public void setProzessVorlage(Prozess prozessVorlage) {
 		this.prozessVorlage = prozessVorlage;
 	}

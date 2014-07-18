@@ -64,6 +64,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	private String internalServletPath;
 	private URL metsURL;
 
+	public CreatePdfFromServletThread() {
+	}
+
+	public CreatePdfFromServletThread(CreatePdfFromServletThread master) {
+		super(master);
+	}
+
 	@Override
 	public void initialize(Prozess inProzess) {
 		super.initialize(inProzess);
@@ -234,6 +241,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
 	public void setMetsURL(URL metsURL) {
 		this.metsURL = metsURL;
+	}
+
+	@Override
+	public CreatePdfFromServletThread clone() {
+		return new CreatePdfFromServletThread(this);
 	}
 
 }
