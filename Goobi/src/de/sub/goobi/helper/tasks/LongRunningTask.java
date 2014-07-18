@@ -31,13 +31,9 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-public class LongRunningTask extends Thread {
+public class LongRunningTask extends EmptyTask {
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
-	private int statusProgress = 0;
-	private String statusMessage = "";
-	private String longMessage = "";
-	private String title = "MasterTask";
 	private Prozess prozess;
 	private boolean isSingleThread = true;
 
@@ -45,44 +41,31 @@ public class LongRunningTask extends Thread {
 		this.prozess = inProzess;
 	}
 
-	public void execute() {
-		this.statusProgress = 1;
-		this.statusMessage = "running";
-		this.isSingleThread = false;
-		run();
+	public void setShowMessages(boolean showMessages) {
+		isSingleThread = !showMessages;
 	}
 
+	@Deprecated
 	public void cancel() {
-		this.statusMessage = "stopping";
 		this.interrupt();
 	}
 
-	protected void stopped() {
-		this.statusMessage = "stopped";
-		this.statusProgress = -1;
+	@Override
+	public EmptyTask clone() {
+		LongRunningTask lrt = null;
+		try {
+			lrt = getClass().newInstance();
+			lrt.initialize(prozess);
+		} catch (InstantiationException e) {
+			logger.error(e);
+		} catch (IllegalAccessException e) {
+			logger.error(e);
+		}
+		return lrt;
 	}
 
-	@Override
-	public void run() {
-		/*
-		 * --------------------- Simulierung einer lang laufenden Aufgabe
-		 * -------------------
-		 */
-		for (int i = 0; i < 100; i++) {
-			/*
-			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
-			 */
-			if (this.isInterrupted()) {
-				stopped();
-				return;
-			}
-			/* lang dauernde Schleife zur Simulierung einer langen Aufgabe */
-			for (double j = 0; j < 10000000; j++) {
-			}
-			setStatusProgress(i);
-		}
-		setStatusMessage("done");
-		setStatusProgress(100);
+	@Deprecated
+	protected void stopped() {
 	}
 
 	/**
@@ -97,32 +80,39 @@ public class LongRunningTask extends Thread {
 	 * Status des Tasks in Angabe von Prozent
 	 * ================================================================
 	 */
+	@Deprecated
 	public int getStatusProgress() {
-		return this.statusProgress;
+		if (super.getException() != null) {
+			return -1;
+		}
+		return super.getProgress();
 	}
 
 	/**
 	 * Meldung über den aktuellen Task
 	 * ================================================================
 	 */
+	@Deprecated
 	public String getStatusMessage() {
-		return this.statusMessage;
+		return super.getTaskState().toString().toLowerCase();
 	}
 
 	/**
 	 * Titel des aktuellen Task
 	 * ================================================================
 	 */
+	@Deprecated
 	public String getTitle() {
-		return this.title;
+		return super.getName();
 	}
 
 	/**
 	 * Setter für Fortschritt nur für vererbte Klassen
 	 * ================================================================
 	 */
+	@Deprecated
 	protected void setStatusProgress(int statusProgress) {
-		this.statusProgress = statusProgress;
+		super.setProgress(statusProgress);
 	}
 
 	protected void setStatusProgress(double statusProgress) {
@@ -133,8 +123,9 @@ public class LongRunningTask extends Thread {
 	 * Setter für Statusmeldung nur für vererbte Klassen
 	 * ================================================================
 	 */
+	@Deprecated
 	protected void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
+		super.setWorkDetail(statusMessage);
 		if (!this.isSingleThread) {
 			Helper.setMeldung(statusMessage);
 			logger.debug(statusMessage);
@@ -145,8 +136,9 @@ public class LongRunningTask extends Thread {
 	 * Setter für Titel nur für vererbte Klassen
 	 * ================================================================
 	 */
+	@Deprecated
 	protected void setTitle(String title) {
-		this.title = title;
+		super.setNameDetail(title);
 	}
 
 	/**
@@ -157,12 +149,9 @@ public class LongRunningTask extends Thread {
 		this.prozess = prozess;
 	}
 
-	public String getLongMessage() {
-		return this.longMessage;
-	}
-
+	@Deprecated
 	public void setLongMessage(String inlongMessage) {
-		this.longMessage = inlongMessage;
+		super.setWorkDetail(inlongMessage);
 	}
 
 }

@@ -541,10 +541,12 @@ public class Prozess implements Serializable {
 		if (isSwappedOutGui()) {
 			ProcessSwapInTask pst = new ProcessSwapInTask();
 			pst.initialize(this);
-			pst.execute();
-			if (pst.getStatusProgress() == -1) {
+			pst.setProgress(1);
+			pst.setShowMessages(true);
+			pst.run();
+			if (pst.getException() != null) {
 				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists()) {
-					throw new SwapException(pst.getStatusMessage());
+					throw new SwapException(pst.getException().getMessage());
 				} else {
 					setSwappedOutGui(false);
 				}

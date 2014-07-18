@@ -1,5 +1,3 @@
-package de.sub.goobi.forms;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,7 +25,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.LinkedList;
+package de.sub.goobi.forms;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -35,101 +34,67 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.tasks.CloneableLongRunningTask;
 import de.sub.goobi.helper.tasks.LongRunningTask;
 import de.sub.goobi.helper.tasks.LongRunningTaskManager;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
+
 
 public class LongRunningTasksForm {
-	private Prozess prozess;
-	private LongRunningTask task;
-	private static final Logger logger = Logger.getLogger(LongRunningTask.class);
-
-	public LinkedList<LongRunningTask> getTasks() {
-		return LongRunningTaskManager.getInstance().getTasks();
+	private EmptyTask task;
+	public List<EmptyTask> getTasks() {
+		return TaskManager.getTaskList();
 	}
 
-
-	public void addNewMasterTask() {
-		Prozess p = new Prozess();
-		p.setTitel("hallo Titel " + System.currentTimeMillis());
-		this.task = new LongRunningTask();
-		this.task.initialize(p);
-		LongRunningTaskManager.getInstance().addTask(this.task);
+	public void addDemoTask() {
+		task = new EmptyTask();
+		TaskManager.addTask(task);
 	}
 
-	/**
-	 * Thread entweder starten oder restarten ================================================================
-	 */
 	public void executeTask() {
-		if (this.task.getStatusProgress() == 0) {
-			LongRunningTaskManager.getInstance().executeTask(this.task);
-		} else {
-			/* Thread lief schon und wurde abgebrochen */
-			LongRunningTask lrt = null;
-			try {
-				lrt = this.task.getClass().newInstance();
-				lrt.initialize(this.task.getProzess());
-			} catch (InstantiationException e) {
-				/*
-				 * Some tasks need to pass more data than just a Prozess object.
-				 * They implement clone() to create their copy themselves.
-				 */
-				if (this.task instanceof CloneableLongRunningTask) {
-					lrt = ((CloneableLongRunningTask) this.task).clone();
-				} else
-					logger.error(e);
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-			}
-			if (lrt != null) {
-				LongRunningTaskManager.getInstance().replaceTask(this.task, lrt);
-				LongRunningTaskManager.getInstance().executeTask(lrt);
-			}
-		}
+		task.start();
 	}
 
 	public void clearFinishedTasks() {
-		LongRunningTaskManager.getInstance().clearFinishedTasks();
+		TaskManager.removeAllFinishedTasks();
 	}
 
 	public void clearAllTasks() {
-		LongRunningTaskManager.getInstance().clearAllTasks();
+		TaskManager.stopAndDeleteAllTasks();
 	}
 
 	public void moveTaskUp() {
-		LongRunningTaskManager.getInstance().moveTaskUp(this.task);
+		TaskManager.runEarlier(task);
 	}
 
 	public void moveTaskDown() {
-		LongRunningTaskManager.getInstance().moveTaskDown(this.task);
+		TaskManager.runLater(task);
 	}
 
 	public void cancelTask() {
-		LongRunningTaskManager.getInstance().cancelTask(this.task);
+		TaskSitter.setAutoRunningThreads(false);
+		task.interrupt(Behaviour.PREPARE_FOR_RESTART);
 	}
 
 	public void removeTask() {
-		LongRunningTaskManager.getInstance().removeTask(this.task);
+		task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 	}
 
-	public Prozess getProzess() {
-		return this.prozess;
+	public boolean isDemoTasksLinkShowing() {
+		return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
 	}
 
-	public void setProzess(Prozess prozess) {
-		this.prozess = prozess;
-	}
-
-	public LongRunningTask getTask() {
-		return this.task;
-	}
-
-	public void setTask(LongRunningTask task) {
+	public void setTask(EmptyTask task) {
 		this.task = task;
 	}
 
 	public boolean isRunning() {
-		return LongRunningTaskManager.getInstance().isRunning();
+		return TaskSitter.isAutoRunningThreads();
 	}
 
 	public void toggleRunning() {
-		LongRunningTaskManager.getInstance().setRunning(!LongRunningTaskManager.getInstance().isRunning());
+		boolean mode = !TaskSitter.isAutoRunningThreads();
+		TaskSitter.setAutoRunningThreads(mode);
 	}
 }

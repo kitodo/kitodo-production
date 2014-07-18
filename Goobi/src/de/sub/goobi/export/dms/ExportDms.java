@@ -55,6 +55,9 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.helper.tasks.ExportDmsTask;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 public class ExportDms extends ExportMets {
@@ -62,6 +65,7 @@ public class ExportDms extends ExportMets {
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
+	private ExportDmsTask exportDmsTask = null;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -116,7 +120,23 @@ public class ExportDms extends ExportMets {
 			MetadataTypeNotAllowedException, ExportFileException,
 			UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
-		
+
+		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
+			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
+			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
+					myProzess.getTitel());
+			return true;
+		} else {
+			return startExport(myProzess, inZielVerzeichnis, null);
+		}
+	}
+
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
+			throws IOException, InterruptedException, WriteException, PreferencesException,
+			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
+			SwapException, DAOException, TypeNotAllowedForParentException {
+
+		this.exportDmsTask = exportDmsTask;
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
@@ -146,8 +166,12 @@ public class ExportDms extends ExportMets {
 			gdzfile = newfile;
 
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-					+ myProzess.getTitel(), e);
+			if (exportDmsTask != null) {
+				exportDmsTask.setException(e);
+			} else {
+				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
+						+ myProzess.getTitel(), e);
+			}
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
@@ -228,6 +252,9 @@ public class ExportDms extends ExportMets {
 			}
 			prepareUserDirectory(zielVerzeichnis);
 		}
+		if (exportDmsTask != null) {
+			exportDmsTask.setProgress(1);
+		}
 
 		/*
 		 * -------------------------------- der eigentliche Download der Images
@@ -247,8 +274,12 @@ public class ExportDms extends ExportMets {
 			directoryDownload(myProzess, zielVerzeichnis);
 			
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(
-					"Export canceled, Process: " + myProzess.getTitel(), e);
+			if (exportDmsTask != null) {
+				exportDmsTask.setException(e);
+			} else {
+				Helper.setFehlerMeldung(
+						"Export canceled, Process: " + myProzess.getTitel(), e);
+			}
 			return false;
 		}
 
@@ -259,6 +290,9 @@ public class ExportDms extends ExportMets {
 		 * --------------------------------
 		 */
 		if (myProzess.getProjekt().isUseDmsImport()) {
+			if (exportDmsTask != null) {
+				exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
+			}
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
@@ -291,17 +325,30 @@ public class ExportDms extends ExportMets {
 						agoraThread.stopThread();
 					}
 				} catch (InterruptedException e) {
-					Helper.setFehlerMeldung(myProzess.getTitel()
-							+ ": error on export - ", e.getMessage());
+					if (exportDmsTask != null) {
+						exportDmsTask.setException(e);
+					} else {
+						Helper.setFehlerMeldung(myProzess.getTitel()
+								+ ": error on export - ", e.getMessage());
+					}
 					myLogger.error(myProzess.getTitel() + ": error on export",
 							e);
 				}
 				if (agoraThread.rueckgabe.length() > 0) {
-					Helper.setFehlerMeldung(myProzess.getTitel() + ": ",
-							agoraThread.rueckgabe);
+					if (exportDmsTask != null) {
+						exportDmsTask.setException(new RuntimeException(myProzess.getTitel() + ": "
+								+ agoraThread.rueckgabe));
+					} else {
+						Helper.setFehlerMeldung(myProzess.getTitel() + ": ",
+								agoraThread.rueckgabe);
+					}
 				} else {
-					Helper.setMeldung(null, myProzess.getTitel() + ": ",
-							"ExportFinished");
+					if (exportDmsTask != null) {
+						exportDmsTask.setProgress(100);
+					} else {
+						Helper.setMeldung(null, myProzess.getTitel() + ": ",
+								"ExportFinished");
+					}
 					/* Success-Ordner wieder löschen */
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
 						File successFile = new File(myProzess.getProjekt()
@@ -311,6 +358,9 @@ public class ExportDms extends ExportMets {
 						Helper.deleteDir(successFile);
 					}
 				}
+			}
+			if (exportDmsTask != null) {
+				exportDmsTask.setProgress(100);
 			}
 		} else {
 			/* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
@@ -427,8 +477,12 @@ public class ExportDms extends ExportMets {
 				try {
                     	FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
                     } catch (Exception e) {
-					Helper.setFehlerMeldung("Export canceled, error",
-							"could not create destination directory");
+					if (exportDmsTask != null) {
+							exportDmsTask.setException(e);
+						} else {
+							Helper.setFehlerMeldung("Export canceled, error",
+									"could not create destination directory");
+						}
 					myLogger.error("could not create destination directory", e);
 				}
 			}
@@ -437,12 +491,23 @@ public class ExportDms extends ExportMets {
 
 			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
+				if (exportDmsTask != null) {
+					exportDmsTask.setWorkDetail(dateien[i].getName());
+				}
 				File meinZiel = new File(zielTif + File.separator
 						+ dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);
+				if (exportDmsTask != null) {
+					exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+					if (exportDmsTask.isInterrupted()) {
+						throw new InterruptedException();
+					}
+				}
+			}
+			if (exportDmsTask != null) {
+				exportDmsTask.setWorkDetail(null);
 			}
 		}
-
 	}
 	
 	/**

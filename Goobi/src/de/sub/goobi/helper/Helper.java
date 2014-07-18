@@ -28,14 +28,10 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -63,6 +59,7 @@ import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
@@ -308,73 +305,6 @@ public class Helper implements Serializable, Observer {
 		hsl.getNewSession();
 	}
 
-	// /**
-	// * Call scripts from console and give back error messages and return value of the called script
-	// *
-	// * @throws IOException
-	// * @throws InterruptedException
-	// *
-	// */
-	// public static Integer callShell2(String command) throws IOException, InterruptedException {
-	// InputStream is = null;
-	// InputStream es = null;
-	// OutputStream out = null;
-	//
-	// try {
-	// myLogger.debug("execute Shellcommand callShell2: " + command);
-	// boolean errorsExist = false;
-	// if (command == null || command.length() == 0) {
-	// return 1;
-	// }
-	// Process process = Runtime.getRuntime().exec(command);
-	// is = process.getInputStream();
-	// es = process.getErrorStream();
-	// out = process.getOutputStream();
-	// Scanner scanner = new Scanner(is);
-	// while (scanner.hasNextLine()) {
-	// String myLine = scanner.nextLine();
-	// setMeldung(myLine);
-	// }
-	//
-	// scanner.close();
-	// scanner = new Scanner(es);
-	// while (scanner.hasNextLine()) {
-	// errorsExist = true;
-	// setFehlerMeldung(scanner.nextLine());
-	// }
-	// scanner.close();
-	// int rueckgabe = process.waitFor();
-	// if (errorsExist) {
-	// return 1;
-	// } else {
-	// return rueckgabe;
-	// }
-	// } finally {
-	// if (is != null) {
-	// try {
-	// is.close();
-	// } catch (IOException e) {
-	// is = null;
-	// }
-	// }
-	// if (es != null) {
-	// try {
-	// es.close();
-	// } catch (IOException e) {
-	// es = null;
-	// }
-	//
-	// }
-	// if (out != null) {
-	// try {
-	// out.close();
-	// } catch (IOException e) {
-	// out = null;
-	// }
-	// }
-	// }
-	// }
-
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
@@ -498,17 +428,7 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static void copyFile(File src, File dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
-		InputStream in = new FileInputStream(src);
-		OutputStream out = new FileOutputStream(dst);
-
-		// Transfer bytes from in to out
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0) {
-			out.write(buf, 0, len);
-		}
-		in.close();
-		out.close();
+		FileUtils.copyFile(src, dst, false);
 	}
 
 	/**

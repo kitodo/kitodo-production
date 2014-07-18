@@ -27,6 +27,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -34,19 +36,44 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
-public class ScriptThreadWithoutHibernate extends Thread {
+public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
-	private StepObject step;
-	public String rueckgabe = "";
-	public boolean stop = false;
+	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
 
 	public ScriptThreadWithoutHibernate(StepObject step) {
 		this.step = step;
 		setDaemon(true);
+
+		String function = null;
+		if (StepManager.loadScripts(step.getId()).size() > 0) {
+			function = "executeAllScriptsForStep";
+		} else if (step.isTypExport()) {
+			function = "executeDmsExport";
+		} else if (step.getStepPlugin() != null && step.getStepPlugin().length() > 0) {
+			function = "executeStepPlugin";
+		}
+		List<String> parameterList = new ArrayList<String>(1);
+		try {
+			parameterList.add(MySQLHelper.getProcessObjectForId(step.getProcessId()).getTitle());
+		} catch (SQLException e) {
+			parameterList.add(e.getMessage());
+		}
+		setNameDetail(function != null ? Helper.getTranslation(function, parameterList) : null);
+		hs.setTask(this);
+	}
+
+	public ScriptThreadWithoutHibernate(ScriptThreadWithoutHibernate origin) {
+		this.step = origin.step;
+		setDaemon(true);
+
+		setName(origin.getName());
+		hs.setTask(this);
 	}
 
 	@Override
@@ -69,8 +96,8 @@ public class ScriptThreadWithoutHibernate extends Thread {
 		}
 	}
 
-	public void stopThread() {
-		this.rueckgabe = "Import wurde wegen Zeitüberschreitung abgebrochen";
-		this.stop = true;
+	@Override
+	public ScriptThreadWithoutHibernate clone() {
+		return new ScriptThreadWithoutHibernate(this);
 	}
 }
