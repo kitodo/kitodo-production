@@ -477,6 +477,17 @@ public class EmptyTask extends Thread implements Cloneable {
 	}
 
 	/**
+	 * The procedure setProgress() may be used to set the task’s progress in
+	 * percent (i.e., from 0 to 100).
+	 * 
+	 * @param progress
+	 *            the tasks progress
+	 */
+	protected void setProgress(double statusProgress) {
+		setProgress(new Double(Math.ceil(statusProgress)).intValue());
+	}
+
+	/**
 	 * Sets the time of death of the task now.
 	 */
 	void setTimeOfDeath() {

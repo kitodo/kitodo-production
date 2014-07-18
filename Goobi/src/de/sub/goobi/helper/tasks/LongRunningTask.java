@@ -115,8 +115,9 @@ public class LongRunningTask extends EmptyTask {
 		super.setProgress(statusProgress);
 	}
 
+	@Deprecated
 	protected void setStatusProgress(double statusProgress) {
-		this.statusProgress = new Double(Math.ceil(statusProgress)).intValue();
+		super.setProgress(statusProgress);
 	}
 
 	/**

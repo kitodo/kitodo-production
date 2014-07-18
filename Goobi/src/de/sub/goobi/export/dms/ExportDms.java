@@ -65,7 +65,7 @@ public class ExportDms extends ExportMets {
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
-	private ExportDmsTask exportDmsTask = null;
+	private ExportDmsTask exportDmsTask;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -104,11 +104,32 @@ public class ExportDms extends ExportMets {
 			MetadataTypeNotAllowedException, ExportFileException,
 			UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
+
+		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
+			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
+			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
+					myProzess.getTitel());
+			return true;
+		} else {
+			return startExport(myProzess, inZielVerzeichnis, (ExportDmsTask) null);
+		}
+	}
+
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
+			throws IOException, InterruptedException, WriteException, PreferencesException,
+			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
+			SwapException, DAOException, TypeNotAllowedForParentException {
+
+		this.exportDmsTask = exportDmsTask;
 		try{
 			return startExport(myProzess, inZielVerzeichnis, myProzess.readMetadataFile());
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-					+ myProzess.getTitel(), e);
+			if (exportDmsTask != null) {
+				exportDmsTask.setException(e);
+			} else {
+				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
+						+ myProzess.getTitel(), e);
+			}
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
@@ -120,23 +141,7 @@ public class ExportDms extends ExportMets {
 			MetadataTypeNotAllowedException, ExportFileException,
 			UghHelperException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
-
-		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
-			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
-			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
-					myProzess.getTitel());
-			return true;
-		} else {
-			return startExport(myProzess, inZielVerzeichnis, null);
-		}
-	}
-
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
-			throws IOException, InterruptedException, WriteException, PreferencesException,
-			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
-
-		this.exportDmsTask = exportDmsTask;
+		
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
@@ -415,6 +420,9 @@ public class ExportDms extends ExportMets {
 			File[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
 				if(dateien[i].isFile()) {
+					if (exportDmsTask != null) {
+						exportDmsTask.setWorkDetail(dateien[i].getName());
+					}
 					File meinZiel = new File(destination + File.separator
 							+ dateien[i].getName());
 					Helper.copyFile(dateien[i], meinZiel);
@@ -435,12 +443,18 @@ public class ExportDms extends ExportMets {
 					File[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
 						if(files[i].isFile()) {
+							if (exportDmsTask != null) {
+								exportDmsTask.setWorkDetail(files[i].getName());
+							}
 							File target = new File(destination + File.separator + files[i].getName());
 							Helper.copyFile(files[i], target);
 						}
 					}
 				}
 			}
+		}
+		if (exportDmsTask != null) {
+			exportDmsTask.setWorkDetail(null);
 		}
 	}
 
