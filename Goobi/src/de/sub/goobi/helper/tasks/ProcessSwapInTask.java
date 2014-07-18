@@ -208,7 +208,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 	}
 
 	@Override
-	public EmptyTask clone() {
+	public ProcessSwapInTask clone() {
 		return new ProcessSwapInTask(this);
 	}
 

@@ -174,7 +174,7 @@ public void run() {
    }
 
 	@Override
-	public EmptyTask clone() {
+	public ProcessSwapOutTask clone() {
 		return new ProcessSwapOutTask(this);
 	}
 
