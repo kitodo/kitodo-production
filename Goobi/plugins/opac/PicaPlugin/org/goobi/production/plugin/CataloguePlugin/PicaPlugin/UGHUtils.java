@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -73,6 +74,11 @@ class UGHUtils {
 		}
 	}
 
+	private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, Iterable<String> inValues) {
+		for (String inValue : inValues)
+			addMetadatum(inStruct, inPrefs, inMetadataType, inValue);
+	}
+
 	static void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* vorhandenes Element löschen */
 		MetadataType mdt = inPrefs.getMetadataTypeByName(inMetadataType);
@@ -88,6 +94,23 @@ class UGHUtils {
 		}
 		/* Element neu hinzufügen */
 		addMetadatum(inStruct, inPrefs, inMetadataType, inValue);
+	}
+
+	static void replaceMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, Iterable<String> inValues) {
+		/* vorhandenes Element löschen */
+		MetadataType mdt = inPrefs.getMetadataTypeByName(inMetadataType);
+		if (mdt == null) {
+			return;
+		}
+		if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
+			// TODO: Use for loops
+			for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
+				Metadata md = iter.next();
+				inStruct.removeMetadata(md);
+			}
+		}
+		/* Element neu hinzufügen */
+		addMetadatum(inStruct, inPrefs, inMetadataType, inValues);
 	}
 
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
@@ -106,6 +129,13 @@ class UGHUtils {
 		} catch (IOException e) {
 		}
 		return inLanguage;
+	}
+
+	static Iterable<String> convertLanguages(Iterable<String> inLanguages) {
+		LinkedList<String> result = new LinkedList<String>();
+		for (String inLanguage : inLanguages)
+			result.add(convertLanguage(inLanguage));
+		return result;
 	}
 
 	/**

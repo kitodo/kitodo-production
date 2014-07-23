@@ -25,8 +25,10 @@
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -169,10 +171,11 @@ public class PicaPlugin implements Plugin {
 		try {
 			Query queryObject = new Query(query);
 			int hits = client.getNumberOfHits(queryObject, timeout);
-			if (hits > 0)
+			if (hits > 0) {
 				return new FindResult(queryObject, hits);
-			else
+			} else {
 				return null;
+			}
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -223,8 +226,9 @@ public class PicaPlugin implements Plugin {
 	 *      long, long)
 	 */
 	public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
-		if (!(searchResult instanceof FindResult))
+		if (!(searchResult instanceof FindResult)) {
 			throw new ClassCastException();
+		}
 		Query myQuery = ((FindResult) searchResult).getQuery();
 
 		Element myFirstHit;
@@ -364,8 +368,9 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getGattung(Element inHit) {
-		if (inHit == null)
+		if (inHit == null) {
 			return "";
+		}
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
@@ -558,18 +563,18 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- Sprachen - Konvertierung auf zwei
 		 * Stellen --------------------------------
 		 */
-		String sprache = getElementFieldValue(myFirstHit, "010@", "a");
-		sprache = UGHUtils.convertLanguage(sprache);
-		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
+		Iterable<String> sprachen = getElementFieldValues(myFirstHit, "010@", "a");
+		sprachen = UGHUtils.convertLanguages(sprachen);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprachen);
 
 		/*
 		 * -------------------------------- bei multivolumes die Sprachen -
 		 * Konvertierung auf zwei Stellen --------------------------------
 		 */
 		if (topstructChild != null && mySecondHit != null) {
-			String spracheMulti = getElementFieldValue(mySecondHit, "010@", "a");
-			spracheMulti = UGHUtils.convertLanguage(spracheMulti);
-			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
+			Iterable<String> sprachenMulti = getElementFieldValues(mySecondHit, "010@", "a");
+			sprachenMulti = UGHUtils.convertLanguages(sprachenMulti);
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", sprachenMulti);
 		}
 
 		/*
@@ -662,6 +667,23 @@ public class PicaPlugin implements Plugin {
 	}
 
 	@SuppressWarnings("unchecked")
+	private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
+		LinkedList<String> result = new LinkedList<String>();
+		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
+			Element myElement = iter2.next();
+			String feldname = myElement.getAttributeValue("tag");
+			/*
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
+			 * Attribut zurückgeben
+			 */
+			if (feldname.equals(inFieldName)) {
+				result.addAll(getFieldValues(myElement, inAttributeName));
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
 	private static String getFieldValue(Element inElement, String attributeValue) {
 		String rueckgabe = "";
 
@@ -669,6 +691,19 @@ public class PicaPlugin implements Plugin {
 			Element subElement = iter.next();
 			if (subElement.getAttributeValue("code").equals(attributeValue)) {
 				rueckgabe = subElement.getValue();
+			}
+		}
+		return rueckgabe;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
+		List<String> rueckgabe = new LinkedList<String>();
+
+		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
+			Element subElement = iter.next();
+			if (subElement.getAttributeValue("code").equals(attributeValue)) {
+				rueckgabe.add(subElement.getValue());
 			}
 		}
 		return rueckgabe;
@@ -707,23 +742,28 @@ public class PicaPlugin implements Plugin {
 		}
 
 		String lastName = getElementFieldValue(hit, "028A", "a");
-		if (lastName.equals(""))
+		if (lastName.equals("")) {
 			lastName = getElementFieldValue(hit, "028A", "l");
+		}
 		String firstName = getElementFieldValue(hit, "028A", "d");
-		if (firstName.equals(""))
+		if (firstName.equals("")) {
 			firstName = getElementFieldValue(hit, "028A", "P");
+		}
 		String middleTitle = getElementFieldValue(hit, "028A", "c");
 		String author = lastName + (!firstName.equals("") ? ", " : "") + firstName
 				+ (!middleTitle.equals("") ? " " : "") + middleTitle;
-		if (author.equals(""))
+		if (author.equals("")) {
 			author = getElementFieldValue(hit, "028A", "8");
+		}
 		if (author.equals("")) {
 			String lastName2 = getElementFieldValue(hit, "028C", "a");
-			if (lastName2.equals(""))
+			if (lastName2.equals("")) {
 				lastName2 = getElementFieldValue(hit, "028C", "l");
+			}
 			String firstName2 = getElementFieldValue(hit, "028C", "d");
-			if (firstName2.equals(""))
+			if (firstName2.equals("")) {
 				firstName2 = getElementFieldValue(hit, "028C", "P");
+			}
 			String middleTitle2 = getElementFieldValue(hit, "028C", "c");
 			author = lastName2 + (!firstName2.equals("") ? ", " : "") + firstName2
 					+ (!middleTitle2.equals("") ? " " : "") + middleTitle2;
@@ -745,20 +785,25 @@ public class PicaPlugin implements Plugin {
 		result.put("series", getElementFieldValue(hit, "036E", "a"));
 
 		String subseries = getElementFieldValue(hit, "021A", "d");
-		if (subseries == null || subseries.length() == 0)
+		if (subseries == null || subseries.length() == 0) {
 			subseries = getElementFieldValue(hit, "021B", "d");
-		if (subseries == null || subseries.length() == 0)
+		}
+		if (subseries == null || subseries.length() == 0) {
 			subseries = getElementFieldValue(hit, "027D", "d");
+		}
 		result.put("subseries", subseries);
 
 		String title = getElementFieldValue(hit, "021A", "a");
-		if (title == null || title.length() == 0)
+		if (title == null || title.length() == 0) {
 			title = getElementFieldValue(hit, "021B", "a");
-		if (title == null || title.length() == 0)
+		}
+		if (title == null || title.length() == 0) {
 			title = getElementFieldValue(hit, "027D", "a");
+		}
 		String titleLong = getElementFieldValue(hit, "021A", "d");
-		if (titleLong != null && titleLong.length() > 0)
+		if (titleLong != null && titleLong.length() > 0) {
 			title = title + " : " + titleLong;
+		}
 		result.put("title", title.replaceAll("@", ""));
 
 		result.put("url", getElementFieldValue(hit, "209R", "a"));
@@ -780,8 +825,9 @@ public class PicaPlugin implements Plugin {
 		int centuryPrefix = upTo.getYear() / 100;
 		String[] fields = dd_mm_yy.split("-");
 		int year = (100 * centuryPrefix) + Integer.parseInt(fields[2]);
-		if (year > upTo.getYear())
+		if (year > upTo.getYear()) {
 			year -= 100;
+		}
 		return new LocalDate(year, Integer.parseInt(fields[1]), Integer.parseInt(fields[0]));
 	}
 
@@ -799,10 +845,11 @@ public class PicaPlugin implements Plugin {
 	 *      long)
 	 */
 	public static long getNumberOfHits(Object searchResult, long timeout) {
-		if (searchResult instanceof FindResult)
+		if (searchResult instanceof FindResult) {
 			return ((FindResult) searchResult).getHits();
-		else
+		} else {
 			throw new ClassCastException();
+		}
 	}
 
 	/**
