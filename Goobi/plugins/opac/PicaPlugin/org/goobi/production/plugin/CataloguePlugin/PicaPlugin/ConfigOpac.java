@@ -91,7 +91,8 @@ class ConfigOpac {
 					String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
 					ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
 							getConfig().getString(tempJ + "[@tag]"), getConfig().getString(tempJ + "[@subtag]"),
-							getConfig().getString(tempJ + "[@value]"));
+							getConfig().getString(tempJ + "[@value]"), getConfig().getString(tempJ + "[@mode]",
+									"replace"));
 
 					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
 
@@ -100,7 +101,8 @@ class ConfigOpac {
 						String tempK = tempJ + ".condition(" + k + ")";
 						ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
 								getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
-								getConfig().getString(tempK + "[@value]"));
+								getConfig().getString(tempK + "[@value]"), getConfig().getString(tempK + "[@mode]",
+										"matches"));
 						proofElements.add(oteProof);
 					}
 					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
