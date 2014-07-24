@@ -31,11 +31,13 @@ class ConfigOpacCatalogueBeautifierElement {
 	private final String tag;
 	private final String subtag;
 	private final String value;
+	private final String mode;
 
-	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value) {
+	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
 		this.tag = tag;
 		this.subtag = subtag;
 		this.value = value;
+		this.mode = mode;
 	}
 
 	String getTag() {
@@ -48,6 +50,10 @@ class ConfigOpacCatalogueBeautifierElement {
 
 	String getValue() {
 		return value;
+	}
+
+	String getMode() {
+		return mode;
 	}
 
 	@Override
