@@ -201,6 +201,9 @@ class ConfigOpacCatalogue {
 				}
 				if (beautifier.getTagElementToChange().getMode().equals("replace"))
 					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher));
+				else if (beautifier.getTagElementToChange().getMode().equals("prepend"))
+					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
+							elementToChange.getText()));
 				else
 					elementToChange.setText(elementToChange.getText().concat(
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
