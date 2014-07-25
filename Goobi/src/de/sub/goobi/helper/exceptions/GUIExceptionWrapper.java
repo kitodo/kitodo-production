@@ -74,7 +74,7 @@ public class GUIExceptionWrapper extends Exception {
 	private String err_emailMessage = "";
 	private String err_subjectLine = "";
 
-	private ArrayList<String> emailAdresses = new ArrayList<String>();
+	private ArrayList<String> emailAddresses = new ArrayList<String>();
 
 	private String internalErrorMsg = "";
 
@@ -125,7 +125,7 @@ public class GUIExceptionWrapper extends Exception {
 						emailCounter++;
 						email = ConfigMain.getParameter("err_emailAddress" + emailCounter.toString(), "end");
 						if (!email.equals("end")) {
-							this.emailAdresses.add(email);
+							this.emailAddresses.add(email);
 						}
 					}
 
@@ -174,9 +174,9 @@ public class GUIExceptionWrapper extends Exception {
 		linkPart = this.err_linkText + lineFeed;
 
 		// only elaborate email part if
-		if (this.emailAdresses.size() > 0) {
+		if (this.emailAddresses.size() > 0) {
 			emailPart = this.err_emailMessage.replace("{0}", 
-					mailtoLinkHrefMailTo + getAdresses() + 
+					mailtoLinkHrefMailTo + getAddresses() +
 					mailtoLinkSubject + this.err_subjectLine + 
 					mailtoLinkBody +  this.err_emailBody +
 					htmlLineFeed + htmlLineFeed + 	
@@ -184,7 +184,7 @@ public class GUIExceptionWrapper extends Exception {
 					htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
 		} else {
-			// if no adresse a general text will be provided by this class
+			// if no address a general text will be provided by this class
 			emailPart = Helper.getTranslation("err_noMailService");
 		}
 
@@ -196,14 +196,14 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 * 
-	 * @return collected adresses as a string to be used after <a href="mailto:"
+	 * @return collected addresses as a string to be used after <a href="mailto:"
 	 */
-	private String getAdresses() {
-		StringBuffer adresses = new StringBuffer();
-		for (String emailAddy : this.emailAdresses) {
-			adresses = adresses.append(emailAddy).append(",%20");
+	private String getAddresses() {
+		StringBuffer addresses = new StringBuffer();
+		for (String emailAddy : this.emailAddresses) {
+			addresses = addresses.append(emailAddy).append(",%20");
 		}
-		return adresses.toString();
+		return addresses.toString();
 	}
 
 	/**
