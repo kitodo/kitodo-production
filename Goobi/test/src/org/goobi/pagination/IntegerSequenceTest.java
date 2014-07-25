@@ -5,7 +5,7 @@
 // * Visit the websites for more information.
 // *    - http://gdz.sub.uni-goettingen.de
 // *    - http://www.goobi.org
-// *    - http://launchpad.net/goobi-production
+// *    - https://github.com/goobi/goobi-production
 // *
 // * Copyright 2011, Center for Retrospective Digitization, Göttingen (GDZ),
 // *
