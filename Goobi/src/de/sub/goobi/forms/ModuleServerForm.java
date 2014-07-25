@@ -187,7 +187,7 @@ public class ModuleServerForm {
 			Element root = doc.getRootElement();
 			/* alle Module durchlaufen */
 			for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
-				Element myModule = (Element) iter.next();
+				Element myModule = iter.next();
 				rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"), null, myModule
 						.getAttributeValue("description")));
 			}
