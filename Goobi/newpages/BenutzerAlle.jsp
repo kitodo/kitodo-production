@@ -68,9 +68,9 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Caption Administration / Users --%>
 									<htm:h3>
-										<h:outputText id="id4" value="#{msgs.benutzer}" />
+										<h:outputText id="id4" value="#{msgs.users}" />
 									</htm:h3>
 									<h:commandLink id="id5" action="#{BenutzerverwaltungForm.Neu}"
 										immediate="true"
