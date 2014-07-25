@@ -120,7 +120,7 @@ public class GUIExceptionWrapper extends Exception {
 					Integer emailCounter = Integer.valueOf(0);
 					String email = "";
 
-					// indefinate emails can be added
+					// indefinite emails can be added
 					while (!email.equals("end")) {
 						emailCounter++;
 						email = ConfigMain.getParameter("err_emailAddress" + emailCounter.toString(), "end");
