@@ -40,7 +40,7 @@
 	<htm:tr>
 		<htm:td styleClass="main_statistikboxen_row2">
 			<h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
-				<h:outputText value="#{msgs.benutzer}:" />
+				<h:outputText value="#{msgs.users}:" />
 				<h:outputText value="#{StatistikForm.anzahlBenutzer}" />
 				<h:outputText value="#{msgs.benutzergruppen}:" />
 				<h:outputText value="#{StatistikForm.anzahlBenutzergruppen}" />
