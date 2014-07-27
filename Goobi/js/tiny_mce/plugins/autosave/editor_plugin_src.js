@@ -61,7 +61,7 @@
 	tinymce.create('tinymce.plugins.AutoSave', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
-		 * This call is done before the editor instance has finished it's initialization so use the onInit event
+		 * This call is done before the editor instance has finished its initialization so use the onInit event
 		 * of the editor instance to intercept that event.
 		 *
 		 * @method init
@@ -288,7 +288,7 @@
 		},
 
 		/**
-		 * This method will store the current contents in the the storage engine.
+		 * This method will store the current contents in the storage engine.
 		 *
 		 * @method storeDraft
 		 */
@@ -298,7 +298,7 @@
 			// Is the contents dirty
 			if (storage) {
 				// If there is no existing key and the contents hasn't been changed since
-				// it's original value then there is no point in saving a draft
+				// its original value then there is no point in saving a draft.
 				if (!storage.getItem(self.key) && !editor.isDirty())
 					return;
 
