@@ -198,14 +198,14 @@
 						<h:outputText styleClass="th_menu"
 							value="- #{msgs.administration} -" />
 
-						<%-- Benutzerverwaltung --%>
+						<%-- Menu Administration / Users --%>
 						<h:commandLink styleClass="mlink" id="users"
 							action="#{BenutzerverwaltungForm.FilterKein}"
 							style="#{NavigationForm.aktuell == '30' ? 'font-weight: bold;':'font-weight:normal ;'}">
 							<h:panelGroup rendered="#{NavigationForm.aktuell == '30'}">
 								<f:verbatim>&#8250; </f:verbatim>
 							</h:panelGroup>
-							<h:outputText value="#{msgs.benutzer}" />
+							<h:outputText value="#{msgs.users}" />
 							<x:updateActionListener property="#{NavigationForm.aktuell}"
 								value="30" />
 						</h:commandLink>
