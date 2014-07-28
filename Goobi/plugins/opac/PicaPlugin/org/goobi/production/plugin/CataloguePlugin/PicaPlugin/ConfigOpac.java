@@ -41,8 +41,9 @@ class ConfigOpac {
 	private static XMLConfiguration config;
 
 	private static XMLConfiguration getConfig() {
-		if (config != null)
+		if (config != null) {
 			return config;
+		}
 		String configPfad = FilenameUtils.concat(PicaPlugin.getConfigDir(), PicaPlugin.OPAC_CONFIGURATION_FILE);
 		if (!new File(configPfad).exists()) {
 			String message = "File not found: ".concat(configPfad);
@@ -91,7 +92,8 @@ class ConfigOpac {
 					String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
 					ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
 							getConfig().getString(tempJ + "[@tag]"), getConfig().getString(tempJ + "[@subtag]"),
-							getConfig().getString(tempJ + "[@value]"));
+							getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "), getConfig().getString(
+									tempJ + "[@mode]", "replace"));
 
 					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
 
@@ -100,7 +102,8 @@ class ConfigOpac {
 						String tempK = tempJ + ".condition(" + k + ")";
 						ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
 								getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
-								getConfig().getString(tempK + "[@value]"));
+								getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "), getConfig()
+										.getString(tempK + "[@mode]", "matches"));
 						proofElements.add(oteProof);
 					}
 					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));

@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -148,11 +150,13 @@ class ConfigOpacCatalogue {
 	private void executeBeautifierForElement(Element el) {
 		for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
 			Element elementToChange = null;
+			Element tagged = null;
 			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
 			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<ConfigOpacCatalogueBeautifierElement>(beautifier
 					.getTagElementsToProof());
 			/* von jedem Record jedes Field durchlaufen */
 			List<Element> elements = el.getChildren("field");
+			Matcher matcher = null;
 			for (Element field : elements) {
 				String tag = field.getAttributeValue("tag");
 				/* von jedem Field alle Subfelder durchlaufen */
@@ -161,16 +165,22 @@ class ConfigOpacCatalogue {
 					String subtag = subfield.getAttributeValue("code");
 					String value = subfield.getText();
 
-					if (beautifier.getTagElementToChange().getTag().equals(tag) && beautifier.getTagElementToChange().getSubtag().equals(subtag)) {
-						elementToChange = subfield;
+					if (beautifier.getTagElementToChange().getTag().equals(tag)) {
+						tagged = field;
+						if (beautifier.getTagElementToChange().getSubtag().equals(subtag)) {
+							elementToChange = subfield;
+						}
 					}
 					/*
 					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus der Liste der Beautifier
 					 * entfernen
 					 */
 					for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
-						if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag) && value.matches(cocbe.getValue())) {
-							prooflist.remove(cocbe);
+						if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)) {
+							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
+							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
+								prooflist.remove(cocbe);
+							}
 						}
 					}
 				}
@@ -179,12 +189,75 @@ class ConfigOpacCatalogue {
 			 * --------------------- wenn in der Kopie der zu prüfenden Elemente keine Elemente mehr enthalten sind, kann der zu ändernde Wert
 			 * wirklich geändert werden -------------------
 			 */
-			if (prooflist.size() == 0 && elementToChange != null) {
-				elementToChange.setText(beautifier.getTagElementToChange().getValue());
+			if (prooflist.size() == 0) {
+				if (elementToChange == null) {
+					if (tagged == null) {
+						tagged = new Element("field");
+						tagged.setAttribute("tag", beautifier.getTagElementToChange().getTag());
+						el.addContent(tagged);
+					}
+					elementToChange = new Element("subfield");
+					elementToChange.setAttribute("code", beautifier.getTagElementToChange().getSubtag());
+					tagged.addContent(elementToChange);
+				}
+				if (beautifier.getTagElementToChange().getMode().equals("replace")) {
+					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher));
+				} else if (beautifier.getTagElementToChange().getMode().equals("prepend")) {
+					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
+							elementToChange.getText()));
+				} else {
+					elementToChange.setText(elementToChange.getText().concat(
+							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
+				}
 			}
 
 		}
 
+	}
+
+	/**
+	 * The function fillIn() replaces marks in a given string by values derived
+	 * from match results. There are two different mechanisms available for
+	 * replacement.
+	 * 
+	 * If the marked string contains the replacement mark <code>{@}</code>, the
+	 * matcher’s find() operation will be invoked over and over again and all
+	 * match results are concatenated and inserted in place of the replacement
+	 * marks.
+	 * 
+	 * Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>,
+	 * <code>{3}</code>, … will be replaced by the capturing groups matched by
+	 * the matcher.
+	 * 
+	 * @param markedString
+	 *            a string with replacement markers
+	 * @param matcher
+	 *            a matcher who’s values shall be inserted
+	 * @return the string with the replacements filled in
+	 * @throws IndexOutOfBoundsException
+	 *             If there is no capturing group in the pattern with the given
+	 *             index
+	 */
+	private static String fillIn(String markedString, Matcher matcher) {
+		if (matcher == null) {
+			return markedString;
+		}
+		if (markedString.contains("{@}")) {
+			StringBuilder composer = new StringBuilder();
+			composer.append(matcher.group());
+			while (matcher.find()) {
+				composer.append(matcher.group());
+			}
+			return markedString.replaceAll("\\{@\\}", composer.toString());
+		} else {
+			StringBuffer replaced = new StringBuffer();
+			Matcher replacer = Pattern.compile("\\{(\\d+)\\}").matcher(markedString);
+			while (replacer.find()) {
+				replacer.appendReplacement(replaced, matcher.group(Integer.parseInt(replacer.group(1))));
+			}
+			replacer.appendTail(replaced);
+			return replaced.toString();
+		}
 	}
 
 	/**
