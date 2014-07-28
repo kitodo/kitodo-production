@@ -178,8 +178,9 @@ class ConfigOpacCatalogue {
 					for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
 						if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)) {
 							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
-							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find())
+							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
 								prooflist.remove(cocbe);
+							}
 						}
 					}
 				}
@@ -199,14 +200,15 @@ class ConfigOpacCatalogue {
 					elementToChange.setAttribute("code", beautifier.getTagElementToChange().getSubtag());
 					tagged.addContent(elementToChange);
 				}
-				if (beautifier.getTagElementToChange().getMode().equals("replace"))
+				if (beautifier.getTagElementToChange().getMode().equals("replace")) {
 					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher));
-				else if (beautifier.getTagElementToChange().getMode().equals("prepend"))
+				} else if (beautifier.getTagElementToChange().getMode().equals("prepend")) {
 					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
 							elementToChange.getText()));
-				else
+				} else {
 					elementToChange.setText(elementToChange.getText().concat(
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
+				}
 			}
 
 		}
@@ -237,13 +239,15 @@ class ConfigOpacCatalogue {
 	 *             index
 	 */
 	private static String fillIn(String markedString, Matcher matcher) {
-		if (matcher == null)
+		if (matcher == null) {
 			return markedString;
+		}
 		if (markedString.contains("{@}")) {
 			StringBuilder composer = new StringBuilder();
 			composer.append(matcher.group());
-			while (matcher.find())
+			while (matcher.find()) {
 				composer.append(matcher.group());
+			}
 			return markedString.replaceAll("\\{@\\}", composer.toString());
 		} else {
 			StringBuffer replaced = new StringBuffer();

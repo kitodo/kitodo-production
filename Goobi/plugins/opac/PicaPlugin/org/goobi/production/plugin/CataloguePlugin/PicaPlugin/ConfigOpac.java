@@ -41,8 +41,9 @@ class ConfigOpac {
 	private static XMLConfiguration config;
 
 	private static XMLConfiguration getConfig() {
-		if (config != null)
+		if (config != null) {
 			return config;
+		}
 		String configPfad = FilenameUtils.concat(PicaPlugin.getConfigDir(), PicaPlugin.OPAC_CONFIGURATION_FILE);
 		if (!new File(configPfad).exists()) {
 			String message = "File not found: ".concat(configPfad);
