@@ -17,11 +17,15 @@ Building
 
 The software is written in Java and using Java Server Faces web technology to run on a [Tomcat Servlet container](http://tomcat.apache.org/) backed up by a [MySQL](http://www.mysql.com) database accessed utilizing the [Hibernate framework](http://www.hibernate.org). It uses (Unix/Windows) shell scripts and is often used with Windows shares in [Samba](http://www.samba.org/) environments authenticated via LDAP.
 
-The project structure is IDE independent. The tool for issue building, testing and packagin of the application is [Ant](http://ant.apache.org/). Ant gets configured by providing a build.properties file nect to the build.xml build-file.
+The project structure is IDE independent. The tool for issue building, testing
+and packaging of the application is [Ant](http://ant.apache.org/). Ant gets
+configured by providing a build.properties file next to the build.xml build-file.
 
 ### Dependencies
 
-All dependend libraries are shipped with the source code. They can be found in the top level directory /lib. The only thing that is not shipped is a Tomcat specific Servlet-API. This should come along with the Tomcat distribution you're building against. It's location has to be specifed either in the build configuration file build.properties or as command line parameter to the ant command.
+All dependent libraries are shipped with the source code. They can be found in the top level directory /lib.
+The only thing that is not shipped is a Tomcat specific servlet API. This should come along with the Tomcat distribution you are building against.
+Its location has to be specified either in the build configuration file build.properties or as a command line parameter to the ant command.
 
 ### Vanilla build using Ant
 
