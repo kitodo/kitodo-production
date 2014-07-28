@@ -173,7 +173,6 @@ public class ExportMetsWithoutHibernate {
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	@SuppressWarnings("deprecation")
 	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
