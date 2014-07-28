@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
