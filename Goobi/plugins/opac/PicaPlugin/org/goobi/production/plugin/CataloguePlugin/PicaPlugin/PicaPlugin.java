@@ -649,6 +649,22 @@ public class PicaPlugin implements Plugin {
 
 	}
 
+	/**
+	 * The function getElementFieldValue() returns the values of the last
+	 * grandchild element of the first child element from a given JDOM Element
+	 * whose “code” attribute equals the given attribute name and whose parents’
+	 * “tag” attribute equals the given field name—or an empty String if there
+	 * is no such grandchild element.
+	 * 
+	 * @param myFirstHit
+	 *            JDOM Element whose descendant elements are to be examined
+	 * @param inFieldName
+	 *            tag attribute value to compare to
+	 * @param inAttributeName
+	 *            code attribute value to compare to
+	 * @return values of the last grandchild of the first child whose code
+	 *         attribute equals and whose parents’ tag attribute equals, too
+	 */
 	@SuppressWarnings("unchecked")
 	private static String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
 
@@ -666,6 +682,21 @@ public class PicaPlugin implements Plugin {
 		return "";
 	}
 
+	/**
+	 * The function getElementFieldValues() returns the values of all grandchild
+	 * elements from a given JDOM Element whose “code” attribute equals the
+	 * given attribute name and whose parents’ “tag” attribute equals the given
+	 * field name—or an empty Collection if there is no such grandchild element.
+	 * 
+	 * @param myFirstHit
+	 *            JDOM Element whose descendant elements are to be examined
+	 * @param inFieldName
+	 *            tag attribute value to compare to
+	 * @param inAttributeName
+	 *            code attribute value to compare to
+	 * @return values of all grandchild elements whose code attribute equals and
+	 *         whose parents’ tag attribute equals, too
+	 */
 	@SuppressWarnings("unchecked")
 	private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
 		LinkedList<String> result = new LinkedList<String>();
@@ -683,6 +714,18 @@ public class PicaPlugin implements Plugin {
 		return result;
 	}
 
+	/**
+	 * The function getFieldValue() returns the value of the last elements from
+	 * a given JDOM Element whose “code” attribute equals the given attribute
+	 * value or the empty String if there is no such child element.
+	 * 
+	 * @param inElement
+	 *            JDOM Element whose child elements are to be examined
+	 * @param attributeValue
+	 *            code attribute value to compare to
+	 * @return values of all child elements whose code attribute equals the
+	 *         attribute value
+	 */
 	@SuppressWarnings("unchecked")
 	private static String getFieldValue(Element inElement, String attributeValue) {
 		String rueckgabe = "";
@@ -696,6 +739,18 @@ public class PicaPlugin implements Plugin {
 		return rueckgabe;
 	}
 
+	/**
+	 * The function getFieldValues() returns the values of all child elements
+	 * from a given JDOM Element whose “code” attribute equals the given
+	 * attribute value or an empty Collection if there is no such child element.
+	 * 
+	 * @param inElement
+	 *            JDOM Element whose child elements are to be examined
+	 * @param attributeValue
+	 *            code attribute value to compare to
+	 * @return values of all child elements whose code attribute equals the
+	 *         attribute value
+	 */
 	@SuppressWarnings("unchecked")
 	private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
 		List<String> rueckgabe = new LinkedList<String>();
