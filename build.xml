@@ -264,28 +264,30 @@
 	</target>
 
 	<!-- Compile plugins -->
-    <target name="compile-PicaMassImport" depends="compile">
-        <javac includeAntRuntime="false" srcdir="${src.dir.plugins.import}/PicaMassImport"
+	<target name="compile-PicaMassImport" depends="compile">
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.import}/PicaMassImport"
 			destdir="${build.dir.plugins.import}/PicaMassImport"
-        	sourcepath="${java.src.dir}:${java.src.dubious.dir}"
-        	source="${build.javac.source}"
+			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
-			debug="${build.javac.debug}"
-			classpathref="compile.classpath">
-        </javac>
-    </target>
+			debug="${build.javac.debug}">
+			<classpath>
+				<pathelement location="${build.classes}"/>
+				<path refid="compile.classpath"/>
+			</classpath>
+		</javac>
+	</target>
 	
-    <target name="compile-PicaPlugin" depends="compile">
-        <javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
+	<target name="compile-PicaPlugin">
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
 			destdir="${build.dir.plugins.opac}/PicaPlugin"
-        	source="${build.javac.source}"
+			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
 			debug="${build.javac.debug}"
 			classpathref="compile.classpath">
-        </javac>
-    </target>
+		</javac>
+	</target>
 	
 	
     <!--==================================================
