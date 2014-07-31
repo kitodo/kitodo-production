@@ -69,6 +69,12 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	private boolean exportFulltext = true;
 	private FolderInformation fi;
 	private ProjectObject project;
+
+	/**
+	 * The field task holds an optional task instance whose progress will be
+	 * updated and whom errors will be passed to to be visible in the task
+	 * manager screen if it’s available.
+	 */
 	private EmptyTask task;
 	
 	public final static String DIRECTORY_SUFFIX = "_tif";
@@ -414,6 +420,15 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 	}
 
+	/**
+	 * The method setTask() can be used to pass in a task instance. If that is
+	 * passed in, the progress in it will be updated during processing and
+	 * occurring errors will be passed to it to be visible in the task manager
+	 * screen.
+	 * 
+	 * @param task
+	 *            task object to submit progress updates and errors to
+	 */
 	public void setTask(EmptyTask task) {
 		this.task = task;
 	}
