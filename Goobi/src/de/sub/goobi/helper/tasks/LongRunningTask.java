@@ -41,8 +41,17 @@ public class LongRunningTask extends EmptyTask {
 		this.prozess = inProzess;
 	}
 
-	public void setShowMessages(boolean showMessages) {
-		isSingleThread = !showMessages;
+	/**
+	 * The method setShowMessages() can be used to set a flag whether this long
+	 * running task is executing asynchronously or not, in the latter case it
+	 * shall show messages to the user using
+	 * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
+	 * 
+	 * @param show
+	 *            whether to show messages to the user
+	 */
+	public void setShowMessages(boolean show) {
+		isSingleThread = !show;
 	}
 
 	@Deprecated
@@ -50,6 +59,13 @@ public class LongRunningTask extends EmptyTask {
 		this.interrupt();
 	}
 
+	/**
+	 * The function clone() creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 */
 	@Override
 	public EmptyTask clone() {
 		LongRunningTask lrt = null;
@@ -64,6 +80,13 @@ public class LongRunningTask extends EmptyTask {
 		return lrt;
 	}
 
+	/**
+	 * The method stopped() has become redundant due to newer development. It
+	 * had been used to record that the thread has stopped. The thread state is
+	 * now directly derived from {@link Thread#getState()} which is reliable in
+	 * determining whether the thread has died, independent of whether it ever
+	 * managed to call stopped() or died before.
+	 */
 	@Deprecated
 	protected void stopped() {
 	}
