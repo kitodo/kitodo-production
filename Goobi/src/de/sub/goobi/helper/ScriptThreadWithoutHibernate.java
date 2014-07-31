@@ -52,6 +52,14 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		hs.setTask(this);
 	}
 
+	/**
+	 * The function getNameDetail() returns a human-readable name for this
+	 * thread.
+	 * 
+	 * @param step
+	 *            StepObject that the name depends on.
+	 * @return a name for this thread
+	 */
 	private final static String getNameDetail(StepObject step) {
 		String function = null;
 		if (StepManager.loadScripts(step.getId()).size() > 0) {

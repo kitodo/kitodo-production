@@ -31,12 +31,32 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
+/**
+ * @author unascribed
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @deprecated New task implementations should directly implement EmptyTask.
+ */
 @Deprecated
 public abstract class LongRunningTask extends EmptyTask {
+	/**
+	 * No-argument constructor. Creates an empty long running task. Must be made
+	 * explicit because a constructor taking an argument is present.
+	 * 
+	 * @deprecated New task implementations should directly implement EmptyTask.
+	 */
+	@Deprecated
 	public LongRunningTask() {
 		super((String) null);
 	}
 
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param master
+	 *            copy master to create a clone of
+	 */
 	public LongRunningTask(LongRunningTask master) {
 		super(master);
 		initialize(master.prozess);
@@ -64,6 +84,9 @@ public abstract class LongRunningTask extends EmptyTask {
 		isSingleThread = !show;
 	}
 
+	/**
+	 * @deprecated Replaced by {@link Thread#interrupt()}.
+	 */
 	@Deprecated
 	public void cancel() {
 		this.interrupt();
@@ -80,11 +103,13 @@ public abstract class LongRunningTask extends EmptyTask {
 	public abstract EmptyTask clone();
 
 	/**
-	 * The method stopped() has become redundant due to newer development. It
-	 * had been used to record that the thread has stopped. The thread state is
-	 * now directly derived from {@link Thread#getState()} which is reliable in
-	 * determining whether the thread has died, independent of whether it ever
-	 * managed to call stopped() or died before.
+	 * The method stopped() had been used to record that the thread has stopped.
+	 * 
+	 * @deprecated The method stopped() has become redundant due to newer
+	 *             development. The thread state is now directly derived from
+	 *             {@link Thread#getState()} which is reliable in determining
+	 *             whether the thread has died, independent of whether it ever
+	 *             managed to call stopped() or died before.
 	 */
 	@Deprecated
 	protected void stopped() {
@@ -101,6 +126,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Status des Tasks in Angabe von Prozent
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#getProgress()}.
 	 */
 	@Deprecated
 	public int getStatusProgress() {
@@ -113,6 +140,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Meldung über den aktuellen Task
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#getTaskState()}.
 	 */
 	@Deprecated
 	public String getStatusMessage() {
@@ -122,6 +151,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Titel des aktuellen Task
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link Thread#getName()}.
 	 */
 	@Deprecated
 	public String getTitle() {
@@ -131,12 +162,17 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Setter für Fortschritt nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#setProgress(int)}.
 	 */
 	@Deprecated
 	protected void setStatusProgress(int statusProgress) {
 		super.setProgress(statusProgress);
 	}
 
+	/**
+	 * @deprecated Replaced by {@link EmptyTask#setProgress(double)}.
+	 */
 	@Deprecated
 	protected void setStatusProgress(double statusProgress) {
 		super.setProgress(statusProgress);
@@ -145,6 +181,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Setter für Statusmeldung nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
 	 */
 	@Deprecated
 	protected void setStatusMessage(String statusMessage) {
@@ -158,6 +196,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * Setter für Titel nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
 	 */
 	@Deprecated
 	protected void setTitle(String title) {
@@ -173,6 +213,9 @@ public abstract class LongRunningTask extends EmptyTask {
 		setNameDetail(prozess.getTitel());
 	}
 
+	/**
+	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
+	 */
 	@Deprecated
 	public void setLongMessage(String inlongMessage) {
 		super.setWorkDetail(inlongMessage);

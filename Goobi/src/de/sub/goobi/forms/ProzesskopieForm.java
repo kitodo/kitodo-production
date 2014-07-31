@@ -1285,6 +1285,14 @@ public class ProzesskopieForm {
 		return this.prozessVorlage;
 	}
 
+	/**
+	 * The function getProzessVorlageTitel() returns some kind of identifier for
+	 * this ProzesskopieForm. The title of the process template that a process
+	 * will be created from can be considered with some reason to be some good
+	 * identifier for the ProzesskopieForm, too.
+	 * 
+	 * @return a human-readable identifier for this object
+	 */
 	public String getProzessVorlageTitel() {
 		return prozessVorlage != null ? prozessVorlage.getTitel() : null;
 	}

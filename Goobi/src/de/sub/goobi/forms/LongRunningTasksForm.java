@@ -36,6 +36,11 @@ import de.sub.goobi.helper.tasks.TaskSitter;
 
 
 public class LongRunningTasksForm {
+	/**
+	 * When adding demo tasks, the task number is incremented and passed in as
+	 * task detail. This is to have some task detail showing, so they can be
+	 * told apart from each other in the screen.
+	 */
 	private static long demoTaskNo = 0;
 
 	/**

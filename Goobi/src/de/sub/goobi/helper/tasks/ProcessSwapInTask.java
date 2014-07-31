@@ -43,9 +43,21 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapInTask extends LongRunningTask {
 
+	/**
+	 * No-argument constructor. Creates an empty ProcessSwapInTask. Must be made
+	 * explicit because a constructor taking an argument is present.
+	 */
 	public ProcessSwapInTask() {
 	}
 
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param processSwapInTask
+	 *            copy master to create a clone of
+	 */
 	public ProcessSwapInTask(ProcessSwapInTask processSwapInTask) {
 		super(processSwapInTask);
 	}
@@ -207,6 +219,13 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(100);
 	}
 
+	/**
+	 * The method clone does call the copy constructor to create a copy of that
+	 * object. This is necessary for Threads that have terminated in order to
+	 * render to run them again possible.
+	 * 
+	 * @see java.lang.Thread#clone()
+	 */
 	@Override
 	public ProcessSwapInTask clone() {
 		return new ProcessSwapInTask(this);
