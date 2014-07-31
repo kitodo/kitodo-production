@@ -483,11 +483,10 @@ public class ExportDms extends ExportMets {
                     	FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
                     } catch (Exception e) {
 					if (exportDmsTask != null) {
-							exportDmsTask.setException(e);
-						} else {
-							Helper.setFehlerMeldung("Export canceled, error",
-									"could not create destination directory");
-						}
+						exportDmsTask.setException(e);
+					} else {
+						Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+					}
 					myLogger.error("could not create destination directory", e);
 				}
 			}
