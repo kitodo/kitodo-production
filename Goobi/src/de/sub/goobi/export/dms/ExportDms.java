@@ -92,7 +92,7 @@ public class ExportDms extends ExportMets {
 	@Override
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis)
 			throws IOException, InterruptedException, WriteException,
- PreferencesException, SwapException, DAOException,
+			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
 		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
