@@ -34,10 +34,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
@@ -52,9 +51,7 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
@@ -89,10 +86,6 @@ public class ExportDms extends ExportMets {
 	 * @throws IOException
 	 * @throws WriteException
 	 * @throws PreferencesException
-	 * @throws UghHelperException
-	 * @throws ExportFileException
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws DocStructHasNoTypeException
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws TypeNotAllowedForParentException
@@ -100,9 +93,7 @@ public class ExportDms extends ExportMets {
 	@Override
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis)
 			throws IOException, InterruptedException, WriteException,
-			PreferencesException, DocStructHasNoTypeException,
-			MetadataTypeNotAllowedException, ExportFileException,
-			UghHelperException, SwapException, DAOException,
+			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
 		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
@@ -115,9 +106,45 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
+	/**
+	 * The function startExport() performs a DMS export to a desired place. In
+	 * addition, it accepts an optional ExportDmsTask object. If that is passed
+	 * in, the progress in it will be updated during processing and occurring
+	 * errors will be passed to it to be visible in the task manager screen.
+	 * 
+	 * @param myProzess
+	 *            process to export
+	 * @param inZielVerzeichnis
+	 *            work directory of the user who triggered the export
+	 * @param exportDmsTask
+	 *            ExportDmsTask object to submit progress updates and errors
+	 * @return false if an error condition was caught, true otherwise
+	 * @throws IOException
+	 *             if “goobi_projects.xml” could not be read
+	 * @throws InterruptedException
+	 *             if the thread running the script to create a directory is
+	 *             interrupted by another thread while it is waiting
+	 * @throws WriteException
+	 *             if a FileNotFoundException occurs when opening the
+	 *             FileOutputStream to write the METS/MODS object
+	 * @throws PreferencesException
+	 *             if the file format selected for DMS export in the project of
+	 *             the process to export that implements
+	 *             {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
+	 * @throws SwapException
+	 *             if after swapping a process back in neither a file system
+	 *             entry "images" nor "meta.xml" exists
+	 * @throws DAOException
+	 *             if saving the fact that a process has been swapped back in to
+	 *             the database fails
+	 * @throws TypeNotAllowedForParentException
+	 *             declared in
+	 *             {@link ugh.dl.DigitalDocument#createDocStruct(DocStructType)}
+	 *             but never thrown, see
+	 *             https://github.com/goobi/goobi-ugh/issues/2
+	 */
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
 			throws IOException, InterruptedException, WriteException, PreferencesException,
-			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
 			SwapException, DAOException, TypeNotAllowedForParentException {
 
 		this.exportDmsTask = exportDmsTask;
@@ -137,9 +164,7 @@ public class ExportDms extends ExportMets {
 
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, Fileformat gdzfile)
 			throws IOException, InterruptedException, WriteException,
-			PreferencesException, DocStructHasNoTypeException,
-			MetadataTypeNotAllowedException, ExportFileException,
-			UghHelperException, SwapException, DAOException,
+			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
@@ -492,11 +517,10 @@ public class ExportDms extends ExportMets {
                     	FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
                     } catch (Exception e) {
 					if (exportDmsTask != null) {
-							exportDmsTask.setException(e);
-						} else {
-							Helper.setFehlerMeldung("Export canceled, error",
-									"could not create destination directory");
-						}
+						exportDmsTask.setException(e);
+					} else {
+						Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+					}
 					myLogger.error("could not create destination directory", e);
 				}
 			}
