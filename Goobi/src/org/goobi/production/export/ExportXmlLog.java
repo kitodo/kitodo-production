@@ -68,7 +68,7 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
- * This class provides xml logfile generation. After the the generation the file will be written to user home directory
+ * This class provides xml logfile generation. After the generation the file will be written to user home directory
  * 
  * @author Robert Sehr
  * @author Steffen Hankiewicz
