@@ -31,7 +31,6 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
 --%>
-<%--<h:form id="formular1">--%>
 <h:panelGroup rendered="#{(not Metadaten.modusHinzufuegen) && (not Metadaten.modusHinzufuegenPerson)}">
 
 
@@ -51,31 +50,6 @@
 				</htm:h3>
 			</htm:td>
 
-			<%--
-			<htm:td width="1%" valign="bottom" align="right" nowrap="">
-				<htm:div id="x1"
-					style="display: none;border: 2px dashed silver;padding:3px">
-					<h:outputLink value="Metadaten2rechts.jsf" target="_self"
-						title="#{msgs.dieAenderungenVerwerfen}">
-						<h:graphicImage value="/newpages/images/buttons/cancel3.gif"
-							style="border: 0px;vertical-align:middle;" />
-						<h:outputText value="#{msgs.abbrechen}" />
-					</h:outputLink>
-				</htm:div>
-			</htm:td>
-			<htm:td width="1%" valign="bottom" align="right" nowrap="">
-				<htm:div id="y1"
-					style="display: none;border: 2px dashed red;padding:3px">
-					<h:commandLink action="#{Metadaten.Reload}"
-						title="#{msgs.dieAenderungenSpeichern}"
-						onclick="document.getElementById('formular4:DatenGeaendert').value = '0'"
-						rendered="#{not Metadaten.nurLesenModus}">
-						<h:graphicImage value="/newpages/images/buttons/ok.gif"
-							style="border: 0px;vertical-align:middle;" />
-						<h:outputText value="#{msgs.speichern}" />
-					</h:commandLink>
-				</htm:div>
-			</htm:td>  --%>
 		</htm:tr>
 	</htm:table>
 
@@ -127,17 +101,7 @@
 					<f:param name="ID" value="#{Item.identifier}" />
 					<x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}" />
 				</h:commandLink>
-				<%-- Transliterieren-Schaltknopf --%>
-				<%-- 		<h:commandLink action="#{Metadaten.TransliterierenPerson}"
-					rendered="#{Item.rolle=='Author'}"
-					title="#{msgs.diesesFeldTransliterieren}">
-					<h:graphicImage value="/newpages/images/buttons/translit.gif"
-						style="margin-left:3px" />
-					<f:param name="ID" value="#{Item.identifier}" />
-					<x:updateActionListener property="#{Metadaten.curPerson}"
-						value="#{Item}" />
-				</h:commandLink>
-	--%>
+
 				<%-- Loeschen-Schaltknopf --%>
 				<h:commandLink id="l6" action="#{Metadaten.LoeschenPerson}" title="#{msgs.personendatenLoeschen}">
 					<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
@@ -268,35 +232,9 @@
 					</h:commandLink>
 				</h:panelGroup>
 			</htm:td>
-			<%-- 
-			<htm:td width="10%" valign="top" align="right" nowrap="">
-				<htm:div id="x2">
-					<h:outputLink value="Metadaten2rechts.jsf" target="_self"
-						title="#{msgs.dieAenderungenVerwerfen}"
-						rendered="#{not Metadaten.nurLesenModus}">
-						<h:graphicImage value="/newpages/images/buttons/cancel3.gif"
-							style="border: 0px;vertical-align:middle;" />
-						<h:outputText value="#{msgs.abbrechen}" />
-					</h:outputLink>
-				</htm:div>
-			</htm:td>
-			<htm:td width="10%" valign="top" align="right" nowrap="">
-				<htm:div id="y2">
-					<h:commandLink action="#{Metadaten.Reload}" style="margin:5px"
-						title="#{msgs.dieAenderungenSpeichern}"
-						onclick="document.getElementById('formular4:DatenGeaendert').value = '0'"
-						rendered="#{not Metadaten.nurLesenModus}">
-						<h:graphicImage value="/newpages/images/buttons/ok.gif"
-							style="border: 0px;vertical-align:middle;" />
-						<h:outputText value="#{msgs.speichern}" />
-					</h:commandLink>
-				</htm:div>
-			</htm:td>
-			--%>
 		</htm:tr>
 	</htm:table>
 
 </h:panelGroup>
-<%--</h:form>--%>
 
 

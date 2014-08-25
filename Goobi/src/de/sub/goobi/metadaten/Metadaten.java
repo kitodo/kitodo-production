@@ -113,7 +113,6 @@ public class Metadaten {
 	private DigitalDocument mydocument;
 	private Prozess myProzess;
 	private Prefs myPrefs;
-	// private String myProzesseID;
 	private String myBenutzerID;
 	private String tempTyp;
 	private String tempWert;
@@ -121,7 +120,6 @@ public class Metadaten {
 	private String tempPersonVorname;
 	private String tempPersonNachname;
 	private String tempPersonRolle;
-	// private String myProzessTitel;
 	private String currentTifFolder;
 	private List<String> allTifFolders;
 	/* Variablen für die Zuweisung der Seiten zu Strukturelementen */
@@ -1515,22 +1513,6 @@ public class Metadaten {
 		return null;
 	}
 	
-	
-//	public String Paginierung() {
-//		Pagination p = new Pagination(this.alleSeitenAuswahl, this.alleSeitenNeu, this.paginierungAbSeiteOderMarkierung, this.paginierungArt,
-//				this.paginierungSeitenProImage, this.paginierungWert);
-//		String result = p.doPagination();
-//		/*
-//		 * zum Schluss nochmal alle Seiten neu einlesen
-//		 */
-//		this.alleSeitenAuswahl = null;
-//		retrieveAllImages();
-//		if (!SperrungAktualisieren()) {
-//			return "SperrungAbgelaufen";
-//		}
-//		return result;
-//	}
-
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
 	 */
@@ -1663,14 +1645,8 @@ public class Metadaten {
 
 	        List<String> dataList = new ArrayList<String>();
 	        myLogger.trace("dataList");
-	        //      try {
 	        dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	        myLogger.trace("dataList 2");
-	        //      } catch (InvalidImagesException e) {
-	        //          myLogger.trace("dataList error");
-	        //          myLogger.error("Images could not be read", e);
-	        //          Helper.setFehlerMeldung("images could not be read", e);
-	        //      }
 	        if (dataList == null || dataList.isEmpty()) {
 	            try {
 	                createPagination();
@@ -1716,22 +1692,16 @@ public class Metadaten {
 	                    if (this.currentTifFolder != null) {
 	                        myLogger.trace("currentTifFolder: " + this.currentTifFolder);
 	                        try {
-	                            //                          dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
 	                            if (dataList == null) {
 	                                return;
 	                            }
-	                            //
 	                        } catch (InvalidImagesException e1) {
 	                            myLogger.trace("dataList error");
 	                            myLogger.error("Images could not be read", e1);
 	                            Helper.setFehlerMeldung("images could not be read", e1);
 	                        }
 	                    }
-	                    //                  if (dataList == null) {
-	                    //                      myLogger.trace("dataList: null");
-	                    //                      return;
-	                    //                  }
 	                    /* das aktuelle tif erfassen */
 	                    if (dataList.size() > pos) {
 	                        this.myBild = dataList.get(pos);
@@ -2174,24 +2144,8 @@ public class Metadaten {
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildErsteSeiteAnzeigen() {
-        //        this.bildAnzeigen = true;
-        //        if (this.treeProperties.get("showpagesasajax")) {
-        //            for (int i = 0; i < this.alleSeiten.length; i++) {
-        //                SelectItem si = this.alleSeiten[i];
-        //                if (si.getLabel().equals(this.ajaxSeiteStart)) {
-        //                    this.alleSeitenAuswahl_ersteSeite = (String) si.getValue();
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //        try {
-        //            int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1;
-        //            BildErmitteln(pageNumber);
         myBild = null;
         BildErmitteln(0);
-        //        } catch (Exception e) {
-        //
-        //        }
 		return "";
 	}
 
@@ -2890,12 +2844,7 @@ public class Metadaten {
             String imagename = pageToRemove.getImageName();
 
             removeImage(imagename);
-            //            try {
             mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
-            //                pageToRemove.removeContentFile(pageToRemove.getAllContentFiles().get(0));
-            //            } catch (ContentFileNotLinkedException e) {
-            //                myLogger.error(e);
-            //            }
 
             mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
             List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
