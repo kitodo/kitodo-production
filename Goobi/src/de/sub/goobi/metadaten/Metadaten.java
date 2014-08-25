@@ -63,6 +63,7 @@ import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
@@ -180,6 +181,7 @@ public class Metadaten {
 	private HashMap<String, Boolean> treeProperties;
 	private final ReentrantLock xmlReadingLock = new ReentrantLock();
     private FileManipulation fileManipulation = null;
+	private boolean addMetadataGroupMode = false;
 
 	/**
 	 * Konstruktor ================================================================
@@ -221,6 +223,15 @@ public class Metadaten {
 		this.tempPersonNachname = "";
 		this.tempPersonRecord = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
 		this.tempPersonVorname = "";
+		if (!SperrungAktualisieren()) {
+			return "SperrungAbgelaufen";
+		}
+		return "";
+	}
+
+	public String AddMetadataGroup() {
+		this.addMetadataGroupMode = true;
+		// TODO: Clear input form
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		}
@@ -397,15 +408,17 @@ public class Metadaten {
 		String authority = null, authorityURI = null;
 		if (valueURI != null) {
 			int boundary = valueURI.indexOf('#');
-			if (boundary == -1)
+			if (boundary == -1) {
 				boundary = valueURI.lastIndexOf('/');
+			}
 			if (boundary == -1) {
 				throw new IncompletePersonObjectException("URI_malformed");
 			} else {
 				authorityURI = valueURI.substring(0, boundary + 1);
-				if (!authorityURI.equals(valueURI))
+				if (!authorityURI.equals(valueURI)) {
 					authority = ConfigMain.getParameter(
 							Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+				}
 			}
 		}
 		return new String[] { authority, authorityURI, valueURI };
@@ -457,6 +470,18 @@ public class Metadaten {
 	}
 
 	public void setSizeOfMetadata(int i) {
+		// do nothing, needed for jsp only
+	}
+
+	public int getSizeOfGroups() {
+		List<MetadataGroupType> possibleMetadataGroupTypes = myDocStruct.getPossibleMetadataGroupTypes();
+		if (possibleMetadataGroupTypes == null) {
+			return 0;
+		}
+		return possibleMetadataGroupTypes.size();
+	}
+
+	public void setSizeOfGroups(int i) {
 		// do nothing, needed for jsp only
 	}
 
@@ -2396,6 +2421,14 @@ public class Metadaten {
 
 	public void setModusHinzufuegenPerson(boolean modusHinzufuegenPerson) {
 		this.modusHinzufuegenPerson = modusHinzufuegenPerson;
+	}
+
+	public boolean isAddMetadataGroupMode() {
+		return this.addMetadataGroupMode;
+	}
+
+	public void setAddMetadataGroupMode(boolean addMetadataGroupMode) {
+		this.addMetadataGroupMode = addMetadataGroupMode;
 	}
 
 	public String getTempPersonNachname() {

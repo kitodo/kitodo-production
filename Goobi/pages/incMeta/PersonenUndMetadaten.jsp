@@ -243,7 +243,7 @@
 	<htm:table width="540">
 		<htm:tr>
 			<htm:td>
-				<h:panelGroup rendered="#{not Metadaten.modusHinzufuegen && not Metadaten.modusHinzufuegenPerson && not Metadaten.nurLesenModus}"
+				<h:panelGroup rendered="#{not Metadaten.modusHinzufuegen && not Metadaten.modusHinzufuegenPerson && not Metadaten.addMetadataGroupMode && not Metadaten.nurLesenModus}"
 					style="margin-top:10px">
 					<%-- Hinzufuegen-Schaltknopf fuer Person--%>
 					<h:commandLink id="l2" action="#{Metadaten.HinzufuegenPerson}" style="margin-left:2px" title="#{msgs.neuePersonAnlegen}"
@@ -259,6 +259,12 @@
 						rendered="#{Metadaten.sizeOfMetadata!=0}">
 						<h:graphicImage value="/newpages/images/buttons/new.gif" style="border: 0px;vertical-align:middle" />
 						<h:outputText value="#{msgs.neueMetadatenHinzufuegen}" />
+					</h:commandLink>
+					<%-- Action link to add new metadata groups --%>
+					<h:commandLink id="l3" action="#{Metadaten.AddMetadataGroup}" style="margin-left:2px" title="#{msgs.addNewMetadataGroup}"
+						rendered="#{Metadaten.sizeOfGroups!=0}">
+						<h:graphicImage value="/newpages/images/buttons/new.gif" style="border: 0px;vertical-align:middle" />
+						<h:outputText value="#{msgs.addNewMetadataGroup}" />
 					</h:commandLink>
 				</h:panelGroup>
 			</htm:td>
