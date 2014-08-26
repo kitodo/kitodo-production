@@ -28,6 +28,7 @@ package de.sub.goobi.helper;
  */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -89,4 +90,17 @@ public final class Util {
 
     private static ResourceBundle bundle;
     public static final String RESOURCE_BUNDLE = "example_app";
+
+	/**
+	 * The function mapCapacityFor() calculates the optimal initial capacity for
+	 * a HashMap instance that is to be populated with the given collection.
+	 * 
+	 * @param collection
+	 *            collection whose size shall be used to determine the initial
+	 *            capacity for a HashMap
+	 * @return the appropriate capacity
+	 */
+	public static int mapCapacityFor(Collection<?> collection) {
+		return (int) Math.ceil(collection.size() / 0.75);
+	}
 }

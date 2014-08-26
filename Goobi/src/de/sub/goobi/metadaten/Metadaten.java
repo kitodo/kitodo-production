@@ -2030,6 +2030,7 @@ public class Metadaten {
 	}
 
 	private int pageNumber = 0;
+	private RenderableMetadataGroup newMetadataGroup;
 
 	public int getPageNumber() {
 		return this.pageNumber;
@@ -3079,4 +3080,34 @@ public class Metadaten {
         return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false); 
     }
     
+	public String addMetadataGroup() {
+		// TODO
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
+
+	public RenderableMetadataGroup getNewMetadataGroup() {
+		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		newMetadataGroup.setLanguage(language);
+		return newMetadataGroup;
+	}
+
+	public boolean isAddNewMetadataGroupLinkShowing() {
+		return myDocStruct.getAddableMetadataGroupTypes() != null;
+	}
+
+	public String showAddNewMetadataGroup() {
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = true;
+		newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes());
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
+
+	public String showMetadata() {
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = false;
+		newMetadataGroup = null;
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
 }

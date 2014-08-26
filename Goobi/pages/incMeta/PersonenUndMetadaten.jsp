@@ -225,8 +225,8 @@
 						<h:outputText value="#{msgs.neueMetadatenHinzufuegen}" />
 					</h:commandLink>
 					<%-- Action link to add new metadata groups --%>
-					<h:commandLink id="l3" action="#{Metadaten.AddMetadataGroup}" style="margin-left:2px" title="#{msgs.addNewMetadataGroup}"
-						rendered="#{Metadaten.sizeOfGroups!=0}">
+					<h:commandLink id="l3" action="#{Metadaten.showAddNewMetadataGroup}" style="margin-left:2px" title="#{msgs.addNewMetadataGroup}"
+						rendered="#{Metadaten.addNewMetadataGroupLinkShowing}">
 						<h:graphicImage value="/newpages/images/buttons/new.gif" style="border: 0px;vertical-align:middle" />
 						<h:outputText value="#{msgs.addNewMetadataGroup}" />
 					</h:commandLink>
