@@ -71,6 +71,16 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
+	 * The function getSize() returns the number of elements in this metadata
+	 * group.
+	 * 
+	 * @return the number of elements in this group
+	 */
+	public int getSize() {
+		return members.size();
+	}
+
+	/**
 	 * The function getType() returns the internal name of the metadata group
 	 * type currently under edit to JSF so that it can mark the appropriate
 	 * option as selected in the metadata group type select box. The user will
@@ -81,6 +91,22 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	public String getType() {
 		return type.getName();
+	}
+
+	/**
+	 * The procedure setLanguage() extends the setter function from
+	 * RenderableMetadatum because if setLanguage() is called for a metadata
+	 * group, both the label display language for the group and for all of its
+	 * members must be set.
+	 * 
+	 * @see de.sub.goobi.metadaten.RenderableMetadatum#setLanguage(java.lang.String)
+	 */
+	@Override
+	void setLanguage(String language) {
+		super.setLanguage(language);
+		for (RenderableGroupedMetadatum member : members.values()) {
+			((RenderableMetadatum) member).setLanguage(language);
+		}
 	}
 
 	/**
@@ -115,8 +141,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		Map<String, RenderableGroupedMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupedMetadatum>(
 				Util.mapCapacityFor(requiredMetadataTypes));
 		for (MetadataType type : requiredMetadataTypes) {
-			String name = type.getName();
-			newMembers.put(name, members.containsKey(name) ? members.get(name) : RenderableMetadatum.create(type));
+			RenderableGroupedMetadatum member = members.get(type.getName());
+			if (member == null) {
+				member = RenderableMetadatum.create(type, this);
+			}
+			newMembers.put(type.getName(), member);
 		}
 		members = newMembers;
 	}

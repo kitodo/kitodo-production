@@ -9,13 +9,14 @@ import javax.faces.model.SelectItem;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public interface RenderableGroupedMetadatum {
+interface RenderableGroupedMetadatum {
+
 	/**
 	 * Shall return the label for the metadatum in the language previously set.
 	 * 
 	 * @return the label for the metadatum
 	 */
-	public String getLabel();
+	String getLabel();
 
 	/**
 	 * Shall return the available items for the the user to choose from. May
@@ -24,7 +25,7 @@ public interface RenderableGroupedMetadatum {
 	 * 
 	 * @return the items to choose from
 	 */
-	public Collection<SelectItem> getItems();
+	Collection<SelectItem> getItems();
 
 	/**
 	 * Shall return the selected items for multi select inputs. May throw an
@@ -33,7 +34,7 @@ public interface RenderableGroupedMetadatum {
 	 * 
 	 * @return
 	 */
-	public Collection<String> getSelectedItems();
+	Collection<String> getSelectedItems();
 
 	/**
 	 * Shall return the value, if any, or an empty String if empty. May throw an
@@ -42,7 +43,15 @@ public interface RenderableGroupedMetadatum {
 	 * 
 	 * @return the value
 	 */
-	public String getValue();
+	String getValue();
+
+	/**
+	 * Shall return true if the element is contained in a group and is the first
+	 * element in its members list, false otherwise.
+	 * 
+	 * @return if the element is the first in its list
+	 */
+	boolean isFirst();
 
 	/**
 	 * Shall return whether the implementing class represents a multi select
@@ -50,7 +59,7 @@ public interface RenderableGroupedMetadatum {
 	 * 
 	 * @return whether the implementing class represents a multi select input
 	 */
-	public boolean isMultiselect();
+	boolean isMultiselect();
 
 	/**
 	 * Shall return whether the user shall be depredated the permission to edit
@@ -58,14 +67,7 @@ public interface RenderableGroupedMetadatum {
 	 * 
 	 * @return whether the component shall be read-only
 	 */
-	public boolean isReadonly();
-
-	/**
-	 * Sat the language in which labels shall be returned.
-	 * 
-	 * @param language
-	 */
-	public void setLanguage(String language);
+	boolean isReadonly();
 
 	/**
 	 * Shall save the items selected by the user. May throw an
@@ -75,7 +77,7 @@ public interface RenderableGroupedMetadatum {
 	 * @param selectedItems
 	 *            the items selected by the user
 	 */
-	public void setSelectedItems(Collection<String> selectedItems);
+	void setSelectedItems(Collection<String> selectedItems);
 
 	/**
 	 * Shall save the value entered by the user. May throw an
@@ -85,5 +87,5 @@ public interface RenderableGroupedMetadatum {
 	 * @param value
 	 *            the value entered by the user
 	 */
-	public void setValue(String value);
+	void setValue(String value);
 }

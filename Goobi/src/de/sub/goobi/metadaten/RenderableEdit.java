@@ -6,11 +6,12 @@ import javax.faces.model.SelectItem;
 
 import ugh.dl.MetadataType;
 
-public class RenderableEdit extends RenderableMetadatum implements RenderableGroupedMetadatum {
+public class RenderableEdit extends RenderableGroupableMetadatum {
 
 	private String value;
 
-	public RenderableEdit(MetadataType metadataType) {
+	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
+		super(container);
 		super.labels = metadataType.getAllLanguages();
 	}
 
@@ -43,5 +44,4 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	public void setValue(String value) {
 		this.value = value;
 	}
-
 }

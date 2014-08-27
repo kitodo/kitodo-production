@@ -8,22 +8,22 @@ public abstract class RenderableMetadatum {
 
 	protected HashMap<String, String> labels;
 
-	public static RenderableGroupedMetadatum create(MetadataType metadataType) {
-		// TODO implement different types of inputs here
-		return new RenderableEdit(metadataType);
+	protected String language;
+
+	public static RenderableGroupedMetadatum create(MetadataType metadataType,
+			RenderableMetadataGroup renderableMetadataGroup) {
+		return new RenderableEdit(metadataType, renderableMetadataGroup);
 	}
 
-	protected String language;
+	public String getLabel() {
+		return labels.get(language);
+	}
 
 	public boolean isReadonly() {
 		return false;
 	}
 
-	public void setLanguage(String language) {
+	void setLanguage(String language) {
 		this.language = language;
-	}
-
-	public String getLabel() {
-		return labels.get(language);
 	}
 }
