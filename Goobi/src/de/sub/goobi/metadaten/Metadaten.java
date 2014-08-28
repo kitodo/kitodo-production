@@ -3099,7 +3099,7 @@ public class Metadaten {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
 		addMetadataGroupMode = true;
-		newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes());
+		newMetadataGroup = RenderableMetadatum.create(myDocStruct.getAddableMetadataGroupTypes());
 		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
 	}
 

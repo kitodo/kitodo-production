@@ -233,6 +233,17 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	public static HashMap<String, String> getAllStrings(String key) {
+		HashMap<String, String> result = new HashMap<String, String>(Util.mapCapacityFor(commonMessages.entrySet()));
+		@SuppressWarnings("unchecked")
+		Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		while (languages.hasNext()) {
+			Locale language = languages.next();
+			result.put(language.getLanguage(), getString(language, key));
+		}
+		return result;
+	}
+
 	public static String getString(Locale language, String key) {
 		if (commonMessages == null || commonMessages.size() <= 1) {
 			loadMsgs();

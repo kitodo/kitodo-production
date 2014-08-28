@@ -15,7 +15,8 @@ import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Util;
 
 /**
- * An RenderableMetadataGroup is a java bean backing a JSF form to add a
+ * A RenderableMetadataGroup is a RenderableMetadatum which holds several
+ * metadata fields as a group. It is a java bean backing a JSF form to add a
  * metadata group. It provides the currently selected type of metadata group to
  * add, a list of all types to choose from and the members of the chosen type in
  * order to browse and alter their values.
@@ -24,7 +25,7 @@ import de.sub.goobi.helper.Util;
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
 
-	private Map<String, RenderableGroupedMetadatum> members = Collections.emptyMap();
+	private Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
 	private final Map<String, MetadataGroupType> possibleTypes;
 	private MetadataGroupType type;
 
@@ -45,12 +46,27 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
+	 * RenderableMetadataGroup constructor. Creates a new
+	 * RenderableMetadataGroup with exactly one type only.
+	 * 
+	 * @param type
+	 * 
+	 * @param addableTypes
+	 *            metadata group types available to add
+	 */
+	protected RenderableMetadataGroup(MetadataGroupType type) {
+		possibleTypes = Collections.emptyMap();
+		this.type = type;
+		updateMembers(type);
+	}
+
+	/**
 	 * The function getMembers returns the input elements of this metadata
 	 * group.
 	 * 
 	 * @return the input elements of this group
 	 */
-	public Collection<RenderableGroupedMetadatum> getMembers() {
+	public Collection<RenderableGroupableMetadatum> getMembers() {
 		return members.values();
 	}
 
@@ -104,7 +120,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	@Override
 	void setLanguage(String language) {
 		super.setLanguage(language);
-		for (RenderableGroupedMetadatum member : members.values()) {
+		for (RenderableGroupableMetadatum member : members.values()) {
 			((RenderableMetadatum) member).setLanguage(language);
 		}
 	}
@@ -138,10 +154,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	private void updateMembers(MetadataGroupType newGroupType) {
 		List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();
-		Map<String, RenderableGroupedMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupedMetadatum>(
+		Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupableMetadatum>(
 				Util.mapCapacityFor(requiredMetadataTypes));
 		for (MetadataType type : requiredMetadataTypes) {
-			RenderableGroupedMetadatum member = members.get(type.getName());
+			RenderableGroupableMetadatum member = members.get(type.getName());
 			if (member == null) {
 				member = RenderableMetadatum.create(type, this);
 			}
