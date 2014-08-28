@@ -135,6 +135,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 *            name of the metadata group type desired
 	 */
 	public void setType(String type) {
+		if (possibleTypes.isEmpty()) {
+			return;
+		}
 		MetadataGroupType newType = possibleTypes.get(type);
 		if (!newType.equals(this.type)) {
 			updateMembers(newType);
