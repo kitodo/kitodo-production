@@ -3099,7 +3099,8 @@ public class Metadaten {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
 		addMetadataGroupMode = true;
-		newMetadataGroup = RenderableMetadatum.create(myDocStruct.getAddableMetadataGroupTypes());
+		newMetadataGroup = RenderableMetadatum.create(myDocStruct.getAddableMetadataGroupTypes(), myProzess
+				.getProjekt().getTitel(), BindState.create);
 		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
 	}
 

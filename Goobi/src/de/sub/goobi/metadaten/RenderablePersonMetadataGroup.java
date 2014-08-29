@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import javax.faces.model.SelectItem;
 
+import org.goobi.api.display.enums.BindState;
+
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Helper;
@@ -37,8 +39,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 	};
 
-	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup) {
-		super(Arrays.asList(new MetadataGroupType[] { getGroupTypeFor(metadataType) }));
+	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup,
+			String projectName, BindState bindState) {
+		super(Arrays.asList(new MetadataGroupType[] { getGroupTypeFor(metadataType) }), projectName, bindState);
 		super.labels = metadataType.getAllLanguages();
 	}
 
@@ -79,11 +82,6 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	@Override
 	public String getValue() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isMultiselect() {
 		throw new UnsupportedOperationException();
 	}
 

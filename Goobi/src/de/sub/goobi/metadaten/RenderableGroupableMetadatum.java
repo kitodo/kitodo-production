@@ -62,14 +62,6 @@ interface RenderableGroupableMetadatum {
 	boolean isFirst();
 
 	/**
-	 * Shall return whether the implementing class represents a multi select
-	 * input or not.
-	 * 
-	 * @return whether the implementing class represents a multi select input
-	 */
-	boolean isMultiselect();
-
-	/**
 	 * Shall return whether the user shall be depredated the permission to edit
 	 * the value(s) on the screen.
 	 * 

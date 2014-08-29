@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import javax.faces.model.SelectItem;
 
+import org.goobi.api.display.enums.BindState;
+
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Util;
@@ -28,6 +30,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	private Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
 	private final Map<String, MetadataGroupType> possibleTypes;
 	private MetadataGroupType type;
+	private String projectName;
+	private BindState bindState;
 
 	/**
 	 * RenderableMetadataGroup constructor. Creates a new
@@ -36,12 +40,14 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @param addableTypes
 	 *            metadata group types available to add
 	 */
-	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes) {
+	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState) {
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
 		}
 		type = addableTypes.iterator().next();
+		this.projectName = projectName;
+		this.bindState = bindState;
 		updateMembers(type);
 	}
 
@@ -170,7 +176,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		for (MetadataType type : requiredMetadataTypes) {
 			RenderableGroupableMetadatum member = members.get(type.getName());
 			if (member == null) {
-				member = RenderableMetadatum.create(type, this);
+				member = RenderableMetadatum.create(type, this, projectName, bindState);
 			}
 			newMembers.put(type.getName(), member);
 		}

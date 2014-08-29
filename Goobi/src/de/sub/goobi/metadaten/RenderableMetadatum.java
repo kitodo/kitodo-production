@@ -3,8 +3,13 @@ package de.sub.goobi.metadaten;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.goobi.api.display.enums.BindState;
+import org.goobi.api.display.helper.ConfigDispayRules;
+
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
+
+import com.sharkysoft.util.UnreachableCodeException;
 
 /**
  * A RenderableMetadatum is a java bean that is backing an input element
@@ -22,6 +27,7 @@ public abstract class RenderableMetadatum {
 	private RenderableMetadataGroup container = null;
 	protected HashMap<String, String> labels;
 	protected String language;
+	protected boolean readonly = false;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata
@@ -46,6 +52,9 @@ public abstract class RenderableMetadatum {
 	/**
 	 * Factory method to create a backing bean to render a metadata group.
 	 * 
+	 * @param projectName
+	 * @param bindState
+	 * 
 	 * @param metadataType
 	 *            type of metadatum to create a bean for
 	 * @param renderableMetadataGroup
@@ -53,29 +62,45 @@ public abstract class RenderableMetadatum {
 	 *            a container
 	 * @return a backing bean to render the metadatum
 	 */
-	public static RenderableMetadataGroup create(Collection<MetadataGroupType> elements) {
-		return new RenderableMetadataGroup(elements);
+	public static RenderableMetadataGroup create(Collection<MetadataGroupType> elements, String projectName,
+			BindState bindState) {
+		return new RenderableMetadataGroup(elements, projectName, bindState);
 	}
 
 	/**
 	 * Factory method to create a backing bean to render a metadatum. Depending
 	 * on the configuration, different input component beans will be created.
 	 * 
-	 * TODO: Requires implementation
-	 * 
 	 * @param metadataType
 	 *            type of metadatum to create a bean for
 	 * @param renderableMetadataGroup
 	 *            container that the metadatum is in, may be null if it isn’t in
 	 *            a container
+	 * @param projectName
+	 * @param bindState
 	 * @return a backing bean to render the metadatum
 	 */
 	public static RenderableGroupableMetadatum create(MetadataType metadataType,
-			RenderableMetadataGroup renderableMetadataGroup) {
+			RenderableMetadataGroup renderableMetadataGroup, String projectName, BindState bindState) {
 		if (metadataType.getIsPerson()) {
-			return new RenderablePersonMetadataGroup(metadataType, renderableMetadataGroup);
+			return new RenderablePersonMetadataGroup(metadataType, renderableMetadataGroup, projectName, bindState);
 		}
-		return new RenderableEdit(metadataType, renderableMetadataGroup);
+
+		switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, bindState.getTitle(),
+				metadataType.getName())) {
+		case input:
+			return new RenderableEdit(metadataType, renderableMetadataGroup);
+		case readonly:
+			return new RenderableBevel(metadataType, renderableMetadataGroup);
+		case select:
+			return new RenderableListBox(metadataType, renderableMetadataGroup, projectName, bindState);
+		case select1:
+			return new RenderableDropDownList(metadataType, renderableMetadataGroup, projectName, bindState);
+		case textarea:
+			return new RenderableLineEdit(metadataType, renderableMetadataGroup);
+		default:
+			throw new UnreachableCodeException("Complete switch statement");
+		}
 	}
 
 	/**
@@ -105,12 +130,10 @@ public abstract class RenderableMetadatum {
 	/**
 	 * Returns whether the metadatum may not be changed by the user.
 	 * 
-	 * TODO: Not yet implemented
-	 * 
 	 * @return whether the metadatum is read-only
 	 */
 	public boolean isReadonly() {
-		return false;
+		return readonly;
 	}
 
 	/**

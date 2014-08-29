@@ -1,16 +1,20 @@
 package de.sub.goobi.metadaten;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import ugh.dl.MetadataType;
 
-public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
+	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
+	private List<String> value;
 
-	private String value;
-
-	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
+	public RenderableLineEdit(MetadataType metadataType, RenderableMetadataGroup container) {
 		super(container);
 		super.labels = metadataType.getAllLanguages();
 	}
@@ -44,7 +48,11 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 */
 	@Override
 	public String getValue() {
-		return value != null ? value : "";
+		if (value != null) {
+			return StringUtils.join(value, HTML_TEXTAREA_LINE_SEPARATOR);
+		} else {
+			return "";
+		}
 	}
 
 	/**
@@ -65,6 +73,6 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 */
 	@Override
 	public void setValue(String value) {
-		this.value = value;
+		this.value = Arrays.asList(value.split(HTML_TEXTAREA_LINE_SEPARATOR));
 	}
 }

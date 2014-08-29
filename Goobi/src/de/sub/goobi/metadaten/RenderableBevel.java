@@ -6,18 +6,17 @@ import javax.faces.model.SelectItem;
 
 import ugh.dl.MetadataType;
 
-public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class RenderableBevel extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
 	private String value;
 
-	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
+	public RenderableBevel(MetadataType metadataType, RenderableMetadataGroup container) {
 		super(container);
 		super.labels = metadataType.getAllLanguages();
 	}
 
 	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
+	 * Throws UnsupportedOperationException because a bevel doesn’t have items.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
@@ -27,8 +26,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
+	 * Throws UnsupportedOperationException because a bevel doesn’t have items.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
 	 */
@@ -38,7 +36,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Returns the edit field value.
+	 * Returns the bevel’s text.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
@@ -48,8 +46,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
+	 * Throws UnsupportedOperationException because a bevel doesn’t have items.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
 	 */
@@ -59,12 +56,12 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Saves the value entered by the user.
+	 * Throws UnsupportedOperationException because a bevel cannot be changed.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String value) {
-		this.value = value;
+		throw new UnsupportedOperationException();
 	}
 }

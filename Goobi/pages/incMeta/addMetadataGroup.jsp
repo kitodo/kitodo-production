@@ -34,11 +34,11 @@
 				</htm:td>
 				<htm:td colspan="2" styleClass="eingabeBoxen_row2">
 					<h:inputTextarea value="#{member.value}"
-						rendered="#{member.class.simpleName == 'RenderableTextbox'}" />
+						rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
 					<h:inputText value="#{member.value}"
 						rendered="#{member.class.simpleName == 'RenderableEdit'}" />
 					<h:selectManyListbox value="#{member.value}"
-						rendered="#{member.class.simpleName == 'RenderableListbox' && member.multiselect == true}">
+						rendered="#{member.class.simpleName == 'RenderableListBox'}">
 						<f:selectItems value="#{member.items}" />
 					</h:selectManyListbox>
 					<h:selectOneMenu value="#{member.value}"
@@ -59,11 +59,11 @@
 					</htm:td>
 					<htm:td styleClass="eingabeBoxen_row2">
 						<h:inputTextarea value="#{innerMember.value}"
-							rendered="#{innerMember.class.simpleName == 'RenderableTextbox'}" />
+							rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
 						<h:inputText value="#{innerMember.value}"
 							rendered="#{innerMember.class.simpleName == 'RenderableEdit'}" />
 						<h:selectManyListbox value="#{innerMember.value}"
-							rendered="#{innerMember.class.simpleName == 'RenderableListbox' && innerMember.multiselect == true}">
+							rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
 							<f:selectItems value="#{innerMember.items}" />
 						</h:selectManyListbox>
 						<h:selectOneMenu value="#{innerMember.value}"
