@@ -63,7 +63,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
-import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
@@ -181,6 +180,8 @@ public class Metadaten {
     private FileManipulation fileManipulation = null;
 	private boolean addMetadataGroupMode = false;
 
+	private RenderableMetadataGroup newMetadataGroup;
+
 	/**
 	 * Konstruktor ================================================================
 	 */
@@ -221,15 +222,6 @@ public class Metadaten {
 		this.tempPersonNachname = "";
 		this.tempPersonRecord = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
 		this.tempPersonVorname = "";
-		if (!SperrungAktualisieren()) {
-			return "SperrungAbgelaufen";
-		}
-		return "";
-	}
-
-	public String AddMetadataGroup() {
-		this.addMetadataGroupMode = true;
-		// TODO: Clear input form
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		}
@@ -468,18 +460,6 @@ public class Metadaten {
 	}
 
 	public void setSizeOfMetadata(int i) {
-		// do nothing, needed for jsp only
-	}
-
-	public int getSizeOfGroups() {
-		List<MetadataGroupType> possibleMetadataGroupTypes = myDocStruct.getPossibleMetadataGroupTypes();
-		if (possibleMetadataGroupTypes == null) {
-			return 0;
-		}
-		return possibleMetadataGroupTypes.size();
-	}
-
-	public void setSizeOfGroups(int i) {
 		// do nothing, needed for jsp only
 	}
 
@@ -2030,8 +2010,6 @@ public class Metadaten {
 	}
 
 	private int pageNumber = 0;
-	private RenderableMetadataGroup newMetadataGroup;
-
 	public int getPageNumber() {
 		return this.pageNumber;
 	}
@@ -2376,14 +2354,6 @@ public class Metadaten {
 
 	public void setModusHinzufuegenPerson(boolean modusHinzufuegenPerson) {
 		this.modusHinzufuegenPerson = modusHinzufuegenPerson;
-	}
-
-	public boolean isAddMetadataGroupMode() {
-		return this.addMetadataGroupMode;
-	}
-
-	public void setAddMetadataGroupMode(boolean addMetadataGroupMode) {
-		this.addMetadataGroupMode = addMetadataGroupMode;
 	}
 
 	public String getTempPersonNachname() {
@@ -3080,21 +3050,58 @@ public class Metadaten {
         return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false); 
     }
     
+	/**
+	 * Save the input, then leave the subpage to add a new metadata group and
+	 * toggle the form to show the page “Metadata”.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
 	public String addMetadataGroup() {
-		// TODO
-		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+		throw new UnsupportedOperationException("Not yet implemented"); // TODO
+		// return showMetadata();
 	}
 
+	/**
+	 * Returns a backing bean object to display the form to create a new
+	 * metadata group.
+	 * 
+	 * @return a bean to create a new metadata group
+	 */
 	public RenderableMetadataGroup getNewMetadataGroup() {
 		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 		newMetadataGroup.setLanguage(language);
 		return newMetadataGroup;
 	}
 
+	/**
+	 * Returns whether the metadata editor is showing the subpage to add a new
+	 * metadata group
+	 * 
+	 * @return whether the page to add a new metadata group shows
+	 */
+	public boolean isAddMetadataGroupMode() {
+		return this.addMetadataGroupMode;
+	}
+
+	/**
+	 * Returns whether the metadata editor is showing a link to open the subpage
+	 * to add a new metadata group
+	 * 
+	 * @return whether the link to add a new metadata group shows
+	 */
 	public boolean isAddNewMetadataGroupLinkShowing() {
 		return myDocStruct.getAddableMetadataGroupTypes() != null;
 	}
 
+	/**
+	 * Toggle the form to show the subpage to add a new metadata group.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
 	public String showAddNewMetadataGroup() {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
@@ -3104,6 +3111,14 @@ public class Metadaten {
 		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
 	}
 
+	/**
+	 * Leave the subpage to add a new metadata group without saving any input
+	 * and toggle the form to show the page “Metadata”.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
 	public String showMetadata() {
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;

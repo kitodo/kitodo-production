@@ -233,6 +233,14 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * Returns a Map holding all translations that are configured in the front
+	 * end of a given resource key.
+	 * 
+	 * @param key
+	 *            resource key to get translations for
+	 * @return a map with all language id strings and the corresponding resource
+	 */
 	public static HashMap<String, String> getAllStrings(String key) {
 		HashMap<String, String> result = new HashMap<String, String>(Util.mapCapacityFor(commonMessages.entrySet()));
 		@SuppressWarnings("unchecked")
