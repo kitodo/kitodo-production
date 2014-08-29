@@ -52,8 +52,7 @@ import de.sub.goobi.helper.Helper;
 public class RenderablePersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadatum {
 
 	/**
-	 * The enum Field holds the fields to show in a
-	 * RenderablePersonMetadataGroup.
+	 * Holds the fields to show in a RenderablePersonMetadataGroup.
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
@@ -63,26 +62,69 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		private boolean isIdentifier;
 		private String resourceKey;
 
+		/**
+		 * Field constructor. Creates a Field enum constant.
+		 * 
+		 * @param resourceKey
+		 *            key string to look up the tranlated labels for the field
+		 *            in the messages file
+		 * @param isIdentifier
+		 *            boolean property telling whether or not the given field is
+		 *            an identifier
+		 */
 		Field(String resourceKey, boolean isIdentifier) {
-			this.resourceKey = resourceKey;
 			this.isIdentifier = isIdentifier;
+			this.resourceKey = resourceKey;
 		}
 
+		/**
+		 * Returns a key string to look up the tranlated labels for the field in
+		 * the messages file.
+		 * 
+		 * @return key string to look up the labels for the field
+		 */
 		private String getResourceKey() {
 			return resourceKey;
 		}
 
+		/**
+		 * Returns whether or not the given field is an identifier.
+		 * 
+		 * @return whether the given field is an identifier
+		 */
 		private boolean isIdentifier() {
 			return isIdentifier;
 		}
 	};
 
+	/**
+	 * Creates a RenderablePersonMetadataGroup.
+	 * 
+	 * @param metadataType
+	 *            metadata type editable by this metadata group
+	 * @param container
+	 *            metadata group this group is showing in
+	 * @param projectName
+	 *            project of the process owning this metadata group
+	 * @param bindState
+	 *            whether the user is about to create the metadata group anew or
+	 *            edit a previously existing one
+	 */
 	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup,
 			String projectName, BindState bindState) {
 		super(Arrays.asList(new MetadataGroupType[] { getGroupTypeFor(metadataType) }), projectName, bindState);
 		super.labels = metadataType.getAllLanguages();
 	}
 
+	/**
+	 * Creates a fictious MetadataGroupType for the given metadata type,
+	 * assuming it is a person. The method is called from the constructor and
+	 * thus should not be overloaded.
+	 * 
+	 * @param type
+	 *            a metadata type which represents a person
+	 * @return a fictious MetadataGroupType with the person’s subfields
+	 */
 	private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
 		MetadataGroupType result = new MetadataGroupType();
 		result.setName(type.getName());
@@ -96,6 +138,17 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		return result;
 	}
 
+	/**
+	 * Creates a fictious MetadataType for the given field of the given metadata
+	 * type, assuming that the latter is a person. The method is called from the
+	 * constructor and thus should not be overloaded.
+	 * 
+	 * @param type
+	 *            a metadata type which represents a person
+	 * @param field
+	 *            a field of the person record
+	 * @return a fictious MetadataGroupType with the person’s subfields
+	 */
 	private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
 		MetadataType result = new MetadataType();
 		result.setName(type.getName() + '.' + field.toString());
@@ -108,26 +161,61 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		return result;
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because this is a group type.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
+	 */
 	@Override
 	public Collection<SelectItem> getItems() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because this is a group type.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
+	 */
 	@Override
 	public Collection<String> getSelectedItems() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because this is a group type.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 */
 	@Override
 	public String getValue() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because this is a group type.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
+	 */
 	@Override
 	public void setSelectedItems(Collection<String> selectedItems) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because this is a group type.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 */
 	@Override
 	public void setValue(String value) {
 		throw new UnsupportedOperationException();

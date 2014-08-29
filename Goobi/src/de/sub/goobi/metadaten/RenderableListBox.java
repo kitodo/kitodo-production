@@ -52,16 +52,43 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Util;
 
+/**
+ * A RenderableListBox is a backing bean for a list style select element to edit
+ * a choose-from kind of metadatum with the option to select one or more values
+ * renderable by JSF.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
 	private final ArrayList<Item> items;
 
-	public RenderableListBox(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup,
-			String projectName, BindState bindState) {
+	/**
+	 * Constructor. Creates a RenderableListBox.
+	 * 
+	 * @param metadataType
+	 *            metadata type editable by this list element
+	 * @param container
+	 *            metadata group this list is showing in
+	 * @param projectName
+	 *            project of the process owning this metadatum
+	 * @param bindState
+	 *            whether the user is about to create the metadatum anew or edit
+	 *            a previously existing one
+	 */
+	public RenderableListBox(MetadataType metadataType, RenderableMetadataGroup container, String projectName,
+			BindState bindState) {
+		super(container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, bindState.getTitle(),
 				metadataType.getName(), DisplayType.select);
 	}
 
+	/**
+	 * Returns the available items for the the user to choose from.
+	 * 
+	 * @return the items to choose from
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
+	 */
 	@Override
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
@@ -71,6 +98,12 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		return result;
 	}
 
+	/**
+	 * Returns a list of identifiers of the items currently selected.
+	 * 
+	 * @return the items currently selected
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
+	 */
 	@Override
 	public Collection<String> getSelectedItems() {
 		HashSet<String> result = new HashSet<String>(Util.mapCapacityFor(items));
@@ -80,11 +113,28 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		return result;
 	}
 
+	/**
+	 * Throws UnsupportedOperationException, because the “value” are the
+	 * selected items which have to be accessed through
+	 * {@link #getSelectedItems()}.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 */
 	@Override
 	public String getValue() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Uses the passed-in list of identifiers of the items that shall be
+	 * selected to set the selected state on the items.
+	 * 
+	 * @param selected
+	 *            list of identifiers of items to be selected
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
+	 */
 	@Override
 	public void setSelectedItems(Collection<String> selected) {
 		HashSet<String> selectedSet = selected instanceof HashSet ? (HashSet<String>) selected : new HashSet<String>(
@@ -94,6 +144,15 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		}
 	}
 
+	/**
+	 * Throws UnsupportedOperationException, because the “value” are the
+	 * selected items which have to be written through
+	 * {@link #setSelectedItems(Collection)}.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 */
 	@Override
 	public void setValue(String value) {
 		throw new UnsupportedOperationException();

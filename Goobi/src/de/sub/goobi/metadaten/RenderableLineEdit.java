@@ -48,10 +48,24 @@ import org.apache.commons.lang.StringUtils;
 
 import ugh.dl.MetadataType;
 
+/**
+ * A RenderableEdit is a backing bean for a multi-line text input element to
+ * edit a metadatum renderable by JSF.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
 	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
 	private List<String> value;
 
+	/**
+	 * Constructor. Creates a RenderableLineEdit.
+	 * 
+	 * @param metadataType
+	 *            metadata type editable by this drop-down list
+	 * @param container
+	 *            metadata group this drop-down list is showing in
+	 */
 	public RenderableLineEdit(MetadataType metadataType, RenderableMetadataGroup container) {
 		super(container);
 		super.labels = metadataType.getAllLanguages();

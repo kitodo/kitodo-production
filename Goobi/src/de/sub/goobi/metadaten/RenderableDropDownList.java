@@ -50,16 +50,43 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 
 import ugh.dl.MetadataType;
 
+/**
+ * A RenderableDropDonwList is a backing bean for a drop-down select element to
+ * edit a choose-from kind of metadatum with the option to select exactly one
+ * value renderable by JSF.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
 	private final ArrayList<Item> items;
 
-	public RenderableDropDownList(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup,
-			String projectName, BindState bindState) {
+	/**
+	 * Constructor. Creates a RenderableDropDonwList.
+	 * 
+	 * @param metadataType
+	 *            metadata type editable by this drop-down list
+	 * @param container
+	 *            metadata group this drop-down list is showing in
+	 * @param projectName
+	 *            project of the process owning this metadatum
+	 * @param bindState
+	 *            whether the user is about to create the metadatum anew or edit
+	 *            a previously existing one
+	 */
+	public RenderableDropDownList(MetadataType metadataType, RenderableMetadataGroup container, String projectName,
+			BindState bindState) {
+		super(container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, bindState.getTitle(),
 				metadataType.getName(), DisplayType.select1);
 	}
 
+	/**
+	 * Returns the available items for the the user to choose from.
+	 * 
+	 * @return the items to choose from
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
+	 */
 	@Override
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
@@ -69,11 +96,31 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 		return result;
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because the selected item of a
+	 * drop-down list is handled by the “value” property.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * 
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
+	 */
 	@Override
 	public Collection<String> getSelectedItems() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Returns the identifier of the item currently selected in this drop-down
+	 * list. If multiple items are internally marked as selected (which is
+	 * possible if the metadata type under edit was bound to a multi-select list
+	 * box during creation and is later bound to a drop-down list box for
+	 * editing) the first of them will be selected. If no item has been selected
+	 * yet the first available item will be selected.
+	 * 
+	 * @return the identifier of the selected item
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 */
 	@Override
 	public String getValue() {
 		for (Item item : items) {
@@ -86,11 +133,30 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 		return null;
 	}
 
+	/**
+	 * Throws UnsupportedOperationException because the selected item of a
+	 * drop-down list is handled by the “value” property.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if called
+	 * 
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
+	 */
 	@Override
 	public void setSelectedItems(Collection<String> selectedItems) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Uses the passed in identifier of the item to be selected to find the firt
+	 * items in the item list in order to mark it as selected and to mark all
+	 * other items in the item list as not selected.
+	 * 
+	 * @param value
+	 *            identifier of the item to be marked as selected
+	 * 
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 */
 	@Override
 	public void setValue(String value) {
 		boolean search = true;

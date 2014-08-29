@@ -44,10 +44,24 @@ import javax.faces.model.SelectItem;
 
 import ugh.dl.MetadataType;
 
+/**
+ * A RenderableEdit is a backing bean for a single-line text input element to
+ * edit a metadatum renderable by JSF.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
 	private String value;
 
+	/**
+	 * Constructor. Creates a RenderableEdit.
+	 * 
+	 * @param metadataType
+	 *            metadata type editable by this drop-down list
+	 * @param container
+	 *            metadata group this drop-down list is showing in
+	 */
 	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
 		super(container);
 		super.labels = metadataType.getAllLanguages();
