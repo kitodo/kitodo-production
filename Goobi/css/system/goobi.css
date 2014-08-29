@@ -281,3 +281,14 @@
 	padding-bottom: 2px;
 	text-transform: uppercase;
 }
+
+/* ===================== Metadata editor ===================== */
+
+.eingabeBoxen_row2 input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.eingabeBoxen_row2 select {
+    width: 100%;
+}

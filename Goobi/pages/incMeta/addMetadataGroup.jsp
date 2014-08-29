@@ -19,7 +19,7 @@
 			<htm:td styleClass="eingabeBoxen_row2">
 				<h:outputLabel for="grouptype" value="#{msgs.typ}:" />
 			</htm:td>
-			<htm:td colspan="2">
+			<htm:td colspan="2" styleClass="eingabeBoxen_row2">
 				<h:selectOneMenu id="grouptype"
 					value="#{Metadaten.newMetadataGroup.type}" onchange="submit()">
 					<f:selectItems value="#{Metadaten.newMetadataGroup.possibleTypes}" />
@@ -28,12 +28,11 @@
 		</htm:tr>
 		<x:dataList var="member" value="#{Metadaten.newMetadataGroup.members}"
 			layout="simple">
-			<htm:tr
-				rendered="#{member.class.simpleName != 'RenderableContributor'}">
-				<htm:td>
+			<htm:tr rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
+				<htm:td styleClass="eingabeBoxen_row2">
 					<h:outputText value="#{member.label}:" />
 				</htm:td>
-				<htm:td colspan="2">
+				<htm:td colspan="2" styleClass="eingabeBoxen_row2">
 					<h:inputTextarea value="#{member.value}"
 						rendered="#{member.class.simpleName == 'RenderableTextbox'}" />
 					<h:inputText value="#{member.value}"
@@ -50,17 +49,15 @@
 						rendered="#{member.class.simpleName == 'RenderableBevel'}" />
 				</htm:td>
 			</htm:tr>
-			<x:dataList var="innerMember" value="#{member.members}"
-				rendered="#{member.class.simpleName == 'RenderableContributor'}">
+			<x:dataList var="innerMember" value="#{member.members}" rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
 				<htm:tr>
-					<htm:td rowspan="#{member.members.size}"
-						rendered="#{innerMember.index == 0}">
+					<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="eingabeBoxen_row2">
 						<h:outputText value="#{member.label}:" />
 					</htm:td>
-					<htm:td>
+					<htm:td styleClass="eingabeBoxen_row2">
 						<h:outputText value="#{innerMember.label}:" />
 					</htm:td>
-					<htm:td>
+					<htm:td styleClass="eingabeBoxen_row2">
 						<h:inputTextarea value="#{innerMember.value}"
 							rendered="#{innerMember.class.simpleName == 'RenderableTextbox'}" />
 						<h:inputText value="#{innerMember.value}"
@@ -80,7 +77,7 @@
 			</x:dataList>
 		</x:dataList>
 		<htm:tr>
-			<htm:td styleClass="eingabeBoxen_row3">
+			<htm:td styleClass="eingabeBoxen_row3" colspan="3">
 				<h:commandButton action="#{Metadaten.showMetadata}"
 					value="#{msgs.abbrechen}" />
 				<h:commandButton action="#{Metadaten.addMetadataGroup}"

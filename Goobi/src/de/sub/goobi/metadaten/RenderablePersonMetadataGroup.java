@@ -39,14 +39,16 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup) {
 		super(Arrays.asList(new MetadataGroupType[] { getGroupTypeFor(metadataType) }));
-
+		super.labels = metadataType.getAllLanguages();
 	}
 
 	private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
 		MetadataGroupType result = new MetadataGroupType();
 		result.setName(type.getName());
 		result.setAllLanguages(type.getAllLanguages());
-		result.setNum(type.getNum());
+		if (type.getNum() != null) {
+			result.setNum(type.getNum());
+		}
 		for (Field field : Field.values()) {
 			result.addMetadataType(getMetadataTypeFor(type, field));
 		}
@@ -56,9 +58,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
 		MetadataType result = new MetadataType();
 		result.setName(type.getName() + '.' + field.toString());
-		result.setNum(type.getNum());
+		if (type.getNum() != null) {
+			result.setNum(type.getNum());
+		}
 		result.setAllLanguages(Helper.getAllStrings(field.getResourceKey()));
-		result.setIsPerson(true);
+		result.setIsPerson(false);
 		result.setIdentifier(field.isIdentifier());
 		return result;
 	}

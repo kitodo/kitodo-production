@@ -71,6 +71,14 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
+	 * 
+	 * @return the number of elements in the members list.
+	 */
+	public String getRowspan() {
+		return Integer.toString(members.values().size());
+	}
+
+	/**
 	 * The function getPossibleTypes() returns the list of metadata group types
 	 * available for the currently selected document structure element.
 	 * Depending on the rule set, availability means that some elements cannot
