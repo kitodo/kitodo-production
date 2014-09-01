@@ -44,6 +44,13 @@ import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Helper;
 
+/**
+ * The class RenderablePersonMetadataGroup represents a metadata group which
+ * represents a person. A person is a fixed data structure in Goobi with the
+ * fields normdata record, first name and last name.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public class RenderablePersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadatum {
 
 	/**
@@ -61,7 +68,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		 * Field constructor. Creates a Field enum constant.
 		 * 
 		 * @param resourceKey
-		 *            key string to look up the tranlated labels for the field
+		 *            key string to look up the translated labels for the field
 		 *            in the messages file
 		 * @param isIdentifier
 		 *            boolean property telling whether or not the given field is
@@ -73,8 +80,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 
 		/**
-		 * Returns a key string to look up the tranlated labels for the field in
-		 * the messages file.
+		 * Returns a key string to look up the translated labels for the field
+		 * in the messages file.
 		 * 
 		 * @return key string to look up the labels for the field
 		 */
