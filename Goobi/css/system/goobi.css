@@ -284,11 +284,11 @@
 
 /* ===================== Metadata editor ===================== */
 
-.eingabeBoxen_row2 input {
+.mdgroup input, .mdgroup textarea {
     box-sizing: border-box;
     width: 100%;
 }
 
-.eingabeBoxen_row2 select {
+.mdgroup select {
     width: 100%;
 }

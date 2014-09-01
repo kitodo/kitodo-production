@@ -68,17 +68,22 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	private Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
 	private final Map<String, MetadataGroupType> possibleTypes;
 	private MetadataGroupType type;
-	private String projectName;
-	private BindState bindState;
+	private final String projectName;
+	private final BindState bindState;
 
 	/**
-	 * RenderableMetadataGroup constructor. Creates a new
-	 * RenderableMetadataGroup.
+	 * Creates a new RenderableMetadataGroup.
 	 * 
 	 * @param addableTypes
-	 *            metadata group types available to add
+	 *            metadata group types available
+	 * @param projectName
+	 *            project that the process whose metadata group is to edit
+	 *            belongs to
+	 * @param bindState
+	 *            whether the metadata group is created anew or being edited
 	 */
-	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState) {
+	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes,
+			String projectName, BindState bindState) {
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
@@ -90,17 +95,21 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * RenderableMetadataGroup constructor. Creates a new
-	 * RenderableMetadataGroup with exactly one type only.
+	 * Creates a new RenderableMetadataGroup with exactly one type only.
 	 * 
+	 * @param metadataType
+	 * @param container
 	 * @param type
-	 * 
-	 * @param addableTypes
-	 *            metadata group types available to add
+	 * @param projectName
+	 * @param bindState
 	 */
-	protected RenderableMetadataGroup(MetadataGroupType type) {
+	protected RenderableMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
+			MetadataGroupType type, String projectName, BindState bindState) {
+		super(metadataType, container);
 		possibleTypes = Collections.emptyMap();
 		this.type = type;
+		this.projectName = projectName;
+		this.bindState = bindState;
 		updateMembers(type);
 	}
 

@@ -78,7 +78,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 */
 	public RenderableListBox(MetadataType metadataType, RenderableMetadataGroup container, String projectName,
 			BindState bindState) {
-		super(container);
+		super(metadataType, container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, bindState.getTitle(),
 				metadataType.getName(), DisplayType.select);
 	}
@@ -89,7 +89,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * @return the items to choose from
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
-	@Override
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
 		for (Item item : items) {
@@ -104,27 +103,12 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * @return the items currently selected
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
-	@Override
 	public Collection<String> getSelectedItems() {
 		HashSet<String> result = new HashSet<String>(Util.mapCapacityFor(items));
 		for (Item item : items) {
 			result.add(item.getValue());
 		}
 		return result;
-	}
-
-	/**
-	 * Throws UnsupportedOperationException, because the “value” are the
-	 * selected items which have to be accessed through
-	 * {@link #getSelectedItems()}.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
-	 */
-	@Override
-	public String getValue() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -135,7 +119,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 *            list of identifiers of items to be selected
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
 	 */
-	@Override
 	public void setSelectedItems(Collection<String> selected) {
 		HashSet<String> selectedSet = selected instanceof HashSet ? (HashSet<String>) selected : new HashSet<String>(
 				selected);
@@ -143,19 +126,4 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 			item.setIsSelected(selectedSet.contains(item.getValue()));
 		}
 	}
-
-	/**
-	 * Throws UnsupportedOperationException, because the “value” are the
-	 * selected items which have to be written through
-	 * {@link #setSelectedItems(Collection)}.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
-	 */
-	@Override
-	public void setValue(String value) {
-		throw new UnsupportedOperationException();
-	}
-
 }

@@ -38,11 +38,6 @@
  */
 package de.sub.goobi.metadaten;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.faces.model.SelectItem;
-
 import org.goobi.api.display.enums.BindState;
 
 import ugh.dl.MetadataGroupType;
@@ -110,9 +105,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 *            whether the user is about to create the metadata group anew or
 	 *            edit a previously existing one
 	 */
-	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup renderableMetadataGroup,
+	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
 			String projectName, BindState bindState) {
-		super(Arrays.asList(new MetadataGroupType[] { getGroupTypeFor(metadataType) }), projectName, bindState);
+		super(metadataType, container, getGroupTypeFor(metadataType), projectName, bindState);
 		super.labels = metadataType.getAllLanguages();
 	}
 
@@ -160,65 +155,4 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		result.setIdentifier(field.isIdentifier());
 		return result;
 	}
-
-	/**
-	 * Throws UnsupportedOperationException because this is a group type.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
-	 */
-	@Override
-	public Collection<SelectItem> getItems() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because this is a group type.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
-	 */
-	@Override
-	public Collection<String> getSelectedItems() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because this is a group type.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
-	 */
-	@Override
-	public String getValue() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because this is a group type.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
-	 */
-	@Override
-	public void setSelectedItems(Collection<String> selectedItems) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because this is a group type.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
-	 */
-	@Override
-	public void setValue(String value) {
-		throw new UnsupportedOperationException();
-	}
-
 }

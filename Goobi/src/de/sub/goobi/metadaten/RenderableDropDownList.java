@@ -76,7 +76,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 */
 	public RenderableDropDownList(MetadataType metadataType, RenderableMetadataGroup container, String projectName,
 			BindState bindState) {
-		super(container);
+		super(metadataType, container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, bindState.getTitle(),
 				metadataType.getName(), DisplayType.select1);
 	}
@@ -87,27 +87,12 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * @return the items to choose from
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
-	@Override
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
 		for (Item item : items) {
 			result.add(new SelectItem(item.getValue(), item.getLabel()));
 		}
 		return result;
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because the selected item of a
-	 * drop-down list is handled by the “value” property.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
-	 */
-	@Override
-	public Collection<String> getSelectedItems() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -121,7 +106,6 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * @return the identifier of the selected item
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
-	@Override
 	public String getValue() {
 		for (Item item : items) {
 			if (item.getIsSelected()) {
@@ -134,20 +118,6 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Throws UnsupportedOperationException because the selected item of a
-	 * drop-down list is handled by the “value” property.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if called
-	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
-	 */
-	@Override
-	public void setSelectedItems(Collection<String> selectedItems) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
 	 * Uses the passed in identifier of the item to be selected to find the firt
 	 * items in the item list in order to mark it as selected and to mark all
 	 * other items in the item list as not selected.
@@ -157,7 +127,6 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
-	@Override
 	public void setValue(String value) {
 		boolean search = true;
 		for (Item item : items) {

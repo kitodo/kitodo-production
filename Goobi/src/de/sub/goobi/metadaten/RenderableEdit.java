@@ -38,10 +38,6 @@
  */
 package de.sub.goobi.metadaten;
 
-import java.util.Collection;
-
-import javax.faces.model.SelectItem;
-
 import ugh.dl.MetadataType;
 
 /**
@@ -63,30 +59,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 *            metadata group this drop-down list is showing in
 	 */
 	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
-		super(container);
-		super.labels = metadataType.getAllLanguages();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
-	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
-	 */
-	@Override
-	public Collection<SelectItem> getItems() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
-	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getSelectedItems()
-	 */
-	@Override
-	public Collection<String> getSelectedItems() {
-		throw new UnsupportedOperationException();
+		super(metadataType, container);
 	}
 
 	/**
@@ -94,20 +67,8 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
-	@Override
 	public String getValue() {
 		return value != null ? value : "";
-	}
-
-	/**
-	 * Throws UnsupportedOperationException because an edit component doesn’t
-	 * have items.
-	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
-	 */
-	@Override
-	public void setSelectedItems(Collection<String> selectedItems) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -115,7 +76,6 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
-	@Override
 	public void setValue(String value) {
 		this.value = value;
 	}

@@ -38,13 +38,12 @@
  */
 package de.sub.goobi.metadaten;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Map;
 
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
-import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 
 import com.sharkysoft.util.UnreachableCodeException;
@@ -63,16 +62,17 @@ import com.sharkysoft.util.UnreachableCodeException;
 public abstract class RenderableMetadatum {
 
 	private RenderableMetadataGroup container = null;
-	protected HashMap<String, String> labels;
+	protected Map<String, String> labels;
 	protected String language;
 	protected boolean readonly = false;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata
-	 * group. This constructor must be used by all successors that do not
-	 * implement RenderableGroupableMetadatum.
+	 * group. A label isn’t needed in this case. This constructor must be used
+	 * by all successors that do not implement RenderableGroupableMetadatum.
 	 */
 	protected RenderableMetadatum() {
+		this.labels = Collections.emptyMap();
 	}
 
 	/**
@@ -80,29 +80,14 @@ public abstract class RenderableMetadatum {
 	 * This constructor must be used by all successors that implement
 	 * RenderableGroupableMetadatum.
 	 * 
+	 * @param metadataType
+	 * 
 	 * @param container
 	 *            group that the renderable metadatum is in
 	 */
-	protected RenderableMetadatum(RenderableMetadataGroup container) {
+	protected RenderableMetadatum(MetadataType metadataType, RenderableMetadataGroup container) {
+		this.labels = metadataType.getAllLanguages();
 		this.container = container;
-	}
-
-	/**
-	 * Factory method to create a backing bean to render a metadata group.
-	 * 
-	 * @param projectName
-	 * @param bindState
-	 * 
-	 * @param metadataType
-	 *            type of metadatum to create a bean for
-	 * @param renderableMetadataGroup
-	 *            container that the metadatum is in, may be null if it isn’t in
-	 *            a container
-	 * @return a backing bean to render the metadatum
-	 */
-	public static RenderableMetadataGroup create(Collection<MetadataGroupType> elements, String projectName,
-			BindState bindState) {
-		return new RenderableMetadataGroup(elements, projectName, bindState);
 	}
 
 	/**
@@ -123,7 +108,6 @@ public abstract class RenderableMetadatum {
 		if (metadataType.getIsPerson()) {
 			return new RenderablePersonMetadataGroup(metadataType, renderableMetadataGroup, projectName, bindState);
 		}
-
 		switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, bindState.getTitle(),
 				metadataType.getName())) {
 		case input:

@@ -57,10 +57,10 @@
 			</htm:td>
 		</htm:tr>
 		<htm:tr>
-			<htm:td styleClass="eingabeBoxen_row2">
+			<htm:td styleClass="eingabeBoxen_row2 mdgroup">
 				<h:outputLabel for="grouptype" value="#{msgs.typ}:" />
 			</htm:td>
-			<htm:td colspan="2" styleClass="eingabeBoxen_row2">
+			<htm:td colspan="2" styleClass="eingabeBoxen_row2 mdgroup">
 				<h:selectOneMenu id="grouptype"
 					value="#{Metadaten.newMetadataGroup.type}" onchange="submit()">
 					<f:selectItems value="#{Metadaten.newMetadataGroup.possibleTypes}" />
@@ -70,10 +70,10 @@
 		<x:dataList var="member" value="#{Metadaten.newMetadataGroup.members}"
 			layout="simple">
 			<htm:tr rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
-				<htm:td styleClass="eingabeBoxen_row2">
+				<htm:td styleClass="eingabeBoxen_row2 mdgroup">
 					<h:outputText value="#{member.label}:" />
 				</htm:td>
-				<htm:td colspan="2" styleClass="eingabeBoxen_row2">
+				<htm:td colspan="2" styleClass="eingabeBoxen_row2 mdgroup">
 					<h:inputTextarea value="#{member.value}"
 						rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
 					<h:inputText value="#{member.value}"
@@ -92,13 +92,13 @@
 			</htm:tr>
 			<x:dataList var="innerMember" value="#{member.members}" rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
 				<htm:tr>
-					<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="eingabeBoxen_row2">
+					<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="eingabeBoxen_row2 mdgroup">
 						<h:outputText value="#{member.label}:" />
 					</htm:td>
-					<htm:td styleClass="eingabeBoxen_row2">
+					<htm:td styleClass="eingabeBoxen_row2 mdgroup">
 						<h:outputText value="#{innerMember.label}:" />
 					</htm:td>
-					<htm:td styleClass="eingabeBoxen_row2">
+					<htm:td styleClass="eingabeBoxen_row2 mdgroup">
 						<h:inputTextarea value="#{innerMember.value}"
 							rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
 						<h:inputText value="#{innerMember.value}"
