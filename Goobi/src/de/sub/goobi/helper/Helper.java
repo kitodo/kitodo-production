@@ -156,7 +156,7 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static void setFehlerMeldung(String meldung, Exception e) {
-		setFehlerMeldung(meldung + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
+		setFehlerMeldung(meldung, '(' + e.getClass().getSimpleName() + ": " + getExceptionMessage(e) + ')');
 	}
 
 	public static void setFehlerMeldung(String control, String meldung, Exception e) {
@@ -237,11 +237,13 @@ public class Helper implements Serializable, Observer {
 
 		if (localMessages.containsKey(language)) {
 			ResourceBundle languageLocal = localMessages.get(language);
-			if (languageLocal.containsKey(key))
+			if (languageLocal.containsKey(key)) {
 				return languageLocal.getString(key);
+			}
 			String lowKey = key.toLowerCase();
-			if (languageLocal.containsKey(lowKey))
+			if (languageLocal.containsKey(lowKey)) {
 				return languageLocal.getString(lowKey);
+			}
 		}
 		try {
 
