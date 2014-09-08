@@ -61,7 +61,11 @@ public abstract class MetadataSelector extends DataSelector {
 		}
 
 		if (path.startsWith(METADATA_PATH_SEPARATOR)) {
-			return new MetadataPathSelector(path);
+			if (path.indexOf(METADATA_SEPARATOR) == 1) {
+				return new LocalMetadataSelector(path.substring(1));
+			} else {
+				return new MetadataPathSelector(path);
+			}
 		}
 		throw new ConfigurationException(
 				"Cannot create metadata selector: Path must start with \"@\" or \"/\", but is: " + path);

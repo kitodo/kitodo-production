@@ -58,7 +58,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * to extract the first metadata path segment.
 	 */
 	private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern.compile("^" + METADATA_PATH_SEPARATOR + "([^"
-			+ METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+?)");
+			+ METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");
 	/**
 	 * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular
 	 * expression used to detect and extract a quantifier expression at the end
