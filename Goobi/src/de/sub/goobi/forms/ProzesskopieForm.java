@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
@@ -98,6 +99,8 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.metadaten.copier.DataCopier;
+import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
@@ -680,6 +683,17 @@ public class ProzesskopieForm {
 					}
 				} // end if ughbinding
 			}// end for
+			
+			String rules = ConfigMain.getParameter("copyData.onCopyProcess");
+			if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+				try {
+					new DataCopier(rules).process(new CopierData(myRdf, prozessVorlage));
+				} catch (ConfigurationException e) {
+					Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+				} catch (RuntimeException e) {
+					Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+				}
+			}
 
 			/*
 			 * -------------------------------- Collectionen hinzufügen --------------------------------
