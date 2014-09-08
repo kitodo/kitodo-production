@@ -28,13 +28,14 @@
 
 package org.goobi.io;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.helper.FilesystemHelper;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 
 /**
  * Creates backup for files in a given directory that match a regular expression.
@@ -62,8 +63,11 @@ public class BackupFileRotation {
 	 * Start the configured backup.
 	 * 
 	 * If the maximum backup count is less then 1, nothing happens.
+	 * 
+	 * @throws IOException
+	 *             if a file system operation fails
 	 */
-	public void performBackup() {
+	public void performBackup() throws IOException {
 		File[] metaFiles;
 
 		if (numberOfBackups < 1) {
@@ -112,27 +116,30 @@ public class BackupFileRotation {
 		this.processDataDirectory = processDataDirectory;
 	}
 
-	private void rename(String oldFileName, String newFileName) {
-		try {
-			FilesystemHelper.renameFile(oldFileName, newFileName);
-		} catch (IOException ioe) {
-			myLogger.warn("Renaming file from " + oldFileName + " to " + newFileName + " failed. Reason: " + ioe.getMessage());
-		}
-
-	}
-
-	private void createBackupForFile(String fileName) {
+	private void createBackupForFile(String fileName) throws IOException {
 		rotateBackupFilesFor(fileName);
 
 		String newName = fileName + ".1";
-		rename(fileName, newName);
+		FilesystemHelper.renameFile(fileName, newName);
 	}
 
-	private void rotateBackupFilesFor(String fileName) {
+	private void rotateBackupFilesFor(String fileName) throws IOException {
+		File oldest = new File(fileName + "." + numberOfBackups);
+		if (oldest.exists() && !oldest.delete()) {
+			String message = "Could not delete " + oldest.getAbsolutePath();
+			myLogger.error(message);
+			throw new IOException(message);
+		}
+
 		for (int count = numberOfBackups; count > 1; count--) {
 			String oldName = fileName + "." + (count - 1);
 			String newName = fileName + "." + count;
-			rename(oldName, newName);
+			try {
+				FilesystemHelper.renameFile(oldName, newName);
+			} catch (FileNotFoundException oldNameNotYetPresent) {
+				myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				continue;
+			}
 		}
 	}
 

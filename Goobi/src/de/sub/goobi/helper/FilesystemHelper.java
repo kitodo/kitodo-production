@@ -28,15 +28,15 @@
 
 package de.sub.goobi.helper;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
-
-import de.sub.goobi.config.ConfigMain;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
+
+import de.sub.goobi.config.ConfigMain;
 
 /**
  * Helper class for file system operations.
@@ -137,6 +137,12 @@ public class FilesystemHelper {
 			throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
 		}
 
+		if (newFile.exists()) {
+			String message = "Renaming of " + oldFileName + " into " + newFileName + " failed: Destination exists.";
+			logger.error(message);
+			throw new IOException(message);
+		}
+
 		do {
 			if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
 				logger.warn("Renaming " + oldFileName
@@ -145,13 +151,14 @@ public class FilesystemHelper {
 			}
 			success = oldFile.renameTo(newFile);
 			if (!success) {
-				if (millisWaited == 0)
+				if (millisWaited == 0) {
 					logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
+				}
 				try {
 					Thread.sleep(SLEEP_INTERVAL_MILLIS);
 				} catch (InterruptedException e) {
 				}
-				millisWaited = SLEEP_INTERVAL_MILLIS;
+				millisWaited += SLEEP_INTERVAL_MILLIS;
 			}
 		} while (!success && millisWaited < MAX_WAIT_MILLIS);
 
