@@ -27,17 +27,20 @@
  */
 package org.goobi.io;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.*;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
-
-import org.apache.log4j.BasicConfigurator;
 
 public class BackupFileRotationTest {
 
@@ -79,7 +82,7 @@ public class BackupFileRotationTest {
 	}
 
 	@Test
-	public void modifiedDateShouldNotChangedOnBackup() {
+	public void modifiedDateShouldNotChangedOnBackup() throws IOException {
 		int numberOfBackups = 1;
 		long originalModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
 		runBackup(numberOfBackups);
@@ -102,7 +105,6 @@ public class BackupFileRotationTest {
 	@Test
 	public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
 		String content1 = "Test One.";
-		String content2 = "Test Two.";
 		int numberOfBackups = 2;
 
 		writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content1);
@@ -181,11 +183,11 @@ public class BackupFileRotationTest {
 		return testFile.lastModified();
 	}
 
-	private void runBackup(int numberOfBackups) {
+	private void runBackup(int numberOfBackups) throws IOException {
 		runBackup(numberOfBackups, BACKUP_FILE_NAME);
 	}
 
-	private void runBackup(int numberOfBackups, String format) {
+	private void runBackup(int numberOfBackups, String format) throws IOException {
 		BackupFileRotation bfr = new BackupFileRotation();
 		bfr.setNumberOfBackups(numberOfBackups);
 		bfr.setProcessDataDirectory(BACKUP_FILE_PATH);

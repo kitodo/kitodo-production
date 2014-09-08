@@ -29,6 +29,7 @@
 package org.goobi.io;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
@@ -133,7 +134,11 @@ public class BackupFileRotation {
 		for (int count = numberOfBackups; count > 1; count--) {
 			String oldName = fileName + "." + (count - 1);
 			String newName = fileName + "." + count;
-			FilesystemHelper.renameFile(oldName, newName);
+			try {
+				FilesystemHelper.renameFile(oldName, newName);
+			} catch (FileNotFoundException oldNameNotYetPresent) {
+				continue;
+			}
 		}
 	}
 
