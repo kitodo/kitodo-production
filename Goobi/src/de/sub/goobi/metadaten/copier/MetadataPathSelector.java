@@ -134,7 +134,7 @@ public class MetadataPathSelector extends MetadataSelector {
 		try {
 			return Integer.valueOf(indexSymbol);
 		} catch (NumberFormatException cannotParseInt) {
-			if (">".equals(indexSymbol)) {
+			if (LAST_CHILD_QUANTIFIER.equals(indexSymbol)) {
 				return Integer.MAX_VALUE;
 			} else {
 				throw cannotParseInt;
@@ -235,5 +235,25 @@ public class MetadataPathSelector extends MetadataSelector {
 			return;
 		}
 		selector.createIfPathExistsOnly(data, subnode, value);
+	}
+
+	/**
+	 * Returns a string that textually represents this MetadataPathSelector.
+	 * 
+	 * @return a string representation of this MetadataPathSelector
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder(40);
+		result.append(METADATA_PATH_SEPARATOR);
+		result.append(docStructType);
+		if (index != null) {
+			result.append('[');
+			result.append(index.equals(Integer.MAX_VALUE) ? LAST_CHILD_QUANTIFIER : index.toString());
+			result.append(']');
+		}
+		result.append(selector);
+		return result.toString();
 	}
 }

@@ -83,4 +83,15 @@ public class DataCopier {
 			rule.apply(data);
 		}
 	}
+
+	/**
+	 * Returns a string that textually represents this data copier.
+	 * 
+	 * @return a string representation of this data copier.
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return rules.toString();
+	}
 }

@@ -55,10 +55,17 @@ public abstract class DataSelector {
 	 * structure hierarchy level
 	 */
 	protected final static String METADATA_PATH_SEPARATOR = "/";
+
 	/**
 	 * Symbol indicating that the next segment of the path is a metadatum
 	 */
 	protected final static String METADATA_SEPARATOR = "@";
+
+	/**
+	 * Symbol indicating that the element of several to choose shall be the last
+	 * one
+	 */
+	protected final static String LAST_CHILD_QUANTIFIER = ">";
 
 	/**
 	 * Factory method to create a DataSelector.

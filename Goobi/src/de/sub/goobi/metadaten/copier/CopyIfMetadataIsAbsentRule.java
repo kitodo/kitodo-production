@@ -128,4 +128,15 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	protected void setSubject(String subject) throws ConfigurationException {
 		destination = MetadataSelector.create(subject);
 	}
+
+	/**
+	 * Returns a string that textually represents this copy rule.
+	 * 
+	 * @return a string representation of this copy rule
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return destination.toString() + ' ' + OPERATOR + ' ' + source.toString();
+	}
 }

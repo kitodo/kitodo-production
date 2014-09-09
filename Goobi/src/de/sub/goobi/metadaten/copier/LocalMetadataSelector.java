@@ -141,4 +141,15 @@ public class LocalMetadataSelector extends MetadataSelector {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
+
+	/**
+	 * Returns a string that textually represents this LocalMetadataSelector.
+	 * 
+	 * @return a string representation of this LocalMetadataSelector
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return METADATA_SEPARATOR + selector.getName();
+	}
 }

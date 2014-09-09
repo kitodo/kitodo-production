@@ -109,4 +109,14 @@ public class CopierData {
 		return process.getRegelsatz().getPreferences();
 	}
 
+	/**
+	 * Returns a string that textually represents this bean.
+	 * 
+	 * @return a string representation of this object
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "{fileformat: " + fileformat.toString() + ", process: " + process.toString() + '}';
+	}
 }
