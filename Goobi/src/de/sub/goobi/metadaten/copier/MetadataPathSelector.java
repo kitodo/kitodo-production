@@ -38,6 +38,7 @@
  */
 package de.sub.goobi.metadaten.copier;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -193,6 +194,9 @@ public class MetadataPathSelector extends MetadataSelector {
 	 */
 	private DocStruct getSubnode(DocStruct logicalNode) {
 		List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType, "*");
+		if (children == null) {
+			children = Collections.emptyList();
+		}
 		switch (children.size()) {
 		case 0:
 			return null;
