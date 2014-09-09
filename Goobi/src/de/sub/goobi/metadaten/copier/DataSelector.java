@@ -68,6 +68,11 @@ public abstract class DataSelector {
 	protected final static String LAST_CHILD_QUANTIFIER = ">";
 
 	/**
+	 * Symbol indicating that the selector is to select a variable
+	 */
+	protected final static String VARIABLE_REFERENCE = "$";
+
+	/**
 	 * Factory method to create a DataSelector.
 	 * 
 	 * @param path
@@ -80,6 +85,9 @@ public abstract class DataSelector {
 	public static DataSelector create(String path) throws ConfigurationException {
 		if (path.startsWith(METADATA_PATH_SEPARATOR) || path.startsWith(METADATA_SEPARATOR)) {
 			return MetadataSelector.create(path);
+		}
+		if (path.startsWith(VARIABLE_REFERENCE)) {
+			return new VariableSelector(path);
 		}
 		throw new ConfigurationException(
 				"Cannot create data selector: Path must start with \"@\", \"/\" or \"$\", but is: " + path);

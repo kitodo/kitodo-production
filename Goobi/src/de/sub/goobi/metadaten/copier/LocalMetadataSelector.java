@@ -70,7 +70,7 @@ public class LocalMetadataSelector extends MetadataSelector {
 	 *             if the metadata path doesn’t start with an “@” character
 	 */
 	public LocalMetadataSelector(String path) throws ConfigurationException {
-		if (!path.startsWith("@")) {
+		if (!path.startsWith(METADATA_SEPARATOR)) {
 			throw new ConfigurationException(
 					"Cannot create local metadata selector: Path must start with \"@\", but is: " + path);
 		}
