@@ -212,11 +212,6 @@
 		Listener für die Modularisierung <listener> <listener-class>
 		de.sub.goobi.Modul.ModulListener </listener-class> </listener>
 	-->
-<!-- Listener for ImageIO -->
-	<listener>
-		<listener-class>org.goobi.production.ImageIOInitializer</listener-class>
-	</listener>
-
 	<!-- Listener for JobManager 
 	<listener>
 		<listener-class>org.goobi.production.flow.jobs.JobManager</listener-class>
@@ -228,6 +223,10 @@
 			org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
 	</listener>
 -->
+
+	<listener>
+		<listener-class>de.sub.goobi.helper.tasks.TaskSitter</listener-class>
+	</listener>
 
 	<listener>
 		<listener-class>org.goobi.production.GoobiVersionListener</listener-class>

@@ -60,10 +60,9 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-import de.sub.goobi.helper.tasks.TiffWriterTask;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -126,8 +125,6 @@ public class GoobiScript {
             importFromFileSystem(inProzesse);
         } else if (this.myParameters.get("action").equals("addUser")) {
             adduser(inProzesse);
-        } else if (this.myParameters.get("action").equals("tiffWriter")) {
-            writeTiffHeader(inProzesse);
         } else if (this.myParameters.get("action").equals("addUserGroup")) {
             addusergroup(inProzesse);
         } else if (this.myParameters.get("action").equals("setTaskProperty")) {
@@ -272,12 +269,10 @@ public class GoobiScript {
      */
     private void swapOutProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapOutTask task = new ProcessSwapOutTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
-
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 
@@ -286,11 +281,10 @@ public class GoobiScript {
      */
     private void swapInProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapInTask task = new ProcessSwapInTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 
@@ -929,18 +923,6 @@ public class GoobiScript {
             }
         }
         Helper.setMeldung("goobiScriptfield", "", "deleteTiffHeaderFile finished");
-    }
-
-    /**
-     * TiffHeader von den Prozessen neu schreiben ================================================================
-     */
-    private void writeTiffHeader(List<Prozess> inProzesse) {
-        for (Iterator<Prozess> iter = inProzesse.iterator(); iter.hasNext();) {
-            Prozess proz = iter.next();
-            TiffWriterTask task = new TiffWriterTask();
-            task.initialize(proz);
-            LongRunningTaskManager.getInstance().addTask(task);
-        }
     }
 
     /**
