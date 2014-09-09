@@ -74,7 +74,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 	 */
 	@Override
 	protected void setObjects(List<String> objects) throws ConfigurationException {
-		destination = MetadataSelector.create(objects.get(0));
+		source = DataSelector.create(objects.get(0));
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 	 */
 	@Override
 	protected void setSubject(String subject) throws ConfigurationException {
-		source = DataSelector.create(subject);
+		destination = MetadataSelector.create(subject);
 	}
 
 	/**

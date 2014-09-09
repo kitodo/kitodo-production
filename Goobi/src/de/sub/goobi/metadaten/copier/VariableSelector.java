@@ -99,21 +99,26 @@ public class VariableSelector extends DataSelector {
 	 * Returns the value of the variable named by the path used to construct the
 	 * variable selector. Returns null if the variable isn’t available.
 	 * 
-	 * @param obj
+	 * @param classInstance
 	 *            object to inspect
 	 * @return value of the variable, or null if not found
 	 */
-	private String findIn(Object obj) {
+	private String findIn(Object classInstance) {
 		try {
-			Field variable = obj.getClass().getDeclaredField(qualifier);
-			variable.setAccessible(true);
+			Field classesFieldReference = classInstance.getClass().getDeclaredField(qualifier);
+			classesFieldReference.setAccessible(true);
+			Object fieldValue = classesFieldReference.get(classInstance);
 			if (subselector == null) {
-				return String.valueOf(variable);
+				return String.valueOf(fieldValue);
 			} else {
-				return subselector.findIn(variable);
+				return fieldValue != null ? subselector.findIn(fieldValue) : null;
 			}
 		} catch (NoSuchFieldException e) {
 			return null;
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
