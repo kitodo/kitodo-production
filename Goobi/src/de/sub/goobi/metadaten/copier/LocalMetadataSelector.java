@@ -41,6 +41,7 @@ package de.sub.goobi.metadaten.copier;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -55,6 +56,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class LocalMetadataSelector extends MetadataSelector {
+	private static final Logger LOG = Logger.getLogger(LocalMetadataSelector.class);
 
 	private final MetadataType selector = new MetadataType();
 
@@ -114,12 +116,27 @@ public class LocalMetadataSelector extends MetadataSelector {
 		if (findIn(logicalNode) != null) {
 			return;
 		}
+		Metadata copy = null;
 		try {
-			Metadata copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
+			copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));
+		} catch (MetadataTypeNotAllowedException e) {
+			// copy rules aren’t related to the rule set but depend on it, so
+			// copy rules that don’t work with the current rule set are ignored
+			LOG.debug("Cannot create metadata element " + selector.getName()
+					+ ": The type isn’t defined by the rule set used.");
+			return;
+		}
+		try {
 			copy.setValue(value);
 			logicalNode.addMetadata(copy);
 		} catch (MetadataTypeNotAllowedException e) {
-			throw new RuntimeException(e.getMessage(), e);
+			// copy rules aren’t related to the rule set but depend on it, so
+			// copy rules that don’t work with the current rule set are ignored
+			LOG.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
+					+ "\") to structural element "
+					+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "
+					+ e.getMessage());
+			return;
 		} catch (DocStructHasNoTypeException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
