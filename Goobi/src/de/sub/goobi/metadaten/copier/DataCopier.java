@@ -52,7 +52,10 @@ import org.apache.commons.configuration.ConfigurationException;
  */
 public class DataCopier {
 
-	List<DataCopyrule> rules;
+	/**
+	 * Holds the rules this data copier can apply to a set of working data.
+	 */
+	private final List<DataCopyrule> rules;
 
 	/**
 	 * Creates a new DataCopier.
