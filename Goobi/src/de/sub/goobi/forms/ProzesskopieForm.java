@@ -352,8 +352,12 @@ public class ProzesskopieForm {
 				new DataCopier(rules).process(data);
 			} catch (ConfigurationException e) {
 				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
-			} catch (RuntimeException e) {
-				Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+			} catch (RuntimeException exception) {
+				if (RuntimeException.class.equals(exception.getClass())) {
+					Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
+				} else {
+					throw exception;
+				}
 			}
 		}
 	}
