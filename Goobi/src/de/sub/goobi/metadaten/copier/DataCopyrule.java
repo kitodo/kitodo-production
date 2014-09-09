@@ -61,10 +61,12 @@ public abstract class DataCopyrule {
 	 * copyrules are to be added to this implementation, they will have to be
 	 * listed named here.
 	 */
-	private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<String, Class<? extends DataCopyrule>>() {
+	private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<String, Class<? extends DataCopyrule>>(
+			3) {
 		private static final long serialVersionUID = 1L;
 		{
 			put(CopyIfMetadataIsAbsentRule.OPERATOR, CopyIfMetadataIsAbsentRule.class);
+			put(OverwriteOrCreateRule.OPERATOR, OverwriteOrCreateRule.class);
 		}
 	};
 

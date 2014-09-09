@@ -131,4 +131,43 @@ public abstract class MetadataSelector extends DataSelector {
 	 */
 	protected abstract void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value);
 
+	/**
+	 * Checks if the document structure node as named by the path is available,
+	 * and sets the metadatum as named by the path to the value passed to the
+	 * function. If the document structure node isn’t yet present, it will be
+	 * created. If the metadatum already exists, it will be overwritten,
+	 * otherwise it will be created.
+	 * 
+	 * @param data
+	 *            data to work on
+	 * @param logicalNode
+	 *            document structure node to start from, intended for recursion
+	 * @param value
+	 *            value to write if no metadatum is available at the path’s end
+	 * @throws RuntimeException
+	 *             if the operation fails for unfulfilled dependencies
+	 */
+	public void createOrOverwrite(CopierData data, String value) {
+		createOrOverwrite(data, data.getLogicalDocStruct(), value);
+	}
+
+	/**
+	 * Calling createOrOverwrite() on the implementing instance should check if
+	 * the document structure node as named by the path is available, and set
+	 * the metadatum as named by the path to the value passed to the function.
+	 * If the document structure node isn’t yet present, it should be created.
+	 * If the metadatum already exists, it shall be overwritten, otherwise it
+	 * shall be created.
+	 * 
+	 * @param data
+	 *            data to work on
+	 * @param logicalNode
+	 *            document structure node to start from, intended for recursion
+	 * @param value
+	 *            value to write if no metadatum is available at the path’s end
+	 * @throws RuntimeException
+	 *             if the operation fails for unfulfilled dependencies
+	 */
+	protected abstract void createOrOverwrite(CopierData data, DocStruct logicalNode, String value);
+
 }

@@ -44,8 +44,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.exceptions.TypeNotAllowedAsChildException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+
+import com.sharkysoft.util.UnreachableCodeException;
 
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
@@ -54,6 +60,8 @@ import ugh.dl.DocStruct;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class MetadataPathSelector extends MetadataSelector {
+	private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
+
 	/**
 	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
 	 * to extract the first metadata path segment.
@@ -230,15 +238,59 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * returning null otherwise. Metadata creation is, by definition, always
 	 * done in a {@link LocalMetadataSelector}.
 	 * 
+	 * @param data
+	 *            data to work on
+	 * @param logicalNode
+	 *            document structure node to start from, intended for recursion
+	 * @param value
+	 *            value to write if no metadatum is available at the path’s end
 	 * @see de.sub.goobi.metadaten.DataSelector#findIn(ugh.dl.DocStruct)
 	 */
 	@Override
-	public void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
+	protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
 		DocStruct subnode = getSubnode(logicalNode);
 		if (subnode == null) {
 			return;
 		}
 		selector.createIfPathExistsOnly(data, subnode, value);
+	}
+
+	/**
+	 * Sets the metadatum identified by the given path if available, otherwise
+	 * creates the path and metadatum. This works recursively. Metadata creation
+	 * is done in a {@link LocalMetadataSelector}.
+	 * 
+	 * @param data
+	 *            data to work on
+	 * @param logicalNode
+	 *            document structure node to start from, intended for recursion
+	 * @param value
+	 *            value to write
+	 * @see de.sub.goobi.metadaten.DataSelector#findIn(ugh.dl.DocStruct)
+	 */
+	@Override
+	protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
+		DocStruct subnode = getSubnode(logicalNode);
+		if (subnode == null) {
+			try {
+				// TODO: after merge of newspaper module the following three
+				//       lines can be subsumed as:
+				// subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
+				DocStructType dsType = data.getPreferences().getDocStrctTypeByName(docStructType);
+				subnode = data.getDigitalDocument().createDocStruct(dsType);
+				logicalNode.addChild(subnode);
+			} catch (TypeNotAllowedAsChildException e) {
+				// copy rules aren’t related to the rule set but depend on it,
+				// so copy rules that don’t work with the current rule set are
+				// ignored
+				LOG.debug("Cannot create structural element " + docStructType + " as child of "
+						+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+						+ " because it isn’t allowed by the rule set.");
+			} catch (TypeNotAllowedForParentException e) {
+				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
+			}
+		}
+		selector.createOrOverwrite(data, subnode, value);
 	}
 
 	/**

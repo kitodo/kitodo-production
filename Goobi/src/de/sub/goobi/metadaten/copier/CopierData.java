@@ -92,7 +92,7 @@ public class CopierData {
 	 * 
 	 * @return the digital document
 	 */
-	private DigitalDocument getDigitalDocument() {
+	DigitalDocument getDigitalDocument() {
 		try {
 			return fileformat.getDigitalDocument();
 		} catch (PreferencesException e) {
