@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
@@ -98,6 +99,8 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
@@ -318,6 +321,7 @@ public class ProzesskopieForm {
 				this.docType = this.myImportOpac.getOpacDocType().getTitle();
 			}
 			this.atstsl = this.myImportOpac.getAtstsl();
+			applyCopyingRules(new CopierData(myRdf, prozessVorlage));
 			fillFieldsFromMetadataFile();
 			/* über die Treffer informieren */
 			if (this.myImportOpac.getHitcount() == 0) {
@@ -335,7 +339,32 @@ public class ProzesskopieForm {
 	/* =============================================================== */
 
 	/**
-	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen
+	 * Creates a DataCopier with the given configuration, lets it process the
+	 * given data and wraps any errors to display in the front end.
+	 * 
+	 * @param data
+	 *            data to process
+	 */
+	private void applyCopyingRules(CopierData data) {
+		String rules = ConfigMain.getParameter("copyData.onCatalogueQuery");
+		if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+			try {
+				new DataCopier(rules).process(data);
+			} catch (ConfigurationException e) {
+				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+			} catch (RuntimeException exception) {
+				if (RuntimeException.class.equals(exception.getClass())) {
+					Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
+				} else {
+					throw exception;
+				}
+			}
+		}
+	}
+
+	/**
+	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
+	 * füllen
 	 * 
 	 * @throws PreferencesException
 	 */
@@ -680,7 +709,7 @@ public class ProzesskopieForm {
 					}
 				} // end if ughbinding
 			}// end for
-
+			
 			/*
 			 * -------------------------------- Collectionen hinzufügen --------------------------------
 			 */
