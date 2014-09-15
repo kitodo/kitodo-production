@@ -3058,9 +3058,13 @@ public class Metadaten {
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
 	 *         time is up and the user must leave the editor and open it anew
 	 */
-	public String addMetadataGroup() {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
-		// return showMetadata();
+	public String addMetadataGroup() throws DocStructHasNoTypeException {
+		try {
+			myDocStruct.addMetadataGroup(newMetadataGroup.toMetadataGroup());
+		} catch (MetadataTypeNotAllowedException e) {
+			myLogger.error("Error while adding metadata (MetadataTypeNotAllowedException): " + e.getMessage());
+		}
+		return showMetadata();
 	}
 
 	/**

@@ -38,10 +38,15 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.goobi.api.display.enums.BindState;
 
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
+import ugh.dl.Person;
+import ugh.exceptions.MetadataTypeNotAllowedException;
 import de.sub.goobi.helper.Helper;
 
 /**
@@ -115,7 +120,6 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
 			String projectName, BindState bindState) {
 		super(metadataType, container, getGroupTypeFor(metadataType), projectName, bindState);
-		super.labels = metadataType.getAllLanguages();
 	}
 
 	/**
@@ -161,5 +165,35 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		result.setIsPerson(false);
 		result.setIdentifier(field.isIdentifier());
 		return result;
+	}
+
+	@Override
+	public List<Person> toMetadata() {
+		List<Person> result = new ArrayList<Person>(1);
+		Person person;
+		try {
+			person = new Person(metadataType);
+		} catch (MetadataTypeNotAllowedException e) {
+			throw new NullPointerException(e.getMessage());
+		}
+		String normdataRecord = getFieldValue(Field.NORMDATA_RECORD);
+		if (normdataRecord != null & normdataRecord.length() > 0) {
+			String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
+			person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+		}
+		person.setFirstname(getFieldValue(Field.FIRSTNAME));
+		person.setLastname(getFieldValue(Field.LASTNAME));
+		result.add(person);
+		return result;
+	}
+
+	private String getFieldValue(Field field) {
+		String key = metadataType.getName() + '.' + field.toString();
+		return members.get(key).getValue();
+	}
+
+	@Override
+	public String getValue() {
+		throw new UnsupportedOperationException();
 	}
 }

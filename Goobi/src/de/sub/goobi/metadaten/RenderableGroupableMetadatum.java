@@ -38,6 +38,9 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.List;
+
+import ugh.dl.Metadata;
 
 /**
  * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
@@ -76,4 +79,14 @@ interface RenderableGroupableMetadatum {
 	 * @return whether the component shall be read-only
 	 */
 	boolean isReadonly();
+
+	/**
+	 * Shall return the metadata elements contained in this renderable metadata
+	 * group.
+	 * 
+	 * @return
+	 */
+	List<? extends Metadata> toMetadata();
+
+	String getValue();
 }

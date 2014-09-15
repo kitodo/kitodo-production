@@ -38,13 +38,12 @@
  */
 package de.sub.goobi.metadaten;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
+import ugh.exceptions.MetadataTypeNotAllowedException;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -62,9 +61,9 @@ import com.sharkysoft.util.UnreachableCodeException;
 public abstract class RenderableMetadatum {
 
 	private RenderableMetadataGroup container = null;
-	protected Map<String, String> labels;
 	protected String language;
 	protected boolean readonly = false;
+	protected final MetadataType metadataType;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata
@@ -72,7 +71,7 @@ public abstract class RenderableMetadatum {
 	 * by all successors that do not implement RenderableGroupableMetadatum.
 	 */
 	protected RenderableMetadatum() {
-		this.labels = Collections.emptyMap();
+		metadataType = null;
 	}
 
 	/**
@@ -86,7 +85,7 @@ public abstract class RenderableMetadatum {
 	 *            group that the renderable metadatum is in
 	 */
 	protected RenderableMetadatum(MetadataType metadataType, RenderableMetadataGroup container) {
-		this.labels = metadataType.getAllLanguages();
+		this.metadataType = metadataType;
 		this.container = container;
 	}
 
@@ -96,7 +95,7 @@ public abstract class RenderableMetadatum {
 	 * 
 	 * @param metadataType
 	 *            type of metadatum to create a bean for
-	 * @param renderableMetadataGroup
+	 * @param container
 	 *            container that the metadatum is in, may be null if it isn’t in
 	 *            a container
 	 * @param projectName
@@ -104,22 +103,23 @@ public abstract class RenderableMetadatum {
 	 * @return a backing bean to render the metadatum
 	 */
 	public static RenderableGroupableMetadatum create(MetadataType metadataType,
-			RenderableMetadataGroup renderableMetadataGroup, String projectName, BindState bindState) {
+ RenderableMetadataGroup container,
+			String projectName, BindState bindState) {
 		if (metadataType.getIsPerson()) {
-			return new RenderablePersonMetadataGroup(metadataType, renderableMetadataGroup, projectName, bindState);
+			return new RenderablePersonMetadataGroup(metadataType, container, projectName, bindState);
 		}
 		switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, bindState.getTitle(),
 				metadataType.getName())) {
 		case input:
-			return new RenderableEdit(metadataType, renderableMetadataGroup);
+			return new RenderableEdit(metadataType, container);
 		case readonly:
-			return new RenderableEdit(metadataType, renderableMetadataGroup).setReadonly(true);
+			return new RenderableEdit(metadataType, container).setReadonly(true);
 		case select:
-			return new RenderableListBox(metadataType, renderableMetadataGroup, projectName, bindState);
+			return new RenderableListBox(metadataType, container, projectName, bindState);
 		case select1:
-			return new RenderableDropDownList(metadataType, renderableMetadataGroup, projectName, bindState);
+			return new RenderableDropDownList(metadataType, container, projectName, bindState);
 		case textarea:
-			return new RenderableLineEdit(metadataType, renderableMetadataGroup);
+			return new RenderableLineEdit(metadataType, container);
 		default:
 			throw new UnreachableCodeException("Complete switch statement");
 		}
@@ -134,7 +134,7 @@ public abstract class RenderableMetadatum {
 	 * @return the translated label of the metadatum
 	 */
 	public String getLabel() {
-		return labels.get(language);
+		return metadataType.getNameByLanguage(language);
 	}
 
 	/**
@@ -183,4 +183,16 @@ public abstract class RenderableMetadatum {
 	void setLanguage(String language) {
 		this.language = language;
 	}
+
+	protected Metadata getMetadata(String value) {
+		Metadata result;
+		try {
+			result = new Metadata(metadataType);
+		} catch (MetadataTypeNotAllowedException e) {
+			throw new NullPointerException(e.getMessage());
+		}
+		result.setValue(value);
+		return result;
+	}
+
 }

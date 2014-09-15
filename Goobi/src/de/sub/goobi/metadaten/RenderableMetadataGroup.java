@@ -50,8 +50,12 @@ import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.enums.BindState;
 
+import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
+import ugh.dl.Person;
+import ugh.exceptions.MetadataTypeNotAllowedException;
 import de.sub.goobi.helper.Util;
 
 /**
@@ -65,7 +69,7 @@ import de.sub.goobi.helper.Util;
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
 
-	private Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
+	protected Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
 	private final Map<String, MetadataGroupType> possibleTypes;
 	private MetadataGroupType type;
 	private final String projectName;
@@ -82,8 +86,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @param bindState
 	 *            whether the metadata group is created anew or being edited
 	 */
-	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes,
-			String projectName, BindState bindState) {
+	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState) {
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
@@ -204,6 +207,33 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 			updateMembers(newType);
 		}
 		this.type = newType;
+	}
+
+	/**
+	 * Returs the currently showing metadata group as a
+	 * {@link ugh.dl.MetadataGroup} so that it can be added to some structural
+	 * element.
+	 * 
+	 * @return the showing metatdata group as ugh.dl.MetadataGroup
+	 */
+	public MetadataGroup toMetadataGroup() {
+		MetadataGroup result;
+		try {
+			result = new MetadataGroup(type);
+		} catch (MetadataTypeNotAllowedException e) {
+			throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation");
+		}
+		for (RenderableGroupableMetadatum member : members.values()) {
+			for (Metadata x : member.toMetadata()) {
+				if (member instanceof RenderablePersonMetadataGroup) {
+					result.addPerson(((Person) x));
+				} else {
+					result.addMetadata(x);
+				}
+			}
+
+		}
+		return result;
 	}
 
 	/**

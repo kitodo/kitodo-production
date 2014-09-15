@@ -38,6 +38,10 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 
 /**
@@ -78,5 +82,12 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	@Override
+	public List<Metadata> toMetadata() {
+		List<Metadata> result = new ArrayList<Metadata>(1);
+		result.add(getMetadata(value));
+		return result;
 	}
 }

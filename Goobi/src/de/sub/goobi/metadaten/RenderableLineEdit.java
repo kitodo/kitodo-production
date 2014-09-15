@@ -38,11 +38,13 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 
 /**
@@ -53,6 +55,7 @@ import ugh.dl.MetadataType;
  */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
 	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
+	private static final String METADATA_LINE_SEPARATOR = "\n";
 	private List<String> value;
 
 	/**
@@ -87,5 +90,12 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 */
 	public void setValue(String value) {
 		this.value = Arrays.asList(value.split(HTML_TEXTAREA_LINE_SEPARATOR));
+	}
+
+	@Override
+	public List<Metadata> toMetadata() {
+		List<Metadata> result = new ArrayList<Metadata>(1);
+		result.add(getMetadata(StringUtils.join(value, METADATA_LINE_SEPARATOR)));
+		return result;
 	}
 }

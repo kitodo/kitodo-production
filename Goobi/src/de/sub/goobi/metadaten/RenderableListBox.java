@@ -41,6 +41,7 @@ package de.sub.goobi.metadaten;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.faces.model.SelectItem;
 
@@ -49,6 +50,7 @@ import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Util;
 
@@ -125,5 +127,21 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		for (Item item : items) {
 			item.setIsSelected(selectedSet.contains(item.getValue()));
 		}
+	}
+
+	@Override
+	public List<Metadata> toMetadata() {
+		List<Metadata> result = new ArrayList<Metadata>(items.size());
+		for (Item item : items) {
+			if (item.getIsSelected()) {
+				result.add(getMetadata(item.getValue()));
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public String getValue() {
+		throw new UnsupportedOperationException();
 	}
 }
