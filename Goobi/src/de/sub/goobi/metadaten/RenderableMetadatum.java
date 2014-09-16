@@ -81,7 +81,7 @@ public abstract class RenderableMetadatum {
 	 * RenderableGroupableMetadatum.
 	 * 
 	 * @param metadataType
-	 * 
+	 *            metadata type represented by this input element
 	 * @param container
 	 *            group that the renderable metadatum is in
 	 */
@@ -100,12 +100,15 @@ public abstract class RenderableMetadatum {
 	 *            container that the metadatum is in, may be null if it isn’t in
 	 *            a container
 	 * @param projectName
+	 *            name of the project the document under edit does belong to
 	 * @param bindState
+	 *            whether the metadatum is being created or edited
 	 * @return a backing bean to render the metadatum
 	 * @throws ConfigurationException
+	 *             if a metadata field designed for a single value is
+	 *             misconfigured to show a multi-value input element
 	 */
-	public static RenderableGroupableMetadatum create(MetadataType metadataType,
- RenderableMetadataGroup container,
+	public static RenderableGroupableMetadatum create(MetadataType metadataType, RenderableMetadataGroup container,
 			String projectName, BindState bindState) throws ConfigurationException {
 		if (metadataType.getIsPerson()) {
 			return new RenderablePersonMetadataGroup(metadataType, container, projectName, bindState);
@@ -137,6 +140,25 @@ public abstract class RenderableMetadatum {
 	 */
 	public String getLabel() {
 		return metadataType.getNameByLanguage(language);
+	}
+
+	/**
+	 * Creates and returns a metadatum of the internal type with the value
+	 * passed in.
+	 * 
+	 * @param value
+	 *            value to set the metadatum to
+	 * @return a metadatum with the value
+	 */
+	protected Metadata getMetadata(String value) {
+		Metadata result;
+		try {
+			result = new Metadata(metadataType);
+		} catch (MetadataTypeNotAllowedException e) {
+			throw new NullPointerException(e.getMessage());
+		}
+		result.setValue(value);
+		return result;
 	}
 
 	/**
@@ -184,17 +206,6 @@ public abstract class RenderableMetadatum {
 	 */
 	void setLanguage(String language) {
 		this.language = language;
-	}
-
-	protected Metadata getMetadata(String value) {
-		Metadata result;
-		try {
-			result = new Metadata(metadataType);
-		} catch (MetadataTypeNotAllowedException e) {
-			throw new NullPointerException(e.getMessage());
-		}
-		result.setValue(value);
-		return result;
 	}
 
 }

@@ -54,7 +54,7 @@ import ugh.dl.MetadataType;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
-		SingleValueMetadatum {
+		SingleValueRenderableMetadatum {
 	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
 	private static final String METADATA_LINE_SEPARATOR = "\n";
 	private List<String> value;
@@ -95,6 +95,12 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 		this.value = Arrays.asList(value.split(HTML_TEXTAREA_LINE_SEPARATOR));
 	}
 
+	/**
+	 * Returns the value of this edit component as metadata element
+	 * 
+	 * @return a list with one metadata element with the value of this component
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+	 */
 	@Override
 	public List<Metadata> toMetadata() {
 		List<Metadata> result = new ArrayList<Metadata>(1);

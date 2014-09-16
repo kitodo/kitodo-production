@@ -129,6 +129,13 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		}
 	}
 
+	/**
+	 * Returns the value of this edit component as metadata elements
+	 * 
+	 * @return a list of metadata elements with the selected values of this
+	 *         input
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+	 */
 	@Override
 	public List<Metadata> toMetadata() {
 		List<Metadata> result = new ArrayList<Metadata>(items.size());

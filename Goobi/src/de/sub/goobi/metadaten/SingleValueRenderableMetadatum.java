@@ -38,54 +38,26 @@
  */
 package de.sub.goobi.metadaten;
 
-import java.util.List;
-
-import ugh.dl.Metadata;
-
 /**
- * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
- * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can be
- * a RenderablePersonMetadataGroup—which is a special case of a
- * RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
- * 
- * Java interfaces are always public and this interface holds the public methods
- * that are accessed by JSF during rendering. Other methods with a more
- * restricted visibility cannot be defined here. They will be defined in the
- * abstract class {@link RenderableGroupableMetadatum}.
+ * A single value renderable metadatum may reference any renderable metadataum
+ * which does only hold one single value. It provides a setValue() and
+ * getValue() method.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-interface RenderableGroupableMetadatum {
+interface SingleValueRenderableMetadatum {
+	/**
+	 * Sets the value of this editing component.
+	 * 
+	 * @param value
+	 *            value to set
+	 */
+	void setValue(String value);
 
 	/**
-	 * Shall return the label for the metadatum in the language previously set.
+	 * May be used to retrieve the value from this editing component.
 	 * 
-	 * @return the label for the metadatum
+	 * @return the value inside the component
 	 */
-	String getLabel();
-
-	/**
-	 * Shall return true if the element is contained in a group and is the first
-	 * element in its members list, false otherwise.
-	 * 
-	 * @return if the element is the first in its list
-	 */
-	boolean isFirst();
-
-	/**
-	 * Shall return whether the user shall be depredated the permission to edit
-	 * the value(s) on the screen.
-	 * 
-	 * @return whether the component shall be read-only
-	 */
-	boolean isReadonly();
-
-	/**
-	 * Shall return the metadata elements contained in this display element
-	 * backing bean.
-	 * 
-	 * @return the metadata elements contained in this bean
-	 */
-	List<? extends Metadata> toMetadata();
-
+	String getValue();
 }

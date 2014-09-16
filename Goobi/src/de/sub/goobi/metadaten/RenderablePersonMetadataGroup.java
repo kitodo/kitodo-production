@@ -176,9 +176,17 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		return result;
 	}
 
+	/**
+	 * Checks whether the configuration is consistent, thows a
+	 * ConfigurationException otherwise.
+	 * 
+	 * @throws ConfigurationException
+	 *             if one of the sub-fields was configured to display a
+	 *             multi-select metadatum
+	 */
 	private final void checkConfiguration() throws ConfigurationException {
 		for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
-			if (!(entry.getValue() instanceof SingleValueMetadatum)) {
+			if (!(entry.getValue() instanceof SingleValueRenderableMetadatum)) {
 				throw new ConfigurationException(entry.getKey()
 						+ " is configured to display a multi-select input element,"
 						+ " but the field cannot take multiple values.");
@@ -186,11 +194,24 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 	}
 
-	private SingleValueMetadatum getField(Field field) {
+	/**
+	 * Returns a specific sub-field of the person record.
+	 * 
+	 * @param field
+	 *            field to return
+	 * @return the field selected
+	 */
+	private SingleValueRenderableMetadatum getField(Field field) {
 		String key = metadataType.getName() + '.' + field.toString();
-		return (SingleValueMetadatum) members.get(key);
+		return (SingleValueRenderableMetadatum) members.get(key);
 	}
 
+	/**
+	 * Returns the value of this person as metadata element
+	 * 
+	 * @return a list with one person element with the value of this component
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+	 */
 	@Override
 	public List<Person> toMetadata() {
 		List<Person> result = new ArrayList<Person>(1);

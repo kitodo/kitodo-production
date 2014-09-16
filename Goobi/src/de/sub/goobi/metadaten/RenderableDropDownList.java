@@ -60,8 +60,11 @@ import ugh.dl.MetadataType;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum,
-		SingleValueMetadatum {
+		SingleValueRenderableMetadatum {
 
+	/**
+	 * A list holding the items to display in the drop-down list.
+	 */
 	private final ArrayList<Item> items;
 
 	/**
@@ -88,7 +91,6 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * Returns the available items for the the user to choose from.
 	 * 
 	 * @return the items to choose from
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
@@ -107,7 +109,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * yet the first available item will be selected.
 	 * 
 	 * @return the identifier of the selected item
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
 	@Override
 	public String getValue() {
@@ -122,9 +124,9 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Uses the passed in identifier of the item to be selected to find the firt
-	 * items in the item list in order to mark it as selected and to mark all
-	 * other items in the item list as not selected.
+	 * Uses the passed-in identifier of the item to be selected to find the
+	 * first items in the item list in order to mark it as selected and to mark
+	 * all other items in the item list as not selected.
 	 * 
 	 * @param value
 	 *            identifier of the item to be marked as selected
@@ -144,6 +146,13 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 		}
 	}
 
+	/**
+	 * Returns a metadata element that contains the value selected in the
+	 * drop-down list.
+	 * 
+	 * @return the selected value as metadata element
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+	 */
 	@Override
 	public List<Metadata> toMetadata() {
 		List<Metadata> result = new ArrayList<Metadata>(1);

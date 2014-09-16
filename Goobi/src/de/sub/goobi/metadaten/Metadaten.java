@@ -3052,8 +3052,9 @@ public class Metadaten {
     }
     
 	/**
-	 * Save the input, then leave the subpage to add a new metadata group and
-	 * toggle the form to show the page “Metadata”.
+	 * Saves the input from the subform to create a new metadata group in the
+	 * currently selected docStruct and then toggles the form to show the page
+	 * “Metadata”.
 	 * 
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
@@ -3082,7 +3083,7 @@ public class Metadaten {
 
 	/**
 	 * Returns whether the metadata editor is showing the subpage to add a new
-	 * metadata group
+	 * metadata group.
 	 * 
 	 * @return whether the page to add a new metadata group shows
 	 */
@@ -3092,7 +3093,7 @@ public class Metadaten {
 
 	/**
 	 * Returns whether the metadata editor is showing a link to open the subpage
-	 * to add a new metadata group
+	 * to add a new metadata group.
 	 * 
 	 * @return whether the link to add a new metadata group shows
 	 */
@@ -3101,7 +3102,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * Toggle the form to show the subpage to add a new metadata group.
+	 * Toggles the form to show the subpage to add a new metadata group.
 	 * 
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
@@ -3123,8 +3124,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Leave the subpage to add a new metadata group without saving any input
-	 * and toggle the form to show the page “Metadata”.
+	 * Leaves the subpage to add a new metadata group without saving any input
+	 * and toggles the form to show the page “Metadata”.
 	 * 
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock

@@ -104,11 +104,18 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * Creates a new RenderableMetadataGroup with exactly one type only.
 	 * 
 	 * @param metadataType
+	 *            metadata type this element is for
 	 * @param container
+	 *            metedata group this element belongs to
 	 * @param type
+	 *            group type of the element to create
 	 * @param projectName
+	 *            name of the project the act belongs to
 	 * @param bindState
+	 *            whether the metadata group is about to be created or edited
 	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
 	 */
 	protected RenderableMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
 			MetadataGroupType type, String projectName, BindState bindState) throws ConfigurationException {
@@ -131,6 +138,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
+	 * Returns the number of elements in the members list, to be used for the
+	 * label cell height in HTML.
 	 * 
 	 * @return the number of elements in the members list.
 	 */

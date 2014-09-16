@@ -50,7 +50,8 @@ import ugh.dl.MetadataType;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum, SingleValueMetadatum {
+public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
+		SingleValueRenderableMetadatum {
 
 	private String value;
 
@@ -69,7 +70,9 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	/**
 	 * Returns the edit field value.
 	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 * @return the value from or for the edit field
+	 * 
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
 	@Override
 	public String getValue() {
@@ -77,15 +80,24 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Saves the value entered by the user.
+	 * Sets the value or saves the value entered by the user.
 	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 * @param value
+	 *            value to set
+	 * 
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String value) {
 		this.value = value;
 	}
 
+	/**
+	 * Returns the value of this edit component as metadata element
+	 * 
+	 * @return a list with one metadata element with the value of this component
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+	 */
 	@Override
 	public List<Metadata> toMetadata() {
 		List<Metadata> result = new ArrayList<Metadata>(1);
