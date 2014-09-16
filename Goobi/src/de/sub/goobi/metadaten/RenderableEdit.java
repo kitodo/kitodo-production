@@ -50,7 +50,7 @@ import ugh.dl.MetadataType;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum, SingleValueMetadatum {
 
 	private String value;
 
@@ -71,6 +71,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
+	@Override
 	public String getValue() {
 		return value != null ? value : "";
 	}
@@ -80,6 +81,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) {
 		this.value = value;
 	}

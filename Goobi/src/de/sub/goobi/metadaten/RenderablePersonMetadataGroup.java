@@ -40,13 +40,17 @@ package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.enums.BindState;
+import org.goobi.production.constants.Parameters;
 
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
 /**
@@ -116,10 +120,15 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 * @param bindState
 	 *            whether the user is about to create the metadata group anew or
 	 *            edit a previously existing one
+	 * @throws ConfigurationException
+	 *             if one of the sub-fields was configured to display a
+	 *             multi-select metadatum
 	 */
 	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
-			String projectName, BindState bindState) {
+			String projectName, BindState bindState) throws ConfigurationException {
 		super(metadataType, container, getGroupTypeFor(metadataType), projectName, bindState);
+		checkConfiguration();
+		getField(Field.NORMDATA_RECORD).setValue(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
 	}
 
 	/**
@@ -167,6 +176,21 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		return result;
 	}
 
+	private final void checkConfiguration() throws ConfigurationException {
+		for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
+			if (!(entry.getValue() instanceof SingleValueMetadatum)) {
+				throw new ConfigurationException(entry.getKey()
+						+ " is configured to display a multi-select input element,"
+						+ " but the field cannot take multiple values.");
+			}
+		}
+	}
+
+	private SingleValueMetadatum getField(Field field) {
+		String key = metadataType.getName() + '.' + field.toString();
+		return (SingleValueMetadatum) members.get(key);
+	}
+
 	@Override
 	public List<Person> toMetadata() {
 		List<Person> result = new ArrayList<Person>(1);
@@ -176,24 +200,15 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		} catch (MetadataTypeNotAllowedException e) {
 			throw new NullPointerException(e.getMessage());
 		}
-		String normdataRecord = getFieldValue(Field.NORMDATA_RECORD);
-		if (normdataRecord != null & normdataRecord.length() > 0) {
+		String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
+		if (normdataRecord != null & normdataRecord.length() > 0
+				&& !normdataRecord.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
 			String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
 			person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
 		}
-		person.setFirstname(getFieldValue(Field.FIRSTNAME));
-		person.setLastname(getFieldValue(Field.LASTNAME));
+		person.setFirstname(getField(Field.FIRSTNAME).getValue());
+		person.setLastname(getField(Field.LASTNAME).getValue());
 		result.add(person);
 		return result;
-	}
-
-	private String getFieldValue(Field field) {
-		String key = metadataType.getName() + '.' + field.toString();
-		return members.get(key).getValue();
-	}
-
-	@Override
-	public String getValue() {
-		throw new UnsupportedOperationException();
 	}
 }

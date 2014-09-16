@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.enums.BindState;
 
 import ugh.dl.Metadata;
@@ -85,8 +86,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 *            belongs to
 	 * @param bindState
 	 *            whether the metadata group is created anew or being edited
+	 * @throws ConfigurationException
 	 */
-	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState) {
+	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState)
+			throws ConfigurationException {
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
@@ -105,9 +108,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @param type
 	 * @param projectName
 	 * @param bindState
+	 * @throws ConfigurationException
 	 */
 	protected RenderableMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
-			MetadataGroupType type, String projectName, BindState bindState) {
+			MetadataGroupType type, String projectName, BindState bindState) throws ConfigurationException {
 		super(metadataType, container);
 		possibleTypes = Collections.emptyMap();
 		this.type = type;
@@ -197,8 +201,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * 
 	 * @param type
 	 *            name of the metadata group type desired
+	 * @throws ConfigurationException
 	 */
-	public void setType(String type) {
+	public void setType(String type) throws ConfigurationException {
 		if (possibleTypes.isEmpty()) {
 			return;
 		}
@@ -221,14 +226,16 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		try {
 			result = new MetadataGroup(type);
 		} catch (MetadataTypeNotAllowedException e) {
-			throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation");
+			throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation.");
 		}
+		result.getMetadataList().clear();
+
 		for (RenderableGroupableMetadatum member : members.values()) {
-			for (Metadata x : member.toMetadata()) {
+			for (Metadata element : member.toMetadata()) {
 				if (member instanceof RenderablePersonMetadataGroup) {
-					result.addPerson(((Person) x));
+					result.addPerson(((Person) element));
 				} else {
-					result.addMetadata(x);
+					result.addMetadata(element);
 				}
 			}
 
@@ -245,8 +252,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @param newGroupType
 	 *            metadata group type to initialize this renderable metadata
 	 *            group to
+	 * @throws ConfigurationException
 	 */
-	private void updateMembers(MetadataGroupType newGroupType) {
+	private void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
 		List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();
 		Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupableMetadatum>(
 				Util.mapCapacityFor(requiredMetadataTypes));

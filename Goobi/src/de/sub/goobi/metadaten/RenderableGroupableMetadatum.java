@@ -81,12 +81,10 @@ interface RenderableGroupableMetadatum {
 	boolean isReadonly();
 
 	/**
-	 * Shall return the metadata elements contained in this renderable metadata
-	 * group.
+	 * Shall return the metadata elements contained in this metadatum.
 	 * 
 	 * @return
 	 */
 	List<? extends Metadata> toMetadata();
 
-	String getValue();
 }

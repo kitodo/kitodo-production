@@ -38,6 +38,7 @@
  */
 package de.sub.goobi.metadaten;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
@@ -101,10 +102,11 @@ public abstract class RenderableMetadatum {
 	 * @param projectName
 	 * @param bindState
 	 * @return a backing bean to render the metadatum
+	 * @throws ConfigurationException
 	 */
 	public static RenderableGroupableMetadatum create(MetadataType metadataType,
  RenderableMetadataGroup container,
-			String projectName, BindState bindState) {
+			String projectName, BindState bindState) throws ConfigurationException {
 		if (metadataType.getIsPerson()) {
 			return new RenderablePersonMetadataGroup(metadataType, container, projectName, bindState);
 		}

@@ -53,7 +53,8 @@ import ugh.dl.MetadataType;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
+		SingleValueMetadatum {
 	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
 	private static final String METADATA_LINE_SEPARATOR = "\n";
 	private List<String> value;
@@ -75,6 +76,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
+	@Override
 	public String getValue() {
 		if (value != null) {
 			return StringUtils.join(value, HTML_TEXTAREA_LINE_SEPARATOR);
@@ -88,6 +90,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) {
 		this.value = Arrays.asList(value.split(HTML_TEXTAREA_LINE_SEPARATOR));
 	}

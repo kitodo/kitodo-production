@@ -46,6 +46,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -3107,11 +3108,17 @@ public class Metadaten {
 	 *         time is up and the user must leave the editor and open it anew
 	 */
 	public String showAddNewMetadataGroup() {
+		try {
+			newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes(), myProzess
+					.getProjekt().getTitel(), BindState.create);
+		} catch (ConfigurationException e) {
+			Helper.setFehlerMeldung("Form_configuration_mismatch", e.getMessage());
+			myLogger.error(e.getMessage());
+			return "";
+		}
 		modusHinzufuegen = false;
 		modusHinzufuegenPerson = false;
 		addMetadataGroupMode = true;
-		newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes(), myProzess
-				.getProjekt().getTitel(), BindState.create);
 		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
 	}
 

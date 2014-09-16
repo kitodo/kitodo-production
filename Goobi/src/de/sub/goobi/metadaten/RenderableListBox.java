@@ -139,9 +139,4 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		}
 		return result;
 	}
-
-	@Override
-	public String getValue() {
-		throw new UnsupportedOperationException();
-	}
 }

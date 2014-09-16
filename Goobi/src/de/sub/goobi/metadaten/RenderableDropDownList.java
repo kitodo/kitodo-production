@@ -59,7 +59,8 @@ import ugh.dl.MetadataType;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum,
+		SingleValueMetadatum {
 
 	private final ArrayList<Item> items;
 
@@ -108,6 +109,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * @return the identifier of the selected item
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
 	 */
+	@Override
 	public String getValue() {
 		for (Item item : items) {
 			if (item.getIsSelected()) {
@@ -129,6 +131,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) {
 		boolean search = true;
 		for (Item item : items) {
