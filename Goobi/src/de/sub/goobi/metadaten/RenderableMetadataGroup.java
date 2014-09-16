@@ -90,6 +90,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
 			throws ConfigurationException {
+		super(addableTypes.iterator().next().getAllLanguages());
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
@@ -117,6 +118,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	public RenderableMetadataGroup(MetadataGroup data, String language, String projectName)
 			throws ConfigurationException {
+		super(data.getType().getAllLanguages());
 		this.possibleTypes = Collections.emptyMap();
 		this.type = data.getType();
 		this.projectName = projectName;

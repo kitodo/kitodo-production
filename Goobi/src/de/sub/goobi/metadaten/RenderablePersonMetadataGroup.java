@@ -207,8 +207,12 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	public void addContent(Metadata data) {
 		if (data instanceof Person) {
 			Person personData = (Person) data;
-			getField(Field.LASTNAME).setValue(personData.getLastname());
-			getField(Field.FIRSTNAME).setValue(personData.getFirstname());
+			if (personData.getLastname() != null) {
+				getField(Field.LASTNAME).setValue(personData.getLastname());
+			}
+			if (personData.getFirstname() != null) {
+				getField(Field.FIRSTNAME).setValue(personData.getFirstname());
+			}
 			if (personData.getAuthorityURI() != null) {
 				getField(Field.NORMDATA_RECORD).setValue(personData.getAuthorityURI());
 			}

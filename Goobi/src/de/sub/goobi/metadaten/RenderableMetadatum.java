@@ -38,6 +38,8 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.Map;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
@@ -65,14 +67,16 @@ public abstract class RenderableMetadatum {
 	protected String language;
 	protected boolean readonly = false;
 	protected final MetadataType metadataType;
+	private final Map<String, String> labels;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata
 	 * group. A label isn’t needed in this case. This constructor must be used
 	 * by all successors that do not implement RenderableGroupableMetadatum.
 	 */
-	protected RenderableMetadatum() {
+	protected RenderableMetadatum(Map<String, String> labels) {
 		metadataType = null;
+		this.labels = labels;
 	}
 
 	/**
@@ -87,6 +91,7 @@ public abstract class RenderableMetadatum {
 	 */
 	protected RenderableMetadatum(MetadataType metadataType, RenderableMetadataGroup container) {
 		this.metadataType = metadataType;
+		this.labels = metadataType.getAllLanguages();
 		this.container = container;
 	}
 
@@ -139,7 +144,7 @@ public abstract class RenderableMetadatum {
 	 * @return the translated label of the metadatum
 	 */
 	public String getLabel() {
-		return metadataType.getNameByLanguage(language);
+		return labels.get(language);
 	}
 
 	/**
