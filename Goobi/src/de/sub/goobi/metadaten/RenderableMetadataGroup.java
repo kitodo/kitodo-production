@@ -84,11 +84,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @param projectName
 	 *            project that the process whose metadata group is to edit
 	 *            belongs to
-	 * @param bindState
-	 *            whether the metadata group is created anew or being edited
 	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
 	 */
-	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName, BindState bindState)
+	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
 			throws ConfigurationException {
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
@@ -96,8 +96,33 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		}
 		type = addableTypes.iterator().next();
 		this.projectName = projectName;
-		this.bindState = bindState;
+		this.bindState = BindState.create;
 		updateMembers(type);
+	}
+
+	/**
+	 * Creates a new RenderableMetadataGroup, populated with the data from the
+	 * given metadata group.
+	 * 
+	 * @param data
+	 *            metadata group whose data shall be shown
+	 * @param language
+	 *            display language to use
+	 * @param projectName
+	 *            project that the process whose metadata group is to edit
+	 *            belongs to
+	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
+	 */
+	public RenderableMetadataGroup(MetadataGroup data, String language, String projectName)
+			throws ConfigurationException {
+		this.possibleTypes = Collections.emptyMap();
+		this.type = data.getType();
+		this.projectName = projectName;
+		this.bindState = BindState.edit;
+		createMembers(data);
+		setLanguage(language);
 	}
 
 	/**
@@ -125,6 +150,30 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		this.projectName = projectName;
 		this.bindState = bindState;
 		updateMembers(type);
+	}
+
+	/**
+	 * Creates the members for the metadata group.
+	 * 
+	 * @param data
+	 *            metadata group whose data shall be shown
+	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
+	 */
+	private final void createMembers(MetadataGroup data) throws ConfigurationException {
+		List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
+		members = new LinkedHashMap<String, RenderableGroupableMetadatum>(Util.mapCapacityFor(requiredFields));
+		for (MetadataType createField : requiredFields) {
+			RenderableGroupableMetadatum member = RenderableMetadatum.create(createField, this, projectName, bindState);
+			members.put(createField.getName(), member);
+		}
+		for (Metadata contentValue : data.getMetadataList()) {
+			members.get(contentValue.getType().getName()).addContent(contentValue);
+		}
+		for (Person contentValue : data.getPersonList()) {
+			members.get(contentValue.getType().getName()).addContent(contentValue);
+		}
 	}
 
 	/**
@@ -263,7 +312,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 *            group to
 	 * @throws ConfigurationException
 	 */
-	private void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
+	private final void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
 		List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();
 		Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupableMetadatum>(
 				Util.mapCapacityFor(requiredMetadataTypes));

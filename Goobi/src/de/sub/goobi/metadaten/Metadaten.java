@@ -64,6 +64,7 @@ import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
@@ -3070,6 +3071,29 @@ public class Metadaten {
 	}
 
 	/**
+	 * Returns a list with backing beans for all metadata groups available for
+	 * the structural element under edit.
+	 * 
+	 * @return backing beans for the metadata groups of the current element
+	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
+	 */
+	public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
+		List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
+		if (records == null) {
+			return Collections.emptyList();
+		}
+		List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
+		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		String projectName = myProzess.getProjekt().getTitel();
+		for (MetadataGroup record : records) {
+			result.add(new RenderableMetadataGroup(record, language, projectName));
+		}
+		return result;
+	}
+
+	/**
 	 * Returns a backing bean object to display the form to create a new
 	 * metadata group.
 	 * 
@@ -3111,7 +3135,7 @@ public class Metadaten {
 	public String showAddNewMetadataGroup() {
 		try {
 			newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes(), myProzess
-					.getProjekt().getTitel(), BindState.create);
+					.getProjekt().getTitel());
 		} catch (ConfigurationException e) {
 			Helper.setFehlerMeldung("Form_configuration_mismatch", e.getMessage());
 			myLogger.error(e.getMessage());

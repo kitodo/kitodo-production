@@ -88,6 +88,18 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
+	 * Adds the data passed from the metadata element as content to the input.
+	 * This will overwrite any previously set value.
+	 * 
+	 * @param data
+	 *            data to add
+	 */
+	@Override
+	public void addContent(Metadata data) {
+		setValue(data.getValue());
+	}
+
+	/**
 	 * Returns the available items for the the user to choose from.
 	 * 
 	 * @return the items to choose from

@@ -46,6 +46,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.production.constants.Parameters;
 
+import ugh.dl.Metadata;
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
@@ -190,6 +191,32 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 				throw new ConfigurationException(entry.getKey()
 						+ " is configured to display a multi-select input element,"
 						+ " but the field cannot take multiple values.");
+			}
+		}
+	}
+
+	/**
+	 * Add the data passed from the metadata element as content to the person
+	 * record.
+	 * 
+	 * @param data
+	 *            data to add
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
+	 */
+	@Override
+	public void addContent(Metadata data) {
+		if (data instanceof Person) {
+			Person personData = (Person) data;
+			getField(Field.LASTNAME).setValue(personData.getLastname());
+			getField(Field.FIRSTNAME).setValue(personData.getFirstname());
+			if (personData.getAuthorityURI() != null) {
+				getField(Field.NORMDATA_RECORD).setValue(personData.getAuthorityURI());
+			}
+		} else {
+			String[] lastNameFirstName = data.getValue().split(", ", 2);
+			getField(Field.LASTNAME).setValue(lastNameFirstName[0]);
+			if (lastNameFirstName.length > 1) {
+				getField(Field.FIRSTNAME).setValue(lastNameFirstName[1]);
 			}
 		}
 	}

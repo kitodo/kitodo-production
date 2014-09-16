@@ -119,6 +119,78 @@
 
 	<%-- ########################################
 
+            table to display metadata groups
+
+    #########################################--%>
+	<h:panelGroup rendered="#{!empty Metadaten.myGroups}">
+
+		<htm:h4 style="margin-top:0px;margin-bottom:1px">
+			<h:outputText value="#{msgs.metadataGroups}" />
+		</htm:h4>
+		
+		<htm:table>
+			<x:dataList var="aGroup" value="#{Metadaten.myGroups}" layout="simple">
+				<x:dataList var="member" value="#{aGroup.members}" layout="simple">
+					<htm:tr rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
+						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="eingabeBoxen_row2 mdgroup">
+							<h:outputText value="#{aGroup.label}:" />
+						</htm:td>
+						<htm:td styleClass="eingabeBoxen_row2 mdgroup">
+							<h:outputText value="#{member.label}:" />
+						</htm:td>
+						<htm:td colspan="2" styleClass="eingabeBoxen_row2 mdgroup">
+							<h:inputTextarea value="#{member.value}"
+								rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
+							<h:inputText value="#{member.value}"
+								rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}" />
+							<h:selectManyListbox value="#{member.value}"
+								rendered="#{member.class.simpleName == 'RenderableListBox'}">
+								<f:selectItems value="#{member.items}" />
+							</h:selectManyListbox>
+							<h:selectOneMenu value="#{member.value}"
+								rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
+								<f:selectItems value="#{member.items}" />
+							</h:selectOneMenu>
+							<h:outputText id="myOutput" value="#{member.value}"
+								rendered="#{member.class.simpleName == 'RenderableEdit' && member.readonly}" />
+						</htm:td>
+					</htm:tr>
+					<x:dataList var="innerMember" value="#{member.members}" rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
+						<htm:tr>
+							<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="eingabeBoxen_row2 mdgroup">
+								<h:outputText value="#{member.label}:" />
+							</htm:td>
+							<htm:td styleClass="eingabeBoxen_row2 mdgroup">
+								<h:outputText value="#{innerMember.label}:" />
+							</htm:td>
+							<htm:td styleClass="eingabeBoxen_row2 mdgroup">
+								<h:inputTextarea value="#{innerMember.value}"
+									rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
+								<h:inputText value="#{innerMember.value}"
+									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}" />
+								<h:selectManyListbox value="#{innerMember.value}"
+									rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
+									<f:selectItems value="#{innerMember.items}" />
+								</h:selectManyListbox>
+								<h:selectOneMenu value="#{innerMember.value}"
+									rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
+									<f:selectItems value="#{innerMember.items}" />
+								</h:selectOneMenu>
+								<h:outputText id="myOutput" value="#{innerMember.value}"
+									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}" />
+							</htm:td>
+						</htm:tr>
+					</x:dataList>
+					<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="eingabeBoxen_row2 mdgroup">
+						<h:outputText value="BUTTONS HERE" />
+					</htm:td>					
+				</x:dataList>
+			</x:dataList>
+		</htm:table>
+	</h:panelGroup>
+
+	<%-- ########################################
+
                                                  Tabelle fuer die Metadaten
 
  		#########################################--%>

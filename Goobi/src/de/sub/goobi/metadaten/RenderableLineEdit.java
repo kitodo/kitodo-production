@@ -72,6 +72,23 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	}
 
 	/**
+	 * Adds the data passed from the metadata element as content to the input.
+	 * If there is data already (shouldn’t be, but however) it is appended for
+	 * not being lost.
+	 * 
+	 * @param data
+	 *            data to add
+	 */
+	@Override
+	public void addContent(Metadata data) {
+		if (value == null) {
+			value = Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR));
+		} else {
+			value.addAll(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
+		}
+	}
+
+	/**
 	 * Returns the edit field value.
 	 * 
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()

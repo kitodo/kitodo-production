@@ -44,8 +44,8 @@ import ugh.dl.Metadata;
 
 /**
  * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
- * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can be
- * a RenderablePersonMetadataGroup—which is a special case of a
+ * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can
+ * be a RenderablePersonMetadataGroup—which is a special case of a
  * RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
  * 
  * Java interfaces are always public and this interface holds the public methods
@@ -56,6 +56,15 @@ import ugh.dl.Metadata;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 interface RenderableGroupableMetadatum {
+
+	/**
+	 * Shall add the data passed from the metadata element as content to the
+	 * element.
+	 * 
+	 * @param data
+	 *            data to add
+	 */
+	void addContent(Metadata data);
 
 	/**
 	 * Shall return the label for the metadatum in the language previously set.
@@ -87,5 +96,4 @@ interface RenderableGroupableMetadatum {
 	 * @return the metadata elements contained in this bean
 	 */
 	List<? extends Metadata> toMetadata();
-
 }

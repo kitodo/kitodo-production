@@ -86,6 +86,22 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	}
 
 	/**
+	 * Selects all items whose values are equal to the value to set.
+	 * 
+	 * @param data
+	 *            data to add
+	 */
+	@Override
+	public void addContent(Metadata data) {
+		String valueToSet = data.getValue();
+		for (Item item : items) {
+			if (valueToSet.equals(item.getValue())) {
+				item.setIsSelected(true);
+			}
+		}
+	}
+
+	/**
 	 * Returns the available items for the the user to choose from.
 	 * 
 	 * @return the items to choose from

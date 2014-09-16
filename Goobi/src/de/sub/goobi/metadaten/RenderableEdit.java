@@ -68,6 +68,23 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
+	 * Adds the data passed from the metadata element as content to the input.
+	 * If there is data already (shouldn’t be, but however) it is appended for
+	 * not being lost.
+	 * 
+	 * @param data
+	 *            data to add
+	 */
+	@Override
+	public void addContent(Metadata data) {
+		if (value == null || value.length() == 0) {
+			value = data.getValue();
+		} else {
+			value += "; " + data.getValue();
+		}
+	}
+
+	/**
 	 * Returns the edit field value.
 	 * 
 	 * @return the value from or for the edit field
