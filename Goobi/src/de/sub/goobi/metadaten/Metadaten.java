@@ -3088,7 +3088,7 @@ public class Metadaten {
 		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 		String projectName = myProzess.getProjekt().getTitel();
 		for (MetadataGroup record : records) {
-			result.add(new RenderableMetadataGroup(record, language, projectName));
+			result.add(new RenderableMetadataGroup(record, this, language, projectName));
 		}
 		return result;
 	}
@@ -3123,6 +3123,33 @@ public class Metadaten {
 	 */
 	public boolean isAddNewMetadataGroupLinkShowing() {
 		return myDocStruct.getAddableMetadataGroupTypes() != null;
+	}
+
+	/**
+	 * Deletes the metadata group
+	 * 
+	 * @param metadataGroup
+	 *            metadata group to delete.
+	 */
+	void removeMetadataGroupFromCurrentDocStruct(MetadataGroup metadataGroup) {
+		myDocStruct.removeMetadataGroup(metadataGroup);
+	}
+
+	/**
+	 * Toggles the form to show the subpage to add a new metadata group. The
+	 * form is prepared with the values from the metadata group that the copy
+	 * mode was called from.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
+	String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+		newMetadataGroup = new RenderableMetadataGroup(master, myDocStruct.getAddableMetadataGroupTypes());
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = true;
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
 	}
 
 	/**

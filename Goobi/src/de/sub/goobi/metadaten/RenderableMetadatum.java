@@ -67,7 +67,7 @@ public abstract class RenderableMetadatum {
 	protected String language;
 	protected boolean readonly = false;
 	protected final MetadataType metadataType;
-	private final Map<String, String> labels;
+	public final Map<String, String> labels;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata

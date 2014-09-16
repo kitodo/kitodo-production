@@ -75,6 +75,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	private MetadataGroupType type;
 	private final String projectName;
 	private final BindState bindState;
+	private final MetadataGroup metadataGroup;
+	private final Metadaten container;
 
 	/**
 	 * Creates a new RenderableMetadataGroup.
@@ -98,6 +100,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		type = addableTypes.iterator().next();
 		this.projectName = projectName;
 		this.bindState = BindState.create;
+		this.metadataGroup = null;
+		this.container = null;
 		updateMembers(type);
 	}
 
@@ -107,6 +111,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * 
 	 * @param data
 	 *            metadata group whose data shall be shown
+	 * @param metadaten
 	 * @param language
 	 *            display language to use
 	 * @param projectName
@@ -116,13 +121,15 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 *             if a single value metadata field is configured to show a
 	 *             multi-select input
 	 */
-	public RenderableMetadataGroup(MetadataGroup data, String language, String projectName)
+	public RenderableMetadataGroup(MetadataGroup data, Metadaten container, String language, String projectName)
 			throws ConfigurationException {
 		super(data.getType().getAllLanguages());
 		this.possibleTypes = Collections.emptyMap();
 		this.type = data.getType();
 		this.projectName = projectName;
 		this.bindState = BindState.edit;
+		this.metadataGroup = data;
+		this.container = container;
 		createMembers(data);
 		setLanguage(language);
 	}
@@ -151,10 +158,27 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		this.type = type;
 		this.projectName = projectName;
 		this.bindState = bindState;
+		this.metadataGroup = null;
+		this.container = null;
 		updateMembers(type);
 	}
 
-	public void copy() {
+	public RenderableMetadataGroup(RenderableMetadataGroup master, List<MetadataGroupType> addableTypes) {
+		super(master.labels);
+		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
+		for (MetadataGroupType possibleType : addableTypes) {
+			possibleTypes.put(possibleType.getName(), possibleType);
+		}
+		type = master.type;
+		this.projectName = master.projectName;
+		this.bindState = BindState.create;
+		this.metadataGroup = null;
+		this.container = null;
+		try {
+			createMembers(master.toMetadataGroup());
+		} catch (ConfigurationException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	/**
@@ -181,7 +205,15 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		}
 	}
 
+	public void copy() {
+		container.showAddMetadataGroupAsCopy(this);
+	}
+
+	/**
+	 * Deletes this metadata group.
+	 */
 	public void delete() {
+		container.removeMetadataGroupFromCurrentDocStruct(metadataGroup);
 	}
 
 	/**
