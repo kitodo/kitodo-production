@@ -154,6 +154,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		updateMembers(type);
 	}
 
+	public void copy() {
+	}
+
 	/**
 	 * Creates the members for the metadata group.
 	 * 
@@ -178,6 +181,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		}
 	}
 
+	public void delete() {
+	}
+
 	/**
 	 * The function getMembers returns the input elements of this metadata
 	 * group.
@@ -195,7 +201,15 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 * @return the number of elements in the members list.
 	 */
 	public String getRowspan() {
-		return Integer.toString(members.values().size());
+		int result = 0;
+		for (RenderableGroupableMetadatum member : members.values()) {
+			if (member instanceof RenderableMetadataGroup) {
+				result += Integer.parseInt(((RenderableMetadataGroup) member).getRowspan());
+			} else {
+				result += 1;
+			}
+		}
+		return Integer.toString(result);
 	}
 
 	/**
