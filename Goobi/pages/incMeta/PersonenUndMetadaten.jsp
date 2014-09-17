@@ -133,10 +133,10 @@
 				<x:dataList var="member" value="#{aGroup.members}" layout="simple">
 					<htm:tr rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
 						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
-							<h:outputText value="#{aGroup.label}:" />
+							<h:outputText value="#{aGroup.label}" />
 						</htm:td>
 						<htm:td styleClass="mdgroup">
-							<h:outputText value="#{member.label}:" />
+							<h:outputText value="#{member.label}" />
 						</htm:td>
 						<htm:td colspan="2" styleClass="mdgroup">
 							<h:inputTextarea value="#{member.value}" styleClass="metadatenInput"
@@ -166,13 +166,13 @@
 					<x:dataList var="innerMember" value="#{member.members}" rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
 						<htm:tr>
 							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
-								<h:outputText value="#{aGroup.label}:" />
+								<h:outputText value="#{aGroup.label}" />
 							</htm:td>
 							<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="mdgroup">
-								<h:outputText value="#{member.label}:" />
+								<h:outputText value="#{member.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
-								<h:outputText value="#{innerMember.label}:" />
+								<h:outputText value="#{innerMember.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
 								<h:inputTextarea value="#{innerMember.value}" styleClass="metadatenInput"
@@ -201,6 +201,11 @@
 						</htm:tr>
 					</x:dataList>
 				</x:dataList>
+				<htm:tr>
+					<htm:td styleClass="mdgroupBorderBox" colspan="5">
+						<h:outputText value="&nbsp;" escape="false" />
+					</htm:td>
+				</htm:tr>
 			</x:dataList>
 		</htm:table>
 	</h:panelGroup>

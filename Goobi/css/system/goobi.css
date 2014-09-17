@@ -292,3 +292,8 @@
 .mdgroup select {
     width: 100%;
 }
+
+.mdgroupBorderBox {
+    border-top: 1px solid #4b4b98;
+    font-size: 0;
+ }
