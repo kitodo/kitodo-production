@@ -40,7 +40,6 @@ package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -52,7 +51,6 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
-import de.sub.goobi.helper.Util;
 
 /**
  * A RenderableListBox is a backing bean for a list style select element to edit
@@ -85,7 +83,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 				metadataType.getName(), DisplayType.select);
 		if (binding != null) {
 			List<Metadata> elements = binding.getMetadataByType(metadataType.getName());
-			HashSet<String> selected = new HashSet<String>(Util.mapCapacityFor(elements));
+			List<String> selected = new ArrayList<String>(elements.size());
 			for (Metadata m : elements) {
 				selected.add(m.getValue());
 			}
@@ -129,10 +127,12 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * @return the items currently selected
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
-	public Collection<String> getSelectedItems() {
-		HashSet<String> result = new HashSet<String>(Util.mapCapacityFor(items));
+	public List<String> getSelectedItems() {
+		List<String> result = new ArrayList<String>(items.size());
 		for (Item item : items) {
-			result.add(item.getValue());
+			if (item.getIsSelected()) {
+				result.add(item.getValue());
+			}
 		}
 		return result;
 	}
@@ -145,11 +145,9 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 *            list of identifiers of items to be selected
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
 	 */
-	public void setSelectedItems(Collection<String> selected) {
-		HashSet<String> selectedSet = selected instanceof HashSet ? (HashSet<String>) selected : new HashSet<String>(
-				selected);
+	public void setSelectedItems(List<String> selected) {
 		for (Item item : items) {
-			item.setIsSelected(selectedSet.contains(item.getValue()));
+			item.setIsSelected(selected.contains(item.getValue()));
 		}
 		updateBinding();
 	}

@@ -144,17 +144,18 @@
 							<h:outputText value="#{member.label}" />
 						</htm:td>
 						<htm:td colspan="2" styleClass="mdgroup">
-							<h:inputTextarea value="#{member.value}" id="mdgroupInput1"
+							<h:inputTextarea value="#{member.value}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
-							<h:inputText value="#{member.value}" styleClass="metadatenInput" id="mdgroupInput2"
+							<h:inputText value="#{member.value}" styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}" />
-							<h:selectManyListbox value="#{member.value}" id="mdgroupInput3"
+							<h:selectManyListbox value="#{member.selectedItems}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableListBox'}">
 								<f:selectItems value="#{member.items}" />
+								<a4j:support event="onmouseup" requestDelay="1" />
 							</h:selectManyListbox>
-							<h:selectOneMenu value="#{member.value}" id="mdgroupInput4"
+							<h:selectOneMenu value="#{member.value}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
 								<f:selectItems value="#{member.items}" />
@@ -192,18 +193,19 @@
 								<h:outputText value="#{innerMember.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
-								<h:inputTextarea value="#{innerMember.value}" id="mdgroupInput5"
+								<h:inputTextarea value="#{innerMember.value}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
-								<h:inputText value="#{innerMember.value}" id="mdgroupInput6"
+								<h:inputText value="#{innerMember.value}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}" />
-								<h:selectManyListbox value="#{innerMember.value}" id="mdgroupInput7"
+								<h:selectManyListbox value="#{innerMember.selectedItems}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
 									<f:selectItems value="#{innerMember.items}" />
+									<a4j:support event="onmouseup" requestDelay="1" />
 								</h:selectManyListbox>
-								<h:selectOneMenu value="#{innerMember.value}" id="mdgroupInput8"
+								<h:selectOneMenu value="#{innerMember.value}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
 									<f:selectItems value="#{innerMember.items}" />
