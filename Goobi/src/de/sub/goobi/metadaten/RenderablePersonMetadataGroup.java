@@ -43,10 +43,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.goobi.api.display.enums.BindState;
 import org.goobi.production.constants.Parameters;
 
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
@@ -114,20 +114,20 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 * 
 	 * @param metadataType
 	 *            metadata type editable by this metadata group
-	 * @param container
+	 * @param binding
 	 *            metadata group this group is showing in
-	 * @param projectName
+	 * @param container
 	 *            project of the process owning this metadata group
-	 * @param bindState
+	 * @param projectName
 	 *            whether the user is about to create the metadata group anew or
 	 *            edit a previously existing one
 	 * @throws ConfigurationException
 	 *             if one of the sub-fields was configured to display a
 	 *             multi-select metadatum
 	 */
-	public RenderablePersonMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
-			String projectName, BindState bindState) throws ConfigurationException {
-		super(metadataType, container, getGroupTypeFor(metadataType), projectName, bindState);
+	public RenderablePersonMetadataGroup(MetadataType metadataType, MetadataGroup binding,
+			RenderableMetadataGroup container, String projectName) throws ConfigurationException {
+		super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
 		checkConfiguration();
 		getField(Field.NORMDATA_RECORD).setValue(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
 	}

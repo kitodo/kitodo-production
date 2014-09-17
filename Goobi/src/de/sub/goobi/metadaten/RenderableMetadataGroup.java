@@ -49,7 +49,6 @@ import java.util.Map.Entry;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.goobi.api.display.enums.BindState;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
@@ -74,7 +73,6 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	private final Map<String, MetadataGroupType> possibleTypes;
 	private MetadataGroupType type;
 	private final String projectName;
-	private final BindState bindState;
 	private final MetadataGroup metadataGroup;
 	private final Metadaten container;
 
@@ -92,14 +90,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
 			throws ConfigurationException {
-		super(addableTypes.iterator().next().getAllLanguages());
+		super(addableTypes.iterator().next().getAllLanguages(), null);
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
 		}
 		type = addableTypes.iterator().next();
 		this.projectName = projectName;
-		this.bindState = BindState.create;
 		this.metadataGroup = null;
 		this.container = null;
 		updateMembers(type);
@@ -123,11 +120,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 */
 	public RenderableMetadataGroup(MetadataGroup data, Metadaten container, String language, String projectName)
 			throws ConfigurationException {
-		super(data.getType().getAllLanguages());
+		super(data.getType().getAllLanguages(), data);
 		this.possibleTypes = Collections.emptyMap();
 		this.type = data.getType();
 		this.projectName = projectName;
-		this.bindState = BindState.edit;
 		this.metadataGroup = data;
 		this.container = container;
 		createMembers(data);
@@ -151,27 +147,26 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	 *             if a single value metadata field is configured to show a
 	 *             multi-select input
 	 */
-	protected RenderableMetadataGroup(MetadataType metadataType, RenderableMetadataGroup container,
-			MetadataGroupType type, String projectName, BindState bindState) throws ConfigurationException {
-		super(metadataType, container);
+	protected RenderableMetadataGroup(MetadataType metadataType, MetadataGroup binding,
+			RenderableMetadataGroup container, MetadataGroupType type, String projectName)
+			throws ConfigurationException {
+		super(metadataType, binding, container);
 		possibleTypes = Collections.emptyMap();
 		this.type = type;
 		this.projectName = projectName;
-		this.bindState = bindState;
 		this.metadataGroup = null;
 		this.container = null;
 		updateMembers(type);
 	}
 
 	public RenderableMetadataGroup(RenderableMetadataGroup master, List<MetadataGroupType> addableTypes) {
-		super(master.labels);
+		super(master.labels, null);
 		possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.mapCapacityFor(addableTypes));
 		for (MetadataGroupType possibleType : addableTypes) {
 			possibleTypes.put(possibleType.getName(), possibleType);
 		}
 		type = master.type;
 		this.projectName = master.projectName;
-		this.bindState = BindState.create;
 		this.metadataGroup = null;
 		this.container = null;
 		try {
@@ -196,9 +191,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		for (MetadataType createField : requiredFields) {
 			RenderableGroupableMetadatum member;
 			if (!(this instanceof RenderablePersonMetadataGroup)) {
-				member = RenderableMetadatum.create(createField, this, projectName, bindState);
+				member = RenderableMetadatum.create(createField, binding, this, projectName);
 			} else {
-				member = new RenderableEdit(createField, this);
+				member = new RenderableEdit(createField, binding, this);
 			}
 			members.put(createField.getName(), member);
 		}
@@ -373,9 +368,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 			RenderableGroupableMetadatum member = members.get(type.getName());
 			if (member == null) {
 				if (!(this instanceof RenderablePersonMetadataGroup)) {
-					member = RenderableMetadatum.create(type, this, projectName, bindState);
+					member = RenderableMetadatum.create(type, binding, this, projectName);
 				} else {
-					member = new RenderableEdit(type, this);
+					member = new RenderableEdit(type, binding, this);
 				}
 			}
 			newMembers.put(type.getName(), member);

@@ -46,11 +46,11 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
-import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import de.sub.goobi.helper.Util;
 
@@ -78,10 +78,10 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 *            whether the user is about to create the metadatum anew or edit
 	 *            a previously existing one
 	 */
-	public RenderableListBox(MetadataType metadataType, RenderableMetadataGroup container, String projectName,
-			BindState bindState) {
-		super(metadataType, container);
-		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, bindState.getTitle(),
+	public RenderableListBox(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
+			String projectName) {
+		super(metadataType, binding, container);
+		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
 				metadataType.getName(), DisplayType.select);
 	}
 

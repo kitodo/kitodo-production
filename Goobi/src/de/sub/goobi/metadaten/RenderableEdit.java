@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
@@ -63,8 +64,13 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * @param container
 	 *            metadata group this drop-down list is showing in
 	 */
-	public RenderableEdit(MetadataType metadataType, RenderableMetadataGroup container) {
-		super(metadataType, container);
+	public RenderableEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
+		super(metadataType, binding, container);
+		if (binding != null) {
+			for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+				addContent(data);
+			}
+		}
 	}
 
 	/**
@@ -107,6 +113,12 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	@Override
 	public void setValue(String value) {
 		this.value = value;
+
+		if (binding != null) {
+			List<Metadata> bound = binding.getMetadataList();
+			bound.removeAll(binding.getMetadataByType(metadataType.getName()));
+			bound.addAll(toMetadata());
+		}
 	}
 
 	/**

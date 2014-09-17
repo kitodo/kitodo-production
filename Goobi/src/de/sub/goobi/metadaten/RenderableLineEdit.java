@@ -45,6 +45,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
@@ -67,8 +68,8 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 * @param container
 	 *            metadata group this drop-down list is showing in
 	 */
-	public RenderableLineEdit(MetadataType metadataType, RenderableMetadataGroup container) {
-		super(metadataType, container);
+	public RenderableLineEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
+		super(metadataType, binding, container);
 	}
 
 	/**
