@@ -38,11 +38,14 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.BindState;
+import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
 import ugh.dl.Metadata;
@@ -235,9 +238,21 @@ public abstract class RenderableMetadatum {
 	}
 
 	protected void updateBinding() {
-		List<Metadata> bound = binding.getMetadataList();
-		bound.removeAll(binding.getMetadataByType(metadataType.getName()));
-		bound.addAll(((RenderableGroupableMetadatum) this).toMetadata());
+		if (binding != null) {
+			List<Metadata> bound = binding.getMetadataList();
+			bound.removeAll(binding.getMetadataByType(metadataType.getName()));
+			bound.addAll(((RenderableGroupableMetadatum) this).toMetadata());
+		}
+	}
+
+	protected final ArrayList<Item> getItems(String projectName, DisplayType type) {
+		ArrayList<Item> prototypes = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
+				metadataType.getName(), type);
+		ArrayList<Item> result = new ArrayList<Item>(prototypes.size());
+		for (Item item : prototypes) {
+			result.add(new Item(item.getLabel(), item.getValue(), item.getIsSelected()));
+		}
+		return result;
 	}
 
 }

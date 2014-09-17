@@ -345,6 +345,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 			throw new NullPointerException("MetadataGroupType must not be null at MetadataGroup creation.");
 		}
 		result.getMetadataList().clear();
+		result.getPersonList().clear();
 
 		for (RenderableGroupableMetadatum member : members.values()) {
 			for (Metadata element : member.toMetadata()) {

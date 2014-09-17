@@ -46,7 +46,6 @@ import javax.faces.model.SelectItem;
 
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
-import org.goobi.api.display.helper.ConfigDispayRules;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
@@ -83,8 +82,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	public RenderableDropDownList(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
 			String projectName) {
 		super(metadataType, binding, container);
-		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
-				metadataType.getName(), DisplayType.select1);
+		items = getItems(projectName, DisplayType.select1);
 		if (binding != null) {
 			for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
 				addContent(data);
