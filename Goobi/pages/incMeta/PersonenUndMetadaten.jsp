@@ -158,6 +158,7 @@
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
 								<f:selectItems value="#{member.items}" />
+								<a4j:support event="onmouseup" requestDelay="1" />
 							</h:selectOneMenu>
 							<h:outputText id="myOutput" value="#{member.value}"
 								rendered="#{member.class.simpleName == 'RenderableEdit' && member.readonly}" />
@@ -206,6 +207,7 @@
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
 									<f:selectItems value="#{innerMember.items}" />
+									<a4j:support event="onmouseup" requestDelay="1" />
 								</h:selectOneMenu>
 								<h:outputText id="myOutput" value="#{innerMember.value}"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}" />

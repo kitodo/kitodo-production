@@ -133,11 +133,9 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 		for (Item item : items) {
 			if (item.getIsSelected()) {
 				return item.getValue();
-			} else {
-				return items.get(0).getValue();
 			}
 		}
-		return null;
+		return items.get(0).getValue();
 	}
 
 	/**
