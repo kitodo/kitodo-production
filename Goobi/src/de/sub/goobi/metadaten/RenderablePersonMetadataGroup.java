@@ -222,7 +222,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 				getField(Field.FIRSTNAME).setValue(personData.getFirstname());
 			}
 			if (personData.getAuthorityURI() != null) {
-				getField(Field.NORMDATA_RECORD).setValue(personData.getAuthorityURI());
+				getField(Field.NORMDATA_RECORD).setValue(personData.getAuthorityValue());
 			}
 		} else {
 			String[] lastNameFirstName = data.getValue().split(", ", 2);
