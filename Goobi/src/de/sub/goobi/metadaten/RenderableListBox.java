@@ -83,6 +83,14 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		super(metadataType, binding, container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
 				metadataType.getName(), DisplayType.select);
+		if (binding != null) {
+			List<Metadata> elements = binding.getMetadataByType(metadataType.getName());
+			HashSet<String> selected = new HashSet<String>(Util.mapCapacityFor(elements));
+			for (Metadata m : elements) {
+				selected.add(m.getValue());
+			}
+			setSelectedItems(selected);
+		}
 	}
 
 	/**
@@ -143,6 +151,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 		for (Item item : items) {
 			item.setIsSelected(selectedSet.contains(item.getValue()));
 		}
+		updateBinding();
 	}
 
 	/**

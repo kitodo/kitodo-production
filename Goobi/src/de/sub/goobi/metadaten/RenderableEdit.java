@@ -41,9 +41,16 @@ package de.sub.goobi.metadaten;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.goobi.production.constants.Parameters;
+
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
+import ugh.dl.Person;
+
+import com.sharkysoft.util.UnreachableCodeException;
+
+import de.sub.goobi.config.ConfigMain;
 
 /**
  * A RenderableEdit is a backing bean for a single-line text input element to
@@ -113,12 +120,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	@Override
 	public void setValue(String value) {
 		this.value = value;
-
-		if (binding != null) {
-			List<Metadata> bound = binding.getMetadataList();
-			bound.removeAll(binding.getMetadataByType(metadataType.getName()));
-			bound.addAll(toMetadata());
-		}
+		updateBinding();
 	}
 
 	/**
@@ -133,4 +135,36 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 		result.add(getMetadata(value));
 		return result;
 	}
+
+	@Override
+	protected void updateBinding() {
+		if (binding != null) {
+			String typeName = metadataType.getName();
+			String personType = RenderablePersonMetadataGroup.getPersonType(typeName);
+			if (personType == null) {
+				super.updateBinding();
+			} else {
+				for (Person found : binding.getPersonByType(personType)) {
+					switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
+					case FIRSTNAME:
+						found.setFirstname(value);
+						break;
+					case LASTNAME:
+						found.setLastname(value);
+						break;
+					case NORMDATA_RECORD:
+						if (value != null & value.length() > 0
+								&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
+							String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
+							found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+						}
+						break;
+					default:
+						throw new UnreachableCodeException("Complete switch");
+					}
+				}
+			}
+		}
+	}
+
 }

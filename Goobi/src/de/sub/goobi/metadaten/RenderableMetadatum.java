@@ -38,6 +38,7 @@
  */
 package de.sub.goobi.metadaten;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -231,6 +232,12 @@ public abstract class RenderableMetadatum {
 	protected RenderableGroupableMetadatum setReadonly(boolean readolny) {
 		this.readonly = readolny;
 		return (RenderableGroupableMetadatum) this;
+	}
+
+	protected void updateBinding() {
+		List<Metadata> bound = binding.getMetadataList();
+		bound.removeAll(binding.getMetadataByType(metadataType.getName()));
+		bound.addAll(((RenderableGroupableMetadatum) this).toMetadata());
 	}
 
 }

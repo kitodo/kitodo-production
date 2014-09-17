@@ -70,6 +70,11 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 */
 	public RenderableLineEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
 		super(metadataType, binding, container);
+		if (binding != null) {
+			for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+				addContent(data);
+			}
+		}
 	}
 
 	/**
@@ -111,6 +116,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	@Override
 	public void setValue(String value) {
 		this.value = Arrays.asList(value.split(HTML_TEXTAREA_LINE_SEPARATOR));
+		updateBinding();
 	}
 
 	/**

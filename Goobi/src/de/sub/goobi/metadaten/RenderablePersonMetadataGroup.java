@@ -41,6 +41,8 @@ package de.sub.goobi.metadaten;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.production.constants.Parameters;
@@ -109,6 +111,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 	};
 
+	private static final Pattern FICTIOUS_METADATA_TYPE_SCHEME = Pattern.compile("(.+)\\.([^.]+)");
 	/**
 	 * Creates a RenderablePersonMetadataGroup.
 	 * 
@@ -130,6 +133,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
 		checkConfiguration();
 		getField(Field.NORMDATA_RECORD).setValue(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
+		if (binding != null) {
+			for (Person person : binding.getPersonByType(metadataType.getName())) {
+				addContent(person);
+			}
+		}
 	}
 
 	/**
@@ -235,6 +243,22 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	private SingleValueRenderableMetadatum getField(Field field) {
 		String key = metadataType.getName() + '.' + field.toString();
 		return (SingleValueRenderableMetadatum) members.get(key);
+	}
+
+	static Field getPersonField(String fictiousType) {
+		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictiousType);
+		if (matcher.matches()) {
+			return Field.valueOf(matcher.group(2));
+		}
+		return null;
+	}
+
+	static String getPersonType(String fictiousType) {
+		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictiousType);
+		if (matcher.matches()) {
+			return matcher.group(1);
+		}
+		return null;
 	}
 
 	/**

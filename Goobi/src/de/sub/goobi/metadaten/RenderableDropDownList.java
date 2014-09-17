@@ -85,6 +85,11 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 		super(metadataType, binding, container);
 		items = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
 				metadataType.getName(), DisplayType.select1);
+		if (binding != null) {
+			for (Metadata data : binding.getMetadataByType(metadataType.getName())) {
+				addContent(data);
+			}
+		}
 	}
 
 	/**
@@ -156,6 +161,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 				item.setIsSelected(false);
 			}
 		}
+		updateBinding();
 	}
 
 	/**

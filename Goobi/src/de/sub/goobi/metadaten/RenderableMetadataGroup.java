@@ -126,7 +126,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		this.projectName = projectName;
 		this.metadataGroup = data;
 		this.container = container;
-		createMembers(data);
+		createMembers(data, true);
 		setLanguage(language);
 	}
 
@@ -170,38 +170,48 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		this.metadataGroup = null;
 		this.container = null;
 		try {
-			createMembers(master.toMetadataGroup());
+			createMembers(master.toMetadataGroup(), false);
 		} catch (ConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 
 	/**
-	 * Creates the members for the metadata group.
+	 * Creates the members for the metadata group. In update mode, the members
+	 * will be bound tho the metadata group they have been formed from and will
+	 * automatically intialise themselves from it and update it on every change.
+	 * If update is false, they need to be initialised explicitly so that they
+	 * carry a copy of the value. They will not be bound the data object and
+	 * thus can be used to create a copy of the data.
 	 * 
 	 * @param data
 	 *            metadata group whose data shall be shown
+	 * @param autoUpdate
+	 *            whether the data structure shall be updated if the member is
+	 *            edited or not
 	 * @throws ConfigurationException
 	 *             if a single value metadata field is configured to show a
 	 *             multi-select input
 	 */
-	private final void createMembers(MetadataGroup data) throws ConfigurationException {
+	private final void createMembers(MetadataGroup data, boolean autoUpdate) throws ConfigurationException {
 		List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
 		members = new LinkedHashMap<String, RenderableGroupableMetadatum>(Util.mapCapacityFor(requiredFields));
-		for (MetadataType createField : requiredFields) {
+		for (MetadataType field : requiredFields) {
 			RenderableGroupableMetadatum member;
 			if (!(this instanceof RenderablePersonMetadataGroup)) {
-				member = RenderableMetadatum.create(createField, binding, this, projectName);
+				member = RenderableMetadatum.create(field, autoUpdate ? binding : null, this, projectName);
 			} else {
-				member = new RenderableEdit(createField, binding, this);
+				member = new RenderableEdit(field, autoUpdate ? binding : null, this);
 			}
-			members.put(createField.getName(), member);
+			members.put(field.getName(), member);
 		}
-		for (Metadata contentValue : data.getMetadataList()) {
-			members.get(contentValue.getType().getName()).addContent(contentValue);
-		}
-		for (Person contentValue : data.getPersonList()) {
-			members.get(contentValue.getType().getName()).addContent(contentValue);
+		if (!autoUpdate) {
+			for (Metadata contentValue : data.getMetadataList()) {
+				members.get(contentValue.getType().getName()).addContent(contentValue);
+			}
+			for (Person contentValue : data.getPersonList()) {
+				members.get(contentValue.getType().getName()).addContent(contentValue);
+			}
 		}
 	}
 
