@@ -194,7 +194,12 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
 		members = new LinkedHashMap<String, RenderableGroupableMetadatum>(Util.mapCapacityFor(requiredFields));
 		for (MetadataType createField : requiredFields) {
-			RenderableGroupableMetadatum member = RenderableMetadatum.create(createField, this, projectName, bindState);
+			RenderableGroupableMetadatum member;
+			if (!(this instanceof RenderablePersonMetadataGroup)) {
+				member = RenderableMetadatum.create(createField, this, projectName, bindState);
+			} else {
+				member = new RenderableEdit(createField, this);
+			}
 			members.put(createField.getName(), member);
 		}
 		for (Metadata contentValue : data.getMetadataList()) {
@@ -367,7 +372,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		for (MetadataType type : requiredMetadataTypes) {
 			RenderableGroupableMetadatum member = members.get(type.getName());
 			if (member == null) {
-				member = RenderableMetadatum.create(type, this, projectName, bindState);
+				if (!(this instanceof RenderablePersonMetadataGroup)) {
+					member = RenderableMetadatum.create(type, this, projectName, bindState);
+				} else {
+					member = new RenderableEdit(type, this);
+				}
 			}
 			newMembers.put(type.getName(), member);
 		}

@@ -127,77 +127,100 @@
 		<htm:h4 style="margin-top:0px;margin-bottom:1px">
 			<h:outputText value="#{msgs.metadataGroups}" />
 		</htm:h4>
-		
-		<htm:table>
-			<x:dataList var="aGroup" value="#{Metadaten.myGroups}" layout="simple">
+
+		<htm:table style="min-width: 536px; ">
+			<x:dataList var="aGroup" value="#{Metadaten.myGroups}"
+				layout="simple">
 				<x:dataList var="member" value="#{aGroup.members}" layout="simple">
-					<htm:tr rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
-						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
+					<htm:tr
+						rendered="#{member.class.simpleName != 'RenderablePersonMetadataGroup'}">
+						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+							styleClass="mdgroup">
 							<h:outputText value="#{aGroup.label}" />
 						</htm:td>
 						<htm:td styleClass="mdgroup">
 							<h:outputText value="#{member.label}" />
 						</htm:td>
 						<htm:td colspan="2" styleClass="mdgroup">
-							<h:inputTextarea value="#{member.value}" styleClass="metadatenInput"
+							<h:inputTextarea value="#{member.value}"
+								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
 							<h:inputText value="#{member.value}" styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}" />
-							<h:selectManyListbox value="#{member.value}" styleClass="metadatenInput"
+							<h:selectManyListbox value="#{member.value}"
+								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableListBox'}">
 								<f:selectItems value="#{member.items}" />
 							</h:selectManyListbox>
-							<h:selectOneMenu value="#{member.value}" styleClass="metadatenInput"
+							<h:selectOneMenu value="#{member.value}"
+								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
 								<f:selectItems value="#{member.items}" />
 							</h:selectOneMenu>
 							<h:outputText id="myOutput" value="#{member.value}"
 								rendered="#{member.class.simpleName == 'RenderableEdit' && member.readonly}" />
 						</htm:td>
-						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
-							<h:commandLink action="#{aGroup.copy}" title="#{msgs.metadatenKopieren}">
+						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+							styleClass="mdgroup">
+							<h:commandLink action="#{aGroup.copy}"
+								title="#{msgs.metadatenKopieren}">
 								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 							</h:commandLink>
-							<h:commandLink action="#{aGroup.delete}" title="#{msgs.metadatenLoeschen}">
-								<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
+							<h:commandLink action="#{aGroup.delete}"
+								title="#{msgs.metadatenLoeschen}">
+								<h:graphicImage
+									value="/newpages/images/buttons/waste1a_20px.gif"
+									style="margin-left:3px" />
 							</h:commandLink>
-						</htm:td>					
+						</htm:td>
 					</htm:tr>
-					<x:dataList var="innerMember" value="#{member.members}" rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
+					<x:dataList var="innerMember" value="#{member.members}"
+						rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
 						<htm:tr>
-							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
+							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+								styleClass="mdgroup">
 								<h:outputText value="#{aGroup.label}" />
 							</htm:td>
-							<htm:td rowspan="#{member.rowspan}" rendered="#{innerMember.first}" styleClass="mdgroup">
+							<htm:td rowspan="#{member.rowspan}"
+								rendered="#{innerMember.first}" styleClass="mdgroup">
 								<h:outputText value="#{member.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
 								<h:outputText value="#{innerMember.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
-								<h:inputTextarea value="#{innerMember.value}" styleClass="metadatenInput"
+								<h:inputTextarea value="#{innerMember.value}"
+									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
-								<h:inputText value="#{innerMember.value}" styleClass="metadatenInput"
+								<h:inputText value="#{innerMember.value}"
+									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}" />
-								<h:selectManyListbox value="#{innerMember.value}" styleClass="metadatenInput"
+								<h:selectManyListbox value="#{innerMember.value}"
+									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
 									<f:selectItems value="#{innerMember.items}" />
 								</h:selectManyListbox>
-								<h:selectOneMenu value="#{innerMember.value}" styleClass="metadatenInput"
+								<h:selectOneMenu value="#{innerMember.value}"
+									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
 									<f:selectItems value="#{innerMember.items}" />
 								</h:selectOneMenu>
 								<h:outputText id="myOutput" value="#{innerMember.value}"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}" />
 							</htm:td>
-							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}" styleClass="mdgroup">
-								<h:commandLink action="#{aGroup.copy}" title="#{msgs.metadatenKopieren}">
+							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+								styleClass="mdgroup">
+								<h:commandLink action="#{aGroup.copy}"
+									title="#{msgs.metadatenKopieren}">
 									<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 								</h:commandLink>
-								<h:commandLink action="#{aGroup.delete}" title="#{msgs.metadatenLoeschen}">
-									<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
+								<h:commandLink action="#{aGroup.delete}"
+									title="#{msgs.metadatenLoeschen}">
+									<h:graphicImage
+										value="/newpages/images/buttons/waste1a_20px.gif"
+										style="margin-left:3px" />
 								</h:commandLink>
-							</htm:td>					
+							</htm:td>
 						</htm:tr>
 					</x:dataList>
 				</x:dataList>
