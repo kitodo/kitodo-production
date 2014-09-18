@@ -78,7 +78,7 @@
 						rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
 					<h:inputText value="#{member.value}"
 						rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}" />
-					<h:selectManyListbox value="#{member.value}"
+					<h:selectManyListbox value="#{member.selectedItems}"
 						rendered="#{member.class.simpleName == 'RenderableListBox'}">
 						<f:selectItems value="#{member.items}" />
 					</h:selectManyListbox>
@@ -103,7 +103,7 @@
 							rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
 						<h:inputText value="#{innerMember.value}"
 							rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}" />
-						<h:selectManyListbox value="#{innerMember.value}"
+						<h:selectManyListbox value="#{innerMember.selectedItems}"
 							rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
 							<f:selectItems value="#{innerMember.items}" />
 						</h:selectManyListbox>
