@@ -65,6 +65,7 @@ import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
+import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
@@ -3068,6 +3069,23 @@ public class Metadaten {
 			myLogger.error("Error while adding metadata (MetadataTypeNotAllowedException): " + e.getMessage());
 		}
 		return showMetadata();
+	}
+
+	/**
+	 * Checks whether a given meta-data group type is available for adding. This
+	 * can be used by a RenderableMetadataGroup to find out whether it can be
+	 * copied or not.
+	 * 
+	 * @param type
+	 *            meta-data group type to look for
+	 * @return whether the type is available to add
+	 */
+	boolean canCreate(MetadataGroupType type) {
+		List<MetadataGroupType> addableTypes = myDocStruct.getAddableMetadataGroupTypes();
+		if (addableTypes == null) {
+			addableTypes = Collections.emptyList();
+		}
+		return addableTypes.contains(type);
 	}
 
 	/**

@@ -166,7 +166,7 @@
 						</htm:td>
 						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
 							styleClass="mdgroup">
-							<h:commandLink action="#{aGroup.copy}"
+							<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable}"
 								title="#{msgs.metadatenKopieren}">
 								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 							</h:commandLink>
@@ -216,7 +216,7 @@
 							</htm:td>
 							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
 								styleClass="mdgroup">
-								<h:commandLink action="#{aGroup.copy}"
+								<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable}"
 									title="#{msgs.metadatenKopieren}">
 									<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 								</h:commandLink>

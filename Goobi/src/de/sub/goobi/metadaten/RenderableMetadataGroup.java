@@ -293,6 +293,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		return type.getName();
 	}
 
+	public boolean isCopyable() {
+		return container != null && container.canCreate(type);
+	}
+
 	/**
 	 * The procedure setLanguage() extends the setter function from
 	 * RenderableMetadatum because if setLanguage() is called for a metadata
