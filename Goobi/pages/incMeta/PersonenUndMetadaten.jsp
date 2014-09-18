@@ -181,7 +181,7 @@
 					<x:dataList var="innerMember" value="#{member.members}"
 						rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
 						<htm:tr>
-							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first && innerMember.first}"
 								styleClass="mdgroup">
 								<h:outputText value="#{aGroup.label}" />
 							</htm:td>
@@ -214,7 +214,7 @@
 								<h:outputText id="myOutput" value="#{innerMember.value}"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}" />
 							</htm:td>
-							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
+							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first && innerMember.first}"
 								styleClass="mdgroup">
 								<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable}"
 									title="#{msgs.metadatenKopieren}">
