@@ -88,7 +88,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	@Override
 	public void addContent(Metadata data) {
 		if (value == null) {
-			value = Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR));
+			value = new ArrayList<String>(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
 		} else {
 			value.addAll(Arrays.asList(data.getValue().split(METADATA_LINE_SEPARATOR)));
 		}
