@@ -130,7 +130,7 @@
 		
 		<a4j:support event="onkeyup" requestDelay="1" />
 
-		<htm:table style="min-width: 536px; ">
+		<htm:table style="#{Metadaten.nurLesenModus ? '' : 'min-width: 536px; '}">
 			<x:dataList var="aGroup" value="#{Metadaten.myGroups}"
 				layout="simple">
 				<x:dataList var="member" value="#{aGroup.members}" layout="simple">
@@ -144,18 +144,18 @@
 							<h:outputText value="#{member.label}" />
 						</htm:td>
 						<htm:td colspan="2" styleClass="mdgroup">
-							<h:inputTextarea value="#{member.value}"
+							<h:inputTextarea value="#{member.value}" readonly="#{Metadaten.nurLesenModus}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableLineEdit'}" />
-							<h:inputText value="#{member.value}" styleClass="metadatenInput"
+							<h:inputText value="#{member.value}" styleClass="metadatenInput" readonly="#{Metadaten.nurLesenModus}"
 								rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}" />
-							<h:selectManyListbox value="#{member.selectedItems}"
+							<h:selectManyListbox value="#{member.selectedItems}" readonly="#{Metadaten.nurLesenModus}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableListBox'}">
 								<f:selectItems value="#{member.items}" />
 								<a4j:support event="onmouseup" requestDelay="1" />
 							</h:selectManyListbox>
-							<h:selectOneMenu value="#{member.value}"
+							<h:selectOneMenu value="#{member.value}" readonly="#{Metadaten.nurLesenModus}"
 								styleClass="metadatenInput"
 								rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
 								<f:selectItems value="#{member.items}" />
@@ -166,11 +166,11 @@
 						</htm:td>
 						<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first}"
 							styleClass="mdgroup">
-							<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable}"
+							<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable && not Metadaten.nurLesenModus}"
 								title="#{msgs.metadatenKopieren}">
 								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 							</h:commandLink>
-							<h:commandLink action="#{aGroup.delete}"
+							<h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
 								title="#{msgs.metadatenLoeschen}">
 								<h:graphicImage
 									value="/newpages/images/buttons/waste1a_20px.gif"
@@ -193,19 +193,19 @@
 								<h:outputText value="#{innerMember.label}" />
 							</htm:td>
 							<htm:td styleClass="mdgroup">
-								<h:inputTextarea value="#{innerMember.value}"
+								<h:inputTextarea value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}" />
-								<h:inputText value="#{innerMember.value}"
+								<h:inputText value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}" />
-								<h:selectManyListbox value="#{innerMember.selectedItems}"
+								<h:selectManyListbox value="#{innerMember.selectedItems}" readonly="#{Metadaten.nurLesenModus}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
 									<f:selectItems value="#{innerMember.items}" />
 									<a4j:support event="onmouseup" requestDelay="1" />
 								</h:selectManyListbox>
-								<h:selectOneMenu value="#{innerMember.value}"
+								<h:selectOneMenu value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
 									styleClass="metadatenInput"
 									rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
 									<f:selectItems value="#{innerMember.items}" />
@@ -216,11 +216,11 @@
 							</htm:td>
 							<htm:td rowspan="#{aGroup.rowspan}" rendered="#{member.first && innerMember.first}"
 								styleClass="mdgroup">
-								<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable}"
+								<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable && not Metadaten.nurLesenModus}"
 									title="#{msgs.metadatenKopieren}">
 									<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 								</h:commandLink>
-								<h:commandLink action="#{aGroup.delete}"
+								<h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
 									title="#{msgs.metadatenLoeschen}">
 									<h:graphicImage
 										value="/newpages/images/buttons/waste1a_20px.gif"
