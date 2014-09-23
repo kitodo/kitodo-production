@@ -219,6 +219,7 @@
 						<h:panelGroup rendered="#{Metadaten.modusAnsicht == 'Metadaten'}">
 							<%@include file="incMeta/NeuMeta.jsp"%>
 							<%@include file="incMeta/NeuPerson.jsp"%>
+							<%@include file="incMeta/addMetadataGroup.jsp"%>
 							<%@include file="incMeta/PersonenUndMetadaten.jsp"%>
 						</h:panelGroup>
 
