@@ -52,9 +52,8 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * A RenderableDropDonwList is a backing bean for a drop-down select element to
- * edit a choose-from kind of metadatum with the option to select exactly one
- * value renderable by JSF.
+ * Backing bean for a drop-down style select element to edit a single-select
+ * metadatum renderable by JSF.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -64,20 +63,22 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	/**
 	 * A list holding the items to display in the drop-down list.
 	 */
-	private final ArrayList<Item> items;
+	private final Collection<Item> items;
 
 	/**
-	 * Constructor. Creates a RenderableDropDonwList.
+	 * Constructor to create a backing bean for a drop-down select element
+	 * renderable by JSF to edit a choose-from kind of metadatum with the option
+	 * to select exactly one value.
 	 * 
 	 * @param metadataType
 	 *            metadata type editable by this drop-down list
+	 * @param binding
+	 *            metadata group whose value shall be updated if the setter on
+	 *            the backing bean is invoked, may be null
 	 * @param container
 	 *            metadata group this drop-down list is showing in
 	 * @param projectName
 	 *            project of the process owning this metadatum
-	 * @param bindState
-	 *            whether the user is about to create the metadatum anew or edit
-	 *            a previously existing one
 	 */
 	public RenderableDropDownList(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
 			String projectName) {
@@ -96,6 +97,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * 
 	 * @param data
 	 *            data to add
+	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
 	 */
 	@Override
 	public void addContent(Metadata data) {
@@ -133,7 +135,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 				return item.getValue();
 			}
 		}
-		return items.get(0).getValue();
+		return items.iterator().next().getValue();
 	}
 
 	/**
@@ -144,7 +146,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	 * @param value
 	 *            identifier of the item to be marked as selected
 	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String value) {

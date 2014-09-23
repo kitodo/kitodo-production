@@ -57,9 +57,9 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
 /**
- * The class RenderablePersonMetadataGroup represents a metadata group which
- * represents a person. A person is a fixed data structure in Goobi with the
- * fields normdata record, first name and last name.
+ * Specialised RenderableMetadataGroup with fixed fields to edit the internal
+ * metadata group type &ldquo;person&rdquo;. A person is a fixed data structure
+ * in Goobi with the fields normdata record, first name and last name.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -111,7 +111,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 	};
 
+	/**
+	 * Regular expression to separate the person type from the field identifier.
+	 */
 	private static final Pattern FICTIOUS_METADATA_TYPE_SCHEME = Pattern.compile("(.+)\\.([^.]+)");
+
 	/**
 	 * Creates a RenderablePersonMetadataGroup.
 	 * 
@@ -245,16 +249,30 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		return (SingleValueRenderableMetadatum) members.get(key);
 	}
 
-	static Field getPersonField(String fictiousType) {
-		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictiousType);
+	/**
+	 * Returns the field type from the fictitious metadata type
+	 * 
+	 * @param fictitiousType
+	 *            fictitious metadata type
+	 * @return the field to be edited
+	 */
+	static Field getPersonField(String fictitiousType) {
+		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
 		if (matcher.matches()) {
 			return Field.valueOf(matcher.group(2));
 		}
 		return null;
 	}
 
-	static String getPersonType(String fictiousType) {
-		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictiousType);
+	/**
+	 * Returns the person metadata type name from the fictitious metadata type
+	 * 
+	 * @param fictitiousType
+	 *            fictitious metadata type
+	 * @return the person to be edited
+	 */
+	static String getPersonType(String fictitiousType) {
+		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
 		if (matcher.matches()) {
 			return matcher.group(1);
 		}

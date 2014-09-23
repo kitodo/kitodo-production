@@ -34,10 +34,11 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
-   Collection of simple utility methods.
-
-   @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
-*/
+ * Collection of simple utility methods.
+ * 
+ * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 
 public final class Util {
 
@@ -92,15 +93,16 @@ public final class Util {
     public static final String RESOURCE_BUNDLE = "example_app";
 
 	/**
-	 * The function mapCapacityFor() calculates the optimal initial capacity for
-	 * a HashMap instance that is to be populated with the given collection.
+	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
+	 * that is to be populated with the given collection and isn’t intended to
+	 * grow any further.
 	 * 
 	 * @param collection
 	 *            collection whose size shall be used to determine the initial
 	 *            capacity for a HashMap
 	 * @return the appropriate capacity
 	 */
-	public static int mapCapacityFor(Collection<?> collection) {
+	public static int hashCapacityFor(Collection<?> collection) {
 		return (int) Math.ceil(collection.size() / 0.75);
 	}
 }

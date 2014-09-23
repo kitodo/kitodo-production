@@ -52,28 +52,31 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * A RenderableListBox is a backing bean for a list style select element to edit
- * a choose-from kind of metadatum with the option to select one or more values
- * renderable by JSF.
+ * Backing bean for a select list style input element to edit a metadatum with
+ * the option to select one or more predefined values renderable by JSF.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
-	private final ArrayList<Item> items;
+	/**
+	 * Holds the options to show in the select list, including their selection
+	 * state
+	 */
+	private final Collection<Item> items;
 
 	/**
 	 * Constructor. Creates a RenderableListBox.
 	 * 
 	 * @param metadataType
 	 *            metadata type editable by this list element
+	 * @param binding
+	 *            a metadata group whose values shall be updated if the setter
+	 *            methods are called (optional, may be null)
 	 * @param container
 	 *            metadata group this list is showing in
 	 * @param projectName
 	 *            project of the process owning this metadatum
-	 * @param bindState
-	 *            whether the user is about to create the metadatum anew or edit
-	 *            a previously existing one
 	 */
 	public RenderableListBox(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
 			String projectName) {
@@ -109,7 +112,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * Returns the available items for the the user to choose from.
 	 * 
 	 * @return the items to choose from
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
 	public Collection<SelectItem> getItems() {
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
@@ -123,7 +125,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * Returns a list of identifiers of the items currently selected.
 	 * 
 	 * @return the items currently selected
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getItems()
 	 */
 	public List<String> getSelectedItems() {
 		List<String> result = new ArrayList<String>(items.size());
@@ -141,7 +142,6 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	 * 
 	 * @param selected
 	 *            list of identifiers of items to be selected
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setSelectedItems(java.util.Collection)
 	 */
 	public void setSelectedItems(List<String> selected) {
 		for (Item item : items) {

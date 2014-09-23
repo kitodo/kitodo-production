@@ -53,14 +53,17 @@ import com.sharkysoft.util.UnreachableCodeException;
 import de.sub.goobi.config.ConfigMain;
 
 /**
- * A RenderableEdit is a backing bean for a single-line text input element to
- * edit a metadatum renderable by JSF.
+ * Backing bean for a single line input box element to edit a metadatum
+ * renderable by JSF.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
 		SingleValueRenderableMetadatum {
 
+	/**
+	 * Holds the content of the input box.
+	 */
 	private String value;
 
 	/**
@@ -68,6 +71,9 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	 * 
 	 * @param metadataType
 	 *            metadata type editable by this drop-down list
+	 * @param binding
+	 *            metadata group that shall instantly be updated if a setter is
+	 *            invoked
 	 * @param container
 	 *            metadata group this drop-down list is showing in
 	 */
@@ -136,6 +142,13 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 		return result;
 	}
 
+	/**
+	 * Specialised version of updateBinding() which is capable to update a
+	 * metadata type of kind “person” if the input box is part of a
+	 * RenderablePersonMetadataGroup.
+	 * 
+	 * @see de.sub.goobi.metadaten.RenderableMetadatum#updateBinding()
+	 */
 	@Override
 	protected void updateBinding() {
 		if (binding != null) {

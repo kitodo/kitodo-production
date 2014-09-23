@@ -242,7 +242,7 @@ public class Helper implements Serializable, Observer {
 	 * @return a map with all language id strings and the corresponding resource
 	 */
 	public static HashMap<String, String> getAllStrings(String key) {
-		HashMap<String, String> result = new HashMap<String, String>(Util.mapCapacityFor(commonMessages.entrySet()));
+		HashMap<String, String> result = new HashMap<String, String>(Util.hashCapacityFor(commonMessages.entrySet()));
 		@SuppressWarnings("unchecked")
 		Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 		while (languages.hasNext()) {

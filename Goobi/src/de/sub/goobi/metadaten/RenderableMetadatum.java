@@ -39,6 +39,7 @@
 package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,29 +57,63 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 import com.sharkysoft.util.UnreachableCodeException;
 
 /**
- * A RenderableMetadatum is a java bean that is backing an input element
- * renderable by JSF to allow showing and editing a metadatum. This may be a
- * RenderableMetadataGroup or a class implementing RenderableGroupableMetadatum,
- * where the latter can—but doesn’t have to be— a member of a
- * RenderableMetadataGroup. A RenderableMetadataGroup cannot be a member of a
- * RenderableMetadataGroup itself, whereas a RenderablePersonMetadataGroup,
- * which is a special case of a RenderableMetadataGroup, can.
+ * Abstract base class for all kinds of backing beans usable to render input
+ * elements in JSF to edit a metadatum. This may be a RenderableMetadataGroup or
+ * a class implementing RenderableGroupableMetadatum, where the latter can—but
+ * doesn’t have to be—a member of a RenderableMetadataGroup. A
+ * RenderableMetadataGroup cannot be a member of a RenderableMetadataGroup
+ * itself, whereas a RenderablePersonMetadataGroup, which is a special case of a
+ * RenderableMetadataGroup, can.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class RenderableMetadatum {
 
+	/**
+	 * Holds a reference to the renderable metadata group that this metadata
+	 * group is in.
+	 */
 	private RenderableMetadataGroup container = null;
+
+	/**
+	 * Holds the string identifier of the language to use to show the labels of
+	 * the metadata elements in.
+	 */
 	protected String language;
+
+	/**
+	 * Indicates whether this metadatum can only be read by the user and not be
+	 * altered.
+	 */
 	protected boolean readonly = false;
+
+	/**
+	 * Holds the metadata type represented by this input element.
+	 */
 	protected final MetadataType metadataType;
+
+	/**
+	 * Holds the available labels for this input element.
+	 */
 	public final Map<String, String> labels;
+
+	/**
+	 * Holds a reference to a metadata group whose value(s) shall be updated if
+	 * as the setters for the bean are called. May be null if this feature is
+	 * unused.
+	 */
 	protected final MetadataGroup binding;
 
 	/**
 	 * Creates a renderable metadatum which is not held in a renderable metadata
 	 * group. A label isn’t needed in this case. This constructor must be used
 	 * by all successors that do not implement RenderableGroupableMetadatum.
+	 * 
+	 * @param labels
+	 *            available labels for this input element
+	 * @param binding
+	 *            a metadata group whose value(s) shall be updated if as the
+	 *            setters for the bean are called
 	 */
 	protected RenderableMetadatum(Map<String, String> labels, MetadataGroup binding) {
 		this.metadataType = null;
@@ -147,10 +182,24 @@ public abstract class RenderableMetadatum {
 		}
 	}
 
+	/**
+	 * Returns whether the metadatum represented by this instance is about to be
+	 * created or under edit.
+	 * 
+	 * @return whether this metadatum is created or edited
+	 */
 	protected String getBindState() {
 		return getBindState(binding);
 	}
 
+	/**
+	 * Returns whether the metadatum whose binding is passed is about to be
+	 * created or under edit.
+	 * 
+	 * @param binding
+	 *            an object to bind to, or null
+	 * @return whether the metadatum is created or edited
+	 */
 	protected static String getBindState(Object binding) {
 		if (binding == null) {
 			return BindState.create.getTitle();
@@ -237,6 +286,10 @@ public abstract class RenderableMetadatum {
 		return (RenderableGroupableMetadatum) this;
 	}
 
+	/**
+	 * Updates the bound metadata group by the current value(s) of the
+	 * implementing instance.
+	 */
 	protected void updateBinding() {
 		if (binding != null) {
 			List<Metadata> bound = binding.getMetadataList();
@@ -245,7 +298,24 @@ public abstract class RenderableMetadatum {
 		}
 	}
 
-	protected final ArrayList<Item> getItems(String projectName, DisplayType type) {
+	/**
+	 * Returns the available items for select input elements. The available
+	 * items can vary depending on the project, wheter the metadata element is
+	 * about to be created or is under edit, the metadata type and the type of
+	 * the input element.
+	 * 
+	 * Since the items hold their selected state and ConfigDispayRules does
+	 * return the same item instances again if called several times, we need to
+	 * create a deep copy of the retrieved list here, so that several select
+	 * lists lists of the same type can hold their individual selected state.
+	 * 
+	 * @param projectName
+	 *            project of the process owning this metadatum
+	 * @param type
+	 *            type of input element to get the items for
+	 * @return the collection of available items for the input element
+	 */
+	protected final Collection<Item> getItems(String projectName, DisplayType type) {
 		ArrayList<Item> prototypes = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
 				metadataType.getName(), type);
 		ArrayList<Item> result = new ArrayList<Item>(prototypes.size());

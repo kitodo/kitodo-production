@@ -49,15 +49,26 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * A RenderableEdit is a backing bean for a multi-line text input element to
- * edit a metadatum renderable by JSF.
+ * Backing bean for a (multi-line) text input element to edit metadatum
+ * renderable by JSF.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
 		SingleValueRenderableMetadatum {
+	/**
+	 * Line separator used in web front-end I/O
+	 */
 	private static final String HTML_TEXTAREA_LINE_SEPARATOR = "\r\n";
+
+	/**
+	 * Line separator used in filesystem I/O
+	 */
 	private static final String METADATA_LINE_SEPARATOR = "\n";
+
+	/**
+	 * Holds the content lines of the edit box.
+	 */
 	private List<String> value;
 
 	/**
@@ -65,6 +76,9 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	 * 
 	 * @param metadataType
 	 *            metadata type editable by this drop-down list
+	 * @param binding
+	 *            a metadata group whose corresponding metadata element shall be
+	 *            updated if the setter method is called
 	 * @param container
 	 *            metadata group this drop-down list is showing in
 	 */
@@ -97,7 +111,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	/**
 	 * Returns the edit field value.
 	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#getValue()
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
 	@Override
 	public String getValue() {
@@ -111,7 +125,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	/**
 	 * Saves the value entered by the user.
 	 * 
-	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#setValue(java.lang.String)
+	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
 	public void setValue(String value) {
