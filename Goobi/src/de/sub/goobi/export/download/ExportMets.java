@@ -258,6 +258,7 @@ public class ExportMets {
 						v.setPathToFiles(vp.replace(pfg.getPath()));
 						v.setMimetype(pfg.getMimetype());
 						v.setFileSuffix(pfg.getSuffix());
+						v.setOrdinary(!pfg.isPreviewImage());
 						mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 					}
 				} else {
@@ -267,6 +268,7 @@ public class ExportMets {
 					v.setPathToFiles(vp.replace(pfg.getPath()));
 					v.setMimetype(pfg.getMimetype());
 					v.setFileSuffix(pfg.getSuffix());
+					v.setOrdinary(!pfg.isPreviewImage());
 					mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 				}
 			}
@@ -290,8 +292,9 @@ public class ExportMets {
 		mm.setMptrUrl(pointer);
 
 		String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
-		if (anchor.contains(Projekt.ANCHOR_SEPARATOR))
+		if (anchor.contains(Projekt.ANCHOR_SEPARATOR)) {
 			anchor = anchor.split(Projekt.ANCHOR_SEPARATOR)[0];
+		}
 		pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
