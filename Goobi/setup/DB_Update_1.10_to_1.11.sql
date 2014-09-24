@@ -39,3 +39,8 @@ WHERE batchID IS NOT NULL;
 /* In the end the old column "batchID" in table "prozesse" */
 
 ALTER TABLE `prozesse` DROP `batchID`;
+
+/* Create the column "previewImage" in table "projectfilegroups" and set it to false for existing rows */
+
+ALTER TABLE `projectfilegroups` ADD `previewImage` tinyint(1) DEFAULT NULL;
+UPDATE `projectfilegroups` SET `previewImage` = '0';
