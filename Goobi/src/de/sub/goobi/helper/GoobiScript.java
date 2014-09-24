@@ -968,15 +968,13 @@ public class GoobiScript {
     }
 
     private void exportDms(List<Prozess> processes, String exportImages, boolean exportFulltext) {
-        ExportDms dms;
-        if (exportImages != null && exportImages.equals("false")) {
-            dms = new ExportDms(false);
-            dms.setExportFulltext(exportFulltext);
-        } else {
-            dms = new ExportDms(true);
-        }
+		boolean withoutImages = exportImages != null && exportImages.equals("false");
         for (Prozess prozess : processes) {
             try {
+				ExportDms dms = new ExportDms(!withoutImages);
+				if (withoutImages) {
+					dms.setExportFulltext(exportFulltext);
+				}
                 dms.startExport(prozess);
             } catch (DocStructHasNoTypeException e) {
                 logger.error("DocStructHasNoTypeException", e);
