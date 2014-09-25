@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -971,6 +972,9 @@ public class GoobiScript {
 		boolean withoutImages = exportImages != null && exportImages.equals("false");
         for (Prozess prozess : processes) {
             try {
+				Hibernate.initialize(prozess.getProjekt());
+				Hibernate.initialize(prozess.getProjekt().getFilegroups());
+				Hibernate.initialize(prozess.getRegelsatz());
 				ExportDms dms = new ExportDms(!withoutImages);
 				if (withoutImages) {
 					dms.setExportFulltext(exportFulltext);
