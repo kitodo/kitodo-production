@@ -120,6 +120,14 @@
 											value="#{ProjekteForm.myFilegroup.folder}" required="false" />	
 									</h:panelGroup>
 
+									<%-- use for preview image --%>
+									<h:panelGroup/>
+									<h:panelGroup>
+										<h:selectBooleanCheckbox id="pimage" 
+										style="margin-right: 6px;vertical-align: sub"
+											value="#{ProjekteForm.myFilegroup.previewImage}" />
+											<h:outputLabel for="pimage" value="#{msgs.useForPreviewImage}"/>
+									</h:panelGroup>
 
 								</h:panelGrid>
 							</htm:td>

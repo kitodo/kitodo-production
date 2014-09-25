@@ -148,6 +148,7 @@ CREATE TABLE `projectfilegroups` (
   `mimetype` varchar(255) DEFAULT NULL,
   `suffix` varchar(255) DEFAULT NULL,
   `folder` varchar(255) DEFAULT NULL,
+ `previewImage` tinyint(1) DEFAULT NULL,
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
   KEY `FK51AAC2292DFE45A` (`ProjekteID`)

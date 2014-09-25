@@ -37,6 +37,7 @@ public class ProjectFileGroup implements Serializable {
 	private String mimetype; // optional
 	private String suffix; // optional
 	private String folder;
+	private boolean previewImage;
 
 	private Projekt project;
 
@@ -102,6 +103,14 @@ public class ProjectFileGroup implements Serializable {
 
 	public void setFolder(String folder) {
 		this.folder = folder;
+	}
+
+	public boolean isPreviewImage() {
+		return previewImage;
+	}
+
+	public void setPreviewImage(boolean previewImage) {
+		this.previewImage = previewImage;
 	}
 
 }
