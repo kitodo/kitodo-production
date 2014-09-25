@@ -241,7 +241,7 @@ public class PicaPlugin implements Plugin {
 			 * Dom-Dokument in JDom-Dokument umwandeln
 			 * --------------------------------
 			 */
-			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index, timeout);
+			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 			/* Opac-Beautifier aufrufen */
 			myHitlist = configuration.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());

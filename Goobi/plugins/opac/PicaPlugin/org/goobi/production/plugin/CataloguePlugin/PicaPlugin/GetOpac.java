@@ -197,7 +197,7 @@ class GetOpac {
 	 */
 	Node retrievePicaNode(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
 			ParserConfigurationException {
-		return retrievePicaNode(query, 0, numberOfHits > 1 ? -1 : numberOfHits, timeout);
+		return retrievePicaNode(query, 0, numberOfHits < 1 ? -1 : numberOfHits, timeout);
 	}
 
 	/**
@@ -272,7 +272,7 @@ class GetOpac {
 		xmlResult.append("  <" + PICA_COLLECTION_RECORDS + ">\n");
 
 		// retrieve and append the requested hits
-		for (int i = start; i <= end; i++) {
+		for (int i = start; i < end; i++) {
 
 			xmlResult.append(xmlFormatPica(retrievePicaTitle(i, timeout)));
 		}
@@ -317,8 +317,9 @@ class GetOpac {
 		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
 				+ this.cat.getPort() + this.cat.getCbs();
 
-		if (this.lastQuery.equals(querySummary))
+		if (this.lastQuery.equals(querySummary)) {
 			return this.lastOpacResult;
+		}
 		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
 				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
 
@@ -436,10 +437,12 @@ class GetOpac {
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
 		// set timeout if a connection is established but there is no response (= time the database needs to search)
-		if (timeout > 0 && timeout <= Integer.MAX_VALUE)
+		if (timeout > 0 && timeout <= Integer.MAX_VALUE) {
 			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
-		else
+		}
+		else {
 			opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
+		}
 
 		GetMethod opacRequest = null;
 		try {
@@ -447,8 +450,9 @@ class GetOpac {
 			opacClient.executeMethod(opacRequest);
 			return opacRequest.getResponseBodyAsString();
 		} finally {
-			if (opacRequest != null)
+			if (opacRequest != null) {
 				opacRequest.releaseConnection();
+			}
 		}
 	}
 
