@@ -68,7 +68,7 @@ public class ExportDms extends ExportMets {
 	 * will be updated and whom errors will be passed to to be visible in the
 	 * task manager screen if it’s available.
 	 */
-	private ExportDmsTask exportDmsTask = null;
+	public ExportDmsTask exportDmsTask = null;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 

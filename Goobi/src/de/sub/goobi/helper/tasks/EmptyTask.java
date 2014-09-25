@@ -262,10 +262,10 @@ public class EmptyTask extends Thread implements Cloneable {
 				return label;
 			}
 		case CRASHED:
-			if (detail != null) {
-				return label + " (" + detail + ")";
-			} else if (exception.getMessage() != null) {
+			if (exception.getMessage() != null) {
 				return label + " (" + exception.getMessage() + ")";
+			} else if (detail != null) {
+				return label + " (" + detail + ")";
 			} else {
 				return label + " (" + exception.getClass().getSimpleName() + ")";
 			}
