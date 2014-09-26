@@ -33,6 +33,7 @@ import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
+import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
@@ -52,6 +53,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
@@ -68,7 +70,7 @@ public class ExportDms extends ExportMets {
 	 * will be updated and whom errors will be passed to to be visible in the
 	 * task manager screen if it’s available.
 	 */
-	public ExportDmsTask exportDmsTask = null;
+	public EmptyTask exportDmsTask = null;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -155,7 +157,7 @@ public class ExportDms extends ExportMets {
 
 		this.exportDmsTask = exportDmsTask;
 		try{
-			return startExport(myProzess, inZielVerzeichnis, myProzess.readMetadataFile());
+			return startExport(myProzess, inZielVerzeichnis, myProzess.readMetadataFile().getDigitalDocument());
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setException(e);
@@ -168,7 +170,7 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, Fileformat gdzfile)
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, DigitalDocument newfile)
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
@@ -181,25 +183,24 @@ public class ExportDms extends ExportMets {
 		 * -------------------------------- Dokument einlesen
 		 * --------------------------------
 		 */
-		Fileformat newfile;
+		Fileformat gdzfile;
 		try {
 			switch (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport())) {
 			case METS:
-				newfile = new MetsModsImportExport(this.myPrefs);
+				gdzfile = new MetsModsImportExport(this.myPrefs);
 				break;
 
 			case METS_AND_RDF:
-				newfile = new RDFFile(this.myPrefs);
+				gdzfile = new RDFFile(this.myPrefs);
 				break;
 
 			default:
-				newfile = new RDFFile(this.myPrefs);
+				gdzfile = new RDFFile(this.myPrefs);
 				break;
 			}
 
-			newfile.setDigitalDocument(gdzfile.getDigitalDocument());
-			gdzfile = newfile;
+			gdzfile.setDigitalDocument(newfile);
 
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
@@ -412,6 +413,17 @@ public class ExportDms extends ExportMets {
 					"ExportFinished");
 		}
 		return true;
+	}
+
+	/**
+	 * Setter method to pass in a task thread to whom progress and error
+	 * messages shall be reported.
+	 * 
+	 * @param task
+	 *            task implementation
+	 */
+	public void setExportDmsTask(EmptyTask task) {
+		this.exportDmsTask = task;
 	}
 
 	/**
