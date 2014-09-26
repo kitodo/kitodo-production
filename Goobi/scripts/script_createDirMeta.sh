@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
 # * 
@@ -33,4 +33,3 @@
 Directory="$1"
 
 /bin/mkdir -vm 0775 "$Directory"
-
