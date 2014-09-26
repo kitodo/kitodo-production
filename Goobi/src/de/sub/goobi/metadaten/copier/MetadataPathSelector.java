@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -96,16 +96,11 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Creates a new MetadataPathSelector.
 	 * 
-	 * @param selectNode
-	 *            expression to select a node, must either be equal to a
-	 *            metadata structure node type name or a Kleene star, or consist
-	 *            of the former followed by an indexing expression in square
-	 *            braces. The indexing expression may either be numeric or ">"
-	 *            to refer to the last of several nodes.
 	 * @param path
 	 *            path to create sub-selector, passed to {
 	 *            {@link #create(String)}.
 	 * @throws ConfigurationException
+	 *             if the path is invalid
 	 */
 
 	public MetadataPathSelector(String path) throws ConfigurationException {
@@ -244,7 +239,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	 *            document structure node to start from, intended for recursion
 	 * @param value
 	 *            value to write if no metadatum is available at the path’s end
-	 * @see de.sub.goobi.metadaten.DataSelector#findIn(ugh.dl.DocStruct)
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
+	 *      DocStruct, String)
 	 */
 	@Override
 	protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
@@ -266,7 +262,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	 *            document structure node to start from, intended for recursion
 	 * @param value
 	 *            value to write
-	 * @see de.sub.goobi.metadaten.DataSelector#findIn(ugh.dl.DocStruct)
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createOrOverwrite(CopierData,
+	 *      DocStruct, String)
 	 */
 	@Override
 	protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {

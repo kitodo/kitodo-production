@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -42,6 +42,14 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import ugh.dl.DocStruct;
 
+/**
+ * Abstract base class that different types of metadata selectors are based on.
+ * Proviedes a factory method to create its subclasses depending on a a given
+ * String path, and defines methods that shall be implemented by the
+ * implementing metadata selectors.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public abstract class MetadataSelector extends DataSelector {
 
 	/**
@@ -140,8 +148,6 @@ public abstract class MetadataSelector extends DataSelector {
 	 * 
 	 * @param data
 	 *            data to work on
-	 * @param logicalNode
-	 *            document structure node to start from, intended for recursion
 	 * @param value
 	 *            value to write if no metadatum is available at the path’s end
 	 * @throws RuntimeException

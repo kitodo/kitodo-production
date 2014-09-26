@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -58,6 +58,9 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 public class LocalMetadataSelector extends MetadataSelector {
 	private static final Logger LOG = Logger.getLogger(LocalMetadataSelector.class);
 
+	/**
+	 * Metadata type to return
+	 */
 	private final MetadataType selector = new MetadataType();
 
 	/**
