@@ -71,12 +71,11 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-public class ExportBatchTask extends CloneableLongRunningTask {
+public class ExportBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
@@ -94,7 +93,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
 	 * day, issue) into which the issues are aggregated.
 	 */
-	private ArrayListMap<org.joda.time.LocalDate, String> aggregation;
+	private final ArrayListMap<org.joda.time.LocalDate, String> aggregation;
 
 	/**
 	 * The field action holds the number of the action the task currently is in.
@@ -123,9 +122,9 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * action. The fields dividend and divisor are used to display a progress
 	 * bar.
 	 */
-	private double divisor;
+	private final double divisor;
 
-	private HashMap<Integer, String> collectedYears;
+	private final HashMap<Integer, String> collectedYears;
 
 	/**
 	 * Constructor to create an ExportBatchTask.
@@ -137,7 +136,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 *             be reattached either
 	 */
 	public ExportBatchTask(Batch batch) throws HibernateException {
-		setTitle(Helper.getTranslation("automatischerDmsImport"));
+		super(batch.getLabel());
 		this.batch = batch;
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
@@ -145,6 +144,24 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
 		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
+	}
+
+	/**
+	 * The copy constructor creates a new thread from a given one. This is
+	 * required to call the copy constructor of the parent.
+	 * 
+	 * @param master
+	 *            copy master
+	 */
+	public ExportBatchTask(ExportBatchTask master) {
+		super(master);
+		batch = master.batch;
+		action = master.action;
+		aggregation = master.aggregation;
+		collectedYears = master.collectedYears;
+		processesIterator = master.processesIterator;
+		dividend = master.dividend;
+		divisor = master.divisor;
 	}
 
 	/**
@@ -162,7 +179,6 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 			if (action == 1) {
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
-						stopped();
 						return;
 					}
 					process = processesIterator.next();
@@ -171,7 +187,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
 					}
 					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
-					setStatusProgress(++dividend / divisor);
+					setProgress(++dividend / divisor);
 				}
 				action = 2;
 				processesIterator = batch.getProcesses().iterator();
@@ -181,27 +197,21 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 			if (action == 2) {
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
-						stopped();
 						return;
 					}
 					MetsModsImportExport extendedData = buildExportableMetsMods(process = processesIterator.next(),
 							collectedYears, aggregation);
-					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
+					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 
 					new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
 							process, LoginForm.getCurrentUserHomeDir(), extendedData);
-					setStatusProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
+					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
 			}
-
-			setStatusMessage("done");
-
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
 					+ (process != null ? process.getTitel() : "") + ": " + e.getMessage();
-			logger.error(message, e);
-			setStatusMessage(message);
-			setStatusProgress(-1);
+			setException(new RuntimeException(message, e));
 			return;
 		}
 	}
@@ -633,14 +643,7 @@ public class ExportBatchTask extends CloneableLongRunningTask {
 	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
 	 */
 	@Override
-	public CloneableLongRunningTask clone() {
-		ExportBatchTask copy = new ExportBatchTask(batch);
-		copy.action = action;
-		copy.aggregation = aggregation;
-		copy.collectedYears = collectedYears;
-		copy.processesIterator = processesIterator;
-		copy.dividend = dividend;
-		copy.divisor = divisor;
-		return copy;
+	public ExportBatchTask clone() {
+		return new ExportBatchTask(this);
 	}
 }

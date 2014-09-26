@@ -59,7 +59,7 @@ import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.tasks.ExportBatchTask;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BatchDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 
@@ -102,18 +102,21 @@ public class BatchForm extends BasisForm {
 		} else {
 			selectedBatches = new ArrayList<String>();
 			HashSet<Batch> batchesToSelect = new HashSet<Batch>();
-			for (Prozess process : selectedProcesses)
+			for (Prozess process : selectedProcesses) {
 				batchesToSelect.addAll(process.getBatchesInitialized());
-			for (Batch batch : batchesToSelect)
+			}
+			for (Batch batch : batchesToSelect) {
 				selectedBatches.add(batch.getIdString());
+			}
 		}
 	}
 
 	public void loadProcessData() {
 		Set<Prozess> processes = new HashSet<Prozess>();
 		try {
-			for (String b : selectedBatches)
+			for (String b : selectedBatches) {
 				processes.addAll(BatchDAO.read(Integer.parseInt(b)).getProcesses());
+			}
 			currentProcesses = new ArrayList<Prozess>(processes);
 		} catch (Exception e) { // NumberFormatException, DAOException
 			logger.error(e);
@@ -143,8 +146,9 @@ public class BatchForm extends BasisForm {
 	public void filterBatches() {
 		currentBatches = new ArrayList<Batch>();
 		for (Batch batch : BatchDAO.readAll()) {
-			if (batch.contains(batchfilter))
+			if (batch.contains(batchfilter)) {
 				currentBatches.add(batch);
+			}
 		}
 	}
 
@@ -264,8 +268,9 @@ public class BatchForm extends BasisForm {
 			return;
 		}
 		List<Integer> ids = new ArrayList<Integer>(selectedBatchesSize);
-		for (String entry : this.selectedBatches)
+		for (String entry : this.selectedBatches) {
 			ids.add(Integer.parseInt(entry));
+		}
 		try {
 			BatchDAO.deleteAll(ids);
 			FilterAlleStart();
@@ -290,9 +295,10 @@ public class BatchForm extends BasisForm {
 				batch.addAll(this.selectedProcesses);
 				BatchDAO.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : this.selectedProcesses)
+					for (Prozess p : this.selectedProcesses) {
 						p.addToWikiField("debug",
 								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+					}
 					this.dao.saveList(this.selectedProcesses);
 				}
 			}
@@ -318,11 +324,12 @@ public class BatchForm extends BasisForm {
 				batch.removeAll(this.selectedProcesses);
 				BatchDAO.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : this.selectedProcesses)
+					for (Prozess p : this.selectedProcesses) {
 						p.addToWikiField(
 								"debug",
 								Helper.getTranslation("removeFromBatch",
 										Arrays.asList(new String[] { batch.getLabel() })));
+					}
 					this.dao.saveList(this.selectedProcesses);
 				}
 			}
@@ -365,9 +372,10 @@ public class BatchForm extends BasisForm {
 			try {
 				BatchDAO.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : selectedProcesses)
+					for (Prozess p : selectedProcesses) {
 						p.addToWikiField("debug",
 								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+					}
 					this.dao.saveList(selectedProcesses);
 				}
 			} catch (DAOException e) {
@@ -452,8 +460,9 @@ public class BatchForm extends BasisForm {
 				return "";
 			}
 		}
-		for (ExportBatchTask task : batches)
-			LongRunningTaskManager.getInstance().addTask(task);
+		for (ExportBatchTask task : batches) {
+			TaskManager.addTask(task);
+		}
 		return "taskmanager";
 	}
 }

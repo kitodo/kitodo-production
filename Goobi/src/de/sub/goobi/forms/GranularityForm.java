@@ -58,8 +58,7 @@ import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 import de.sub.goobi.helper.tasks.CreateProcessesTask;
-import de.sub.goobi.helper.tasks.LongRunningTask;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
+import de.sub.goobi.helper.tasks.TaskManager;
 
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
@@ -138,9 +137,9 @@ public class GranularityForm {
 		}
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
-		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
+		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
 				generateBatches);
-		LongRunningTaskManager.getInstance().addTask(createProcesses);
+		TaskManager.addTask(createProcesses);
 		return "taskmanager";
 	}
 
