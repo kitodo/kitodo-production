@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,21 +43,26 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import com.sharkysoft.util.UnreachableCodeException;
+
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -84,11 +88,6 @@ public class BatchForm extends BasisForm {
 
 	private String batchTitle;
 
-	private int getBatchMaxSize(){
-		int batchsize =ConfigMain.getIntParameter("batchMaxSize",100);
-		return batchsize;
-	}
-	
 	public List<Prozess> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
@@ -137,7 +136,10 @@ public class BatchForm extends BasisForm {
 		Criteria crit = this.myFilteredDataSource.getCriteria();
 		crit.addOrder(Order.desc("erstellungsdatum"));
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-		crit.setMaxResults(getBatchMaxSize());
+		int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
+		if (batchMaxSize > 0) {
+			crit.setMaxResults(batchMaxSize);
+		}
 		try {
 			this.currentProcesses = crit.list();
 		} catch (HibernateException e) {
@@ -352,9 +354,14 @@ public class BatchForm extends BasisForm {
 			return;
 		} else {
 			try {
-				Batch batch = BatchDAO.read(Integer.valueOf(selectedBatches.get(0)));
-				batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
-				BatchDAO.save(batch);
+				Integer selected = Integer.valueOf(selectedBatches.get(0));
+				for (Batch batch : currentBatches) {
+					if (selected.equals(batch.getId())) {
+						batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
+						BatchDAO.save(batch);
+						return;
+					}
+				}
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
 				logger.error(e);
@@ -367,9 +374,9 @@ public class BatchForm extends BasisForm {
 		if (selectedProcesses.size() > 0) {
 			Batch batch = null;
 			if(batchTitle != null && batchTitle.trim().length() > 0){
-				batch = new Batch(batchTitle.trim(), selectedProcesses);
+				batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
 			}else{
-				batch = new Batch(selectedProcesses);
+				batch = new Batch(Type.LOGISTIC, selectedProcesses);
 			}
 			try {
 				BatchDAO.save(batch);
@@ -437,71 +444,91 @@ public class BatchForm extends BasisForm {
 	}
 
 	/**
-	 * The function exportNewspaperBatch() is called by Faces if the user clicks
-	 * the action link to DMS-export one or more newspaper batches. In case of
-	 * success, the user will be redirected to the task manager page where it
+	 * Creates a batch export task to export the selected batch. The type of
+	 * export task depends on the batch type. If asynchronous tasks have been
+	 * created, the user will be redirected to the task manager page where it
 	 * can observe the task progressing.
 	 * 
 	 * @return the next page to show as named in a &lt;from-outcome&gt; element
 	 *         in faces_config.xml
 	 */
-	public String exportNewspaperBatch() {
-		return exportBatch(ExportBatchTask.class);
-	}
-
-	/**
-	 * The function exportNewspaperBatch() is called by Faces if the user clicks
-	 * the action link to DMS-export one or more serial batches. In case of
-	 * success, the user will be redirected to the task manager page where it
-	 * can observe the task progressing.
-	 * 
-	 * @return the next page to show as named in a &lt;from-outcome&gt; element
-	 *         in faces_config.xml
-	 */
-	public String exportSerialBatch() {
-		return exportBatch(ExportSerialBatchTask.class);
-	}
-
-	/**
-	 * Generic function creating a batch export task using the exporter
-	 * implementation class provided. For each batch, a task will be created and
-	 * the user will be redirected to the task manager page where it can observe
-	 * the task progressing.
-	 * 
-	 * @param exporter
-	 *            task implementation to use
-	 * @return the next page to show as named in a &lt;from-outcome&gt; element
-	 *         in faces_config.xml
-	 */
-	private String exportBatch(Class<? extends EmptyTask> exporter) {
+	public String exportBatch() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 			return "";
 		}
-		LinkedList<EmptyTask> batches = new LinkedList<EmptyTask>();
 		for (String batchID : selectedBatches) {
 			try {
 				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
-				EmptyTask exportBatch;
-				try {
-					exportBatch = exporter.getDeclaredConstructor(Batch.class).newInstance(batch);
-				} catch (Exception e) { // IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
-					if (e instanceof RuntimeException) {
-						throw (RuntimeException) e;
-					} else {
-						throw new RuntimeException(e.getMessage(), e);
+				switch (batch.getType()) {
+				case LOGISTIC:
+					for (Prozess prozess : batch.getProcesses()) {
+						Hibernate.initialize(prozess.getProjekt());
+						Hibernate.initialize(prozess.getProjekt().getFilegroups());
+						Hibernate.initialize(prozess.getRegelsatz());
+						ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
+								true));
+						dms.startExport(prozess);
 					}
+					return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+				case NEWSPAPER:
+					TaskManager.addTask(new ExportBatchTask(batch));
+					return "taskmanager";
+				case SERIAL:
+					TaskManager.addTask(new ExportSerialBatchTask(batch));
+					return "taskmanager";
+				default:
+					throw new UnreachableCodeException("Complete switch statement");
 				}
-				batches.add(exportBatch);
-			} catch (DAOException e) {
+			} catch (Exception e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("fehlerBeimEinlesen");
 				return "";
 			}
 		}
-		for (EmptyTask task : batches) {
-			TaskManager.addTask(task);
+		Helper.setFehlerMeldung("noBatchSelected");
+		return "";
+	}
+
+	/**
+	 * Sets the type of all currently selected batches to LOGISTIC.
+	 */
+	public void setLogistic() {
+		setType(Type.LOGISTIC);
+	}
+
+	/**
+	 * Sets the type of all currently selected batches to NEWSPAPER.
+	 */
+	public void setNewspaper() {
+		setType(Type.NEWSPAPER);
+	}
+
+	/**
+	 * Sets the type of all currently selected batches to SERIAL.
+	 */
+	public void setSerial() {
+		setType(Type.SERIAL);
+	}
+
+	/**
+	 * Sets the type of all currently selected batches to the named one,
+	 * overriding a previously set type, if any.
+	 * 
+	 * @param type
+	 *            type to set
+	 */
+	private void setType(Type type) {
+		try {
+			for (Batch batch : currentBatches) {
+				if (selectedBatches.contains(batch.getId().toString())) {
+					batch.setType(type);
+					BatchDAO.save(batch);
+				}
+			}
+		} catch (DAOException e) {
+			logger.error(e);
+			Helper.setFehlerMeldung("fehlerBeimEinlesen");
 		}
-		return "taskmanager";
 	}
 }

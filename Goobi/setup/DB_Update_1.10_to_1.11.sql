@@ -26,6 +26,7 @@ INSERT INTO batches( BatchID )
 SELECT DISTINCT batchID
 FROM prozesse
 WHERE batchID IS NOT NULL;
+UPDATE `batches` SET `type` = 'LOGISTIC';
 
 /* After the migration of the "batches" we use
  * the table "batchesprozesse" to link "prozesse" and "batches"

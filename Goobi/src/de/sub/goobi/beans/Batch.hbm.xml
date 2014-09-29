@@ -49,6 +49,13 @@
 		</id>
 
 		<property name="title" column="title" type="string" />
+		
+		<property name="type" length="9">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">de.sub.goobi.beans.Batch$Type</param>
+				<param name="type"><!-- int java.sql.Types.VARCHAR = -->12</param>
+			</type>
+		</property>
 
 		<set name="processes" table="batchesprozesse" lazy="true">
 			<key column="BatchID" />

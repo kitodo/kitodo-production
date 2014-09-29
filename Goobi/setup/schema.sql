@@ -385,6 +385,7 @@ CREATE TABLE `batchesprozesse` (
 CREATE TABLE `batches` (
   `BatchID` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
+  `type` varchar(9) DEFAULT NULL,
   PRIMARY KEY (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

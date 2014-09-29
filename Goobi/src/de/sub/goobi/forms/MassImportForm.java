@@ -41,6 +41,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,6 +68,7 @@ import org.joda.time.format.DateTimeFormat;
 
 import ugh.dl.Prefs;
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
@@ -80,12 +82,10 @@ public class MassImportForm {
 	private List<String> digitalCollections;
 	private List<String> possibleDigitalCollections;
 	private String opacCatalogue;
-	// private List<String> recordList = new ArrayList<String>();
 	private List<String> ids = new ArrayList<String>();
 	private ImportFormat format = null;
 	private String idList = "";
 	private String records = "";
-	// private List<String> usablePlugins = new ArrayList<String>();
 	private List<String> usablePluginsForRecords = new ArrayList<String>();
 	private List<String> usablePluginsForIDs = new ArrayList<String>();
 	private List<String> usablePluginsForFiles = new ArrayList<String>();
@@ -95,7 +95,6 @@ public class MassImportForm {
 
 	private File importFile = null;
 	private final Helper help = new Helper();
-	// private ImportConfiguration ic = null;
 
 	private UploadedFile uploadedFile = null;
 
@@ -257,9 +256,6 @@ public class MassImportForm {
 					.getGoobiConfigDirectory());
 
 			if (StringUtils.isNotEmpty(this.idList)) {
-				// IImportPlugin plugin = (IImportPlugin)
-				// PluginLoader.getPlugin(PluginType.Import,
-				// this.currentPlugin);
 				List<String> ids = this.plugin.splitIds(this.idList);
 				List<Record> recordList = new ArrayList<Record>();
 				for (String id : ids) {
@@ -272,10 +268,6 @@ public class MassImportForm {
 
 				answer = this.plugin.generateFiles(recordList);
 			} else if (this.importFile != null) {
-				// uploaded file
-				// IImportPlugin plugin = (IImportPlugin)
-				// PluginLoader.getPlugin(PluginType.Import,
-				// this.currentPlugin);
 				this.plugin.setFile(this.importFile);
 				List<Record> recordList = this.plugin.generateRecordsFromFile();
 				for (Record r : recordList) {
@@ -283,10 +275,6 @@ public class MassImportForm {
 				}
 				answer = this.plugin.generateFiles(recordList);
 			} else if (StringUtils.isNotEmpty(this.records)) {
-				// found list with records
-				// IImportPlugin plugin = (IImportPlugin)
-				// PluginLoader.getPlugin(PluginType.Import,
-				// this.currentPlugin);
 				List<Record> recordList = this.plugin
 						.splitRecords(this.records);
 				for (Record r : recordList) {
@@ -311,20 +299,19 @@ public class MassImportForm {
 							DateTimeFormat.shortDateTime()
 									.print(new DateTime()) });
 					batch = new Batch(Helper.getTranslation(
-							"importedBatchLabel", args));
-				} else
+							"importedBatchLabel", args), Type.LOGISTIC);
+				} else {
 					batch = new Batch();
+				}
 			}
 
 			for (ImportObject io : answer) {
-				if (batch != null)
+				if (batch != null) {
 					io.getBatches().add(batch);
+				}
 				if (io.getImportReturnValue().equals(
 						ImportReturnValue.ExportFinished)) {
 					Prozess p = JobCreation.generateProcess(io, this.template);
-					// int returnValue =
-					// HotfolderJob.generateProcess(io.getProcessTitle(),
-					// this.template, new File(tempfolder), null, "error", b);
 					if (p == null) {
 						if (io.getImportFileName() != null
 								&& !io.getImportFileName().isEmpty()
@@ -351,9 +338,6 @@ public class MassImportForm {
 					param.add(io.getErrorMessage());
 					Helper.setFehlerMeldung(Helper.getTranslation(
 							"importFailedError", param));
-					// Helper.setFehlerMeldung("import failed for: " +
-					// io.getProcessTitle() + " Error message is: " +
-					// io.getErrorMessage());
 					if (io.getImportFileName() != null
 							&& !io.getImportFileName().isEmpty()
 							&& selectedFilenames != null
@@ -426,8 +410,6 @@ public class MassImportForm {
 			List<String> param = new ArrayList<String>();
 			param.add(basename);
 			Helper.setMeldung(Helper.getTranslation("uploadSuccessful", param));
-			// Helper.setMeldung("File '" + basename +
-			// "' successfully uploaded, press 'Save' now...");
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			Helper.setFehlerMeldung("uploadFailed");
@@ -466,9 +448,6 @@ public class MassImportForm {
 	 */
 
 	private boolean testForData() {
-		// if (format == null) {
-		// return false;
-		// }
 		if (StringUtils.isEmpty(this.idList)
 				&& StringUtils.isEmpty(this.records)
 				&& (this.importFile == null)
@@ -572,7 +551,6 @@ public class MassImportForm {
 	 *            the template to set
 	 */
 	public void setTemplate(Prozess template) {
-		// this.ic = new ImportConfiguration(template);
 		this.template = template;
 
 	}
@@ -687,21 +665,6 @@ public class MassImportForm {
 		}
 		return this.format.getTitle();
 	}
-
-	// /**
-	// * @param usablePlugins
-	// * the usablePlugins to set
-	// */
-	// public void setUsablePlugins(List<String> usablePlugins) {
-	// this.usablePlugins = usablePlugins;
-	// }
-	//
-	// /**
-	// * @return the usablePlugins
-	// */
-	// public List<String> getUsablePlugins() {
-	// return usablePlugins;
-	// }
 
 	/**
 	 * @param currentPlugin

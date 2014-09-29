@@ -175,8 +175,13 @@ public class ExportXmlLog implements IProcessDataExport {
 
 		StringBuilder batches = new StringBuilder();
 		for (Batch batch : process.getBatchesInitialized()) {
-			if (batches.length() != 0)
+			if (batch.getType() != null) {
+				batches.append(batch.getTypeTranslated());
+				batches.append(": ");
+			}
+			if (batches.length() != 0) {
 				batches.append(", ");
+			}
 			batches.append(batch.getLabel());
 		}
 		if (batches.length() != 0) {
