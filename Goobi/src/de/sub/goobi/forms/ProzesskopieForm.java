@@ -896,7 +896,11 @@ public class ProzesskopieForm {
 				Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
 				while (enricher.getAllChildren() != null) {
 					// save higher level metadata for lower enrichment
-					for (Metadata available : enricher.getAllMetadata()) {
+					List<Metadata> allMetadata = enricher.getAllMetadata();
+					if (allMetadata == null) {
+						allMetadata = Collections.emptyList();
+					}
+					for (Metadata available : allMetadata) {
 						Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(available.getType()
 								.getName()) ? higherLevelMetadata.get(available.getType().getName())
 								: new HashMap<String, Metadata>();
