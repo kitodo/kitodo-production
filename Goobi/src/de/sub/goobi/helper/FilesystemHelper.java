@@ -28,15 +28,15 @@
 
 package de.sub.goobi.helper;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
-
-import de.sub.goobi.config.ConfigMain;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
+
+import de.sub.goobi.config.ConfigMain;
 
 /**
  * Helper class for file system operations.
@@ -98,9 +98,6 @@ public class FilesystemHelper {
 		} catch (IOException e) {
 			logger.error("IOException in deleteSymLink()", e);
 			Helper.setFehlerMeldung("Aborted deleteSymLink(), error", e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error("InterruptedException in deleteSymLink()", e);
-			Helper.setFehlerMeldung("Command '" + command + "' is interrupted in deleteSymLink()!");
 		}
 	}
 
@@ -145,8 +142,9 @@ public class FilesystemHelper {
 			}
 			success = oldFile.renameTo(newFile);
 			if (!success) {
-				if (millisWaited == 0)
+				if (millisWaited == 0) {
 					logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
+				}
 				try {
 					Thread.sleep(SLEEP_INTERVAL_MILLIS);
 				} catch (InterruptedException e) {

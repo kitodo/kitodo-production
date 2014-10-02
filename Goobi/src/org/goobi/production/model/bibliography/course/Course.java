@@ -40,9 +40,11 @@ package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
@@ -207,21 +209,25 @@ public class Course extends ArrayList<Title> {
 		int initialCapacity = 10;
 		for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
 				.getNextSibling()) {
-			if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS))
+			if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS)) {
 				continue;
+			}
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(initialCapacity);
 			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
 					.getNextSibling()) {
-				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE))
+				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE)) {
 					continue;
+				}
 				String variant = ((Element) titleNode).getAttribute(ATTRIBUTE_VARIANT);
 				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
 						.getNextSibling()) {
-					if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED))
+					if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
 						continue;
+					}
 					String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
-					if (issue == null)
+					if (issue == null) {
 						issue = "";
+					}
 					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
 					IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
 					process.add(individualIssue);
@@ -245,8 +251,9 @@ public class Course extends ArrayList<Title> {
 	@Override
 	public boolean add(Title title) {
 		super.add(title);
-		if (title.countIndividualIssues() > 0)
+		if (title.countIndividualIssues() > 0) {
 			processes.clear();
+		}
 		return true;
 	}
 
@@ -278,10 +285,12 @@ public class Course extends ArrayList<Title> {
 			title.setLastAppearance(date);
 			add(title);
 		} else {
-			if (title.getFirstAppearance().isAfter(date))
+			if (title.getFirstAppearance().isAfter(date)) {
 				title.setFirstAppearance(date);
-			if (title.getLastAppearance().isBefore(date))
+			}
+			if (title.getLastAppearance().isBefore(date)) {
 				title.setLastAppearance(date);
+			}
 		}
 		Issue issue = title.getIssue(issueHeading);
 		if (issue == null) {
@@ -293,8 +302,9 @@ public class Course extends ArrayList<Title> {
 	}
 
 	void clearProcesses() {
-		if (processesAreVolatile)
+		if (processesAreVolatile) {
 			processes.clear();
+		}
 	}
 
 	/**
@@ -306,8 +316,9 @@ public class Course extends ArrayList<Title> {
 	 */
 	public long countIndividualIssues() {
 		long result = 0;
-		for (Title title : this)
+		for (Title title : this) {
 			result += title.countIndividualIssues();
+		}
 		return result;
 	}
 
@@ -325,10 +336,11 @@ public class Course extends ArrayList<Title> {
 	private Title get(String variant) {
 		if (resolveByTitleVariantCache.containsKey(variant)) {
 			Title potentialResult = resolveByTitleVariantCache.get(variant);
-			if (potentialResult.isIdentifiedBy(variant))
+			if (potentialResult.isIdentifiedBy(variant)) {
 				return potentialResult;
-			else
+			} else {
 				resolveByTitleVariantCache.remove(variant);
+			}
 		}
 		for (Title candidate : this) {
 			if (candidate.isIdentifiedBy(variant)) {
@@ -365,13 +377,15 @@ public class Course extends ArrayList<Title> {
 	 * @return the date of first appearance
 	 */
 	public LocalDate getFirstAppearance() {
-		if (super.isEmpty())
+		if (super.isEmpty()) {
 			return null;
+		}
 		LocalDate result = super.get(0).getFirstAppearance();
 		for (int index = 1; index < super.size(); index++) {
 			LocalDate firstAppearance = super.get(index).getFirstAppearance();
-			if (firstAppearance.isBefore(result))
+			if (firstAppearance.isBefore(result)) {
 				result = firstAppearance;
+			}
 		}
 		return result;
 	}
@@ -383,13 +397,15 @@ public class Course extends ArrayList<Title> {
 	 * @return the date of last appearance
 	 */
 	public LocalDate getLastAppearance() {
-		if (super.isEmpty())
+		if (super.isEmpty()) {
 			return null;
+		}
 		LocalDate result = super.get(0).getLastAppearance();
 		for (int index = 1; index < super.size(); index++) {
 			LocalDate lastAppearance = super.get(index).getLastAppearance();
-			if (lastAppearance.isAfter(result))
+			if (lastAppearance.isAfter(result)) {
 				result = lastAppearance;
+			}
 		}
 		return result;
 	}
@@ -422,8 +438,9 @@ public class Course extends ArrayList<Title> {
 			LocalDate lastAppearance = title.getLastAppearance();
 			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 				for (Issue issue : title.getIssues()) {
-					if (issue.isMatch(day))
+					if (issue.isMatch(day)) {
 						result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES : SUNDAY_PAGES;
+					}
 				}
 			}
 		}
@@ -451,9 +468,11 @@ public class Course extends ArrayList<Title> {
 	 * @return the title block on which this date is represented, if any
 	 */
 	public Title isMatch(LocalDate date) {
-		for (Title title : this)
-			if (title.isMatch(date))
+		for (Title title : this) {
+			if (title.isMatch(date)) {
 				return title;
+			}
+		}
 		return null;
 	}
 
@@ -466,8 +485,9 @@ public class Course extends ArrayList<Title> {
 	 * underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
-		for (Title title : this)
+		for (Title title : this) {
 			title.recalculateRegularityOfIssues();
+		}
 	}
 
 	/**
@@ -487,11 +507,15 @@ public class Course extends ArrayList<Title> {
 	@Override
 	public Title remove(int index) {
 		Title title = super.remove(index);
-		for (Map.Entry<String, Title> entry : resolveByTitleVariantCache.entrySet())
-			if (entry.getValue() == title) // pointer equality
-				resolveByTitleVariantCache.remove(entry.getKey());
-		if (title.countIndividualIssues() > 0)
+		Iterator<Entry<String, Title>> entries = resolveByTitleVariantCache.entrySet().iterator();
+		while (entries.hasNext()) {
+			if (entries.next().getValue() == title) { // pointer equality
+				entries.remove();
+			}
+		}
+		if (title.countIndividualIssues() > 0) {
 			processes.clear();
+		}
 		return title;
 	}
 
@@ -516,13 +540,15 @@ public class Course extends ArrayList<Title> {
 				processes.add(process);
 				process = null;
 			}
-			if (process == null)
+			if (process == null) {
 				process = new ArrayList<IndividualIssue>(initialCapacity);
+			}
 			process.add(issue);
 			lastMark = mark;
 		}
-		if (process != null)
+		if (process != null) {
 			processes.add(process);
+		}
 	}
 
 	/**
@@ -556,14 +582,16 @@ public class Course extends ArrayList<Title> {
 					titleNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
 				}
 				Element issueNode = result.createElement(ELEMENT_APPEARED);
-				if (issue != null)
+				if (issue != null) {
 					issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+				}
 				issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
 				titleNode.appendChild(issueNode);
 				previous = index;
 			}
-			if (titleNode != null)
+			if (titleNode != null) {
 				processNode.appendChild(titleNode);
+			}
 			processesNode.appendChild(processNode);
 		}
 		courseNode.appendChild(processesNode);

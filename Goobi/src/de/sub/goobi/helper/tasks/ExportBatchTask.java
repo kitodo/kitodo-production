@@ -79,10 +79,10 @@ public class ExportBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
-	private static final String METADATA_ELEMENT_DAY = "PublicationDay";
-	private static final String METADATA_ELEMENT_ISSUE = "Issue";
-	private static final String METADATA_ELEMENT_MONTH = "PublicationMonth";
-	private static final String METADATA_ELEMENT_YEAR = "PublicationYear";
+	static final String METADATA_ELEMENT_DAY = "PublicationDay";
+	static final String METADATA_ELEMENT_ISSUE = "Issue";
+	static final String METADATA_ELEMENT_MONTH = "PublicationMonth";
+	static final String METADATA_ELEMENT_YEAR = "PublicationYear";
 
 	/**
 	 * The field batch holds the batch whose processes are to export.

@@ -47,10 +47,8 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
-import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.w3c.dom.Document;
 
@@ -135,10 +133,7 @@ public class GranularityForm {
 		if (!prozesskopieForm.isContentValid(false)) {
 			return ProzesskopieForm.NAVI_FIRST_PAGE;
 		}
-		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
-		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
-		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
-				generateBatches);
+		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course, generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";
 	}
