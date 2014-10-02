@@ -300,8 +300,8 @@ public class CreateProcessesTask extends EmptyTask {
 
 		// create the year level
 		DocStruct year = newspaper.createChild(ExportBatchTask.METADATA_ELEMENT_YEAR, document, ruleset);
-		year.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
-				Integer.toString(issues.get(0).getDate().getYear()));
+		String theYear = Integer.toString(issues.get(0).getDate().getYear());
+		year.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear);
 
 		// create the month level
 		Map<Integer, DocStruct> months = new HashMap<Integer, DocStruct>();
@@ -312,6 +312,10 @@ public class CreateProcessesTask extends EmptyTask {
 			if (!months.containsKey(monthNo)) {
 				DocStruct newMonth = year.createChild(ExportBatchTask.METADATA_ELEMENT_MONTH, document, ruleset);
 				newMonth.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString());
+				try {
+					newMonth.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
 				try {
 					newMonth.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString());
 				} catch (MetadataTypeNotAllowedException undesired) {
@@ -326,6 +330,14 @@ public class CreateProcessesTask extends EmptyTask {
 				newDay.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
 						Integer.toString(date.getDayOfMonth()));
 				try {
+					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
 					newDay.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
 							Integer.toString(date.getDayOfMonth()));
 				} catch (MetadataTypeNotAllowedException undesired) {
@@ -339,6 +351,18 @@ public class CreateProcessesTask extends EmptyTask {
 			String heading = individualIssue.getHeading();
 			if (heading != null && heading.trim().length() > 0) {
 				issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_ISSUE, heading);
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_DAY, Integer.toString(date.getDayOfMonth()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
 				try {
 					issue.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading);
 				} catch (MetadataTypeNotAllowedException undesired) {
