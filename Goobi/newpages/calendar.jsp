@@ -163,13 +163,13 @@
 		 --%>
 			function titleDataIsValid() {
 				if (!document.getElementById("form1:firstAppearance").value
-						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
+						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
 					document.getElementById("form1:firstAppearance").focus();
 					return false;
 				}
 				if (!document.getElementById("form1:lastAppearance").value
-						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
+						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
 					alert("${msgs['calendar.title.lastAppearance.invalid']}");
 					document.getElementById("form1:lastAppearance").focus();
 					return false;
