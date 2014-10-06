@@ -155,6 +155,24 @@ public class CalendarForm {
 	protected int yearShowing = 1979; // Cf. 42
 
 	/**
+	 * The field firstAppearanceInToChange is set in the setter method
+	 * setFirstAppearance to notify the setter method setLastAppearance that the
+	 * date of first appearance has to be changed. Java Server Faces tries to
+	 * update the data model by sequentially calling two setter methods. By
+	 * allowing the user to alter both fields at one time this may lead to an
+	 * illegal intermediate state in the data model which the latter
+	 * successfully rejects (which it should). Imagine the case that one title
+	 * block is from March until September and the second one from October to
+	 * November. Now the second block shall be moved to January until February.
+	 * Setting the start date from October to January will cause an overlapping
+	 * state with the other block which is prohibited by definition. Therefore
+	 * changing the beginning date must be forwarded to the setter method to
+	 * change the end date to allow this change, which is allowed, if taken
+	 * atomically.
+	 */
+	private LocalDate firstAppearanceIsToChange = null;
+
+	/**
 	 * The class IssueController backs the control elements that are necessary
 	 * to manage the properties of an issue using Faces, including the option of
 	 * its deletion.
@@ -1100,9 +1118,7 @@ public class CalendarForm {
 				if (titlePickerUnchanged) {
 					if (titleShowing.getFirstAppearance() == null
 							|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
-						titleShowing.setFirstAppearance(newFirstAppearance);
-						checkTitlePlausibility();
-						navigate();
+						firstAppearanceIsToChange = newFirstAppearance;
 					}
 				}
 			} else {
@@ -1137,9 +1153,34 @@ public class CalendarForm {
 		try {
 			if (titleShowing != null) {
 				if (titlePickerUnchanged) {
-					if (titleShowing.getLastAppearance() == null
-							|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
-						titleShowing.setLastAppearance(newLastAppearance);
+					if (firstAppearanceIsToChange == null) {
+						if (titleShowing.getLastAppearance() == null
+								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+							if (titleShowing.getFirstAppearance() != null
+									&& newLastAppearance.isBefore(titleShowing.getFirstAppearance())) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setLastAppearance(newLastAppearance);
+							checkTitlePlausibility();
+							navigate();
+						}
+					} else {
+						if (titleShowing.getLastAppearance() == null
+								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+							if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
+						} else {
+							if (titleShowing.getLastAppearance() != null
+									&& titleShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setFirstAppearance(firstAppearanceIsToChange);
+						}
 						checkTitlePlausibility();
 						navigate();
 					}
@@ -1151,6 +1192,8 @@ public class CalendarForm {
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
+		} finally {
+			firstAppearanceIsToChange = null;
 		}
 	}
 

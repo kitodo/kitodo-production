@@ -387,6 +387,41 @@ public class Title {
 	}
 
 	/**
+	 * The method setPublicationPeriod() sets two LocalDate instances as days of
+	 * first and last appearance for this Title.
+	 * 
+	 * @param firstAppearance
+	 *            date of first appearance
+	 * @param lastAppearance
+	 *            date of last appearance
+	 * @throws IllegalArgumentException
+	 *             if the date would overlap with another block
+	 */
+	public void setPublicationPeriod(LocalDate firstAppearance, LocalDate lastAppearance) {
+		prohibitOverlaps(firstAppearance, lastAppearance);
+		try {
+			if (!this.firstAppearance.equals(firstAppearance)) {
+				course.clearProcesses();
+			}
+		} catch (NullPointerException e) {
+			if (this.firstAppearance == null ^ firstAppearance == null) {
+				course.clearProcesses();
+			}
+		}
+		try {
+			if (!this.lastAppearance.equals(lastAppearance)) {
+				course.clearProcesses();
+			}
+		} catch (NullPointerException e) {
+			if (this.lastAppearance == null ^ lastAppearance == null) {
+				course.clearProcesses();
+			}
+		}
+		this.firstAppearance = firstAppearance;
+		this.lastAppearance = lastAppearance;
+	}
+
+	/**
 	 * The method checkForOverlaps() tests an not yet set time range for this
 	 * title whether it doesn’t overlap with other titles in this course and can
 	 * be set. (Because this method is called prior to setting a new value as a
@@ -403,7 +438,7 @@ public class Title {
 	 */
 	private void prohibitOverlaps(LocalDate from, LocalDate until) throws IllegalArgumentException {
 		for (Title title : course) {
-			if (title != this
+			if (!title.equals(this)
 					&& (title.getFirstAppearance().isBefore(until) && !title.getLastAppearance().isBefore(from) || (title
 							.getLastAppearance().isAfter(from) && !title.getFirstAppearance().isAfter(until)))) {
 				throw new IllegalArgumentException();
