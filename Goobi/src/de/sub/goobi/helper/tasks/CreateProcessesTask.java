@@ -257,9 +257,11 @@ public class CreateProcessesTask extends CloneableLongRunningTask {
 	 *             thrown while performing the rollback
 	 */
 	private void flushLogisticsBatch(String processTitle) throws DAOException {
-		logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
-		BatchDAO.save(logisticsBatch);
-		logisticsBatch = new Batch();
+		if (logisticsBatch.size() > 0) {
+			logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
+			BatchDAO.save(logisticsBatch);
+			logisticsBatch = new Batch();
+		}
 		currentBreakMark = null;
 		batchLabel = null;
 	}

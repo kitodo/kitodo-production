@@ -145,8 +145,9 @@ public class Batch {
 	 * @return true if the title or label contain s, false otherwise
 	 */
 	public boolean contains(CharSequence s) {
-		if (s == null)
+		if (s == null) {
 			return true;
+		}
 		return title != null && title.contains(s) || getNumericLabel().contains(s);
 	}
 
@@ -208,13 +209,14 @@ public class Batch {
 	 * @return the processes that are in the batch
 	 */
 	public Set<Prozess> getProcesses() {
-		if (id != null)
+		if (id != null) {
 			try {
 				Hibernate.initialize(processes);
 			} catch (HibernateException e) {
 				BatchDAO.reattach(this);
 				Hibernate.initialize(processes);
 			}
+		}
 		return processes;
 	}
 
@@ -277,6 +279,17 @@ public class Batch {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	/**
+	 * Returns the number of elements in this batch. If this batch contains more
+	 * than Integer.MAX_VALUE elements, returns Integer.MAX_VALUE.
+	 * 
+	 * @return the number of elements in this batch
+	 * @see java.util.Collection#size()
+	 */
+	public int size() {
+		return processes.size();
 	}
 
 	/**
@@ -344,28 +357,37 @@ public class Batch {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Batch))
+		}
+		if (!(obj instanceof Batch)) {
 			return false;
+		}
 		Batch other = (Batch) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		if (processes == null) {
-			if (other.processes != null)
+			if (other.processes != null) {
 				return false;
-		} else if (!processes.equals(other.processes))
+			}
+		} else if (!processes.equals(other.processes)) {
 			return false;
+		}
 		if (title == null) {
-			if (other.title != null)
+			if (other.title != null) {
 				return false;
-		} else if (!title.equals(other.title))
+			}
+		} else if (!title.equals(other.title)) {
 			return false;
+		}
 		return true;
 	}
 }
