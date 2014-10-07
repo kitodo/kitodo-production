@@ -310,7 +310,7 @@ public class ExportBatchTask extends EmptyTask {
 
 		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
 				.getPreferences(), process, null);
-		String metsPointerPathAnchor = process.getProjekt().getMetsPointerPathAnchor();
+		String metsPointerPathAnchor = process.getProjekt().getMetsPointerPath();
 		if (metsPointerPathAnchor.contains(Projekt.ANCHOR_SEPARATOR)) {
 			metsPointerPathAnchor = metsPointerPathAnchor.split(Projekt.ANCHOR_SEPARATOR)[1];
 		}
@@ -416,7 +416,7 @@ public class ExportBatchTask extends EmptyTask {
 			DAOException, IOException, InterruptedException {
 		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
 				.getPreferences(), process, null);
-		return replacer.replace(process.getProjekt().getMetsPointerPath());
+		return replacer.replace(process.getProjekt().getMetsPointerPathAnchor());
 	}
 
 	/**

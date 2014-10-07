@@ -292,18 +292,26 @@ public class ExportMets {
 		mm.setPurlUrl(vp.replace(myProzess.getProjekt().getMetsPurl()));
 		mm.setContentIDs(vp.replace(myProzess.getProjekt().getMetsContentIDs()));
 
-		String pointer = myProzess.getProjekt().getMetsPointerPath();
-		pointer = vp.replace(pointer);
-		mm.setMptrUrl(pointer);
-
-		String anchor = myProzess.getProjekt().getMetsPointerPathAnchor();
-		if (anchor.contains(Projekt.ANCHOR_SEPARATOR)) {
-			anchor = anchor.split(Projekt.ANCHOR_SEPARATOR)[0];
+		// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl  is the
+		// pointer used to point to the superordinate (anchor) file, that is
+		// representing a “virtual” group such as a series. Several anchors
+		// pointer paths can be defined/ since it is possible to define several
+		// levels of superordinate structures (such as the complete edition of
+		// a daily newspaper, one year ouf of that edition, …)
+		String anchorPointersToReplace = myProzess.getProjekt().getMetsPointerPath();
+		mm.setMptrUrl(null);
+		for (String anchorPointerToReplace : anchorPointersToReplace.split(Projekt.ANCHOR_SEPARATOR)) {
+			String anchorPointer = vp.replace(anchorPointerToReplace);
+			mm.setMptrUrl(anchorPointer);
 		}
-		pointer = vp.replace(anchor);
-		mm.setMptrAnchorUrl(pointer);
 
-		// if (!ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+		// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
+		// from the (lowest) superordinate (anchor) file to the lowest level
+		// file (the non-anchor file). 
+		String metsPointerToReplace = myProzess.getProjekt().getMetsPointerPathAnchor();
+		String metsPointer = vp.replace(metsPointerToReplace);
+		mm.setMptrAnchorUrl(metsPointer);
+
 		List<String> images = new ArrayList<String>();
 		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
 			try {
