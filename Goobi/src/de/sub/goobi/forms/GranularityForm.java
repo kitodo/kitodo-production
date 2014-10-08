@@ -136,6 +136,10 @@ public class GranularityForm {
 		if (!prozesskopieForm.isContentValid(false)) {
 			return ProzesskopieForm.NAVI_FIRST_PAGE;
 		}
+		if (course == null || course.getNumberOfProcesses() < 1) {
+			Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+			return "";
+		}
 		String description = StringUtils.join(CourseToGerman.asReadableText(course), "\n\n");
 		prozesskopieForm.setAdditionalField("PublicationRun", description, false);
 		LongRunningTask createProcesses = new CreateProcessesTask(prozesskopieForm, course.getProcesses(),
@@ -158,6 +162,10 @@ public class GranularityForm {
 	public void downloadClick() {
 		try {
 			course.recalculateRegularityOfIssues();
+			if (course == null || course.getNumberOfProcesses() < 1) {
+				Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+				return;
+			}
 			Document courseXML = course.toXML();
 			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
 			FacesUtils.sendDownload(data, "course.xml");
