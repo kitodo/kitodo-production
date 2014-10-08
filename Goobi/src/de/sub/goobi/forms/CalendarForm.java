@@ -1036,7 +1036,8 @@ public class CalendarForm {
 	 * to the next screen. It returns either the String constant that indicates
 	 * Faces the next screen, or sets an error message if the user didn’t yet
 	 * input an issue and indicates Faces to stay on that screen by returning
-	 * the empty string.
+	 * the empty string. Before navigation, old values are removed—if any—so
+	 * that the screen is reinitialised with the current calendar state.
 	 * 
 	 * @return the screen to show next
 	 */
@@ -1045,6 +1046,7 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
 			return "";
 		}
+		Helper.removeManagedBean("GranularityForm");
 		return "ShowGranularityPicker";
 	}
 
