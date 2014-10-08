@@ -519,8 +519,8 @@
 									</htm:table>
 
 									<htm:div styleClass="continueButton">
-										<h:commandButton value="#{msgs['granularity.header']}"
-											action="ShowGranularityPicker" />
+										<h:commandButton value="#{msgs['weiter']}"
+											action="#{CalendarForm.nextClick}" />
 									</htm:div>
 
 									<%-- ===================== End page main content ====================== --%>

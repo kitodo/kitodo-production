@@ -1032,6 +1032,23 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function nextClick() is executed if the user clicks the button to go
+	 * to the next screen. It returns either the String constant that indicates
+	 * Faces the next screen, or sets an error message if the user didn’t yet
+	 * input an issue and indicates Faces to stay on that screen by returning
+	 * the empty string.
+	 * 
+	 * @return the screen to show next
+	 */
+	public String nextClick() {
+		if (course == null || course.countIndividualIssues() < 1) {
+			Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
+			return "";
+		}
+		return "ShowGranularityPicker";
+	}
+
+	/**
 	 * Tries to interpret a string entered by the user as a date as flexible as
 	 * possible. Supports two-digit years and imperial date field order
 	 * (month/day/year). In case of flexible interpretations, hints will be
