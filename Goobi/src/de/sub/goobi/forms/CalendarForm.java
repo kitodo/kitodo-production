@@ -1037,6 +1037,13 @@ public class CalendarForm {
 	 * (month/day/year). In case of flexible interpretations, hints will be
 	 * displayed to put the user on the right track what happened to his input.
 	 * 
+	 * If the user clicks the link to upload a course of appearance file, no
+	 * warning message shall show. Therefore an alternate white-space character
+	 * (U+00A0) will be appended to the value string by Javascript on the user
+	 * side because the setter methods will be called by Faces before the link
+	 * action will be executed, but we want to skip the error message generation
+	 * in that case, too.
+	 * 
 	 * @param value
 	 *            value entered by the user
 	 * @param input
@@ -1070,7 +1077,9 @@ public class CalendarForm {
 				}
 			}
 		}
-		Helper.setFehlerMeldung("calendar.title." + input + ".invalid");
+		if (!uploadShowing && value.indexOf("\u00A0") == -1) {
+			Helper.setFehlerMeldung("calendar.title." + input + ".invalid");
+		}
 		return null;
 	}
 
@@ -1122,9 +1131,11 @@ public class CalendarForm {
 					}
 				}
 			} else {
-				titleShowing = new Title(course);
-				titleShowing.setFirstAppearance(newFirstAppearance);
-				course.add(titleShowing);
+				if (newFirstAppearance != null) {
+					titleShowing = new Title(course);
+					titleShowing.setFirstAppearance(newFirstAppearance);
+					course.add(titleShowing);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.firstAppearance.rejected");
@@ -1186,9 +1197,11 @@ public class CalendarForm {
 					}
 				}
 			} else {
-				titleShowing = new Title(course);
-				titleShowing.setLastAppearance(newLastAppearance);
-				course.add(titleShowing);
+				if (newLastAppearance != null) {
+					titleShowing = new Title(course);
+					titleShowing.setLastAppearance(newLastAppearance);
+					course.add(titleShowing);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
