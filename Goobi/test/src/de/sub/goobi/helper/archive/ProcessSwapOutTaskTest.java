@@ -38,9 +38,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
+import de.sub.goobi.persistence.ProzessDAO;
 
 @Ignore("Crashing") 
 public class ProcessSwapOutTaskTest {
@@ -73,14 +73,15 @@ public class ProcessSwapOutTaskTest {
    private void swapOut() {
       ProcessSwapOutTask psot = new ProcessSwapOutTask();
       psot.initialize(proz);
-      psot.execute();
+		psot.run();
       assertTrue(proz.isSwappedOutGui());
    }
 
+	@SuppressWarnings("unused")
    private void swapIn() {
       ProcessSwapInTask psot = new ProcessSwapInTask();
       psot.initialize(proz);
-      psot.execute();
+		psot.run();
       assertFalse(proz.isSwappedOutGui());
    }
 
