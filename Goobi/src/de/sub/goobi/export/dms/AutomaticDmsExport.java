@@ -30,6 +30,7 @@ package de.sub.goobi.export.dms;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -55,6 +56,8 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.ProzessDAO;
 
 public class AutomaticDmsExport extends ExportMets {
@@ -130,6 +133,27 @@ public class AutomaticDmsExport extends ExportMets {
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + myProzess.getTitel(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
+		}
+
+		String rules = ConfigMain.getParameter("copyData.onExport");
+		if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+			try {
+				new DataCopier(rules).process(new CopierData(newfile, myProzess));
+			} catch (ConfigurationException e) {
+				// TODO: When merging with issue #166, add this:
+				// if (task != null) {
+				//     task.setException(e);
+				// }					
+				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+				return false;
+			} catch (RuntimeException e) {
+				// TODO: When merging with issue #166, add this:
+				// if (task != null) {
+				//     task.setException(e);
+				// }					
+				Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+				return false;
+			}
 		}
 
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());

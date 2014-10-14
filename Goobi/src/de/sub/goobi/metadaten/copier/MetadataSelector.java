@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -42,6 +42,14 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import ugh.dl.DocStruct;
 
+/**
+ * Abstract base class that different types of metadata selectors are based on.
+ * Proviedes a factory method to create its subclasses depending on a a given
+ * String path, and defines methods that shall be implemented by the
+ * implementing metadata selectors.
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 public abstract class MetadataSelector extends DataSelector {
 
 	/**
@@ -130,5 +138,42 @@ public abstract class MetadataSelector extends DataSelector {
 	 *             if the operation fails for unfulfilled dependencies
 	 */
 	protected abstract void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value);
+
+	/**
+	 * Checks if the document structure node as named by the path is available,
+	 * and sets the metadatum as named by the path to the value passed to the
+	 * function. If the document structure node isn’t yet present, it will be
+	 * created. If the metadatum already exists, it will be overwritten,
+	 * otherwise it will be created.
+	 * 
+	 * @param data
+	 *            data to work on
+	 * @param value
+	 *            value to write if no metadatum is available at the path’s end
+	 * @throws RuntimeException
+	 *             if the operation fails for unfulfilled dependencies
+	 */
+	public void createOrOverwrite(CopierData data, String value) {
+		createOrOverwrite(data, data.getLogicalDocStruct(), value);
+	}
+
+	/**
+	 * Calling createOrOverwrite() on the implementing instance should check if
+	 * the document structure node as named by the path is available, and set
+	 * the metadatum as named by the path to the value passed to the function.
+	 * If the document structure node isn’t yet present, it should be created.
+	 * If the metadatum already exists, it shall be overwritten, otherwise it
+	 * shall be created.
+	 * 
+	 * @param data
+	 *            data to work on
+	 * @param logicalNode
+	 *            document structure node to start from, intended for recursion
+	 * @param value
+	 *            value to write if no metadatum is available at the path’s end
+	 * @throws RuntimeException
+	 *             if the operation fails for unfulfilled dependencies
+	 */
+	protected abstract void createOrOverwrite(CopierData data, DocStruct logicalNode, String value);
 
 }

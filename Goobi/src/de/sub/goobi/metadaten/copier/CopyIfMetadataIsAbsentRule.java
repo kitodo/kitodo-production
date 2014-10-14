@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -90,7 +90,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	/**
 	 * Returns the maximum number of objects this rule can accept, always 1.
 	 * 
-	 * @see de.sub.goobi.metadaten.DataCopyrule#getMaxObjects()
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
 	 */
 	@Override
 	protected int getMaxObjects() {
@@ -100,7 +100,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	/**
 	 * Returns the minimum number of objects this rule requires, always 1.
 	 * 
-	 * @see de.sub.goobi.metadaten.DataCopyrule#getMinObjects()
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
 	 */
 	@Override
 	protected int getMinObjects() {
@@ -111,7 +111,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	 * Saves the source object path and creates a selector for it. The source
 	 * selector can be arbitrary DataSelector, which may be read-only.
 	 * 
-	 * @see de.sub.goobi.metadaten.DataCopyrule#setObjects(java.util.List)
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
 	 */
 	@Override
 	protected void setObjects(List<String> objects) throws ConfigurationException {
@@ -122,7 +122,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	 * Saves the destination object path and creates a selector for it. The
 	 * destination selector must be a writable MetadataSelector.
 	 * 
-	 * @see de.sub.goobi.metadaten.DataCopyrule#setSubject(java.lang.String)
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
 	 */
 	@Override
 	protected void setSubject(String subject) throws ConfigurationException {

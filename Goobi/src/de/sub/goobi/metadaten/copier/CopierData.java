@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -92,7 +92,7 @@ public class CopierData {
 	 * 
 	 * @return the digital document
 	 */
-	private DigitalDocument getDigitalDocument() {
+	DigitalDocument getDigitalDocument() {
 		try {
 			return fileformat.getDigitalDocument();
 		} catch (PreferencesException e) {

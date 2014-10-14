@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -68,6 +68,11 @@ public abstract class DataSelector {
 	protected final static String LAST_CHILD_QUANTIFIER = ">";
 
 	/**
+	 * Symbol indicating that the selector is to select a variable
+	 */
+	protected final static String VARIABLE_REFERENCE = "$";
+
+	/**
 	 * Factory method to create a DataSelector.
 	 * 
 	 * @param path
@@ -81,6 +86,9 @@ public abstract class DataSelector {
 		if (path.startsWith(METADATA_PATH_SEPARATOR) || path.startsWith(METADATA_SEPARATOR)) {
 			return MetadataSelector.create(path);
 		}
+		if (path.startsWith(VARIABLE_REFERENCE)) {
+			return new VariableSelector(path);
+		}
 		throw new ConfigurationException(
 				"Cannot create data selector: Path must start with \"@\", \"/\" or \"$\", but is: " + path);
 	}
@@ -91,8 +99,8 @@ public abstract class DataSelector {
 	 * Should return null if either the path or the metadatum at the end of the
 	 * path aren’t available.
 	 * 
-	 * @param obj
-	 *            object to retrieve the data from
+	 * @param data
+	 *            data collection to locate the metadatum in
 	 * @return the value the path points to, or null if absent
 	 * @throws RuntimeException
 	 *             if the path cannot be resolved

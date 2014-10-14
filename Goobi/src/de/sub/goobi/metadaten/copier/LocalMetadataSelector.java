@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
  * 
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
@@ -58,6 +58,9 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 public class LocalMetadataSelector extends MetadataSelector {
 	private static final Logger LOG = Logger.getLogger(LocalMetadataSelector.class);
 
+	/**
+	 * Metadata type to return
+	 */
 	private final MetadataType selector = new MetadataType();
 
 	/**
@@ -70,7 +73,7 @@ public class LocalMetadataSelector extends MetadataSelector {
 	 *             if the metadata path doesn’t start with an “@” character
 	 */
 	public LocalMetadataSelector(String path) throws ConfigurationException {
-		if (!path.startsWith("@")) {
+		if (!path.startsWith(METADATA_SEPARATOR)) {
 			throw new ConfigurationException(
 					"Cannot create local metadata selector: Path must start with \"@\", but is: " + path);
 		}
@@ -88,10 +91,24 @@ public class LocalMetadataSelector extends MetadataSelector {
 	 */
 	@Override
 	protected String findIn(DocStruct node) {
+		Metadata found = findMetadatumIn(node);
+		return found != null ? found.getValue() : null;
+	}
+
+	/**
+	 * Returns the metadatum named by the path used to construct the metadata
+	 * selector, or null if no such metadatum is available here.
+	 * 
+	 * @param node
+	 *            document structure node to examine
+	 * @return the metadatum, or null if absent
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+	 */
+	private Metadata findMetadatumIn(DocStruct node) {
 		List<? extends Metadata> metadata = node.getAllMetadataByType(selector);
 		for (Metadata metadatum : metadata) {
 			if (selector.getName().equals(metadatum.getType().getName())) {
-				return metadatum.getValue();
+				return metadatum;
 			}
 		}
 		return null;
@@ -113,9 +130,49 @@ public class LocalMetadataSelector extends MetadataSelector {
 	 */
 	@Override
 	protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
-		if (findIn(logicalNode) != null) {
+		if (findMetadatumIn(logicalNode) != null) {
 			return;
 		}
+		tryToCreateANewMetadatum(data, logicalNode, value);
+	}
+
+	/**
+	 * Sets the value of the metadatum described by the path to the value passed
+	 * to the function or creates a metadatum as described by the path,
+	 * respectively.
+	 * 
+	 * @param data
+	 *            document to work on, required to access the rule set
+	 * @param logicalNode
+	 *            document structure node to check and enrich
+	 * @param value
+	 *            value to write if no metadatum of this type is available
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(de.sub.goobi.metadaten.copier.CopierData,
+	 *      ugh.dl.DocStruct, java.lang.String)
+	 */
+
+	@Override
+	protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
+		Metadata existingMetadatum = findMetadatumIn(logicalNode);
+		if (existingMetadatum != null) {
+			existingMetadatum.setValue(value);
+		} else {
+			tryToCreateANewMetadatum(data, logicalNode, value);
+		}
+	}
+
+	/**
+	 * Adds a metadatum as named by the path with the value passed to the
+	 * function. Doesn’t do anything if that isn’t possible.
+	 * 
+	 * @param data
+	 *            document to work on, required to access the rule set
+	 * @param logicalNode
+	 *            document structure node to check and enrich
+	 * @param value
+	 *            value to write if no metadatum of this type is available
+	 */
+	private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
 		Metadata copy = null;
 		try {
 			copy = new Metadata(data.getPreferences().getMetadataTypeByName(selector.getName()));

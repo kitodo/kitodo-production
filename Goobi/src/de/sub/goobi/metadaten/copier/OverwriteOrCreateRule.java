@@ -38,63 +38,101 @@
  */
 package de.sub.goobi.metadaten.copier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * A data copier is a class that can be parameterised to copy data in goobi
- * processes depending on rules.
+ * Data copy rule that either overwrites the metadatum described by the selector
+ * on the left hand side or creates it anew, if it isn’t yet present.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class DataCopier {
+public class OverwriteOrCreateRule extends DataCopyrule {
 
 	/**
-	 * Holds the rules this data copier can apply to a set of working data.
+	 * Operator representing the OverwriteOrCreateRule in the data copier syntax
 	 */
-	private final List<DataCopyrule> rules;
+	protected static final String OPERATOR = "=";
 
 	/**
-	 * Creates a new DataCopier.
-	 * 
-	 * @param program
-	 *            a semicolon-separated list of expressions defining rules to
-	 *            apply to the metadata
-	 * @throws ConfigurationException
-	 *             may be thrown if the program is syntactically wrong
+	 * Selector for the metadatum to be overwritten or created
 	 */
-	public DataCopier(String program) throws ConfigurationException {
-		List<String> commands = Arrays.asList(program.split(";"));
-		rules = new ArrayList<DataCopyrule>(commands.size());
-		for (String command : commands) {
-			rules.add(DataCopyrule.createFor(command));
-		}
-	}
+	private MetadataSelector destination;
 
 	/**
-	 * Applies the rules defined by the “program” passed to the constructor onto
-	 * a given dataset.
+	 * Selector for the data to be copied
+	 */
+	private DataSelector source;
+
+	/**
+	 * Applies the rule to the given data object
 	 * 
 	 * @param data
-	 *            a data object to work on
+	 *            data to apply the rule on
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
 	 */
-	public void process(CopierData data) {
-		for (DataCopyrule rule : rules) {
-			rule.apply(data);
+	@Override
+	public void apply(CopierData data) {
+		String value = source.findIn(data);
+		if (value == null) {
+			return;
 		}
+		destination.createOrOverwrite(data, value);
 	}
 
 	/**
-	 * Returns a string that textually represents this data copier.
+	 * Returns the minimal number of objects required by the rule to work as
+	 * expected, that is 1.
 	 * 
-	 * @return a string representation of this data copier.
+	 * @return always 1
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
+	 */
+	@Override
+	protected int getMinObjects() {
+		return 1;
+	}
+
+	/**
+	 * Returns the maximal number of objects supported by the rule to work as
+	 * expected, that is 1.
+	 * 
+	 * @return always 1
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
+	 */
+	@Override
+	protected int getMaxObjects() {
+		return 1;
+	}
+
+	/**
+	 * Saves the source object path.
+	 * 
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
+	 */
+	@Override
+	protected void setObjects(List<String> objects) throws ConfigurationException {
+		source = DataSelector.create(objects.get(0));
+	}
+
+	/**
+	 * Saves the destination object path.
+	 * 
+	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
+	 */
+	@Override
+	protected void setSubject(String subject) throws ConfigurationException {
+		destination = MetadataSelector.create(subject);
+	}
+
+	/**
+	 * Returns a string that textually represents this copy rule.
+	 * 
+	 * @return a string representation of this copy rule
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return rules.toString();
+		return destination.toString() + ' ' + OPERATOR + ' ' + source.toString();
 	}
 }
