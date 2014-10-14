@@ -40,7 +40,6 @@ public class Regelsatz implements Serializable {
 	private Integer id;
 	private String titel;
 	private String datei;
-	private Prefs mypreferences;
 	private Boolean orderMetadataByRuleset = false;
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
@@ -77,14 +76,13 @@ public class Regelsatz implements Serializable {
 	}
 
 	public Prefs getPreferences() {
-		this.mypreferences = new Prefs();
+		Prefs mypreferences = new Prefs();
 		try {
-			this.mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis")
-					+ this.datei);
+			mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + getDatei());
 		} catch (PreferencesException e) {
 			logger.error(e);
 		}
-		return this.mypreferences;
+		return mypreferences;
 	}
 
 	public boolean isOrderMetadataByRuleset() {

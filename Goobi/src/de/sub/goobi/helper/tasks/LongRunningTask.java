@@ -31,13 +31,39 @@ import org.apache.log4j.Logger;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
-public class LongRunningTask extends Thread {
+/**
+ * @author unascribed
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @deprecated New task implementations should directly implement EmptyTask.
+ */
+@Deprecated
+public abstract class LongRunningTask extends EmptyTask {
+	/**
+	 * No-argument constructor. Creates an empty long running task. Must be made
+	 * explicit because a constructor taking an argument is present.
+	 * 
+	 * @deprecated New task implementations should directly implement EmptyTask.
+	 */
+	@Deprecated
+	public LongRunningTask() {
+		super((String) null);
+	}
+
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param master
+	 *            copy master to create a clone of
+	 */
+	public LongRunningTask(LongRunningTask master) {
+		super(master);
+		initialize(master.prozess);
+	}
+
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
-	private int statusProgress = 0;
-	private String statusMessage = "";
-	private String longMessage = "";
-	private String title = "MasterTask";
 	private Prozess prozess;
 	private boolean isSingleThread = true;
 
@@ -45,44 +71,48 @@ public class LongRunningTask extends Thread {
 		this.prozess = inProzess;
 	}
 
-	public void execute() {
-		this.statusProgress = 1;
-		this.statusMessage = "running";
-		this.isSingleThread = false;
-		run();
+	/**
+	 * The method setShowMessages() can be used to set a flag whether this long
+	 * running task is executing asynchronously or not, in the latter case it
+	 * shall show messages to the user using
+	 * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
+	 * 
+	 * @param show
+	 *            whether to show messages to the user
+	 */
+	public void setShowMessages(boolean show) {
+		isSingleThread = !show;
 	}
 
+	/**
+	 * @deprecated Replaced by {@link Thread#interrupt()}.
+	 */
+	@Deprecated
 	public void cancel() {
-		this.statusMessage = "stopping";
 		this.interrupt();
 	}
 
-	protected void stopped() {
-		this.statusMessage = "stopped";
-		this.statusProgress = -1;
-	}
-
+	/**
+	 * The function clone() creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 */
 	@Override
-	public void run() {
-		/*
-		 * --------------------- Simulierung einer lang laufenden Aufgabe
-		 * -------------------
-		 */
-		for (int i = 0; i < 100; i++) {
-			/*
-			 * prüfen, ob der Thread unterbrochen wurde, wenn ja, stopped()
-			 */
-			if (this.isInterrupted()) {
-				stopped();
-				return;
-			}
-			/* lang dauernde Schleife zur Simulierung einer langen Aufgabe */
-			for (double j = 0; j < 10000000; j++) {
-			}
-			setStatusProgress(i);
-		}
-		setStatusMessage("done");
-		setStatusProgress(100);
+	public abstract EmptyTask clone();
+
+	/**
+	 * The method stopped() had been used to record that the thread has stopped.
+	 * 
+	 * @deprecated The method stopped() has become redundant due to newer
+	 *             development. The thread state is now directly derived from
+	 *             {@link Thread#getState()} which is reliable in determining
+	 *             whether the thread has died, independent of whether it ever
+	 *             managed to call stopped() or died before.
+	 */
+	@Deprecated
+	protected void stopped() {
 	}
 
 	/**
@@ -96,45 +126,67 @@ public class LongRunningTask extends Thread {
 	/**
 	 * Status des Tasks in Angabe von Prozent
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#getProgress()}.
 	 */
+	@Deprecated
 	public int getStatusProgress() {
-		return this.statusProgress;
+		if (super.getException() != null) {
+			return -1;
+		}
+		return super.getProgress();
 	}
 
 	/**
 	 * Meldung über den aktuellen Task
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#getTaskState()}.
 	 */
+	@Deprecated
 	public String getStatusMessage() {
-		return this.statusMessage;
+		return super.getTaskState().toString().toLowerCase();
 	}
 
 	/**
 	 * Titel des aktuellen Task
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link Thread#getName()}.
 	 */
+	@Deprecated
 	public String getTitle() {
-		return this.title;
+		return super.getName();
 	}
 
 	/**
 	 * Setter für Fortschritt nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#setProgress(int)}.
 	 */
+	@Deprecated
 	protected void setStatusProgress(int statusProgress) {
-		this.statusProgress = statusProgress;
+		super.setProgress(statusProgress);
 	}
 
+	/**
+	 * @deprecated Replaced by {@link EmptyTask#setProgress(double)}.
+	 */
+	@Deprecated
 	protected void setStatusProgress(double statusProgress) {
-		this.statusProgress = new Double(Math.ceil(statusProgress)).intValue();
+		super.setProgress(statusProgress);
 	}
 
 	/**
 	 * Setter für Statusmeldung nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
 	 */
+	@Deprecated
 	protected void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
+		super.setWorkDetail(statusMessage);
 		if (!this.isSingleThread) {
 			Helper.setMeldung(statusMessage);
 			logger.debug(statusMessage);
@@ -144,9 +196,12 @@ public class LongRunningTask extends Thread {
 	/**
 	 * Setter für Titel nur für vererbte Klassen
 	 * ================================================================
+	 * 
+	 * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
 	 */
+	@Deprecated
 	protected void setTitle(String title) {
-		this.title = title;
+		super.setNameDetail(title);
 	}
 
 	/**
@@ -155,14 +210,15 @@ public class LongRunningTask extends Thread {
 	 */
 	protected void setProzess(Prozess prozess) {
 		this.prozess = prozess;
+		setNameDetail(prozess.getTitel());
 	}
 
-	public String getLongMessage() {
-		return this.longMessage;
-	}
-
+	/**
+	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
+	 */
+	@Deprecated
 	public void setLongMessage(String inlongMessage) {
-		this.longMessage = inlongMessage;
+		super.setWorkDetail(inlongMessage);
 	}
 
 }

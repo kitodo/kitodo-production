@@ -27,6 +27,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -34,19 +36,60 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
-public class ScriptThreadWithoutHibernate extends Thread {
+public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
-	private StepObject step;
-	public String rueckgabe = "";
-	public boolean stop = false;
+	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
 
 	public ScriptThreadWithoutHibernate(StepObject step) {
+		super(getNameDetail(step));
 		this.step = step;
-		setDaemon(true);
+		hs.setTask(this);
+	}
+
+	/**
+	 * The function getNameDetail() returns a human-readable name for this
+	 * thread.
+	 * 
+	 * @param step
+	 *            StepObject that the name depends on.
+	 * @return a name for this thread
+	 */
+	private final static String getNameDetail(StepObject step) {
+		String function = null;
+		if (StepManager.loadScripts(step.getId()).size() > 0) {
+			function = "executeAllScriptsForStep";
+		} else if (step.isTypExport()) {
+			function = "executeDmsExport";
+		} else if (step.getStepPlugin() != null && step.getStepPlugin().length() > 0) {
+			function = "executeStepPlugin";
+		}
+		List<String> parameterList = new ArrayList<String>(1);
+		try {
+			parameterList.add(MySQLHelper.getProcessObjectForId(step.getProcessId()).getTitle());
+		} catch (SQLException e) {
+			parameterList.add(e.getMessage());
+		}
+		return function != null ? Helper.getTranslation(function, parameterList) : null;
+	}
+
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param origin
+	 *            copy master to create a clone of
+	 */
+	public ScriptThreadWithoutHibernate(ScriptThreadWithoutHibernate origin) {
+		super(origin);
+		step = origin.step;
+		hs.setTask(this);
 	}
 
 	@Override
@@ -69,8 +112,15 @@ public class ScriptThreadWithoutHibernate extends Thread {
 		}
 	}
 
-	public void stopThread() {
-		this.rueckgabe = "Import wurde wegen Zeitüberschreitung abgebrochen";
-		this.stop = true;
+	/**
+	 * The function clone() calls the clone constructor to create a new instance
+	 * of this object. This is necessary for Threads that have terminated in
+	 * order to render to run them again possible.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 */
+	@Override
+	public ScriptThreadWithoutHibernate clone() {
+		return new ScriptThreadWithoutHibernate(this);
 	}
 }

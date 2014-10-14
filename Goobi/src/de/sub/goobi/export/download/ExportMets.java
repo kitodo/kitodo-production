@@ -55,6 +55,7 @@ import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -218,7 +219,13 @@ public class ExportMets {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setFehlerMeldung(myProzess.getTitel() + ": could not find any referenced images, export aborted");
+				if (this instanceof ExportDms && ((ExportDms) this).exportDmsTask != null) {
+					((ExportDms) this).exportDmsTask.setException(new RuntimeException(myProzess.getTitel()
+							+ ": could not find any referenced images, export aborted"));
+				} else {
+					Helper.setFehlerMeldung(myProzess.getTitel()
+							+ ": could not find any referenced images, export aborted");
+				}
 				dd = null;
 				return false;
 			}
