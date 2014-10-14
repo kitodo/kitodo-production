@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.goobi.production.constants.Parameters;
+import org.hibernate.Hibernate;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -110,11 +111,26 @@ public class ExportSerialBatchTask extends EmptyTask {
 	public ExportSerialBatchTask(Batch batch) {
 		super(batch.getLabel());
 		this.batch = batch;
-		int bs = batch.getProcesses().size();
-		pointers = new ArrayList<String>(bs);
+		int batchSize = batch.getProcesses().size();
+		pointers = new ArrayList<String>(batchSize);
 		stepcounter = 0;
 		processesIterator = null;
-		maxsize = bs + 1;
+		maxsize = batchSize + 1;
+		initialiseRuleSets(batch.getProcesses());
+	}
+
+	/**
+	 * Initialises the the rule sets of the processes to export that export
+	 * depends on. This cannot be done later because the therad doesn’t have
+	 * access to the hibernate session any more.
+	 * 
+	 * @param processes
+	 *            collection of processes whose rulesets are to be initialised
+	 */
+	private static final void initialiseRuleSets(Iterable<Prozess> processes) {
+		for (Prozess process : processes) {
+			Hibernate.initialize(process.getRegelsatz());
+		}
 	}
 
 	/**

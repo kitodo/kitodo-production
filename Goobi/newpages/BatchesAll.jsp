@@ -101,7 +101,7 @@
 					return false;
 				}
 				var text = selectBatches.options[selectBatches.selectedIndex].text;
-				var newName = prompt("${msgs['enterBatchName']}", text.replace(/ \(.*?\)$/, ""));
+				var newName = prompt("${msgs['enterBatchName']}", text.replace(/ \[.*?\]$/, "").replace(/ \(.*?\)$/, ""));
 				if(newName != null){
 					document.getElementById('mytaskform:batchName').value = newName;
 					return true;
@@ -166,15 +166,27 @@
 												</h:selectManyListbox>
 									
 												<h:panelGrid columns="1" cellpadding="2px">
-													<h:commandLink action="#{BatchForm.exportNewspaperBatch}">
+													<h:commandLink action="#{BatchForm.exportBatch}">
 														<h:graphicImage alt="reload" value="/newpages/images/buttons/dms.png" style="vertical-align:middle" />
-														<h:outputText value="#{msgs.exportNewspaperBatch}" />
+														<h:outputText value="#{msgs.exportBatch}" />
 													</h:commandLink>
-
-													<h:commandLink action="#{BatchForm.exportSerialBatch}">
-														<h:graphicImage alt="reload" value="/newpages/images/buttons/dms.png" style="vertical-align:middle" />
-														<h:outputText value="#{msgs.exportSerialBatch}" />
-													</h:commandLink>
+													
+													<h:panelGroup>
+														<h:graphicImage alt="new" value="/newpages/images/buttons/edit.gif" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.typeSet}" />
+														<h:outputText value=" " />
+														<h:commandLink action="#{BatchForm.setLogistic}">
+															<h:outputText value="#{msgs.typeSetLogistic}" />
+														</h:commandLink>
+														<h:outputText value=", " />
+														<h:commandLink action="#{BatchForm.setNewspaper}">
+															<h:outputText value="#{msgs.typeSetNewspaper}" />
+														</h:commandLink>
+														<h:outputText value=", " />
+														<h:commandLink action="#{BatchForm.setSerial}">
+															<h:outputText value="#{msgs.typeSetSerial}" />
+														</h:commandLink>
+													</h:panelGroup>
 
 													<h:commandLink action="#{BatchForm.loadProcessData}">
 														<h:graphicImage alt="reload" value="/newpages/images/buttons/reload_doc.gif" style="vertical-align:middle" />

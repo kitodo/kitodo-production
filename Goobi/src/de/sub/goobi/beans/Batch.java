@@ -56,6 +56,25 @@ import de.sub.goobi.persistence.BatchDAO;
  */
 public class Batch {
 	/**
+	 * Type of batch:
+	 * 
+	 * <dl>
+	 * <dt>LOGISTIC</dt>
+	 * <dd>facilitates the logistics of excavation and processing in the
+	 * digitisation centre</dd>
+	 * <dt>NEWSPAPER</dt>
+	 * <dd>forms the complete edition of a newspaper</dd>
+	 * <dt>SERIAL</dt>
+	 * <dd>forms the complete edition of a serial publication</dd>
+	 * </dl>
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 */
+	public enum Type {
+		LOGISTIC, NEWSPAPER, SERIAL;
+	}
+
+	/**
 	 * The field id holds the database record identifier. It is null in case
 	 * that the Batch has not yet been saved by Hibernate.
 	 */
@@ -72,30 +91,54 @@ public class Batch {
 	private Set<Prozess> processes;
 
 	/**
+	 * The field type holds the batch type.
+	 */
+	private Type type;
+
+	/**
 	 * Default constructor. Creates an empty batch object.
 	 */
 	public Batch() {
-		processes = new HashSet<Prozess>();
+		this.processes = new HashSet<Prozess>(0);
 	}
 
 	/**
-	 * Constructor to create an empty batch object with a given title.
+	 * Constructor to create an empty batch object with a given type.
+	 * 
+	 * @param type
+	 *            type of the batch
+	 */
+	public Batch(Type type) {
+		this.processes = new HashSet<Prozess>(0);
+		this.type = type;
+	}
+
+	/**
+	 * Constructor to create an empty batch object with a given title and a
+	 * type.
 	 * 
 	 * @param title
 	 *            title for the batch
+	 * @param type
+	 *            type of the batch
 	 */
-	public Batch(String title) {
+	public Batch(String title, Type type) {
+		this.processes = new HashSet<Prozess>(0);
 		this.title = title;
+		this.type = type;
 	}
 
 	/**
 	 * Constructor to create a batch that holds the given processes.
 	 * 
+	 * @param type
+	 *            type of the batch
 	 * @param processes
 	 *            processes that go into the batch
 	 */
-	public Batch(Collection<? extends Prozess> processes) {
+	public Batch(Type type, Collection<? extends Prozess> processes) {
 		this.processes = new HashSet<Prozess>(processes);
+		this.type = type;
 	}
 
 	/**
@@ -104,11 +147,14 @@ public class Batch {
 	 * 
 	 * @param title
 	 *            title for the batch
+	 * @param type
+	 *            type of the batch
 	 * @param processes
 	 *            processes that go into the batch
 	 */
-	public Batch(String title, Collection<? extends Prozess> processes) {
+	public Batch(String title, Type type, Collection<? extends Prozess> processes) {
 		this.title = title;
+		this.type = type;
 		this.processes = new HashSet<Prozess>(processes);
 	}
 
@@ -130,7 +176,7 @@ public class Batch {
 	 * 
 	 * @param processes
 	 *            collection containing elements to be added to this set
-	 * @returns true if this set changed as a result of the call
+	 * @return true if this set changed as a result of the call
 	 */
 	public boolean addAll(Collection<? extends Prozess> processes) {
 		return getProcesses().addAll(processes);
@@ -145,8 +191,9 @@ public class Batch {
 	 * @return true if the title or label contain s, false otherwise
 	 */
 	public boolean contains(CharSequence s) {
-		if (s == null)
+		if (s == null) {
 			return true;
+		}
 		return title != null && title.contains(s) || getNumericLabel().contains(s);
 	}
 
@@ -169,6 +216,8 @@ public class Batch {
 	 * 
 	 * This method is required by Faces which silently fails if you try to use
 	 * the id Integer.
+	 * 
+	 * @return the identifier for the batch as String
 	 */
 	public String getIdString() {
 		return id.toString();
@@ -208,13 +257,14 @@ public class Batch {
 	 * @return the processes that are in the batch
 	 */
 	public Set<Prozess> getProcesses() {
-		if (id != null)
+		if (id != null) {
 			try {
 				Hibernate.initialize(processes);
 			} catch (HibernateException e) {
 				BatchDAO.reattach(this);
 				Hibernate.initialize(processes);
 			}
+		}
 		return processes;
 	}
 
@@ -230,11 +280,34 @@ public class Batch {
 	}
 
 	/**
+	 * Returns the batch type.
+	 * 
+	 * @return the batch type
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * Returns the translated batch type label.
+	 * 
+	 * @return the display label for the batch type
+	 */
+	public String getTypeTranslated() {
+		if (type != null) {
+			return Helper.getTranslation("batch_type_".concat(type.toString().toLowerCase()));
+		} else {
+			return "";
+		}
+	}
+
+	/**
 	 * The function removeAll() removes all elements that are contained in the
 	 * given collection from this batch.
 	 * 
 	 * @param processes
 	 *            collection containing elements to be removed from this set
+	 * @return whether the set of processes changed as a result of the call
 	 * @returns true if the set of processes was changed as a result of the call
 	 */
 	public boolean removeAll(Collection<?> processes) {
@@ -280,6 +353,19 @@ public class Batch {
 	}
 
 	/**
+	 * The method setType() can be used to set a batch title.
+	 * 
+	 * This function is also required by Hibernate when creating objects from
+	 * the database.
+	 * 
+	 * @param type
+	 *            type for the batch
+	 */
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	/**
 	 * The function toString() returns a concise but informative representation
 	 * that is easy for a person to read and that "textually represents" this
 	 * batch.
@@ -311,25 +397,15 @@ public class Batch {
 				result.append(getProcesses() != null ? processes.size() : null);
 			}
 			result.append(')');
+			if (type != null) {
+				result.append(" [");
+				result.append(getTypeTranslated());
+				result.append(']');
+			}
 			return result.toString();
 		} catch (RuntimeException fallback) {
 			return super.toString();
 		}
-	}
-
-	/**
-	 * The function hashCode() returns a hash code value for the batch.
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((processes == null) ? 0 : processes.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
 	}
 
 	/**
@@ -344,28 +420,36 @@ public class Batch {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Batch))
+		}
+		if (!(obj instanceof Batch)) {
 			return false;
+		}
 		Batch other = (Batch) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (processes == null) {
-			if (other.processes != null)
-				return false;
-		} else if (!processes.equals(other.processes))
-			return false;
+		if (id != null && id.equals(other.id)) {
+			return true;
+		}
 		if (title == null) {
-			if (other.title != null)
+			if (other.title != null) {
 				return false;
-		} else if (!title.equals(other.title))
+			}
+		} else if (!title.equals(other.title)) {
 			return false;
+		}
+		if (type != other.type) {
+			return false;
+		}
+		if (processes == null) {
+			if (other.processes != null) {
+				return false;
+			}
+		} else if (!processes.equals(other.processes)) {
+			return false;
+		}
 		return true;
 	}
 }

@@ -824,4 +824,13 @@ public class Schritt implements Serializable {
 		this.validationPlugin = validationPlugin;
 	}
 
+	/**
+	 * Returns whether this is a step of a process that is part of at least one
+	 * batch as read-only property "batchSize".
+	 * 
+	 * @return whether this step’s process is in a batch
+	 */
+	public boolean isBatchSize() {
+		return prozess.getBatchesInitialized().size() > 0;
+	}
 }

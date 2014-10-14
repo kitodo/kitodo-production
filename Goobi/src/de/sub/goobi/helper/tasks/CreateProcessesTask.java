@@ -48,6 +48,7 @@ import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
@@ -87,13 +88,13 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The field fullBatch holds a batch that all issues will be assigned to.
 	 */
-	private Batch fullBatch = new Batch();
+	private Batch fullBatch = new Batch(Type.NEWSPAPER);
 
 	/**
 	 * The field logisticsBatch holds a batch that all issues of the same
 	 * logistics unit will be assigned to.
 	 */
-	private Batch logisticsBatch = new Batch();
+	private Batch logisticsBatch = new Batch(Type.LOGISTIC);
 
 	/**
 	 * The field nextProcessToCreate holds the index of the next process to
@@ -273,7 +274,7 @@ public class CreateProcessesTask extends EmptyTask {
 	private void flushLogisticsBatch(String processTitle) throws DAOException {
 		logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
 		BatchDAO.save(logisticsBatch);
-		logisticsBatch = new Batch();
+		logisticsBatch = new Batch(Type.LOGISTIC);
 		currentBreakMark = null;
 		batchLabel = null;
 	}

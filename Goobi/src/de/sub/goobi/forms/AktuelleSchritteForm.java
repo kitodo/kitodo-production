@@ -65,6 +65,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
@@ -307,7 +308,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Set<Batch> batches = mySchritt.getProzess().getBatchesInitialized();
+		Set<Batch> batches = mySchritt.getProzess().getBatchesByType(Type.LOGISTIC);
 		if (batches.size() > 1) {
 			Helper.setFehlerMeldung("multipleBatchesAssigned");
 			return "";
@@ -392,7 +393,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<Schritt> currentStepsOfBatch = new ArrayList<Schritt>();
 
 		String steptitle = this.mySchritt.getTitel();
-		Set<Batch> batches = mySchritt.getProzess().getBatchesInitialized();
+		Set<Batch> batches = mySchritt.getProzess().getBatchesByType(Type.LOGISTIC);
 		if (batches.size() > 1) {
 			Helper.setFehlerMeldung("multipleBatchesAssigned");
 			return "";

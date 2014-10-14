@@ -64,6 +64,14 @@ public class Parameters {
 	public static final String AUTHORITY_ID_FROM_URI = "authority.{0}.id";
 
 	/**
+	 * Integer, limits the number of batches showing on the page “Batches”.
+	 * Defaults to -1 which disables this functionality. If set, only the
+	 * limited number of batches will be shown, the other batches will be
+	 * present but hidden and thus cannot be modified and not even be deleted.
+	 */
+	public static final String BATCH_DISPLAY_LIMIT = "batchMaxSize";
+
+	/**
 	 * Milliseconds. Indicates the maximum duration an interaction with a
 	 * library catalogue may take. Defaults to 30 minutes.
 	 */

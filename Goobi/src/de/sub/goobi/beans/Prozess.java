@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -67,6 +68,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -255,15 +257,39 @@ public class Prozess implements Serializable {
 	}
 
 	/**
+	 * Returns the batches of the desired type for a process.
+	 * 
+	 * @param type
+	 *            type of batches to return
+	 * 
+	 * @return all batches of the desired type
+	 */
+	public Set<Batch> getBatchesByType(Type type) {
+		Set<Batch> batches = getBatchesInitialized();
+		if (type != null) {
+			HashSet<Batch> result = new HashSet<Batch>(batches);
+			Iterator<Batch> indicator = result.iterator();
+			while (indicator.hasNext()) {
+				if (!type.equals(indicator.next().getType())) {
+					indicator.remove();
+				}
+			}
+			return result;
+		}
+		return batches;
+	}
+
+	/**
 	 * The function getBatchesInitialized() returns the batches for a process
 	 * and takes care that the object is initialized from Hibernate already and
 	 * will not be bothered if the Hibernate session ends.
 	 * 
-	 * @return the history field of the process which is loaded
+	 * @return the batches field of the process which is loaded
 	 */
 	public Set<Batch> getBatchesInitialized() {
-		if (id != null)
+		if (id != null) {
 			Hibernate.initialize(batches);
+		}
 		return this.batches;
 	}
 
@@ -606,12 +632,14 @@ public class Prozess implements Serializable {
 	 * @return the batches the process is in
 	 */
 	public String getBatchID() {
-		if (batches == null || batches.size() == 0)
+		if (batches == null || batches.size() == 0) {
 			return null;
+		}
 		StringBuilder result = new StringBuilder();
 		for (Batch batch : batches) {
-			if (result.length() > 0)
+			if (result.length() > 0) {
 				result.append(", ");
+			}
 			result.append(batch.getLabel());
 		}
 		return result.toString();
