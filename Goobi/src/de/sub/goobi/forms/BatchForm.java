@@ -58,7 +58,9 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportBatchTask;
+import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BatchDAO;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -435,24 +437,61 @@ public class BatchForm extends BasisForm {
 	}
 
 	/**
-	 * The function exportBatch() is called by Faces if the user clicks the
-	 * action link to DMS-export one or more batches. For each batch, a long
-	 * running task will be created and the user will be redirected to the long
-	 * running task manager page where it can observe the task progressing.
+	 * The function exportNewspaperBatch() is called by Faces if the user clicks
+	 * the action link to DMS-export one or more newspaper batches. In case of
+	 * success, the user will be redirected to the task manager page where it
+	 * can observe the task progressing.
 	 * 
 	 * @return the next page to show as named in a &lt;from-outcome&gt; element
 	 *         in faces_config.xml
 	 */
-	public String exportBatch() {
+	public String exportNewspaperBatch() {
+		return exportBatch(ExportBatchTask.class);
+	}
+
+	/**
+	 * The function exportNewspaperBatch() is called by Faces if the user clicks
+	 * the action link to DMS-export one or more serial batches. In case of
+	 * success, the user will be redirected to the task manager page where it
+	 * can observe the task progressing.
+	 * 
+	 * @return the next page to show as named in a &lt;from-outcome&gt; element
+	 *         in faces_config.xml
+	 */
+	public String exportSerialBatch() {
+		return exportBatch(ExportSerialBatchTask.class);
+	}
+
+	/**
+	 * Generic function creating a batch export task using the exporter
+	 * implementation class provided. For each batch, a task will be created and
+	 * the user will be redirected to the task manager page where it can observe
+	 * the task progressing.
+	 * 
+	 * @param exporter
+	 *            task implementation to use
+	 * @return the next page to show as named in a &lt;from-outcome&gt; element
+	 *         in faces_config.xml
+	 */
+	private String exportBatch(Class<? extends EmptyTask> exporter) {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 			return "";
 		}
-		LinkedList<ExportBatchTask> batches = new LinkedList<ExportBatchTask>();
+		LinkedList<EmptyTask> batches = new LinkedList<EmptyTask>();
 		for (String batchID : selectedBatches) {
 			try {
 				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
-				ExportBatchTask exportBatch = new ExportBatchTask(batch);
+				EmptyTask exportBatch;
+				try {
+					exportBatch = exporter.getDeclaredConstructor(Batch.class).newInstance(batch);
+				} catch (Exception e) { // IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+					if (e instanceof RuntimeException) {
+						throw (RuntimeException) e;
+					} else {
+						throw new RuntimeException(e.getMessage(), e);
+					}
+				}
 				batches.add(exportBatch);
 			} catch (DAOException e) {
 				logger.error(e);
@@ -460,7 +499,7 @@ public class BatchForm extends BasisForm {
 				return "";
 			}
 		}
-		for (ExportBatchTask task : batches) {
+		for (EmptyTask task : batches) {
 			TaskManager.addTask(task);
 		}
 		return "taskmanager";

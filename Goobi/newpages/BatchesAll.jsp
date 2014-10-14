@@ -166,9 +166,14 @@
 												</h:selectManyListbox>
 									
 												<h:panelGrid columns="1" cellpadding="2px">
-													<h:commandLink action="#{BatchForm.exportBatch}">
+													<h:commandLink action="#{BatchForm.exportNewspaperBatch}">
 														<h:graphicImage alt="reload" value="/newpages/images/buttons/dms.png" style="vertical-align:middle" />
-														<h:outputText value="#{msgs.exportBatch}" />
+														<h:outputText value="#{msgs.exportNewspaperBatch}" />
+													</h:commandLink>
+
+													<h:commandLink action="#{BatchForm.exportSerialBatch}">
+														<h:graphicImage alt="reload" value="/newpages/images/buttons/dms.png" style="vertical-align:middle" />
+														<h:outputText value="#{msgs.exportSerialBatch}" />
 													</h:commandLink>
 
 													<h:commandLink action="#{BatchForm.loadProcessData}">

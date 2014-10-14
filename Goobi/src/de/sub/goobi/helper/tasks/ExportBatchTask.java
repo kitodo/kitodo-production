@@ -204,7 +204,7 @@ public class ExportBatchTask extends EmptyTask {
 					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 
 					new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
-							process, LoginForm.getCurrentUserHomeDir(), extendedData);
+							process, LoginForm.getCurrentUserHomeDir(), extendedData.getDigitalDocument());
 					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 				}
 			}
@@ -412,7 +412,7 @@ public class ExportBatchTask extends EmptyTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	private static String getMetsPointerURL(Prozess process) throws PreferencesException, ReadException, SwapException,
+	static String getMetsPointerURL(Prozess process) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
 		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
 				.getPreferences(), process, null);
