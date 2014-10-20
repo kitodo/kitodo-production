@@ -941,7 +941,8 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
-	private void createNewFileformat() {
+	@Override
+	public void createNewFileformat() {
 
 		Prefs myPrefs = this.prozessKopie.getRegelsatz().getPreferences();
 

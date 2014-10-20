@@ -39,14 +39,29 @@
 package de.sub.goobi.helper.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
+import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
+import org.joda.time.LocalDate;
 
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.Prefs;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.TypeNotAllowedAsChildException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.beans.Prozess;
@@ -124,26 +139,32 @@ public class CreateProcessesTask extends EmptyTask {
 	private final List<List<IndividualIssue>> processes;
 
 	/**
+	 * The field description holds a verbal description of the course of
+	 * appearance.
+	 */
+	private final List<String> description;
+
+	/**
 	 * The class CreateProcessesTask is a LongRunningTask to create processes
 	 * from a course of appearance.
 	 * 
 	 * @param pattern
 	 *            a ProzesskopieForm to use for creating processes
-	 * @param processes
-	 *            a list of processes to create
+	 * @param course
+	 *            course of appearance to create processes for
 	 * @param batchGranularity
 	 *            a granularity level at which baches shall be created
 	 */
-	public CreateProcessesTask(ProzesskopieForm pattern, List<List<IndividualIssue>> processes,
-			Granularity batchGranularity) {
+	public CreateProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
 		super(pattern.getProzessVorlageTitel());
 		this.pattern = pattern;
-		this.processes = new ArrayList<List<IndividualIssue>>(processes.size());
+		this.processes = new ArrayList<List<IndividualIssue>>(course.getNumberOfProcesses());
+		this.description = CourseToGerman.asReadableText(course);
 		this.createBatches = batchGranularity;
-		for (List<IndividualIssue> issues : processes) {
+		for (List<IndividualIssue> issues : course.getProcesses()) {
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
 			process.addAll(issues);
-			this.processes.add(process);
+			processes.add(process);
 		}
 		nextProcessToCreate = 0;
 		numberOfProcesses = processes.size();
@@ -160,6 +181,7 @@ public class CreateProcessesTask extends EmptyTask {
 		super(master);
 		this.pattern = master.pattern;
 		this.processes = master.processes;
+		this.description = master.description;
 		this.createBatches = master.createBatches;
 		this.logisticsBatch = master.logisticsBatch;
 		this.currentBreakMark = master.currentBreakMark;
@@ -202,6 +224,13 @@ public class CreateProcessesTask extends EmptyTask {
 								+ issues.get(0).toString()));
 						return;
 					}
+					setWorkDetail(currentTitle);
+
+					if (newProcess.getFileformat() == null) {
+						newProcess.createNewFileformat();
+					}
+					createLogicalStructure(newProcess, issues, StringUtils.join(description, "\n\n"));
+
 					if (isInterrupted()) {
 						return;
 					}
@@ -222,10 +251,124 @@ public class CreateProcessesTask extends EmptyTask {
 			saveFullBatch(currentTitle);
 			setProgress(100);
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
-			setException(new RuntimeException(e.getClass().getSimpleName()
-					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask") + ": "
-					+ e.getMessage(), e));
+			String message = e instanceof MetadataTypeNotAllowedException && currentTitle != null ? Helper
+					.getTranslation("CreateProcessesTask.MetadataNotAllowedException",
+							Arrays.asList(new String[] { currentTitle })) : e.getClass().getSimpleName()
+					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask");
+			setException(new RuntimeException(message + ": " + e.getMessage(), e));
 			return;
+		}
+	}
+
+	/**
+	 * Creates a logical structure tree in the process under creation. In the
+	 * tree, all issues will have been created. Presumption is that never issues
+	 * for more than one year will be added to the same process.
+	 * 
+	 * @param newProcess
+	 *            process under creation
+	 * @param issues
+	 *            issues to add
+	 * @param publicationRun
+	 *            verbal description of the course of appearance
+	 * @throws TypeNotAllowedForParentException
+	 *             if this DocStruct is not allowed for a parent
+	 * @throws TypeNotAllowedAsChildException
+	 *             if a child should be added, but it's DocStruct type isn't
+	 *             member of this instance's DocStruct type
+	 * @throws MetadataTypeNotAllowedException
+	 *             if no corresponding MetadataType object is returned by
+	 *             getAddableMetadataTypes()
+	 */
+	private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues, String publicationRun)
+			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+
+		// initialise
+		Prefs ruleset = newProcess.getProzessKopie().getRegelsatz().getPreferences();
+		DigitalDocument document;
+		try {
+			document = newProcess.getFileformat().getDigitalDocument();
+		} catch (PreferencesException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		DocStruct newspaper = document.getLogicalDocStruct();
+
+		// try to add the publication run
+		try {
+			newspaper.addMetadata("PublicationRun", publicationRun);
+		} catch (MetadataTypeNotAllowedException undesired) {
+		}
+
+		// create the year level
+		DocStruct year = newspaper.createChild(ExportBatchTask.METADATA_ELEMENT_YEAR, document, ruleset);
+		String theYear = Integer.toString(issues.get(0).getDate().getYear());
+		year.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear);
+
+		// create the month level
+		Map<Integer, DocStruct> months = new HashMap<Integer, DocStruct>();
+		Map<LocalDate, DocStruct> days = new HashMap<LocalDate, DocStruct>(488);
+		for (IndividualIssue individualIssue : issues) {
+			LocalDate date = individualIssue.getDate();
+			Integer monthNo = date.getMonthOfYear();
+			if (!months.containsKey(monthNo)) {
+				DocStruct newMonth = year.createChild(ExportBatchTask.METADATA_ELEMENT_MONTH, document, ruleset);
+				newMonth.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString());
+				try {
+					newMonth.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					newMonth.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString());
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				months.put(monthNo, newMonth);
+			}
+			DocStruct month = months.get(monthNo);
+
+			// create the day level
+			if (!days.containsKey(date)) {
+				DocStruct newDay = month.createChild(ExportBatchTask.METADATA_ELEMENT_DAY, document, ruleset);
+				newDay.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+						Integer.toString(date.getDayOfMonth()));
+				try {
+					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					newDay.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
+							Integer.toString(date.getDayOfMonth()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				days.put(date, newDay);
+			}
+			DocStruct day = days.get(date);
+
+			// create the issue
+			DocStruct issue = day.createChild(ExportBatchTask.METADATA_ELEMENT_ISSUE, document, ruleset);
+			String heading = individualIssue.getHeading();
+			if (heading != null && heading.trim().length() > 0) {
+				issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_ISSUE, heading);
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_DAY, Integer.toString(date.getDayOfMonth()));
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+				try {
+					issue.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading);
+				} catch (MetadataTypeNotAllowedException undesired) {
+				}
+			}
 		}
 	}
 

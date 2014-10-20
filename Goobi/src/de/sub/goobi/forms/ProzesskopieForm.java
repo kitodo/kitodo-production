@@ -1084,7 +1084,7 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
-	private void createNewFileformat() {
+	public void createNewFileformat() {
 		Prefs myPrefs = this.prozessKopie.getRegelsatz().getPreferences();
 		try {
 			DigitalDocument dd = new DigitalDocument();
@@ -1949,5 +1949,15 @@ public class ProzesskopieForm {
 			Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
 			return false;
 		}
+	}
+
+	/**
+	 * Returns the representation of the file holding the document metadata in
+	 * memory.
+	 * 
+	 * @return the metadata file in memory
+	 */
+	public Fileformat getFileformat() {
+		return myRdf;
 	}
 }
