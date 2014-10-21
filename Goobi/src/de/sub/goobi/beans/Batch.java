@@ -1,27 +1,27 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -51,13 +51,13 @@ import de.sub.goobi.persistence.BatchDAO;
 /**
  * The class Batch represents a user-definable, unordered collection of
  * processes that methods can be applied on in batch processing.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Batch {
 	/**
 	 * Type of batch:
-	 * 
+	 *
 	 * <dl>
 	 * <dt>LOGISTIC</dt>
 	 * <dd>facilitates the logistics of excavation and processing in the
@@ -67,7 +67,7 @@ public class Batch {
 	 * <dt>SERIAL</dt>
 	 * <dd>forms the complete edition of a serial publication</dd>
 	 * </dl>
-	 * 
+	 *
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	public enum Type {
@@ -104,7 +104,7 @@ public class Batch {
 
 	/**
 	 * Constructor to create an empty batch object with a given type.
-	 * 
+	 *
 	 * @param type
 	 *            type of the batch
 	 */
@@ -116,7 +116,7 @@ public class Batch {
 	/**
 	 * Constructor to create an empty batch object with a given title and a
 	 * type.
-	 * 
+	 *
 	 * @param title
 	 *            title for the batch
 	 * @param type
@@ -130,7 +130,7 @@ public class Batch {
 
 	/**
 	 * Constructor to create a batch that holds the given processes.
-	 * 
+	 *
 	 * @param type
 	 *            type of the batch
 	 * @param processes
@@ -144,7 +144,7 @@ public class Batch {
 	/**
 	 * Constructor to create a batch with a given title that holds the given
 	 * processes.
-	 * 
+	 *
 	 * @param title
 	 *            title for the batch
 	 * @param type
@@ -161,7 +161,7 @@ public class Batch {
 	/**
 	 * The function add() adds the given process to this batch if it is not
 	 * already present.
-	 * 
+	 *
 	 * @param process
 	 *            process to add
 	 * @return true if this batch did not already contain the specified process
@@ -173,7 +173,7 @@ public class Batch {
 	/**
 	 * The function addAll() adds all of the elements in the given collection to
 	 * this batch if they're not already present.
-	 * 
+	 *
 	 * @param processes
 	 *            collection containing elements to be added to this set
 	 * @return true if this set changed as a result of the call
@@ -185,7 +185,7 @@ public class Batch {
 	/**
 	 * The function contains() returns true if the title (if set) or the
 	 * id-based label contain the specified sequence of char values.
-	 * 
+	 *
 	 * @param s
 	 *            the sequence to search for
 	 * @return true if the title or label contain s, false otherwise
@@ -201,9 +201,9 @@ public class Batch {
 	 * The function getId() returns the database record identifier for the
 	 * batch. In case that the Batch has not yet been saved by Hibernate it
 	 * returns null.
-	 * 
+	 *
 	 * This method is required by Hibernate.
-	 * 
+	 *
 	 * @return the database record identifier for the batch
 	 */
 	public Integer getId() {
@@ -213,10 +213,10 @@ public class Batch {
 	/**
 	 * The function getIdString() returns the identifier for the batch as
 	 * read-only property "idString".
-	 * 
+	 *
 	 * This method is required by Faces which silently fails if you try to use
 	 * the id Integer.
-	 * 
+	 *
 	 * @return the identifier for the batch as String
 	 */
 	public String getIdString() {
@@ -229,7 +229,7 @@ public class Batch {
 	 * recent versions of Production, batches didn’t support titles) its ancient
 	 * label, consisting of the prefix “Batch ” (in the desired translation)
 	 * together with its id number.
-	 * 
+	 *
 	 * @return a readable label for the batch
 	 */
 	public String getLabel() {
@@ -240,7 +240,7 @@ public class Batch {
 	 * The function getNumericLabel() returns a readable label for the batch,
 	 * consisting of the prefix “Batch ” (in the desired translation) together
 	 * with its id number.
-	 * 
+	 *
 	 * @return a readable label for the batch
 	 */
 	private String getNumericLabel() {
@@ -250,10 +250,10 @@ public class Batch {
 	/**
 	 * The function getProcesses() return the processes that belong to the
 	 * batch.
-	 * 
+	 *
 	 * The internal logic is to make sure the collection has been populated from
 	 * Hibernate.
-	 * 
+	 *
 	 * @return the processes that are in the batch
 	 */
 	public Set<Prozess> getProcesses() {
@@ -272,7 +272,7 @@ public class Batch {
 	 * The function getTitle() returns the batch title. Using titles for batches
 	 * is optional, the field may be null. If so, the function returns null. Use
 	 * {@link #getLabel()} to get either the title or an alternative name.
-	 * 
+	 *
 	 * @return the batch title
 	 */
 	public String getTitle() {
@@ -281,7 +281,7 @@ public class Batch {
 
 	/**
 	 * Returns the batch type.
-	 * 
+	 *
 	 * @return the batch type
 	 */
 	public Type getType() {
@@ -290,7 +290,7 @@ public class Batch {
 
 	/**
 	 * Returns the translated batch type label.
-	 * 
+	 *
 	 * @return the display label for the batch type
 	 */
 	public String getTypeTranslated() {
@@ -304,7 +304,7 @@ public class Batch {
 	/**
 	 * The function removeAll() removes all elements that are contained in the
 	 * given collection from this batch.
-	 * 
+	 *
 	 * @param processes
 	 *            collection containing elements to be removed from this set
 	 * @return whether the set of processes changed as a result of the call
@@ -318,7 +318,7 @@ public class Batch {
 	 * The method setId() sets the database record identifier of this batch.
 	 * This method is solely intended to be called by Hibernate when creating
 	 * objects from the database. Do not use it in the code.
-	 * 
+	 *
 	 * @param id
 	 *            database record identifier of this batch
 	 */
@@ -328,10 +328,10 @@ public class Batch {
 
 	/**
 	 * The method setProcesses() sets the processes that belong to the batch.
-	 * 
+	 *
 	 * This method is also required by Hibernate when creating objects from the
 	 * database.
-	 * 
+	 *
 	 * @param processes
 	 *            processes that belong to the batch
 	 */
@@ -341,10 +341,10 @@ public class Batch {
 
 	/**
 	 * The method setTitle() can be used to set a batch title.
-	 * 
+	 *
 	 * This function is also required by Hibernate when creating objects from
 	 * the database.
-	 * 
+	 *
 	 * @param title
 	 *            a title for the batch
 	 */
@@ -354,10 +354,10 @@ public class Batch {
 
 	/**
 	 * The method setType() can be used to set a batch title.
-	 * 
+	 *
 	 * This function is also required by Hibernate when creating objects from
 	 * the database.
-	 * 
+	 *
 	 * @param type
 	 *            type for the batch
 	 */
@@ -366,10 +366,21 @@ public class Batch {
 	}
 
 	/**
+	 * Returns the number of elements in this batch. If this batch contains more
+	 * than Integer.MAX_VALUE elements, returns Integer.MAX_VALUE.
+	 *
+	 * @return the number of elements in this batch
+	 * @see java.util.Collection#size()
+	 */
+	public int size() {
+		return processes.size();
+	}
+
+	/**
 	 * The function toString() returns a concise but informative representation
 	 * that is easy for a person to read and that "textually represents" this
 	 * batch.
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -411,7 +422,7 @@ public class Batch {
 	/**
 	 * The function equals() indicates whether some other object is “equal to”
 	 * this one.
-	 * 
+	 *
 	 * @param obj
 	 *            the reference object with which to compare
 	 * @return true if this object is the same as the obj argument; false

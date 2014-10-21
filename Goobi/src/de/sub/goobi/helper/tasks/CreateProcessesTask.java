@@ -1,27 +1,27 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -73,7 +73,7 @@ import de.sub.goobi.persistence.BatchDAO;
 /**
  * The class CreateProcessesTask is a LongRunningTask to create processes from a
  * course of appearance.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateProcessesTask extends EmptyTask {
@@ -147,7 +147,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The class CreateProcessesTask is a LongRunningTask to create processes
 	 * from a course of appearance.
-	 * 
+	 *
 	 * @param pattern
 	 *            a ProzesskopieForm to use for creating processes
 	 * @param course
@@ -173,7 +173,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The copy constructor creates a new thread from a given one. This is
 	 * required to call the copy constructor of the parent.
-	 * 
+	 *
 	 * @param master
 	 *            copy master
 	 */
@@ -193,9 +193,9 @@ public class CreateProcessesTask extends EmptyTask {
 
 	/**
 	 * The function run() is the main function of this task (which is a thread).
-	 * 
+	 *
 	 * It will create a new process for each entry from the field “processes”.
-	 * 
+	 *
 	 * Therefore it makes use of
 	 * CreateNewProcessProcessor.newProcessFromTemplate() to once again load a
 	 * ProzesskopieForm from Hibernate for each process to create, sets the
@@ -203,7 +203,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * title and finally initiates the process creation one by one. The
 	 * statusProgress variable is being updated to show the operator how far the
 	 * task has proceeded.
-	 * 
+	 *
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -264,7 +264,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * Creates a logical structure tree in the process under creation. In the
 	 * tree, all issues will have been created. Presumption is that never issues
 	 * for more than one year will be added to the same process.
-	 * 
+	 *
 	 * @param newProcess
 	 *            process under creation
 	 * @param issues
@@ -376,7 +376,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The method addToBatches() adds a given process to the allover and the
 	 * annual batch. If the break mark changes, the logistics batch will be
 	 * flushed and the process will be added to a new logistics batch.
-	 * 
+	 *
 	 * @param process
 	 *            process to add
 	 * @param issues
@@ -407,7 +407,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The method flushLogisticsBatch() sets the title for the logistics batch,
 	 * saves it to hibernate and then populates the global variable with a new,
 	 * empty batch.
-	 * 
+	 *
 	 * @param processTitle
 	 *            the title of the process
 	 * @throws DAOException
@@ -415,9 +415,11 @@ public class CreateProcessesTask extends EmptyTask {
 	 *             thrown while performing the rollback
 	 */
 	private void flushLogisticsBatch(String processTitle) throws DAOException {
-		logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
-		BatchDAO.save(logisticsBatch);
-		logisticsBatch = new Batch(Type.LOGISTIC);
+		if (logisticsBatch.size() > 0) {
+			logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
+			BatchDAO.save(logisticsBatch);
+			logisticsBatch = new Batch();
+		}
 		currentBreakMark = null;
 		batchLabel = null;
 	}
@@ -425,7 +427,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The method saveFullBatch() sets the title for the allover batch and saves
 	 * it to hibernate.
-	 * 
+	 *
 	 * @param theProcessTitle
 	 *            the title of the process
 	 * @throws DAOException
@@ -442,7 +444,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * that are no punctuation characters
 	 * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the
 	 * given string.
-	 * 
+	 *
 	 * @param s
 	 *            string to parse
 	 * @return the first sequence of characters that are no punctuation
@@ -462,7 +464,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The function clone() creates a copy of this CreateProcessesTask for
 	 * providing the possibility to restart it because a Thread can only be
 	 * started once.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
 	 */
 	@Override
