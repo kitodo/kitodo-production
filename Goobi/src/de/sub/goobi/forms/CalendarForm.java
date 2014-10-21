@@ -40,11 +40,14 @@ package de.sub.goobi.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -52,6 +55,7 @@ import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
 import org.w3c.dom.Document;
@@ -72,12 +76,34 @@ public class CalendarForm {
 	private static final Logger logger = Logger.getLogger(CalendarForm.class);
 
 	/**
+	 * The constant field ISSUE_COLOURS holds a regular expression to parse date
+	 * inputs in a flexible way.
+	 */
+	private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
+
+	/**
 	 * The constant field ISSUE_COLOURS holds the colours used to represent the
 	 * issues in the calendar editor. It is populated on form bean creation, so
 	 * changing the configuration should take effect without need to restart the
 	 * servlet container.
 	 */
 	protected static String[] ISSUE_COLOURS;
+	
+	/**
+	 * The constant field START_RELATION hold the date the course of publication
+	 * of the the German-language “Relation aller Fürnemmen und gedenckwürdigen
+	 * Historien”, which is often recognized as the first newspaper, began. If
+	 * the user tries to create a title block before that date, a hint will be
+	 * shown.
+	 */
+	private static final LocalDate START_RELATION = new LocalDate(1605, 9, 12);
+
+	/**
+	 * The constant field TODAY hold the date of today. Reading the system clock
+	 * requires much synchronisation throughout the JVM and is therefore only
+	 * done once on form creation.
+	 */
+	private final LocalDate TODAY = LocalDate.now();
 
 	/**
 	 * The field course holds the course of appearance currently under edit by
@@ -127,6 +153,24 @@ public class CalendarForm {
 	 * instance.
 	 */
 	protected int yearShowing = 1979; // Cf. 42
+
+	/**
+	 * The field firstAppearanceInToChange is set in the setter method
+	 * setFirstAppearance to notify the setter method setLastAppearance that the
+	 * date of first appearance has to be changed. Java Server Faces tries to
+	 * update the data model by sequentially calling two setter methods. By
+	 * allowing the user to alter both fields at one time this may lead to an
+	 * illegal intermediate state in the data model which the latter
+	 * successfully rejects (which it should). Imagine the case that one title
+	 * block is from March until September and the second one from October to
+	 * November. Now the second block shall be moved to January until February.
+	 * Setting the start date from October to January will cause an overlapping
+	 * state with the other block which is prohibited by definition. Therefore
+	 * changing the beginning date must be forwarded to the setter method to
+	 * change the end date to allow this change, which is allowed, if taken
+	 * atomically.
+	 */
+	private LocalDate firstAppearanceIsToChange = null;
 
 	/**
 	 * The class IssueController backs the control elements that are necessary
@@ -284,11 +328,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Fridays
 		 */
 		public void setFriday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addFriday();
-				else
+				} else {
 					issue.removeFriday();
+				}
+			}
 		}
 
 		/**
@@ -300,8 +346,9 @@ public class CalendarForm {
 		 *            heading to be used
 		 */
 		public void setHeading(String heading) {
-			if (titlePickerUnchanged)
+			if (titlePickerUnchanged) {
 				issue.setHeading(heading);
+			}
 		}
 
 		/**
@@ -313,11 +360,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Mondays
 		 */
 		public void setMonday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addMonday();
-				else
+				} else {
 					issue.removeMonday();
+				}
+			}
 		}
 
 		/**
@@ -329,11 +378,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Saturdays
 		 */
 		public void setSaturday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addSaturday();
-				else
+				} else {
 					issue.removeSaturday();
+				}
+			}
 		}
 
 		/**
@@ -345,11 +396,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Sundays
 		 */
 		public void setSunday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addSunday();
-				else
+				} else {
 					issue.removeSunday();
+				}
+			}
 		}
 
 		/**
@@ -361,11 +414,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Thursdays
 		 */
 		public void setThursday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addThursday();
-				else
+				} else {
 					issue.removeThursday();
+				}
+			}
 		}
 
 		/**
@@ -377,11 +432,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Tuesdays
 		 */
 		public void setTuesday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addTuesday();
-				else
+				} else {
 					issue.removeTuesday();
+				}
+			}
 		}
 
 		/**
@@ -393,11 +450,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Wednesdays
 		 */
 		public void setWednesday(boolean appears) {
-			if (titlePickerUnchanged)
-				if (appears)
+			if (titlePickerUnchanged) {
+				if (appears) {
 					issue.addWednesday();
-				else
+				} else {
 					issue.removeWednesday();
+				}
+			}
 		}
 	}
 
@@ -434,8 +493,9 @@ public class CalendarForm {
 		 * @return the day of month in enumerative form
 		 */
 		public String getDay() {
-			if (date == null)
+			if (date == null) {
 				return "";
+			}
 			return Integer.toString(date.getDayOfMonth()).concat(".");
 		}
 
@@ -457,8 +517,9 @@ public class CalendarForm {
 		 * @return the cell’s CSS style class name
 		 */
 		public String getStyleClass() {
-			if (date == null)
+			if (date == null) {
 				return "";
+			}
 			if (onTitle) {
 				switch (date.getDayOfWeek()) {
 				case DateTimeConstants.SATURDAY:
@@ -594,10 +655,11 @@ public class CalendarForm {
 		 * will be removed. Otherwise, an additional issue will be added.
 		 */
 		public void selectClick() {
-			if (issue.isDayOfWeek(date.getDayOfWeek()))
+			if (issue.isDayOfWeek(date.getDayOfWeek())) {
 				issue.removeExclusion(date);
-			else
+			} else {
 				issue.addAddition(date);
+			}
 		}
 
 		/**
@@ -607,10 +669,11 @@ public class CalendarForm {
 		 * will be removed.
 		 */
 		public void unselectClick() {
-			if (issue.isDayOfWeek(date.getDayOfWeek()))
+			if (issue.isDayOfWeek(date.getDayOfWeek())) {
 				issue.addExclusion(date);
-			else
+			} else {
 				issue.removeAddition(date);
+			}
 		}
 	}
 
@@ -693,7 +756,7 @@ public class CalendarForm {
 	 * 1−31), each line then contains 12 cells representing the months. This is
 	 * due to HTML table being produced line by line.
 	 * 
-	 * @return
+	 * @return the table cells to build the calendar sheet
 	 */
 	public List<List<Cell>> getCalendarSheet() {
 		List<List<Cell>> result = getEmptySheet();
@@ -721,8 +784,9 @@ public class CalendarForm {
 		List<List<Cell>> result = new ArrayList<List<Cell>>(31);
 		for (int day = 1; day <= 31; day++) {
 			ArrayList<Cell> row = new ArrayList<Cell>(DateTimeConstants.DECEMBER);
-			for (int month = 1; month <= 12; month++)
+			for (int month = 1; month <= 12; month++) {
 				row.add(new Cell());
+			}
 			result.add(row);
 		}
 		return result;
@@ -743,14 +807,16 @@ public class CalendarForm {
 				.plusDays(1)) {
 			Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
 			cell.setDate(date);
-			if (currentTitle == null || !currentTitle.isMatch(date))
+			if (currentTitle == null || !currentTitle.isMatch(date)) {
 				currentTitle = course.isMatch(date);
+			}
 			if (currentTitle == null) {
 				cell.setOnTitle(false);
 			} else {
 				Integer hashCode = Integer.valueOf(currentTitle.hashCode());
-				if (!issueControllersCreatedOnce.containsKey(hashCode))
+				if (!issueControllersCreatedOnce.containsKey(hashCode)) {
 					issueControllersCreatedOnce.put(hashCode, getIssues(currentTitle));
+				}
 				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce.get(hashCode), date));
 			}
 		}
@@ -768,9 +834,37 @@ public class CalendarForm {
 	 */
 	protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
 		List<IssueOption> result = new ArrayList<IssueOption>();
-		for (IssueController controller : issueControllers)
+		for (IssueController controller : issueControllers) {
 			result.add(new IssueOption(controller, date));
+		}
 		return result;
+	}
+
+	/**
+	 * The function checkTitlePlausibility compares the dates entered against
+	 * some plausibility assumptions and sets hints otherwise.
+	 */
+	private void checkTitlePlausibility() {
+		if (titleShowing.getFirstAppearance() != null && titleShowing.getLastAppearance() != null) {
+			if (titleShowing.getFirstAppearance().plusYears(100).isBefore(titleShowing.getLastAppearance())) {
+				Helper.setMeldung("calendar.title.long");
+			}
+			if (titleShowing.getFirstAppearance().isAfter(titleShowing.getLastAppearance())) {
+				Helper.setFehlerMeldung("calendar.title.negative");
+			}
+			if (titleShowing.getFirstAppearance().isBefore(START_RELATION)) {
+				Helper.setMeldung("calendar.title.firstAppearance.early");
+			}
+			if (titleShowing.getFirstAppearance().isAfter(TODAY)) {
+				Helper.setMeldung("calendar.title.firstAppearance.fiction");
+			}
+			if (titleShowing.getLastAppearance().isBefore(START_RELATION)) {
+				Helper.setMeldung("calendar.title.lastAppearance.early");
+			}
+			if (titleShowing.getLastAppearance().isAfter(TODAY)) {
+				Helper.setMeldung("calendar.title.lastAppearance.fiction");
+			}
+		}
 	}
 
 	/**
@@ -781,10 +875,11 @@ public class CalendarForm {
 	 * @return date of first appearance of currently showing title
 	 */
 	public String getFirstAppearance() {
-		if (titleShowing != null && titleShowing.getFirstAppearance() != null)
+		if (titleShowing != null && titleShowing.getFirstAppearance() != null) {
 			return DateUtils.DATE_FORMATTER.print(titleShowing.getFirstAppearance());
-		else
+		} else {
 			return "";
+		}
 	}
 
 	/**
@@ -801,13 +896,17 @@ public class CalendarForm {
 	 * The function getIssues() returns the list of issues for a given title
 	 * block.
 	 * 
+	 * @param title
+	 *            title whose issues are to be returned
 	 * @return the list of issues
 	 */
 	private List<IssueController> getIssues(Title title) {
 		List<IssueController> result = new ArrayList<IssueController>();
-		if (title != null)
-			for (Issue issue : title.getIssues())
+		if (title != null) {
+			for (Issue issue : title.getIssues()) {
 				result.add(new IssueController(issue, result.size()));
+			}
+		}
 		return result;
 	}
 
@@ -819,10 +918,11 @@ public class CalendarForm {
 	 * @return date of last appearance of currently showing title
 	 */
 	public String getLastAppearance() {
-		if (titleShowing != null && titleShowing.getLastAppearance() != null)
+		if (titleShowing != null && titleShowing.getLastAppearance() != null) {
 			return DateUtils.DATE_FORMATTER.print(titleShowing.getLastAppearance());
-		else
+		} else {
 			return "";
+		}
 	}
 
 	/**
@@ -874,7 +974,7 @@ public class CalendarForm {
 	 * The function getYear() returns the year to be shown in the calendar sheet
 	 * as read-only property "year".
 	 * 
-	 * @return
+	 * @return the year to show on the calendar sheet
 	 */
 	public String getYear() {
 		return Integer.toString(yearShowing);
@@ -883,6 +983,8 @@ public class CalendarForm {
 	/**
 	 * The function getUploadShowing() returns whether the dialog to upload a
 	 * course of appearance XML file shall be shown or not.
+	 * 
+	 * @return whether the dialog to upload a course of appearance shows
 	 */
 	public boolean getUploadShowing() {
 		return uploadShowing;
@@ -905,10 +1007,12 @@ public class CalendarForm {
 	 */
 	protected void navigate() {
 		try {
-			if (yearShowing > titleShowing.getLastAppearance().getYear())
+			if (yearShowing > titleShowing.getLastAppearance().getYear()) {
 				yearShowing = titleShowing.getLastAppearance().getYear();
-			if (yearShowing < titleShowing.getFirstAppearance().getYear())
+			}
+			if (yearShowing < titleShowing.getFirstAppearance().getYear()) {
 				yearShowing = titleShowing.getFirstAppearance().getYear();
+			}
 		} catch (NullPointerException e) {
 		}
 	}
@@ -928,6 +1032,77 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function nextClick() is executed if the user clicks the button to go
+	 * to the next screen. It returns either the String constant that indicates
+	 * Faces the next screen, or sets an error message if the user didn’t yet
+	 * input an issue and indicates Faces to stay on that screen by returning
+	 * the empty string. Before navigation, old values are removed—if any—so
+	 * that the screen is reinitialised with the current calendar state.
+	 * 
+	 * @return the screen to show next
+	 */
+	public String nextClick() {
+		if (course == null || course.countIndividualIssues() < 1) {
+			Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
+			return "";
+		}
+		Helper.removeManagedBean("GranularityForm");
+		return "ShowGranularityPicker";
+	}
+
+	/**
+	 * Tries to interpret a string entered by the user as a date as flexible as
+	 * possible. Supports two-digit years and imperial date field order
+	 * (month/day/year). In case of flexible interpretations, hints will be
+	 * displayed to put the user on the right track what happened to his input.
+	 * 
+	 * If the user clicks the link to upload a course of appearance file, no
+	 * warning message shall show. Therefore an alternate white-space character
+	 * (U+00A0) will be appended to the value string by Javascript on the user
+	 * side because the setter methods will be called by Faces before the link
+	 * action will be executed, but we want to skip the error message generation
+	 * in that case, too.
+	 * 
+	 * @param value
+	 *            value entered by the user
+	 * @param input
+	 *            input element, one of "firstAppearance" or "lastAppearance"
+	 * @return the date if found, or null otherwise
+	 */
+	private LocalDate parseDate(String value, String input) {
+		Matcher dateParser = FLEXIBLE_DATE.matcher(value);
+		int[] numbers = new int[3];
+		if (dateParser.matches()) {
+			for (int i = 0; i < 3; i++) {
+				numbers[i] = Integer.valueOf(dateParser.group(i + 1));
+			}
+			if (numbers[2] < 100) {
+				new LocalDate();
+				numbers[2] += 100 * TODAY.getCenturyOfEra();
+				if (numbers[2] > TODAY.getYear()) {
+					numbers[2] -= 100;
+				}
+				Helper.setMeldung(Helper.getTranslation("calendar.title." + input + ".yearCompleted",
+						Arrays.asList(new String[] { dateParser.group(3), Integer.toString(numbers[2]) })));
+			}
+			try {
+				return new LocalDate(numbers[2], numbers[1], numbers[0]);
+			} catch (IllegalFieldValueException invalidDate) {
+				try {
+					LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
+				Helper.setMeldung("calendar.title." + input + ".swapped");
+					return swapped;
+				} catch (IllegalFieldValueException stillInvalid) {
+				}
+			}
+		}
+		if (!uploadShowing && value.indexOf("\u00A0") == -1) {
+			Helper.setFehlerMeldung("calendar.title." + input + ".invalid");
+		}
+		return null;
+	}
+
+	/**
 	 * The method removeTitleClick() deletes the currently selected Title block
 	 * from the course of appearance.The method is not intended to be used if
 	 * there is only one block left.
@@ -940,8 +1115,9 @@ public class CalendarForm {
 		assert course.size() > 1;
 		int index = course.indexOf(titleShowing);
 		course.remove(index);
-		if (index > 0)
+		if (index > 0) {
 			index--;
+		}
 		titleShowing = course.get(index);
 		navigate();
 	}
@@ -961,7 +1137,7 @@ public class CalendarForm {
 	public void setFirstAppearance(String firstAppearance) {
 		LocalDate newFirstAppearance;
 		try {
-			newFirstAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(firstAppearance);
+			newFirstAppearance = parseDate(firstAppearance, "firstAppearance");
 		} catch (IllegalArgumentException e) {
 			newFirstAppearance = titleShowing != null ? titleShowing.getFirstAppearance() : null;
 		}
@@ -970,14 +1146,15 @@ public class CalendarForm {
 				if (titlePickerUnchanged) {
 					if (titleShowing.getFirstAppearance() == null
 							|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
-						titleShowing.setFirstAppearance(newFirstAppearance);
-						navigate();
+						firstAppearanceIsToChange = newFirstAppearance;
 					}
 				}
 			} else {
-				titleShowing = new Title(course);
-				titleShowing.setFirstAppearance(newFirstAppearance);
-				course.add(titleShowing);
+				if (newFirstAppearance != null) {
+					titleShowing = new Title(course);
+					titleShowing.setFirstAppearance(newFirstAppearance);
+					course.add(titleShowing);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.firstAppearance.rejected");
@@ -999,26 +1176,56 @@ public class CalendarForm {
 	public void setLastAppearance(String lastAppearance) {
 		LocalDate newLastAppearance;
 		try {
-			newLastAppearance = DateUtils.DATE_FORMATTER.parseLocalDate(lastAppearance);
+			newLastAppearance = parseDate(lastAppearance, "lastAppearance");
 		} catch (IllegalArgumentException e) {
 			newLastAppearance = titleShowing != null ? titleShowing.getLastAppearance() : null;
 		}
 		try {
 			if (titleShowing != null) {
 				if (titlePickerUnchanged) {
-					if (titleShowing.getLastAppearance() == null
-							|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
-						titleShowing.setLastAppearance(newLastAppearance);
+					if (firstAppearanceIsToChange == null) {
+						if (titleShowing.getLastAppearance() == null
+								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+							if (titleShowing.getFirstAppearance() != null
+									&& newLastAppearance.isBefore(titleShowing.getFirstAppearance())) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setLastAppearance(newLastAppearance);
+							checkTitlePlausibility();
+							navigate();
+						}
+					} else {
+						if (titleShowing.getLastAppearance() == null
+								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+							if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
+						} else {
+							if (titleShowing.getLastAppearance() != null
+									&& titleShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
+								Helper.setFehlerMeldung("calendar.title.negative");
+								return;
+							}
+							titleShowing.setFirstAppearance(firstAppearanceIsToChange);
+						}
+						checkTitlePlausibility();
 						navigate();
 					}
 				}
 			} else {
-				titleShowing = new Title(course);
-				titleShowing.setLastAppearance(newLastAppearance);
-				course.add(titleShowing);
+				if (newLastAppearance != null) {
+					titleShowing = new Title(course);
+					titleShowing.setLastAppearance(newLastAppearance);
+					course.add(titleShowing);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
+		} finally {
+			firstAppearanceIsToChange = null;
 		}
 	}
 
@@ -1037,11 +1244,13 @@ public class CalendarForm {
 	 *            hashCode() in hex of the Title to be selected
 	 */
 	public void setTitlePickerSelected(String value) {
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 		titlePickerUnchanged = value.equals(Integer.toHexString(titleShowing.hashCode()));
 		if (!titlePickerUnchanged) {
 			titleShowing = titlePickerResolver.get(value);
+			checkTitlePlausibility();
 			navigate();
 		}
 	}

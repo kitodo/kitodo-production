@@ -69,6 +69,9 @@ import org.joda.time.LocalDate;
  */
 public class Issue {
 
+	/**
+	 * Course of appearance this issue is in.
+	 */
 	private final Course course;
 
 	/**
@@ -108,7 +111,10 @@ public class Issue {
 	private String heading;
 
 	/**
-	 * Empty issue constructor
+	 * Empty issue constructor.
+	 * 
+	 * @param course
+	 *            course of appearance this issue is in
 	 */
 	public Issue(Course course) {
 		this.course = course;
@@ -118,6 +124,14 @@ public class Issue {
 		this.exclusions = new HashSet<LocalDate>();
 	}
 
+	/**
+	 * Issue constructor with the option to set the issue heading.
+	 * 
+	 * @param course
+	 *            course of appearance this issue is in
+	 * @param heading
+	 *            issue heading
+	 */
 	public Issue(Course course, String heading) {
 		this.course = course;
 		this.heading = heading;
@@ -129,7 +143,7 @@ public class Issue {
 	/**
 	 * Adds a LocalDate to the set of exclusions.
 	 * 
-	 * @param exclusion
+	 * @param addition
 	 *            date to add
 	 * @return true if the set was changed
 	 */
@@ -147,8 +161,9 @@ public class Issue {
 	 */
 	private boolean addDayOfWeek(int dayOfWeek) {
 		boolean result = daysOfWeek.add(dayOfWeek);
-		if (result)
+		if (result) {
 			course.clearProcesses();
+		}
 		return result;
 	}
 
@@ -231,6 +246,10 @@ public class Issue {
 	 * Creates a copy of the object. All instance variables will be copied—this
 	 * is done in the getter methods—so that modifications to the copied object
 	 * will not impact to the copy master.
+	 * 
+	 * @param course
+	 *            course the copy shall belong to
+	 * @return a copy of this object for the new course
 	 */
 	public Issue clone(Course course) {
 		Issue copy = new Issue(course);
@@ -251,12 +270,15 @@ public class Issue {
 	 * @param lastAppearance
 	 *            last day of the time range to inspect
 	 * @return the count of issues
+	 * @throws IllegalArgumentException
+	 *             if lastAppearance is null
 	 */
 	long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
 		long result = 0;
 		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-			if (isMatch(day))
+			if (isMatch(day)) {
 				result += 1;
+			}
 		}
 		return result;
 	}
@@ -297,6 +319,13 @@ public class Issue {
 		return heading;
 	}
 
+	/**
+	 * Returns whether the issue regularly appeared on the given day of week.
+	 * 
+	 * @param dayOfWeek
+	 *            day of week to look up
+	 * @return whether the issue appeared on that day of week
+	 */
 	public boolean isDayOfWeek(int dayOfWeek) {
 		return daysOfWeek.contains(dayOfWeek);
 	}
@@ -390,6 +419,11 @@ public class Issue {
 	 * time. This is especially sensible to detect the underlying regularity
 	 * after lots of individual issues whose existence is known have been added
 	 * one by one as additions.
+	 * 
+	 * @param firstAppearance
+	 *            first day of the date range
+	 * @param lastAppearance
+	 *            last day of the date range
 	 */
 	void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
 		final int APPEARED = 1;
@@ -404,8 +438,9 @@ public class Issue {
 			subsets[dayOfWeek - 1][APPEARED] = new HashSet<LocalDate>();
 		}
 
-		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1))
+		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 			subsets[day.getDayOfWeek() - 1][isMatch(day) ? APPEARED : NOT_APPEARED].add(day);
+		}
 
 		for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
 			if (subsets[dayOfWeek - 1][APPEARED].size() > subsets[dayOfWeek - 1][NOT_APPEARED].size()) {
@@ -425,6 +460,9 @@ public class Issue {
 	/**
 	 * Removes the given LocalDate from the set of addition
 	 * 
+	 * @param addition
+	 *            date to remove
+	 * 
 	 * @return true if the Set was changed
 	 */
 	public boolean removeAddition(LocalDate addition) {
@@ -441,13 +479,17 @@ public class Issue {
 	 */
 	private boolean removeDayOfWeek(int dayOfWeek) {
 		boolean result = daysOfWeek.remove(dayOfWeek);
-		if (result)
+		if (result) {
 			course.clearProcesses();
+		}
 		return result;
 	}
 
 	/**
 	 * Removes the given LocalDate from the set of exclusions
+	 * 
+	 * @param exclusion
+	 *            date to remove
 	 * 
 	 * @return true if the Set was changed
 	 */
@@ -526,8 +568,9 @@ public class Issue {
 	 *            heading to be used
 	 */
 	public void setHeading(String heading) {
-		if (this.heading == null && heading != null || !this.heading.equals(heading))
+		if (this.heading == null && heading != null || !this.heading.equals(heading)) {
 			course.clearProcesses();
+		}
 		this.heading = heading;
 	}
 
@@ -552,17 +595,17 @@ public class Issue {
 		result.append(daysOfWeek.contains(DateTimeConstants.SATURDAY) ? 'S' : '-');
 		result.append(daysOfWeek.contains(DateTimeConstants.SUNDAY) ? 'S' : '-');
 		result.append(") +");
-		if (additions.size() <= 5)
+		if (additions.size() <= 5) {
 			result.append(additions.toString());
-		else {
+		} else {
 			result.append("[…(");
 			result.append(additions.size());
 			result.append(")…]");
 		}
 		result.append(" -");
-		if (exclusions.size() <= 5)
+		if (exclusions.size() <= 5) {
 			result.append(exclusions.toString());
-		else {
+		} else {
 			result.append("[…(");
 			result.append(exclusions.size());
 			result.append(")…]");
@@ -608,33 +651,44 @@ public class Issue {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Issue))
+		}
+		if (!(obj instanceof Issue)) {
 			return false;
+		}
 		Issue other = (Issue) obj;
 		if (additions == null) {
-			if (other.additions != null)
+			if (other.additions != null) {
 				return false;
-		} else if (!additions.equals(other.additions))
+			}
+		} else if (!additions.equals(other.additions)) {
 			return false;
+		}
 		if (daysOfWeek == null) {
-			if (other.daysOfWeek != null)
+			if (other.daysOfWeek != null) {
 				return false;
-		} else if (!daysOfWeek.equals(other.daysOfWeek))
+			}
+		} else if (!daysOfWeek.equals(other.daysOfWeek)) {
 			return false;
+		}
 		if (exclusions == null) {
-			if (other.exclusions != null)
+			if (other.exclusions != null) {
 				return false;
-		} else if (!exclusions.equals(other.exclusions))
+			}
+		} else if (!exclusions.equals(other.exclusions)) {
 			return false;
+		}
 		if (heading == null) {
-			if (other.heading != null)
+			if (other.heading != null) {
 				return false;
-		} else if (!heading.equals(other.heading))
+			}
+		} else if (!heading.equals(other.heading)) {
 			return false;
+		}
 		return true;
 	}
 }

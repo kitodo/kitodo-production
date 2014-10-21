@@ -105,6 +105,26 @@
 				return false;
 			}
 		<%--
+		 * The function setIgnoreInvalidValue() inserts an alternate white space
+		 * into the date input boxes in case the upload window is shown. This
+		 * is later used in the application to notice that the user chose the
+		 * link to show the upload window even before the link action is executed
+		 * to prevent error messages concerning an invalid input to show. This is
+		 * necessary because JSF evaluates the field values before executing the
+		 * action link.
+		 * 
+		 * @param uploadWindow
+		 *            whether the upload window shall show
+		 * @return whether the upload window shall show
+		 --%>
+			function setIgnoreInvalidValue(uploadWindow) {
+				if(uploadWindow == true){
+					document.getElementById("form1:firstAppearance").value += "\xA0";
+					document.getElementById("form1:lastAppearance").value += "\xA0";
+				}
+				return uploadWindow;
+			}
+		<%--
 		 * The function setSelectSelectedByValue() sets the selected element of a
 		 * select box to the first option whose submit value is given.
 		 * 
@@ -163,13 +183,13 @@
 		 --%>
 			function titleDataIsValid() {
 				if (!document.getElementById("form1:firstAppearance").value
-						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
+						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
 					alert("${msgs['calendar.title.firstAppearance.invalid']}");
 					document.getElementById("form1:firstAppearance").focus();
 					return false;
 				}
 				if (!document.getElementById("form1:lastAppearance").value
-						.match(/^[0-3]\d\.[01]\d.\d{4}$/)) {
+						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
 					alert("${msgs['calendar.title.lastAppearance.invalid']}");
 					document.getElementById("form1:lastAppearance").focus();
 					return false;
@@ -208,7 +228,7 @@
 					<%-- ===================== Page main frame ===================== --%>
 
 					<h:form id="form1" enctype="multipart/form-data"
-						onsubmit="return uploadWindow || titleDataIsValid()">
+						onsubmit="return setIgnoreInvalidValue(uploadWindow) || titleDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -499,8 +519,8 @@
 									</htm:table>
 
 									<htm:div styleClass="continueButton">
-										<h:commandButton value="#{msgs['granularity.header']}"
-											action="ShowGranularityPicker" />
+										<h:commandButton value="#{msgs['weiter']}"
+											action="#{CalendarForm.nextClick}" />
 									</htm:div>
 
 									<%-- ===================== End page main content ====================== --%>

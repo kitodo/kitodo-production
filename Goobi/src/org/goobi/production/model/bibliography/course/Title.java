@@ -103,6 +103,7 @@ public class Title {
 	 * Default constructor. Creates a Title object without any data.
 	 * 
 	 * @param course
+	 *            course this title is in
 	 */
 	public Title(Course course) {
 		this.course = course;
@@ -113,10 +114,10 @@ public class Title {
 	}
 
 	/**
-	 * Constructor for a title with a given heading and variant identifier.
+	 * Constructor for a title with a given variant identifier.
 	 * 
-	 * @param heading
-	 *            the name of the title
+	 * @param course
+	 *            course this title is in
 	 * @param variant
 	 *            a variant identifier (may be null)
 	 */
@@ -137,9 +138,29 @@ public class Title {
 	 * @return true if the set was changed
 	 */
 	public boolean addIssue(Issue issue) {
-		if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0)
-			course.clearProcesses();
+		clearProcessesIfNecessary(issue);
 		return issues.add(issue);
+	}
+
+	/**
+	 * When a course of appearance has been loaded from a file or the processes
+	 * list has already been generated, it already contains issues which must be
+	 * deleted in the case that an issue is added to or removed from the course
+	 * of appearance which is producing issues in the selected time range. If
+	 * the time range cannot be evaluated because either of the variables is
+	 * null, we go the safe way and delete, too.
+	 * 
+	 * @param issue
+	 *            issue to add or delete
+	 */
+	private void clearProcessesIfNecessary(Issue issue) {
+		try {
+			if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0) {
+				course.clearProcesses();
+			}
+		} catch (RuntimeException e) { // if firstAppearance or lastAppearance is null
+			course.clearProcesses();
+		}
 	}
 
 	/**
@@ -147,14 +168,16 @@ public class Title {
 	 * 
 	 * @param course
 	 *            Course this title belongs to
+	 * @return a copy of this
 	 */
 	public Title clone(Course course) {
 		Title copy = new Title(course);
 		copy.firstAppearance = firstAppearance;
 		copy.lastAppearance = lastAppearance;
 		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
-		for (Issue issue : issues)
+		for (Issue issue : issues) {
 			copiedIssues.add(issue.clone(course));
+		}
 		copy.issues = copiedIssues;
 		return copy;
 	}
@@ -167,13 +190,15 @@ public class Title {
 	 * @return the count of issues
 	 */
 	public long countIndividualIssues() {
-		if (firstAppearance == null || lastAppearance == null)
+		if (firstAppearance == null || lastAppearance == null) {
 			return 0;
+		}
 		long result = 0;
 		for (LocalDate day = firstAppearance; !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 			for (Issue issue : getIssues()) {
-				if (issue.isMatch(day))
+				if (issue.isMatch(day)) {
 					result += 1;
+				}
 			}
 		}
 		return result;
@@ -194,12 +219,16 @@ public class Title {
 	 * objects for a given day, each of them representing a stamping of one
 	 * physically appeared issue.
 	 * 
+	 * @param date
+	 *            date to generate issues for
+	 * 
 	 * @return a List of IndividualIssue objects, each of them representing one
 	 *         physically appeared issue
 	 */
 	public List<IndividualIssue> getIndividualIssues(LocalDate date) {
-		if (!isMatch(date))
+		if (!isMatch(date)) {
 			return Collections.emptyList();
+		}
 		ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
 		for (Issue issue : getIssues()) {
 			if (issue.isMatch(date)) {
@@ -218,9 +247,11 @@ public class Title {
 	 * @return Issue with that heading
 	 */
 	public Issue getIssue(String heading) {
-		for (Issue issue : issues)
-			if (heading.equals(issue.getHeading()))
+		for (Issue issue : issues) {
+			if (heading.equals(issue.getHeading())) {
 				return issue;
+			}
+		}
 		return null;
 	}
 
@@ -254,6 +285,14 @@ public class Title {
 		return firstAppearance == null && lastAppearance == null && (issues == null || issues.isEmpty());
 	}
 
+	/**
+	 * Can be used to find out whether the given variant string equals the
+	 * variant assigned to this title block in a NullPointerException-safe way
+	 * 
+	 * @param variant
+	 *            variant to compare against
+	 * @return whether the given string is equals to the assigned variant
+	 */
 	public boolean isIdentifiedBy(String variant) {
 		return variant == null && this.variant == null || this.variant.equals(variant);
 	}
@@ -283,8 +322,9 @@ public class Title {
 	 * one by one as additions to the underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
-		for (Issue issue : issues)
+		for (Issue issue : issues) {
 			issue.recalculateRegularity(firstAppearance, lastAppearance);
+		}
 	}
 
 	/**
@@ -296,8 +336,7 @@ public class Title {
 	 * @return true if the set was changed
 	 */
 	public boolean removeIssue(Issue issue) {
-		if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0)
-			course.clearProcesses();
+		clearProcessesIfNecessary(issue);
 		return issues.remove(issue);
 	}
 
@@ -313,11 +352,13 @@ public class Title {
 	public void setFirstAppearance(LocalDate firstAppearance) throws IllegalArgumentException {
 		prohibitOverlaps(firstAppearance, lastAppearance != null ? lastAppearance : firstAppearance);
 		try {
-			if (!this.firstAppearance.equals(firstAppearance))
+			if (!this.firstAppearance.equals(firstAppearance)) {
 				course.clearProcesses();
+			}
 		} catch (NullPointerException e) {
-			if (this.firstAppearance == null ^ firstAppearance == null)
+			if (this.firstAppearance == null ^ firstAppearance == null) {
 				course.clearProcesses();
+			}
 		}
 		this.firstAppearance = firstAppearance;
 	}
@@ -334,12 +375,49 @@ public class Title {
 	public void setLastAppearance(LocalDate lastAppearance) {
 		prohibitOverlaps(firstAppearance != null ? firstAppearance : lastAppearance, lastAppearance);
 		try {
-			if (!this.lastAppearance.equals(lastAppearance))
+			if (!this.lastAppearance.equals(lastAppearance)) {
 				course.clearProcesses();
+			}
 		} catch (NullPointerException e) {
-			if (this.lastAppearance == null ^ lastAppearance == null)
+			if (this.lastAppearance == null ^ lastAppearance == null) {
 				course.clearProcesses();
+			}
 		}
+		this.lastAppearance = lastAppearance;
+	}
+
+	/**
+	 * The method setPublicationPeriod() sets two LocalDate instances as days of
+	 * first and last appearance for this Title.
+	 * 
+	 * @param firstAppearance
+	 *            date of first appearance
+	 * @param lastAppearance
+	 *            date of last appearance
+	 * @throws IllegalArgumentException
+	 *             if the date would overlap with another block
+	 */
+	public void setPublicationPeriod(LocalDate firstAppearance, LocalDate lastAppearance) {
+		prohibitOverlaps(firstAppearance, lastAppearance);
+		try {
+			if (!this.firstAppearance.equals(firstAppearance)) {
+				course.clearProcesses();
+			}
+		} catch (NullPointerException e) {
+			if (this.firstAppearance == null ^ firstAppearance == null) {
+				course.clearProcesses();
+			}
+		}
+		try {
+			if (!this.lastAppearance.equals(lastAppearance)) {
+				course.clearProcesses();
+			}
+		} catch (NullPointerException e) {
+			if (this.lastAppearance == null ^ lastAppearance == null) {
+				course.clearProcesses();
+			}
+		}
+		this.firstAppearance = firstAppearance;
 		this.lastAppearance = lastAppearance;
 	}
 
@@ -359,11 +437,13 @@ public class Title {
 	 *             if the check fails
 	 */
 	private void prohibitOverlaps(LocalDate from, LocalDate until) throws IllegalArgumentException {
-		for (Title title : course)
-			if (title != this
+		for (Title title : course) {
+			if (!title.equals(this)
 					&& (title.getFirstAppearance().isBefore(until) && !title.getLastAppearance().isBefore(from) || (title
-							.getLastAppearance().isAfter(from) && !title.getFirstAppearance().isAfter(until))))
+							.getLastAppearance().isAfter(from) && !title.getFirstAppearance().isAfter(until)))) {
 				throw new IllegalArgumentException();
+			}
+		}
 	}
 
 	/**
@@ -377,16 +457,19 @@ public class Title {
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		if (firstAppearance != null)
+		if (firstAppearance != null) {
 			result.append(firstAppearance.toString());
+		}
 		result.append(" - ");
-		if (lastAppearance != null)
+		if (lastAppearance != null) {
 			result.append(lastAppearance.toString());
+		}
 		result.append(" [");
 		boolean first = true;
 		for (Issue issue : issues) {
-			if (!first)
+			if (!first) {
 				result.append(", ");
+			}
 			result.append(issue.toString());
 			first = false;
 		}
@@ -404,11 +487,13 @@ public class Title {
 	 */
 	public String toString(DateTimeFormatter dateConverter) {
 		StringBuilder result = new StringBuilder();
-		if (firstAppearance != null)
+		if (firstAppearance != null) {
 			result.append(dateConverter.print(firstAppearance));
+		}
 		result.append(" − ");
-		if (lastAppearance != null)
+		if (lastAppearance != null) {
 			result.append(dateConverter.print(lastAppearance));
+		}
 		return result.toString();
 	}
 
@@ -450,33 +535,44 @@ public class Title {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Title))
+		}
+		if (!(obj instanceof Title)) {
 			return false;
+		}
 		Title other = (Title) obj;
 		if (firstAppearance == null) {
-			if (other.firstAppearance != null)
+			if (other.firstAppearance != null) {
 				return false;
-		} else if (!firstAppearance.equals(other.firstAppearance))
+			}
+		} else if (!firstAppearance.equals(other.firstAppearance)) {
 			return false;
+		}
 		if (issues == null) {
-			if (other.issues != null)
+			if (other.issues != null) {
 				return false;
-		} else if (!issues.equals(other.issues))
+			}
+		} else if (!issues.equals(other.issues)) {
 			return false;
+		}
 		if (lastAppearance == null) {
-			if (other.lastAppearance != null)
+			if (other.lastAppearance != null) {
 				return false;
-		} else if (!lastAppearance.equals(other.lastAppearance))
+			}
+		} else if (!lastAppearance.equals(other.lastAppearance)) {
 			return false;
+		}
 		if (variant == null) {
-			if (other.variant != null)
+			if (other.variant != null) {
 				return false;
-		} else if (!variant.equals(other.variant))
+			}
+		} else if (!variant.equals(other.variant)) {
 			return false;
+		}
 		return true;
 	}
 }

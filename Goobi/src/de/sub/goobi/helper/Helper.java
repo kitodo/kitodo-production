@@ -303,6 +303,24 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * The procedure removeManagedBean() removes a managed bean from the faces
+	 * context by name. If nothing such is available, nothing happens.
+	 * 
+	 * @param name
+	 *            managed bean to remove
+	 */
+	public static void removeManagedBean(String name) {
+		try {
+			@SuppressWarnings("rawtypes")
+			Map sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			if (sessionMap.containsKey(name)) {
+				sessionMap.remove(name);
+			}
+		} catch (Exception nothingToDo) {
+		}
+	}
+
 	public static Session getHibernateSession() {
 		Session sess;
 		try {

@@ -1,27 +1,27 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2013 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -62,7 +62,7 @@ import de.sub.goobi.helper.tasks.TaskManager;
  * The class GranularityForm provides the screen logic for a JSF page to choose
  * the granularity to split up the course of appearance of a newspaper into
  * Goobi processes.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class GranularityForm {
@@ -124,7 +124,7 @@ public class GranularityForm {
 	 * running task to create processes is prepared and the user will be
 	 * redirected to the task manager page where it can observe the task
 	 * progressing.
-	 * 
+	 *
 	 * @return the next page to show as named in a &lt;from-outcome&gt; element
 	 *         in faces_config.xml
 	 */
@@ -132,6 +132,10 @@ public class GranularityForm {
 		ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
 		if (!prozesskopieForm.isContentValid(false)) {
 			return ProzesskopieForm.NAVI_FIRST_PAGE;
+		}
+		if (course == null || course.getNumberOfProcesses() < 1) {
+			Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+			return "";
 		}
 		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course, generateBatches);
 		TaskManager.addTask(createProcesses);
@@ -141,7 +145,7 @@ public class GranularityForm {
 	/**
 	 * The procedure downloadClick() is called if the user clicks the button to
 	 * download the course of appearance in XML format.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws TransformerException
@@ -152,6 +156,10 @@ public class GranularityForm {
 	public void downloadClick() {
 		try {
 			course.recalculateRegularityOfIssues();
+			if (course == null || course.getNumberOfProcesses() < 1) {
+				Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+				return;
+			}
 			Document courseXML = course.toXML();
 			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
 			FacesUtils.sendDownload(data, "course.xml");
@@ -173,7 +181,7 @@ public class GranularityForm {
 	 * If the year level is chosen, or if &ldquo;granularity&rdquo; isn&rsquo;t
 	 * set, only the null value, indicating the function is in &ldquo;off&rdquo;
 	 * state, is returned along with a verbal description of the cause.
-	 * 
+	 *
 	 * @return the granularity level chosen by the user
 	 */
 	@SuppressWarnings("incomplete-switch")
@@ -210,7 +218,7 @@ public class GranularityForm {
 	 * altering the course of appearance in a way that the processes need to be
 	 * recalculated—it literally returns “null” as String. If there are
 	 * processes loaded from a foreign source, it returns “foreign”.
-	 * 
+	 *
 	 * @return the granularity level chosen by the user
 	 */
 	public String getGranularity() {
@@ -224,7 +232,7 @@ public class GranularityForm {
 	 * The function getIssueCount() returns the number of issues that physically
 	 * appeared as to the underlying course of appearance data model as
 	 * read-only property “issueCount”.
-	 * 
+	 *
 	 * @return the number of issues physically appeared
 	 */
 	public long getIssueCount() {
@@ -236,7 +244,7 @@ public class GranularityForm {
 	 * digitization project guessed and entered by the user—or null indicating
 	 * that the user didn’t enter anything yet—as read-write property
 	 * “numberOfPages”
-	 * 
+	 *
 	 * @return the total number of pages of the digitization project
 	 */
 	public Long getNumberOfPages() {
@@ -247,7 +255,7 @@ public class GranularityForm {
 	 * The function getNumberOfPages returns the total number of pages of the
 	 * digitization project entered by the user or a guessed value as read-only
 	 * property “numberOfPagesOptionallyGuessed”
-	 * 
+	 *
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public Long getNumberOfPagesOptionallyGuessed() {
@@ -263,7 +271,7 @@ public class GranularityForm {
 	 * will be created. If the course had to condemn its processes because the
 	 * user changed the course, the recalculation of the processes will be
 	 * re-initiated here.
-	 * 
+	 *
 	 * @return the number of processes that will be created
 	 */
 	public int getNumberOfProcesses() {
@@ -276,7 +284,7 @@ public class GranularityForm {
 	/**
 	 * The function getSelectedBatchOption() returns the level for which batches
 	 * will be created as read-write property “numberOfPagesOptionallyGuessed”
-	 * 
+	 *
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public String getSelectedBatchOption() {
@@ -316,7 +324,7 @@ public class GranularityForm {
 	/**
 	 * The method setCourse() is called by JSF to inject the course data model
 	 * into the form. This behaviour is configured in faces-config.xml
-	 * 
+	 *
 	 * @param course
 	 *            Course of appearance data model to be used
 	 */
@@ -327,7 +335,7 @@ public class GranularityForm {
 	/**
 	 * The procedure setNumberOfPages() is called by Faces on postbacks to save
 	 * the received value of the read-write property “numberOfPages”.
-	 * 
+	 *
 	 * @param value
 	 *            new value to be stored
 	 */
@@ -338,7 +346,7 @@ public class GranularityForm {
 	/**
 	 * The procedure setSelectedBatchOption() is called by Faces on postbacks to
 	 * save the received value of the read-write property “selectedBatchOption”
-	 * 
+	 *
 	 * @param option
 	 *            Granularity level for which batches will be created
 	 */
