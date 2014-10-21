@@ -46,6 +46,7 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
