@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -104,6 +105,7 @@ public class ExportDms extends ExportMets {
 			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
+		Hibernate.initialize(myProzess.getProjekt().getFilegroups());
 		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
 			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
 			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
