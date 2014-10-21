@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 import ugh.dl.ContentFile;
@@ -49,15 +50,13 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -66,6 +65,9 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
 
 public class ExportMets {
 	protected Helper help = new Helper();
@@ -129,6 +131,19 @@ public class ExportMets {
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		String atsPpnBand = myProzess.getTitel();
 		Fileformat gdzfile = myProzess.readMetadataFile();
+
+		String rules = ConfigMain.getParameter("copyData.onExport");
+		if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+			try {
+				new DataCopier(rules).process(new CopierData(gdzfile, myProzess));
+			} catch (ConfigurationException e) {
+				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+				return false;
+			} catch (RuntimeException exception) {
+				Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
+				return false;
+			}
+		}
 
 		/* nur beim Rusdml-Projekt die Metadaten aufbereiten */
 		ConfigProjects cp = new ConfigProjects(myProzess.getProjekt().getTitel());
