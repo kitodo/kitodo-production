@@ -917,7 +917,11 @@ public class ProzesskopieForm {
 								.entrySet()) {
 							String enrichable = availableHigherMetadata.getKey();
 							boolean addable = false;
-							for (MetadataType addableMetadata : enricher.getAddableMetadataTypes()) {
+							List<MetadataType> addableTypesNotNull = enricher.getAddableMetadataTypes();
+							if (addableTypesNotNull == null) {
+								addableTypesNotNull = Collections.emptyList();
+							}
+							for (MetadataType addableMetadata : addableTypesNotNull) {
 								if (addableMetadata.getName().equals(enrichable)) {
 									addable = true;
 									break;
