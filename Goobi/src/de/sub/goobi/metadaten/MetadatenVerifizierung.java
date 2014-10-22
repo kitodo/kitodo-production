@@ -46,6 +46,7 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
@@ -90,7 +91,7 @@ public class MetadatenVerifizierung {
 		if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
 			Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
 			try {
-				if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
+				if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(logical.getType().getNameByLanguage(metadataLanguage));
@@ -110,7 +111,7 @@ public class MetadatenVerifizierung {
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierSame", parameter));
 					ergebnis = false;
 				}
-				if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
+				if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
