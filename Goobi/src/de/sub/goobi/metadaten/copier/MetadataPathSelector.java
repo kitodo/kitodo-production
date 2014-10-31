@@ -39,6 +39,7 @@
 package de.sub.goobi.metadaten.copier;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,14 +61,19 @@ import com.sharkysoft.util.UnreachableCodeException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class MetadataPathSelector extends MetadataSelector {
-	private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
+	private static final Object ALL_CHILDREN_SYMBOL = "*";
 
+	private static final String ANY_METADATA_TYPE_SYMBOL = "*";
+
+	@SuppressWarnings("javadoc")
+	private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
 	/**
 	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
 	 * to extract the first metadata path segment.
 	 */
 	private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern.compile("^" + METADATA_PATH_SEPARATOR + "([^"
 			+ METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");
+
 	/**
 	 * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular
 	 * expression used to detect and extract a quantifier expression at the end
@@ -86,7 +92,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * Integer of the element referenced, where Integer.MAX_VALUE indicates the
 	 * "last" element, or null if none.
 	 */
-	private final Integer index;
+	private final Object index;
 
 	/**
 	 * A metadata selector resolving the subsequent path
@@ -111,7 +117,7 @@ public class MetadataPathSelector extends MetadataSelector {
 			String indexSymbol = pathSelectorHasElementSelector.group(2);
 			try {
 				index = getIndexValue(indexSymbol);
-				if (index < 0) {
+				if (index instanceof Integer && ((Integer) index).intValue() < 0) {
 					throw new ConfigurationException("Negative element count is not allowed, in path: " + path);
 				}
 			} catch (NumberFormatException e) {
@@ -124,105 +130,10 @@ public class MetadataPathSelector extends MetadataSelector {
 		selector = super.create(path.substring(pathSegment.length() + 1));
 	}
 
-	/**
-	 * The function getIndexValue() returns the numerical value represented by
-	 * the symbolic (String) representation passed in. Since the method is
-	 * called from the constructor it must not be overridden in subclasses.
-	 * 
-	 * @param indexSymbol
-	 *            an integer value or ">" to refer to Integer.MAX_VALUE
-	 * @return the integer value of the string, or Integer.MAX_VALUE for the
-	 *         symbol ">".
-	 */
-	private final Integer getIndexValue(String indexSymbol) {
-		try {
-			return Integer.valueOf(indexSymbol);
-		} catch (NumberFormatException cannotParseInt) {
-			if (LAST_CHILD_QUANTIFIER.equals(indexSymbol)) {
-				return Integer.MAX_VALUE;
-			} else {
-				throw cannotParseInt;
-			}
-		}
-	}
-
-	/**
-	 * The function matchCurrentPathSegment() returns the path segment this
-	 * metadata path selector is responsible to represent. Since the method is
-	 * called from the constructor it must not be overridden in subclasses.
-	 * 
-	 * @param path
-	 *            path expression to parse
-	 * @return the path segment for this selector
-	 * @throws ConfigurationException
-	 *             if the path cannot be parsed
-	 */
-	private final String matchCurrentPathSegment(String path) throws ConfigurationException {
-		Matcher metadataPathSplitter = METADATA_SPLIT_PATH_SCHEME.matcher(path);
-		if (!metadataPathSplitter.find()) {
-			throw new ConfigurationException(
-					"Cannot create metadata path selector: Path must contain path segment, but is: " + path);
-		}
-		return metadataPathSplitter.group(1);
-	}
-
-	/**
-	 * Returns the value of the metadatum named by the path used to construct
-	 * the metadata selector, or null if either the path or the metadatum at the
-	 * end of the path aren’t available. This works recursively, by calling
-	 * itself on the subnode, if found, or returning null otherwise.
-	 * 
-	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
-	 */
-	@Override
-	protected String findIn(DocStruct supernode) {
-		DocStruct subnode = getSubnode(supernode);
-		if (subnode == null) {
-			return null;
-		} else {
-			return selector.findIn(subnode);
-		}
-	}
-
-	/**
-	 * Returns the subnode identified by the path segment this metadata path
-	 * selector is responsible for. Returns null if no such node can be found.
-	 * 
-	 * @param logicalNode
-	 *            document structure node to retrieve the subnode from
-	 * @return the subnode in question
-	 * @throws RuntimeException
-	 *             if there is more than one element matching but no index was
-	 *             given to chose among them
-	 */
-	private DocStruct getSubnode(DocStruct logicalNode) {
-		List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType, "*");
-		if (children == null) {
-			children = Collections.emptyList();
-		}
-		switch (children.size()) {
-		case 0:
-			return null;
-		case 1:
-			if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
-				return children.get(0);
-			}
-		default:
-			if (index == null) {
-				throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
-						+ docStructType);
-			} else {
-				if (index.equals(Long.MAX_VALUE)) {
-					return children.get(children.size() - 1);
-				}
-				if (children.size() >= index) {
-					return children.get(index);
-				} else {
-					return null;
-				}
-			}
-		}
-
+	private MetadataPathSelector(String docStructType, int index, MetadataSelector selector) {
+		this.docStructType = docStructType;
+		this.index = Integer.valueOf(index);
+		this.selector = selector;
 	}
 
 	/**
@@ -290,6 +201,157 @@ public class MetadataPathSelector extends MetadataSelector {
 		selector.createOrOverwrite(data, subnode, value);
 	}
 
+	@Override
+	protected Iterable<MetadataSelector> findAll(DocStruct logicalNode) {
+		LinkedList<MetadataSelector> result = new LinkedList<MetadataSelector>();
+		List<DocStruct> children = logicalNode.getAllChildren();
+		if (children == null) {
+			children = Collections.emptyList();
+		}
+		int lastChild = children.size() - 1;
+		int count = 0;
+		for (DocStruct child : children) {
+			if (typeCheck(child) && indexCheck(count, lastChild)) {
+				for (MetadataSelector cms : selector.findAll(child)) {
+					result.add(new MetadataPathSelector(ANY_METADATA_TYPE_SYMBOL, count, cms));
+				}
+			}
+			count++;
+		} 
+		return result;
+	}
+
+	/**
+	 * Returns the value of the metadatum named by the path used to construct
+	 * the metadata selector, or null if either the path or the metadatum at the
+	 * end of the path aren’t available. This works recursively, by calling
+	 * itself on the subnode, if found, or returning null otherwise.
+	 * 
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+	 */
+	@Override
+	protected String findIn(DocStruct supernode) {
+		DocStruct subnode = getSubnode(supernode);
+		if (subnode == null) {
+			return null;
+		} else {
+			return selector.findIn(subnode);
+		}
+	}
+
+	public int getIndex() {
+		if (index != null && index instanceof Integer) {
+			int a = ((Integer) index).intValue();
+			if (a < Integer.MAX_VALUE) {
+				return a;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * The function getIndexValue() returns the numerical value represented by
+	 * the symbolic (String) representation passed in. Since the method is
+	 * called from the constructor it must not be overridden in subclasses.
+	 * 
+	 * @param indexSymbol
+	 *            an integer value or ">" to refer to Integer.MAX_VALUE
+	 * @return the integer value of the string, or Integer.MAX_VALUE for the
+	 *         symbol ">".
+	 */
+	private final Object getIndexValue(String indexSymbol) {
+		try {
+			return Integer.valueOf(indexSymbol);
+		} catch (NumberFormatException cannotParseInt) {
+			if (LAST_CHILD_QUANTIFIER.equals(indexSymbol)) {
+				return Integer.MAX_VALUE;
+			} else {
+				return indexSymbol;
+			}
+		}
+	}
+
+	public MetadataSelector getSelector() {
+		return selector;
+	}
+
+	/**
+	 * Returns the subnode identified by the path segment this metadata path
+	 * selector is responsible for. Returns null if no such node can be found.
+	 * 
+	 * @param logicalNode
+	 *            document structure node to retrieve the subnode from
+	 * @return the subnode in question
+	 * @throws RuntimeException
+	 *             if there is more than one element matching but no index was
+	 *             given to chose among them
+	 */
+	private DocStruct getSubnode(DocStruct logicalNode) {
+		List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
+				ANY_METADATA_TYPE_SYMBOL);
+		if (children == null) {
+			children = Collections.emptyList();
+		}
+		switch (children.size()) {
+		case 0:
+			return null;
+		case 1:
+			if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
+				return children.get(0);
+			}
+		default:
+			if (index == null) {
+				throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
+						+ docStructType);
+			} else {
+				if (!(index instanceof Integer)) {
+					throw new RuntimeException("Could not resolve metadata path: In this regard, index \"" + index
+							+ "\" is not allowed.");
+				} else {
+					if (index.equals(Long.MAX_VALUE)) {
+						return children.get(children.size() - 1);
+					}
+					if (children.size() >= ((Integer) index).intValue()) {
+						return children.get(((Integer) index).intValue());
+					} else {
+						return null;
+					}
+				}
+			}
+		}
+	}
+
+	private boolean indexCheck(int childIndex, int lastChildIndex) {
+		if (index == null && lastChildIndex == 0 || ALL_CHILDREN_SYMBOL.equals(index)) {
+			return true;
+		}
+		int comparee = ((Integer) index).intValue();
+		if (childIndex == comparee || (comparee == Integer.MAX_VALUE && childIndex == lastChildIndex)) {
+			return true;
+		}
+		throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for " + docStructType);
+	}
+
+	/**
+	 * The function matchCurrentPathSegment() returns the path segment this
+	 * metadata path selector is responsible to represent. Since the method is
+	 * called from the constructor it must not be overridden in subclasses.
+	 * 
+	 * @param path
+	 *            path expression to parse
+	 * @return the path segment for this selector
+	 * @throws ConfigurationException
+	 *             if the path cannot be parsed
+	 */
+	private final String matchCurrentPathSegment(String path) throws ConfigurationException {
+		Matcher metadataPathSplitter = METADATA_SPLIT_PATH_SCHEME.matcher(path);
+		if (!metadataPathSplitter.find()) {
+			throw new ConfigurationException(
+					"Cannot create metadata path selector: Path must contain path segment, but is: " + path);
+		}
+		return metadataPathSplitter.group(1);
+	}
+
 	/**
 	 * Returns a string that textually represents this MetadataPathSelector.
 	 * 
@@ -308,5 +370,9 @@ public class MetadataPathSelector extends MetadataSelector {
 		}
 		result.append(selector);
 		return result.toString();
+	}
+
+	private boolean typeCheck(DocStruct child) {
+		return ANY_METADATA_TYPE_SYMBOL.equals(docStructType) || docStructType.equals(child.getType().getName());
 	}
 }

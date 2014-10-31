@@ -38,6 +38,7 @@
  */
 package de.sub.goobi.metadaten.copier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -78,40 +79,6 @@ public class LocalMetadataSelector extends MetadataSelector {
 					"Cannot create local metadata selector: Path must start with \"@\", but is: " + path);
 		}
 		selector.setName(path.substring(1));
-	}
-
-	/**
-	 * Return the value of the metadatum named by the path used to construct the
-	 * metadata selector, or null if no such metadatum is available here.
-	 * 
-	 * @param node
-	 *            document structure node to examine
-	 * @return the value of the metadatum, or null if absent
-	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
-	 */
-	@Override
-	protected String findIn(DocStruct node) {
-		Metadata found = findMetadatumIn(node);
-		return found != null ? found.getValue() : null;
-	}
-
-	/**
-	 * Returns the metadatum named by the path used to construct the metadata
-	 * selector, or null if no such metadatum is available here.
-	 * 
-	 * @param node
-	 *            document structure node to examine
-	 * @return the metadatum, or null if absent
-	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
-	 */
-	private Metadata findMetadatumIn(DocStruct node) {
-		List<? extends Metadata> metadata = node.getAllMetadataByType(selector);
-		for (Metadata metadatum : metadata) {
-			if (selector.getName().equals(metadatum.getType().getName())) {
-				return metadatum;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -162,6 +129,75 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
+	 * Returns all concrete metadata selectors the potentially generic metadata
+	 * selector expression resolves to.
+	 * 
+	 * @param node
+	 *            Node of the logical document structure to work on
+	 * @return all metadata selectors the expression resolves to
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
+	 */
+	@Override
+	protected Iterable<MetadataSelector> findAll(DocStruct node) {
+		ArrayList<MetadataSelector> result = new ArrayList<MetadataSelector>(1);
+		List<MetadataType> addableTypes = node.getAddableMetadataTypes();
+		if (addableTypes != null) {
+			for (MetadataType addable : addableTypes) {
+				if (selector.getName().equals(addable.getName())) {
+					result.add(this);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Return the value of the metadatum named by the path used to construct the
+	 * metadata selector, or null if no such metadatum is available here.
+	 * 
+	 * @param node
+	 *            document structure node to examine
+	 * @return the value of the metadatum, or null if absent
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+	 */
+	@Override
+	protected String findIn(DocStruct node) {
+		Metadata found = findMetadatumIn(node);
+		return found != null ? found.getValue() : null;
+	}
+
+	/**
+	 * Returns the metadatum named by the path used to construct the metadata
+	 * selector, or null if no such metadatum is available here.
+	 * 
+	 * @param node
+	 *            document structure node to examine
+	 * @return the metadatum, or null if absent
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
+	 */
+	private Metadata findMetadatumIn(DocStruct node) {
+		List<? extends Metadata> metadata = node.getAllMetadataByType(selector);
+		for (Metadata metadatum : metadata) {
+			if (selector.getName().equals(metadatum.getType().getName())) {
+				return metadatum;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a string that textually represents this LocalMetadataSelector.
+	 * 
+	 * @return a string representation of this LocalMetadataSelector
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return METADATA_SEPARATOR + selector.getName();
+	}
+
+	/**
 	 * Adds a metadatum as named by the path with the value passed to the
 	 * function. Doesn’t do anything if that isn’t possible.
 	 * 
@@ -197,16 +233,5 @@ public class LocalMetadataSelector extends MetadataSelector {
 		} catch (DocStructHasNoTypeException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * Returns a string that textually represents this LocalMetadataSelector.
-	 * 
-	 * @return a string representation of this LocalMetadataSelector
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return METADATA_SEPARATOR + selector.getName();
 	}
 }

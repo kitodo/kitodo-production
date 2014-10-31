@@ -55,6 +55,12 @@ import de.sub.goobi.beans.Prozess;
 public class CopierData {
 
 	/**
+	 * A metadata selector relative to which the data shall be read during
+	 * copying.
+	 */
+	private final MetadataSelector destination;
+
+	/**
 	 * The workspace file to modify
 	 */
 	private final Fileformat fileformat;
@@ -63,6 +69,21 @@ public class CopierData {
 	 * The Goobi process corresponding to the workspace file
 	 */
 	private final Prozess process;
+
+	/**
+	 * Creates a new CopierData bean with an additional destination metadata
+	 * selector.
+	 * 
+	 * @param data
+	 *            data bean without or with destination metadata selector
+	 * @param destination
+	 *            destination metadata selector to use
+	 */
+	public CopierData(CopierData data, MetadataSelector destination) {
+		this.fileformat = data.fileformat;
+		this.process = data.process;
+		this.destination = destination;
+	}
 
 	/**
 	 * Creates a new CopierData bean.
@@ -75,15 +96,17 @@ public class CopierData {
 	public CopierData(Fileformat fileformat, Prozess process) {
 		this.fileformat = fileformat;
 		this.process = process;
+		this.destination = null;
 	}
 
 	/**
-	 * Returns the top-level element of the logical document structure tree.
+	 * Returns the destination metadata selector relative to which the data
+	 * shall be read during copying.
 	 * 
-	 * @return the logical document structure
+	 * @return the destination metadata selector
 	 */
-	public DocStruct getLogicalDocStruct() {
-		return getDigitalDocument().getLogicalDocStruct();
+	public MetadataSelector getDestination() {
+		return destination;
 	}
 
 	/**
@@ -98,6 +121,15 @@ public class CopierData {
 		} catch (PreferencesException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Returns the top-level element of the logical document structure tree.
+	 * 
+	 * @return the logical document structure
+	 */
+	public DocStruct getLogicalDocStruct() {
+		return getDigitalDocument().getLogicalDocStruct();
 	}
 
 	/**

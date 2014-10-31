@@ -51,6 +51,12 @@ import org.apache.commons.configuration.ConfigurationException;
  */
 public abstract class DataSelector {
 	/**
+	 * Symbol indicating that the element of several to choose shall be the last
+	 * one
+	 */
+	protected final static String LAST_CHILD_QUANTIFIER = ">";
+
+	/**
 	 * Symbol indicating that the next segment of the path is a document
 	 * structure hierarchy level
 	 */
@@ -62,10 +68,16 @@ public abstract class DataSelector {
 	protected final static String METADATA_SEPARATOR = "@";
 
 	/**
-	 * Symbol indicating that the element of several to choose shall be the last
-	 * one
+	 * Symbol indicating that the next segment of the path is a reference to the
+	 * node of the logical document structure that the metadata will be written
+	 * to.
 	 */
-	protected final static String LAST_CHILD_QUANTIFIER = ">";
+	protected static final String RESPECTIVE_DESTINATION_REFERENCE = "#";
+
+	/**
+	 * Symbol indicating that the value is a static string
+	 */
+	private static final String STRING_MARK = "\"";
 
 	/**
 	 * Symbol indicating that the selector is to select a variable
@@ -88,6 +100,12 @@ public abstract class DataSelector {
 		}
 		if (path.startsWith(VARIABLE_REFERENCE)) {
 			return new VariableSelector(path);
+		}
+		if (path.startsWith(STRING_MARK)) {
+			return new StringSelector(path);
+		}
+		if (path.startsWith(RESPECTIVE_DESTINATION_REFERENCE)) {
+			return new DestinationReferenceSelector(path);
 		}
 		throw new ConfigurationException(
 				"Cannot create data selector: Path must start with \"@\", \"/\" or \"$\", but is: " + path);
