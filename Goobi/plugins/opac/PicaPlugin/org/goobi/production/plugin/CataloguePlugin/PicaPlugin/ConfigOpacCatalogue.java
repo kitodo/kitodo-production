@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,8 +150,13 @@ class ConfigOpacCatalogue {
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
 		for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
+			int moreOccurrences;
+			HashSet<Element> processed = new HashSet<Element>();
+			do {
 			Element elementToChange = null;
 			Element tagged = null;
+			moreOccurrences = 0;
+			boolean merelyCount = false;
 			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
 			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<ConfigOpacCatalogueBeautifierElement>(beautifier
 					.getTagElementsToProof());
@@ -166,22 +172,29 @@ class ConfigOpacCatalogue {
 					String value = subfield.getText();
 
 					if (beautifier.getTagElementToChange().getTag().equals(tag)) {
-						tagged = field;
-						if (beautifier.getTagElementToChange().getSubtag().equals(subtag)) {
-							elementToChange = subfield;
+						if (!merelyCount) tagged = field;
+						if (beautifier.getTagElementToChange().getSubtag().equals(subtag) && !processed.contains(subfield)) {
+							if(!merelyCount) elementToChange = subfield;
+							moreOccurrences++;
 						}
 					}
 					/*
 					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus der Liste der Beautifier
 					 * entfernen
 					 */
+					if(!merelyCount){
 					for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
-						if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)) {
+							if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)
+									&& !processed.contains(subfield)) {
 							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
 							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
 								prooflist.remove(cocbe);
+								if (prooflist.size() == 0 && subfield.equals(elementToChange)){
+									merelyCount = true;
+								}
 							}
 						}
+					}
 					}
 				}
 			}
@@ -209,8 +222,9 @@ class ConfigOpacCatalogue {
 					elementToChange.setText(elementToChange.getText().concat(
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
 				}
+				processed.add(elementToChange);
 			}
-
+			} while (moreOccurrences > 1);
 		}
 
 	}
