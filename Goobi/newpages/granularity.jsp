@@ -150,7 +150,8 @@
 												<h:commandLink value="#{msgs['granularity.apply']}"
 													id="applyLink" styleClass="rightText" />
 												<htm:span styleClass="fillWrapper">
-													<h:inputText value="#{GranularityForm.numberOfPagesPerIssue}"
+													<h:inputText
+														value="#{GranularityForm.numberOfPagesPerIssue}"
 														id="numberOfPages" onkeydown="showApplyLink();"
 														onchange="showApplyLink();" styleClass="filling">
 														<f:convertNumber />
@@ -264,7 +265,8 @@
 													value="granularity.#{GranularityForm.selectedBatchOption}"
 													binding="#{requestScope.selectedBatchOptionLabel}"
 													rendered="false" />
-												<h:outputFormat value="#{msgs['granularity.info.textbox.batches']}"
+												<h:outputFormat
+													value="#{msgs['granularity.info.textbox.batches']}"
 													rendered="#{GranularityForm.selectedBatchOption ne 'null'}"
 													styleClass="filling">
 													<f:param
@@ -276,6 +278,14 @@
 
 									<%-- ===================== End page main content ====================== --%>
 
+								</htm:td>
+							</htm:tr>
+							<htm:tr>
+								<htm:td>
+									<h:commandButton value="#{msgs.goBack}"
+										rendered="#{ProzesskopieForm.calendarButtonShowing}"
+										action="ShowCalendarEditor">
+									</h:commandButton>
 								</htm:td>
 							</htm:tr>
 						</htm:table>
