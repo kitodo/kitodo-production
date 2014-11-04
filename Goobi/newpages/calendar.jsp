@@ -72,7 +72,7 @@
 				if (!titleDataIsValid()) {
 					return false;
 				}
-				if (document.getElementById("form1:applyChanges").style.display == "none") {
+				if (document.getElementById("form1:applyLink").style.display == "none") {
 					return true;
 				} else {
 					return confirm("${msgs['calendar.title.add.query']}");
@@ -149,14 +149,11 @@
 		 * The function showApplyLink() makes the apply changes link for an issue
 		 * name box show.
 		 * 
-		 * @param o
-		 *            object who triggered the execution of the function (pass
-		 *            “this” on call)
 		 * @return always true
 		 --%>
-			function showApplyLink(o) {
-				document.getElementById(o.id.replace(/issueHeading/,
-						"applyLink")).style.display = "inline";
+			function showApplyLink() {
+				document.getElementById("form1:applyLinkPlaceholder").style.display = "none";
+				document.getElementById("form1:applyLink").style.display = "inline";
 				return true;
 			}
 		<%--
@@ -168,8 +165,10 @@
 		 * @return always true
 		 --%>
 			function startEditTitle() {
-				if (document.getElementById("form1:titlePicker").options.length > 0)
-					document.getElementById("form1:applyChanges").style.display = "inline-block";
+				if (document.getElementById("form1:titlePicker").options.length > 0){
+					document.getElementById("form1:applyLinkPlaceholder").style.display = "none";
+					document.getElementById("form1:applyLink").style.display = "inline";
+				}
 				return true;
 			}
 		<%--
@@ -211,7 +210,7 @@
 		 * @return whether the change request shall be processed
 		 --%>
 			function titlePickerChangeQuery(originValue) {
-				if (document.getElementById("form1:applyChanges").style.display == "none"
+				if (document.getElementById("form1:applyLink").style.display == "none"
 						|| confirm("${msgs['calendar.title.alter.query']}"))
 					return true;
 				setSelectSelectedByValue("form1:titlePicker", originValue);
@@ -235,13 +234,15 @@
 						<h:panelGrid width="100%" columns="1"
 							styleClass="layoutInhaltKopf">
 							<h:panelGroup>
-								<h:commandLink value="#{msgs.startseite}" action="newMain" />
+								<h:commandLink value="#{msgs.startseite}" action="newMain"
+									onclick="uploadWindow=true" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:commandLink value="#{msgs.prozessverwaltung}"
-									action="ProzessverwaltungAlle" />
+									action="ProzessverwaltungAlle" onclick="uploadWindow=true" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:commandLink value="#{msgs.einenNeuenProzessAnlegen}"
-									action="#{ProzesskopieForm.GoToSeite1}" />
+									action="#{ProzesskopieForm.GoToSeite1}"
+									onclick="uploadWindow=true" />
 								<f:verbatim> &#8250;&#8250; </f:verbatim>
 								<h:outputText value="#{msgs['calendar.header']}" />
 							</h:panelGroup>
@@ -250,74 +251,101 @@
 						<htm:table border="0" align="center" width="100%" cellpadding="15">
 							<htm:tr>
 								<htm:td>
-									<htm:h3>
-										<h:outputText value="#{msgs['calendar.header']}" />
-									</htm:h3>
+									<htm:div styleClass="formRow">
+										<htm:h3 styleClass="calendarCaption">
+											<h:outputText value="#{msgs['calendar.header']}" />
+										</htm:h3>
+										<h:commandLink value="#{msgs['granularity.download']}"
+											action="#{CalendarForm.downloadClick}" styleClass="rightText" />
+										<h:commandLink value="#{msgs['calendar.upload']}"
+											action="#{CalendarForm.showUploadClick}"
+											onclick="uploadWindow=true" styleClass="rightText"
+											style="padding-right: 10px; " />
+										<h:commandLink value="#{msgs['calendar.applyChanges']}"
+											id="applyLink" styleClass="rightText"
+											style="padding-right: 10px; display: none; " />
+										<h:outputText value="#{msgs['calendar.applyChanges']}"
+											title="#{msgs['calendar.applyChanges.placeholder']}"
+											onclick="alert('#{msgs['calendar.applyChanges.placeholder']}'); return false;"
+											id="applyLinkPlaceholder" styleClass="rightText"
+											style="padding-right: 10px; color: gray; cursor: help;" />
+									</htm:div>
 
 									<%-- Global warnings and error messages --%>
 
-									<h:messages globalOnly="true" errorClass="text_red"
-										infoClass="text_blue" showDetail="true" showSummary="true"
-										tooltip="true" />
+									<htm:div style="clear: both; ">
+										<h:messages globalOnly="true" errorClass="text_red"
+											infoClass="text_blue" showDetail="true" showSummary="true"
+											tooltip="true" />
+									</htm:div>
 
 									<%-- ===================== Page main content ====================== --%>
 
-									<htm:div>
-										<htm:div styleClass="leftBox calendarTitleMgmt">
+									<htm:fieldset styleClass="calendarTitleMgmt"
+										style="margin-bottom: 14px; ">
+										<htm:legend>
+											<h:outputText value="#{msgs['calendar.title.caption']}" />
+										</htm:legend>
 
+										<%-- Input elements for base data --%>
+										<htm:div styleClass="formRow">
 											<%-- Select box to switch between already defined titles --%>
-											<h:selectOneListbox styleClass="filling" size="7"
-												value="#{CalendarForm.titlePickerSelected}"
+											<h:outputLabel for="titlePicker" styleClass="leftText"
+												value="#{msgs['calendar.title.select']}"
+												style="margin-top: 10px;" />
+
+											<h:selectOneMenu value="#{CalendarForm.titlePickerSelected}"
 												onchange="if(titlePickerChangeQuery('#{CalendarForm.titlePickerSelected}')){submit();}"
-												id="titlePicker">
+												id="titlePicker" style="margin-top: 5px; min-width: 162px; ">
 												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
 													var="item" itemLabel="#{item.label}"
 													itemValue="#{item.value}" />
-											</h:selectOneListbox>
+											</h:selectOneMenu>
+
+
+											<htm:div styleClass="keepTogether">
+												<h:outputText
+													value="#{msgs['calendar.title.firstAppearance']}" />
+												<h:inputText value="#{CalendarForm.firstAppearance}"
+													onkeydown="startEditTitle()" onchange="startEditTitle()"
+													id="firstAppearance" />
+											</htm:div>
+
+											<htm:div styleClass="keepTogether">
+												<h:outputText
+													value="#{msgs['calendar.title.lastAppearance']}" />
+												<h:inputText value="#{CalendarForm.lastAppearance}"
+													onkeydown="startEditTitle()" onchange="startEditTitle()"
+													id="lastAppearance" />
+											</htm:div>
 
 											<%-- Buttons to add and remove titles --%>
-											<htm:div styleClass="formRow">
-												<h:commandLink value="#{msgs['calendar.title.add']}"
-													rendered="#{CalendarForm.blank}" styleClass="actionLink" />
-												<h:commandLink value="#{msgs['calendar.title.add']}"
-													action="#{CalendarForm.addTitleClick}"
-													onclick="if(!addClickQuery()){return false;}"
-													rendered="#{not CalendarForm.blank}"
-													styleClass="actionLink" />
-												<h:commandLink value="#{msgs['calendar.title.remove']}"
-													action="#{CalendarForm.removeTitleClick}"
-													onclick="if(!removeClickQuery()){return false;}"
-													styleClass="actionLink" />
-											</htm:div>
-											<h:commandLink value="#{msgs['calendar.upload']}"
-												action="#{CalendarForm.showUploadClick}"
-												onclick="uploadWindow=true" styleClass="actionLink" />
+											<h:commandLink title="#{msgs['calendar.title.addFirst']}"
+												rendered="#{CalendarForm.blank}" styleClass="actionLink">
+												<h:graphicImage style="vertical-align: text-bottom;"
+													value="/newpages/images/buttons/edit_20.gif"
+													rendered="#{CalendarForm.blank}" />
+											</h:commandLink>
+											<h:commandLink title="#{msgs['calendar.title.add']}"
+												action="#{CalendarForm.addTitleClick}"
+												onclick="if(!addClickQuery()){return false;}"
+												rendered="#{not CalendarForm.blank}" styleClass="actionLink">
+												<h:graphicImage style="vertical-align: text-bottom;"
+													value="/newpages/images/buttons/star_blue.gif"
+													rendered="#{not CalendarForm.blank}" />
+											</h:commandLink>
+											<h:commandLink title="#{msgs['calendar.title.remove']}"
+												style="vertical-align: text-bottom;"
+												action="#{CalendarForm.removeTitleClick}"
+												onclick="if(!removeClickQuery()){return false;}"
+												styleClass="actionLink">
+												<h:graphicImage
+													value="/newpages/images/buttons/waste1_20px.gif" />
+											</h:commandLink>
 										</htm:div>
 
-										<htm:div styleClass="fillWrapper calendarTitleContent">
-											<%-- Input elements for base data --%>
-											<htm:div styleClass="filling formRow">
-												<htm:div styleClass="keepTogether">
-													<h:outputText
-														value="#{msgs['calendar.title.firstAppearance']}" />
-													<h:inputText value="#{CalendarForm.firstAppearance}"
-														onkeydown="startEditTitle()" onchange="startEditTitle()"
-														id="firstAppearance" />
-												</htm:div>
 
-												<htm:div styleClass="keepTogether">
-													<h:outputText
-														value="#{msgs['calendar.title.lastAppearance']}" />
-													<h:inputText value="#{CalendarForm.lastAppearance}"
-														onkeydown="startEditTitle()" onchange="startEditTitle()"
-														id="lastAppearance" />
-												</htm:div>
-
-												<h:commandLink value="#{msgs['calendar.applyChanges']}"
-													id="applyChanges" style="display: none;"
-													styleClass="actionLink" />
-											</htm:div>
-
+										<htm:div styleClass="calendarTitleContent">
 											<t:dataList layout="simple" var="issue"
 												value="#{CalendarForm.issues}">
 												<htm:div styleClass="filling formRow">
@@ -334,39 +362,33 @@
 													</htm:span>
 
 													<%-- Delete button --%>
-													<h:commandLink value="#{msgs['calendar.issue.delete']}"
+													<h:commandLink title="#{msgs['calendar.issue.delete']}"
 														action="#{issue.deleteClick}"
 														onclick="if(!deleteClickQuery()){return false;}"
-														styleClass="rightText" />
+														styleClass="rightText"
+														style="margin-left: 8px; margin-top: -2px;">
+														<h:graphicImage
+															value="/newpages/images/buttons/waste1_20px.gif" />
+													</h:commandLink>
 
-													<%-- Update button --%>
-													<h:commandLink value="#{msgs['calendar.applyChanges']}"
-														id="applyLink" styleClass="rightText"
-														style="display: none;" />
-
-													<%-- Issue name box --%>
-													<htm:span styleClass="fillWrapper">
-														<h:inputText value="#{issue.heading}" id="issueHeading"
-															onkeydown="showApplyLink(this);"
-															onchange="showApplyLink(this);" styleClass="filling" />
-													</htm:span>
 
 													<%-- Days of week --%>
-													<htm:div styleClass="daysOfWeek">
+													<htm:div styleClass="rightText">
+
 														<htm:div styleClass="keepTogether">
 															<h:selectBooleanCheckbox id="monday"
 																value="#{issue.monday}" onchange="submit()" />
 															<h:outputLabel value="#{msgs['calendar.issue.monday']}"
 																for="monday" />
 														</htm:div>
-
+														
 														<htm:div styleClass="keepTogether">
 															<h:selectBooleanCheckbox id="tuesday"
 																value="#{issue.tuesday}" onchange="submit()" />
 															<h:outputLabel value="#{msgs['calendar.issue.tuesday']}"
 																for="tuesday" />
 														</htm:div>
-
+														
 														<htm:div styleClass="keepTogether">
 															<h:selectBooleanCheckbox id="wednesday"
 																value="#{issue.wednesday}" onchange="submit()" />
@@ -374,14 +396,14 @@
 																value="#{msgs['calendar.issue.wednesday']}"
 																for="wednesday" />
 														</htm:div>
-
+														
 														<htm:div styleClass="keepTogether">
 															<h:selectBooleanCheckbox id="thursday"
 																value="#{issue.thursday}" onchange="submit()" />
 															<h:outputLabel value="#{msgs['calendar.issue.thursday']}"
 																for="thursday" />
 														</htm:div>
-
+														
 														<htm:div styleClass="keepTogether">
 															<h:selectBooleanCheckbox id="friday"
 																value="#{issue.friday}" onchange="submit()" />
@@ -403,14 +425,24 @@
 																for="sunday" />
 														</htm:div>
 													</htm:div>
+
+													<%-- Issue name box --%>
+													<htm:span styleClass="fillWrapper">
+														<h:inputText value="#{issue.heading}" id="issueHeading"
+															onkeydown="showApplyLink();" onchange="showApplyLink();"
+															styleClass="filling" />
+													</htm:span>
 												</htm:div>
 											</t:dataList>
 											<%-- Add button --%>
-											<h:commandLink value="#{msgs['calendar.issue.add']}"
-												action="#{CalendarForm.addIssueClick}" />
+											<h:commandLink title="#{msgs['calendar.issue.add']}"
+												action="#{CalendarForm.addIssueClick}">
+												<h:graphicImage style="margin-left: -5px;"
+													value="/newpages/images/buttons/star_blue.gif" />
+											</h:commandLink>
 
 										</htm:div>
-									</htm:div>
+									</htm:fieldset>
 
 									<%-- File upload dialogue --%>
 
@@ -518,7 +550,12 @@
 										</t:dataList>
 									</htm:table>
 
-									<htm:div styleClass="continueButton">
+									<htm:div styleClass="leftText">
+										<h:commandButton value="#{msgs['goBack']}"
+											action="#{ProzesskopieForm.GoToSeite1}"
+											onclick="uploadWindow=true" />
+									</htm:div>
+									<htm:div styleClass="rightText">
 										<h:commandButton value="#{msgs['weiter']}"
 											action="#{CalendarForm.nextClick}" />
 									</htm:div>

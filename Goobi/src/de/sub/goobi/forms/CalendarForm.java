@@ -49,9 +49,12 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
@@ -63,6 +66,7 @@ import org.xml.sax.SAXException;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.DateUtils;
+import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 
@@ -723,6 +727,42 @@ public class CalendarForm {
 	 */
 	public void backwardClick() {
 		yearShowing -= 1;
+	}
+
+	/**
+	 * The function downloadClick() is executed if the user clicks the action
+	 * link to “export” the calendar data. If the course of appearance doesn’t
+	 * yet contain generated processes—which is always the case, except that the
+	 * user just came from uploading a data file and didn’t change anything
+	 * about it—process data will be generated. Then an XML file will be made
+	 * out of it and sent to the user’s browser.
+	 * 
+	 * Note: The process data will be generated with a granularity of “days”
+	 * (each day forms one process). This setting can be changed later after the
+	 * data has been re-imported, but it will remain if the user uploads the
+	 * saved data and then proceeds right to the next page and creates processes
+	 * with the granularity “as imported”. However, since this is possible
+	 * and—as to our knowledge in late 2014, when this was written—this is the
+	 * best option of all, this default has been chosen here.
+	 */
+	public void downloadClick() {
+		try {
+			if (course == null || course.countIndividualIssues() == 0) {
+				Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+				return;
+			}
+			if (course.getNumberOfProcesses() == 0) {
+				course.splitInto(Granularity.DAYS);
+			}
+			byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
+			FacesUtils.sendDownload(data, "course.xml");
+		} catch (TransformerException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	/**
