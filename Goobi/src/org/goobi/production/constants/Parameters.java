@@ -96,6 +96,12 @@ public class Parameters {
 	public static final String HITLIST_PAGE_SIZE = "catalogue.hitlist.pageSize";
 
 	/**
+	 * Long. Number of pages per process below which the features in the
+	 * granualarity dialog shall be locked.
+	 */
+	public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
+
+	/**
 	 * Points to a folder on the file system that contains Production plug-in
 	 * jars. In the folder, there must be subfolders named as defined in enum
 	 * PluginType (currently: “import”, “step”, “validation”, “command” and

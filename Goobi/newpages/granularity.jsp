@@ -66,6 +66,23 @@
 				}
 				return true;
 			}
+			
+		<%--
+		 * If a message is provided, the function shows a message box to the user
+		 * with the message provided an prevents the button from executing. If the
+		 * message is empty, the function will have no effect.
+		 * 
+		 * @param message
+		 *            message to show
+		 * @return true to cancel the operation
+		 --%>
+			function locked(message) {
+				if (message == ""){
+					return false;
+				}
+				alert(message);
+				return true;
+			}
 		</script>
 		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
 			align="center">
@@ -177,11 +194,13 @@
 
 										<%-- Button to download course of appearance as XML --%>
 										<h:commandButton value="#{msgs['granularity.download']}"
-											action="#{GranularityForm.downloadClick}" />
+											action="#{GranularityForm.downloadClick}"
+											onclick="if(locked('#{GranularityForm.lockMessage}')) return false;" />
 
 										<%-- Button to create a long running task to create processes --%>
 										<h:commandButton value="#{msgs['granularity.create']}"
-											action="#{GranularityForm.createProcessesClick}" />
+											action="#{GranularityForm.createProcessesClick}"
+											onclick="if(locked('#{GranularityForm.lockMessage}')) return false;" />
 									</htm:div>
 
 									<htm:fieldset>
