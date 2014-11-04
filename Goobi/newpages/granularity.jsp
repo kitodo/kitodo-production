@@ -143,7 +143,7 @@
 													id="applyLink" styleClass="rightText"
 													style="display: none;" />
 												<htm:span styleClass="fillWrapper">
-													<h:inputText value="#{GranularityForm.numberOfPages}"
+													<h:inputText value="#{GranularityForm.numberOfPagesPerIssue}"
 														id="numberOfPages" onkeydown="showApplyLink();"
 														onchange="showApplyLink();" styleClass="filling">
 														<f:convertNumber />
@@ -210,11 +210,6 @@
 											binding="#{requestScope.processesFormatted}" rendered="false">
 											<f:convertNumber />
 										</h:outputText>
-										<h:outputText
-											value="#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}"
-											binding="#{requestScope.pagesPerProcess}" rendered="false">
-											<f:convertNumber maxFractionDigits="1" />
-										</h:outputText>
 										<htm:div styleClass="granularityInfoTextbox"
 											rendered="#{GranularityForm.numberOfProcesses>0}"
 											title="#{msgs['granularity.info.textbox.mouseOver']}">
@@ -244,7 +239,7 @@
 													rendered="#{GranularityForm.numberOfPages != null}"
 													styleClass="filling">
 													<f:param value="#{requestScope.processesFormatted.value}" />
-													<f:param value="#{requestScope.pagesPerProcess.value}" />
+													<f:param value="#{GranularityForm.pagesPerProcessRounded}" />
 												</h:outputFormat>
 												<h:outputText
 													rendered="#{GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses>1000}"

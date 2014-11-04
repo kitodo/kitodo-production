@@ -252,6 +252,17 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getNumberOfPages returns the number of pages per issue
+	 * guessed and entered by the user—or null indicating that the user didn’t
+	 * enter anything yet—as read-write property “numberOfPagesPerIssue”
+	 * 
+	 * @return the total number of pages of the digitization project
+	 */
+	public Long getNumberOfPagesPerIssue() {
+		return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
+	}
+
+	/**
 	 * The function getNumberOfPages returns the total number of pages of the
 	 * digitization project entered by the user or a guessed value as read-only
 	 * property “numberOfPagesOptionallyGuessed”
@@ -282,9 +293,32 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getPagesPerProcessRounded() returns the pages per process as
+	 * a rounded string.
+	 * 
+	 * This should be done in JSF using “convertNumber”, but it doesn’t show any
+	 * effect and the number still prints with a decimal fractions part that is
+	 * not desired. This JSF code should put the number rounded into the request
+	 * scope, but rounding doesn’t work for some unknown reason.
+	 * 
+	 * <pre>
+	 * &lt;h:outputText binding=&quot;#{requestScope.pagesPerProcess}&quot; rendered=&quot;false&quot;&gt;
+	 *         value=&quot;#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}&quot;
+	 *     &lt;f:convertNumber maxFractionDigits=&quot;0&quot; /&gt;
+	 * &lt;/h:outputText&gt;
+	 * </pre>
+	 * 
+	 * @return the pages per process as a rounded string
+	 */
+	public String getPagesPerProcessRounded() {
+		double pagesPerProcess = (double) getNumberOfPagesOptionallyGuessed() / getNumberOfProcesses();
+		return Long.toString(Math.round(pagesPerProcess));
+	}
+
+	/**
 	 * The function getSelectedBatchOption() returns the level for which batches
 	 * will be created as read-write property “numberOfPagesOptionallyGuessed”
-	 *
+	 * 
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public String getSelectedBatchOption() {
@@ -333,14 +367,15 @@ public class GranularityForm {
 	}
 
 	/**
-	 * The procedure setNumberOfPages() is called by Faces on postbacks to save
-	 * the received value of the read-write property “numberOfPages”.
-	 *
+	 * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks
+	 * to save the received value of the read-write property
+	 * “numberOfPagesPerIssue”.
+	 * 
 	 * @param value
 	 *            new value to be stored
 	 */
-	public void setNumberOfPages(Long value) {
-		numberOfPages = value;
+	public void setNumberOfPagesPerIssue(Long value) {
+		numberOfPages = value == null ? null : value * course.countIndividualIssues();
 	}
 
 	/**
