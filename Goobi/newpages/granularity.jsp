@@ -66,15 +66,6 @@
 				}
 				return true;
 			}
-		<%--
-		 * The function showApplyLink() shows a link to apply the value entered.
-		 * 
-		 * @return always true
-		 --%>
-			function showApplyLink() {
-				document.getElementById("form1:applyLink").style.display = "inline";
-				return true;
-			}
 		</script>
 		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
 			align="center">
@@ -140,8 +131,7 @@
 													value="#{msgs['granularity.numberOfPages']}"
 													styleClass="leftText" />
 												<h:commandLink value="#{msgs['granularity.apply']}"
-													id="applyLink" styleClass="rightText"
-													style="display: none;" />
+													id="applyLink" styleClass="rightText" />
 												<htm:span styleClass="fillWrapper">
 													<h:inputText value="#{GranularityForm.numberOfPagesPerIssue}"
 														id="numberOfPages" onkeydown="showApplyLink();"
