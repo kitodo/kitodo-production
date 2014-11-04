@@ -735,7 +735,10 @@ public class CalendarForm {
 	 * yet contain generated processes—which is always the case, except that the
 	 * user just came from uploading a data file and didn’t change anything
 	 * about it—process data will be generated. Then an XML file will be made
-	 * out of it and sent to the user’s browser.
+	 * out of it and sent to the user’s browser. If the granularity was
+	 * temporarily added, it will be removed afterwards so that the user will
+	 * not be presented with the option to generate processes “as imported” if
+	 * he or she never ran an import before.
 	 * 
 	 * Note: The process data will be generated with a granularity of “days”
 	 * (each day forms one process). This setting can be changed later after the
@@ -746,12 +749,14 @@ public class CalendarForm {
 	 * best option of all, this default has been chosen here.
 	 */
 	public void downloadClick() {
+		boolean granularityWasTemporarilyAdded = false;
 		try {
 			if (course == null || course.countIndividualIssues() == 0) {
-				Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
+				Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
 				return;
 			}
 			if (course.getNumberOfProcesses() == 0) {
+				granularityWasTemporarilyAdded = true;
 				course.splitInto(Granularity.DAYS);
 			}
 			byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
@@ -762,6 +767,10 @@ public class CalendarForm {
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
 			logger.error(e.getMessage(), e);
+		} finally {
+			if (granularityWasTemporarilyAdded) {
+				course.clearProcesses();
+			}
 		}
 	}
 
