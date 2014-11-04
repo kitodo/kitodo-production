@@ -1085,8 +1085,7 @@ public class CalendarForm {
 	 * to the next screen. It returns either the String constant that indicates
 	 * Faces the next screen, or sets an error message if the user didn’t yet
 	 * input an issue and indicates Faces to stay on that screen by returning
-	 * the empty string. Before navigation, old values are removed—if any—so
-	 * that the screen is reinitialised with the current calendar state.
+	 * the empty string.
 	 * 
 	 * @return the screen to show next
 	 */
@@ -1095,7 +1094,6 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
 			return "";
 		}
-		Helper.removeManagedBean("GranularityForm");
 		return "ShowGranularityPicker";
 	}
 
@@ -1328,7 +1326,9 @@ public class CalendarForm {
 	/**
 	 * The method uploadClick() will be called by Faces if the user has selected
 	 * a course of appearance XML file for upload in the window and clicks the
-	 * button to upload it.
+	 * button to upload it. Old values of the granularity picker are removed—if
+	 * any—so that the screen is reinitialised with the current calendar state
+	 * next time.
 	 */
 	public void uploadClick() {
 		try {
@@ -1339,6 +1339,7 @@ public class CalendarForm {
 			Document xml = XMLUtils.load(uploadedFile.getInputStream());
 			course = new Course(xml);
 			titleShowing = course.get(0);
+			Helper.removeManagedBean("GranularityForm");
 			navigate();
 		} catch (SAXException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");
