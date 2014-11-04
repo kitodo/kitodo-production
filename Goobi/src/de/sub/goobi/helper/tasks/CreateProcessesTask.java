@@ -300,7 +300,7 @@ public class CreateProcessesTask extends EmptyTask {
 		}
 
 		// create the year level
-		DocStruct year = newspaper.createChild(ExportBatchTask.METADATA_ELEMENT_YEAR, document, ruleset);
+		DocStruct year = newspaper.createChild(newspaper.getAddableMetadataTypes().get(0).getName(), document, ruleset);
 		String theYear = Integer.toString(issues.get(0).getDate().getYear());
 		year.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear);
 
@@ -311,10 +311,11 @@ public class CreateProcessesTask extends EmptyTask {
 			LocalDate date = individualIssue.getDate();
 			Integer monthNo = date.getMonthOfYear();
 			if (!months.containsKey(monthNo)) {
-				DocStruct newMonth = year.createChild(ExportBatchTask.METADATA_ELEMENT_MONTH, document, ruleset);
+				DocStruct newMonth = year.createChild(year.getAddableMetadataTypes().get(0).getName(), document,
+						ruleset);
 				newMonth.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString());
 				try {
-					newMonth.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+					newMonth.addMetadata(year.getType().getName(), theYear);
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
@@ -327,15 +328,16 @@ public class CreateProcessesTask extends EmptyTask {
 
 			// create the day level
 			if (!days.containsKey(date)) {
-				DocStruct newDay = month.createChild(ExportBatchTask.METADATA_ELEMENT_DAY, document, ruleset);
+				DocStruct newDay = month.createChild(month.getAddableMetadataTypes().get(0).getName(), document,
+						ruleset);
 				newDay.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
 						Integer.toString(date.getDayOfMonth()));
 				try {
-					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+					newDay.addMetadata(year.getType().getName(), theYear);
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
-					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+					newDay.addMetadata(month.getType().getName(), Integer.toString(date.getMonthOfYear()));
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
@@ -348,20 +350,20 @@ public class CreateProcessesTask extends EmptyTask {
 			DocStruct day = days.get(date);
 
 			// create the issue
-			DocStruct issue = day.createChild(ExportBatchTask.METADATA_ELEMENT_ISSUE, document, ruleset);
+			DocStruct issue = day.createChild(day.getAddableMetadataTypes().get(0).getName(), document, ruleset);
 			String heading = individualIssue.getHeading();
 			if (heading != null && heading.trim().length() > 0) {
-				issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_ISSUE, heading);
+				issue.addMetadata(issue.getType().getName(), heading);
 				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
+					issue.addMetadata(year.getType().getName(), theYear);
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
+					issue.addMetadata(month.getType().getName(), Integer.toString(date.getMonthOfYear()));
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_DAY, Integer.toString(date.getDayOfMonth()));
+					issue.addMetadata(day.getType().getName(), Integer.toString(date.getDayOfMonth()));
 				} catch (MetadataTypeNotAllowedException undesired) {
 				}
 				try {
@@ -464,8 +466,8 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The function clone() creates a copy of this CreateProcessesTask for
 	 * providing the possibility to restart it because a Thread can only be
 	 * started once.
-	 *
-	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
 	 */
 	@Override
 	public CreateProcessesTask clone() {
