@@ -1151,22 +1151,27 @@ public class CalendarForm {
 
 	/**
 	 * The method removeTitleClick() deletes the currently selected Title block
-	 * from the course of appearance.The method is not intended to be used if
-	 * there is only one block left.
+	 * from the course of appearance. If there is only one block left, the
+	 * editor will instead be reset.
 	 * 
 	 * @throws IndexOutOfBoundsException
 	 *             if the title referenced by “titleShowing” isn’t contained in
 	 *             the course of appearance
 	 */
 	public void removeTitleClick() {
-		assert course.size() > 1;
-		int index = course.indexOf(titleShowing);
-		course.remove(index);
-		if (index > 0) {
-			index--;
+		if (course.size() < 2) {
+			course.clear();
+			titlePickerResolver.clear();
+			titleShowing = null;
+		} else {
+			int index = course.indexOf(titleShowing);
+			course.remove(index);
+			if (index > 0) {
+				index--;
+			}
+			titleShowing = course.get(index);
+			navigate();
 		}
-		titleShowing = course.get(index);
-		navigate();
 	}
 
 	/**

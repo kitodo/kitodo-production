@@ -98,11 +98,7 @@
 		 * @return whether a title block can be deleted
 		 --%>
 			function removeClickQuery() {
-				if (document.getElementById("form1:titlePicker").length >= 2) {
-					return confirm("${msgs['calendar.title.remove.query']}");
-				} else
-					alert("${msgs['calendar.title.remove.disabled']}");
-				return false;
+				return confirm("${msgs['calendar.title.remove.query']}");
 			}
 		<%--
 		 * The function setIgnoreInvalidValue() inserts an alternate white space
