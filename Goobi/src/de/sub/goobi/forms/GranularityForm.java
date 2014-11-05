@@ -42,16 +42,19 @@ package de.sub.goobi.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.w3c.dom.Document;
 
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
@@ -240,6 +243,29 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getLockMessage() returns an empty string if either no limit
+	 * for the minimal number of pages per process has been configured, or the
+	 * limit has been reached, which will allow normal processing. Otherwise, an
+	 * error message string is returned, explaining the user how to fix the
+	 * problem. Quotes are replaced for not to break the Javascript in action
+	 * here.
+	 * 
+	 * @return an error message, or the empty string if everything is okay.
+	 */
+	public String getLockMessage() {
+		long perProcess = ConfigMain.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
+		if (getNumberOfProcesses() < 1 || perProcess < 1
+				|| (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
+			return "";
+		}
+		double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
+		List<String> args = Arrays.asList(new String[] { Long.toString(perProcess),
+				Long.toString((long) Math.ceil(perIssue)) });
+		return Helper.getTranslation("granularity.numberOfPages.tooSmall", args).replaceAll("\"", "″")
+				.replaceAll("'", "′");
+	}
+
+	/**
 	 * The function getNumberOfPages returns the total number of pages of the
 	 * digitization project guessed and entered by the user—or null indicating
 	 * that the user didn’t enter anything yet—as read-write property
@@ -249,6 +275,17 @@ public class GranularityForm {
 	 */
 	public Long getNumberOfPages() {
 		return numberOfPages;
+	}
+
+	/**
+	 * The function getNumberOfPages returns the number of pages per issue
+	 * guessed and entered by the user—or null indicating that the user didn’t
+	 * enter anything yet—as read-write property “numberOfPagesPerIssue”
+	 * 
+	 * @return the total number of pages of the digitization project
+	 */
+	public Long getNumberOfPagesPerIssue() {
+		return numberOfPages != null ? numberOfPages / course.countIndividualIssues() : null;
 	}
 
 	/**
@@ -282,9 +319,32 @@ public class GranularityForm {
 	}
 
 	/**
+	 * The function getPagesPerProcessRounded() returns the pages per process as
+	 * a rounded string.
+	 * 
+	 * This should be done in JSF using “convertNumber”, but it doesn’t show any
+	 * effect and the number still prints with a decimal fractions part that is
+	 * not desired. This JSF code should put the number rounded into the request
+	 * scope, but rounding doesn’t work for some unknown reason.
+	 * 
+	 * <pre>
+	 * &lt;h:outputText binding=&quot;#{requestScope.pagesPerProcess}&quot; rendered=&quot;false&quot;&gt;
+	 *         value=&quot;#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}&quot;
+	 *     &lt;f:convertNumber maxFractionDigits=&quot;0&quot; /&gt;
+	 * &lt;/h:outputText&gt;
+	 * </pre>
+	 * 
+	 * @return the pages per process as a rounded string
+	 */
+	public String getPagesPerProcessRounded() {
+		double pagesPerProcess = (double) getNumberOfPagesOptionallyGuessed() / getNumberOfProcesses();
+		return Long.toString(Math.round(pagesPerProcess));
+	}
+
+	/**
 	 * The function getSelectedBatchOption() returns the level for which batches
 	 * will be created as read-write property “numberOfPagesOptionallyGuessed”
-	 *
+	 * 
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public String getSelectedBatchOption() {
@@ -333,14 +393,15 @@ public class GranularityForm {
 	}
 
 	/**
-	 * The procedure setNumberOfPages() is called by Faces on postbacks to save
-	 * the received value of the read-write property “numberOfPages”.
-	 *
+	 * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks
+	 * to save the received value of the read-write property
+	 * “numberOfPagesPerIssue”.
+	 * 
 	 * @param value
 	 *            new value to be stored
 	 */
-	public void setNumberOfPages(Long value) {
-		numberOfPages = value;
+	public void setNumberOfPagesPerIssue(Long value) {
+		numberOfPages = value == null ? null : value * course.countIndividualIssues();
 	}
 
 	/**

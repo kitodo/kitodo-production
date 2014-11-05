@@ -49,9 +49,12 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Course;
+import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Issue;
 import org.goobi.production.model.bibliography.course.Title;
 import org.joda.time.DateTimeConstants;
@@ -63,6 +66,7 @@ import org.xml.sax.SAXException;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.DateUtils;
+import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 
@@ -726,6 +730,51 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function downloadClick() is executed if the user clicks the action
+	 * link to “export” the calendar data. If the course of appearance doesn’t
+	 * yet contain generated processes—which is always the case, except that the
+	 * user just came from uploading a data file and didn’t change anything
+	 * about it—process data will be generated. Then an XML file will be made
+	 * out of it and sent to the user’s browser. If the granularity was
+	 * temporarily added, it will be removed afterwards so that the user will
+	 * not be presented with the option to generate processes “as imported” if
+	 * he or she never ran an import before.
+	 * 
+	 * Note: The process data will be generated with a granularity of “days”
+	 * (each day forms one process). This setting can be changed later after the
+	 * data has been re-imported, but it will remain if the user uploads the
+	 * saved data and then proceeds right to the next page and creates processes
+	 * with the granularity “as imported”. However, since this is possible
+	 * and—as to our knowledge in late 2014, when this was written—this is the
+	 * best option of all, this default has been chosen here.
+	 */
+	public void downloadClick() {
+		boolean granularityWasTemporarilyAdded = false;
+		try {
+			if (course == null || course.countIndividualIssues() == 0) {
+				Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
+				return;
+			}
+			if (course.getNumberOfProcesses() == 0) {
+				granularityWasTemporarilyAdded = true;
+				course.splitInto(Granularity.DAYS);
+			}
+			byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
+			FacesUtils.sendDownload(data, "course.xml");
+		} catch (TransformerException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
+			logger.error(e.getMessage(), e);
+		} finally {
+			if (granularityWasTemporarilyAdded) {
+				course.clearProcesses();
+			}
+		}
+	}
+
+	/**
 	 * The method forwardClick() flips the calendar sheet forward one year in
 	 * time.
 	 */
@@ -1036,8 +1085,7 @@ public class CalendarForm {
 	 * to the next screen. It returns either the String constant that indicates
 	 * Faces the next screen, or sets an error message if the user didn’t yet
 	 * input an issue and indicates Faces to stay on that screen by returning
-	 * the empty string. Before navigation, old values are removed—if any—so
-	 * that the screen is reinitialised with the current calendar state.
+	 * the empty string.
 	 * 
 	 * @return the screen to show next
 	 */
@@ -1046,7 +1094,6 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
 			return "";
 		}
-		Helper.removeManagedBean("GranularityForm");
 		return "ShowGranularityPicker";
 	}
 
@@ -1104,22 +1151,27 @@ public class CalendarForm {
 
 	/**
 	 * The method removeTitleClick() deletes the currently selected Title block
-	 * from the course of appearance.The method is not intended to be used if
-	 * there is only one block left.
+	 * from the course of appearance. If there is only one block left, the
+	 * editor will instead be reset.
 	 * 
 	 * @throws IndexOutOfBoundsException
 	 *             if the title referenced by “titleShowing” isn’t contained in
 	 *             the course of appearance
 	 */
 	public void removeTitleClick() {
-		assert course.size() > 1;
-		int index = course.indexOf(titleShowing);
-		course.remove(index);
-		if (index > 0) {
-			index--;
+		if (course.size() < 2) {
+			course.clear();
+			titlePickerResolver.clear();
+			titleShowing = null;
+		} else {
+			int index = course.indexOf(titleShowing);
+			course.remove(index);
+			if (index > 0) {
+				index--;
+			}
+			titleShowing = course.get(index);
+			navigate();
 		}
-		titleShowing = course.get(index);
-		navigate();
 	}
 
 	/**
@@ -1279,7 +1331,9 @@ public class CalendarForm {
 	/**
 	 * The method uploadClick() will be called by Faces if the user has selected
 	 * a course of appearance XML file for upload in the window and clicks the
-	 * button to upload it.
+	 * button to upload it. Old values of the granularity picker are removed—if
+	 * any—so that the screen is reinitialised with the current calendar state
+	 * next time.
 	 */
 	public void uploadClick() {
 		try {
@@ -1290,6 +1344,7 @@ public class CalendarForm {
 			Document xml = XMLUtils.load(uploadedFile.getInputStream());
 			course = new Course(xml);
 			titleShowing = course.get(0);
+			Helper.removeManagedBean("GranularityForm");
 			navigate();
 		} catch (SAXException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");

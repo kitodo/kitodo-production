@@ -301,7 +301,13 @@ public class Course extends ArrayList<Title> {
 		return new IndividualIssue(title, issue, date);
 	}
 
-	void clearProcesses() {
+	/**
+	 * The procedure clearProcesses() deletes the process list. This is
+	 * necessary if the processes must be regenerated because the data structure
+	 * they will be derived from has changed, or if they only had been added
+	 * temporarily to be able to retrieve an XML file containing values.
+	 */
+	public void clearProcesses() {
 		if (processesAreVolatile) {
 			processes.clear();
 		}

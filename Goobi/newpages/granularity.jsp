@@ -66,13 +66,21 @@
 				}
 				return true;
 			}
+			
 		<%--
-		 * The function showApplyLink() shows a link to apply the value entered.
+		 * If a message is provided, the function shows a message box to the user
+		 * with the message provided an prevents the button from executing. If the
+		 * message is empty, the function will have no effect.
 		 * 
-		 * @return always true
+		 * @param message
+		 *            message to show
+		 * @return true to cancel the operation
 		 --%>
-			function showApplyLink() {
-				document.getElementById("form1:applyLink").style.display = "inline";
+			function locked(message) {
+				if (message == ""){
+					return false;
+				}
+				alert(message);
 				return true;
 			}
 		</script>
@@ -140,10 +148,10 @@
 													value="#{msgs['granularity.numberOfPages']}"
 													styleClass="leftText" />
 												<h:commandLink value="#{msgs['granularity.apply']}"
-													id="applyLink" styleClass="rightText"
-													style="display: none;" />
+													id="applyLink" styleClass="rightText" />
 												<htm:span styleClass="fillWrapper">
-													<h:inputText value="#{GranularityForm.numberOfPages}"
+													<h:inputText
+														value="#{GranularityForm.numberOfPagesPerIssue}"
 														id="numberOfPages" onkeydown="showApplyLink();"
 														onchange="showApplyLink();" styleClass="filling">
 														<f:convertNumber />
@@ -187,11 +195,13 @@
 
 										<%-- Button to download course of appearance as XML --%>
 										<h:commandButton value="#{msgs['granularity.download']}"
-											action="#{GranularityForm.downloadClick}" />
+											action="#{GranularityForm.downloadClick}"
+											onclick="if(locked('#{GranularityForm.lockMessage}')) return false;" />
 
 										<%-- Button to create a long running task to create processes --%>
 										<h:commandButton value="#{msgs['granularity.create']}"
-											action="#{GranularityForm.createProcessesClick}" />
+											action="#{GranularityForm.createProcessesClick}"
+											onclick="if(locked('#{GranularityForm.lockMessage}')) return false;" />
 									</htm:div>
 
 									<htm:fieldset>
@@ -209,11 +219,6 @@
 										<h:outputText value="#{GranularityForm.numberOfProcesses}"
 											binding="#{requestScope.processesFormatted}" rendered="false">
 											<f:convertNumber />
-										</h:outputText>
-										<h:outputText
-											value="#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}"
-											binding="#{requestScope.pagesPerProcess}" rendered="false">
-											<f:convertNumber maxFractionDigits="1" />
 										</h:outputText>
 										<htm:div styleClass="granularityInfoTextbox"
 											rendered="#{GranularityForm.numberOfProcesses>0}"
@@ -244,7 +249,7 @@
 													rendered="#{GranularityForm.numberOfPages != null}"
 													styleClass="filling">
 													<f:param value="#{requestScope.processesFormatted.value}" />
-													<f:param value="#{requestScope.pagesPerProcess.value}" />
+													<f:param value="#{GranularityForm.pagesPerProcessRounded}" />
 												</h:outputFormat>
 												<h:outputText
 													rendered="#{GranularityForm.numberOfPagesOptionallyGuessed/GranularityForm.numberOfProcesses>1000}"
@@ -260,7 +265,8 @@
 													value="granularity.#{GranularityForm.selectedBatchOption}"
 													binding="#{requestScope.selectedBatchOptionLabel}"
 													rendered="false" />
-												<h:outputFormat value="#{msgs['granularity.info.textbox.batches']}"
+												<h:outputFormat
+													value="#{msgs['granularity.info.textbox.batches']}"
 													rendered="#{GranularityForm.selectedBatchOption ne 'null'}"
 													styleClass="filling">
 													<f:param
@@ -272,6 +278,14 @@
 
 									<%-- ===================== End page main content ====================== --%>
 
+								</htm:td>
+							</htm:tr>
+							<htm:tr>
+								<htm:td>
+									<h:commandButton value="#{msgs.goBack}"
+										rendered="#{ProzesskopieForm.calendarButtonShowing}"
+										action="ShowCalendarEditor">
+									</h:commandButton>
 								</htm:td>
 							</htm:tr>
 						</htm:table>
