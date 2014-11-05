@@ -73,10 +73,11 @@ import de.sub.goobi.persistence.BatchDAO;
 /**
  * The class CreateProcessesTask is a LongRunningTask to create processes from a
  * course of appearance.
- *
+ * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateProcessesTask extends EmptyTask {
+
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
 	 * which finds it to be null, and is used and set back to null in
@@ -147,7 +148,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The class CreateProcessesTask is a LongRunningTask to create processes
 	 * from a course of appearance.
-	 *
+	 * 
 	 * @param pattern
 	 *            a ProzesskopieForm to use for creating processes
 	 * @param course
@@ -173,7 +174,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The copy constructor creates a new thread from a given one. This is
 	 * required to call the copy constructor of the parent.
-	 *
+	 * 
 	 * @param master
 	 *            copy master
 	 */
@@ -193,9 +194,9 @@ public class CreateProcessesTask extends EmptyTask {
 
 	/**
 	 * The function run() is the main function of this task (which is a thread).
-	 *
+	 * 
 	 * It will create a new process for each entry from the field “processes”.
-	 *
+	 * 
 	 * Therefore it makes use of
 	 * CreateNewProcessProcessor.newProcessFromTemplate() to once again load a
 	 * ProzesskopieForm from Hibernate for each process to create, sets the
@@ -203,7 +204,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * title and finally initiates the process creation one by one. The
 	 * statusProgress variable is being updated to show the operator how far the
 	 * task has proceeded.
-	 *
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -261,10 +262,34 @@ public class CreateProcessesTask extends EmptyTask {
 	}
 
 	/**
+	 * The function createFirstChild() creates the first level of the logical
+	 * document structure available at the given parent.
+	 * 
+	 * @param docStruct
+	 *            level of the logical document structure to create a child in
+	 * @param document
+	 *            document to create the child in
+	 * @param ruleset
+	 *            rule set the document is based on
+	 * @return the created child
+	 */
+	private DocStruct createFirstChild(DocStruct docStruct, DigitalDocument document, Prefs ruleset) {
+		String firstAddable = null;
+		try {
+			firstAddable = docStruct.getType().getAllAllowedDocStructTypes().get(0);
+			return docStruct.createChild(firstAddable, document, ruleset);
+		} catch (Exception e) {
+			throw new RuntimeException("Could not add child " + (firstAddable != null ? firstAddable + " " : "")
+					+ "to DocStrctType " + docStruct.getType().getName() + ": "
+					+ e.getClass().getSimpleName().replace("NullPointerException", "No child type available."), e);
+		}
+	}
+
+	/**
 	 * Creates a logical structure tree in the process under creation. In the
 	 * tree, all issues will have been created. Presumption is that never issues
 	 * for more than one year will be added to the same process.
-	 *
+	 * 
 	 * @param newProcess
 	 *            process under creation
 	 * @param issues
@@ -294,15 +319,12 @@ public class CreateProcessesTask extends EmptyTask {
 		DocStruct newspaper = document.getLogicalDocStruct();
 
 		// try to add the publication run
-		try {
-			newspaper.addMetadata("PublicationRun", publicationRun);
-		} catch (MetadataTypeNotAllowedException undesired) {
-		}
+		addMetadatum(newspaper, "PublicationRun", publicationRun, false);
 
 		// create the year level
-		DocStruct year = newspaper.createChild(ExportBatchTask.METADATA_ELEMENT_YEAR, document, ruleset);
+		DocStruct year = createFirstChild(newspaper, document, ruleset);
 		String theYear = Integer.toString(issues.get(0).getDate().getYear());
-		year.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear);
+		addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
 
 		// create the month level
 		Map<Integer, DocStruct> months = new HashMap<Integer, DocStruct>();
@@ -311,63 +333,68 @@ public class CreateProcessesTask extends EmptyTask {
 			LocalDate date = individualIssue.getDate();
 			Integer monthNo = date.getMonthOfYear();
 			if (!months.containsKey(monthNo)) {
-				DocStruct newMonth = year.createChild(ExportBatchTask.METADATA_ELEMENT_MONTH, document, ruleset);
-				newMonth.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString());
-				try {
-					newMonth.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					newMonth.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString());
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
+				DocStruct newMonth = createFirstChild(year, document, ruleset);
+				addMetadatum(newMonth, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString(), true);
+				addMetadatum(newMonth, year.getType().getName(), theYear, false);
+				addMetadatum(newMonth, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
 				months.put(monthNo, newMonth);
 			}
 			DocStruct month = months.get(monthNo);
 
 			// create the day level
 			if (!days.containsKey(date)) {
-				DocStruct newDay = month.createChild(ExportBatchTask.METADATA_ELEMENT_DAY, document, ruleset);
-				newDay.addMetadata(MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
-						Integer.toString(date.getDayOfMonth()));
-				try {
-					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					newDay.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					newDay.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
-							Integer.toString(date.getDayOfMonth()));
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
+				DocStruct newDay = createFirstChild(month, document, ruleset);
+				addMetadatum(newDay, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+						Integer.toString(date.getDayOfMonth()), true);
+				addMetadatum(newDay, year.getType().getName(), theYear, false);
+				addMetadatum(newDay, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
+				addMetadatum(newDay, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
+						Integer.toString(date.getDayOfMonth()), false);
 				days.put(date, newDay);
 			}
 			DocStruct day = days.get(date);
 
 			// create the issue
-			DocStruct issue = day.createChild(ExportBatchTask.METADATA_ELEMENT_ISSUE, document, ruleset);
+			DocStruct issue = createFirstChild(day, document, ruleset);
 			String heading = individualIssue.getHeading();
 			if (heading != null && heading.trim().length() > 0) {
-				issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_ISSUE, heading);
-				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_YEAR, theYear);
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_MONTH, Integer.toString(date.getMonthOfYear()));
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					issue.addMetadata(ExportBatchTask.METADATA_ELEMENT_DAY, Integer.toString(date.getDayOfMonth()));
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
-				try {
-					issue.addMetadata(MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading);
-				} catch (MetadataTypeNotAllowedException undesired) {
-				}
+				addMetadatum(issue, issue.getType().getName(), heading, true);
+			}
+			addMetadatum(issue, year.getType().getName(), theYear, false);
+			addMetadatum(issue, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
+			addMetadatum(issue, day.getType().getName(), Integer.toString(date.getDayOfMonth()), false);
+			addMetadatum(issue, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
+		}
+	}
+
+	/**
+	 * The function addMetadatum() adds a metadatum to the given level of the
+	 * logical document structure hierarchy.
+	 * 
+	 * @param level
+	 *            level of the logical document structure to create a child in
+	 * @param key
+	 *            name of the metadatum to create
+	 * @param value
+	 *            value to set the metadatum to
+	 * @param fail
+	 *            if true, throws an error on fail, otherwise returns silently
+	 */
+	private void addMetadatum(DocStruct level, String key, String value, boolean fail) {
+		try {
+			level.addMetadata(key, value);
+		} catch (Exception e) {
+			if (fail) {
+				throw new RuntimeException("Could not create metadatum "
+						+ key
+						+ " in "
+						+ (level.getType() != null ? "DocStrctType " + level.getType().getName()
+								: "anonymous DocStrctType")
+						+ ": "
+						+ e.getClass()
+								.getSimpleName()
+								.replace("NullPointerException",
+										"No metadata types are associated with that DocStructType."), e);
 			}
 		}
 	}
@@ -376,7 +403,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The method addToBatches() adds a given process to the allover and the
 	 * annual batch. If the break mark changes, the logistics batch will be
 	 * flushed and the process will be added to a new logistics batch.
-	 *
+	 * 
 	 * @param process
 	 *            process to add
 	 * @param issues
@@ -407,7 +434,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The method flushLogisticsBatch() sets the title for the logistics batch,
 	 * saves it to hibernate and then populates the global variable with a new,
 	 * empty batch.
-	 *
+	 * 
 	 * @param processTitle
 	 *            the title of the process
 	 * @throws DAOException
@@ -427,7 +454,7 @@ public class CreateProcessesTask extends EmptyTask {
 	/**
 	 * The method saveFullBatch() sets the title for the allover batch and saves
 	 * it to hibernate.
-	 *
+	 * 
 	 * @param theProcessTitle
 	 *            the title of the process
 	 * @throws DAOException
@@ -444,7 +471,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * that are no punctuation characters
 	 * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the
 	 * given string.
-	 *
+	 * 
 	 * @param s
 	 *            string to parse
 	 * @return the first sequence of characters that are no punctuation
@@ -464,8 +491,8 @@ public class CreateProcessesTask extends EmptyTask {
 	 * The function clone() creates a copy of this CreateProcessesTask for
 	 * providing the possibility to restart it because a Thread can only be
 	 * started once.
-	 *
-	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
 	 */
 	@Override
 	public CreateProcessesTask clone() {

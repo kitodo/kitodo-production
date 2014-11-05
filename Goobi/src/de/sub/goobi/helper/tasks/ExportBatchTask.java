@@ -79,10 +79,30 @@ public class ExportBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
-	static final String METADATA_ELEMENT_DAY = "PublicationDay";
-	static final String METADATA_ELEMENT_ISSUE = "Issue";
-	static final String METADATA_ELEMENT_MONTH = "PublicationMonth";
-	static final String METADATA_ELEMENT_YEAR = "PublicationYear";
+
+	/**
+	 * Name of the structural element used to represent the day of month in the
+	 * anchor structure of the newspaper.
+	 */
+	private final String dayLevelName;
+
+	/**
+	 * Name of the structural element used to represent the issue in the anchor
+	 * structure of the newspaper.
+	 */
+	private final String issueLevelName;
+
+	/**
+	 * Name of the structural element used to represent the month in the anchor
+	 * structure of the newspaper.
+	 */
+	private final String monthLevelName;
+
+	/**
+	 * Name of the structural element used to represent the year in the anchor
+	 * structure of the newspaper.
+	 */
+	private final String yearLevelName;
 
 	/**
 	 * The field batch holds the batch whose processes are to export.
@@ -134,8 +154,26 @@ public class ExportBatchTask extends EmptyTask {
 	 * @throws HibernateException
 	 *             if the batch isn’t attached to a Hibernate session and cannot
 	 *             be reattached either
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set configured
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
 	 */
-	public ExportBatchTask(Batch batch) throws HibernateException {
+	public ExportBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
+			DAOException, IOException, InterruptedException {
 		super(batch.getLabel());
 		this.batch = batch;
 		action = 1;
@@ -144,6 +182,15 @@ public class ExportBatchTask extends EmptyTask {
 		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
 		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
+		DocStruct dsNewspaper = batch.getProcesses().iterator().next().getDigitalDocument().getLogicalDocStruct();
+		DocStruct dsYear = dsNewspaper.getAllChildren().get(0);
+		yearLevelName = dsYear.getType().getName();
+		DocStruct dsMonth = dsYear.getAllChildren().get(0);
+		monthLevelName = dsMonth.getType().getName();
+		DocStruct dsDay = dsMonth.getAllChildren().get(0);
+		dayLevelName = dsDay.getType().getName();
+		DocStruct dsIssue = dsDay.getAllChildren().get(0);
+		issueLevelName = dsIssue.getType().getName();
 	}
 
 	/**
@@ -162,6 +209,10 @@ public class ExportBatchTask extends EmptyTask {
 		processesIterator = master.processesIterator;
 		dividend = master.dividend;
 		divisor = master.divisor;
+		dayLevelName = master.dayLevelName;
+		issueLevelName = master.issueLevelName;
+		monthLevelName = master.monthLevelName;
+		yearLevelName = master.yearLevelName;
 	}
 
 	/**
@@ -229,26 +280,26 @@ public class ExportBatchTask extends EmptyTask {
 	 * @throws ReadException
 	 *             if one of the preconditions fails
 	 */
-	private static int getYear(DigitalDocument act) throws ReadException {
+	private int getYear(DigitalDocument act) throws ReadException {
 		List<DocStruct> children = act.getLogicalDocStruct().getAllChildren();
 		if (children == null) {
 			throw new ReadException(
 					"Could not get date year: Logical structure tree doesn’t have elements. Exactly one element of type "
-							+ METADATA_ELEMENT_YEAR + " is required.");
+							+ yearLevelName + " is required.");
 		}
 		if (children.size() > 1) {
 			throw new ReadException(
 					"Could not get date year: Logical structure has several elements. Exactly one element (of type "
-							+ METADATA_ELEMENT_YEAR + ") is required.");
+							+ yearLevelName + ") is required.");
 		}
 		try {
 			return getMetadataIntValueByName(children.get(0), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
 		} catch (NoSuchElementException nose) {
-			throw new ReadException("Could not get date year: " + METADATA_ELEMENT_YEAR + " has no meta data field "
+			throw new ReadException("Could not get date year: " + yearLevelName + " has no meta data field "
 					+ MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE + '.');
 		} catch (NumberFormatException uber) {
 			throw new ReadException("Could not get date year: " + MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE
-					+ " value from " + METADATA_ELEMENT_YEAR + " cannot be interpeted as whole number.");
+					+ " value from " + yearLevelName + " cannot be interpeted as whole number.");
 		}
 	}
 
@@ -460,7 +511,7 @@ public class ExportBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static MetsModsImportExport buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
+	private MetsModsImportExport buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
 			ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
@@ -502,12 +553,12 @@ public class ExportBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
+	private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
 			Prefs ruleSet) throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException,
 			TypeNotAllowedAsChildException {
 		for (Integer year : years.keySet()) {
 			if (year.intValue() != ownYear) {
-				DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR,
+				DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
 						MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, act, ruleSet);
 				child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
 			}
@@ -588,7 +639,7 @@ public class ExportBatchTask extends EmptyTask {
 	 *             allow the MetadataType or if the maximum number of Metadata
 	 *             (of this type) is already available
 	 */
-	private static void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
+	private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
 			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		for (int i = 0; i < issues.size(); i++) {
@@ -621,17 +672,17 @@ public class ExportBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
+	private void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), METADATA_ELEMENT_YEAR,
+		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, act, ruleset);
-		DocStruct month = getOrCreateChild(year, METADATA_ELEMENT_MONTH,
+		DocStruct month = getOrCreateChild(year, monthLevelName,
 				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-		DocStruct day = getOrCreateChild(month, METADATA_ELEMENT_DAY,
+		DocStruct day = getOrCreateChild(month, dayLevelName,
 				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-		DocStruct issue = day.createChild(METADATA_ELEMENT_ISSUE, act, ruleset);
+		DocStruct issue = day.createChild(issueLevelName, act, ruleset);
 		issue.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
 	}
 
