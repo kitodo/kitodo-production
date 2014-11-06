@@ -61,8 +61,14 @@ import com.sharkysoft.util.UnreachableCodeException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class MetadataPathSelector extends MetadataSelector {
-	private static final Object ALL_CHILDREN_SYMBOL = "*";
+	/**
+	 * Symbol meaning that all indices are to be matched.
+	 */
+	private static final String ALL_CHILDREN_SYMBOL = "*";
 
+	/**
+	 * Symbol meaning that any metadata types are to be matched.
+	 */
 	private static final String ANY_METADATA_TYPE_SYMBOL = "*";
 
 	@SuppressWarnings("javadoc")
@@ -130,6 +136,17 @@ public class MetadataPathSelector extends MetadataSelector {
 		selector = super.create(path.substring(pathSegment.length() + 1));
 	}
 
+	/**
+	 * Creates a new metadata path selector as specified by the arguments
+	 * passed.
+	 * 
+	 * @param docStructType
+	 *            docStructType name to match
+	 * @param index
+	 *            index to match
+	 * @param selector
+	 *            selector for the subsequent path
+	 */
 	private MetadataPathSelector(String docStructType, int index, MetadataSelector selector) {
 		this.docStructType = docStructType;
 		this.index = Integer.valueOf(index);
@@ -201,6 +218,16 @@ public class MetadataPathSelector extends MetadataSelector {
 		selector.createOrOverwrite(data, subnode, value);
 	}
 
+	/**
+	 * The function findAll() returns all concrete metadata selectors the
+	 * potentially generic metadata selector expression resolves to.
+	 * 
+	 * @param logicalNode
+	 *            Node of the logical document structure to work on
+	 * @return all metadata selectors the expression resolves to
+	 * 
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
+	 */
 	@Override
 	protected Iterable<MetadataSelector> findAll(DocStruct logicalNode) {
 		LinkedList<MetadataSelector> result = new LinkedList<MetadataSelector>();
@@ -217,7 +244,7 @@ public class MetadataPathSelector extends MetadataSelector {
 				}
 			}
 			count++;
-		} 
+		}
 		return result;
 	}
 
@@ -239,6 +266,13 @@ public class MetadataPathSelector extends MetadataSelector {
 		}
 	}
 
+	/**
+	 * Returns the numeric index of the metadata selector, if any. If no index
+	 * is specified ({@code null}), or generically refers to all or the last
+	 * element, {@code -1} is returned.
+	 * 
+	 * @return the index number of the metadata selector
+	 */
 	public int getIndex() {
 		if (index != null && index instanceof Integer) {
 			int a = ((Integer) index).intValue();
@@ -271,6 +305,11 @@ public class MetadataPathSelector extends MetadataSelector {
 		}
 	}
 
+	/**
+	 * Returns the selector for the rest of the expression.
+	 * 
+	 * @return the subsequent selector
+	 */
 	public MetadataSelector getSelector() {
 		return selector;
 	}
@@ -321,6 +360,25 @@ public class MetadataPathSelector extends MetadataSelector {
 		}
 	}
 
+	/**
+	 * The function indexCheck() calculates whether the given child’s index is
+	 * to be matched by this metadata path selector. A child index is to match
+	 * if
+	 * <ul>
+	 * <li>the metadata path selector doesn’t specify an index and the index of
+	 * the last child is equal to {@code 0},</li>
+	 * <li>the metadata path selector specifies all children,</li>
+	 * <li>the metadata path selector exactly points to the given index, or</li>
+	 * <li>generically to the last element, and the given index is the last
+	 * index.</li>
+	 * </ul>
+	 * 
+	 * @param childIndex
+	 *            index to check
+	 * @param lastChildIndex
+	 *            last available index
+	 * @return whether the index is to be matched
+	 */
 	private boolean indexCheck(int childIndex, int lastChildIndex) {
 		if (index == null && lastChildIndex == 0 || ALL_CHILDREN_SYMBOL.equals(index)) {
 			return true;
@@ -372,6 +430,19 @@ public class MetadataPathSelector extends MetadataSelector {
 		return result.toString();
 	}
 
+	/**
+	 * The function typeCheck() calculates whether the given child is to be
+	 * matched by type name by this metadata path selector. A child is to match
+	 * if
+	 * <ul>
+	 * <li>the metadata path selector specifies all children, or</li>
+	 * <li>the metadata path selector specifies exactly the type of the child.</li>
+	 * </ul>
+	 * 
+	 * @param child
+	 *            child whose type shall be checked
+	 * @return whether the child type is to be matched
+	 */
 	private boolean typeCheck(DocStruct child) {
 		return ANY_METADATA_TYPE_SYMBOL.equals(docStructType) || docStructType.equals(child.getType().getName());
 	}
