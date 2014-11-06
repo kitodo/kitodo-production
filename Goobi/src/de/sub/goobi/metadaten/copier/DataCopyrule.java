@@ -62,9 +62,10 @@ public abstract class DataCopyrule {
 	 * listed named here.
 	 */
 	private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<String, Class<? extends DataCopyrule>>(
-			3) {
+			4) {
 		private static final long serialVersionUID = 1L;
 		{
+			put(ComposeFormattedRule.OPERATOR, ComposeFormattedRule.class);
 			put(CopyIfMetadataIsAbsentRule.OPERATOR, CopyIfMetadataIsAbsentRule.class);
 			put(OverwriteOrCreateRule.OPERATOR, OverwriteOrCreateRule.class);
 		}
@@ -126,14 +127,6 @@ public abstract class DataCopyrule {
 	protected abstract void apply(CopierData data);
 
 	/**
-	 * The function getMinObject must return the minimal number of objects
-	 * required by the rule to work as expected.
-	 * 
-	 * @return the minimal number of objects required by the rule
-	 */
-	protected abstract int getMinObjects();
-
-	/**
 	 * The function getMinObject must return the maximal number of objects
 	 * required by the rule to work as expected. If it returns 0, the
 	 * setObjects() method will not be called.
@@ -141,6 +134,14 @@ public abstract class DataCopyrule {
 	 * @return the maximal number of objects required by the rule
 	 */
 	protected abstract int getMaxObjects();
+
+	/**
+	 * The function getMinObject must return the minimal number of objects
+	 * required by the rule to work as expected.
+	 * 
+	 * @return the minimal number of objects required by the rule
+	 */
+	protected abstract int getMinObjects();
 
 	/**
 	 * The method setObjects() is called to pass the rule its objects. The list
