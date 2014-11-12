@@ -222,6 +222,8 @@ class ConfigOpacCatalogue {
 					elementToChange.setText(elementToChange.getText().concat(
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
 				}
+			}
+			if(elementToChange != null) {
 				processed.add(elementToChange);
 			}
 			} while (moreOccurrences > 1);
