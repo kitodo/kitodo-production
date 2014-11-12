@@ -145,13 +145,13 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Creates a fictious MetadataGroupType for the given metadata type,
+	 * Creates a fictitious MetadataGroupType for the given metadata type,
 	 * assuming it is a person. The method is called from the constructor and
 	 * thus should not be overloaded.
 	 * 
 	 * @param type
 	 *            a metadata type which represents a person
-	 * @return a fictious MetadataGroupType with the person’s subfields
+	 * @return a fictitious MetadataGroupType with the person’s subfields
 	 */
 	private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
 		MetadataGroupType result = new MetadataGroupType();
@@ -167,7 +167,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Creates a fictious MetadataType for the given field of the given metadata
+	 * Creates a fictitious MetadataType for the given field of the given metadata
 	 * type, assuming that the latter is a person. The method is called from the
 	 * constructor and thus should not be overloaded.
 	 * 
@@ -175,7 +175,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 *            a metadata type which represents a person
 	 * @param field
 	 *            a field of the person record
-	 * @return a fictious MetadataGroupType with the person’s subfields
+	 * @return a fictitious MetadataGroupType with the person’s subfields
 	 */
 	private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
 		MetadataType result = new MetadataType();

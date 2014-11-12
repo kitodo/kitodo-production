@@ -118,11 +118,11 @@ public class NLAIdentity {
         // And add to the list
         returnList.add(idMap);
 
-        // All name entities from contributing insitutions
+        // All name entities from contributing institutions
         @SuppressWarnings("unchecked")
 		List<Node> sourceIdentities = eac.selectNodes("eac:eac-cpf/eac:cpfDescription//eac:eac-cpf");
         for (Node identity : sourceIdentities) {
-            // Insitution for this ID
+            // Institution for this ID
             institutionNode = identity.selectSingleNode("*//eac:maintenanceAgency/eac:agencyName");
             institutionString = institutionNode.getText();
 
@@ -137,7 +137,7 @@ public class NLAIdentity {
                 for (Map<String, String> name : nameList) {
                     idMap.putAll(name);
                 }
-                // Indicate the insitution for each one
+                // Indicate the institution for each one
                 idMap.put("institution", institutionString);
                 // And add to the list
                 returnList.add(idMap);

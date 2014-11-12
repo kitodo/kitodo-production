@@ -467,7 +467,7 @@ public class CreateProcessesTask extends EmptyTask {
 	}
 
 	/**
-	 * The function firstGroupFrom() extracts the first sequence of charachters
+	 * The function firstGroupFrom() extracts the first sequence of characters
 	 * that are no punctuation characters
 	 * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the
 	 * given string.
