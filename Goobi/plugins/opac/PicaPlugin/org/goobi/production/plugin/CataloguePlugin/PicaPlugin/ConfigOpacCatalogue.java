@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -218,10 +219,15 @@ class ConfigOpacCatalogue {
 				} else if (beautifier.getTagElementToChange().getMode().equals("prepend")) {
 					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
 							elementToChange.getText()));
+				} else if (beautifier.getTagElementToChange().getMode().equals("unescapeXml")) {
+					elementToChange.setText(StringEscapeUtils.unescapeXml(fillIn(beautifier.getTagElementToChange()
+							.getValue(), matcher)));
 				} else {
 					elementToChange.setText(elementToChange.getText().concat(
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
 				}
+			}
+			if(elementToChange != null) {
 				processed.add(elementToChange);
 			}
 			} while (moreOccurrences > 1);
