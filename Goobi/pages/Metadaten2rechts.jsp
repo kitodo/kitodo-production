@@ -41,6 +41,8 @@
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-2.1.1.min.js"></script>
 		<script type="text/javascript">
+		jQuery.noConflict();<%-- leave $ to RichFaces' prototype.js --%>
+
 		<%--
 		 * The function toAjaxUrl() converts an absolute URL of a norm data record
 		 * to the relative URL we need to actually retrieve this norm data record,
@@ -69,7 +71,7 @@
 		 --%>
 		    function setNameFromRecord(recordID, firstnameID, lastnameID){
 		    	var url = toAjaxUrl(document.getElementById(recordID).value);
-				$.ajax({
+		    	jQuery.ajax({
 				    url: url,
 				    dataType: "xml",
 				    error: function(jqXHR, textStatus, errorThrown){
