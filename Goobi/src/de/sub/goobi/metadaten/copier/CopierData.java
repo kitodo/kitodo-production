@@ -38,12 +38,16 @@
  */
 package de.sub.goobi.metadaten.copier;
 
+import java.sql.SQLException;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.persistence.apache.MySQLHelper;
+import de.sub.goobi.persistence.apache.ProcessObject;
 
 /**
  * A CopierData object contains all the data the data copier has access to. It
@@ -62,7 +66,7 @@ public class CopierData {
 	/**
 	 * The Goobi process corresponding to the workspace file
 	 */
-	private final Prozess process;
+	private final Object process;
 
 	/**
 	 * Creates a new CopierData bean.
@@ -72,7 +76,7 @@ public class CopierData {
 	 * @param process
 	 *            the related goobi process
 	 */
-	public CopierData(Fileformat fileformat, Prozess process) {
+	public CopierData(Fileformat fileformat, Object process) {
 		this.fileformat = fileformat;
 		this.process = process;
 	}
@@ -105,8 +109,12 @@ public class CopierData {
 	 * 
 	 * @return the required ruleset.
 	 */
-	public Prefs getPreferences() {
-		return process.getRegelsatz().getPreferences();
+	public Prefs getPreferences() throws SQLException {
+		if (process instanceof ProcessObject) {
+			return MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()).getPreferences();
+		} else {
+			return ((Prozess) process).getRegelsatz().getPreferences();
+		}
 	}
 
 	/**

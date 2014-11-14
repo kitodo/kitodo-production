@@ -285,6 +285,14 @@ public class MetadataPathSelector extends MetadataSelector {
 						+ " because it isn’t allowed by the rule set.");
 			} catch (TypeNotAllowedForParentException e) {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
+			} catch (Exception e) {
+				// copy rule failed, skip it
+				LOG.debug(
+						"Cannot create structural element " + docStructType + " as child of "
+								+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+								+ ": Accessing the rule set failed with exception: "
+								+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+				return;
 			}
 		}
 		selector.createOrOverwrite(data, subnode, value);
