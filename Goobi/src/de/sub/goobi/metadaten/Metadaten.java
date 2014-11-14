@@ -1263,12 +1263,12 @@ public class Metadaten {
 
 		// added new
 		DocStruct log = this.mydocument.getLogicalDocStruct();
+		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+				&& log.getAllChildren().size() > 0) {
+			log = log.getAllChildren().get(0);
+		}
 		if (log.getType().getAnchorClass() != null) {
-			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
-				log = log.getAllChildren().get(0);
-			} else {
-				return "";
-			}
+			return "";
 		}
 
 		if (log.getAllChildren() != null) {

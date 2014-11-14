@@ -104,12 +104,11 @@ public class MetadatenImagesHelper {
             SwapException, DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
-        DocStruct log = this.mydocument.getLogicalDocStruct();
-		if (log.getType().getAnchorClass() != null) {
-            if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
-                log = log.getAllChildren().get(0);
-            }
-        }
+		DocStruct log = this.mydocument.getLogicalDocStruct();
+		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+				&& log.getAllChildren().size() > 0) {
+			log = log.getAllChildren().get(0);
+		}
 
         /*-------------------------------- 
          * der physische Baum wird nur
