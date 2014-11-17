@@ -445,7 +445,7 @@ public class CreateProcessesTask extends EmptyTask {
 		if (logisticsBatch.size() > 0) {
 			logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
 			BatchDAO.save(logisticsBatch);
-			logisticsBatch = new Batch();
+			logisticsBatch = new Batch(Type.LOGISTIC);
 		}
 		currentBreakMark = null;
 		batchLabel = null;
