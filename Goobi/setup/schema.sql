@@ -148,6 +148,7 @@ CREATE TABLE `projectfilegroups` (
   `mimetype` varchar(255) DEFAULT NULL,
   `suffix` varchar(255) DEFAULT NULL,
   `folder` varchar(255) DEFAULT NULL,
+ `previewImage` tinyint(1) DEFAULT NULL,
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
   KEY `FK51AAC2292DFE45A` (`ProjekteID`)
@@ -212,7 +213,6 @@ CREATE TABLE `prozesse` (
   `sortHelperDocstructs` int(11) DEFAULT NULL,
   `sortHelperMetadata` int(11) DEFAULT NULL,
   `erstellungsdatum` datetime DEFAULT NULL,
-  `batchID` int(11) DEFAULT NULL,
   `wikifield` longtext,
   `ProjekteID` int(11) DEFAULT NULL,
   `MetadatenKonfigurationID` int(11) DEFAULT NULL,
@@ -370,5 +370,22 @@ CREATE TABLE `werkstueckeeigenschaften` (
   `werkstueckeID` int(11) DEFAULT NULL,
   PRIMARY KEY (`werkstueckeeigenschaftenID`),
   KEY `FK7B209DC7FBCBC046` (`werkstueckeID`)
+) DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `batchesprozesse` (
+  `ProzesseID` int(11) NOT NULL,
+  `BatchID` int(11) NOT NULL,
+  PRIMARY KEY (`ProzesseID`,`BatchID`)
+) DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `batches` (
+  `BatchID` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `type` varchar(9) DEFAULT NULL,
+  PRIMARY KEY (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

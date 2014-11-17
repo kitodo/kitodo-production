@@ -64,6 +64,21 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	private String internalServletPath;
 	private URL metsURL;
 
+	public CreatePdfFromServletThread() {
+	}
+
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param master
+	 *            copy master to create a clone of
+	 */
+	public CreatePdfFromServletThread(CreatePdfFromServletThread master) {
+		super(master);
+	}
+
 	@Override
 	public void initialize(Prozess inProzess) {
 		super.initialize(inProzess);
@@ -234,6 +249,18 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
 	public void setMetsURL(URL metsURL) {
 		this.metsURL = metsURL;
+	}
+
+	/**
+	 * The function clone() calls the clone constructor to create a new instance
+	 * of this object. This is necessary for Threads that have terminated in
+	 * order to render to run them again possible.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 */
+	@Override
+	public CreatePdfFromServletThread clone() {
+		return new CreatePdfFromServletThread(this);
 	}
 
 }

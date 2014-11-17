@@ -55,6 +55,8 @@ import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 import de.sub.goobi.persistence.apache.ProcessManager;
 import de.sub.goobi.persistence.apache.ProcessObject;
@@ -65,6 +67,13 @@ import de.sub.goobi.persistence.apache.StepObject;
 public class HelperSchritteWithoutHibernate {
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
 	public final static String DIRECTORY_PREFIX = "orig_";
+
+	/**
+	 * The field task holds an optional task instance whose progress will be
+	 * updated and whom errors will be passed to to be visible in the task
+	 * manager screen if it’s available.
+	 */
+	private EmptyTask task;
 
 	/**
 	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
@@ -94,6 +103,9 @@ public class HelperSchritteWithoutHibernate {
 				}
 			}
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.debug("cannot resolve LoginForm", e);
 		}
 		logger.debug("set new end date");
@@ -168,9 +180,10 @@ public class HelperSchritteWithoutHibernate {
 		updateProcessStatus(processId);
 		logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
 		for (StepObject automaticStep : automatischeSchritte) {
-			logger.debug("starting scripts for step with stepId " + automaticStep.getId() + " and processId " + automaticStep.getProcessId());
+			logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
+					+ automaticStep.getProcessId());
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
-			myThread.start();
+			TaskManager.addTask(myThread);
 		}
 		for (StepObject finish : stepsToFinish) {
 			logger.debug("closing task " + finish.getTitle());
@@ -187,6 +200,9 @@ public class HelperSchritteWithoutHibernate {
 				 }
 			}
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error("Exception during update of hibernate cache", e);
 		}
 	}
@@ -236,11 +252,13 @@ public class HelperSchritteWithoutHibernate {
 				break;
 			}
 			if (script != null && !script.equals(" ") && script.length() != 0) {
-				if (automatic && (count == size)) {
-					returnParameter = executeScriptForStepObject(step, script, true);
-				} else {
-					returnParameter = executeScriptForStepObject(step, script, false);
+				if (task != null) {
+					task.setWorkDetail(script);
 				}
+				returnParameter = executeScriptForStepObject(step, script, automatic && (count == size));
+			}
+			if (task != null) {
+				task.setProgress((int) (100d*count/size));
 			}
 			count++;
 		}
@@ -260,10 +278,19 @@ public class HelperSchritteWithoutHibernate {
 		try {
 			dd = po.readMetadataFile(fi.getMetadataFilePath(), prefs).getDigitalDocument();
 		} catch (PreferencesException e2) {
+			if (task != null) {
+				task.setException(e2);
+			}
 			logger.error(e2);
 		} catch (ReadException e2) {
+			if (task != null) {
+				task.setException(e2);
+			}
 			logger.error(e2);
 		} catch (IOException e2) {
+			if (task != null) {
+				task.setException(e2);
+			}
 			logger.error(e2);
 		}
 		VariableReplacerWithoutHibernate replacer = new VariableReplacerWithoutHibernate(dd, prefs, po, step);
@@ -297,8 +324,14 @@ public class HelperSchritteWithoutHibernate {
 				}
 			}
 		} catch (IOException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung("IOException: ", e.getMessage());
 		} catch (InterruptedException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
 		}
 		return rueckgabe;
@@ -310,6 +343,7 @@ public class HelperSchritteWithoutHibernate {
 		if (!ConfigMain.getBooleanParameter("automaticExportWithOcr", true)) {
 			dms.setExportFulltext(false);
 		}
+		dms.setTask(task);
 		ProcessObject po = ProcessManager.getProcessObjectForId(step.getProcessId());
 		try {
 			boolean validate = dms.startExport(po);
@@ -319,31 +353,52 @@ public class HelperSchritteWithoutHibernate {
 				abortStep(step);
 			}
 		} catch (DAOException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (PreferencesException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (WriteException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (SwapException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (TypeNotAllowedForParentException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (IOException e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			logger.error(e);
 			abortStep(step);
 			return;
 		} catch (InterruptedException e) {
 			// validation error
+			if (task != null) {
+				task.setException(e);
+			}
 			abortStep(step);
 			return;
 		}
@@ -356,5 +411,18 @@ public class HelperSchritteWithoutHibernate {
 		step.setEditType(StepEditType.AUTOMATIC.getValue());
 
 		StepManager.updateStep(step);
+	}
+
+	/**
+	 * The method setTask() can be used to pass in a task instance. If that is
+	 * passed in, the progress in it will be updated during processing and
+	 * occurring errors will be passed to it to be visible in the task manager
+	 * screen.
+	 * 
+	 * @param task
+	 *            task object to submit progress updates and errors to
+	 */
+	public void setTask(EmptyTask obj) {
+		this.task = obj;
 	}
 }

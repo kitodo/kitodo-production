@@ -50,11 +50,10 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class ExportDms_CorrectRusdml {
-	private Prefs myPrefs;
+	private final Prefs myPrefs;
 	private List<DocStruct> docStructsOhneSeiten;
-	private Prozess myProzess;
-	private DigitalDocument mydocument;
-	BeanHelper bhelp = new BeanHelper();
+	private final Prozess myProzess;
+	private final DigitalDocument mydocument;
 	private static final Logger logger = Logger.getLogger(ExportDms_CorrectRusdml.class);
 
 	public ExportDms_CorrectRusdml(Prozess inProzess, Prefs inPrefs, Fileformat inGdzfile) throws PreferencesException {
@@ -74,15 +73,16 @@ public class ExportDms_CorrectRusdml {
 		 * -------------------------------- Prozesseigenschaften ermitteln
 		 * --------------------------------
 		 */
-		atsPpnBand = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "ATS") + bhelp.WerkstueckEigenschaftErmitteln(myProzess, "TSL") + "_";
-		String ppn = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
+		atsPpnBand = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "ATS")
+				+ BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "TSL") + "_";
+		String ppn = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
 		if (!ppn.startsWith("PPN")) {
 			ppn = "PPN" + ppn;
 		}
 		atsPpnBand += ppn;
-		String bandnummer = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
+		String bandnummer = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Band");
 		if (bandnummer != null && bandnummer.length() > 0) {
-			atsPpnBand += "_" + bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
+			atsPpnBand += "_" + BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Band");
 		}
 
 		/*
@@ -113,7 +113,7 @@ public class ExportDms_CorrectRusdml {
 		RusdmlCheckMetadata(inStruct);
 
 		/* hat das Docstruct keine Bilder, wird es in die Liste genommen */
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+		if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
 			docStructsOhneSeiten.add(inStruct);
 		}
 
@@ -306,7 +306,7 @@ public class ExportDms_CorrectRusdml {
 		 * -------------------------------- bei fehlender digitaler PPN:
 		 * Fehlermeldung und raus --------------------------------
 		 */
-		String PPN = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
+		String PPN = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
 		if (PPN.length() == 0) {
 			throw new ExportFileException("Exportfehler: Keine PPN digital vorhanden");
 		}
@@ -325,11 +325,11 @@ public class ExportDms_CorrectRusdml {
 		 * -------------------------------- Eigenschaften aus dem Werkstück
 		 * holen --------------------------------
 		 */
-		String Titel = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Haupttitel");
-		String Verlag = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Verlag");
-		String Ort = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Erscheinungsort");
-		String ISSN = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "ISSN");
-		String BandNummer = bhelp.WerkstueckEigenschaftErmitteln(myProzess, "Band");
+		String Titel = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Haupttitel");
+		String Verlag = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Verlag");
+		String Ort = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Erscheinungsort");
+		String ISSN = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "ISSN");
+		String BandNummer = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Band");
 
 		/*
 		 * -------------------------------- die Metadaten erzeugen

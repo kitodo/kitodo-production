@@ -29,6 +29,7 @@ package de.sub.goobi.forms;
  */
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
@@ -315,6 +316,25 @@ public class LoginForm {
 
 	public boolean isSchonEingeloggt() {
 		return this.schonEingeloggt;
+	}
+
+	/**
+	 * The function getUserHomeDir() returns the home directory of the currently
+	 * logged in user, if any, or the empty string otherwise.
+	 * 
+	 * @return the home directory of the current user
+	 * @throws InterruptedException
+	 *             If the thread running the script is interrupted by another
+	 *             thread while it is waiting, then the wait is ended and an
+	 *             InterruptedException is thrown.
+	 * @throw IOException If an I/O error occurs.
+	 */
+	public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
+		String result = "";
+		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		if (loginForm != null)
+			result = loginForm.getMyBenutzer().getHomeDir();
+		return result;
 	}
 
 }

@@ -1,0 +1,535 @@
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support
+ * of mass digitization.
+ * 
+ * (c) 2014 Goobi. Digialisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * 
+ * Visit the websites for more information.
+ *     		- http://www.goobi.org/en/
+ *     		- https://github.com/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ * Linking this library statically or dynamically with other modules is making a
+ * combined work based on this library. Thus, the terms and conditions of the
+ * GNU General Public License cover the whole combination. As a special
+ * exception, the copyright holders of this library give you permission to link
+ * this library with independent modules to produce an executable, regardless of
+ * the license terms of these independent modules, and to copy and distribute
+ * the resulting executable under terms of your choice, provided that you also
+ * meet, for each linked independent module, the terms and conditions of the
+ * license of that module. An independent module is a module which is not
+ * derived from or based on this library. If you modify this library, you may
+ * extend this exception to your version of the library, but you are not obliged
+ * to do so. If you do not wish to do so, delete this exception statement from
+ * your version.
+ */
+package org.goobi.production.plugin;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Map;
+
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+
+import com.sharkysoft.util.NotImplementedException;
+import com.sharkysoft.util.UnreachableCodeException;
+
+/**
+ * The class UnspecificPlugin is the base class for a set of redirection classes
+ * that take plug-in implementation object as arguments. The plug-in
+ * implementation classes can be POJOs that can be compiled without the
+ * necessity to link it against the Production code, thus making it possible to
+ * provide proprietary plug-ins that do not violate the GPL. The plug-in classes
+ * must however implement a number of public methods, which they are checked for
+ * upon instantiation. If one of the methods is missing a NoSuchMethodException
+ * will be thrown. The methods defined in this class are shared across all
+ * plug-ins and must be provided by all of them:
+ * 
+ * <p>
+ * <code>void configure(Map)</code><br>
+ * The function configure() will be called by the {@link PluginLoader} right
+ * after loading a plug-in to pass it the configuration map created in
+ * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
+ * implement this method.
+ * </p>
+ * 
+ * <p>
+ * <code>String getDescription(Locale)</code><br>
+ * When being called, the function getDescription() shall return a
+ * human-readable description for the plug-in. The plug-in may or may not make
+ * use of the provided locale to return a description in the named language. If
+ * the Locale is null or doesn’t denote a language, the plug-in shall return a
+ * human-readable description in English.
+ * </p>
+ * 
+ * <p>
+ * <code>String getTitle(Locale)</code><br>
+ * When being called, the function getTitle() shall return a human-readable name
+ * / title for the plug-in. The plug-in may or may not make use of the provided
+ * locale to return a title in the named language. If the Locale is null or
+ * doesn’t denote a language, the plug-in shall return its human-readable name
+ * in English.
+ * </p>
+ * 
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
+public abstract class UnspecificPlugin {
+	/**
+	 * The constant NO_ARGS holds an empty class array.
+	 */
+	private static final Class<?>[] NO_ARGS = new Class<?>[] {};
+
+	/**
+	 * The field plugin holds a reference to the plug-in implementation class.
+	 */
+	protected final Object plugin;
+
+	/**
+	 * The field configure holds a Method reference to the method configure() of
+	 * the plug-in implementation class or <code>null</code> if the plug-in
+	 * doesn’t implement that method.
+	 */
+	private final Method configure;
+
+	/**
+	 * The field getTitle holds a Method reference to the method getTitle() of
+	 * the plug-in implementation class.
+	 */
+	private final Method getTitle;
+
+	/**
+	 * The field getDescription holds a Method reference to the method
+	 * getDescription() of the plug-in implementation class.
+	 */
+	private final Method getDescription;
+
+	/**
+	 * UnspecificPlugin constructor. The abstract class UnspecificPlugin can
+	 * only be created by classes instantiating it.
+	 * 
+	 * <p>
+	 * The constructor saves a reference to the plug-in implementation class in
+	 * the final field plugin and inspects the class for existence of the
+	 * methods configure, getDescription and getTitle.
+	 * </p>
+	 * 
+	 * @param implementation
+	 *            plug-in implementation class
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 * @throws NoSuchMethodException
+	 *             if a required method is not found on the plug-in
+	 */
+	protected UnspecificPlugin(Object implementation) throws SecurityException, NoSuchMethodException {
+		plugin = implementation;
+
+		configure = getOptionalMethod("configure", Map.class, Void.TYPE);
+		getDescription = getDeclaredMethod("getDescription", Locale.class, String.class);
+		getTitle = getDeclaredMethod("getTitle", Locale.class, String.class);
+	}
+
+	/**
+	 * The function create() is called by the {@link PluginLoader} to create a
+	 * redirection class of the given PluginType to handle a given plug-in
+	 * implementation class.
+	 * 
+	 * @param type
+	 *            type of redirection class required for this implementation
+	 * @param implementation
+	 *            plug-in implementation class
+	 * @return redirection class of the given PluginType
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 * @throws NoSuchMethodException
+	 *             if a required method is not found on the plugin
+	 */
+	static UnspecificPlugin create(PluginType type, Object implementation) throws SecurityException,
+			NoSuchMethodException {
+		switch (type) {
+		case Command:
+			// return new CommandPlugin(implementation);
+			throw new NotImplementedException();
+		case Import:
+			// return new ImportPlugin(implementation);
+			throw new NotImplementedException();
+		case Opac:
+			return new CataloguePlugin(implementation);
+		case Step:
+			// return new StepPlugin(implementation);
+			throw new NotImplementedException();
+		case Validation:
+			// return new ValidationPlugin(implementation);
+			throw new NotImplementedException();
+		default:
+			throw new UnreachableCodeException();
+		}
+	}
+
+	/**
+	 * The function configure() is called by the {@link PluginLoader} right
+	 * after loading a plug-in to pass it the configuration map created in
+	 * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
+	 * make use of the configuration provided.
+	 * 
+	 * @param configuration
+	 *            the configuration map created by the PluginLoader
+	 */
+	void configure(Map<String, String> configuration) {
+		if (configure != null)
+			invokeQuietly(plugin, configure, configuration, null);
+	}
+
+	/**
+	 * The function getDeclaredMethod() looks up a no-arg method in the plugin
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 * @throws NoSuchMethodException
+	 *             if a matching method is not found
+	 */
+	protected final Method getDeclaredMethod(String name, Class<?> resultType) throws SecurityException,
+			NoSuchMethodException {
+		return getDeclaredMethod(name, NO_ARGS, resultType);
+	}
+
+	/**
+	 * The function getDeclaredMethod() looks up a 1-arg method in the plugin
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param parameter0Type
+	 *            type of the parameter of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 * @throws NoSuchMethodException
+	 *             if a matching method is not found
+	 */
+	protected final Method getDeclaredMethod(String name, Class<?> parameter0Type, Class<?> resultType)
+			throws SecurityException, NoSuchMethodException {
+		return getDeclaredMethod(name, new Class[] { parameter0Type }, resultType);
+	}
+
+	/**
+	 * The function getDeclaredMethod() looks up a method in the plugin
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param parameterTypes
+	 *            types of the parameters of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 * @throws NoSuchMethodException
+	 *             if a matching method is not found
+	 */
+	protected final Method getDeclaredMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
+			throws SecurityException, NoSuchMethodException {
+		Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
+		if (!resultType.isAssignableFrom(result.getReturnType()))
+			throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
+					+ parameterTypes.toString() + "), must be " + resultType.toString());
+		return result;
+	}
+
+	/**
+	 * The function getDescription() returns a human-readable description for
+	 * the plug-in. The plug-in may or may not make use of the provided locale
+	 * to return a description in the named language. If the Locale is null or
+	 * doesn’t denote a language, the plug-in will return a description in
+	 * English.
+	 * 
+	 * <p>
+	 * Currently, this method is not referenced from within the Production code,
+	 * but this may change in future. The function is provided for completeness
+	 * since it was part of the old plug-in API, too.
+	 * </p>
+	 * 
+	 * @param language
+	 *            language to get the description in
+	 * @return a human-readable description for the plug-in
+	 */
+	public String getDescription(Locale language) {
+		return invokeQuietly(plugin, getDescription, language, String.class);
+	}
+
+	/**
+	 * The function getDeclaredMethod() looks up a no-arg method in the plug-in
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type. If no matching method can be found, it returns
+	 * null and doesn’t throw a NoSuchMethodException.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 */
+	protected final Method getOptionalMethod(String name, Class<?> resultType) throws SecurityException {
+		return getOptionalMethod(name, NO_ARGS, resultType);
+	}
+
+	/**
+	 * The function getDeclaredMethod() looks up a 1-arg method in the plugin
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type. If no matching method can be found, it returns
+	 * null and doesn’t throw a NoSuchMethodException.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param parameter0Type
+	 *            type of the parameter of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 */
+	protected final Method getOptionalMethod(String name, Class<?> parameter0Type, Class<?> resultType)
+			throws SecurityException {
+		return getOptionalMethod(name, new Class[] { parameter0Type }, resultType);
+	}
+
+	/**
+	 * The function getOptionalMethod() looks up a method in the plug-in
+	 * implementation object. It extends
+	 * {@link java.lang.Class#getDeclaredMethod(String, Class...)} as it also
+	 * checks the result type. If no matching method can be found, it returns
+	 * null and doesn’t throw a NoSuchMethodException.
+	 * 
+	 * @param name
+	 *            name of the method to look up
+	 * @param parameterTypes
+	 *            types of the parameters of the method to look up
+	 * @param resultType
+	 *            result type of the method to look up
+	 * @return a Method object representing the method implementation in the
+	 *         plug-in
+	 * @throws SecurityException
+	 *             If a security manager, is present and an invocation of its
+	 *             method checkMemberAccess(this, Member.DECLARED) denies access
+	 *             to the declared method or if the caller’s class loader is not
+	 *             the same as or an ancestor of the class loader for the
+	 *             current class and invocation of the security manager’s
+	 *             checkPackageAccess() denies access to the package of this
+	 *             class.
+	 */
+	protected final Method getOptionalMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
+			throws SecurityException {
+		try {
+			return getDeclaredMethod(name, parameterTypes, resultType);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * The function getTitle() returns a human-readable name title for the
+	 * plug-in. The plug-in may or may not make use of the provided locale to
+	 * return a title in the named language. If the Locale is null or doesn’t
+	 * denote a language, the plug-in will return its English name.
+	 * 
+	 * @param language
+	 *            language to get the plugin’s name in
+	 * @return a human-readable name for the plug-in
+	 */
+	public String getTitle(Locale language) {
+		return invokeQuietly(plugin, getTitle, language, String.class);
+	}
+
+	/**
+	 * The method getType() must be implemented in the redirection class that
+	 * implements this abstract class. It must return the PluginType
+	 * corresponding to that class.
+	 * 
+	 * @return a value from enum PluginType
+	 */
+	public abstract PluginType getType();
+
+	/**
+	 * The function invokeQuietly() invokes a no-arg method on a given object,
+	 * returning a result of the given resultType. RuntimeExceptions wrapped as
+	 * InvocationTargetException by Method.invoke() will be unwrapped, any other
+	 * wrapped exceptions will be unwrapped and rewrapped as RuntimeExceptions,
+	 * the same is true for any other checked exceptions that may occur.
+	 * 
+	 * @param object
+	 *            object to invoke a method on
+	 * @param method
+	 *            method to invoke on the object
+	 * @param resultType
+	 *            result type of the method to invoke (may be Void.TYPE)
+	 * @return an object of the specified type
+	 */
+	protected <T> T invokeQuietly(Object object, Method method, Class<T> resultType) {
+		return invokeQuietly(object, method, NO_ARGS, resultType);
+	}
+
+	/**
+	 * The function invokeQuietly() invokes a method on a given object, passing
+	 * the argument provided and returning a result of the given resultType.
+	 * RuntimeExceptions wrapped as InvocationTargetException by Method.invoke()
+	 * will be unwrapped, any other wrapped exceptions will be unwrapped and
+	 * rewrapped as RuntimeExceptions, the same is true for any other checked
+	 * exceptions that may occur.
+	 * 
+	 * @param object
+	 *            object to invoke a method on
+	 * @param method
+	 *            method to invoke on the object
+	 * @param arg0
+	 *            argument to pass to the object
+	 * @param resultType
+	 *            result type of the method to invoke (may be Void.TYPE)
+	 * @return an object of the specified type
+	 */
+	protected <T> T invokeQuietly(Object object, Method method, Object arg0, Class<T> resultType) {
+		return invokeQuietly(object, method, new Object[] { arg0 }, resultType);
+	}
+
+	/**
+	 * The function invokeQuietly() invokes a method on a given object, passing
+	 * the arguments provided and returning a result of the given resultType.
+	 * RuntimeExceptions wrapped as InvocationTargetException by Method.invoke()
+	 * will be unwrapped, any other wrapped exceptions will be unwrapped and
+	 * rewrapped as RuntimeExceptions, the same is true for any other checked
+	 * exceptions that may occur.
+	 * 
+	 * @param object
+	 *            object to invoke a method on
+	 * @param method
+	 *            method to invoke on the object
+	 * @param args
+	 *            arguments to pass to the object
+	 * @param resultType
+	 *            result type of the method to invoke (may be Void.TYPE)
+	 * @return an object of the specified type
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> T invokeQuietly(Object object, Method method, Object[] args, Class<T> resultType) {
+		try {
+			return (T) method.invoke(object, args);
+		} catch (RuntimeException toBeRethrown) {
+			throw toBeRethrown;
+		} catch (InvocationTargetException toBeUnwrapped) {
+			Throwable wrappedException = toBeUnwrapped.getTargetException();
+			if (wrappedException == null)
+				throw new RuntimeException(toBeUnwrapped.getMessage(), toBeUnwrapped);
+			if (wrappedException instanceof RuntimeException)
+				throw (RuntimeException) wrappedException;
+			else
+				throw new RuntimeException(wrappedException.getMessage(), wrappedException);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * The function typeOf() returns the PluginType of the given plugin class.
+	 * 
+	 * <p>
+	 * When changing the further plugin API to the new format, add the
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            the class to inspect
+	 * @return a value from enum PluginType, or null if there is no match
+	 */
+	public static PluginType typeOf(Class<? extends UnspecificPlugin> clazz) {
+		// if (ImportPlugin.class.isAssignableFrom(clazz))
+		//     return PluginType.Import;
+		// if (StepPlugin.class.isAssignableFrom(clazz))
+		//     return PluginType.Step;
+		// if (ValidationPlugin.class.isAssignableFrom(clazz))
+		//     return PluginType.Validation;
+		// if (CommandPlugin.class.isAssignableFrom(clazz))
+		//     return PluginType.Command;
+		if (CataloguePlugin.class.isAssignableFrom(clazz))
+			return PluginType.Opac;
+		return null;
+	}
+}

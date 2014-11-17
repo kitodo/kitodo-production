@@ -41,10 +41,9 @@ import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.forms.ModuleServerForm;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
@@ -69,11 +68,9 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  * @author Steffen Hankiewicz
  */
 public class ExtendedDataImpl extends DataImpl {
-   BeanHelper beanhelp = new BeanHelper();
-
-   private String isProcess = "PROCESS";
-   private String isWorkpiece = "WORKPIECE";
-   private String isTemplate = "TEMPLATE";
+   private final String isProcess = "PROCESS";
+   private final String isWorkpiece = "WORKPIECE";
+   private final String isTemplate = "TEMPLATE";
    
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
@@ -81,7 +78,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
-   public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.add(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -92,13 +90,13 @@ public class ExtendedDataImpl extends DataImpl {
        * Prozesseigenschaft
       * --------------------------------*/
       if (type.equals("") || type.equals(isProcess)) {
-         if (p.getEigenschaften() == null)
+         if (p.getEigenschaftenInitialized() == null)
             p.setEigenschaften(new HashSet<Prozesseigenschaft>());
          Prozesseigenschaft pe = new Prozesseigenschaft();
          pe.setProzess(p);
          pe.setTitel(gpp.getName());
          pe.setWert(gpp.getValue());
-         p.getEigenschaften().add(pe);
+         p.getEigenschaftenInitialized().add(pe);
       }
 
       /* --------------------------------
@@ -149,7 +147,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
     * ================================================================*/
-   public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
+   @Override
+public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
       super.getData(sessionId, type, count);
 
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
@@ -196,7 +195,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
     * ================================================================*/
-   public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
+   @Override
+public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
          throws GoobiException {
       super.getProperties(sessionId, type, count);
       ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
@@ -256,7 +256,8 @@ public class ExtendedDataImpl extends DataImpl {
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/
-   public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.set(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);

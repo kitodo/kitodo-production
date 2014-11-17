@@ -64,6 +64,8 @@
 			<f:selectItem itemLabel="Barcode 8200" itemValue="8200" />
 			<f:selectItem itemLabel="ISBN" itemValue="7" />
 			<f:selectItem itemLabel="ISSN" itemValue="8" />
+			<f:selectItem itemLabel="Title" itemValue="4" />
+			<f:selectItem itemLabel="ZDB-ID" itemValue="8506" />
 		</h:selectOneMenu>
 
 	</h:panelGroup>

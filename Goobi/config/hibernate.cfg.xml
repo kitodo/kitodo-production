@@ -67,6 +67,7 @@
  		<property name="hbm2ddl.auto">update</property> 
 		
 		<!-- Die einzelnen Mappings -->
+		<mapping resource="de/sub/goobi/beans/Batch.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Benutzergruppe.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Benutzer.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Benutzereigenschaft.hbm.xml" />

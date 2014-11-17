@@ -42,7 +42,7 @@
     
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
-    <property name="build.dist.version" value="1.10.3" />
+    <property name="build.dist.version" value="1.11.0" />
     <property name="build.dist.vendor" value="goobi.org"/>
     <property name="build.dist.url" value="https://github.com/goobi/goobi-production"/>
     <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
@@ -60,7 +60,16 @@
 
     <property name="java.src.dir" value="${src.dir}/src"/>
     <property name="java.src.dubious.dir" value="${src.dir}/src-dubious"/>
-
+	
+	<!-- Plugins -->
+	<property name="build.dir.plugins.import" value="${build.dir}/plugins/import"/>
+	<property name="build.dist.dir.plugins.import" value="${build.dist.dir}/plugins/import"/>
+	<property name="src.dir.plugins.import" value="${src.dir}/plugins/import"/>
+	
+	<property name="build.dir.plugins.opac" value="${build.dir}/plugins/opac"/>
+	<property name="build.dist.dir.plugins.opac" value="${build.dist.dir}/plugins/opac"/>
+	<property name="src.dir.plugins.opac" value="${src.dir}/plugins/opac"/>
+	
     <!--==================================================
         Datatype declarations
         ==================================================-->
@@ -185,6 +194,8 @@
         <mkdir dir="${doc.javadocs.dir}"/>
         <delete dir="${test.report.dir}"/>
         <mkdir dir="${test.report.dir}"/>
+    	<mkdir dir="${build.dir.plugins.import}/PicaMassImport"/>
+        <mkdir dir="${build.dir.plugins.opac}/PicaPlugin"/>
     </target>
 
     <!--==================================================
@@ -252,23 +263,50 @@
 			outputDir="${build.jsp.src}" />
 	</target>
 
+	<!-- Compile plugins -->
+	<target name="compile-PicaMassImport" depends="compile">
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.import}/PicaMassImport"
+			destdir="${build.dir.plugins.import}/PicaMassImport"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="${build.javac.debug}">
+			<classpath>
+				<pathelement location="${build.classes}"/>
+				<path refid="compile.classpath"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="compile-PicaPlugin">
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
+			destdir="${build.dir.plugins.opac}/PicaPlugin"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="${build.javac.debug}"
+			classpathref="compile.classpath">
+		</javac>
+	</target>
+	
+	
     <!--==================================================
         Distribution
         ==================================================-->
 
     <!-- Build of war file. -->
-    <target name="war" depends="compile, copy-config">
+    <target name="war" depends="compile, copy-config, create-plugin-jar-files">
 
         <war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
 
             <classes dir="${build.classes}"/>
 
             <lib dir="${lib.dir}"/>
-
-            <fileset dir="${src.dir}"
+        	
+        	<fileset dir="${src.dir}"
                 includes="WEB-INF/*.*, index.jsp, LICENSE"
                 excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
-
+     	
             <zipfileset dir="${src.dir}/pages" prefix="pages">
                 <patternset>
                     <include name="**/*.jsp"/>
@@ -287,6 +325,8 @@
             <zipfileset dir="${src.dir}/css" prefix="css"/>
             <zipfileset dir="${src.dir}/js" prefix="js" />
 
+        	<zipfileset dir="${build.dist.dir}/plugins" prefix="plugins"/>
+        	
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
                 <attribute name="Implementation-Version" value="${build.dist.version}"/>
@@ -298,8 +338,6 @@
         </war>
 
     </target>
-
-	
 
     <!-- Copy configuration files to build directory -->
     <target name="copy-config">
@@ -320,7 +358,19 @@
             <fileset dir="${config.local.dir}" includes="*.*"/>
         </copy>
     </target>
+	
+	<!-- Build of plugin jars -->
 
+	<target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar">
+	</target>
+	
+	<target name="create-PicaMassImport-jar" depends="compile-PicaMassImport">
+		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport.jar" basedir="${build.dir.plugins.import}/PicaMassImport" />
+	</target>
+
+	<target name="create-PicaPlugin-jar" depends="compile-PicaPlugin">
+		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin.jar" basedir="${build.dir.plugins.opac}/PicaPlugin" />
+	</target>
 
     <!--==================================================
         Testing

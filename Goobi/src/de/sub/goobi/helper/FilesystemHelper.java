@@ -98,9 +98,6 @@ public class FilesystemHelper {
 		} catch (IOException e) {
 			logger.error("IOException in deleteSymLink()", e);
 			Helper.setFehlerMeldung("Aborted deleteSymLink(), error", e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error("InterruptedException in deleteSymLink()", e);
-			Helper.setFehlerMeldung("Command '" + command + "' is interrupted in deleteSymLink()!");
 		}
 	}
 

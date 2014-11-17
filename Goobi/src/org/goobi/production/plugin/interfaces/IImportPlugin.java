@@ -36,7 +36,6 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
 
 import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 
@@ -85,4 +84,8 @@ public interface IImportPlugin extends IPlugin {
 	public DocstructElement getDocstruct();
 	
 	public void setDocstruct(DocstructElement dse);
+	
+	public void setOpacCatalogue(String opacCatalogue);
+
+	public void setGoobiConfigDirectory(String configDir);	
 }

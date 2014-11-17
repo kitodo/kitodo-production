@@ -38,6 +38,78 @@
 	<%@include file="/newpages/inc/head.jsp"%>
 
 	<body style="margin: 0px 2px 2px 2px;" class="metadatenRechtsBody" onload="addableTypenAnzeigen();TreeReloaden()">
+	
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript">
+		jQuery.noConflict();<%-- leave $ to RichFaces' prototype.js --%>
+
+		<%--
+		 * The function toAjaxUrl() converts an absolute URL of a norm data record
+		 * to the relative URL we need to actually retrieve this norm data record,
+		 * using a reverse proxy to get along with Javascript's same origin policy.
+		 * 
+		 * @param URL
+		 *            of a norm data record
+		 * @return access URL via reverse proxy
+		 --%>
+			function toAjaxUrl(url){
+				return url.replace(new RegExp("^.*?://[^/]+/(.*)$", ""), function($0, $1){
+					return "${pageContext.request.contextPath}/" + $1 + "/about/rdf";
+				});
+			}
+
+		<%--
+		 * The function setNameFromRecord() retrieves a norm data record using AJAX
+		 * and puts the first and last name in the corresponding form fields.
+		 * 
+		 * @param recordID
+		 *            id of the input element holding the URL of the record
+		 * @param firstnameID
+		 *            id of the input element to put the first name
+		 * @param lastnameID
+		 *            id of the input element to put the last name
+		 --%>
+		    function setNameFromRecord(recordID, firstnameID, lastnameID){
+		    	var url = toAjaxUrl(document.getElementById(recordID).value);
+		    	jQuery.ajax({
+				    url: url,
+				    dataType: "xml",
+				    error: function(jqXHR, textStatus, errorThrown){
+				        alert("${msgs.getNormDataRecordFailed} " + errorThrown);
+				    }
+				})
+				    .done(function(data) {
+				        var preferredName = data.getElementsByTagName("gndo:preferredNameEntityForThePerson")[0];
+				        document.getElementById(firstnameID).value = preferredName.getElementsByTagName("gndo:forename")[0].textContent;
+				        document.getElementById(lastnameID).value = preferredName.getElementsByTagName("gndo:surname")[0].textContent;
+				    });
+		    }
+		    
+		<%--
+		 * The function getNormDateNeuPerson() retrieves a norm data record using
+		 * AJAX from the form to add a new person as metadata. The first and last
+		 * name from the records will be put in the corresponding form fields.
+		 --%>
+		    function getNormDataNeuPerson(){
+		    	setNameFromRecord("formular2:normDataRecord", "formular2:vorname", "formular2:nachname");
+		    }
+		    
+		<%--
+		 * The function getNormDataPersonenUndMetadaten() retrieves a norm data
+		 * record using AJAX from the form showing all metadata. The first and last
+		 * name from the records will be put in the corresponding form fields.
+		 * 
+		 * @param actionLink
+		 *            link corresponding to the group of fields to update
+		 --%>
+			function getNormDataPersonenUndMetadaten(actionLink){
+		    	var actionLinkID = actionLink.id;
+				var recordID = actionLinkID.replace(/:clicker$/, ":record");
+				var firstnameID = actionLinkID.replace(/:clicker$/, ":firstname");
+				var lastnameID = actionLinkID.replace(/:clicker$/, ":lastname");
+		    	setNameFromRecord(recordID, firstnameID, lastnameID);
+		    }
+		</script>
 
 		<a4j:status>
 			<f:facet name="start">
@@ -149,6 +221,7 @@
 						<h:panelGroup rendered="#{Metadaten.modusAnsicht == 'Metadaten'}">
 							<%@include file="incMeta/NeuMeta.jsp"%>
 							<%@include file="incMeta/NeuPerson.jsp"%>
+							<%@include file="incMeta/addMetadataGroup.jsp"%>
 							<%@include file="incMeta/PersonenUndMetadaten.jsp"%>
 						</h:panelGroup>
 

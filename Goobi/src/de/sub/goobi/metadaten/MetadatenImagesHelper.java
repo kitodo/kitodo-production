@@ -76,8 +76,8 @@ import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 public class MetadatenImagesHelper {
     private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
-    private Prefs myPrefs;
-    private DigitalDocument mydocument;
+    private final Prefs myPrefs;
+    private final DigitalDocument mydocument;
     private int myLastImage = 0;
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
@@ -104,12 +104,11 @@ public class MetadatenImagesHelper {
             SwapException, DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
-        DocStruct log = this.mydocument.getLogicalDocStruct();
-        if (log.getType().isAnchor()) {
-            if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
-                log = log.getAllChildren().get(0);
-            }
-        }
+		DocStruct log = this.mydocument.getLogicalDocStruct();
+		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+				&& log.getAllChildren().size() > 0) {
+			log = log.getAllChildren().get(0);
+		}
 
         /*-------------------------------- 
          * der physische Baum wird nur

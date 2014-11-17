@@ -54,6 +54,7 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
@@ -172,9 +173,20 @@ public class ExportXmlLog implements IProcessDataExport {
 		comment.setText(process.getWikifield());
 		processElements.add(comment);
 
-		if (process.getBatchID() != null) {
+		StringBuilder batches = new StringBuilder();
+		for (Batch batch : process.getBatchesInitialized()) {
+			if (batch.getType() != null) {
+				batches.append(batch.getTypeTranslated());
+				batches.append(": ");
+			}
+			if (batches.length() != 0) {
+				batches.append(", ");
+			}
+			batches.append(batch.getLabel());
+		}
+		if (batches.length() != 0) {
 			Element batch = new Element("batch", xmlns);
-			batch.setText(String.valueOf(process.getBatchID()));
+			batch.setText(batches.toString());
 			processElements.add(batch);
 		}
 	
@@ -481,7 +493,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @param xslt
 	 */
 
-	public void startExport(List<Prozess> processList, OutputStream outputStream, String xslt) {
+	public void startExport(Iterable<Prozess> processList, OutputStream outputStream, String xslt) {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);

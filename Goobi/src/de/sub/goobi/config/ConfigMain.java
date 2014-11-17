@@ -28,7 +28,7 @@ package de.sub.goobi.config;
  * exception statement from your version.
  */
 import java.io.File;
-import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -37,37 +37,31 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
+import org.goobi.production.constants.FileNames;
+import org.joda.time.Duration;
 
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
-public class ConfigMain implements Serializable {
-	private static final long serialVersionUID = -7167854300981799440L;
-
+public class ConfigMain {
 	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
-
-	static ConfigMain configMain = new ConfigMain();
 	private static PropertiesConfiguration config;
-	private static String configPfad;
 	private static String imagesPath = null;
 
-	/**
-	 * @throws ConfigurationException
-	 */
-	private ConfigMain() {
-		PropertiesConfiguration.setDefaultListDelimiter('&');
-		if (configPfad == null) {
-			configPfad = "goobi_config.properties";
+	private static PropertiesConfiguration getConfig() {
+		if (config != null) {
+			return config;
 		}
+		PropertiesConfiguration.setDefaultListDelimiter('&');
 		try {
-			config = new PropertiesConfiguration(configPfad);
+			config = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 		} catch (ConfigurationException e) {
+			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
 			config = new PropertiesConfiguration();
 		}
-		// config.setDelimiterParsingDisabled(true);
 		config.setListDelimiter('|');
-
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
+		return config;
 	}
 
 	/**
@@ -111,7 +105,7 @@ public class ConfigMain implements Serializable {
 	 */
 	public static String getParameter(String inParameter) {
 		try {
-			return config.getString(inParameter);
+			return getConfig().getString(inParameter);
 		} catch (RuntimeException e) {
 			myLogger.error(e);
 			return "- keine Konfiguration gefunden -";
@@ -125,7 +119,7 @@ public class ConfigMain implements Serializable {
 	 */
 	public static String getParameter(String inParameter, String inDefaultIfNull) {
 		try {
-			return config.getString(inParameter, inDefaultIfNull);
+			return getConfig().getString(inParameter, inDefaultIfNull);
 			// return config.getProperty(inParameter).toString();
 		} catch (RuntimeException e) {
 			return inDefaultIfNull;
@@ -147,7 +141,7 @@ public class ConfigMain implements Serializable {
 	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
-		return config.getBoolean(inParameter, inDefault);
+		return getConfig().getBoolean(inParameter, inDefault);
 	}
 
 	/**
@@ -156,7 +150,17 @@ public class ConfigMain implements Serializable {
 	 * @return Parameter as Long
 	 */
 	public static long getLongParameter(String inParameter, long inDefault) {
-		return config.getLong(inParameter, inDefault);
+		return getConfig().getLong(inParameter, inDefault);
+	}
+
+	/**
+	 * Request Duration parameter from configuration
+	 * 
+	 * @return Parameter as Duration
+	 */
+	public static Duration getDurationParameter(String inParameter, TimeUnit timeUnit, long inDefault) {
+		long duration = getLongParameter(inParameter, inDefault);
+		return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
 	}
 
 	/**
@@ -167,7 +171,7 @@ public class ConfigMain implements Serializable {
 	public static int getIntParameter(String inParameter) {
 		return getIntParameter(inParameter, 0);
 	}
-
+	
 	/**
 	 * Request int-parameter from Configuration with default-value
 	 * 
@@ -175,9 +179,19 @@ public class ConfigMain implements Serializable {
 	 */
 	public static int getIntParameter(String inParameter, int inDefault) {
 		try {
-			return config.getInt(inParameter, inDefault);
+			return getConfig().getInt(inParameter, inDefault);
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Request String[]-parameter from Configuration
+	 * 
+	 * @return Parameter as String[] 
+	 */
+	public static String[] getStringArrayParameter(String inParameter) {
+		
+		return getConfig().getStringArray(inParameter);
 	}
 }

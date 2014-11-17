@@ -169,6 +169,12 @@
 															<h:outputText value="#{msgs.prozessvorlage}:" />
 															<h:outputText value="#{MassImportForm.template.titel}" />
 
+															<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
+
+															<h:selectOneMenu id="katalogauswahl" value="#{MassImportForm.opacCatalogue}" styleClass="processMassImport">
+																<si:selectItems value="#{MassImportForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+															</h:selectOneMenu>
+
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
 															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
 																<si:selectItems value="#{MassImportForm.possibleDigitalCollection}" var="step" itemLabel="#{step}" itemValue="#{step}" />

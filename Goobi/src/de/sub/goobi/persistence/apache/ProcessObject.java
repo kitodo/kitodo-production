@@ -61,11 +61,11 @@ public class ProcessObject {
 	private int sortHelperDocstructs;
 	private int sortHelperMetadata;
 	private String wikifield;
-	private int batchID;
 
-	public ProcessObject(int processId, String title, String ausgabename, boolean isTemplate, boolean swappedOut, boolean inAuswahllisteAnzeigen,
-			String sortHelperStatus, int sortHelperImages, int sortHelperArticles, Date erstellungsdatum, int projekteID,
-			int metadatenKonfigurationID, int sortHelperDocstructs, int sortHelperMetadata, String wikifield, int batchID) {
+	public ProcessObject(int processId, String title, String ausgabename, boolean isTemplate, boolean swappedOut,
+			boolean inAuswahllisteAnzeigen, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
+			Date erstellungsdatum, int projekteID, int metadatenKonfigurationID, int sortHelperDocstructs,
+			int sortHelperMetadata, String wikifield) {
 		super();
 		this.id = processId;
 		this.title = title;
@@ -82,7 +82,6 @@ public class ProcessObject {
 		this.sortHelperDocstructs = sortHelperDocstructs;
 		this.sortHelperMetadata = sortHelperMetadata;
 		this.wikifield = wikifield;
-		this.batchID = batchID;
 	}
 
 	public int getId() {
@@ -203,14 +202,6 @@ public class ProcessObject {
 
 	public void setWikifield(String wikifield) {
 		this.wikifield = wikifield;
-	}
-
-	public int getBatchID() {
-		return this.batchID;
-	}
-
-	public void setBatchID(int batchID) {
-		this.batchID = batchID;
 	}
 
 	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {

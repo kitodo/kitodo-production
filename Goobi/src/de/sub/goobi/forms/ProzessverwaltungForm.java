@@ -48,6 +48,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -267,6 +268,21 @@ public class ProzessverwaltungForm extends BasisForm {
 								}
 							}
 						}
+						{
+							// renaming defined direcories
+							String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+							for(String processDir : processDirs) {
+								
+								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
+								
+								File dir = new File(processDirAbsolut);
+								if(dir.isDirectory())
+								{
+									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+								}
+							}
+						}
+						
 					} catch (Exception e) {
 						logger.warn("could not rename folder", e);
 					}
@@ -521,7 +537,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 	public String ProzessEigenschaftLoeschen() {
 		try {
-			myProzess.getEigenschaften().remove(myProzessEigenschaft);
+			myProzess.getEigenschaftenInitialized().remove(myProzessEigenschaft);
 			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
@@ -580,7 +596,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String ProzessEigenschaftUebernehmen() {
-		myProzess.getEigenschaften().add(myProzessEigenschaft);
+		myProzess.getEigenschaftenInitialized().add(myProzessEigenschaft);
 		myProzessEigenschaft.setProzess(myProzess);
 		Speichern();
 		return "";
@@ -1873,7 +1889,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	                Prozesseigenschaft pe = new Prozesseigenschaft();
 	                pe.setProzess(myProzess);
 	                pt.setProzesseigenschaft(pe);
-	                myProzess.getEigenschaften().add(pe);
+	                myProzess.getEigenschaftenInitialized().add(pe);
 	                pt.transfer();
 	            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1907,18 +1923,18 @@ public class ProzessverwaltungForm extends BasisForm {
 					Prozesseigenschaft pe = new Prozesseigenschaft();
 					pe.setProzess(this.myProzess);
 					p.setProzesseigenschaft(pe);
-					this.myProzess.getEigenschaften().add(pe);
+					this.myProzess.getEigenschaftenInitialized().add(pe);
 				}
 				p.transfer();
-				if (!this.myProzess.getEigenschaften().contains(p.getProzesseigenschaft())) {
-					this.myProzess.getEigenschaften().add(p.getProzesseigenschaft());
+				if (!this.myProzess.getEigenschaftenInitialized().contains(p.getProzesseigenschaft())) {
+					this.myProzess.getEigenschaftenInitialized().add(p.getProzesseigenschaft());
 				}
 			}
 
 			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					this.myProzess.getEigenschaften().remove(pe);
+					this.myProzess.getEigenschaftenInitialized().remove(pe);
 				}
 			}
 
@@ -1947,18 +1963,18 @@ public class ProzessverwaltungForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.myProzess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
+				this.myProzess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
 			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					this.myProzess.getEigenschaften().remove(pe);
+					this.myProzess.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.dao.save(this.myProzess);
@@ -2003,14 +2019,14 @@ public class ProzessverwaltungForm extends BasisForm {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processPropertyList.remove(pp);
-			this.myProzess.getEigenschaften().remove(pp.getProzesseigenschaft());
+			this.myProzess.getEigenschaftenInitialized().remove(pp.getProzesseigenschaft());
 
 		}
 
 		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				this.myProzess.getEigenschaften().remove(pe);
+				this.myProzess.getEigenschaftenInitialized().remove(pe);
 			}
 		}
 		try {
@@ -2087,7 +2103,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.myProzess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
+				this.myProzess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -2124,5 +2140,4 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
 	}
-
 }

@@ -170,11 +170,9 @@ public class MySQLUtils {
 				int sortHelperDocstructs = rs.getInt("sortHelperDocstructs");
 				int sortHelperMetadata = rs.getInt("sortHelperMetadata");
 				String wikifield = rs.getString("wikifield");
-				int batchID = rs.getInt("batchID");
-				ProcessObject po = new ProcessObject(processId, title, ausgabename, isTemplate, swappedOut, inAuswahllisteAnzeigen, sortHelperStatus,
-						sortHelperImages, sortHelperArticles, erstellungsdatum, projekteID, metadatenKonfigurationID, sortHelperDocstructs,
-						sortHelperMetadata, wikifield, batchID);
-				return po;
+				return new ProcessObject(processId, title, ausgabename, isTemplate, swappedOut, inAuswahllisteAnzeigen,
+						sortHelperStatus, sortHelperImages, sortHelperArticles, erstellungsdatum, projekteID,
+						metadatenKonfigurationID, sortHelperDocstructs, sortHelperMetadata, wikifield);
 			}
 			return null;
 		}

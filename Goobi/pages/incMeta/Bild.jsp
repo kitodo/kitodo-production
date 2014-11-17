@@ -244,6 +244,11 @@
 			<f:param name="Anzahl" value="0" />
 		</h:commandButton>
 
+		<h:outputText value="#{msgs.currentRepresentative}" rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}" />
+		<h:outputText value="#{msgs.noFileSelected}" rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative && empty Metadaten.currentRepresentativePage}" />
+		<h:outputText value="#{Metadaten.alleSeiten[Metadaten.currentRepresentativePage].label}" rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative && not empty Metadaten.currentRepresentativePage}" />
+		<h:outputText value="" rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}" />
+		
 		<h:outputText value="#{msgs.setRepresentative} " rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}" />
 		<h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
 			rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}">
