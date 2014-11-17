@@ -223,20 +223,18 @@ public class ExportDms extends ExportMets {
 			try {
 				new DataCopier(rules).process(new CopierData(gdzfile, myProzess));
 			} catch (ConfigurationException e) {
-				// TODO: When merging with issue #166, add this:
-				// if (exportDmsTask != null) {
-				//     exportDmsTask.setException(e);
-				// } else {
+				if (exportDmsTask != null) {
+					exportDmsTask.setException(e);
+				} else {
 					Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
-				// }
+				}
 				return false;
-			} catch (RuntimeException exception) {
-				// TODO: When merging with issue #166, add this:
-				// if (exportDmsTask != null) {
-				//     exportDmsTask.setException(e);
-				// } else {
-					Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
-				// }
+			} catch (RuntimeException e) {
+				if (exportDmsTask != null) {
+					exportDmsTask.setException(e);
+				} else {
+					Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+				}
 				return false;
 			}
 		}
