@@ -162,17 +162,15 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			try {
 				new DataCopier(rules).process(new CopierData(newfile, process));
 			} catch (ConfigurationException e) {
-				// TODO: When merging with issue #166, add this:
-				// if (task != null) {
-				//     task.setException(e);
-				// }					
+				if (task != null) {
+					task.setException(e);
+				}
 				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
 				return false;
 			} catch (RuntimeException e) {
-				// TODO: When merging with issue #166, add this:
-				// if (task != null) {
-				//     task.setException(e);
-				// }					
+				if (task != null) {
+					task.setException(e);
+				}
 				Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
 				return false;
 			}
