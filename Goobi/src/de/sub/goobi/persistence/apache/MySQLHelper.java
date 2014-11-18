@@ -523,34 +523,34 @@ public class MySQLHelper {
 			propValues.append("(" + stepId++ + ",'start',1,1,1,false, ''," + processId
 					+ ", false, '', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch01',1,2,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch01',1,2,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch02',1,3,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch02',1,3,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch03',1,4,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch03',1,4,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch04',1,5,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch04',1,5,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch05',1,6,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch05',1,6,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch06',1,7,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch06',1,7,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch07',1,8,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch07',1,8,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch08',1,9,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch08',1,9,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch09',1,10,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch09',1,10,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch10',1,11,0,true, '/bin/bash /opt/digiverso/goobi/scripts/dummy2.sh (stepid)',"
+			propValues.append("(" + stepId++ + ",'automatisch10',1,11,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
 					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
 			if (processId % 5000 == 0) {
 				String values = propValues.toString();

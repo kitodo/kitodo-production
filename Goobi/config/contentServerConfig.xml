@@ -139,7 +139,7 @@
     *
     * sample: <contentCache useCache="false" path="/home/goobi/gcsCache" size="300"/>
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <contentCache useShortFileNames="true" useCache="false" path="/opt/digiverso/goobi/cache" size="30"/>
+    <contentCache useShortFileNames="true" useCache="false" path="/usr/local/goobi/cache" size="30"/>
 	<thumbnailCache useCache="false" />		
 	<pdfCache useCache="false" />
 	
