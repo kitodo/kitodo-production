@@ -72,7 +72,7 @@ class GetOpac {
 
 	private static final String PICA_FIELD_NAME = "tag";
 
-	private static final String PICA_FIELD_OCCURENCES = "occurrence";
+	private static final String PICA_FIELD_OCCURRENCES = "occurrence";
 
 	private static final String PICA_SUBFIELD = "subfield";
 
@@ -371,17 +371,17 @@ class GetOpac {
 
 		String[] fieldComponents = null;
 		String fieldName = null;
-		String fieldOccurence = null;
-		int indexOfFieldOccurence = -1;
+		String fieldOccurrence = null;
+		int indexOfFieldOccurrence = -1;
 
 		fieldComponents = field.split("\\$");
-		indexOfFieldOccurence = fieldComponents[0].indexOf("/");
+		indexOfFieldOccurrence = fieldComponents[0].indexOf("/");
 
-		if (indexOfFieldOccurence != -1) {
-			fieldName = fieldComponents[0].substring(0, indexOfFieldOccurence);
-			fieldOccurence = fieldComponents[0].substring(indexOfFieldOccurence + 1);
+		if (indexOfFieldOccurrence != -1) {
+			fieldName = fieldComponents[0].substring(0, indexOfFieldOccurrence);
+			fieldOccurrence = fieldComponents[0].substring(indexOfFieldOccurrence + 1);
 			result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldName + "\" "
-					+ PICA_FIELD_OCCURENCES + "=\"" + fieldOccurence + "\">\n");
+					+ PICA_FIELD_OCCURRENCES + "=\"" + fieldOccurrence + "\">\n");
 		} else {
 			result.append("    <" + PICA_FIELD + " " + PICA_FIELD_NAME + "=\"" + fieldComponents[0] + "\">\n");
 		}
