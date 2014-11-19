@@ -114,7 +114,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	/**
 	 * Regular expression to separate the person type from the field identifier.
 	 */
-	private static final Pattern FICTIOUS_METADATA_TYPE_SCHEME = Pattern.compile("(.+)\\.([^.]+)");
+	private static final Pattern FICTITIOUS_METADATA_TYPE_SCHEME = Pattern.compile("(.+)\\.([^.]+)");
 
 	/**
 	 * Creates a RenderablePersonMetadataGroup.
@@ -257,7 +257,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 * @return the field to be edited
 	 */
 	static Field getPersonField(String fictitiousType) {
-		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
+		Matcher matcher = FICTITIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
 		if (matcher.matches()) {
 			return Field.valueOf(matcher.group(2));
 		}
@@ -272,7 +272,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	 * @return the person to be edited
 	 */
 	static String getPersonType(String fictitiousType) {
-		Matcher matcher = FICTIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
+		Matcher matcher = FICTITIOUS_METADATA_TYPE_SCHEME.matcher(fictitiousType);
 		if (matcher.matches()) {
 			return matcher.group(1);
 		}
