@@ -27,6 +27,5 @@
 
 #tomcat.dir.lib=/opt/apache-tomcat-5.5.32/common/lib
 #tomcat.compile.jsp=false
-#javac.debug=true
 #javac.args=
 

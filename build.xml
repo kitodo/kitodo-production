@@ -238,7 +238,8 @@
 			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
-			debug="${build.javac.debug}"
+			debug="true"
+			debuglevel="lines,vars,source"
 			classpathref="compile.classpath">
         </javac>
     </target>
@@ -249,7 +250,8 @@
                source="${build.javac.source}"
                target="${build.javac.target}"
                encoding="UTF8"
-               debug="${build.javac.debug}"
+               debug="true"
+               debuglevel="lines,vars,source"
                classpathref="test.classpath">
         </javac>
     </target>
@@ -270,7 +272,8 @@
 			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
-			debug="${build.javac.debug}">
+			debug="true"
+			debuglevel="lines,vars,source">
 			<classpath>
 				<pathelement location="${build.classes}"/>
 				<path refid="compile.classpath"/>
@@ -284,7 +287,8 @@
 			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
-			debug="${build.javac.debug}"
+			debug="true"
+			debuglevel="lines,vars,source"
 			classpathref="compile.classpath">
 		</javac>
 	</target>
