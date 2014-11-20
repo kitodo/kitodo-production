@@ -1878,7 +1878,7 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function getHitlist returns the hits for the currenly showing page of
+	 * The function getHitlist returns the hits for the currently showing page of
 	 * the hitlist as read-only property "hitlist".
 	 * 
 	 * @return a list of hits to render in the hitlist
@@ -1955,7 +1955,7 @@ public class ProzesskopieForm {
 
 	/**
 	 * The function nextPageClick() is executed if the user clicks the action
-	 * link to flip one page foreward in the hit list.
+	 * link to flip one page forward in the hit list.
 	 */
 	public void nextPageClick() {
 		hitlistPage++;

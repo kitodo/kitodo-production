@@ -96,7 +96,7 @@ public class AdministrationForm implements Serializable {
 		String adminMd5 = ConfigMain.getParameter("superadminpassword");
 		this.istPasswortRichtig = (this.passwort.equals(adminMd5));
 		if (!this.istPasswortRichtig) {
-			Helper.setFehlerMeldung("wrong passworwd", "");
+			Helper.setFehlerMeldung("wrong password", "");
 		}
 		return "";
 	}

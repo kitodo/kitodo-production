@@ -67,7 +67,7 @@ public class Citation {
 	 * <p>
 	 * <b>MONOGRAPH</b> − to cite from a continuous book (unlike an anthology)<br>
 	 * <b>ANTHOLOGY</b> − to cite from an article published in an antology<br>
-	 * <b>PERIODICAL</b> − to cite from an articel published in a periodical<br>
+	 * <b>PERIODICAL</b> − to cite from an article published in a periodical<br>
 	 * <b>THESIS</b> − to cite from an academic writing <b>STANDARD</b> − to
 	 * cite from a standard <b>INTERNET</b> − to cite from a web site (use
 	 * PERIODICAL for online journals as well)

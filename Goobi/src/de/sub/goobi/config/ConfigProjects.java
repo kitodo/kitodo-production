@@ -128,7 +128,7 @@ public class ConfigProjects {
 	
 
 	/**
-	 * Ermitteln eines boolean-Paramters der Konfiguration
+	 * Ermitteln eines boolean-Parameters der Konfiguration
 	 * @return Parameter als String
 	 */
 	public boolean getParamBoolean(String inParameter) {
@@ -142,7 +142,7 @@ public class ConfigProjects {
 	
 
 	/**
-	 * Ermitteln eines long-Paramters der Konfiguration
+	 * Ermitteln eines long-Parameters der Konfiguration
 	 * @return Parameter als Long
 	 */
 	public long getParamLong(String inParameter) {
@@ -157,7 +157,7 @@ public class ConfigProjects {
 	
 
 	/**
-	 * Ermitteln einer Liste von Paramtern der Konfiguration
+	 * Ermitteln einer Liste von Parametern der Konfiguration
 	 * @return Parameter als List
 	 */
 	@SuppressWarnings("unchecked")
