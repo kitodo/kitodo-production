@@ -82,6 +82,11 @@
 				        var preferredName = data.getElementsByTagName("gndo:preferredNameEntityForThePerson")[0];
 				        document.getElementById(firstnameID).value = preferredName.getElementsByTagName("gndo:forename")[0].textContent;
 				        document.getElementById(lastnameID).value = preferredName.getElementsByTagName("gndo:surname")[0].textContent;
+				        try{
+				        	A4J.AJAX.Submit("_viewRoot", "formular2", null, null);
+				        }catch(e){
+				        	document.getElementById("formular2").submit();
+				        }
 				    });
 		    }
 		    
