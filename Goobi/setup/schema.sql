@@ -377,7 +377,9 @@ CREATE TABLE `werkstueckeeigenschaften` (
 CREATE TABLE `batchesprozesse` (
   `ProzesseID` int(11) NOT NULL,
   `BatchID` int(11) NOT NULL,
-  PRIMARY KEY (`ProzesseID`,`BatchID`)
+  PRIMARY KEY (`ProzesseID`,`BatchID`),
+  KEY `FK4614E1D551BB26FA` (`ProzesseID`),
+  KEY `FK4614E1D58DC81D49` (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -386,8 +388,6 @@ CREATE TABLE `batches` (
   `BatchID` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `type` varchar(9) DEFAULT NULL,
-  PRIMARY KEY (`BatchID`),
-  KEY `FK4614E1D551BB26FA` (`ProzesseID`),
-  KEY `FK4614E1D58DC81D49` (`BatchID`)
+  PRIMARY KEY (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
