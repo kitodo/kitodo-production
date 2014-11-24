@@ -59,7 +59,7 @@ public class ConfigMain {
 			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
 			config = new PropertiesConfiguration();
 		}
-		config.setListDelimiter('|');
+		config.setListDelimiter('&');
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 		return config;
 	}
