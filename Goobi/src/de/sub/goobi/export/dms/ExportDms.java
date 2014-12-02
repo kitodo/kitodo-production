@@ -567,7 +567,8 @@ public class ExportDms extends ExportMets {
 						Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					}
 					myLogger.error("could not create destination directory", e);
-					return;
+					throw e instanceof RuntimeException ? (RuntimeException) e // will be caught in startExport(Prozess, String, DigitalDocument)
+							: new RuntimeException(e.getMessage(), e);
 				}
 			}
 
