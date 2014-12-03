@@ -297,6 +297,45 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
+			 * -------------------------------- wenn der Treffer ein Volume
+			 * eines Periodical-Bandes ist, dann die Serie überordnen
+			 * --------------------------------
+			 */
+			if (cod.isPeriodical()) {
+				/* Sammelband-PPN ermitteln */
+				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
+				if (serialPublicationPpn != "") {
+					/* Sammelband aus dem Opac holen */
+
+					myQuery = new Query(serialPublicationPpn, "12");
+					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					if (client.getNumberOfHits(myQuery, timeout) == 1) {
+						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
+						/* Opac-Beautifier aufrufen */
+						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						/* Konvertierung in jdom-Elemente */
+						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
+
+						/* dem Rootelement den Volume-Treffer hinzufügen */
+						myFirstHit.getParent().removeContent(myFirstHit);
+						myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
+
+						myJdomDoc = myJdomDocMultivolumeband;
+						myFirstHit = myJdomDoc.getRootElement().getChild("record");
+
+						/* die Jdom-Element wieder zurück zu Dom konvertieren */
+						DOMOutputter doutputter = new DOMOutputter();
+						myHitlist = doutputter.output(myJdomDocMultivolumeband);
+						/*
+						 * dabei aber nicht das Document, sondern das erste Kind
+						 * nehmen
+						 */
+						myHitlist = myHitlist.getFirstChild();
+					}
+				}
+			}
+
+			/*
 			 * -------------------------------- wenn der Treffer ein Contained
 			 * Work ist, dann übergeordnetes Werk
 			 * --------------------------------
@@ -635,7 +674,7 @@ public class PicaPlugin implements Plugin {
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (cod.isPeriodical()) {
+		if (cod.isPeriodical() && topstruct.getAllChildren() == null) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
