@@ -298,17 +298,17 @@ public class PicaPlugin implements Plugin {
 
 			/*
 			 * -------------------------------- wenn der Treffer ein Volume
-			 * eines Periodical-Bandes ist, dann das Sammelwerk überordnen
+			 * eines Periodical-Bandes ist, dann die Serie überordnen
 			 * --------------------------------
 			 */
 			// if (isMultivolume()) {
 			if (cod.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
-				String multiVolumePpn = getPpnFromParent(myFirstHit, "036F", "9");
-				if (multiVolumePpn != "") {
+				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
+				if (serialPublicationPpn != "") {
 					/* Sammelband aus dem Opac holen */
 
-					myQuery = new Query(multiVolumePpn, "12");
+					myQuery = new Query(serialPublicationPpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
