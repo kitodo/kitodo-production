@@ -29,6 +29,7 @@ package de.sub.goobi.export.dms;
  */
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
@@ -109,7 +110,8 @@ public class ExportDms extends ExportMets {
 			TypeNotAllowedForParentException {
 
 		Hibernate.initialize(myProzess.getProjekt().getFilegroups());
-		if (ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
+		if (myProzess.getProjekt().isUseDmsImport()
+				&& ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
 			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
 			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
 					myProzess.getTitel());
@@ -566,6 +568,15 @@ public class ExportDms extends ExportMets {
 						Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					}
 					myLogger.error("could not create destination directory", e);
+					if (e instanceof IOException) {
+						throw (IOException) e;
+					} else if (e instanceof InterruptedException) {
+						throw (InterruptedException) e;
+					} else if (e instanceof RuntimeException) {
+						throw (RuntimeException) e;
+					} else {
+						throw new UndeclaredThrowableException(e);
+					}
 				}
 			}
 
