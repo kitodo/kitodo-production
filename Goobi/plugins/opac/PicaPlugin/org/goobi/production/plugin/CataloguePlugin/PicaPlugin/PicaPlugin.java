@@ -301,7 +301,6 @@ public class PicaPlugin implements Plugin {
 			 * eines Periodical-Bandes ist, dann die Serie überordnen
 			 * --------------------------------
 			 */
-			// if (isMultivolume()) {
 			if (cod.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
 				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
