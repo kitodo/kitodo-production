@@ -349,7 +349,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 
-		/**
+	/**
 	 * If the record contains a volume of a serial publication, then the series
 	 * data will be prepended to it.
 	 * 
