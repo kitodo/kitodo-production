@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
 # * 
@@ -37,4 +37,3 @@ Home="$2"
 /bin/chmod g+w "$Home"
 /bin/chown $User "$Home"
 /bin/chgrp tomcat "$Home"
-
