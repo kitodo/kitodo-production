@@ -58,7 +58,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
-import de.sub.goobi.helper.tasks.CreateProcessesTask;
+import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
 /**
@@ -140,7 +140,7 @@ public class GranularityForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
 			return "";
 		}
-		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course, generateBatches);
+		CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course, generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";
 	}

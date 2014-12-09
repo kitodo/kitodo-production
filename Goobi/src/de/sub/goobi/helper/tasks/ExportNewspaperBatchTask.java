@@ -687,11 +687,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	}
 
 	/**
-	 * The function clone() creates a copy of this CreateProcessesTask for
+	 * The function clone() creates a copy of this ExportNewspaperBatchTask for
 	 * providing the possibility to restart it because a Thread can only be
 	 * started once.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
 	 */
 	@Override
 	public ExportNewspaperBatchTask clone() {
