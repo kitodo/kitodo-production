@@ -71,12 +71,12 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.BatchDAO;
 
 /**
- * The class CreateProcessesTask is a LongRunningTask to create processes from a
- * course of appearance.
+ * The class CreateNewspaperProcessesTask is a LongRunningTask to create
+ * processes from a course of appearance.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateProcessesTask extends EmptyTask {
+public class CreateNewspaperProcessesTask extends EmptyTask {
 
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
@@ -146,8 +146,8 @@ public class CreateProcessesTask extends EmptyTask {
 	private final List<String> description;
 
 	/**
-	 * The class CreateProcessesTask is a LongRunningTask to create processes
-	 * from a course of appearance.
+	 * The class CreateNewspaperProcessesTask is a LongRunningTask to create
+	 * processes from a course of appearance.
 	 * 
 	 * @param pattern
 	 *            a ProzesskopieForm to use for creating processes
@@ -156,7 +156,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * @param batchGranularity
 	 *            a granularity level at which baches shall be created
 	 */
-	public CreateProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
+	public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
 		super(pattern.getProzessVorlageTitel());
 		this.pattern = pattern;
 		this.processes = new ArrayList<List<IndividualIssue>>(course.getNumberOfProcesses());
@@ -178,7 +178,7 @@ public class CreateProcessesTask extends EmptyTask {
 	 * @param master
 	 *            copy master
 	 */
-	public CreateProcessesTask(CreateProcessesTask master) {
+	public CreateNewspaperProcessesTask(CreateNewspaperProcessesTask master) {
 		super(master);
 		this.pattern = master.pattern;
 		this.processes = master.processes;
@@ -253,9 +253,9 @@ public class CreateProcessesTask extends EmptyTask {
 			setProgress(100);
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
 			String message = e instanceof MetadataTypeNotAllowedException && currentTitle != null ? Helper
-					.getTranslation("CreateProcessesTask.MetadataNotAllowedException",
+					.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
 							Arrays.asList(new String[] { currentTitle })) : e.getClass().getSimpleName()
-					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateProcessesTask");
+					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask");
 			setException(new RuntimeException(message + ": " + e.getMessage(), e));
 			return;
 		}
@@ -488,14 +488,14 @@ public class CreateProcessesTask extends EmptyTask {
 	}
 
 	/**
-	 * The function clone() creates a copy of this CreateProcessesTask for
-	 * providing the possibility to restart it because a Thread can only be
+	 * The function clone() creates a copy of this CreateNewspaperProcessesTask
+	 * for providing the possibility to restart it because a Thread can only be
 	 * started once.
 	 * 
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
 	 */
 	@Override
-	public CreateProcessesTask clone() {
-		return new CreateProcessesTask(this);
+	public CreateNewspaperProcessesTask clone() {
+		return new CreateNewspaperProcessesTask(this);
 	}
 }

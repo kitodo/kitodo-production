@@ -61,7 +61,7 @@ import org.joda.time.LocalDate;
  * </p>
  * 
  * <p>
- * Each issue can be modeled by one Issue object each, which are held by a Title
+ * Each issue can be modeled by one Issue object each, which are held by a Block
  * object which provides the dates of first and last appearance.
  * </p>
  * 

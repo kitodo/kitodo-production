@@ -61,7 +61,7 @@
 		 --%>
 			var uploadWindow = false;
 		<%--
-		 * The function addClickQuery() checks whether adding a title block can be
+		 * The function addClickQuery() checks whether adding a block can be
 		 * performed without unexpected side effects. In the rare case that there
 		 * could be confusion the user will be prompted with an explainatory message
 		 * and has an option to continue or not.
@@ -69,13 +69,13 @@
 		 * @return whether the add request shall be processed
 		 --%>
 			function addClickQuery() {
-				if (!titleDataIsValid()) {
+				if (!blockDataIsValid()) {
 					return false;
 				}
 				if (document.getElementById("form1:applyLink").style.display == "none") {
 					return true;
 				} else {
-					return confirm("${msgs['calendar.title.add.query']}");
+					return confirm("${msgs['calendar.block.add.query']}");
 				}
 			}
 		<%--
@@ -89,16 +89,16 @@
 				return confirm("${msgs['calendar.issue.delete.query']}");
 			}
 		<%--
-		 * The function removeClickQuery() checks whether a title block shall or
+		 * The function removeClickQuery() checks whether a block shall or
 		 * shall not be deleted. The user is presented with a query whether it wants
 		 * to delete the block. This is to prevent misclicks. If there is only one
 		 * block left, instead, the user is presented with an information that this
 		 * isn’t allowed.
 		 * 
-		 * @return whether a title block can be deleted
+		 * @return whether a block can be deleted
 		 --%>
 			function removeClickQuery() {
-				return confirm("${msgs['calendar.title.remove.query']}");
+				return confirm("${msgs['calendar.block.remove.query']}");
 			}
 		<%--
 		 * The function setIgnoreInvalidValue() inserts an alternate white space
@@ -132,7 +132,7 @@
 		 *             if no option with the given value was found
 		 --%>
 			function setSelectSelectedByValue(id, value) {
-				var select = document.getElementById('form1:titlePicker');
+				var select = document.getElementById('form1:blockChanger');
 				for (var i = 0; i < select.options.length; i++) {
 					if (select.options[i].value == value) {
 						select.selectedIndex = i;
@@ -153,63 +153,63 @@
 				return true;
 			}
 		<%--
-		 * The function startEditTitle() is called whenever the data of the title
+		 * The function startEditBlock() is called whenever the data of the
 		 * block is being edited by the user. The button “apply changes” is shown
-		 * except for the first title block (because there isn’t anything yet that
+		 * except for the first block (because there isn’t anything yet that
 		 * changes can be “applied on” in the sense of meaning).
 		 * 
 		 * @return always true
 		 --%>
-			function startEditTitle() {
-				if (document.getElementById("form1:titlePicker").options.length > 0){
+			function startEditBlock() {
+				if (document.getElementById("form1:blockChanger").options.length > 0){
 					document.getElementById("form1:applyLinkPlaceholder").style.display = "none";
 					document.getElementById("form1:applyLink").style.display = "inline";
 				}
 				return true;
 			}
 		<%--
-		 * The function titleDataIsValid() validates the title data typed in by the
+		 * The function blockDataIsValid() validates the block data typed in by the
 		 * user.
 		 * 
 		 * The following requirements must be met:
 		 * 		• The dates must be well-formed.
 		 * 
-		 * @return whether the title data is valid
+		 * @return whether the block data is valid
 		 --%>
-			function titleDataIsValid() {
+			function blockDataIsValid() {
 				if (!document.getElementById("form1:firstAppearance").value
 						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
-					alert("${msgs['calendar.title.firstAppearance.invalid']}");
+					alert("${msgs['calendar.block.firstAppearance.invalid']}");
 					document.getElementById("form1:firstAppearance").focus();
 					return false;
 				}
 				if (!document.getElementById("form1:lastAppearance").value
 						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
-					alert("${msgs['calendar.title.lastAppearance.invalid']}");
+					alert("${msgs['calendar.block.lastAppearance.invalid']}");
 					document.getElementById("form1:lastAppearance").focus();
 					return false;
 				}
 				return true;
 			}
 		<%--
-		 * The function titlePickerChangeQuery() checks whether silently changing
-		 * the title block is possible. In the rare case that there are unsubmitted
-		 * changes to the title block, the user is presented with a query whether it
+		 * The function blockChangerChangeQuery() checks whether silently changing
+		 * the block is possible. In the rare case that there are unsubmitted
+		 * changes to the block, the user is presented with a query whether he or she
 		 * wants to continue, which implies that the changes will be lost. In case
-		 * that the user decides not to continue the selected option in the title
-		 * picker is restored so that a subsequent form submission results in the
+		 * that the user decides not to continue the selected option in the block
+		 * changer is restored so that a subsequent form submission results in the
 		 * correct behaviour.
 		 * 
 		 * @param originValue
-		 *            form value of the option that was selected in the title picker
+		 *            form value of the option that was selected in the block changer
 		 *            on page load
 		 * @return whether the change request shall be processed
 		 --%>
-			function titlePickerChangeQuery(originValue) {
+			function blockChangerChangeQuery(originValue) {
 				if (document.getElementById("form1:applyLink").style.display == "none"
-						|| confirm("${msgs['calendar.title.alter.query']}"))
+						|| confirm("${msgs['calendar.block.alter.query']}"))
 					return true;
-				setSelectSelectedByValue("form1:titlePicker", originValue);
+				setSelectSelectedByValue("form1:blockChanger", originValue);
 				return false;
 			}
 		</script>
@@ -223,7 +223,7 @@
 					<%-- ===================== Page main frame ===================== --%>
 
 					<h:form id="form1" enctype="multipart/form-data"
-						onsubmit="return setIgnoreInvalidValue(uploadWindow) || titleDataIsValid()">
+						onsubmit="return setIgnoreInvalidValue(uploadWindow) || blockDataIsValid()">
 
 						<%-- Bread crumbs --%>
 
@@ -280,20 +280,20 @@
 									<htm:fieldset styleClass="calendarTitleMgmt"
 										style="margin-bottom: 14px; ">
 										<htm:legend>
-											<h:outputText value="#{msgs['calendar.title.caption']}" />
+											<h:outputText value="#{msgs['calendar.block.caption']}" />
 										</htm:legend>
 
 										<%-- Input elements for base data --%>
 										<htm:div styleClass="formRow">
-											<%-- Select box to switch between already defined titles --%>
-											<h:outputLabel for="titlePicker" styleClass="leftText"
-												value="#{msgs['calendar.title.select']}"
+											<%-- Drop down list to switch between already defined blocks --%>
+											<h:outputLabel for="blockChanger" styleClass="leftText"
+												value="#{msgs['calendar.block.select']}"
 												style="margin-top: 10px;" />
 
-											<h:selectOneMenu value="#{CalendarForm.titlePickerSelected}"
-												onchange="if(titlePickerChangeQuery('#{CalendarForm.titlePickerSelected}')){submit();}"
-												id="titlePicker" style="margin-top: 5px; min-width: 162px; ">
-												<si:selectItems value="#{CalendarForm.titlePickerOptions}"
+											<h:selectOneMenu value="#{CalendarForm.blockChangerSelected}"
+												onchange="if(blockChangerChangeQuery('#{CalendarForm.blockChangerSelected}')){submit();}"
+												id="blockChanger" style="margin-top: 5px; min-width: 162px; ">
+												<si:selectItems value="#{CalendarForm.blockChangerOptions}"
 													var="item" itemLabel="#{item.label}"
 													itemValue="#{item.value}" />
 											</h:selectOneMenu>
@@ -301,7 +301,7 @@
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText
-													value="#{msgs['calendar.title.firstAppearance']}" />
+													value="#{msgs['calendar.block.firstAppearance']}" />
 												<h:inputText value="#{CalendarForm.firstAppearance}"
 													onkeydown="startEditTitle()" onchange="startEditTitle()"
 													id="firstAppearance" />
@@ -309,20 +309,20 @@
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText
-													value="#{msgs['calendar.title.lastAppearance']}" />
+													value="#{msgs['calendar.block.lastAppearance']}" />
 												<h:inputText value="#{CalendarForm.lastAppearance}"
 													onkeydown="startEditTitle()" onchange="startEditTitle()"
 													id="lastAppearance" />
 											</htm:div>
 
-											<%-- Buttons to add and remove titles --%>
-											<h:commandLink title="#{msgs['calendar.title.addFirst']}"
+											<%-- Buttons to copy and remove blocks --%>
+											<h:commandLink title="#{msgs['calendar.block.addFirst']}"
 												rendered="#{CalendarForm.blank}" styleClass="actionLink">
 												<h:graphicImage style="vertical-align: text-bottom;"
 													value="/newpages/images/buttons/edit_20.gif"
 													rendered="#{CalendarForm.blank}" />
 											</h:commandLink>
-											<h:commandLink title="#{msgs['calendar.title.add']}"
+											<h:commandLink title="#{msgs['calendar.block.add']}"
 												action="#{CalendarForm.addTitleClick}"
 												onclick="if(!addClickQuery()){return false;}"
 												rendered="#{not CalendarForm.blank}" styleClass="actionLink">
@@ -330,7 +330,7 @@
 													value="/newpages/images/buttons/star_blue.gif"
 													rendered="#{not CalendarForm.blank}" />
 											</h:commandLink>
-											<h:commandLink title="#{msgs['calendar.title.remove']}"
+											<h:commandLink title="#{msgs['calendar.block.remove']}"
 												style="vertical-align: text-bottom;"
 												action="#{CalendarForm.removeTitleClick}"
 												onclick="if(!removeClickQuery()){return false;}"

@@ -60,15 +60,13 @@ import de.sub.goobi.helper.XMLUtils;
  * The class Course represents the course of appearance of a newspaper.
  * 
  * <p>
- * A course of appearance consists of one or more Title elements. Interruptions
- * in the course of appearance can be modeled by subsequent Titles with the same
- * heading. In case that the newspaper changed its name, a new Title is
- * required, too.
+ * A course of appearance consists of one or more blocks of time. Interruptions
+ * in the course of appearance can be modeled by subsequent blocks.
  * </p>
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Course extends ArrayList<Title> {
+public class Course extends ArrayList<Block> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -83,8 +81,8 @@ public class Course extends ArrayList<Title> {
 	 * 
 	 * <p>
 	 * The attribute <code>index="…"</code> is optional. It may be used to
-	 * distinguish different title block with the same title (value from
-	 * <code>heading="…"</code> attribute).
+	 * distinguish different blocks if needed and can be omitted if only one
+	 * block is used.
 	 * </p>
 	 */
 	private static final String ATTRIBUTE_VARIANT = "index";
@@ -166,22 +164,25 @@ public class Course extends ArrayList<Title> {
 
 	/**
 	 * Element <code>&lt;title&gt;</code> used in the XML representation of a
-	 * course of appearance.
+	 * course of appearance. Each <code>&lt;title&gt;</code> element represents
+	 * a block in time the appeared issues belong to. It has the optional
+	 * attribute <code>index="…"</code> and can hold
+	 * <code>&lt;appeared&gt;</code> elements (of any quantity).
 	 * 
 	 * <p>
-	 * Each <code>&lt;title&gt;</code> element represents the title block the
-	 * appeared issues belong to. It has the attributes <code>heading="…"</code>
-	 * (required, must not be empty) and <code>index="…"</code> (optional) and
-	 * can hold <code>&lt;appeared&gt;</code> elements (of any quantity).
+	 * Note: In the original design, the element was intended to model title
+	 * name changes. This was given up later, but for historical reasons, the
+	 * XML element’s name is still “title”. For the original design, see
+	 * https://github.com/goobi/goobi-production/issues/51#issuecomment-38035674
 	 * </p>
 	 */
-	private static final String ELEMENT_TITLE = "title";
+	private static final String ELEMENT_BLOCK = "title";
 
 	/**
 	 * List of Lists of Issues, each representing a process.
 	 */
 	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
-	private final Map<String, Title> resolveByTitleVariantCache = new HashMap<String, Title>();
+	private final Map<String, Block> resolveByBlockVariantCache = new HashMap<String, Block>();
 
 	private boolean processesAreVolatile = true;
 
@@ -213,13 +214,13 @@ public class Course extends ArrayList<Title> {
 				continue;
 			}
 			List<IndividualIssue> process = new ArrayList<IndividualIssue>(initialCapacity);
-			for (Node titleNode = processNode.getFirstChild(); titleNode != null; titleNode = titleNode
+			for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
 					.getNextSibling()) {
-				if (!(titleNode instanceof Element) || !titleNode.getNodeName().equals(ELEMENT_TITLE)) {
+				if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
 					continue;
 				}
-				String variant = ((Element) titleNode).getAttribute(ATTRIBUTE_VARIANT);
-				for (Node issueNode = titleNode.getFirstChild(); issueNode != null; issueNode = issueNode
+				String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
+				for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
 						.getNextSibling()) {
 					if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
 						continue;
@@ -241,17 +242,17 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
-	 * Appends the specified Title to the end of this course.
+	 * Appends the specified block to the end of this course.
 	 * 
-	 * @param title
-	 *            title to be appended to this course
+	 * @param block
+	 *            block to be appended to this course
 	 * @return true (as specified by Collection.add(E))
 	 * @see java.util.ArrayList#add(java.lang.Object)
 	 */
 	@Override
-	public boolean add(Title title) {
-		super.add(title);
-		if (title.countIndividualIssues() > 0) {
+	public boolean add(Block block) {
+		super.add(block);
+		if (block.countIndividualIssues() > 0) {
 			processes.clear();
 		}
 		return true;
@@ -259,18 +260,16 @@ public class Course extends ArrayList<Title> {
 
 	/**
 	 * Adds a LocalDate to the set of additions of the issue identified by
-	 * issueHeading in the title block identified by titleHeading
-	 * and—optionally—variant. Note that in case that the date is outside the
-	 * time range of the described title block, the time range will be expanded.
-	 * Do not use this function in contexts where there is one or more issues in
-	 * the block that have a regular appearance set, because in this case the
-	 * regularly appeared issues in the expanded block will show up later, too,
-	 * which is probably not what you want.
+	 * issueHeading in the block optionally identified by a variant. Note that
+	 * in case that the date is outside the time range of the described block,
+	 * the time range will be expanded. Do not use this function in contexts
+	 * where there is one or more issues in the block that have a regular
+	 * appearance set, because in this case the regularly appeared issues in the
+	 * expanded block will show up later, too, which is probably not what you
+	 * want.
 	 * 
-	 * @param titleHeading
-	 *            heading of the title this issue is in
 	 * @param variant
-	 *            variant of the title heading (may be null)
+	 *            block identifier (may be null)
 	 * @param issueHeading
 	 *            heading of the issue this issue is of
 	 * @param date
@@ -278,27 +277,27 @@ public class Course extends ArrayList<Title> {
 	 * @return an IndividualIssue representing the added issue
 	 */
 	private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
-		Title title = get(variant);
-		if (title == null) {
-			title = new Title(this, variant);
-			title.setFirstAppearance(date);
-			title.setLastAppearance(date);
-			add(title);
+		Block block = get(variant);
+		if (block == null) {
+			block = new Block(this, variant);
+			block.setFirstAppearance(date);
+			block.setLastAppearance(date);
+			add(block);
 		} else {
-			if (title.getFirstAppearance().isAfter(date)) {
-				title.setFirstAppearance(date);
+			if (block.getFirstAppearance().isAfter(date)) {
+				block.setFirstAppearance(date);
 			}
-			if (title.getLastAppearance().isBefore(date)) {
-				title.setLastAppearance(date);
+			if (block.getLastAppearance().isBefore(date)) {
+				block.setLastAppearance(date);
 			}
 		}
-		Issue issue = title.getIssue(issueHeading);
+		Issue issue = block.getIssue(issueHeading);
 		if (issue == null) {
 			issue = new Issue(this, issueHeading);
-			title.addIssue(issue);
+			block.addIssue(issue);
 		}
 		issue.addAddition(date);
-		return new IndividualIssue(title, issue, date);
+		return new IndividualIssue(block, issue, date);
 	}
 
 	/**
@@ -322,35 +321,33 @@ public class Course extends ArrayList<Title> {
 	 */
 	public long countIndividualIssues() {
 		long result = 0;
-		for (Title title : this) {
-			result += title.countIndividualIssues();
+		for (Block block : this) {
+			result += block.countIndividualIssues();
 		}
 		return result;
 	}
 
 	/**
-	 * Returns the title identified by the given title and—optionally—variant,
-	 * or null if no title with the given combination can be found.
+	 * Returns the block identified by the optionally given variant, or null if
+	 * no block with the given variant can be found.
 	 * 
-	 * @param title
-	 *            the heading of the title to be returned
 	 * @param variant
-	 *            the variant of the title (may be null)
-	 * @return the title identified by the given title and—optionally—variant,
-	 *         or null if no title with the given combination can be found
+	 *            the variant of the block (may be null)
+	 * @return the block identified by the given variant, or null if no block
+	 *         can be found
 	 */
-	private Title get(String variant) {
-		if (resolveByTitleVariantCache.containsKey(variant)) {
-			Title potentialResult = resolveByTitleVariantCache.get(variant);
+	private Block get(String variant) {
+		if (resolveByBlockVariantCache.containsKey(variant)) {
+			Block potentialResult = resolveByBlockVariantCache.get(variant);
 			if (potentialResult.isIdentifiedBy(variant)) {
 				return potentialResult;
 			} else {
-				resolveByTitleVariantCache.remove(variant);
+				resolveByBlockVariantCache.remove(variant);
 			}
 		}
-		for (Title candidate : this) {
+		for (Block candidate : this) {
 			if (candidate.isIdentifiedBy(variant)) {
-				resolveByTitleVariantCache.put(variant, candidate);
+				resolveByBlockVariantCache.put(variant, candidate);
 				return candidate;
 			}
 		}
@@ -369,8 +366,8 @@ public class Course extends ArrayList<Title> {
 		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
 		LocalDate lastAppearance = getLastAppearance();
 		for (LocalDate day = getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-			for (Title title : this) {
-				result.addAll(title.getIndividualIssues(day));
+			for (Block block : this) {
+				result.addAll(block.getIndividualIssues(day));
 			}
 		}
 		return result;
@@ -440,10 +437,10 @@ public class Course extends ArrayList<Title> {
 		final int SUNDAY_PAGES = 240;
 
 		long result = 0;
-		for (Title title : this) {
-			LocalDate lastAppearance = title.getLastAppearance();
-			for (LocalDate day = title.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-				for (Issue issue : title.getIssues()) {
+		for (Block block : this) {
+			LocalDate lastAppearance = block.getLastAppearance();
+			for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
+				for (Issue issue : block.getIssues()) {
 					if (issue.isMatch(day)) {
 						result += day.getDayOfWeek() != DateTimeConstants.SUNDAY ? WEEKDAY_PAGES : SUNDAY_PAGES;
 					}
@@ -464,35 +461,34 @@ public class Course extends ArrayList<Title> {
 	}
 
 	/**
-	 * The function isMatch() iterates over the array of title blocks and
-	 * returns the first one that matches a given date. Since there shouldn’t be
-	 * overlapping blocks, there should be at most one block for which this is
-	 * true. If no matching block is found, it will return null.
+	 * The function isMatch() iterates over the array of blocks and returns the
+	 * first one that matches a given date. Since there shouldn’t be overlapping
+	 * blocks, there should be at most one block for which this is true. If no
+	 * matching block is found, it will return null.
 	 * 
 	 * @param date
 	 *            a LocalDate to examine
-	 * @return the title block on which this date is represented, if any
+	 * @return the block on which this date is represented, if any
 	 */
-	public Title isMatch(LocalDate date) {
-		for (Title title : this) {
-			if (title.isMatch(date)) {
-				return title;
+	public Block isMatch(LocalDate date) {
+		for (Block block : this) {
+			if (block.isMatch(date)) {
+				return block;
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * The method recalculateRegularityOfIssues() recalculates for all Title
-	 * objects of this Course for each Issue the daysOfWeek of its regular
-	 * appearance within the interval of time of the Title. This is especially
-	 * sensible to detect the underlying regularity after lots of issues whose
-	 * existence is known have been added one by one as additions to the
-	 * underlying issue(s).
+	 * The method recalculateRegularityOfIssues() recalculates for all blocks of
+	 * this Course for each Issue the daysOfWeek of its regular appearance
+	 * within the interval of time of the block. This is especially sensible to
+	 * detect the underlying regularity after lots of issues whose existence is
+	 * known have been added one by one as additions to the underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
-		for (Title title : this) {
-			title.recalculateRegularityOfIssues();
+		for (Block block : this) {
+			block.recalculateRegularityOfIssues();
 		}
 	}
 
@@ -511,18 +507,18 @@ public class Course extends ArrayList<Title> {
 	 * @see java.util.ArrayList#remove(int)
 	 */
 	@Override
-	public Title remove(int index) {
-		Title title = super.remove(index);
-		Iterator<Entry<String, Title>> entries = resolveByTitleVariantCache.entrySet().iterator();
+	public Block remove(int index) {
+		Block block = super.remove(index);
+		Iterator<Entry<String, Block>> entries = resolveByBlockVariantCache.entrySet().iterator();
 		while (entries.hasNext()) {
-			if (entries.next().getValue() == title) { // pointer equality
+			if (entries.next().getValue() == block) { // pointer equality
 				entries.remove();
 			}
 		}
-		if (title.countIndividualIssues() > 0) {
+		if (block.countIndividualIssues() > 0) {
 			processes.clear();
 		}
-		return title;
+		return block;
 	}
 
 	/**
@@ -575,28 +571,28 @@ public class Course extends ArrayList<Title> {
 		Element processesNode = result.createElement(ELEMENT_PROCESSES);
 		for (List<IndividualIssue> process : processes) {
 			Element processNode = result.createElement(ELEMENT_PROCESS);
-			Element titleNode = null;
+			Element blockNode = null;
 			int previous = -1;
 			for (IndividualIssue issue : process) {
 				int index = issue.indexIn(this);
-				if (index != previous && titleNode != null) {
-					processNode.appendChild(titleNode);
-					titleNode = null;
+				if (index != previous && blockNode != null) {
+					processNode.appendChild(blockNode);
+					blockNode = null;
 				}
-				if (titleNode == null) {
-					titleNode = result.createElement(ELEMENT_TITLE);
-					titleNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
+				if (blockNode == null) {
+					blockNode = result.createElement(ELEMENT_BLOCK);
+					blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
 				}
 				Element issueNode = result.createElement(ELEMENT_APPEARED);
 				if (issue != null) {
 					issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
 				}
 				issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
-				titleNode.appendChild(issueNode);
+				blockNode.appendChild(issueNode);
 				previous = index;
 			}
-			if (titleNode != null) {
-				processNode.appendChild(titleNode);
+			if (blockNode != null) {
+				processNode.appendChild(blockNode);
 			}
 			processesNode.appendChild(processNode);
 		}

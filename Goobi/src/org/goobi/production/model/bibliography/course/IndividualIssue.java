@@ -95,22 +95,22 @@ public class IndividualIssue {
 	protected final Issue issue;
 
 	/**
-	 * Title block that the issue this is an issue from is in
+	 * Block that the issue this is an issue from is in
 	 */
-	protected final Title title;
+	protected final Block block;
 
 	/**
 	 * Constructor to create an IndividualIssue
 	 * 
-	 * @param title
-	 *            Title block this issue is in
+	 * @param block
+	 *            Block block this issue is in
 	 * @param issue
 	 *            Issue type that this issue is of
 	 * @param date
 	 *            Date of appearance
 	 */
-	IndividualIssue(Title title, Issue issue, LocalDate date) {
-		this.title = title;
+	IndividualIssue(Block block, Issue issue, LocalDate date) {
+		this.block = block;
 		this.issue = issue;
 		this.date = date;
 	}
@@ -231,16 +231,16 @@ public class IndividualIssue {
 
 	/**
 	 * The function indexIn() returns the index of the first occurrence of the
-	 * title of this issue in the given course, or -1 if the course does not
+	 * block of this issue in the given course, or -1 if the course does not
 	 * contain the element.
 	 * 
 	 * @param course
-	 *            course to find the title in
-	 * @return the index of the first occurrence of the title of this issue in
+	 *            course to find the block in
+	 * @return the index of the first occurrence of the block of this issue in
 	 *         the course, or -1 if the course does not contain the element
 	 */
 	int indexIn(Course course) {
-		return course.indexOf(title);
+		return course.indexOf(block);
 	}
 
 	/**
@@ -283,7 +283,7 @@ public class IndividualIssue {
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((issue == null) ? 0 : issue.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((block == null) ? 0 : block.hashCode());
 		return result;
 	}
 
@@ -325,11 +325,11 @@ public class IndividualIssue {
 		} else if (!issue.equals(other.issue)) {
 			return false;
 		}
-		if (title == null) {
-			if (other.title != null) {
+		if (block == null) {
+			if (other.block != null) {
 				return false;
 			}
-		} else if (!title.equals(other.title)) {
+		} else if (!block.equals(other.block)) {
 			return false;
 		}
 		return true;
