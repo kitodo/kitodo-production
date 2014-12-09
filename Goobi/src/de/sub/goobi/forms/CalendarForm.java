@@ -77,104 +77,122 @@ import de.sub.goobi.helper.XMLUtils;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CalendarForm {
-	private static final Logger logger = Logger.getLogger(CalendarForm.class);
-
 	/**
-	 * The constant field ISSUE_COLOURS holds a regular expression to parse date
-	 * inputs in a flexible way.
+	 * The class Cell represents a single table cell on the calendar sheet.
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
+	public class Cell {
+		/**
+		 * The field date holds the date that this cell represents in the course
+		 * of time.
+		 */
+		protected LocalDate date = null;
 
-	/**
-	 * The constant field ISSUE_COLOURS holds the colours used to represent the
-	 * issues in the calendar editor. It is populated on form bean creation, so
-	 * changing the configuration should take effect without need to restart the
-	 * servlet container.
-	 */
-	protected static String[] ISSUE_COLOURS;
-	
-	/**
-	 * The constant field START_RELATION hold the date the course of publication
-	 * of the the German-language “Relation aller Fürnemmen und gedenckwürdigen
-	 * Historien”, which is often recognized as the first newspaper, began. If
-	 * the user tries to create a title block before that date, a hint will be
-	 * shown.
-	 */
-	private static final LocalDate START_RELATION = new LocalDate(1605, 9, 12);
+		/**
+		 * The field issues holds the possible issues for that day.
+		 */
+		protected List<IssueOption> issues = Collections.emptyList();
 
-	/**
-	 * The constant field TODAY hold the date of today. Reading the system clock
-	 * requires much synchronisation throughout the JVM and is therefore only
-	 * done once on form creation.
-	 */
-	private final LocalDate TODAY = LocalDate.now();
+		/**
+		 * The field onBlock contains the statement, whether the day is covered
+		 * by the currently showing block (or otherwise needs to be greyed-out
+		 * in the front end).
+		 */
+		protected boolean onBlock = true; // do not grey out dates which aren’t defined by the calendar system
 
-	/**
-	 * The field course holds the course of appearance currently under edit by
-	 * this calendar form instance.
-	 */
-	protected Course course;
+		/**
+		 * The function getDay() returns the day of month (that is a number in
+		 * 1−31) of the date the cell represents, followed by a full stop, as
+		 * read-only property "day". For cells which are undefined by the
+		 * calendar system, it returns the empty String.
+		 * 
+		 * @return the day of month in enumerative form
+		 */
+		public String getDay() {
+			if (date == null) {
+				return "";
+			}
+			return Integer.toString(date.getDayOfMonth()).concat(".");
+		}
 
-	/**
-	 * The Map titlePickerResolver is populated with the IDs used in the title
-	 * picker list box and the references to the Title objects referenced by the
-	 * IDs for easily looking them up upon change.
-	 */
-	protected Map<String, Title> titlePickerResolver;
+		/**
+		 * The function getIssues() returns the issues that may have appeared on
+		 * that day as read-only field “issues”.
+		 * 
+		 * @return the issues optionally appeared that day
+		 */
+		public List<IssueOption> getIssues() {
+			return issues;
+		}
 
-	/**
-	 * The field titleShowing holds the Title block currently showing in this
-	 * calendar instance. The Title held in titleShowing must be part of the
-	 * course object, too.
-	 */
-	protected Title titleShowing;
+		/**
+		 * The function getStyleClass returns the CSS class names to be printed
+		 * into the HTML to display the table cell state as read-only property
+		 * “styleClass”.
+		 * 
+		 * @return the cell’s CSS style class name
+		 */
+		public String getStyleClass() {
+			if (date == null) {
+				return "";
+			}
+			if (onBlock) {
+				switch (date.getDayOfWeek()) {
+				case DateTimeConstants.SATURDAY:
+					return "saturday";
+				case DateTimeConstants.SUNDAY:
+					return "sunday";
+				default:
+					return "weekday";
+				}
+			} else {
+				switch (date.getDayOfWeek()) {
+				case DateTimeConstants.SATURDAY:
+					return "saturdayNoTitle";
+				case DateTimeConstants.SUNDAY:
+					return "sundayNoTitle";
+				default:
+					return "weekdayNoTitle";
+				}
+			}
+		}
 
-	/**
-	 * The field titlePickerUnchanged is of importance during the update model
-	 * values phase of the JSF life-cycle. During that phase several setter
-	 * methods are sequentially called. The first method called is
-	 * setTitlePickerSelected(). If the user chose a different title block to be
-	 * displayed, titleShowing will be altered. This would cause the subsequent
-	 * calls to other setter methods to overwrite the values in the newly
-	 * selected title block with the values of the previously displayed block
-	 * which come back in in the form that is submitted by the browser if this
-	 * is not blocked. Therefore setTitlePickerSelected() sets
-	 * titlePickerUnchanged to control whether the other setter methods shall or
-	 * shall not write the incoming data into the respective fields.
-	 */
-	protected boolean titlePickerUnchanged = true;
+		/**
+		 * The method setDate() sets the date represented by this calendar sheet
+		 * cell.
+		 * 
+		 * @param date
+		 *            the date represented by this calendar sheet cell
+		 */
+		protected void setDate(LocalDate date) {
+			this.date = date;
+		}
 
-	/**
-	 * The field uploadShowing indicates whether the dialogue box to upload a
-	 * course of appearance XML description is showing or not.
-	 */
-	protected boolean uploadShowing = false;
+		/**
+		 * The method setIssues() sets the list of possible issues for the date
+		 * represented by this calendar sheet cell.
+		 * 
+		 * @param issues
+		 *            the list of issues possible in this cell
+		 */
+		protected void setIssues(List<IssueOption> issues) {
+			this.issues = issues;
+		}
 
-	protected UploadedFile uploadedFile;
-
-	/**
-	 * The field yearShowing tells the year currently showing in this calendar
-	 * instance.
-	 */
-	protected int yearShowing = 1979; // Cf. 42
-
-	/**
-	 * The field firstAppearanceInToChange is set in the setter method
-	 * setFirstAppearance to notify the setter method setLastAppearance that the
-	 * date of first appearance has to be changed. Java Server Faces tries to
-	 * update the data model by sequentially calling two setter methods. By
-	 * allowing the user to alter both fields at one time this may lead to an
-	 * illegal intermediate state in the data model which the latter
-	 * successfully rejects (which it should). Imagine the case that one title
-	 * block is from March until September and the second one from October to
-	 * November. Now the second block shall be moved to January until February.
-	 * Setting the start date from October to January will cause an overlapping
-	 * state with the other block which is prohibited by definition. Therefore
-	 * changing the beginning date must be forwarded to the setter method to
-	 * change the end date to allow this change, which is allowed, if taken
-	 * atomically.
-	 */
-	private LocalDate firstAppearanceIsToChange = null;
+		/**
+		 * The method setOnTitle() can be used to change the piece of
+		 * information whether the day is covered by the currently showing title
+		 * block or not.
+		 * 
+		 * @param onBlock
+		 *            whether the day is covered by the currently showing title
+		 *            block
+		 */
+		protected void setOnBlock(boolean onBlock) {
+			this.onBlock = onBlock;
+		}
+	}
 
 	/**
 	 * The class IssueController backs the control elements that are necessary
@@ -185,15 +203,15 @@ public class CalendarForm {
 	 */
 	public class IssueController {
 		/**
+		 * The field index holds a consecutive index representing its position
+		 * in the list of issues held by the block.
+		 */
+		protected final int index;
+
+		/**
 		 * The field issue holds the issue that is managed by this controller.
 		 */
 		protected final Issue issue;
-
-		/**
-		 * The field index holds a consecutive index representing its position
-		 * in the list of issues held by the title block.
-		 */
-		protected final int index;
 
 		/**
 		 * Constructor. Creates a new IssueController for the given issue and
@@ -202,7 +220,7 @@ public class CalendarForm {
 		 * @param issue
 		 *            Issue that shall be managed by this controller
 		 * @param index
-		 *            consecutive index of the issue in the title block
+		 *            consecutive index of the issue in the block
 		 */
 		protected IssueController(Issue issue, int index) {
 			this.issue = issue;
@@ -211,10 +229,10 @@ public class CalendarForm {
 
 		/**
 		 * The method deleteClick() deletes the issue wrapped by this controller
-		 * from the set of issues held by the title currently showing.
+		 * from the set of issues held by the block currently showing.
 		 */
 		public void deleteClick() {
-			titleShowing.removeIssue(issue);
+			blockShowing.removeIssue(issue);
 		}
 
 		/**
@@ -332,7 +350,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Fridays
 		 */
 		public void setFriday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addFriday();
 				} else {
@@ -350,7 +368,7 @@ public class CalendarForm {
 		 *            heading to be used
 		 */
 		public void setHeading(String heading) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				issue.setHeading(heading);
 			}
 		}
@@ -364,7 +382,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Mondays
 		 */
 		public void setMonday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addMonday();
 				} else {
@@ -382,7 +400,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Saturdays
 		 */
 		public void setSaturday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addSaturday();
 				} else {
@@ -400,7 +418,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Sundays
 		 */
 		public void setSunday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addSunday();
 				} else {
@@ -418,7 +436,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Thursdays
 		 */
 		public void setThursday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addThursday();
 				} else {
@@ -436,7 +454,7 @@ public class CalendarForm {
 		 *            whether the issue appears on Tuesdays
 		 */
 		public void setTuesday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addTuesday();
 				} else {
@@ -454,130 +472,13 @@ public class CalendarForm {
 		 *            whether the issue appears on Wednesdays
 		 */
 		public void setWednesday(boolean appears) {
-			if (titlePickerUnchanged) {
+			if (blockChangerUnchanged) {
 				if (appears) {
 					issue.addWednesday();
 				} else {
 					issue.removeWednesday();
 				}
 			}
-		}
-	}
-
-	/**
-	 * The class Cell represents a single table cell on the calendar sheet.
-	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
-	 */
-	public class Cell {
-		/**
-		 * The field date holds the date that this cell represents in the course
-		 * of time.
-		 */
-		protected LocalDate date = null;
-
-		/**
-		 * The field issues holds the possible issues for that day.
-		 */
-		protected List<IssueOption> issues = Collections.emptyList();
-
-		/**
-		 * The field onTitle contains the statement, whether the day is covered
-		 * by the currently showing title block (or othewise needs to be
-		 * greyed-out in the front end).
-		 */
-		protected boolean onTitle = true; // do not grey out dates which aren’t defined by the calendar system
-
-		/**
-		 * The function getDay() returns the day of month (that is a number in
-		 * 1−31) of the date the cell represents, followed by a full stop, as
-		 * read-only property "day". For cells which are undefined by the
-		 * calendar system, it returns the empty String.
-		 * 
-		 * @return the day of month in enumerative form
-		 */
-		public String getDay() {
-			if (date == null) {
-				return "";
-			}
-			return Integer.toString(date.getDayOfMonth()).concat(".");
-		}
-
-		/**
-		 * The function getIssues() returns the issues that may have appeared on
-		 * that day as read-only field “issues”.
-		 * 
-		 * @return the issues optionally appeared that day
-		 */
-		public List<IssueOption> getIssues() {
-			return issues;
-		}
-
-		/**
-		 * The function getStyleClass returns the CSS class names to be printed
-		 * into the HTML to display the table cell state as read-only property
-		 * “styleClass”.
-		 * 
-		 * @return the cell’s CSS style class name
-		 */
-		public String getStyleClass() {
-			if (date == null) {
-				return "";
-			}
-			if (onTitle) {
-				switch (date.getDayOfWeek()) {
-				case DateTimeConstants.SATURDAY:
-					return "saturday";
-				case DateTimeConstants.SUNDAY:
-					return "sunday";
-				default:
-					return "weekday";
-				}
-			} else {
-				switch (date.getDayOfWeek()) {
-				case DateTimeConstants.SATURDAY:
-					return "saturdayNoTitle";
-				case DateTimeConstants.SUNDAY:
-					return "sundayNoTitle";
-				default:
-					return "weekdayNoTitle";
-				}
-			}
-		}
-
-		/**
-		 * The method setDate() sets the date represented by this calendar sheet
-		 * cell.
-		 * 
-		 * @param date
-		 *            the date represented by this calendar sheet cell
-		 */
-		protected void setDate(LocalDate date) {
-			this.date = date;
-		}
-
-		/**
-		 * The method setIssues() sets the list of possible issues for the date
-		 * represented by this calendar sheet cell.
-		 * 
-		 * @param issues
-		 *            the list of issues possible in this cell
-		 */
-		protected void setIssues(List<IssueOption> issues) {
-			this.issues = issues;
-		}
-
-		/**
-		 * The method setOnTitle() can be used to change the piece of
-		 * information whether the day is covered by the currently showing title
-		 * block or not.
-		 * 
-		 * @param onTitle
-		 *            whether the day is covered by the currently showing title
-		 *            block
-		 */
-		protected void setOnTitle(boolean onTitle) {
-			this.onTitle = onTitle;
 		}
 	}
 
@@ -589,16 +490,16 @@ public class CalendarForm {
 	 */
 	public class IssueOption {
 		/**
-		 * The field date holds the date of this possible issue in the course of
-		 * time.
-		 */
-		protected final LocalDate date;
-
-		/**
 		 * The field colour holds the colour representative for optically
 		 * distinguishing the given issue
 		 */
 		protected final String colour;
+
+		/**
+		 * The field date holds the date of this possible issue in the course of
+		 * time.
+		 */
+		protected final LocalDate date;
 
 		/**
 		 * The field issue holds the issue this that this possible issue would
@@ -682,6 +583,104 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The constant field ISSUE_COLOURS holds a regular expression to parse date
+	 * inputs in a flexible way.
+	 */
+	private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
+
+	/**
+	 * The constant field ISSUE_COLOURS holds the colours used to represent the
+	 * issues in the calendar editor. It is populated on form bean creation, so
+	 * changing the configuration should take effect without need to restart the
+	 * servlet container.
+	 */
+	protected static String[] ISSUE_COLOURS;
+
+	private static final Logger logger = Logger.getLogger(CalendarForm.class);
+
+	/**
+	 * The constant field START_RELATION hold the date the course of publication
+	 * of the the German-language “Relation aller Fürnemmen und gedenckwürdigen
+	 * Historien”, which is often recognized as the first newspaper, began. If
+	 * the user tries to create a block before that date, a hint will be shown.
+	 */
+	private static final LocalDate START_RELATION = new LocalDate(1605, 9, 12);
+
+	/**
+	 * The Map blockChangerResolver is populated with the IDs used in the block
+	 * changer drop down element and the references to the block objects
+	 * referenced by the IDs for easily looking them up upon change.
+	 */
+	protected Map<String, Title> blockChangerResolver;
+
+	/**
+	 * The field blockChangerUnchanged is of importance during the update model
+	 * values phase of the JSF life-cycle. During that phase several setter
+	 * methods are sequentially called. The first method called is
+	 * setBlockChangerSelected(). If the user chose a different block to be
+	 * displayed, blockShowing will be altered. This would cause the subsequent
+	 * calls to other setter methods to overwrite the values in the newly
+	 * selected block with the values of the previously displayed block which
+	 * come back in in the form that is submitted by the browser if this is not
+	 * blocked. Therefore setBlockChangerSelected() sets blockChangerUnchanged
+	 * to control whether the other setter methods shall or shall not write the
+	 * incoming data into the respective fields.
+	 */
+	protected boolean blockChangerUnchanged = true;
+
+	/**
+	 * The field blockShowing holds the block currently showing in this calendar
+	 * instance. The block held in blockShowing must be part of the course
+	 * object, too.
+	 */
+	protected Title blockShowing;
+
+	/**
+	 * The field course holds the course of appearance currently under edit by
+	 * this calendar form instance.
+	 */
+	protected Course course;
+
+	/**
+	 * The field firstAppearanceInToChange is set in the setter method
+	 * setFirstAppearance to notify the setter method setLastAppearance that the
+	 * date of first appearance has to be changed. Java Server Faces tries to
+	 * update the data model by sequentially calling two setter methods. By
+	 * allowing the user to alter both fields at one time this may lead to an
+	 * illegal intermediate state in the data model which the latter
+	 * successfully rejects (which it should). Imagine the case that one block
+	 * is from March until September and the second one from October to
+	 * November. Now the second block shall be moved to January until February.
+	 * Setting the start date from October to January will cause an overlapping
+	 * state with the other block which is prohibited by definition. Therefore
+	 * changing the beginning date must be forwarded to the setter method to
+	 * change the end date to allow this change, which is allowed, if taken
+	 * atomically.
+	 */
+	private LocalDate firstAppearanceIsToChange = null;
+
+	/**
+	 * The constant field TODAY hold the date of today. Reading the system clock
+	 * requires much synchronisation throughout the JVM and is therefore only
+	 * done once on form creation.
+	 */
+	private final LocalDate TODAY = LocalDate.now();
+
+	protected UploadedFile uploadedFile;
+
+	/**
+	 * The field uploadShowing indicates whether the dialogue box to upload a
+	 * course of appearance XML description is showing or not.
+	 */
+	protected boolean uploadShowing = false;
+
+	/**
+	 * The field yearShowing tells the year currently showing in this calendar
+	 * instance.
+	 */
+	protected int yearShowing = 1979; // Cf. 42
+
+	/**
 	 * Empty constructor. Creates a new form without yet any data.
 	 * 
 	 * <p>
@@ -695,30 +694,16 @@ public class CalendarForm {
 		ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
 				"#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000").split(";");
 		course = new Course();
-		titlePickerResolver = new HashMap<String, Title>();
-		titleShowing = null;
-	}
-
-	/**
-	 * The method addTitleClick() creates and adds a copy of the currently
-	 * showing title block.
-	 */
-	public void addTitleClick() {
-		Title copy = titleShowing.clone(course);
-		LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
-		copy.setFirstAppearance(firstAppearance);
-		copy.setLastAppearance(firstAppearance);
-		course.add(copy);
-		titleShowing = copy;
-		navigate();
+		blockChangerResolver = new HashMap<String, Title>();
+		blockShowing = null;
 	}
 
 	/**
 	 * The method addIssueClick() adds a new issue to the set of issues held by
-	 * the title currently showing.
+	 * the block currently showing.
 	 */
 	public void addIssueClick() {
-		titleShowing.addIssue(new Issue(course));
+		blockShowing.addIssue(new Issue(course));
 	}
 
 	/**
@@ -727,6 +712,65 @@ public class CalendarForm {
 	 */
 	public void backwardClick() {
 		yearShowing -= 1;
+	}
+
+	/**
+	 * The function buildIssueOptions() creates a list of issueOptions for a
+	 * given date.
+	 * 
+	 * @param issueControllers
+	 *            the list of issue controllers in question
+	 * @param date
+	 *            the date in question
+	 * @return a list of issue options for the date
+	 */
+	protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
+		List<IssueOption> result = new ArrayList<IssueOption>();
+		for (IssueController controller : issueControllers) {
+			result.add(new IssueOption(controller, date));
+		}
+		return result;
+	}
+
+	/**
+	 * The function checkBlockPlausibility compares the dates entered against
+	 * some plausibility assumptions and sets hints otherwise.
+	 */
+	private void checkBlockPlausibility() {
+		if (blockShowing.getFirstAppearance() != null && blockShowing.getLastAppearance() != null) {
+			if (blockShowing.getFirstAppearance().plusYears(100).isBefore(blockShowing.getLastAppearance())) {
+				Helper.setMeldung("calendar.title.long");
+			}
+			if (blockShowing.getFirstAppearance().isAfter(blockShowing.getLastAppearance())) {
+				Helper.setFehlerMeldung("calendar.title.negative");
+			}
+			if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
+				Helper.setMeldung("calendar.title.firstAppearance.early");
+			}
+			if (blockShowing.getFirstAppearance().isAfter(TODAY)) {
+				Helper.setMeldung("calendar.title.firstAppearance.fiction");
+			}
+			if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
+				Helper.setMeldung("calendar.title.lastAppearance.early");
+			}
+			if (blockShowing.getLastAppearance().isAfter(TODAY)) {
+				Helper.setMeldung("calendar.title.lastAppearance.fiction");
+			}
+		}
+	}
+
+	/**
+	 * The method copyBlockClick() creates and adds a copy of the currently
+	 * showing block.
+	 */
+	public void copyBlockClick() {
+		Title copy = blockShowing.clone(course);
+		LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
+		copy.setFirstAppearance(firstAppearance);
+		copy.setLastAppearance(firstAppearance);
+		course.add(copy);
+		blockShowing = copy;
+		navigate();
 	}
 
 	/**
@@ -784,18 +828,53 @@ public class CalendarForm {
 
 	/**
 	 * The function getBlank() returns whether the calendar editor is in mint
-	 * condition, i.e. there is no title block defined yet, as read-only
-	 * property “blank”.
+	 * condition, i.e. there is no block defined yet, as read-only property
+	 * “blank”.
 	 * 
 	 * <p>
 	 * Side note: “empty” is a reserved word in JSP and cannot be used as
 	 * property name.
 	 * </p>
 	 * 
-	 * @return whether there is no title block yet
+	 * @return whether there is no block yet
 	 */
 	public boolean getBlank() {
 		return course.size() == 0;
+	}
+
+	/**
+	 * The function getBlockChangerOptions() returns the elements for the block
+	 * changer drop down element as read only property "blockChangerOptions". It
+	 * returns a List of Map with each two entries: "value" and "label". "value"
+	 * is the hashCode() in hex of the block which will later be used if the
+	 * field "blockChangerSelected" is altered to choose the currently selected
+	 * block, "label" is the readable description to be shown to the user.
+	 * 
+	 * @return the elements for the block changer drop down element
+	 */
+	public List<Map<String, String>> getBlockChangerOptions() {
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		for (Title block : course) {
+			String value = Integer.toHexString(block.hashCode());
+			blockChangerResolver.put(value, block);
+			Map<String, String> item = new HashMap<String, String>();
+			item.put("value", value);
+			item.put("label", block.toString(DateUtils.DATE_FORMATTER));
+			result.add(item);
+		}
+		return result;
+	}
+
+	/**
+	 * The function getBlockChangerSelected() returns the hashCode() value of
+	 * the block currently selected as read-write property
+	 * "blockChangerSelected". If a new block is under edit, returns the empty
+	 * String.
+	 * 
+	 * @return identifier of the selected block
+	 */
+	public String getBlockChangerSelected() {
+		return blockShowing == null ? "" : Integer.toHexString(blockShowing.hashCode());
 	}
 
 	/**
@@ -842,117 +921,40 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The method populateByCalendar() populates an empty calendar sheet by
-	 * iterating on LocalDate.
-	 * 
-	 * @param sheet
-	 *            calendar sheet to populate
-	 */
-	protected void populateByCalendar(List<List<Cell>> sheet) {
-		Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<Integer, List<IssueController>>();
-		Title currentTitle = null;
-		ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
-		for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
-				.plusDays(1)) {
-			Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
-			cell.setDate(date);
-			if (currentTitle == null || !currentTitle.isMatch(date)) {
-				currentTitle = course.isMatch(date);
-			}
-			if (currentTitle == null) {
-				cell.setOnTitle(false);
-			} else {
-				Integer hashCode = Integer.valueOf(currentTitle.hashCode());
-				if (!issueControllersCreatedOnce.containsKey(hashCode)) {
-					issueControllersCreatedOnce.put(hashCode, getIssues(currentTitle));
-				}
-				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce.get(hashCode), date));
-			}
-		}
-	}
-
-	/**
-	 * The function buildIssueOptions() creates a list of issueOptions for a
-	 * given date.
-	 * 
-	 * @param issueControllers
-	 *            the list of issue controllers in question
-	 * @param date
-	 *            the date in question
-	 * @return a list of issue options for the date
-	 */
-	protected List<IssueOption> buildIssueOptions(List<IssueController> issueControllers, LocalDate date) {
-		List<IssueOption> result = new ArrayList<IssueOption>();
-		for (IssueController controller : issueControllers) {
-			result.add(new IssueOption(controller, date));
-		}
-		return result;
-	}
-
-	/**
-	 * The function checkTitlePlausibility compares the dates entered against
-	 * some plausibility assumptions and sets hints otherwise.
-	 */
-	private void checkTitlePlausibility() {
-		if (titleShowing.getFirstAppearance() != null && titleShowing.getLastAppearance() != null) {
-			if (titleShowing.getFirstAppearance().plusYears(100).isBefore(titleShowing.getLastAppearance())) {
-				Helper.setMeldung("calendar.title.long");
-			}
-			if (titleShowing.getFirstAppearance().isAfter(titleShowing.getLastAppearance())) {
-				Helper.setFehlerMeldung("calendar.title.negative");
-			}
-			if (titleShowing.getFirstAppearance().isBefore(START_RELATION)) {
-				Helper.setMeldung("calendar.title.firstAppearance.early");
-			}
-			if (titleShowing.getFirstAppearance().isAfter(TODAY)) {
-				Helper.setMeldung("calendar.title.firstAppearance.fiction");
-			}
-			if (titleShowing.getLastAppearance().isBefore(START_RELATION)) {
-				Helper.setMeldung("calendar.title.lastAppearance.early");
-			}
-			if (titleShowing.getLastAppearance().isAfter(TODAY)) {
-				Helper.setMeldung("calendar.title.lastAppearance.fiction");
-			}
-		}
-	}
-
-	/**
 	 * The function getFirstAppearance() returns the date of first appearance of
-	 * the Title block currently showing as read-write property
-	 * "firstAppearance".
+	 * the block currently showing as read-write property "firstAppearance".
 	 * 
-	 * @return date of first appearance of currently showing title
+	 * @return date of first appearance of currently showing block
 	 */
 	public String getFirstAppearance() {
-		if (titleShowing != null && titleShowing.getFirstAppearance() != null) {
-			return DateUtils.DATE_FORMATTER.print(titleShowing.getFirstAppearance());
+		if (blockShowing != null && blockShowing.getFirstAppearance() != null) {
+			return DateUtils.DATE_FORMATTER.print(blockShowing.getFirstAppearance());
 		} else {
 			return "";
 		}
 	}
 
 	/**
-	 * The function getIssues() returns the list of issues held by the title
-	 * block currently showing as read-only property "issues".
+	 * The function getIssues() returns the list of issues held by the block
+	 * currently showing as read-only property "issues".
 	 * 
 	 * @return the list of issues
 	 */
 	public List<IssueController> getIssues() {
-		return titleShowing != null ? getIssues(titleShowing) : new ArrayList<IssueController>();
+		return blockShowing != null ? getIssues(blockShowing) : new ArrayList<IssueController>();
 	}
 
 	/**
-	 * The function getIssues() returns the list of issues for a given title
-	 * block.
+	 * The function getIssues() returns the list of issues for a given block.
 	 * 
-	 * @param title
-	 *            title whose issues are to be returned
+	 * @param block
+	 *            block whose issues are to be returned
 	 * @return the list of issues
 	 */
-	private List<IssueController> getIssues(Title title) {
+	private List<IssueController> getIssues(Title block) {
 		List<IssueController> result = new ArrayList<IssueController>();
-		if (title != null) {
-			for (Issue issue : title.getIssues()) {
+		if (block != null) {
+			for (Issue issue : block.getIssues()) {
 				result.add(new IssueController(issue, result.size()));
 			}
 		}
@@ -961,52 +963,16 @@ public class CalendarForm {
 
 	/**
 	 * The function getLastAppearance() returns the date of last appearance of
-	 * the Title block currently showing as read-write property
-	 * "lastAppearance".
+	 * the block currently showing as read-write property "lastAppearance".
 	 * 
-	 * @return date of last appearance of currently showing title
+	 * @return date of last appearance of currently showing block
 	 */
 	public String getLastAppearance() {
-		if (titleShowing != null && titleShowing.getLastAppearance() != null) {
-			return DateUtils.DATE_FORMATTER.print(titleShowing.getLastAppearance());
+		if (blockShowing != null && blockShowing.getLastAppearance() != null) {
+			return DateUtils.DATE_FORMATTER.print(blockShowing.getLastAppearance());
 		} else {
 			return "";
 		}
-	}
-
-	/**
-	 * The function getTitlePickerOptions() returns the elements for the title
-	 * picker list box as read only property "titlePickerOptions". It returns a
-	 * List of Map with each two entries: "value" and "label". "value" is the
-	 * hashCode() in hex of the Title which will later be used if the field
-	 * "titlePickerSelected" is altered to choose the currently selected title
-	 * block, "label" is the readable description to be shown to the user.
-	 * 
-	 * @return the elements for the title picker list box
-	 */
-	public List<Map<String, String>> getTitlePickerOptions() {
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-		for (Title title : course) {
-			String value = Integer.toHexString(title.hashCode());
-			titlePickerResolver.put(value, title);
-			Map<String, String> item = new HashMap<String, String>();
-			item.put("value", value);
-			item.put("label", title.toString(DateUtils.DATE_FORMATTER));
-			result.add(item);
-		}
-		return result;
-	}
-
-	/**
-	 * The function getTitlePickerSelected() returns the hashCode() value of the
-	 * title block currently selected as read-write property
-	 * "titlePickerSelected". If a new block is under edit, returns the empty
-	 * String.
-	 * 
-	 * @return identifier of the selected title
-	 */
-	public String getTitlePickerSelected() {
-		return titleShowing == null ? "" : Integer.toHexString(titleShowing.hashCode());
 	}
 
 	/**
@@ -1020,16 +986,6 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The function getYear() returns the year to be shown in the calendar sheet
-	 * as read-only property "year".
-	 * 
-	 * @return the year to show on the calendar sheet
-	 */
-	public String getYear() {
-		return Integer.toString(yearShowing);
-	}
-
-	/**
 	 * The function getUploadShowing() returns whether the dialog to upload a
 	 * course of appearance XML file shall be shown or not.
 	 * 
@@ -1040,43 +996,53 @@ public class CalendarForm {
 	}
 
 	/**
+	 * The function getYear() returns the year to be shown in the calendar sheet
+	 * as read-only property "year".
+	 * 
+	 * @return the year to show on the calendar sheet
+	 */
+	public String getYear() {
+		return Integer.toString(yearShowing);
+	}
+
+	/**
 	 * The method hideUploadClick() will be called by Faces if the user clicks
 	 * the cancel button leave the dialog to upload a course of appearance XML
 	 * file.
 	 */
 	public void hideUploadClick() {
-		neglectEmptyTitle();
+		neglectEmptyBlock();
 		uploadShowing = false;
 	}
 
 	/**
 	 * The method navigate() alters the year the calendar sheet is shown for so
-	 * that something of the current title block is visible to prevent the user
-	 * from needing to click through centuries manually to get there.
+	 * that something of the current block is visible to prevent the user from
+	 * needing to click through centuries manually to get there.
 	 */
 	protected void navigate() {
 		try {
-			if (yearShowing > titleShowing.getLastAppearance().getYear()) {
-				yearShowing = titleShowing.getLastAppearance().getYear();
+			if (yearShowing > blockShowing.getLastAppearance().getYear()) {
+				yearShowing = blockShowing.getLastAppearance().getYear();
 			}
-			if (yearShowing < titleShowing.getFirstAppearance().getYear()) {
-				yearShowing = titleShowing.getFirstAppearance().getYear();
+			if (yearShowing < blockShowing.getFirstAppearance().getYear()) {
+				yearShowing = blockShowing.getFirstAppearance().getYear();
 			}
 		} catch (NullPointerException e) {
 		}
 	}
 
 	/**
-	 * The function neglectEmptyTitle() removes an empty title block. Usually,
-	 * an empty title block cannot be created. But if the user clicks the upload
-	 * dialog button, the form must be submitted, which causes the setters of
-	 * the form fields to create one prior to the function call. To stay
-	 * consistent, it is removed here again.
+	 * The function neglectEmptyBlock() removes an empty block. Usually, an
+	 * empty block cannot be created. But if the user clicks the upload dialog
+	 * button, the form must be submitted, which causes the setters of the form
+	 * fields to create one prior to the function call. To stay consistent, it
+	 * is removed here again.
 	 */
-	protected void neglectEmptyTitle() {
-		if (titleShowing != null && titleShowing.isEmpty()) {
-			course.remove(titleShowing);
-			titleShowing = null;
+	protected void neglectEmptyBlock() {
+		if (blockShowing != null && blockShowing.isEmpty()) {
+			course.remove(blockShowing);
+			blockShowing = null;
 		}
 	}
 
@@ -1137,7 +1103,7 @@ public class CalendarForm {
 			} catch (IllegalFieldValueException invalidDate) {
 				try {
 					LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
-				Helper.setMeldung("calendar.title." + input + ".swapped");
+					Helper.setMeldung("calendar.title." + input + ".swapped");
 					return swapped;
 				} catch (IllegalFieldValueException stillInvalid) {
 				}
@@ -1150,26 +1116,82 @@ public class CalendarForm {
 	}
 
 	/**
-	 * The method removeTitleClick() deletes the currently selected Title block
-	 * from the course of appearance. If there is only one block left, the
-	 * editor will instead be reset.
+	 * The method populateByCalendar() populates an empty calendar sheet by
+	 * iterating on LocalDate.
+	 * 
+	 * @param sheet
+	 *            calendar sheet to populate
+	 */
+	protected void populateByCalendar(List<List<Cell>> sheet) {
+		Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<Integer, List<IssueController>>();
+		Title currentBlock = null;
+		ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
+		for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
+				.plusDays(1)) {
+			Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
+			cell.setDate(date);
+			if (currentBlock == null || !currentBlock.isMatch(date)) {
+				currentBlock = course.isMatch(date);
+			}
+			if (currentBlock == null) {
+				cell.setOnBlock(false);
+			} else {
+				Integer hashCode = Integer.valueOf(currentBlock.hashCode());
+				if (!issueControllersCreatedOnce.containsKey(hashCode)) {
+					issueControllersCreatedOnce.put(hashCode, getIssues(currentBlock));
+				}
+				cell.setIssues(buildIssueOptions(issueControllersCreatedOnce.get(hashCode), date));
+			}
+		}
+	}
+
+	/**
+	 * The method removeBlockClick() deletes the currently selected block from
+	 * the course of appearance. If there is only one block left, the editor
+	 * will instead be reset.
 	 * 
 	 * @throws IndexOutOfBoundsException
-	 *             if the title referenced by “titleShowing” isn’t contained in
+	 *             if the block referenced by “blockShowing” isn’t contained in
 	 *             the course of appearance
 	 */
-	public void removeTitleClick() {
+	public void removeBlockClick() {
 		if (course.size() < 2) {
 			course.clear();
-			titlePickerResolver.clear();
-			titleShowing = null;
+			blockChangerResolver.clear();
+			blockShowing = null;
 		} else {
-			int index = course.indexOf(titleShowing);
+			int index = course.indexOf(blockShowing);
 			course.remove(index);
 			if (index > 0) {
 				index--;
 			}
-			titleShowing = course.get(index);
+			blockShowing = course.get(index);
+			navigate();
+		}
+	}
+
+	/**
+	 * The method setBlockChangerSelected() will be called by Faces to store a
+	 * new value of the read-write property "blockChangerSelected". If it is
+	 * different from the current one, this means that the user selected a
+	 * different Block in the block changer drop down element. The event will be
+	 * used to alter the “blockShowing” field which keeps the block currently
+	 * showing. “updateAllowed” will be set accordingly to update the contents
+	 * of the current block or to prevent fields containing data from the
+	 * previously displaying block to overwrite the data inside the newly
+	 * selected one.
+	 * 
+	 * @param value
+	 *            hashCode() in hex of the block to be selected
+	 */
+	public void setBlockChangerSelected(String value) {
+		if (value == null) {
+			return;
+		}
+		blockChangerUnchanged = value.equals(Integer.toHexString(blockShowing.hashCode()));
+		if (!blockChangerUnchanged) {
+			blockShowing = blockChangerResolver.get(value);
+			checkBlockPlausibility();
 			navigate();
 		}
 	}
@@ -1177,11 +1199,10 @@ public class CalendarForm {
 	/**
 	 * The method setFirstAppearance() will be called by Faces to store a new
 	 * value of the read-write property "firstAppearance", which represents the
-	 * the date of first appearance of the Title block currently showing. The
-	 * event will be used to either alter the date of first appearance of the
-	 * Title block defined by the “titleShowing” field or, in case that a new
-	 * title block is under edit, to initially set its the date of first
-	 * appearance.
+	 * the date of first appearance of the block currently showing. The event
+	 * will be used to either alter the date of first appearance of the block
+	 * defined by the “blockShowing” field or, in case that a new block is under
+	 * edit, to initially set its the date of first appearance.
 	 * 
 	 * @param firstAppearance
 	 *            new date of first appearance
@@ -1191,21 +1212,21 @@ public class CalendarForm {
 		try {
 			newFirstAppearance = parseDate(firstAppearance, "firstAppearance");
 		} catch (IllegalArgumentException e) {
-			newFirstAppearance = titleShowing != null ? titleShowing.getFirstAppearance() : null;
+			newFirstAppearance = blockShowing != null ? blockShowing.getFirstAppearance() : null;
 		}
 		try {
-			if (titleShowing != null) {
-				if (titlePickerUnchanged) {
-					if (titleShowing.getFirstAppearance() == null
-							|| !titleShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
+			if (blockShowing != null) {
+				if (blockChangerUnchanged) {
+					if (blockShowing.getFirstAppearance() == null
+							|| !blockShowing.getFirstAppearance().isEqual(newFirstAppearance)) {
 						firstAppearanceIsToChange = newFirstAppearance;
 					}
 				}
 			} else {
 				if (newFirstAppearance != null) {
-					titleShowing = new Title(course);
-					titleShowing.setFirstAppearance(newFirstAppearance);
-					course.add(titleShowing);
+					blockShowing = new Title(course);
+					blockShowing.setFirstAppearance(newFirstAppearance);
+					course.add(blockShowing);
 				}
 			}
 		} catch (IllegalArgumentException e) {
@@ -1216,11 +1237,10 @@ public class CalendarForm {
 	/**
 	 * The method setLastAppearance() will be called by Faces to store a new
 	 * value of the read-write property "lastAppearance", which represents the
-	 * the date of last appearance of the Title block currently showing. The
-	 * event will be used to either alter the date of last appearance of the
-	 * Title block defined by the “titleShowing” field or, in case that a new
-	 * title block is under edit, to initially set its the date of last
-	 * appearance.
+	 * the date of last appearance of the block currently showing. The event
+	 * will be used to either alter the date of last appearance of the block
+	 * defined by the “blockShowing” field or, in case that a new block is under
+	 * edit, to initially set its the date of last appearance.
 	 * 
 	 * @param lastAppearance
 	 *            new date of last appearance
@@ -1230,80 +1250,54 @@ public class CalendarForm {
 		try {
 			newLastAppearance = parseDate(lastAppearance, "lastAppearance");
 		} catch (IllegalArgumentException e) {
-			newLastAppearance = titleShowing != null ? titleShowing.getLastAppearance() : null;
+			newLastAppearance = blockShowing != null ? blockShowing.getLastAppearance() : null;
 		}
 		try {
-			if (titleShowing != null) {
-				if (titlePickerUnchanged) {
+			if (blockShowing != null) {
+				if (blockChangerUnchanged) {
 					if (firstAppearanceIsToChange == null) {
-						if (titleShowing.getLastAppearance() == null
-								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
-							if (titleShowing.getFirstAppearance() != null
-									&& newLastAppearance.isBefore(titleShowing.getFirstAppearance())) {
+						if (blockShowing.getLastAppearance() == null
+								|| !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+							if (blockShowing.getFirstAppearance() != null
+									&& newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
 								Helper.setFehlerMeldung("calendar.title.negative");
 								return;
 							}
-							titleShowing.setLastAppearance(newLastAppearance);
-							checkTitlePlausibility();
+							blockShowing.setLastAppearance(newLastAppearance);
+							checkBlockPlausibility();
 							navigate();
 						}
 					} else {
-						if (titleShowing.getLastAppearance() == null
-								|| !titleShowing.getLastAppearance().isEqual(newLastAppearance)) {
+						if (blockShowing.getLastAppearance() == null
+								|| !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
 							if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
 								Helper.setFehlerMeldung("calendar.title.negative");
 								return;
 							}
-							titleShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
+							blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
 						} else {
-							if (titleShowing.getLastAppearance() != null
-									&& titleShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
+							if (blockShowing.getLastAppearance() != null
+									&& blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
 								Helper.setFehlerMeldung("calendar.title.negative");
 								return;
 							}
-							titleShowing.setFirstAppearance(firstAppearanceIsToChange);
+							blockShowing.setFirstAppearance(firstAppearanceIsToChange);
 						}
-						checkTitlePlausibility();
+						checkBlockPlausibility();
 						navigate();
 					}
 				}
 			} else {
 				if (newLastAppearance != null) {
-					titleShowing = new Title(course);
-					titleShowing.setLastAppearance(newLastAppearance);
-					course.add(titleShowing);
+					blockShowing = new Title(course);
+					blockShowing.setLastAppearance(newLastAppearance);
+					course.add(blockShowing);
 				}
 			}
 		} catch (IllegalArgumentException e) {
 			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
 		} finally {
 			firstAppearanceIsToChange = null;
-		}
-	}
-
-	/**
-	 * The method setTitlePickerSelected() will be called by Faces to store a
-	 * new value of the read-write property "titlePickerSelected". If it is
-	 * different from the current one, this means that the user selected a
-	 * different Title block in the title picker list box. The event will be
-	 * used to alter the “titleShowing” field which keeps the Title block
-	 * currently showing. “updateAllowed” will be set accordingly to update the
-	 * contents of the current title block or to prevent fields containing data
-	 * from the previously displaying title block to overwrite the data inside
-	 * the newly selected one.
-	 * 
-	 * @param value
-	 *            hashCode() in hex of the Title to be selected
-	 */
-	public void setTitlePickerSelected(String value) {
-		if (value == null) {
-			return;
-		}
-		titlePickerUnchanged = value.equals(Integer.toHexString(titleShowing.hashCode()));
-		if (!titlePickerUnchanged) {
-			titleShowing = titlePickerResolver.get(value);
-			checkTitlePlausibility();
-			navigate();
 		}
 	}
 
@@ -1324,7 +1318,7 @@ public class CalendarForm {
 	 * the button to upload a course of appearance XML file
 	 */
 	public void showUploadClick() {
-		neglectEmptyTitle();
+		neglectEmptyBlock();
 		uploadShowing = true;
 	}
 
@@ -1343,21 +1337,21 @@ public class CalendarForm {
 			}
 			Document xml = XMLUtils.load(uploadedFile.getInputStream());
 			course = new Course(xml);
-			titleShowing = course.get(0);
+			blockShowing = course.get(0);
 			Helper.removeManagedBean("GranularityForm");
 			navigate();
 		} catch (SAXException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.SAXException");
 			logger.error(e.getMessage(), e);
-			neglectEmptyTitle();
+			neglectEmptyBlock();
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
 			logger.error(e.getMessage(), e);
-			neglectEmptyTitle();
+			neglectEmptyBlock();
 		} catch (NoSuchElementException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
 			logger.error(e.getMessage(), e);
-			neglectEmptyTitle();
+			neglectEmptyBlock();
 		} finally {
 			uploadedFile = null;
 			uploadShowing = false;
