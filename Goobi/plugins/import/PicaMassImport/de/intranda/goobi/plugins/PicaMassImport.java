@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -315,10 +316,24 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 					// collections
 					if (this.currentCollectionList != null) {
 						MetadataType mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
+						DocStruct topLogicalStruct = dd.getLogicalDocStruct();
+						List<DocStruct> volumes = topLogicalStruct.getAllChildren();
+						if (volumes == null) {
+							volumes = Collections.emptyList();
+						}
 						for (String collection : this.currentCollectionList) {
 							Metadata mdCollection = new Metadata(mdTypeCollection);
 							mdCollection.setValue(collection);
-							dd.getLogicalDocStruct().addMetadata(mdCollection);
+							topLogicalStruct.addMetadata(mdCollection);
+							for (DocStruct volume : volumes) {
+								try {
+									Metadata mdCollectionForVolume = new Metadata(mdTypeCollection);
+									mdCollectionForVolume.setValue(collection);
+									volume.addMetadata(mdCollectionForVolume);
+								} catch (MetadataTypeNotAllowedException e) {
+									logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
+								}
+							}
 						}
 					}
 
