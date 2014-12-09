@@ -166,7 +166,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 				pointers.clear();
 				for (Prozess process1 : batch.getProcesses()) {
 					process = process1;
-					pointers.add(ExportBatchTask.getMetsPointerURL(process));
+					pointers.add(ExportNewspaperBatchTask.getMetsPointerURL(process));
 				}
 				processesIterator = batch.getProcesses().iterator();
 				stepcounter++;
@@ -245,7 +245,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 			type = root.getAllChildren().get(0).getType().getName();
 		} catch (NullPointerException e) {
 		}
-		String ownPointer = ExportBatchTask.getMetsPointerURL(process);
+		String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
 		Prefs ruleset = process.getRegelsatz().getPreferences();
 		for (String pointer : allPointers) {
 			if (!pointer.equals(ownPointer)) {

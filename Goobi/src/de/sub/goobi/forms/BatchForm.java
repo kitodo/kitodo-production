@@ -63,7 +63,7 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.tasks.ExportBatchTask;
+import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BatchDAO;
@@ -472,7 +472,7 @@ public class BatchForm extends BasisForm {
 					}
 					return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
 				case NEWSPAPER:
-					TaskManager.addTask(new ExportBatchTask(batch));
+					TaskManager.addTask(new ExportNewspaperBatchTask(batch));
 					return "taskmanager";
 				case SERIAL:
 					TaskManager.addTask(new ExportSerialBatchTask(batch));
