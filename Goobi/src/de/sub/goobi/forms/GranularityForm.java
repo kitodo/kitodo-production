@@ -58,7 +58,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
-import de.sub.goobi.helper.tasks.CreateProcessesTask;
+import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
 /**
@@ -141,7 +141,7 @@ public class GranularityForm {
 			return "";
 		}
 		Helper.removeManagedBean("ProzesskopieForm");
-		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course, generateBatches);
+		CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course, generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";
 	}
@@ -250,7 +250,7 @@ public class GranularityForm {
 	 * error message string is returned, explaining the user how to fix the
 	 * problem. Quotes are replaced for not to break the Javascript in action
 	 * here.
-	 * 
+	 *
 	 * @return an error message, or the empty string if everything is okay.
 	 */
 	public String getLockMessage() {
@@ -282,7 +282,7 @@ public class GranularityForm {
 	 * The function getNumberOfPages returns the number of pages per issue
 	 * guessed and entered by the user—or null indicating that the user didn’t
 	 * enter anything yet—as read-write property “numberOfPagesPerIssue”
-	 * 
+	 *
 	 * @return the total number of pages of the digitization project
 	 */
 	public Long getNumberOfPagesPerIssue() {
@@ -322,19 +322,19 @@ public class GranularityForm {
 	/**
 	 * The function getPagesPerProcessRounded() returns the pages per process as
 	 * a rounded string.
-	 * 
+	 *
 	 * This should be done in JSF using “convertNumber”, but it doesn’t show any
 	 * effect and the number still prints with a decimal fractions part that is
 	 * not desired. This JSF code should put the number rounded into the request
 	 * scope, but rounding doesn’t work for some unknown reason.
-	 * 
+	 *
 	 * <pre>
 	 * &lt;h:outputText binding=&quot;#{requestScope.pagesPerProcess}&quot; rendered=&quot;false&quot;&gt;
 	 *         value=&quot;#{GranularityForm.numberOfPagesOptionallyGuessed / GranularityForm.numberOfProcesses}&quot;
 	 *     &lt;f:convertNumber maxFractionDigits=&quot;0&quot; /&gt;
 	 * &lt;/h:outputText&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @return the pages per process as a rounded string
 	 */
 	public String getPagesPerProcessRounded() {
@@ -345,7 +345,7 @@ public class GranularityForm {
 	/**
 	 * The function getSelectedBatchOption() returns the level for which batches
 	 * will be created as read-write property “numberOfPagesOptionallyGuessed”
-	 * 
+	 *
 	 * @return an (optionally guessed) total number of pages
 	 */
 	public String getSelectedBatchOption() {
@@ -397,7 +397,7 @@ public class GranularityForm {
 	 * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks
 	 * to save the received value of the read-write property
 	 * “numberOfPagesPerIssue”.
-	 * 
+	 *
 	 * @param value
 	 *            new value to be stored
 	 */

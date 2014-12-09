@@ -810,14 +810,14 @@ span.jscalendar-DB-title-control-normal-style:hover{
 	background-color: #E3ACAC;
 }
 
-.weekdayNoTitle {
+.weekdayNoBlock {
 	background-color: #C9CACC;
 }
 
-.saturdayNoTitle {
+.saturdayNoBlock {
 	background-color: #8AA8B6;
 }
 
-.sundayNoTitle {
+.sundayNoBlock {
 	background-color: #B68A8A;
 }

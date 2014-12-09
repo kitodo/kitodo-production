@@ -75,8 +75,8 @@ import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-public class ExportBatchTask extends EmptyTask {
-	private static final Logger logger = Logger.getLogger(ExportBatchTask.class);
+public class ExportNewspaperBatchTask extends EmptyTask {
+	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
@@ -147,7 +147,7 @@ public class ExportBatchTask extends EmptyTask {
 	private final HashMap<Integer, String> collectedYears;
 
 	/**
-	 * Constructor to create an ExportBatchTask.
+	 * Constructor to create an ExportNewspaperBatchTask.
 	 * 
 	 * @param batch
 	 *            batch to export
@@ -172,7 +172,7 @@ public class ExportBatchTask extends EmptyTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	public ExportBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
+	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
 		super(batch.getLabel());
 		this.batch = batch;
@@ -200,7 +200,7 @@ public class ExportBatchTask extends EmptyTask {
 	 * @param master
 	 *            copy master
 	 */
-	public ExportBatchTask(ExportBatchTask master) {
+	public ExportNewspaperBatchTask(ExportNewspaperBatchTask master) {
 		super(master);
 		batch = master.batch;
 		action = master.action;
@@ -687,14 +687,14 @@ public class ExportBatchTask extends EmptyTask {
 	}
 
 	/**
-	 * The function clone() creates a copy of this CreateProcessesTask for
+	 * The function clone() creates a copy of this ExportNewspaperBatchTask for
 	 * providing the possibility to restart it because a Thread can only be
 	 * started once.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.CloneableLongRunningTask#clone()
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
 	 */
 	@Override
-	public ExportBatchTask clone() {
-		return new ExportBatchTask(this);
+	public ExportNewspaperBatchTask clone() {
+		return new ExportNewspaperBatchTask(this);
 	}
 }
