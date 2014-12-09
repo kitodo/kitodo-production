@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
@@ -529,7 +531,14 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 		StepObject so = StepManager.getStepById(this.mySchritt.getId());
 		new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
-		// new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
+		long millisToWait = ConfigMain.getLongParameter(Parameters.WAIT_ON_CLOSE_STEP, 0);
+		if (millisToWait > 0) {
+			try {
+				TimeUnit.MILLISECONDS.sleep(millisToWait);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 		return FilterAlleStart();
 	}
 
