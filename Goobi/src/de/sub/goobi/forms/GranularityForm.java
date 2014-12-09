@@ -140,6 +140,7 @@ public class GranularityForm {
 			Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
 			return "";
 		}
+		Helper.removeManagedBean("ProzesskopieForm");
 		CreateProcessesTask createProcesses = new CreateProcessesTask(prozesskopieForm, course, generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";
