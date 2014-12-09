@@ -53,10 +53,10 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.goobi.production.model.bibliography.course.Block;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Issue;
-import org.goobi.production.model.bibliography.course.Block;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
@@ -149,11 +149,11 @@ public class CalendarForm {
 			} else {
 				switch (date.getDayOfWeek()) {
 				case DateTimeConstants.SATURDAY:
-					return "saturdayNoTitle";
+					return "saturdayNoBlock";
 				case DateTimeConstants.SUNDAY:
-					return "sundayNoTitle";
+					return "sundayNoBlock";
 				default:
-					return "weekdayNoTitle";
+					return "weekdayNoBlock";
 				}
 			}
 		}
