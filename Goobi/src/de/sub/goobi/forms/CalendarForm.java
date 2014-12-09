@@ -181,13 +181,12 @@ public class CalendarForm {
 		}
 
 		/**
-		 * The method setOnTitle() can be used to change the piece of
-		 * information whether the day is covered by the currently showing title
-		 * block or not.
+		 * The method setOnBlock() can be used to change the piece of
+		 * information whether the day is covered by the currently showing block
+		 * or not.
 		 * 
 		 * @param onBlock
-		 *            whether the day is covered by the currently showing title
-		 *            block
+		 *            whether the day is covered by the currently showing block
 		 */
 		protected void setOnBlock(boolean onBlock) {
 			this.onBlock = onBlock;
