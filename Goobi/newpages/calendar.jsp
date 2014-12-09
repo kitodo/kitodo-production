@@ -75,7 +75,7 @@
 				if (document.getElementById("form1:applyLink").style.display == "none") {
 					return true;
 				} else {
-					return confirm("${msgs['calendar.title.add.query']}");
+					return confirm("${msgs['calendar.block.add.query']}");
 				}
 			}
 		<%--
@@ -98,7 +98,7 @@
 		 * @return whether a block can be deleted
 		 --%>
 			function removeClickQuery() {
-				return confirm("${msgs['calendar.title.remove.query']}");
+				return confirm("${msgs['calendar.block.remove.query']}");
 			}
 		<%--
 		 * The function setIgnoreInvalidValue() inserts an alternate white space
@@ -179,13 +179,13 @@
 			function blockDataIsValid() {
 				if (!document.getElementById("form1:firstAppearance").value
 						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
-					alert("${msgs['calendar.title.firstAppearance.invalid']}");
+					alert("${msgs['calendar.block.firstAppearance.invalid']}");
 					document.getElementById("form1:firstAppearance").focus();
 					return false;
 				}
 				if (!document.getElementById("form1:lastAppearance").value
 						.match(/^\D*\d+\D+\d+\D+\d+\D*$/)) {
-					alert("${msgs['calendar.title.lastAppearance.invalid']}");
+					alert("${msgs['calendar.block.lastAppearance.invalid']}");
 					document.getElementById("form1:lastAppearance").focus();
 					return false;
 				}
@@ -207,7 +207,7 @@
 		 --%>
 			function blockChangerChangeQuery(originValue) {
 				if (document.getElementById("form1:applyLink").style.display == "none"
-						|| confirm("${msgs['calendar.title.alter.query']}"))
+						|| confirm("${msgs['calendar.block.alter.query']}"))
 					return true;
 				setSelectSelectedByValue("form1:blockChanger", originValue);
 				return false;
@@ -280,14 +280,14 @@
 									<htm:fieldset styleClass="calendarTitleMgmt"
 										style="margin-bottom: 14px; ">
 										<htm:legend>
-											<h:outputText value="#{msgs['calendar.title.caption']}" />
+											<h:outputText value="#{msgs['calendar.block.caption']}" />
 										</htm:legend>
 
 										<%-- Input elements for base data --%>
 										<htm:div styleClass="formRow">
 											<%-- Drop down list to switch between already defined blocks --%>
 											<h:outputLabel for="blockChanger" styleClass="leftText"
-												value="#{msgs['calendar.title.select']}"
+												value="#{msgs['calendar.block.select']}"
 												style="margin-top: 10px;" />
 
 											<h:selectOneMenu value="#{CalendarForm.blockChangerSelected}"
@@ -301,7 +301,7 @@
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText
-													value="#{msgs['calendar.title.firstAppearance']}" />
+													value="#{msgs['calendar.block.firstAppearance']}" />
 												<h:inputText value="#{CalendarForm.firstAppearance}"
 													onkeydown="startEditTitle()" onchange="startEditTitle()"
 													id="firstAppearance" />
@@ -309,20 +309,20 @@
 
 											<htm:div styleClass="keepTogether">
 												<h:outputText
-													value="#{msgs['calendar.title.lastAppearance']}" />
+													value="#{msgs['calendar.block.lastAppearance']}" />
 												<h:inputText value="#{CalendarForm.lastAppearance}"
 													onkeydown="startEditTitle()" onchange="startEditTitle()"
 													id="lastAppearance" />
 											</htm:div>
 
 											<%-- Buttons to copy and remove blocks --%>
-											<h:commandLink title="#{msgs['calendar.title.addFirst']}"
+											<h:commandLink title="#{msgs['calendar.block.addFirst']}"
 												rendered="#{CalendarForm.blank}" styleClass="actionLink">
 												<h:graphicImage style="vertical-align: text-bottom;"
 													value="/newpages/images/buttons/edit_20.gif"
 													rendered="#{CalendarForm.blank}" />
 											</h:commandLink>
-											<h:commandLink title="#{msgs['calendar.title.add']}"
+											<h:commandLink title="#{msgs['calendar.block.add']}"
 												action="#{CalendarForm.addTitleClick}"
 												onclick="if(!addClickQuery()){return false;}"
 												rendered="#{not CalendarForm.blank}" styleClass="actionLink">
@@ -330,7 +330,7 @@
 													value="/newpages/images/buttons/star_blue.gif"
 													rendered="#{not CalendarForm.blank}" />
 											</h:commandLink>
-											<h:commandLink title="#{msgs['calendar.title.remove']}"
+											<h:commandLink title="#{msgs['calendar.block.remove']}"
 												style="vertical-align: text-bottom;"
 												action="#{CalendarForm.removeTitleClick}"
 												onclick="if(!removeClickQuery()){return false;}"

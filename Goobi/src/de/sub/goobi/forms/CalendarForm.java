@@ -738,22 +738,22 @@ public class CalendarForm {
 	private void checkBlockPlausibility() {
 		if (blockShowing.getFirstAppearance() != null && blockShowing.getLastAppearance() != null) {
 			if (blockShowing.getFirstAppearance().plusYears(100).isBefore(blockShowing.getLastAppearance())) {
-				Helper.setMeldung("calendar.title.long");
+				Helper.setMeldung("calendar.block.long");
 			}
 			if (blockShowing.getFirstAppearance().isAfter(blockShowing.getLastAppearance())) {
-				Helper.setFehlerMeldung("calendar.title.negative");
+				Helper.setFehlerMeldung("calendar.block.negative");
 			}
 			if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
-				Helper.setMeldung("calendar.title.firstAppearance.early");
+				Helper.setMeldung("calendar.block.firstAppearance.early");
 			}
 			if (blockShowing.getFirstAppearance().isAfter(TODAY)) {
-				Helper.setMeldung("calendar.title.firstAppearance.fiction");
+				Helper.setMeldung("calendar.block.firstAppearance.fiction");
 			}
 			if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
-				Helper.setMeldung("calendar.title.lastAppearance.early");
+				Helper.setMeldung("calendar.block.lastAppearance.early");
 			}
 			if (blockShowing.getLastAppearance().isAfter(TODAY)) {
-				Helper.setMeldung("calendar.title.lastAppearance.fiction");
+				Helper.setMeldung("calendar.block.lastAppearance.fiction");
 			}
 		}
 	}
@@ -1094,7 +1094,7 @@ public class CalendarForm {
 				if (numbers[2] > TODAY.getYear()) {
 					numbers[2] -= 100;
 				}
-				Helper.setMeldung(Helper.getTranslation("calendar.title." + input + ".yearCompleted",
+				Helper.setMeldung(Helper.getTranslation("calendar.block." + input + ".yearCompleted",
 						Arrays.asList(new String[] { dateParser.group(3), Integer.toString(numbers[2]) })));
 			}
 			try {
@@ -1102,14 +1102,14 @@ public class CalendarForm {
 			} catch (IllegalFieldValueException invalidDate) {
 				try {
 					LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
-					Helper.setMeldung("calendar.title." + input + ".swapped");
+					Helper.setMeldung("calendar.block." + input + ".swapped");
 					return swapped;
 				} catch (IllegalFieldValueException stillInvalid) {
 				}
 			}
 		}
 		if (!uploadShowing && value.indexOf("\u00A0") == -1) {
-			Helper.setFehlerMeldung("calendar.title." + input + ".invalid");
+			Helper.setFehlerMeldung("calendar.block." + input + ".invalid");
 		}
 		return null;
 	}
@@ -1229,7 +1229,7 @@ public class CalendarForm {
 				}
 			}
 		} catch (IllegalArgumentException e) {
-			Helper.setFehlerMeldung("calendar.title.firstAppearance.rejected");
+			Helper.setFehlerMeldung("calendar.block.firstAppearance.rejected");
 		}
 	}
 
@@ -1259,7 +1259,7 @@ public class CalendarForm {
 								|| !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
 							if (blockShowing.getFirstAppearance() != null
 									&& newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
-								Helper.setFehlerMeldung("calendar.title.negative");
+								Helper.setFehlerMeldung("calendar.block.negative");
 								return;
 							}
 							blockShowing.setLastAppearance(newLastAppearance);
@@ -1270,14 +1270,14 @@ public class CalendarForm {
 						if (blockShowing.getLastAppearance() == null
 								|| !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
 							if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
-								Helper.setFehlerMeldung("calendar.title.negative");
+								Helper.setFehlerMeldung("calendar.block.negative");
 								return;
 							}
 							blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
 						} else {
 							if (blockShowing.getLastAppearance() != null
 									&& blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
-								Helper.setFehlerMeldung("calendar.title.negative");
+								Helper.setFehlerMeldung("calendar.block.negative");
 								return;
 							}
 							blockShowing.setFirstAppearance(firstAppearanceIsToChange);
@@ -1294,7 +1294,7 @@ public class CalendarForm {
 				}
 			}
 		} catch (IllegalArgumentException e) {
-			Helper.setFehlerMeldung("calendar.title.lastAppearance.rejected");
+			Helper.setFehlerMeldung("calendar.block.lastAppearance.rejected");
 		} finally {
 			firstAppearanceIsToChange = null;
 		}
