@@ -188,7 +188,15 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 				}
 				// reading identifier
 				MetadataType identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-				mdList = logicalDS.getAllMetadataByType(identifierType);
+				List<? extends Metadata> childMdList = null;
+				if (child != null) {
+					childMdList = child.getAllMetadataByType(identifierType);
+				}
+				if (childMdList != null) {
+					mdList = childMdList;
+				} else {
+					mdList = logicalDS.getAllMetadataByType(identifierType);
+				}
 				if (mdList != null && mdList.size() > 0) {
 					Metadata identifier = mdList.get(0);
 					currentIdentifier = identifier.getValue();
