@@ -87,17 +87,19 @@ public class CourseToGerman {
 	 */
 	public static List<String> asReadableText(Course course) {
 		List<String> result = new ArrayList<String>();
-		if (course.isEmpty())
+		if (course.isEmpty()) {
 			return result;
-		Iterator<Title> blocks = course.iterator();
+		}
+		Iterator<Block> blocks = course.iterator();
 		boolean hasPreviousBlock = false;
 		do {
-			Title title = blocks.next();
-			result.add(titleToString(title, hasPreviousBlock));
-			for (Issue issue : title.getIssues()) {
+			Block block = blocks.next();
+			result.add(titleToString(block, hasPreviousBlock));
+			for (Issue issue : block.getIssues()) {
 				String irregularities = irregularitiesToString(issue);
-				if (irregularities != null)
+				if (irregularities != null) {
 					result.add(irregularities);
+				}
 			}
 			hasPreviousBlock = true;
 		} while (blocks.hasNext());
@@ -105,30 +107,30 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The function titleToString() formulates the regular appearance of a title
-	 * block in German language.
+	 * The function titleToString() formulates the regular appearance of a block
+	 * in German language.
 	 * 
-	 * @param title
+	 * @param block
 	 *            Titel to formulate
 	 * @param subsequentBlock
 	 *            false for the first block, true otherwise
 	 */
-	private static String titleToString(Title title, boolean subsequentBlock) {
+	private static String titleToString(Block block, boolean subsequentBlock) {
 		StringBuilder result = new StringBuilder(500);
-		int currentIssuesSize = title.getIssues().size();
+		int currentIssuesSize = block.getIssues().size();
 		if (subsequentBlock == false) {
 			result.append("Die Zeitung erschien vom ");
-			appendDate(result, title.getFirstAppearance());
+			appendDate(result, block.getFirstAppearance());
 		} else {
 			result.append("Ab dem ");
-			appendDate(result, title.getFirstAppearance());
+			appendDate(result, block.getFirstAppearance());
 			result.append(" erschien die Zeitung unter dem gleichen Titel");
 		}
 		result.append(" bis zum ");
-		appendDate(result, title.getLastAppearance());
+		appendDate(result, block.getLastAppearance());
 		result.append(" regelmäßig ");
 
-		Iterator<Issue> issueIterator = title.getIssues().iterator();
+		Iterator<Issue> issueIterator = block.getIssues().iterator();
 		for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
 			Issue issue = issueIterator.next();
 			result.append("an allen ");
@@ -138,20 +140,25 @@ public class CourseToGerman {
 					result.append(DAYS_OF_WEEK_NAMES[dayOfWeek]);
 					result.append("en");
 					daysOfWeekCount++;
-					if (daysOfWeekCount < issue.getDaysOfWeek().size() - 1)
+					if (daysOfWeekCount < issue.getDaysOfWeek().size() - 1) {
 						result.append(", ");
-					if (daysOfWeekCount == issue.getDaysOfWeek().size() - 1)
+					}
+					if (daysOfWeekCount == issue.getDaysOfWeek().size() - 1) {
 						result.append(" und ");
+					}
 				}
 			}
 			result.append(" als ");
 			result.append(issue.getHeading());
-			if (issueIndex < currentIssuesSize - 2)
+			if (issueIndex < currentIssuesSize - 2) {
 				result.append(", ");
-			if (issueIndex == currentIssuesSize - 2)
+			}
+			if (issueIndex == currentIssuesSize - 2) {
 				result.append(" sowie ");
-			if (issueIndex == currentIssuesSize - 1)
+			}
+			if (issueIndex == currentIssuesSize - 1) {
 				result.append(".");
+			}
 		}
 		return result.toString();
 	}
@@ -168,8 +175,9 @@ public class CourseToGerman {
 		int exclusionsSize = issue.getExclusions().size();
 		StringBuilder buffer = new StringBuilder((int) (Math.ceil(10.907 * (additionsSize + exclusionsSize)) + 500));
 
-		if (additionsSize == 0 && exclusionsSize == 0)
+		if (additionsSize == 0 && exclusionsSize == 0) {
 			return null;
+		}
 
 		buffer.append("Die Ausgabe „");
 		buffer.append(issue.getHeading());
@@ -177,11 +185,13 @@ public class CourseToGerman {
 
 		if (exclusionsSize > 0) {
 			appendManyDates(buffer, issue.getExclusions(), false);
-			if (additionsSize > 0)
+			if (additionsSize > 0) {
 				buffer.append(", dafür jedoch ");
+			}
 		}
-		if (additionsSize > 0)
+		if (additionsSize > 0) {
 			appendManyDates(buffer, issue.getAdditions(), true);
+		}
 		buffer.append(".");
 		return buffer.toString();
 	}
@@ -202,10 +212,11 @@ public class CourseToGerman {
 	 *             if buffer or dates is null
 	 */
 	private static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
-		if (signum)
+		if (signum) {
 			buffer.append("zusätzlich ");
-		else
+		} else {
 			buffer.append("nicht ");
+		}
 
 		TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates
 				: new TreeSet<LocalDate>(dates);
@@ -224,8 +235,9 @@ public class CourseToGerman {
 			nextInSameMonth = nextBothInSameMonth;
 			nextBothInSameMonth = DateUtils.sameMonth(next, overNext);
 
-			if (previousYear != current.getYear())
+			if (previousYear != current.getYear()) {
 				buffer.append("am ");
+			}
 
 			buffer.append(current.getDayOfMonth());
 			buffer.append('.');
@@ -238,22 +250,26 @@ public class CourseToGerman {
 			if (!DateUtils.sameYear(current, next)) {
 				buffer.append(' ');
 				buffer.append(current.getYear());
-				if (next != null)
-					if (!DateUtils.sameYear(next, orderedDates.last()))
+				if (next != null) {
+					if (!DateUtils.sameYear(next, orderedDates.last())) {
 						buffer.append(", ");
-					else {
+					} else {
 						buffer.append(" und ebenfalls ");
-						if (!signum)
+						if (!signum) {
 							buffer.append("nicht ");
+						}
 					}
-				if (next != null)
+				}
+				if (next != null) {
 					lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
+				}
 			} else if (next != null) {
 				if (nextInSameMonth && nextBothInSameMonth || !nextInSameMonth
-						&& next.getMonthOfYear() != lastMonthOfYear)
+						&& next.getMonthOfYear() != lastMonthOfYear) {
 					buffer.append(", ");
-				else
+				} else {
 					buffer.append(" und ");
+				}
 			}
 
 			previousYear = current.getYear();

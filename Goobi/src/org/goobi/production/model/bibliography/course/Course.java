@@ -66,7 +66,7 @@ import de.sub.goobi.helper.XMLUtils;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Course extends ArrayList<Title> {
+public class Course extends ArrayList<Block> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -182,7 +182,7 @@ public class Course extends ArrayList<Title> {
 	 * List of Lists of Issues, each representing a process.
 	 */
 	private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
-	private final Map<String, Title> resolveByBlockVariantCache = new HashMap<String, Title>();
+	private final Map<String, Block> resolveByBlockVariantCache = new HashMap<String, Block>();
 
 	private boolean processesAreVolatile = true;
 
@@ -250,7 +250,7 @@ public class Course extends ArrayList<Title> {
 	 * @see java.util.ArrayList#add(java.lang.Object)
 	 */
 	@Override
-	public boolean add(Title block) {
+	public boolean add(Block block) {
 		super.add(block);
 		if (block.countIndividualIssues() > 0) {
 			processes.clear();
@@ -277,9 +277,9 @@ public class Course extends ArrayList<Title> {
 	 * @return an IndividualIssue representing the added issue
 	 */
 	private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
-		Title block = get(variant);
+		Block block = get(variant);
 		if (block == null) {
-			block = new Title(this, variant);
+			block = new Block(this, variant);
 			block.setFirstAppearance(date);
 			block.setLastAppearance(date);
 			add(block);
@@ -321,7 +321,7 @@ public class Course extends ArrayList<Title> {
 	 */
 	public long countIndividualIssues() {
 		long result = 0;
-		for (Title block : this) {
+		for (Block block : this) {
 			result += block.countIndividualIssues();
 		}
 		return result;
@@ -329,23 +329,23 @@ public class Course extends ArrayList<Title> {
 
 	/**
 	 * Returns the block identified by the optionally given variant, or null if
-	 * no title with the given variant can be found.
+	 * no block with the given variant can be found.
 	 * 
 	 * @param variant
-	 *            the variant of the title (may be null)
+	 *            the variant of the block (may be null)
 	 * @return the block identified by the given variant, or null if no block
 	 *         can be found
 	 */
-	private Title get(String variant) {
+	private Block get(String variant) {
 		if (resolveByBlockVariantCache.containsKey(variant)) {
-			Title potentialResult = resolveByBlockVariantCache.get(variant);
+			Block potentialResult = resolveByBlockVariantCache.get(variant);
 			if (potentialResult.isIdentifiedBy(variant)) {
 				return potentialResult;
 			} else {
 				resolveByBlockVariantCache.remove(variant);
 			}
 		}
-		for (Title candidate : this) {
+		for (Block candidate : this) {
 			if (candidate.isIdentifiedBy(variant)) {
 				resolveByBlockVariantCache.put(variant, candidate);
 				return candidate;
@@ -366,7 +366,7 @@ public class Course extends ArrayList<Title> {
 		LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
 		LocalDate lastAppearance = getLastAppearance();
 		for (LocalDate day = getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
-			for (Title block : this) {
+			for (Block block : this) {
 				result.addAll(block.getIndividualIssues(day));
 			}
 		}
@@ -437,7 +437,7 @@ public class Course extends ArrayList<Title> {
 		final int SUNDAY_PAGES = 240;
 
 		long result = 0;
-		for (Title block : this) {
+		for (Block block : this) {
 			LocalDate lastAppearance = block.getLastAppearance();
 			for (LocalDate day = block.getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
 				for (Issue issue : block.getIssues()) {
@@ -470,8 +470,8 @@ public class Course extends ArrayList<Title> {
 	 *            a LocalDate to examine
 	 * @return the block on which this date is represented, if any
 	 */
-	public Title isMatch(LocalDate date) {
-		for (Title block : this) {
+	public Block isMatch(LocalDate date) {
+		for (Block block : this) {
 			if (block.isMatch(date)) {
 				return block;
 			}
@@ -487,7 +487,7 @@ public class Course extends ArrayList<Title> {
 	 * known have been added one by one as additions to the underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
-		for (Title block : this) {
+		for (Block block : this) {
 			block.recalculateRegularityOfIssues();
 		}
 	}
@@ -507,9 +507,9 @@ public class Course extends ArrayList<Title> {
 	 * @see java.util.ArrayList#remove(int)
 	 */
 	@Override
-	public Title remove(int index) {
-		Title block = super.remove(index);
-		Iterator<Entry<String, Title>> entries = resolveByBlockVariantCache.entrySet().iterator();
+	public Block remove(int index) {
+		Block block = super.remove(index);
+		Iterator<Entry<String, Block>> entries = resolveByBlockVariantCache.entrySet().iterator();
 		while (entries.hasNext()) {
 			if (entries.next().getValue() == block) { // pointer equality
 				entries.remove();

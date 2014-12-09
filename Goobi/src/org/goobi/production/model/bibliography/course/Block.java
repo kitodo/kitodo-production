@@ -47,65 +47,60 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * The class Title is a bean class that represents an interval of time in the
- * course of appearance of a newspaper within which it wasn’t suspended and
- * didn’t change its name either. A Title instance handles one or more Issue
- * objects.
- * 
- * TODO: Rename class. The name “Title” was chosen because the class was
- * originally intended to reflect changes of the title of a newspaper. Now, it
- * does only represent temporary blocks.
+ * The class Block is a bean class that represents an interval of time in the
+ * course of appearance of a newspaper within which it wasn’t suspended. A Block
+ * instance handles one or more Issue objects.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class Title {
+public class Block {
 	/**
-	 * The field course holds a reference to the course this Title block is in.
+	 * The field course holds a reference to the course this block is in.
 	 */
 	private final Course course;
 
 	/**
 	 * The field variant may hold a variant identifer that can be used to
-	 * distinguish different title blocks with equal heading during the buildup
-	 * of a course of appearance from individual issues.
+	 * distinguish different blocks during the buildup of a course of appearance
+	 * from individual issues.
 	 * 
 	 * Given a newspaper appeared three times a week for a period of time, and
 	 * then changed to being published six times a week without changing its
-	 * heading, and this change shall be represented by different title blocks,
-	 * the variant identifier can be used to distinguish the blocks. Otherwise,
-	 * both time ranges would be represented in one combined block, what would
-	 * be factual correct but would result in a multitude of exceptions, which
+	 * heading, and this change shall be represented by different blocks, the
+	 * variant identifier can be used to distinguish the blocks. Otherwise, both
+	 * time ranges would be represented in one combined block, what would be
+	 * factual correct but would result in a multitude of exceptions, which
 	 * could be undesired.
 	 */
 	private final String variant;
 
 	/**
 	 * The field firstAppearance holds the date representing the first day of
-	 * the period of time represented by this title block. The date is treated
-	 * as inclusive.
+	 * the period of time represented by this block. The date is treated as
+	 * inclusive.
 	 */
 	private LocalDate firstAppearance;
 
 	/**
 	 * The field lastAppearance holds the date representing the last day of the
-	 * period of time represented by this title block. The date is treated as
+	 * period of time represented by this block. The date is treated as
 	 * inclusive.
 	 */
 	private LocalDate lastAppearance;
 
 	/**
 	 * The field issues holds the issues that have appeared during the period of
-	 * time represented by this title block.
+	 * time represented by this block.
 	 */
 	private List<Issue> issues;
 
 	/**
-	 * Default constructor. Creates a Title object without any data.
+	 * Default constructor. Creates a Block object without any data.
 	 * 
 	 * @param course
-	 *            course this title is in
+	 *            course this block is in
 	 */
-	public Title(Course course) {
+	public Block(Course course) {
 		this.course = course;
 		this.variant = null;
 		this.firstAppearance = null;
@@ -114,14 +109,14 @@ public class Title {
 	}
 
 	/**
-	 * Constructor for a title with a given variant identifier.
+	 * Constructor for a block with a given variant identifier.
 	 * 
 	 * @param course
-	 *            course this title is in
+	 *            course this block is in
 	 * @param variant
 	 *            a variant identifier (may be null)
 	 */
-	public Title(Course course, String variant) {
+	public Block(Course course, String variant) {
 		this.course = course;
 		this.variant = variant;
 		this.firstAppearance = null;
@@ -130,7 +125,7 @@ public class Title {
 	}
 
 	/**
-	 * The function addIssue() adds an Issue to this title if it is not already
+	 * The function addIssue() adds an Issue to this block if it is not already
 	 * present.
 	 * 
 	 * @param issue
@@ -164,14 +159,14 @@ public class Title {
 	}
 
 	/**
-	 * The function clone() creates and returns a copy of this Title.
+	 * The function clone() creates and returns a copy of this Block.
 	 * 
 	 * @param course
-	 *            Course this title belongs to
+	 *            Course this block belongs to
 	 * @return a copy of this
 	 */
-	public Title clone(Course course) {
-		Title copy = new Title(course);
+	public Block clone(Course course) {
+		Block copy = new Block(course);
 		copy.firstAppearance = firstAppearance;
 		copy.lastAppearance = lastAppearance;
 		ArrayList<Issue> copiedIssues = new ArrayList<Issue>(issues.size() > 10 ? issues.size() : 10);
@@ -206,9 +201,9 @@ public class Title {
 
 	/**
 	 * The function getIssues() returns the list of issues contained in this
-	 * Title.
+	 * Block.
 	 * 
-	 * @return the list of issues from this Title
+	 * @return the list of issues from this Block
 	 */
 	public List<Issue> getIssues() {
 		return new ArrayList<Issue>(issues);
@@ -239,8 +234,8 @@ public class Title {
 	}
 
 	/**
-	 * The function getIssue() returns an issue from the Title by the issue’s
-	 * heading, or null if the title doesn’t contain an issue with that heading.
+	 * The function getIssue() returns an issue from the Block by the issue’s
+	 * heading, or null if the block doesn’t contain an issue with that heading.
 	 * 
 	 * @param heading
 	 *            Heading of the issue to look for
@@ -257,7 +252,7 @@ public class Title {
 
 	/**
 	 * The function getFirstAppearance() returns the date the regularity of this
-	 * title begins with.
+	 * block begins with.
 	 * 
 	 * @return the date of first appearance
 	 */
@@ -267,7 +262,7 @@ public class Title {
 
 	/**
 	 * The function getLastAppearance() returns the date the regularity of this
-	 * title ends with.
+	 * block ends with.
 	 * 
 	 * @return the date of last appearance
 	 */
@@ -276,10 +271,10 @@ public class Title {
 	}
 
 	/**
-	 * The function isEmpty() returns whether the title is in an empty state or
+	 * The function isEmpty() returns whether the block is in an empty state or
 	 * not.
 	 * 
-	 * @return whether the title is dataless
+	 * @return whether the block is dataless
 	 */
 	public boolean isEmpty() {
 		return firstAppearance == null && lastAppearance == null && (issues == null || issues.isEmpty());
@@ -287,7 +282,7 @@ public class Title {
 
 	/**
 	 * Can be used to find out whether the given variant string equals the
-	 * variant assigned to this title block in a NullPointerException-safe way
+	 * variant assigned to this block in a NullPointerException-safe way
 	 * 
 	 * @param variant
 	 *            variant to compare against
@@ -299,12 +294,12 @@ public class Title {
 
 	/**
 	 * The function isMatch() returns whether a given LocalDate comes within the
-	 * limits of this title. Defaults to false if either the argument or one of
+	 * limits of this block. Defaults to false if either the argument or one of
 	 * the fields to compare against is null.
 	 * 
 	 * @param date
 	 *            a LocalDate to examine
-	 * @return whether the date is within the limits of this title block
+	 * @return whether the date is within the limits of this block
 	 */
 	public boolean isMatch(LocalDate date) {
 		try {
@@ -317,7 +312,7 @@ public class Title {
 	/**
 	 * The method recalculateRegularityOfIssues() recalculates for each Issue
 	 * the daysOfWeek of its regular appearance within the interval of time of
-	 * the Title. This is especially sensible to detect the underlying
+	 * the Block. This is especially sensible to detect the underlying
 	 * regularity after lots of issues whose existence is known have been added
 	 * one by one as additions to the underlying issue(s).
 	 */
@@ -328,7 +323,7 @@ public class Title {
 	}
 
 	/**
-	 * The function removeIssue() removes the specified Issue from this Title if
+	 * The function removeIssue() removes the specified Issue from this Block if
 	 * it is present.
 	 * 
 	 * @param issue
@@ -342,7 +337,7 @@ public class Title {
 
 	/**
 	 * The method setFirstAppearance() sets a LocalDate as day of first
-	 * appearance for this Title.
+	 * appearance for this Block.
 	 * 
 	 * @param firstAppearance
 	 *            date of first appearance
@@ -365,7 +360,7 @@ public class Title {
 
 	/**
 	 * The method setLastAppearance() sets a LocalDate as day of last appeanance
-	 * for this Title.
+	 * for this Block.
 	 * 
 	 * @param lastAppearance
 	 *            date of last appearance
@@ -388,7 +383,7 @@ public class Title {
 
 	/**
 	 * The method setPublicationPeriod() sets two LocalDate instances as days of
-	 * first and last appearance for this Title.
+	 * first and last appearance for this Block.
 	 * 
 	 * @param firstAppearance
 	 *            date of first appearance
@@ -423,7 +418,7 @@ public class Title {
 
 	/**
 	 * The method checkForOverlaps() tests an not yet set time range for this
-	 * title whether it doesn’t overlap with other titles in this course and can
+	 * block whether it doesn’t overlap with other titles in this course and can
 	 * be set. (Because this method is called prior to setting a new value as a
 	 * field value, it doesn’t take the values from the classes’ fields even
 	 * though it isn’t static.) If the given dates would cause an overlapping,
@@ -437,10 +432,10 @@ public class Title {
 	 *             if the check fails
 	 */
 	private void prohibitOverlaps(LocalDate from, LocalDate until) throws IllegalArgumentException {
-		for (Title title : course) {
-			if (!title.equals(this)
-					&& (title.getFirstAppearance().isBefore(until) && !title.getLastAppearance().isBefore(from) || (title
-							.getLastAppearance().isAfter(from) && !title.getFirstAppearance().isAfter(until)))) {
+		for (Block block : course) {
+			if (!block.equals(this)
+					&& (block.getFirstAppearance().isBefore(until) && !block.getLastAppearance().isBefore(from) || (block
+							.getLastAppearance().isAfter(from) && !block.getFirstAppearance().isAfter(until)))) {
 				throw new IllegalArgumentException();
 			}
 		}
@@ -448,10 +443,10 @@ public class Title {
 
 	/**
 	 * The function toString() provides returns a string that contains a concise
-	 * but informative representation of this title that is easy for a person to
+	 * but informative representation of this block that is easy for a person to
 	 * read.
 	 * 
-	 * @return a string representation of the title
+	 * @return a string representation of the block
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -479,11 +474,11 @@ public class Title {
 
 	/**
 	 * The function toString() provides returns a string that contains a textual
-	 * representation of this title that is easy for a person to read.
+	 * representation of this block that is easy for a person to read.
 	 * 
 	 * @param dateConverter
 	 *            a DateTimeFormatter for formatting the local dates
-	 * @return a string to identify the title
+	 * @return a string to identify the block
 	 */
 	public String toString(DateTimeFormatter dateConverter) {
 		StringBuilder result = new StringBuilder();
@@ -499,7 +494,7 @@ public class Title {
 
 	/**
 	 * Returns a hash code for the object which depends on the content of its
-	 * variables. Whenever Title objects are held in HashSet objects, a
+	 * variables. Whenever Block objects are held in HashSet objects, a
 	 * hashCode() is essentially necessary.
 	 * 
 	 * <p>
@@ -541,10 +536,10 @@ public class Title {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Title)) {
+		if (!(obj instanceof Block)) {
 			return false;
 		}
-		Title other = (Title) obj;
+		Block other = (Block) obj;
 		if (firstAppearance == null) {
 			if (other.firstAppearance != null) {
 				return false;

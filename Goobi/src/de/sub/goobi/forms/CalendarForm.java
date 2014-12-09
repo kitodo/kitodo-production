@@ -56,7 +56,7 @@ import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.Issue;
-import org.goobi.production.model.bibliography.course.Title;
+import org.goobi.production.model.bibliography.course.Block;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
@@ -610,7 +610,7 @@ public class CalendarForm {
 	 * changer drop down element and the references to the block objects
 	 * referenced by the IDs for easily looking them up upon change.
 	 */
-	protected Map<String, Title> blockChangerResolver;
+	protected Map<String, Block> blockChangerResolver;
 
 	/**
 	 * The field blockChangerUnchanged is of importance during the update model
@@ -632,7 +632,7 @@ public class CalendarForm {
 	 * instance. The block held in blockShowing must be part of the course
 	 * object, too.
 	 */
-	protected Title blockShowing;
+	protected Block blockShowing;
 
 	/**
 	 * The field course holds the course of appearance currently under edit by
@@ -693,7 +693,7 @@ public class CalendarForm {
 		ISSUE_COLOURS = ConfigMain.getParameter("issue.colours",
 				"#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000").split(";");
 		course = new Course();
-		blockChangerResolver = new HashMap<String, Title>();
+		blockChangerResolver = new HashMap<String, Block>();
 		blockShowing = null;
 	}
 
@@ -763,7 +763,7 @@ public class CalendarForm {
 	 * showing block.
 	 */
 	public void copyBlockClick() {
-		Title copy = blockShowing.clone(course);
+		Block copy = blockShowing.clone(course);
 		LocalDate firstAppearance = course.getLastAppearance().plusDays(1);
 		copy.setFirstAppearance(firstAppearance);
 		copy.setLastAppearance(firstAppearance);
@@ -853,7 +853,7 @@ public class CalendarForm {
 	 */
 	public List<Map<String, String>> getBlockChangerOptions() {
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-		for (Title block : course) {
+		for (Block block : course) {
 			String value = Integer.toHexString(block.hashCode());
 			blockChangerResolver.put(value, block);
 			Map<String, String> item = new HashMap<String, String>();
@@ -950,7 +950,7 @@ public class CalendarForm {
 	 *            block whose issues are to be returned
 	 * @return the list of issues
 	 */
-	private List<IssueController> getIssues(Title block) {
+	private List<IssueController> getIssues(Block block) {
 		List<IssueController> result = new ArrayList<IssueController>();
 		if (block != null) {
 			for (Issue issue : block.getIssues()) {
@@ -1123,7 +1123,7 @@ public class CalendarForm {
 	 */
 	protected void populateByCalendar(List<List<Cell>> sheet) {
 		Map<Integer, List<IssueController>> issueControllersCreatedOnce = new HashMap<Integer, List<IssueController>>();
-		Title currentBlock = null;
+		Block currentBlock = null;
 		ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
 		for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
 				.plusDays(1)) {
@@ -1223,7 +1223,7 @@ public class CalendarForm {
 				}
 			} else {
 				if (newFirstAppearance != null) {
-					blockShowing = new Title(course);
+					blockShowing = new Block(course);
 					blockShowing.setFirstAppearance(newFirstAppearance);
 					course.add(blockShowing);
 				}
@@ -1288,7 +1288,7 @@ public class CalendarForm {
 				}
 			} else {
 				if (newLastAppearance != null) {
-					blockShowing = new Title(course);
+					blockShowing = new Block(course);
 					blockShowing.setLastAppearance(newLastAppearance);
 					course.add(blockShowing);
 				}
