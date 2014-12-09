@@ -133,4 +133,17 @@ public class Parameters {
 	 * given they have the same meta data type addable. Defaults to false.
 	 */
 	public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
+
+	/**
+	 * Milliseconds. Closing a step after some user chose to finish the task is
+	 * done asynchronously. Unless in case of time-taking automatic tasks, this
+	 * usually only takes fractions of a second. However, the result page is
+	 * usually rendered just in the moment before the step is closed, still
+	 * showing the task and thus giving the user the feeling of a caching
+	 * problem: It requires to reload the page to gain access the next step
+	 * which one would expect to be available right away. The property
+	 * "waitOnCloseStepMillis" allows to manually retard the loading of the next
+	 * page in favour of hopefully getting access to the next step.
+	 */
+	public static final String WAIT_ON_CLOSE_STEP = "waitOnCloseStepMillis";
 }
