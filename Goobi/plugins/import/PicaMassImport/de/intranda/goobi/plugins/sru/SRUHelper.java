@@ -99,6 +99,9 @@ public class SRUHelper {
 		Element root = doc.getRootElement();
 		// <srw:records>
 		Element srw_records = root.getChild("records", SRW);
+		if (srw_records == null) {
+			return null;
+		}
 		// <srw:record>
 		Element srw_record = srw_records.getChild("record", SRW);
 		// <srw:recordData>

@@ -163,8 +163,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		try {
 			Node pica = SRUHelper.parseResult(search);
 			if (pica == null) {
-				logger.error("pica record for " + currentIdentifier + " does not exist in catalogue");
-				throw new ImportPluginException("pica record for " + currentIdentifier + " does not exist in catalogue");
+				String mess = "PICA record for " + currentIdentifier + " does not exist in catalogue.";
+				logger.error(mess);
+				throw new ImportPluginException(mess);
 
 			}
 			pica = addParentDataForVolume(pica);
@@ -371,6 +372,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 			}
 			if (!parentPPN.isEmpty()) {
 				Node parentRecord = SRUHelper.parseResult(SRUHelper.search(parentPPN, getOpacAddress()));
+				if (parentRecord == null) {
+					String mess = "Could not retrieve superordinate record " + parentPPN;
+					logger.error(mess);
+					throw new ImportPluginException(mess);
+
+				}
 				org.jdom.Document resultAsJDOM = new DOMBuilder().build(parentRecord.getOwnerDocument());
 				volumeAsJDOM.getParent().removeContent(volumeAsJDOM);
 				resultAsJDOM.getRootElement().addContent(volumeAsJDOM);
