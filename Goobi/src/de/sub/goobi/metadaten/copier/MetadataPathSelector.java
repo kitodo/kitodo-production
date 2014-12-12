@@ -181,7 +181,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Sets the metadatum identified by the given path if available, otherwise
 	 * creates the path and metadatum. This works recursively. Metadata creation
-	 * is done in a {@link LocalMetadataSelector}.
+	 * is done in a {@link LocalMetadataSelector}. If the DocStructType is set
+	 * to "*", no path will be created if no path exists.
 	 * 
 	 * @param data
 	 *            data to work on
@@ -195,7 +196,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	@Override
 	protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
 		DocStruct subnode = getSubnode(logicalNode);
-		if (subnode == null) {
+		if (subnode == null && !ANY_METADATA_TYPE_SYMBOL.equals(docStructType)) {
 			try {
 				subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
 			} catch (TypeNotAllowedAsChildException e) {
