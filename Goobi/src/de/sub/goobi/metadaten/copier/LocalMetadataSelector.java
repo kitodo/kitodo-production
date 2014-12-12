@@ -47,7 +47,6 @@ import org.apache.log4j.Logger;
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
-import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
@@ -236,8 +235,6 @@ public class LocalMetadataSelector extends MetadataSelector {
 					+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "
 					+ e.getMessage());
 			return;
-		} catch (DocStructHasNoTypeException e) {
-			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 }
