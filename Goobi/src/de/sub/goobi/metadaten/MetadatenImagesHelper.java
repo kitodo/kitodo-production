@@ -192,9 +192,11 @@ public class MetadatenImagesHelper {
         }
         try {
             List<String> imageNamesInMediaFolder = getDataFiles(inProzess);
-            for (String imageName : imageNamesInMediaFolder) {
-                if (!assignedImages.containsKey(imageName)) {
-                    imagesWithoutPageElements.add(imageName);
+            if (imageNamesInMediaFolder != null) {
+                for (String imageName : imageNamesInMediaFolder) {
+                    if (!assignedImages.containsKey(imageName)) {
+                        imagesWithoutPageElements.add(imageName);
+                    }
                 }
             }
         } catch (InvalidImagesException e1) {
