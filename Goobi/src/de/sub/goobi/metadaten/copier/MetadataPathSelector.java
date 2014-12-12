@@ -48,7 +48,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
@@ -182,7 +181,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Sets the metadatum identified by the given path if available, otherwise
 	 * creates the path and metadatum. This works recursively. Metadata creation
-	 * is done in a {@link LocalMetadataSelector}.
+	 * is done in a {@link LocalMetadataSelector}. If the DocStructType is set
+	 * to "*", no path will be created if no path exists.
 	 * 
 	 * @param data
 	 *            data to work on
@@ -196,14 +196,9 @@ public class MetadataPathSelector extends MetadataSelector {
 	@Override
 	protected void createOrOverwrite(CopierData data, DocStruct logicalNode, String value) {
 		DocStruct subnode = getSubnode(logicalNode);
-		if (subnode == null) {
+		if (subnode == null && !ANY_METADATA_TYPE_SYMBOL.equals(docStructType)) {
 			try {
-				// TODO: after merge of newspaper module the following three
-				//       lines can be subsumed as:
-				// subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
-				DocStructType dsType = data.getPreferences().getDocStrctTypeByName(docStructType);
-				subnode = data.getDigitalDocument().createDocStruct(dsType);
-				logicalNode.addChild(subnode);
+				subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
 			} catch (TypeNotAllowedAsChildException e) {
 				// copy rules aren’t related to the rule set but depend on it,
 				// so copy rules that don’t work with the current rule set are
@@ -211,6 +206,7 @@ public class MetadataPathSelector extends MetadataSelector {
 				LOG.debug("Cannot create structural element " + docStructType + " as child of "
 						+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 						+ " because it isn’t allowed by the rule set.");
+				return;
 			} catch (TypeNotAllowedForParentException e) {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
 			} catch (Exception e) {
@@ -223,7 +219,10 @@ public class MetadataPathSelector extends MetadataSelector {
 				return;
 			}
 		}
-		selector.createOrOverwrite(data, subnode, value);
+		if (subnode != null) {
+			selector.createOrOverwrite(data, subnode, value);
+		}
+		return;
 	}
 
 	/**
