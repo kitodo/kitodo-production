@@ -48,7 +48,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
@@ -198,12 +197,7 @@ public class MetadataPathSelector extends MetadataSelector {
 		DocStruct subnode = getSubnode(logicalNode);
 		if (subnode == null) {
 			try {
-				// TODO: after merge of newspaper module the following three
-				//       lines can be subsumed as:
-				// subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
-				DocStructType dsType = data.getPreferences().getDocStrctTypeByName(docStructType);
-				subnode = data.getDigitalDocument().createDocStruct(dsType);
-				logicalNode.addChild(subnode);
+				subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
 			} catch (TypeNotAllowedAsChildException e) {
 				// copy rules aren’t related to the rule set but depend on it,
 				// so copy rules that don’t work with the current rule set are
