@@ -206,6 +206,7 @@ public class MetadataPathSelector extends MetadataSelector {
 				LOG.debug("Cannot create structural element " + docStructType + " as child of "
 						+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 						+ " because it isn’t allowed by the rule set.");
+				return;
 			} catch (TypeNotAllowedForParentException e) {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
 			} catch (Exception e) {
@@ -218,7 +219,10 @@ public class MetadataPathSelector extends MetadataSelector {
 				return;
 			}
 		}
-		selector.createOrOverwrite(data, subnode, value);
+		if (subnode != null) {
+			selector.createOrOverwrite(data, subnode, value);
+		}
+		return;
 	}
 
 	/**
