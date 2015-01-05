@@ -734,14 +734,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	public void setDocstruct(DocstructElement dse) {
 	}
 
-	private String createAtstsl(String myTitle, String autor) {
+	private String createAtstsl(String myTitle, String author) {
 		String myAtsTsl = "";
-		if (autor != null && !autor.equals("")) {
-			/* autor */
-			if (autor.length() > 4) {
-				myAtsTsl = autor.substring(0, 4);
+		if (author != null && !author.equals("")) {
+			/* author */
+			if (author.length() > 4) {
+				myAtsTsl = author.substring(0, 4);
 			} else {
-				myAtsTsl = autor;
+				myAtsTsl = author;
 				/* titel */
 			}
 
@@ -756,7 +756,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		 * -------------------------------- bei Zeitschriften Tsl berechnen --------------------------------
 		 */
 		// if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
-		if (autor == null || autor.equals("")) {
+		if (author == null || author.equals("")) {
 			myAtsTsl = "";
 			StringTokenizer tokenizer = new StringTokenizer(myTitle);
 			int counter = 1;
