@@ -57,8 +57,9 @@ public class ConfigOpac {
 	private static XMLConfiguration config;
 
 	private static XMLConfiguration getConfig() throws FileNotFoundException {
-		if (config != null)
+		if (config != null) {
 			return config;
+		}
 		String configPfad = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
 				FileNames.OPAC_CONFIGURATION_FILE);
 
@@ -77,10 +78,10 @@ public class ConfigOpac {
 	}
 
 	/**
-	 * return all configured Catalogue-Titles from Configfile
-	 * ================================================================
+	 * Returns all configured catalogue titles from the config file.
+	 * 
+	 * @return all catalogue titles
 	 */
-	@XmlElement(name = "interface")
 	public static ArrayList<String> getAllCatalogueTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		try {
@@ -116,10 +117,10 @@ public class ConfigOpac {
 	}
 
 	/**
-	 * return all configured Doctype-Titles from Configfile
-	 * ================================================================
+	 * Returns all configured media types from the config file.
+	 * 
+	 * @return all media types
 	 */
-	@XmlElement(name = "mediaType")
 	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
 		try {
@@ -192,12 +193,36 @@ public class ConfigOpac {
 		List<String> result = new LinkedList<String>();
 		@SuppressWarnings("unchecked")
 		List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt("catalogue");
-		for (HierarchicalConfiguration catalogue : catalogues)
+		for (HierarchicalConfiguration catalogue : catalogues) {
 			if (title.equals(catalogue.getString("[@title]"))) {
-				for (String restriction : catalogue.getStringArray("restriction"))
+				for (String restriction : catalogue.getStringArray("restriction")) {
 					result.add(restriction);
+				}
 				break;
 			}
+		}
 		return result;
+	}
+
+	/**
+	 * Returns all configured catalogue titles from the config file. The Jersey
+	 * API cannot invoke static methods, so we need this wrapper method.
+	 * 
+	 * @return all catalogue titles
+	 */
+	@XmlElement(name = "interface")
+	public ArrayList<String> getInterface() {
+		return getAllCatalogueTitles();
+	}
+
+	/**
+	 * Returns all configured media types from the config file. The Jersey API
+	 * cannot invoke static methods, so we need this wrapper method.
+	 * 
+	 * @return all media types
+	 */
+	@XmlElement(name = "mediaType")
+	public ArrayList<ConfigOpacDoctype> getMediaType() {
+		return getAllDoctypes();
 	}
 }
