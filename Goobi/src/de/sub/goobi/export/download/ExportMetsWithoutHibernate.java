@@ -50,6 +50,7 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -284,12 +285,24 @@ public class ExportMetsWithoutHibernate {
 			mm.setPurlUrl(vp.replace(this.project.getMetsPurl()));
 			mm.setContentIDs(vp.replace(this.project.getMetsContentIDs()));
 
-			String pointer = this.project.getMetsPointerPath();
-			pointer = vp.replace(pointer);
-			mm.setMptrUrl(pointer);
+			// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
+			// pointer used to point to the superordinate (anchor) file, that is
+			// representing a “virtual” group such as a series. Several anchors
+			// pointer paths can be defined/ since it is possible to define several
+			// levels of superordinate structures (such as the complete edition of
+			// a daily newspaper, one year ouf of that edition, …)
+			String anchorPointersToReplace = this.project.getMetsPointerPath();
+			mm.setMptrUrl(null);
+			for (String anchorPointerToReplace : anchorPointersToReplace.split(Projekt.ANCHOR_SEPARATOR)) {
+				String anchorPointer = vp.replace(anchorPointerToReplace);
+				mm.setMptrUrl(anchorPointer);
+			}
 
+			// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
+			// from the (lowest) superordinate (anchor) file to the lowest level
+			// file (the non-anchor file). 
 			String anchor = this.project.getMetsPointerPathAnchor();
-			pointer = vp.replace(anchor);
+			String pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
 
 			List<String> images = new ArrayList<String>();
