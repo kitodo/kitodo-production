@@ -48,3 +48,21 @@ ALTER TABLE `prozesse` DROP `batchID`;
 
 ALTER TABLE `projectfilegroups` ADD `previewImage` tinyint(1) DEFAULT NULL;
 UPDATE `projectfilegroups` SET `previewImage` = '0';
+
+/* Move records from table schritteeigenschaften to table prozesseeigenschaften */
+INSERT INTO prozesseeigenschaften
+(Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate,container,prozesseID)
+  SELECT
+    se.Titel,
+    se.Wert,
+    se.IstObligatorisch,
+    se.DatentypenID,
+    se.Auswahl,
+    se.creationDate,
+    se.container,
+    s.ProzesseID
+  FROM
+    schritteeigenschaften se, schritte s
+  WHERE se.SchritteID = s.SchritteID;
+
+DROP TABLE schritteeigenschaften;
