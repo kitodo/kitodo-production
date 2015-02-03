@@ -88,10 +88,6 @@
 								<%@include
 									file="inc_AktuelleSchritte/schritt_box_Properties.jsp"%>
 									
-								<%--  
-								<%@include
-									file="inc_AktuelleSchritte/schritt_box_Eigenschaften.jsp"%>
-								--%>
 								<%@include file="inc_AktuelleSchritte/schritt_box_Action.jsp"%>
 
 							</htm:td>
