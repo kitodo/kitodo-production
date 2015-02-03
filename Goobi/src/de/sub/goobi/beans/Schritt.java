@@ -85,7 +85,6 @@ public class Schritt implements Serializable {
 	private Boolean batchStep = false;
 
 	private Prozess prozess;
-	private Set<Schritteigenschaft> eigenschaften;
 	private Set<Benutzer> benutzer;
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
@@ -97,7 +96,6 @@ public class Schritt implements Serializable {
 
 	public Schritt() {
 		this.titel = "";
-		this.eigenschaften = new HashSet<Schritteigenschaft>();
 		this.benutzer = new HashSet<Benutzer>();
 		this.benutzergruppen = new HashSet<Benutzergruppe>();
 		this.prioritaet = Integer.valueOf(0);
@@ -329,17 +327,6 @@ public class Schritt implements Serializable {
 		this.panelAusgeklappt = panelAusgeklappt;
 	}
 
-	public Set<Schritteigenschaft> getEigenschaften() {
-		if (this.eigenschaften == null) {
-			this.eigenschaften = new HashSet<Schritteigenschaft>();
-		}
-		return this.eigenschaften;
-	}
-
-	public void setEigenschaften(Set<Schritteigenschaft> eigenschaften) {
-		this.eigenschaften = eigenschaften;
-	}
-
 	public Set<Benutzer> getBenutzer() {
 		return this.benutzer;
 	}
@@ -359,30 +346,6 @@ public class Schritt implements Serializable {
 	/*
 	 *  Helper
 	 */
-
-	public int getEigenschaftenSize() {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-			return 0;
-		}
-		if (this.eigenschaften == null) {
-			return 0;
-		} else {
-			return this.eigenschaften.size();
-		}
-	}
-
-	public List<Schritteigenschaft> getEigenschaftenList() {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-		}
-		if (this.eigenschaften == null) {
-			return new ArrayList<Schritteigenschaft>();
-		}
-		return new ArrayList<Schritteigenschaft>(this.eigenschaften);
-	}
 
 	public int getBenutzerSize() {
 		try {
@@ -800,7 +763,6 @@ public class Schritt implements Serializable {
 			current = (Schritt) sess.load(Schritt.class, this.getId());
 		}
 		if (!hasOpen) {
-			current.eigenschaften.size();
 			current.benutzer.size();
 			current.benutzergruppen.size();
 			sess.close();

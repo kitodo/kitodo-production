@@ -71,7 +71,6 @@ import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
@@ -107,7 +106,6 @@ public class AktuelleSchritteForm extends BasisForm {
 	private String solutionMessage;
 
 	private String modusBearbeiten = "";
-	private Schritteigenschaft mySchrittEigenschaft;
 	private final WebDav myDav = new WebDav();
 	private int gesamtAnzahlImages = 0;
 	private int pageAnzahlImages = 0;
@@ -531,16 +529,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
 		// new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
 		return FilterAlleStart();
-	}
-
-	/*
-	 *  Eigenschaften bearbeiten
-	 */
-
-	public String SchrittEigenschaftNeu() {
-		this.mySchritt.setBearbeitungszeitpunkt(new Date());
-		this.mySchrittEigenschaft = new Schritteigenschaft();
-		return "";
 	}
 
 	public String SperrungAufheben() {
@@ -977,14 +965,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void setSolutionMessage(String solutionMessage) {
 		this.solutionMessage = solutionMessage;
-	}
-
-	public Schritteigenschaft getMySchrittEigenschaft() {
-		return this.mySchrittEigenschaft;
-	}
-
-	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		this.mySchrittEigenschaft = mySchrittEigenschaft;
 	}
 
 	/*

@@ -46,7 +46,6 @@
 //import de.sub.goobi.Beans.Prozess;
 //import de.sub.goobi.Beans.Prozesseigenschaft;
 //import de.sub.goobi.Beans.Schritt;
-//import de.sub.goobi.Beans.Schritteigenschaft;
 //import de.sub.goobi.Beans.Vorlage;
 //import de.sub.goobi.Beans.Vorlageeigenschaft;
 //import de.sub.goobi.Beans.Werkstueck;
@@ -213,18 +212,6 @@
 //				if (step.getEditTypeEnum() != null) {
 //					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), String.valueOf(step.getEditTypeEnum().getTitle()), Field.Store.YES,
 //							Field.Index.NOT_ANALYZED));
-//				}
-//				if (step.getEigenschaften() != null) {
-//					for (Schritteigenschaft prop : step.getEigenschaftenList()) {
-//						if (prop.getTitel() != null && prop.getWert() != null) {
-//							doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//						}
-//					}
 //				}
 //			}
 //			// Metadata

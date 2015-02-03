@@ -59,7 +59,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -692,23 +691,6 @@ public class ProductionDataImport {
 			if (s.getTitel().contains("scan") || s.getTitel().contains("Scan")) {
 				boolean pages = false;
 				boolean scangeraet = false;
-				for (Schritteigenschaft se : s.getEigenschaftenList()) {
-					if (se.getTitel().contains("Anzahl der Images") || se.getTitel().contains("Anzahl der Seiten")
-							|| se.getTitel().contains("Seitenzahl")) {
-						if (!se.getWert().equals(pd.getWERKSCANSEITEN())) {
-							conflicts.add(new ImportConflicts(String.valueOf(s.getId()), "Seitenzahl", se.getWert(), String.valueOf(pd
-									.getWERKSCANSEITEN())));
-						}
-						pages = true;
-					} else if (se.getTitel().contains("Scangerät")) {
-						if (se.getWert().equals(String.valueOf(pd.getSCANNERTYP()))) {
-							scangeraet = true;
-						} else {
-							conflicts.add(new ImportConflicts(String.valueOf(s.getId()), "Scangerät", se.getWert(), pd.getSCANNERTYP()));
-							scangeraet = true;
-						}
-					}
-				}
 
 				if (!pages) {
 					// WERKSCANSEITEN

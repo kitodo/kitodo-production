@@ -42,7 +42,6 @@ import org.hibernate.Session;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
@@ -290,23 +289,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				isDirty = true;
 			}
 
-			if (step.getEigenschaftenSize() > 0) {
-
-				for (Schritteigenschaft prop : step.getEigenschaftenList()) {
-					if (prop.getType().equals(PropertyType.messageError)) {
-						Date myDate = prop.getCreationDate();
-						if (myDate == null && step.getBearbeitungszeitpunkt() != null) {
-							myDate = step.getBearbeitungszeitpunkt();
-						}
-						if (myDate != null) {
-							he = addHistoryEvent(myDate, step.getReihenfolge(), step.getTitel(), HistoryEventType.stepError, inProcess);
-							if (he != null) {
-								isDirty = true;
-							}
-						}
-					}
-				}
-			}
 		}
 
 		// this method removes duplicate items from the history list, which

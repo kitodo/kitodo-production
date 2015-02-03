@@ -90,7 +90,6 @@ import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -126,7 +125,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	private List<ProcessCounterObject> myAnzahlList;
 	private HashMap<String, Integer> myAnzahlSummary;
 	private Prozesseigenschaft myProzessEigenschaft;
-	private Schritteigenschaft mySchrittEigenschaft;
 	private Benutzer myBenutzer;
 	private Vorlage myVorlage;
 	private Vorlageeigenschaft myVorlageEigenschaft;
@@ -545,16 +543,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		return "";
 	}
 
-	public String SchrittEigenschaftLoeschen() {
-		try {
-			mySchritt.getEigenschaften().remove(mySchrittEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		return "";
-	}
-
 	public String VorlageEigenschaftLoeschen() {
 		try {
 			myVorlage.getEigenschaften().remove(myVorlageEigenschaft);
@@ -580,11 +568,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		return "";
 	}
 
-	public String SchrittEigenschaftNeu() {
-		mySchrittEigenschaft = new Schritteigenschaft();
-		return "";
-	}
-
 	public String VorlageEigenschaftNeu() {
 		myVorlageEigenschaft = new Vorlageeigenschaft();
 		return "";
@@ -598,13 +581,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String ProzessEigenschaftUebernehmen() {
 		myProzess.getEigenschaftenInitialized().add(myProzessEigenschaft);
 		myProzessEigenschaft.setProzess(myProzess);
-		Speichern();
-		return "";
-	}
-
-	public String SchrittEigenschaftUebernehmen() {
-		mySchritt.getEigenschaften().add(mySchrittEigenschaft);
-		mySchrittEigenschaft.setSchritt(mySchritt);
 		Speichern();
 		return "";
 	}
@@ -1103,14 +1079,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public void setMySchrittReload(Schritt mySchritt) {
 		this.mySchritt = mySchritt;
-	}
-
-	public Schritteigenschaft getMySchrittEigenschaft() {
-		return this.mySchrittEigenschaft;
-	}
-
-	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		this.mySchrittEigenschaft = mySchrittEigenschaft;
 	}
 
 	public Vorlage getMyVorlage() {
