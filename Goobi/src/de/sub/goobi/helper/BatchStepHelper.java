@@ -498,13 +498,7 @@ public class BatchStepHelper {
 				temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
-				Schritteigenschaft se = new Schritteigenschaft();
 
-				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-				se.setType(PropertyType.messageError);
-				se.setCreationDate(myDate);
-				se.setSchritt(temp);
 				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess()
@@ -512,7 +506,6 @@ public class BatchStepHelper {
 								WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "error",
 										message));
 
-				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
 				this.currentStep
 						.getProzess()
@@ -532,13 +525,6 @@ public class BatchStepHelper {
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 					step.setCorrectionStep();
 					step.setBearbeitungsende(null);
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-					seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 				}
 			}
 			/*
@@ -634,14 +620,6 @@ public class BatchStepHelper {
 						step.setBearbeitungsende(null);
 						step.setBearbeitungszeitpunkt(now);
 					}
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-					seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-							+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 					this.stepDAO.save(step);
 				}
 			}

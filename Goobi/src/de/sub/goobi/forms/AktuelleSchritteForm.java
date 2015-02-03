@@ -583,21 +583,13 @@ public class AktuelleSchritteForm extends BasisForm {
 			SchrittDAO dao = new SchrittDAO();
 			Schritt temp = dao.get(this.myProblemID);
 			temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-			// if (temp.getPrioritaet().intValue() == 0)
 			temp.setCorrectionStep();
 			temp.setBearbeitungsende(null);
-			Schritteigenschaft se = new Schritteigenschaft();
 
-			se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-			se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-			se.setType(PropertyType.messageError);
-			se.setCreationDate(myDate);
-			se.setSchritt(temp);
 			String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 					+ ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(
 					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "error", message));
-			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
 					.getProzess()
@@ -612,16 +604,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 				Schritt step = iter.next();
 				step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-				// if (step.getPrioritaet().intValue() == 0)
 				step.setCorrectionStep();
 				step.setBearbeitungsende(null);
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
 				dao.save(step);
 			}
 
@@ -687,18 +671,10 @@ public class AktuelleSchritteForm extends BasisForm {
 					// step.setBearbeitungsbeginn(null);
 					step.setBearbeitungszeitpunkt(now);
 				}
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
 				mySchritt.setBearbeitungszeitpunkt(new Date());
 				if (ben != null) {
 					mySchritt.setBearbeitungsbenutzer(ben);
 				}
-				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
 				dao.save(step);
 			}
 
