@@ -30,7 +30,6 @@ public class FilterString {
 	
 	// english 
 	public static final String PROCESSPROPERTY = "processproperty:";
-	public static final String STEPPROPERTY = "stepproperty:";
 	public static final String STEP = "step:";
 	public static final String STEPINWORK = "stepinwork:";
 	public static final String STEPLOCKED = "steplocked:";
@@ -48,7 +47,6 @@ public class FilterString {
 	
 	// german
 	public static final String PROZESSEIGENSCHAFT = "prozesseigenschaft:";
-	public static final String SCHRITTEIGENSCHAFT = "schritteigenschaft";
 	public static final String SCHRITT = "schritt:";
 	public static final String SCHRITTINARBEIT = "schrittinarbeit:";
 	public static final String SCHRITTGESPERRT = "schrittgesperrt:";
