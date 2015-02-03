@@ -100,8 +100,8 @@
 					</htm:td>
 				</htm:tr>
 				<x:dataList var="intern" style="font-weight: normal"
-					rendered="#{item.eigenschaftenSize!=0}"
-					value="#{item.eigenschaftenList}" layout="ordered list"
+					rendered="#{item.prozess.eigenschaftenSize!=0}"
+					value="#{item.prozess.eigenschaftenList}" layout="ordered list"
 					rowCountVar="rowCount" rowIndexVar="rowIndex">
 					<htm:tr rendered="#{item.bearbeitungsbenutzer.id !=0}">
 						<htm:td width="150">
