@@ -574,6 +574,14 @@ public class AktuelleSchritteForm extends BasisForm {
 			temp.setCorrectionStep();
 			temp.setBearbeitungsende(null);
 
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+			pe.setType(PropertyType.messageError);
+			pe.setCreationDate(myDate);
+			pe.setProzess(this.mySchritt.getProzess());
+			this.mySchritt.getProzess().getEigenschaften().add(pe);
+
 			String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 					+ ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(
@@ -673,6 +681,15 @@ public class AktuelleSchritteForm extends BasisForm {
 					+ ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(
 					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
+
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+			pe.setType(PropertyType.messageImportant);
+			pe.setCreationDate(new Date());
+			pe.setProzess(this.mySchritt.getProzess());
+			this.mySchritt.getProzess().getEigenschaften().add(pe);
 
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {

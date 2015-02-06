@@ -498,6 +498,14 @@ public class BatchStepHelper {
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
 
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
+				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+				pe.setType(PropertyType.messageError);
+				pe.setCreationDate(myDate);
+				pe.setProzess(this.currentStep.getProzess());
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+
 				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess()
@@ -622,6 +630,16 @@ public class BatchStepHelper {
 					this.stepDAO.save(step);
 				}
 			}
+
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+			pe.setProzess(this.currentStep.getProzess());
+			pe.setType(PropertyType.messageImportant);
+			pe.setCreationDate(new Date());
+			this.currentStep.getProzess().getEigenschaften().add(pe);
+
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
 					+ ben.getNachVorname() + ")";
 			this.currentStep.getProzess().setWikifield(
