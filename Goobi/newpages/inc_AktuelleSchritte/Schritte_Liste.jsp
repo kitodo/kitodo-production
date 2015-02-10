@@ -330,7 +330,7 @@
 				<htm:div>
 					<h:panelGrid columns="1" width="400" style="background-color:#f3ebeb; font-size:11px; border: 1px solid #a24033; padding: 1px;">
 
-						<x:dataTable var="intern" rendered="#{item.prozess.eigenschaftenSize!=0}" value="#{item.prozess.eigenschaftenList}">
+						<x:dataTable var="intern" rendered="#{item.prozess.eigenschaftenSize!=0}" value="#{item.prozess.sortedCorrectionSolutionMessages}">
 							<x:column style="vertical-align: top;">
 								<h:outputText value="#{intern.titel}:" />
 							</x:column>
