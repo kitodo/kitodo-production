@@ -559,7 +559,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 		for (Integer year : years.keySet()) {
 			if (year.intValue() != ownYear) {
 				DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-						MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, act, ruleSet);
+						MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(),
+						MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
 				child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
 			}
 		}
@@ -579,8 +580,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 * @param identifier
 	 *            value that identifies the DocStruct to return
 	 * @param optionalField
-	 *            optionally, adds another meta data field with this name and
-	 *            the value used as identifier (may be null)
+	 *            adds another meta data field with this name and the value used
+	 *            as identifier if the metadata type is allowed
 	 * @param act
 	 *            act to create the child in
 	 * @param ruleset
@@ -605,8 +606,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 		} catch (NoSuchElementException nose) {
 			DocStruct child = parent.createChild(type, act, ruleset);
 			child.addMetadata(identifierField, identifier);
-			if (optionalField != null) {
+			try {
 				child.addMetadata(optionalField, identifier);
+			} catch (MetadataTypeNotAllowedException e) {
 			}
 			return child;
 		}
@@ -675,7 +677,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	private void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, act, ruleset);
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
 		DocStruct month = getOrCreateChild(year, monthLevelName,
 				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
