@@ -250,7 +250,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 					if (isInterrupted()) {
 						return;
 					}
-					MetsModsImportExport extendedData = buildExportableMetsMods(process = processesIterator.next(),
+					MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(),
 							collectedYears, aggregation);
 					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 
@@ -511,14 +511,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private MetsModsImportExport buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
+	private MetsMods buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
 			ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
 		Prefs ruleSet = process.getRegelsatz().getPreferences();
-		MetsModsImportExport result = new MetsModsImportExport(ruleSet);
-		((MetsMods) result).read(process.getMetadataFilePath());
+		MetsMods result = new MetsMods(ruleSet);
+		result.read(process.getMetadataFilePath());
 
 		DigitalDocument caudexDigitalis = result.getDigitalDocument();
 		int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
