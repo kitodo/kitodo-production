@@ -40,6 +40,7 @@ package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.helper.Helper;
 
 /**
  * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}
@@ -49,7 +50,7 @@ import de.sub.goobi.export.dms.ExportDms;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class ExportDmsTask extends EmptyTask {
+public class ExportDmsTask extends EmptyTask implements INameableTask {
 
 	private final ExportDms exportDms;
 	private final Prozess process;
@@ -84,6 +85,16 @@ public class ExportDmsTask extends EmptyTask {
 		this.exportDms = source.exportDms;
 		this.process = source.process;
 		this.userHome = source.userHome;
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ExportDmsTask");
 	}
 
 	/**

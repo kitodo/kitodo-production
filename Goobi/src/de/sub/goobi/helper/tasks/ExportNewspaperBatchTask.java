@@ -71,11 +71,12 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-public class ExportNewspaperBatchTask extends EmptyTask {
+public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
@@ -436,6 +437,16 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 			list = Collections.emptyList();
 		}
 		return list;
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ExportNewspaperBatchTask");
 	}
 
 	/**

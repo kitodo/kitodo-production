@@ -54,7 +54,7 @@ import de.sub.goobi.helper.Helper;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class EmptyTask extends Thread implements Cloneable {
+public class EmptyTask extends Thread implements Cloneable, INameableTask {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
 	 * to do with a terminated thread. These are:
@@ -207,6 +207,16 @@ public class EmptyTask extends Thread implements Cloneable {
 	 */
 	Behaviour getBehaviour() {
 		return behaviour;
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("EmptyTask");
 	}
 
 	/**
@@ -457,7 +467,7 @@ public class EmptyTask extends Thread implements Cloneable {
 	 */
 	protected void setNameDetail(String detail) {
 		StringBuilder composer = new StringBuilder(119);
-		composer.append(Helper.getTranslation(getClass().getSimpleName()));
+		composer.append(((INameableTask) this).getDisplayName());
 		if (detail != null) {
 			composer.append(": ");
 			composer.append(detail);
