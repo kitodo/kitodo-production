@@ -59,7 +59,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -280,21 +279,6 @@ public class ProductionDataImport {
 
 	}
 
-	private void generateStepProperty(Session session, Schritt s, String name, String value, PropertyType type, Integer position, boolean required) {
-		if (value != null) {
-			Schritteigenschaft property = new Schritteigenschaft();
-			property.setCreationDate(new Date());
-			property.setIstObligatorisch(required);
-			property.setTitel(name);
-			property.setSchritt(s);
-			property.setWert(value);
-			property.setType(type);
-			s.getEigenschaftenList().add(property);
-			session.saveOrUpdate(s);
-			session.saveOrUpdate(property);
-		}
-	}
-
 	private void generateWerkProperty(Session session, Werkstueck w, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Werkstueckeigenschaft property = new Werkstueckeigenschaft();
@@ -428,15 +412,15 @@ public class ProductionDataImport {
 				s.setBearbeitungsstatusEnum(StepStatus.DONE);
 				
 				// WERKSCANSEITEN
-				generateStepProperty(session, s, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
 
 				prozess.setSortHelperImages(pd.getWERKSCANSEITEN());
 
 				// SCANNERTYP
-				generateStepProperty(session, s, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
 
 				// DRUCKQUALITAET
-				generateStepProperty(session, s, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
 
 			}
 
@@ -457,40 +441,40 @@ public class ProductionDataImport {
 
 			
 				// BITONALIMAGENACHBEARBEITUNG
-				generateStepProperty(session, s, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// GRAUIMAGENACHBEARBEITUNG
-				generateStepProperty(session, s, "GrayscaleImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "GrayscaleImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBEIMAGENACHBEARBEITUNG
-				generateStepProperty(session, s, "ColorImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "ColorImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBGRAUABB
 				// TODO Name
-				generateStepProperty(session, s, "FarbGrauAbb", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "FarbGrauAbb", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
 
 				// ImageNachbearbBitonalDatum
-				generateStepProperty(session, s, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()),
+				generateProzessProperty(session, prozess, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()),
 						PropertyType.Date, 0, false);
 
 				// ImageNachbearbBitonalPerson
-				// generateStepProperty(session, s, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0,
+				// generateProzessProperty(session, prozess, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0,
 				// false);
 
 				// ImageNachbearbGrauDatum
-				generateStepProperty(session, s, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
+				generateProzessProperty(session, prozess, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
 						0, false);
 
 				// ImageNachbearbGrauPerson
-				// generateStepProperty(session, s, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0,
+				// generateProzessProperty(session, prozess, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0,
 				// false);
 
 				// ImageNachbearbFarbeDatum
-				generateStepProperty(session, s, "DatumFarbImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()),
+				generateProzessProperty(session, prozess, "DatumFarbImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()),
 						PropertyType.Date, 0, false);
 
 				// ImageNachbearbFarbePerson
-				// generateStepProperty(session, s, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
+				// generateProzessProperty(session, prozess, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *
@@ -501,10 +485,10 @@ public class ProductionDataImport {
 				s.setEditTypeEnum(StepEditType.ADMIN);
 
 				// CDSICHERUNG
-				generateStepProperty(session, s, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
 
 				// MAARCHIV
-				generateStepProperty(session, s, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
 
 			} else if (s.getTitel().contains("Import von CD")) {
 				s.setBearbeitungsbeginn(pd.getImportDatum());
@@ -707,35 +691,18 @@ public class ProductionDataImport {
 			if (s.getTitel().contains("scan") || s.getTitel().contains("Scan")) {
 				boolean pages = false;
 				boolean scangeraet = false;
-				for (Schritteigenschaft se : s.getEigenschaftenList()) {
-					if (se.getTitel().contains("Anzahl der Images") || se.getTitel().contains("Anzahl der Seiten")
-							|| se.getTitel().contains("Seitenzahl")) {
-						if (!se.getWert().equals(pd.getWERKSCANSEITEN())) {
-							conflicts.add(new ImportConflicts(String.valueOf(s.getId()), "Seitenzahl", se.getWert(), String.valueOf(pd
-									.getWERKSCANSEITEN())));
-						}
-						pages = true;
-					} else if (se.getTitel().contains("Scangerät")) {
-						if (se.getWert().equals(String.valueOf(pd.getSCANNERTYP()))) {
-							scangeraet = true;
-						} else {
-							conflicts.add(new ImportConflicts(String.valueOf(s.getId()), "Scangerät", se.getWert(), pd.getSCANNERTYP()));
-							scangeraet = true;
-						}
-					}
-				}
 
 				if (!pages) {
 					// WERKSCANSEITEN
-					generateStepProperty(session, s, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
+					generateProzessProperty(session, p, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
 
 				}
 				if (!scangeraet) {
 					// SCANNERTYP
-					generateStepProperty(session, s, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
+					generateProzessProperty(session, p, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
 				}
 				// DRUCKQUALITAET
-				generateStepProperty(session, s, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
 			}
 			/********************************************
 			 * step 'Qualitätskontrolle' *
@@ -751,46 +718,46 @@ public class ProductionDataImport {
 				 *******************************************/
 			} else if (s.getTitel().contains("Imagenachbearbeitung")) {
 
-				generateStepProperty(session, s, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// GRAUIMAGENACHBEARBEITUNG
-				generateStepProperty(session, s, "GrauImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "GrauImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBEIMAGENACHBEARBEITUNG
-				generateStepProperty(session, s, "FarbeImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "FarbeImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBGRAUABB
-				generateStepProperty(session, s, "FarbgrauABB", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "FarbgrauABB", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
 
 				// ImageNachbearbBitonalDatum
-				generateStepProperty(session, s, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date,
+				generateProzessProperty(session, p, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date,
 						0, false);
 
 				// ImageNachbearbBitonalPerson
-//				generateStepProperty(session, s, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0, false);
+//				generateProzessProperty(session, p, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0, false);
 
 				// ImageNachbearbGrauDatum
-				generateStepProperty(session, s, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
+				generateProzessProperty(session, p, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
 						0, false);
 
 				// ImageNachbearbGrauPerson
-//				generateStepProperty(session, s, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0, false);
+//				generateProzessProperty(session, p, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0, false);
 
 				// ImageNachbearbFarbeDatum
-				generateStepProperty(session, s, "DatumFarbeImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0,
+				generateProzessProperty(session, p, "DatumFarbeImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0,
 						false);
 
 				// ImageNachbearbFarbePerson
-//				generateStepProperty(session, s, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
+//				generateProzessProperty(session, p, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *
 				 *******************************************/
 			} else if (s.getTitel().contains("Archivierung")) {
-				generateStepProperty(session, s, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
 
 				// MAARCHIV
-				generateStepProperty(session, s, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
 
 			}
 

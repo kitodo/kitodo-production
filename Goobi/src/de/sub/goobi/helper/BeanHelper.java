@@ -39,7 +39,6 @@ import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -55,18 +54,6 @@ public class BeanHelper {
 		Set<Prozesseigenschaft> eigenschaften = inProzess.getEigenschaftenInitialized();
 		if (eigenschaften == null) {
 			eigenschaften = new HashSet<Prozesseigenschaft>();
-		}
-		eigenschaften.add(eig);
-	}
-
-	public static void EigenschaftHinzufuegen(Schritt inSchritt, String inTitel, String inWert) {
-		Schritteigenschaft eig = new Schritteigenschaft();
-		eig.setTitel(inTitel);
-		eig.setWert(inWert);
-		eig.setSchritt(inSchritt);
-		Set<Schritteigenschaft> eigenschaften = inSchritt.getEigenschaften();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Schritteigenschaft>();
 		}
 		eigenschaften.add(eig);
 	}
@@ -140,21 +127,6 @@ public class BeanHelper {
 			//Fixing a bug found by Holger Busse (Berlin)
 			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
 			
-			/* --------------------------------
-			 * Eigenschaften des Schritts
-			 * --------------------------------*/
-			HashSet<Schritteigenschaft> myEigenschaften = new HashSet<Schritteigenschaft>();
-			for (Schritteigenschaft eig : step.getEigenschaftenList()) {
-				Schritteigenschaft eigneu = new Schritteigenschaft();
-				eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-				eigneu.setType(eig.getType());
-				eigneu.setTitel(eig.getTitel());
-				eigneu.setWert(eig.getWert());
-				eigneu.setSchritt(stepneu);
-				myEigenschaften.add(eigneu);
-			}
-			stepneu.setEigenschaften(myEigenschaften);
-
 			/* --------------------------------
 			 * Benutzer übernehmen
 			 * --------------------------------*/

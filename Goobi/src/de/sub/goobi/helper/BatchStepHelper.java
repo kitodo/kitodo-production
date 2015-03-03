@@ -56,7 +56,6 @@ import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
@@ -498,13 +497,15 @@ public class BatchStepHelper {
 				temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
-				Schritteigenschaft se = new Schritteigenschaft();
 
-				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-				se.setType(PropertyType.messageError);
-				se.setCreationDate(myDate);
-				se.setSchritt(temp);
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
+				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+				pe.setType(PropertyType.messageError);
+				pe.setCreationDate(myDate);
+				pe.setProzess(this.currentStep.getProzess());
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+
 				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess()
@@ -512,7 +513,6 @@ public class BatchStepHelper {
 								WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "error",
 										message));
 
-				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
 				this.currentStep
 						.getProzess()
@@ -532,13 +532,6 @@ public class BatchStepHelper {
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 					step.setCorrectionStep();
 					step.setBearbeitungsende(null);
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-					seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 				}
 			}
 			/*
@@ -634,17 +627,19 @@ public class BatchStepHelper {
 						step.setBearbeitungsende(null);
 						step.setBearbeitungszeitpunkt(now);
 					}
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-					seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-							+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 					this.stepDAO.save(step);
 				}
 			}
+
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+			pe.setProzess(this.currentStep.getProzess());
+			pe.setType(PropertyType.messageImportant);
+			pe.setCreationDate(new Date());
+			this.currentStep.getProzess().getEigenschaften().add(pe);
+
 			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
 					+ ben.getNachVorname() + ")";
 			this.currentStep.getProzess().setWikifield(

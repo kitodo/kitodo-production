@@ -75,7 +75,6 @@
 		<mapping resource="de/sub/goobi/beans/Prozess.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Prozesseigenschaft.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Schritt.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Schritteigenschaft.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Werkstueck.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Werkstueckeigenschaft.hbm.xml" />
 		<mapping resource="de/sub/goobi/beans/Vorlage.hbm.xml" />

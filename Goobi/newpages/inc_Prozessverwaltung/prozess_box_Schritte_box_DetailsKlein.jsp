@@ -117,17 +117,6 @@
 					</htm:td>
 				</htm:tr>
 
-				<x:dataList var="intern" value="#{item.eigenschaftenList}" rowCountVar="rowCount" rowIndexVar="rowIndex" rendered="#{item.eigenschaftenSize!=0}">
-					<htm:tr>
-						<htm:td width="150">
-							<h:outputText value="#{intern.titel}:" />
-						</htm:td>
-						<htm:td>
-							<h:outputText value="#{intern.wert}" />
-						</htm:td>
-					</htm:tr>
-				</x:dataList>
-
 			</htm:table>
 		</htm:td>
 	</htm:tr>

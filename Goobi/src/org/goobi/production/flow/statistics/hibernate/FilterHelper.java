@@ -454,26 +454,6 @@ public class FilterHelper {
 		}
 	}
 
-	protected static void filterStepProperty(Conjunction con, String tok, boolean negate) {
-		/* Filtering by signature */
-		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
-		if (!negate) {
-			if (ts.length > 1) {
-				con.add(Restrictions.and(Restrictions.like("schritteig.wert", "%" + ts[1] + "%"),
-						Restrictions.like("schritteig.titel", "%" + ts[0] + "%")));
-			} else {
-				con.add(Restrictions.like("schritteig.wert", "%" + ts[0] + "%"));
-			}
-		} else {
-			if (ts.length > 1) {
-				con.add(Restrictions.not(Restrictions.and(Restrictions.like("schritteig.wert", "%" + ts[1] + "%"),
-						Restrictions.like("schritteig.titel", "%" + ts[0] + "%"))));
-			} else {
-				con.add(Restrictions.not(Restrictions.like("schritteig.wert", "%" + ts[0] + "%")));
-			}
-		}
-	}
-
 	protected static void filterProcessProperty(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
 		/* Filtering by signature */
@@ -657,11 +637,6 @@ public class FilterHelper {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, false);
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPPROPERTY) || tok.toLowerCase().startsWith(FilterString.SCHRITTEIGENSCHAFT)) {
-				if (conjStepProperties == null) {
-					conjStepProperties = Restrictions.conjunction();
-				}
-				FilterHelper.filterStepProperty(conjStepProperties, tok, false);
 			}
 
 			// search over steps
@@ -762,12 +737,6 @@ public class FilterHelper {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, true);
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPPROPERTY)
-					|| tok.toLowerCase().startsWith("-" + FilterString.SCHRITTEIGENSCHAFT)) {
-				if (conjStepProperties == null) {
-					conjStepProperties = Restrictions.conjunction();
-				}
-				FilterHelper.filterStepProperty(conjStepProperties, tok, true);
 			}
 
 			else if (tok.toLowerCase().startsWith("-" + FilterString.STEPINWORK) || tok.toLowerCase().startsWith("-" + FilterString.SCHRITTINARBEIT)) {

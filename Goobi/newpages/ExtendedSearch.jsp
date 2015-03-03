@@ -108,16 +108,6 @@
 								<h:inputText value="#{SearchForm.templatePropertyValue}" />
 							</h:panelGroup>
 
-							<%-- step property --%>
-							<h:outputText value="#{msgs.stepProperties}" />
-							<h:panelGroup>
-								<h:selectOneMenu value="#{SearchForm.stepPropertyTitle}">
-									<si:selectItems value="#{SearchForm.stepPropertyTitles}"
-										var="step" itemLabel="#{step}" itemValue="#{step}" />
-								</h:selectOneMenu>
-								<h:inputText value="#{SearchForm.stepPropertyValue}" />
-							</h:panelGroup>
-							
 							<%--steps --%>
 							<h:outputText value="#{msgs.step}"/>
 							<h:panelGroup>

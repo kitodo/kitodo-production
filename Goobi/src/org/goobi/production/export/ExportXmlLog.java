@@ -58,7 +58,6 @@ import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -246,28 +245,6 @@ public class ExportXmlLog implements IProcessDataExport {
 			Element editType = new Element("edittype", xmlns);
 			editType.setText(s.getEditTypeEnum().getTitle());
 			stepElement.addContent(editType);
-
-			ArrayList<Element> stepProperties = new ArrayList<Element>();
-			for (Schritteigenschaft prop : s.getEigenschaftenList()) {
-				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitel());
-				if (prop.getWert() != null) {
-					property.setAttribute("value", replacer(prop.getWert()));
-				} else {
-					property.setAttribute("value", "");
-				}
-			
-				Element label = new Element("label", xmlns);
-				
-				label.setText(prop.getTitel());
-				property.addContent(label);
-				stepProperties.add(property);
-			}
-			if (stepProperties.size() != 0) {
-				Element properties = new Element("properties", xmlns);
-				properties.addContent(stepProperties);
-				stepElement.addContent(properties);
-			}
 
 			stepElements.add(stepElement);
 		}

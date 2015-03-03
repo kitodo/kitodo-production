@@ -71,7 +71,6 @@ import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
@@ -107,7 +106,6 @@ public class AktuelleSchritteForm extends BasisForm {
 	private String solutionMessage;
 
 	private String modusBearbeiten = "";
-	private Schritteigenschaft mySchrittEigenschaft;
 	private final WebDav myDav = new WebDav();
 	private int gesamtAnzahlImages = 0;
 	private int pageAnzahlImages = 0;
@@ -533,16 +531,6 @@ public class AktuelleSchritteForm extends BasisForm {
 		return FilterAlleStart();
 	}
 
-	/*
-	 *  Eigenschaften bearbeiten
-	 */
-
-	public String SchrittEigenschaftNeu() {
-		this.mySchritt.setBearbeitungszeitpunkt(new Date());
-		this.mySchrittEigenschaft = new Schritteigenschaft();
-		return "";
-	}
-
 	public String SperrungAufheben() {
 		MetadatenSperrung.UnlockProcess(this.mySchritt.getProzess().getId());
 		return "";
@@ -583,21 +571,21 @@ public class AktuelleSchritteForm extends BasisForm {
 			SchrittDAO dao = new SchrittDAO();
 			Schritt temp = dao.get(this.myProblemID);
 			temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
-			// if (temp.getPrioritaet().intValue() == 0)
 			temp.setCorrectionStep();
 			temp.setBearbeitungsende(null);
-			Schritteigenschaft se = new Schritteigenschaft();
 
-			se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-			se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-			se.setType(PropertyType.messageError);
-			se.setCreationDate(myDate);
-			se.setSchritt(temp);
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+			pe.setType(PropertyType.messageError);
+			pe.setCreationDate(myDate);
+			pe.setProzess(this.mySchritt.getProzess());
+			this.mySchritt.getProzess().getEigenschaften().add(pe);
+
 			String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 					+ ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(
 					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "error", message));
-			temp.getEigenschaften().add(se);
 			dao.save(temp);
 			this.mySchritt
 					.getProzess()
@@ -612,16 +600,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 				Schritt step = iter.next();
 				step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-				// if (step.getPrioritaet().intValue() == 0)
 				step.setCorrectionStep();
 				step.setBearbeitungsende(null);
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
 				dao.save(step);
 			}
 
@@ -687,18 +667,10 @@ public class AktuelleSchritteForm extends BasisForm {
 					// step.setBearbeitungsbeginn(null);
 					step.setBearbeitungszeitpunkt(now);
 				}
-				Schritteigenschaft seg = new Schritteigenschaft();
-				seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
 				mySchritt.setBearbeitungszeitpunkt(new Date());
 				if (ben != null) {
 					mySchritt.setBearbeitungsbenutzer(ben);
 				}
-				seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-				seg.setSchritt(step);
-				seg.setType(PropertyType.messageImportant);
-				seg.setCreationDate(new Date());
-				step.getEigenschaften().add(seg);
 				dao.save(step);
 			}
 
@@ -709,6 +681,15 @@ public class AktuelleSchritteForm extends BasisForm {
 					+ ben.getNachVorname() + ")";
 			this.mySchritt.getProzess().setWikifield(
 					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
+
+			Prozesseigenschaft pe = new Prozesseigenschaft();
+			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+			pe.setType(PropertyType.messageImportant);
+			pe.setCreationDate(new Date());
+			pe.setProzess(this.mySchritt.getProzess());
+			this.mySchritt.getProzess().getEigenschaften().add(pe);
 
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
@@ -1001,14 +982,6 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void setSolutionMessage(String solutionMessage) {
 		this.solutionMessage = solutionMessage;
-	}
-
-	public Schritteigenschaft getMySchrittEigenschaft() {
-		return this.mySchrittEigenschaft;
-	}
-
-	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		this.mySchrittEigenschaft = mySchrittEigenschaft;
 	}
 
 	/*

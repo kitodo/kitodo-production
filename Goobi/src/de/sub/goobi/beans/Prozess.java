@@ -32,12 +32,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -1406,4 +1401,68 @@ public class Prozess implements Serializable {
 			DAOException, IOException, InterruptedException {
 		return readMetadataFile().getDigitalDocument();
 	}
+
+	/**
+	 * Filter for correction / solution messages.
+	 *
+	 * @param lpe List of process properties
+	 * @return List of filtered correction / solution messages
+	 */
+	protected List<Prozesseigenschaft> filterForCorrectionSolutionMessages(List<Prozesseigenschaft> lpe) {
+		ArrayList<Prozesseigenschaft> filteredList = new ArrayList<Prozesseigenschaft>();
+		List<String> listOfTranslations = new ArrayList<String>();
+		String propertyTitle = "";
+
+		listOfTranslations.add("Korrektur notwendig");
+		listOfTranslations.add("Korrektur durchgefuehrt");
+		listOfTranslations.add(Helper.getTranslation("Korrektur notwendig"));
+		listOfTranslations.add(Helper.getTranslation("Korrektur durchgefuehrt"));
+
+		if ((lpe == null) || (lpe.size() == 0)) {
+			return filteredList;
+		}
+
+		// filtering for correction and solution messages
+		for (Prozesseigenschaft pe : lpe) {
+			propertyTitle = pe.getTitel();
+			if (listOfTranslations.contains(propertyTitle)) {
+				filteredList.add(pe);
+			}
+		}
+		return filteredList;
+	}
+
+	/**
+	 * Filter and sort after creation date list of process properties for correction and solution messages.
+	 *
+	 * @return list of Prozesseigenschaft objects
+	 */
+	public List<Prozesseigenschaft> getSortedCorrectionSolutionMessages() {
+		List<Prozesseigenschaft> filteredList;
+		List<Prozesseigenschaft> lpe = this.getEigenschaftenList();
+
+		if ((lpe == null) || (lpe.size() == 0)) {
+			return new ArrayList<Prozesseigenschaft>();
+		}
+
+		filteredList = filterForCorrectionSolutionMessages(lpe);
+
+		// sorting after creation date
+		Collections.sort(filteredList, new Comparator<Prozesseigenschaft>() {
+			public int compare(Prozesseigenschaft o1, Prozesseigenschaft o2) {
+				Date o1Date = o1.getCreationDate();
+				Date o2Date = o2.getCreationDate();
+				if (o1Date == null) {
+					o1Date = new Date();
+				}
+				if (o2Date == null) {
+					o2Date = new Date();
+				}
+				return o1Date.compareTo(o2Date);
+			}
+		});
+
+		return new ArrayList<Prozesseigenschaft>(filteredList);
+	}
+
 }
