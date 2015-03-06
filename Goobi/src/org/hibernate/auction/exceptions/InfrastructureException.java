@@ -1,5 +1,5 @@
-package dubious.sub.goobi.helper.encryption.exceptions;
-//TODO: What's the licence of this file?
+package org.hibernate.auction.exceptions;
+
 /**
  * This exception is used to mark (fatal) failures in infrastructure and system code.
  *
@@ -7,7 +7,6 @@ package dubious.sub.goobi.helper.encryption.exceptions;
  */
 public class InfrastructureException
 	extends RuntimeException {
-	private static final long serialVersionUID = -5431126070176417318L;
 
 	public InfrastructureException() {
 	}
