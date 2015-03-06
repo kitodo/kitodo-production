@@ -16,6 +16,7 @@ package org.hibernate.auction.exceptions;
  */
 public class InfrastructureException
 	extends RuntimeException {
+	private static final long serialVersionUID = -5431126070176417318L;
 
 	public InfrastructureException() {
 	}
