@@ -112,6 +112,7 @@ public class ExportDms extends ExportMets {
 		Hibernate.initialize(myProzess.getProjekt().getFilegroups());
 		if (myProzess.getProjekt().isUseDmsImport()
 				&& ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
+			Hibernate.initialize(myProzess.getRegelsatz());
 			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
 			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
 					myProzess.getTitel());
