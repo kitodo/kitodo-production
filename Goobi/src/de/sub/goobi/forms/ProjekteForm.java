@@ -107,7 +107,7 @@ public class ProjekteForm extends BasisForm {
 
 	// making sure its cleaned up
 	@Override
-	public void finalize() {
+	protected void finalize() {
 		this.Cancel();
 	}
 
