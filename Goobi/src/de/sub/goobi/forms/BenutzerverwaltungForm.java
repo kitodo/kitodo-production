@@ -121,7 +121,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 				crit.add(Restrictions.eq("istAktiv", true));
 			}
 
-			if (this.filter != null || this.filter.length() != 0) {
+			if (this.filter != null && this.filter.length() != 0) {
 				Disjunction ex = Restrictions.disjunction();
 				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
