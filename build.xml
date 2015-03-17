@@ -393,7 +393,7 @@
 
     <target name="run-test" depends="compile-tests" description="Run specific JUnit test">
 		<fail unless="junit.test.name" message="Property not set: junit.test.name"/>
-        <junit>
+        <junit fork="yes">
             <classpath refid="test.classpath"/>
             <formatter type="plain" usefile="false"/>
             <test name="${junit.test.name}"	haltonfailure="yes" unless="junit.test.methods"/>
