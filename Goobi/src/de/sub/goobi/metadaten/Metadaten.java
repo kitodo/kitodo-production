@@ -399,7 +399,7 @@ public class Metadaten {
 	 */
 	static String[] parseAuthorityFileArgs(String valueURI) {
 		String authority = null, authorityURI = null;
-		if (valueURI != null) {
+		if (valueURI != null && !valueURI.isEmpty()) {
 			int boundary = valueURI.indexOf('#');
 			if (boundary == -1) {
 				boundary = valueURI.lastIndexOf('/');
