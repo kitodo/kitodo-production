@@ -183,9 +183,15 @@ public class ConnectionManager {
 			logger.debug("Failed to get get Locked Connections - Exception: " + e.toString());
 		} finally {
 			try {
-				rs.close();
-				p_stmt.close();
-				con.close();
+				if (rs != null) {
+					rs.close();
+				}
+				if (p_stmt != null) {
+					p_stmt.close();
+				}
+				if (con != null) {
+					con.close();
+				}
 			} catch (java.sql.SQLException ex) {
 				logger.error(ex.toString());
 			}
