@@ -34,9 +34,8 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.auction.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
-
-import dubious.sub.goobi.helper.encryption.exceptions.InfrastructureException;
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
 // the newer version follows on bottom  of this class
