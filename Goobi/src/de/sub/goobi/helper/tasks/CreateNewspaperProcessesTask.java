@@ -279,9 +279,26 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 			firstAddable = docStruct.getType().getAllAllowedDocStructTypes().get(0);
 			return docStruct.createChild(firstAddable, document, ruleset);
 		} catch (Exception e) {
-			throw new RuntimeException("Could not add child " + (firstAddable != null ? firstAddable + " " : "")
-					+ "to DocStrctType " + docStruct.getType().getName() + ": "
-					+ e.getClass().getSimpleName().replace("NullPointerException", "No child type available."), e);
+			StringBuilder message = new StringBuilder();
+			message.append("Could not add child ");
+			if (firstAddable != null) {
+				message.append(firstAddable);
+				message.append(' ');
+			}
+			message.append("to DocStrct");
+			if (docStruct.getType() == null) {
+				message.append(" without type");
+			} else {
+				message.append("Type ");
+				message.append(docStruct.getType().getName());
+			}
+			message.append(": ");
+			if (e instanceof NullPointerException) {
+				message.append("No child type available.");
+			} else {
+				message.append(e.getClass().getSimpleName());
+			}
+			throw new RuntimeException(message.toString(), e);
 		}
 	}
 
