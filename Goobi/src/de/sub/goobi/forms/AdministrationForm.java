@@ -31,10 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.SystemUtils;
@@ -54,7 +52,6 @@ import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.beans.Schritt;
@@ -69,10 +66,8 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
-import de.sub.goobi.persistence.SchrittDAO;
 import dubious.sub.goobi.helper.encryption.DesEncrypter;
 import dubious.sub.goobi.helper.encryption.MD5;
 
@@ -172,22 +167,6 @@ public class AdministrationForm implements Serializable {
 			dao.save(auf);
 		}
 		Helper.setMeldung(null, "", "Elements successful counted");
-	}
-
-	//TODO: Remove this
-	public void SiciKorr() throws DAOException {
-		Benutzergruppe gruppe = new BenutzergruppenDAO().get(Integer.valueOf(15));
-		Set<Benutzergruppe> neueGruppen = new HashSet<Benutzergruppe>();
-		neueGruppen.add(gruppe);
-
-		SchrittDAO dao = new SchrittDAO();
-		//TODO: Try to avoid SQL
-		List<Schritt> schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
-		for (Schritt auf : schritte) {
-			auf.setBenutzergruppen(neueGruppen);
-			dao.save(auf);
-		}
-		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}
 
 	public void StandardRegelsatzSetzen() throws DAOException {
