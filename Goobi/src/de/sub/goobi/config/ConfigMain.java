@@ -50,12 +50,13 @@ public class ConfigMain {
 
 	private static PropertiesConfiguration getConfig() {
 		if (config == null) {
-		PropertiesConfiguration.setDefaultListDelimiter('&');
+			PropertiesConfiguration.setDefaultListDelimiter('&');
 			PropertiesConfiguration initialized = null;
-		try {
+			try {
 				initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
-		} catch (ConfigurationException e) {
-			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
+			} catch (ConfigurationException e) {
+				myLogger.warn("Loading of " + FileNames.CONFIG_FILE
+						+ " failed. Trying to start with empty configuration.", e);
 				initialized = new PropertiesConfiguration();
 			}
 			initialized.setListDelimiter('&');
