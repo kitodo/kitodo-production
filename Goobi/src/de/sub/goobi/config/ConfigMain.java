@@ -49,18 +49,19 @@ public class ConfigMain {
 	private static String imagesPath = null;
 
 	private static PropertiesConfiguration getConfig() {
-		if (config != null) {
-			return config;
-		}
+		if (config == null) {
 		PropertiesConfiguration.setDefaultListDelimiter('&');
+			PropertiesConfiguration initialized = null;
 		try {
-			config = new PropertiesConfiguration(FileNames.CONFIG_FILE);
+				initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 		} catch (ConfigurationException e) {
 			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
-			config = new PropertiesConfiguration();
+				initialized = new PropertiesConfiguration();
+			}
+			initialized.setListDelimiter('&');
+			initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
+			config = initialized;
 		}
-		config.setListDelimiter('&');
-		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 		return config;
 	}
 
