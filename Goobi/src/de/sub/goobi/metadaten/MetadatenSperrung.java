@@ -143,8 +143,8 @@ public class MetadatenSperrung implements Serializable {
 	/**
 	 * Sekunden zurückgeben, seit der letzten Bearbeitung der Metadaten
 	 */
-	public long getLockSekunden(long ProzessID) {
-		HashMap<String, String> temp = sperrungen.get(String.valueOf(ProzessID));
+	public long getLockSekunden(int ProzessID) {
+		HashMap<String, String> temp = sperrungen.get(ProzessID);
 		/* wenn der Prozess nicht in der Hashmap ist, gibt es keine Zeit */
 		if (temp == null) {
 			return 0;

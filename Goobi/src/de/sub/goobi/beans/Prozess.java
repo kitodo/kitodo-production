@@ -32,7 +32,14 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -363,11 +370,11 @@ public class Prozess implements Serializable {
 	}
 
 	public long getMinutenGesperrt() {
-		return this.msp.getLockSekunden(this.id.longValue()) / 60;
+		return this.msp.getLockSekunden(this.id) / 60;
 	}
 
 	public long getSekundenGesperrt() {
-		return this.msp.getLockSekunden(this.id.longValue()) % 60;
+		return this.msp.getLockSekunden(this.id) % 60;
 	}
 
 	/*
@@ -1449,6 +1456,7 @@ public class Prozess implements Serializable {
 
 		// sorting after creation date
 		Collections.sort(filteredList, new Comparator<Prozesseigenschaft>() {
+			@Override
 			public int compare(Prozesseigenschaft o1, Prozesseigenschaft o2) {
 				Date o1Date = o1.getCreationDate();
 				Date o2Date = o2.getCreationDate();
