@@ -44,7 +44,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import dubious.sub.goobi.helper.encryption.MD5;
+import de.sub.goobi.helper.encryption.MD5;
 
 public class MD5Test {
 	static HashMap<String, String> testData;
