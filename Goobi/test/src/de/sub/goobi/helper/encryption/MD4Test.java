@@ -46,7 +46,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import dubious.sub.goobi.helper.encryption.MD4;
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 public class MD4Test {
 	static HashMap<String, byte[]> testData;

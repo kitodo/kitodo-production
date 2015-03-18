@@ -55,13 +55,14 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.config.ConfigMain;
-import dubious.sub.goobi.helper.encryption.MD4;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like the LDAP system providers.

@@ -56,6 +56,8 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
@@ -63,7 +65,6 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import dubious.sub.goobi.helper.encryption.MD4;
 
 public class Ldap {
 	private static final Logger myLogger = Logger.getLogger(Ldap.class);
