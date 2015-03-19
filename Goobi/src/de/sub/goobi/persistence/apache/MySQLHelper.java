@@ -30,6 +30,7 @@ package de.sub.goobi.persistence.apache;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -269,7 +270,7 @@ public class MySQLHelper {
 			sql.append(" WHERE SchritteID = ? ");
 			Object[] param = { step.getTitle(), step.getReihenfolge(), step.getBearbeitungsstatus(), time, start, end,
 					step.getBearbeitungsbenutzer(), step.getEditType(), step.isTypAutomatisch(), step.getId() };
-			logger.debug("saving step: " + sql.toString() + ", " + param);
+			logger.debug("saving step: " + sql.toString() + ", " + Arrays.toString(param));
 
 			run.update(connection, sql.toString(), param);
 			// logger.debug(sql);
@@ -289,7 +290,7 @@ public class MySQLHelper {
 			// String propNames = "numericValue, stringvalue, type, date, processId";
 			Object[] param = { order, value, type, datetime, processId };
 			String sql = "INSERT INTO " + "history" + " (numericValue, stringvalue, type, date, processId) VALUES ( ?, ?, ?, ? ,?)";
-			logger.trace("added history event " + sql + ", " + param);
+			logger.trace("added history event " + sql + ", " + Arrays.toString(param));
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
@@ -306,7 +307,7 @@ public class MySQLHelper {
 			StringBuilder sql = new StringBuilder();
 			Object[] param = { value, processId };
 			sql.append("UPDATE prozesse SET sortHelperStatus = ? WHERE ProzesseID = ?");
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			run.update(connection, sql.toString(), param);
 		} finally {
 			closeConnection(connection);
@@ -320,7 +321,7 @@ public class MySQLHelper {
 			StringBuilder sql = new StringBuilder();
 			Object[] param = { numberOfFiles, processId };
 			sql.append("UPDATE prozesse SET sortHelperImages = ? WHERE ProzesseID = ?");
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			run.update(connection, sql.toString(), param);
 		} finally {
 			closeConnection(connection);
@@ -334,7 +335,7 @@ public class MySQLHelper {
 			StringBuilder sql = new StringBuilder();
 			Object[] param = { logValue, processId };
 			sql.append("UPDATE prozesse SET wikifield = ? WHERE ProzesseID = ?");
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			run.update(connection, sql.toString(), param);
 		} finally {
 			closeConnection(connection);
@@ -347,7 +348,7 @@ public class MySQLHelper {
 		sql.append("SELECT * FROM projekte WHERE ProjekteID = ?");
 		try {
 			Object[] param = { projectId };
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			ProjectObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectHandler, param);
 			return answer;
 		} finally {
@@ -362,7 +363,7 @@ public class MySQLHelper {
 		sql.append("SELECT * FROM projectfilegroups WHERE ProjekteID = ? ");
 		try {
 			Object[] param = { projectId };
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			List<ProjectFileGroup> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectFilegroupListHandler,
 					param);
 			return answer;
@@ -378,7 +379,7 @@ public class MySQLHelper {
 		sql.append("SELECT * FROM benutzereigenschaften WHERE Titel = '_filter' AND BenutzerID = ?");
 		try {
 			Object[] param = { userId };
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			List<String> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToFilterListtHandler, param);
 			return answer;
 		} finally {
@@ -394,7 +395,7 @@ public class MySQLHelper {
 			String propNames = "Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate, BenutzerID";
 			Object[] param = { "_filter", filterstring, false, 5, null, datetime, userId };
 			String sql = "INSERT INTO " + "benutzereigenschaften" + " (" + propNames + ") VALUES ( ?, ?,? ,? ,? ,?,? )";
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
@@ -407,7 +408,7 @@ public class MySQLHelper {
 			QueryRunner run = new QueryRunner();
 			Object[] param = { userId, filterstring };
 			String sql = "DELETE FROM benutzereigenschaften WHERE Titel = '_filter' AND BenutzerID = ? AND Wert = ?";
-			logger.debug(sql.toString() + ", " + param);
+			logger.debug(sql.toString() + ", " + Arrays.toString(param));
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
