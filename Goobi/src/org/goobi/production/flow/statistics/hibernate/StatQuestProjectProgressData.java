@@ -440,17 +440,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return dtbl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.goobi.production.flow.statistics.IStatisticalQuestion#getRendererInverted
-	 * (de.intranda.commons.chart.renderer.IRenderer)
-	 */
-	public Boolean getRendererInverted(IRenderer inRenderer) {
-		return null;
-	}
-
 	public void setCommonWorkflow(List<StepInformation> commonWorkFlow) {
 		this.commonWorkFlow = commonWorkFlow;
 		this.isDirty = true;
