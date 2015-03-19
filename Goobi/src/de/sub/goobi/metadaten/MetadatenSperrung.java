@@ -128,7 +128,10 @@ public class MetadatenSperrung implements Serializable {
 	/* =============================================================== */
 
 	/**
-	 * Remove lock for process
+	 * Remove lock for process.
+	 * 
+	 * @param ProzessID
+	 *            Id of process to unlock
 	 */
 	public static void UnlockProcess(int ProzessID) {
 		HashMap<String, String> temp = sperrungen.get(ProzessID);
