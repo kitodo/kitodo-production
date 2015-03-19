@@ -144,11 +144,11 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static void setFehlerMeldung(String meldung, String beschreibung) {
-		setMeldung(null, meldung, beschreibung, false);
+		setMeldung(null, meldung, beschreibung != null ? beschreibung : "", false);
 	}
 
 	public static void setFehlerMeldung(String control, String meldung, String beschreibung) {
-		setMeldung(control, meldung, beschreibung, false);
+		setMeldung(control, meldung, beschreibung != null ? beschreibung : "", false);
 	}
 
 	public static void setFehlerMeldung(Exception e) {
