@@ -84,7 +84,6 @@ import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
@@ -2542,19 +2541,19 @@ public class Metadaten {
 		this.alleSeitenAuswahl_letzteSeite = alleSeitenAuswahl_letzteSeite;
 	}
 
-	public List<TreeNode> getStrukturBaum3() {
+	public List<HashMap<String, Object>> getStrukturBaum3() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsList();
 		} else {
-			return new ArrayList<TreeNode>();
+			return Collections.emptyList();
 		}
 	}
 
-	public List<TreeNode> getStrukturBaum3Alle() {
+	public List<HashMap<String, Object>> getStrukturBaum3Alle() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsListAlle();
 		} else {
-			return new ArrayList<TreeNode>();
+			return Collections.emptyList();
 		}
 	}
 
