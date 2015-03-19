@@ -568,7 +568,7 @@ public class Issue {
 	 *            heading to be used
 	 */
 	public void setHeading(String heading) {
-		if (this.heading == null && heading != null || !this.heading.equals(heading)) {
+		if (this.heading == null ? heading != null : !this.heading.equals(heading)) {
 			course.clearProcesses();
 		}
 		this.heading = heading;
