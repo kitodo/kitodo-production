@@ -28,9 +28,9 @@ package org.goobi.production.importer;
  * exception statement from your version.
  */
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.goobi.production.enums.ImportReturnValue;
 
@@ -43,7 +43,7 @@ public class ImportObject {
 
 	// TODO must end with ".xml" in current implementation
 	private String processTitle ="";
-	private Set<Batch> batches = new HashSet<Batch>(0);
+	private final Collection<Batch> batches = new LinkedList<Batch>();
 	
 	private String metsFilename ="";
 
@@ -111,14 +111,10 @@ public class ImportObject {
 		this.templateProperties = templateProperties;
 	}
 
-	public Set<Batch> getBatches() {
+	public Collection<Batch> getBatches() {
 		return batches;
 	}
 
-	public void setBatches(Set<Batch> batches) {
-		this.batches = batches;
-	}
-	
     public String getImportFileName() {
         return importFileName;
     }

@@ -842,7 +842,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 		}
 
-		if (io.getBatches() != null) {
+		if (!io.getBatches().isEmpty()) {
 			this.prozessKopie.getBatchesInitialized().addAll(io.getBatches());
 		}
 		try {
