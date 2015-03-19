@@ -93,7 +93,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + title, e.getMessage());
-			ergebnis = false;
+			return false;
 		}
 
 		DocStruct logical = dd.getLogicalDocStruct();
