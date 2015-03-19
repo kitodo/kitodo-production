@@ -29,7 +29,6 @@ package de.sub.goobi.persistence.apache;
  */
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,8 +41,6 @@ import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Regelsatz;
 
 public class MySQLUtils {
-
-	public static SimpleDateFormat sdfShowDateTime = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 
 	public static ResultSetHandler<List<StepObject>> resultSetToStepObjectListHandler = new ResultSetHandler<List<StepObject>>() {
 		@Override
