@@ -136,13 +136,14 @@ public class MetadatenVerifizierung {
 		 * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
 		 */
 		DocStruct logicalTop = dd.getLogicalDocStruct();
+		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
 		if (logicalTop == null) {
 			Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationError"));
 			ergebnis = false;
+		} else {
+			this.checkDocStructsOhneSeiten(logicalTop);
 		}
 
-		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
-		this.checkDocStructsOhneSeiten(logicalTop);
 		if (this.docStructsOhneSeiten.size() != 0) {
 			for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
 				DocStruct ds = iter.next();
