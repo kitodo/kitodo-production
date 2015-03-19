@@ -102,7 +102,7 @@ public class MetadatenVerifizierung {
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
-				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getName());

@@ -758,7 +758,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				 */
 				if (step.getProzess().getId().intValue() == Integer.parseInt(myID) && step.getBearbeitungsstatusEnum() == StepStatus.INWORK) {
 					this.mySchritt = step;
-					if (SchrittDurchBenutzerAbschliessen() != "") {
+					if (!SchrittDurchBenutzerAbschliessen().isEmpty()) {
 						geprueft.add(element);
 					}
 					this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_MULTI);

@@ -2511,7 +2511,7 @@ public class Metadaten {
 	}
 
 	public String getNeuesElementWohin() {
-		if (this.neuesElementWohin == null || this.neuesElementWohin == "") {
+		if (this.neuesElementWohin == null || this.neuesElementWohin.isEmpty()) {
 			this.neuesElementWohin = "1";
 		}
 		return this.neuesElementWohin;

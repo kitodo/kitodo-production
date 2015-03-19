@@ -108,7 +108,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
-				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
 							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
@@ -571,7 +571,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 								+ Helper.getTranslation("MetadataIsEmpty"));
 						return false;
 					}
-					if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+					if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 							&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
 								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName() + " and "
