@@ -84,7 +84,7 @@ public class MetadatenVerifizierung {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + inProzess.getTitel(), e.getMessage());
-			ergebnis = false;
+			return false;
 		}
 
 		DocStruct logical = dd.getLogicalDocStruct();
