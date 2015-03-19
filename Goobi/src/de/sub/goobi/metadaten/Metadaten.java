@@ -1301,6 +1301,7 @@ public class Metadaten {
 			mydocument = this.gdzfile.getDigitalDocument();
 		} catch (PreferencesException e) {
 			Helper.setMeldung(null, "Can not get DigitalDocument: ", e.getMessage());
+			return;
 		}
 
 		List<DocStruct> meineListe = mydocument.getPhysicalDocStruct().getAllChildren();
