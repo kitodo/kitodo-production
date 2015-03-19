@@ -199,7 +199,8 @@ public class BatchProcessHelper {
 
 						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
 							if (processPe.getTitel() != null) {
-								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == null ? processPe
+										.getContainer() == null : pe.getContainer().equals(processPe.getContainer())) {
 									processPe.setWert(pe.getWert());
 									match = true;
 									break;
