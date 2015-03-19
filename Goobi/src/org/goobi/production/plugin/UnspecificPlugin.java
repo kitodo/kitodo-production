@@ -40,6 +40,7 @@ package org.goobi.production.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
@@ -294,7 +295,7 @@ public abstract class UnspecificPlugin {
 		Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
 		if (!resultType.isAssignableFrom(result.getReturnType()))
 			throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
-					+ parameterTypes.toString() + "), must be " + resultType.toString());
+					+ Arrays.toString(parameterTypes) + "), must be " + resultType.toString());
 		return result;
 	}
 
