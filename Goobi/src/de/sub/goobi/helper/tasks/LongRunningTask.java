@@ -37,7 +37,7 @@ import de.sub.goobi.helper.Helper;
  * @deprecated New task implementations should directly implement EmptyTask.
  */
 @Deprecated
-public abstract class LongRunningTask extends EmptyTask {
+public abstract class LongRunningTask extends EmptyTask implements INameableTask {
 	/**
 	 * No-argument constructor. Creates an empty long running task. Must be made
 	 * explicit because a constructor taking an argument is present.
@@ -114,6 +114,14 @@ public abstract class LongRunningTask extends EmptyTask {
 	@Deprecated
 	protected void stopped() {
 	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public abstract String getDisplayName();
 
 	/**
 	 * Prozess-Getter

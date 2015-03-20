@@ -59,6 +59,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
@@ -73,7 +74,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class ExportSerialBatchTask extends EmptyTask {
+public class ExportSerialBatchTask extends EmptyTask implements INameableTask {
 
 	/**
 	 * The batch to export
@@ -117,6 +118,16 @@ public class ExportSerialBatchTask extends EmptyTask {
 		processesIterator = null;
 		maxsize = batchSize + 1;
 		initialiseRuleSets(batch.getProcesses());
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ExportSerialBatchTask");
 	}
 
 	/**
