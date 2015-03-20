@@ -263,4 +263,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 		return new CreatePdfFromServletThread(this);
 	}
 
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("CreatePdfFromServletThread");
+	}
 }

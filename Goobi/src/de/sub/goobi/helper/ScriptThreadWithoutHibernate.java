@@ -37,11 +37,12 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
 import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.INameableTask;
 import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
-public class ScriptThreadWithoutHibernate extends EmptyTask {
+public class ScriptThreadWithoutHibernate extends EmptyTask implements INameableTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
@@ -90,6 +91,16 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		super(origin);
 		step = origin.step;
 		hs.setTask(this);
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ScriptThreadWithoutHibernate");
 	}
 
 	@Override

@@ -76,7 +76,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateNewspaperProcessesTask extends EmptyTask {
+public class CreateNewspaperProcessesTask extends EmptyTask implements INameableTask {
 
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
@@ -452,6 +452,16 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	}
 
 	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("CreateNewspaperProcessesTask");
+	}
+
+	/**
 	 * The method saveFullBatch() sets the title for the allover batch and saves
 	 * it to hibernate.
 	 * 
@@ -498,4 +508,5 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	public CreateNewspaperProcessesTask clone() {
 		return new CreateNewspaperProcessesTask(this);
 	}
+
 }

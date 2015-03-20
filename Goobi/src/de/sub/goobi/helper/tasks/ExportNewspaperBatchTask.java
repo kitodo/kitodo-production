@@ -71,11 +71,12 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
-public class ExportNewspaperBatchTask extends EmptyTask {
+public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
@@ -250,7 +251,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 					if (isInterrupted()) {
 						return;
 					}
-					MetsModsImportExport extendedData = buildExportableMetsMods(process = processesIterator.next(),
+					MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(),
 							collectedYears, aggregation);
 					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
 
@@ -439,6 +440,16 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	}
 
 	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ExportNewspaperBatchTask");
+	}
+
+	/**
 	 * The function getMetsPointerURL() investigates the METS pointer URL of the
 	 * process.
 	 * 
@@ -511,14 +522,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private MetsModsImportExport buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
+	private MetsMods buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
 			ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
 		Prefs ruleSet = process.getRegelsatz().getPreferences();
-		MetsModsImportExport result = new MetsModsImportExport(ruleSet);
-		((MetsMods) result).read(process.getMetadataFilePath());
+		MetsMods result = new MetsMods(ruleSet);
+		result.read(process.getMetadataFilePath());
 
 		DigitalDocument caudexDigitalis = result.getDigitalDocument();
 		int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
@@ -559,7 +570,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 		for (Integer year : years.keySet()) {
 			if (year.intValue() != ownYear) {
 				DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-						MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(), null, act, ruleSet);
+						MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(),
+						MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);
 				child.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, years.get(year));
 			}
 		}
@@ -579,8 +591,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 * @param identifier
 	 *            value that identifies the DocStruct to return
 	 * @param optionalField
-	 *            optionally, adds another meta data field with this name and
-	 *            the value used as identifier (may be null)
+	 *            adds another meta data field with this name and the value used
+	 *            as identifier if the metadata type is allowed
 	 * @param act
 	 *            act to create the child in
 	 * @param ruleset
@@ -605,8 +617,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 		} catch (NoSuchElementException nose) {
 			DocStruct child = parent.createChild(type, act, ruleset);
 			child.addMetadata(identifierField, identifier);
-			if (optionalField != null) {
+			try {
 				child.addMetadata(optionalField, identifier);
+			} catch (MetadataTypeNotAllowedException e) {
 			}
 			return child;
 		}
@@ -675,7 +688,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	private void insertIssueReference(DigitalDocument act, Prefs ruleset, LocalDate date, String metsPointerURL)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()), null, act, ruleset);
+				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
+				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
 		DocStruct month = getOrCreateChild(year, monthLevelName,
 				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
