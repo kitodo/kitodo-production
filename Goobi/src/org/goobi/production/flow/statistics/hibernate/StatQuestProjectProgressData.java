@@ -99,7 +99,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns true if all Data for the generation is set
+	 * @return true if all Data for the generation is set
 	 */
 
 	public Boolean isDataComplete() {
@@ -216,7 +216,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns if reference curve is used of average production
+	 * @return if reference curve is used of average production
 	 */
 	public Boolean getReferenceCurve() {
 		return this.flagReferenceCurve;
@@ -468,7 +468,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns List of Steps that are selectable for this View
+	 * @return List of Steps that are selectable for this View
 	 */
 
 	public List<String> getSelectableSteps() {
@@ -522,8 +522,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns DataTable generated from the selected step names and the
-	 *          selected reference curve
+	 * @return DataTable generated from the selected step names and the
+	 *         selected reference curve
 	 */
 	public DataTable getSelectedTable() {
 		getDataTable();

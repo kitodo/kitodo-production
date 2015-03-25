@@ -532,7 +532,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * @returns a StatQuestThroughputCommonFlow for the generation of projekt progress data
+	 * @return a StatQuestThroughputCommonFlow for the generation of projekt progress data
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 

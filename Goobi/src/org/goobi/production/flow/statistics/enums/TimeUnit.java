@@ -151,7 +151,7 @@ public enum TimeUnit {
 	
 	/**
 	 * 
-	 * @returns a day factor for the selected time unit based on an average year of 365.25 days
+	 * @return a day factor for the selected time unit based on an average year of 365.25 days
 	 */
 	public Double getDayFactor(){
 		return this.dayFactor;
