@@ -495,7 +495,7 @@ public class StatisticsManager implements Serializable {
 	}
 
 	/**
-	 * @return includeLoops flag
+	 * @param includeLoops
 	 */
 	public void setIncludeLoops(boolean includeLoops) {
 		this.includeLoops = includeLoops;
