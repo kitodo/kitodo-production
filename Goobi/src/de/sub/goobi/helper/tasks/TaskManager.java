@@ -54,7 +54,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 /**
  * The class TaskManager serves to handle the execution of threads. It can be
  * user controlled by the “Long running task manager”, backed by
- * {@link de.sub.goobi.forms.LongRunningTaskForm}.
+ * {@link de.sub.goobi.forms.LongRunningTasksForm}.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
