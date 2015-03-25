@@ -96,8 +96,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	/**
 	 * DMS-Export an eine gewünschte Stelle
 	 * 
-	 * @param myProzess
-	 * @param zielVerzeichnis
+	 * @param process
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws WriteException
