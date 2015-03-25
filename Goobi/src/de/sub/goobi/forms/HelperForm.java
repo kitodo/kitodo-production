@@ -53,6 +53,9 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.DocketDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 
+/**
+ * @author Wulf Riebensahm
+ */
 public class HelperForm {
 
 	public static final String MAIN_JSF_PATH = "/newpages";
@@ -68,8 +71,6 @@ public class HelperForm {
 	}
 
 	/**
-	 * @author Wulf
-	 * @param none
 	 * @return returns dynamically resolved path for Version Logo
 	 */
 	public String getApplicationVersionLogo() {
@@ -233,13 +234,11 @@ public class HelperForm {
 		return myList;
 	}
 
-	/*
+	/**
 	 * method returns a valid css file, which is the suggestion unless
 	 * suggestion is not available if not available default.css is returned
 	 * 
-	 * @author Wulf
-	 * 
-	 * @param suggested css file
+	 * @param cssFileName suggested css file
 	 * 
 	 * @return valid css file
 	 */
