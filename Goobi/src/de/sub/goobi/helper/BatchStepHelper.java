@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
+import javax.naming.AuthenticationException;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -567,39 +568,50 @@ public class BatchStepHelper {
 	}
 
 	public String SolveProblemForSingle() {
-		solveProblem();
-		saveStep();
-		this.solutionMessage = "";
-		this.mySolutionStep = "";
+		try {
+			solveProblem();
+			saveStep();
+			this.solutionMessage = "";
+			this.mySolutionStep = "";
 
-		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-		return asf.FilterAlleStart();
+			AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+			return asf.FilterAlleStart();
+		} catch (AuthenticationException e) {
+			Helper.setFehlerMeldung(e.getMessage());
+			return "";
+		}
 	}
 
 	public String SolveProblemForAll() {
-		for (Schritt s : this.steps) {
-			this.currentStep = s;
-			solveProblem();
-			saveStep();
-		}
-		this.solutionMessage = "";
-		this.mySolutionStep = "";
+		try {
+			for (Schritt s : this.steps) {
+				this.currentStep = s;
+				solveProblem();
+				saveStep();
+			}
+			this.solutionMessage = "";
+			this.mySolutionStep = "";
 
-		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-		return asf.FilterAlleStart();
+			AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+			return asf.FilterAlleStart();
+		} catch (AuthenticationException e) {
+			Helper.setFehlerMeldung(e.getMessage());
+			return "";
+		}
 	}
 
-	private void solveProblem() {
+	private void solveProblem() throws AuthenticationException {
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben == null) {
+			throw new AuthenticationException("userNotFound");
+		}
 		Date now = new Date();
 		this.myDav.UploadFromHome(this.currentStep.getProzess());
 		this.currentStep.setBearbeitungsstatusEnum(StepStatus.DONE);
 		this.currentStep.setBearbeitungsende(now);
 		this.currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 		currentStep.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			currentStep.setBearbeitungsbenutzer(ben);
-		}
+		currentStep.setBearbeitungsbenutzer(ben);
 
 		try {
 			Schritt temp = null;
@@ -630,24 +642,26 @@ public class BatchStepHelper {
 					}
 					this.stepDAO.save(step);
 				}
-			}
 
-			Prozesseigenschaft pe = new Prozesseigenschaft();
-			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-			pe.setProzess(this.currentStep.getProzess());
-			pe.setType(PropertyType.messageImportant);
-			pe.setCreationDate(new Date());
-			this.currentStep.getProzess().getEigenschaften().add(pe);
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "
+						+ this.solutionMessage);
+				pe.setProzess(this.currentStep.getProzess());
+				pe.setType(PropertyType.messageImportant);
+				pe.setCreationDate(new Date());
+				this.currentStep.getProzess().getEigenschaften().add(pe);
 
-			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
-					+ ben.getNachVorname() + ")";
-			this.currentStep.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "info", message));
+				String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "
+						+ this.solutionMessage + " (" + ben.getNachVorname() + ")";
+				this.currentStep.getProzess().setWikifield(
+						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess()
+								.getWikifield(), "info", message));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
+			}
 		} catch (DAOException e) {
 		}
 	}
