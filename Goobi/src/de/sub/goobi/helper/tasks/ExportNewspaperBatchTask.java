@@ -253,11 +253,11 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 					}
 					MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(),
 							collectedYears, aggregation);
-					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
+					setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
 					new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
 							process, LoginForm.getCurrentUserHomeDir(), extendedData.getDigitalDocument());
-					setProgress(GAUGE_INCREMENT_PER_ACTION + ++dividend / divisor);
+					setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 				}
 			}
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
@@ -656,7 +656,7 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		for (int i = 0; i < issues.size(); i++) {
-			if (issues.getKey(i).getYear() == currentYear && !issues.getValue(i).equals(ownMetsPointerURL)) {
+			if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
 				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
 			}
 		}
@@ -701,14 +701,15 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	}
 
 	/**
-	 * The function clone() creates a copy of this ExportNewspaperBatchTask for
-	 * providing the possibility to restart it because a Thread can only be
-	 * started once.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public ExportNewspaperBatchTask clone() {
+	public ExportNewspaperBatchTask replace() {
 		return new ExportNewspaperBatchTask(this);
 	}
 }

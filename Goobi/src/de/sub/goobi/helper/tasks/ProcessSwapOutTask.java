@@ -97,7 +97,7 @@ public void run() {
          setStatusProgress(-1);
          return;
       }
-      if (swapPath == null || swapPath.length() == 0) {
+      if ((swapPath == null) || (swapPath.length() == 0)) {
          setStatusMessage("no swappingPath defined");
          setStatusProgress(-1);
          return;
@@ -196,14 +196,15 @@ public void run() {
    }
 
 	/**
-	 * The method clone does call the copy constructor to create a copy of that
-	 * object. This is necessary for Threads that have terminated in order to
-	 * render to run them again possible.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see java.lang.Thread#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public ProcessSwapOutTask clone() {
+	public ProcessSwapOutTask replace() {
 		return new ProcessSwapOutTask(this);
 	}
 

@@ -183,7 +183,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
 						}
 						break;
 					case PREPARE_FOR_RESTART:
-						EmptyTask replacement = task.clone();
+						EmptyTask replacement = task.replace();
 						if (replacement != null) {
 							position.set(replacement);
 							launchableThreads.addLast(replacement);

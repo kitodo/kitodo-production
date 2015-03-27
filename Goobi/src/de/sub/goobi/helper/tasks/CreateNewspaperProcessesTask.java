@@ -242,17 +242,17 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 					addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
 				}
 				nextProcessToCreate++;
-				setProgress(100 * nextProcessToCreate / (numberOfProcesses + 2));
+				setProgress((100 * nextProcessToCreate) / (numberOfProcesses + 2));
 				if (isInterrupted()) {
 					return;
 				}
 			}
 			flushLogisticsBatch(currentTitle);
-			setProgress((100 * nextProcessToCreate + 1) / (numberOfProcesses + 2));
+			setProgress(((100 * nextProcessToCreate) + 1) / (numberOfProcesses + 2));
 			saveFullBatch(currentTitle);
 			setProgress(100);
 		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
-			String message = e instanceof MetadataTypeNotAllowedException && currentTitle != null ? Helper
+			String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null) ? Helper
 					.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
 							Arrays.asList(new String[] { currentTitle })) : e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask");
@@ -374,7 +374,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 			// create the issue
 			DocStruct issue = createFirstChild(day, document, ruleset);
 			String heading = individualIssue.getHeading();
-			if (heading != null && heading.trim().length() > 0) {
+			if ((heading != null) && (heading.trim().length() > 0)) {
 				addMetadatum(issue, issue.getType().getName(), heading, true);
 			}
 			addMetadatum(issue, year.getType().getName(), theYear, false);
@@ -435,7 +435,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 		if (createBatches != null) {
 			int lastIndex = issues.size() - 1;
 			int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
-			if (currentBreakMark != null && breakMark != currentBreakMark) {
+			if ((currentBreakMark != null) && (breakMark != currentBreakMark)) {
 				flushLogisticsBatch(processTitle);
 			}
 			if (batchLabel == null) {
@@ -515,14 +515,15 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 	}
 
 	/**
-	 * The function clone() creates a copy of this CreateNewspaperProcessesTask
-	 * for providing the possibility to restart it because a Thread can only be
-	 * started once.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public CreateNewspaperProcessesTask clone() {
+	public CreateNewspaperProcessesTask replace() {
 		return new CreateNewspaperProcessesTask(this);
 	}
 

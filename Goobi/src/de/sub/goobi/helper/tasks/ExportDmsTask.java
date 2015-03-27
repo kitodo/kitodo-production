@@ -114,13 +114,15 @@ public class ExportDmsTask extends EmptyTask implements INameableTask {
 	}
 
 	/**
-	 * The function clone() provides the ability to copy the task object to
-	 * restart an export that was previously interrupted by the user.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public ExportDmsTask clone() {
+	public ExportDmsTask replace() {
 		return new ExportDmsTask(this);
 	}
 }

@@ -54,7 +54,7 @@ import de.sub.goobi.helper.Helper;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class EmptyTask extends Thread implements Cloneable, INameableTask {
+public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
 	 * to do with a terminated thread. These are:
@@ -170,15 +170,14 @@ public class EmptyTask extends Thread implements Cloneable, INameableTask {
 	}
 
 	/**
-	 * The method clone does call the copy constructor to create a copy of that
-	 * object. Every subclass that has fields must provide its own copy
+	 * Calls the copy constructor to create a not-yet-executed replacement copy
+	 * of that thread object. Every subclass must provide its own copy
 	 * constructor—which must call super(objectToCopy)—and overload this method
 	 * to call its own copy constructor.
 	 * 
-	 * @see java.lang.Thread#clone()
+	 * @return a not-yet-executed replacement of this thread
 	 */
-	@Override
-	public EmptyTask clone() {
+	public EmptyTask replace() {
 		return new EmptyTask(this);
 	}
 

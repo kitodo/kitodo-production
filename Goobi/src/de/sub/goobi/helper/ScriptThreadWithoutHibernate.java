@@ -67,7 +67,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask implements INameable
 			function = "executeAllScriptsForStep";
 		} else if (step.isTypExport()) {
 			function = "executeDmsExport";
-		} else if (step.getStepPlugin() != null && step.getStepPlugin().length() > 0) {
+		} else if ((step.getStepPlugin() != null) && (step.getStepPlugin().length() > 0)) {
 			function = "executeStepPlugin";
 		}
 		List<String> parameterList = new ArrayList<String>(1);
@@ -114,7 +114,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask implements INameable
 			this.hs.executeAllScriptsForStep(this.step, automatic);
 		} else if (this.step.isTypExport()) {
 			this.hs.executeDmsExport(this.step, automatic);
-		} else if (this.step.getStepPlugin() != null && this.step.getStepPlugin().length() > 0) {
+		} else if ((this.step.getStepPlugin() != null) && (this.step.getStepPlugin().length() > 0)) {
 			IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, step.getStepPlugin());
 			isp.initialize(step, "");
 			if (isp.execute()) {
@@ -124,14 +124,15 @@ public class ScriptThreadWithoutHibernate extends EmptyTask implements INameable
 	}
 
 	/**
-	 * The function clone() calls the clone constructor to create a new instance
-	 * of this object. This is necessary for Threads that have terminated in
-	 * order to render to run them again possible.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public ScriptThreadWithoutHibernate clone() {
+	public ScriptThreadWithoutHibernate replace() {
 		return new ScriptThreadWithoutHibernate(this);
 	}
 }

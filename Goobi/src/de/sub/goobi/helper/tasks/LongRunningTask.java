@@ -93,14 +93,15 @@ public abstract class LongRunningTask extends EmptyTask implements INameableTask
 	}
 
 	/**
-	 * The function clone() creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
 	 * 
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#clone()
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
 	@Override
-	public abstract EmptyTask clone();
+	public abstract EmptyTask replace();
 
 	/**
 	 * The method stopped() had been used to record that the thread has stopped.
