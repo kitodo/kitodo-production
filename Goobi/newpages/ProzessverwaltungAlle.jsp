@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Prozesse in der �?bersicht
+							Alle Prozesse in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="ProzessverwaltungForm" />
@@ -67,7 +67,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.prozessverwaltung}" />
 									</htm:h3>
@@ -78,13 +78,7 @@
 										tooltip="true" />
 
 									<%-- Prozesse auflisten --%>
-									<%-- old
-							<%@include file="inc_Prozessverwaltung/Context_Prozesse_Liste.jsp"%>
-							--%>
 									<%@include file="inc_Prozessverwaltung/Prozesse_Liste.jsp"%>
-
-									<%-- abgeschlossene Prozesse 
-							<%@include file="inc_Prozessverwaltung/Prozesse_abgeschlossen.jsp"%> --%>
 
 									<%-- Prozesse auflisten --%>
 									<%@include
