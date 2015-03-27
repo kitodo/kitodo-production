@@ -80,9 +80,6 @@
 									<%-- Prozesse auflisten --%>
 									<%@include file="inc_Prozessverwaltung/Prozesse_Liste.jsp"%>
 
-									<%-- abgeschlossene Prozesse 
-							<%@include file="inc_Prozessverwaltung/Prozesse_abgeschlossen.jsp"%> --%>
-
 									<%-- Prozesse auflisten --%>
 									<%@include
 										file="inc_Prozessverwaltung/Prozesse_Liste_Action.jsp"%>
