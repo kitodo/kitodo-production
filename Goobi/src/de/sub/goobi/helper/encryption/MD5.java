@@ -26,7 +26,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor
  * <b>&copy; Copyright:</b> Karsten Bettray - 2010<br><br>
  * <b>License:</b> GPL2.0<br>
   * @author Karsten Bettray (Universit&auml;t Duisburg-Essen)<br><br>
- * @version 0.1<br>
+  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @version 0.1.1<br>
  *
  */
 public class MD5
@@ -76,7 +77,7 @@ public class MD5
             md = MessageDigest.getInstance("MD5");   // getting a 'MD5-Instance'
             encryptMsg = md.digest(text.getBytes()); // solving the MD5-Hash
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("No Such Algorithm Exception!");
+        	throw new RuntimeException(e.getMessage(), e);
         }
 
         String swap = "";       // swap-string for the result
