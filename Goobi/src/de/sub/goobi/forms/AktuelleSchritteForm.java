@@ -559,6 +559,11 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String ReportProblem() {
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben == null) {
+			Helper.setFehlerMeldung("userNotFound");
+			return "";
+		}
 		myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
 		myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
@@ -566,10 +571,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 		mySchritt.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			mySchritt.setBearbeitungsbenutzer(ben);
-		}
+		mySchritt.setBearbeitungsbenutzer(ben);
 		this.mySchritt.setBearbeitungsbeginn(null);
 
 		try {
@@ -640,16 +642,18 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String SolveProblem() {
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben == null) {
+			Helper.setFehlerMeldung("userNotFound");
+			return "";
+		}
 		Date now = new Date();
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
 		this.mySchritt.setBearbeitungsende(now);
 		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 		mySchritt.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			mySchritt.setBearbeitungsbenutzer(ben);
-		}
+		mySchritt.setBearbeitungsbenutzer(ben);
 
 		try {
 			SchrittDAO dao = new SchrittDAO();
