@@ -113,7 +113,7 @@ public class MetadatenVerifizierung {
 				}
 				if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					List<String> parameter = new ArrayList<String>();
-					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
+					parameter.add(identifierFirstChild.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
 					ergebnis = false;

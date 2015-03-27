@@ -325,7 +325,7 @@ public class SearchForm {
 			if (!this.processPropertyTitle.isEmpty() && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
 				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
 			} else {
-				search += "\""+ this.masterpiecePropertyOperand+FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
+				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
 			}
 		}
 		if (!this.masterpiecePropertyValue.isEmpty()) {
