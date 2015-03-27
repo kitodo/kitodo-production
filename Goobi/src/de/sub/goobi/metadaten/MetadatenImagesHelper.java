@@ -90,7 +90,6 @@ public class MetadatenImagesHelper {
      * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
      * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
      * 
-     * @return null
      * @throws TypeNotAllowedForParentException
      * @throws TypeNotAllowedForParentException
      * @throws InterruptedException

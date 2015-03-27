@@ -238,7 +238,7 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 * 
-	 * @returns the Class of the initial Exception if possible
+	 * @return the Class of the initial Exception if possible
 	 */
 	private String getContextInfo(){
 		String getContextInfo = "";

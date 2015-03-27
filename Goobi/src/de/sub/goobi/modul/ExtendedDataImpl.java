@@ -74,7 +74,10 @@ public class ExtendedDataImpl extends DataImpl {
    
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
-    * @param SessionID, Type, Count, Property
+    * @param sessionId
+    * @param type
+    * @param count
+    * @param pp
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
@@ -143,7 +146,9 @@ public int add(String sessionId, String type, int count, HashMap pp) throws Goob
 
    /**
     * Diese Methode wird benötigt um feste Eigenschaften von Metadaten auszulesen.
-    * @param SessionID, Type, Count
+    * @param sessionId
+    * @param type
+    * @param count
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
     * ================================================================*/
@@ -191,7 +196,9 @@ public HashMap<String, String> getData(String sessionId, String type, int count)
 
    /**
     * Diese Methode wird benötigt um Eigenschaften von Metadaten auszulesen
-    * @param SessionID, Type, Count
+    * @param sessionId
+    * @param type
+    * @param count
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
     * ================================================================*/
@@ -252,7 +259,10 @@ public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String ty
 
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
-    * @param SessionID, Type, Count, Property
+    * @param sessionId
+    * @param type
+    * @param count
+    * @param pp
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/

@@ -307,8 +307,7 @@ public class Batch {
 	 *
 	 * @param processes
 	 *            collection containing elements to be removed from this set
-	 * @return whether the set of processes changed as a result of the call
-	 * @returns true if the set of processes was changed as a result of the call
+	 * @return true if the set of processes was changed as a result of the call
 	 */
 	public boolean removeAll(Collection<?> processes) {
 		return getProcesses().removeAll(processes);

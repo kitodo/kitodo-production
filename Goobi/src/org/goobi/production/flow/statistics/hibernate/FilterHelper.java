@@ -190,7 +190,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameter
-	 * @author Wulf Riebensahm
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepStart(String parameter) {
@@ -203,7 +202,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameter
-	 * @author Wulf Riebensahm
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepEnd(String parameter) {
@@ -217,7 +215,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameters
-	 * @author Wulf Riebensahm
 	 * @return StepFilter
 	 ****************************************************************************/
 	protected static StepFilter getStepFilter(String parameters) {

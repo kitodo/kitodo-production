@@ -54,8 +54,8 @@ public class ProjectHelper {
 	 * 
 	 * 
 	 * @param instance
-	 * @returns a GoobiCollection of the following structure:
-	 * @GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
+	 * @return a GoobiCollection of the following structure:
+	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
 	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
 	 * 
 	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The

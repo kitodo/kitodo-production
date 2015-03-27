@@ -115,6 +115,9 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
+/**
+ * @author Wulf Riebensahm
+ */
 public class ProzessverwaltungForm extends BasisForm {
 	private static final long serialVersionUID = 2838270843176821134L;
 	private static final Logger logger = Logger.getLogger(ProzessverwaltungForm.class);
@@ -175,7 +178,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	/**
 	 * needed for ExtendedSearch
 	 * 
-	 * @return
+	 * @return always true
 	 */
 	public boolean getInitialize() {
 		return true;
@@ -1413,8 +1416,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	/**
 	 * ist called via jsp at the end of building a chart in include file Prozesse_Liste_Statistik.jsp and resets the statistics so that with the next
 	 * reload a chart is not shown anymore
-	 * 
-	 * @author Wulf
 	 */
 	public String getResetStatistic() {
 		this.showStatistics = false;

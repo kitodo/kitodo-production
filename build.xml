@@ -205,7 +205,7 @@
     <!-- building javadoc for sources -->
     <target name="javadoc" depends="init">
         <javadoc destdir="${doc.javadocs.dir}"
-                 sourcepath="${java.src.dir}" Author="true"
+                 sourcepath="${java.src.dir}:${java.src.dubious.dir}" Author="true"
                  version="true"
                  Use="true" noindex="true" Windowtitle="Goobi JavaDoc References" Doctitle="Goobi JavaDoc References"
                  bottom="Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ)." encoding="UTF8">

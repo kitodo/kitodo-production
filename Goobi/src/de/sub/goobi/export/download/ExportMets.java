@@ -109,7 +109,7 @@ public class ExportMets {
 	 * DMS-Export an eine gewünschte Stelle
 	 * 
 	 * @param myProzess
-	 * @param zielVerzeichnis
+	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws PreferencesException

@@ -54,7 +54,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionID
     * @return ProzessID
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
@@ -65,7 +65,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um die Volltextdatei zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -86,7 +86,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um das relative Arbeisverzeichnis zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Arbeitsverzeichnis (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -107,7 +107,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um die Metadatendatei zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -129,7 +129,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Parameter Struktur
     * @throws GoobiException: 1, 2, 4, 5, 6, 254
     * ================================================================*/
@@ -155,7 +155,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode liefert das Projekt eines Prozesses. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Projekttitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
@@ -167,7 +167,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode liefert den Titel eines Prozesses. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Prozesstitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/

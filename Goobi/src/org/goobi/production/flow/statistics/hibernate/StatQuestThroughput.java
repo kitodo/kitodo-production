@@ -71,7 +71,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 * not included means that only min(date) or max(date) - depending on option
 	 * in
 	 * 
-	 * @see historyEventType
+	 * @see HistoryEventType
 	 * 
 	 * @return status of loops included or not
 	 */

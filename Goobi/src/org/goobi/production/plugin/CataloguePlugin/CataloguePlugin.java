@@ -350,7 +350,6 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * 
 	 * @param catalogue
 	 *            catalogue in question
-	 * @return whether the plugin supports that catalogue
 	 */
 	public void useCatalogue(String catalogue) {
 		invokeQuietly(plugin, useCatalogue, catalogue, null);

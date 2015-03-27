@@ -327,7 +327,7 @@ public class LoginForm {
 	 *             If the thread running the script is interrupted by another
 	 *             thread while it is waiting, then the wait is ended and an
 	 *             InterruptedException is thrown.
-	 * @throw IOException If an I/O error occurs.
+	 * @throws IOException if an I/O error occurs.
 	 */
 	public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
 		String result = "";
