@@ -93,7 +93,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + title, e.getMessage());
-			ergebnis = false;
+			return false;
 		}
 
 		DocStruct logical = dd.getLogicalDocStruct();
@@ -108,7 +108,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
-				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
 							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
@@ -138,13 +138,14 @@ public class MetadatenVerifizierungWithoutHibernate {
 		 * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
 		 */
 		DocStruct logicalTop = dd.getLogicalDocStruct();
+		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
 		if (logicalTop == null) {
 			Helper.setFehlerMeldung(title + ": " + Helper.getTranslation("MetadataPaginationError"));
 			ergebnis = false;
+		} else {
+			this.checkDocStructsOhneSeiten(logicalTop);
 		}
 
-		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
-		this.checkDocStructsOhneSeiten(logicalTop);
 		if (this.docStructsOhneSeiten.size() != 0) {
 			for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
 				DocStruct ds = iter.next();
@@ -570,7 +571,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 								+ Helper.getTranslation("MetadataIsEmpty"));
 						return false;
 					}
-					if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+					if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 							&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
 								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName() + " and "

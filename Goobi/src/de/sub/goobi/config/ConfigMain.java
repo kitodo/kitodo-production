@@ -45,22 +45,28 @@ import de.sub.goobi.helper.Helper;
 
 public class ConfigMain {
 	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
-	private static PropertiesConfiguration config;
+	private static volatile PropertiesConfiguration config;
 	private static String imagesPath = null;
 
 	private static PropertiesConfiguration getConfig() {
-		if (config != null) {
-			return config;
+		if (config == null) {
+			synchronized (ConfigMain.class) {
+				PropertiesConfiguration initialized = config;
+				if (initialized == null) {
+					PropertiesConfiguration.setDefaultListDelimiter('&');
+					try {
+						initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
+					} catch (ConfigurationException e) {
+						myLogger.warn("Loading of " + FileNames.CONFIG_FILE
+								+ " failed. Trying to start with empty configuration.", e);
+						initialized = new PropertiesConfiguration();
+					}
+					initialized.setListDelimiter('&');
+					initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
+					config = initialized;
+				}
+			}
 		}
-		PropertiesConfiguration.setDefaultListDelimiter('&');
-		try {
-			config = new PropertiesConfiguration(FileNames.CONFIG_FILE);
-		} catch (ConfigurationException e) {
-			myLogger.warn("Loading of " + FileNames.CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
-			config = new PropertiesConfiguration();
-		}
-		config.setListDelimiter('&');
-		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 		return config;
 	}
 

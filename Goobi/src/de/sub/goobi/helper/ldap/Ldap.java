@@ -122,7 +122,7 @@ public class Ldap {
 				myLogger.debug("HomeVerzeichnis existiert schon");
 			}
 		} else {
-			Helper.setMeldung(null, Helper.getTranslation("ldapIsReadOnly"));
+			Helper.setMeldung(Helper.getTranslation("ldapIsReadOnly"));
 		}
 	}
 

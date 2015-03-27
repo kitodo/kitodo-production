@@ -44,7 +44,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.apache.StepManager;
@@ -409,7 +408,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				logger.debug("updating history entries for " + proc.getTitel());
 				try {
 					if (!proc.isSwappedOutGui()) {
-						if (true == updateHistory(proc) | updateHistoryForSteps(proc)) {
+						boolean processHistoryChanged = (true == updateHistory(proc));
+						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
+						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
 							logger.debug("history updated for process " + proc.getId());
 						}

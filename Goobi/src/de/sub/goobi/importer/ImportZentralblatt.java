@@ -63,7 +63,7 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 public class ImportZentralblatt {
 	private static final Logger myLogger = Logger.getLogger(ImportZentralblatt.class);
 	String Trennzeichen;
-	private Helper help;
+	private final Helper help;
 	private Prefs myPrefs;
 
 	/**
@@ -226,7 +226,7 @@ public class ImportZentralblatt {
 		case 0xd: // carriage return, '\r'
 			return true;
 		default:
-			return ((0x20 <= c && c <= 0xd7ff) || (0xe000 <= c && c <= 0xfffd) || (0x10000 <= c && c <= 0x10ffff));
+			return ((0x20 <= c && c <= 0xd7ff) || (0xe000 <= c && c <= 0xfffd));
 		}
 	}
 

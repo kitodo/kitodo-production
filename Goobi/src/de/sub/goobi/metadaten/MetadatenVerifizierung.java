@@ -84,7 +84,7 @@ public class MetadatenVerifizierung {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + inProzess.getTitel(), e.getMessage());
-			ergebnis = false;
+			return false;
 		}
 
 		DocStruct logical = dd.getLogicalDocStruct();
@@ -102,7 +102,7 @@ public class MetadatenVerifizierung {
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
-				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getName());
@@ -136,13 +136,14 @@ public class MetadatenVerifizierung {
 		 * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
 		 */
 		DocStruct logicalTop = dd.getLogicalDocStruct();
+		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
 		if (logicalTop == null) {
 			Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationError"));
 			ergebnis = false;
+		} else {
+			this.checkDocStructsOhneSeiten(logicalTop);
 		}
 
-		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
-		this.checkDocStructsOhneSeiten(logicalTop);
 		if (this.docStructsOhneSeiten.size() != 0) {
 			for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
 				DocStruct ds = iter.next();

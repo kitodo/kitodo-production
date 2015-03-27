@@ -159,11 +159,11 @@ public class GranularityForm {
 	 */
 	public void downloadClick() {
 		try {
-			course.recalculateRegularityOfIssues();
 			if (course == null || course.getNumberOfProcesses() < 1) {
 				Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
 				return;
 			}
+			course.recalculateRegularityOfIssues();
 			Document courseXML = course.toXML();
 			byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
 			FacesUtils.sendDownload(data, "course.xml");

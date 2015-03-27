@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -121,6 +122,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	private static String DONEDIRECTORYNAME = "fertig/";
 	private final ProzessDAO pdao;
 	private Boolean flagWait = false;
+	private final ReentrantLock flagWaitLock = new ReentrantLock();
 	private BatchStepHelper batchHelper;
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
@@ -234,7 +236,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 
 	public String SchrittDurchBenutzerUebernehmen() {
-		synchronized (this.flagWait) {
+		this.flagWaitLock.lock();
+		try {
 
 			if (!this.flagWait) {
 				this.flagWait = true;
@@ -289,6 +292,8 @@ public class AktuelleSchritteForm extends BasisForm {
 				return "";
 			}
 			this.flagWait = false;
+		} finally {
+			this.flagWaitLock.unlock();
 		}
 		return "AktuelleSchritteBearbeiten";
 	}
@@ -753,7 +758,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				 */
 				if (step.getProzess().getId().intValue() == Integer.parseInt(myID) && step.getBearbeitungsstatusEnum() == StepStatus.INWORK) {
 					this.mySchritt = step;
-					if (SchrittDurchBenutzerAbschliessen() != "") {
+					if (!SchrittDurchBenutzerAbschliessen().isEmpty()) {
 						geprueft.add(element);
 					}
 					this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_MULTI);

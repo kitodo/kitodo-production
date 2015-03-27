@@ -83,7 +83,7 @@ public class ProjekteForm extends BasisForm {
 
 	private Projekt myProjekt = new Projekt();
 	private ProjectFileGroup myFilegroup;
-	private ProjektDAO dao = new ProjektDAO();
+	private final ProjektDAO dao = new ProjektDAO();
 
 	// lists accepting the preliminary actions of adding and delting filegroups
 	// it needs the execution of commit fileGroups to make these changes permanent
@@ -120,7 +120,7 @@ public class ProjekteForm extends BasisForm {
 	private void deleteFileGroups(List<Integer> fileGroups) {
 		for (Integer id : fileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
-				if (f.getId() == id) {
+				if (f.getId() == null ? id == null : f.getId().equals(id)) {
 					this.myProjekt.getFilegroups().remove(f);
 					break;
 				}
@@ -280,7 +280,7 @@ public class ProjekteForm extends BasisForm {
 
 		for (Integer id : this.deletedFileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
-				if (f.getId() == id) {
+				if (f.getId() == null ? id == null : f.getId().equals(id)) {
 					filteredFileGroupList.remove(f);
 					break;
 				}

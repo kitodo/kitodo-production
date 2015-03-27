@@ -852,8 +852,8 @@ public class ProzesskopieForm {
 					}
 				}
 			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
-				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
-						.getType().getName());
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
+						populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
 			} catch (IndexOutOfBoundsException e) { // if getAllAllowedDocStructTypes() returns empty list
 				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
 						.getType().getName());

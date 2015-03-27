@@ -59,17 +59,17 @@ public class TreeNode {
 
    
 
-   public List<TreeNode> getChildrenAsList() {
-      List<TreeNode> myList = new ArrayList<TreeNode>();
-      getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<TreeNode>());
+   public List<HashMap<String,Object>> getChildrenAsList() {
+      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
+      getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<Boolean>());
       return myList;
    }
 
    
 
-   public List<TreeNode> getChildrenAsListAlle() {
-      List<TreeNode> myList = new ArrayList<TreeNode>();
-      getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<TreeNode>());
+   public List<HashMap<String,Object>> getChildrenAsListAlle() {
+      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
+      getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<Boolean>());
       return myList;
    }
    
@@ -115,25 +115,24 @@ public class TreeNode {
 
    
 
-	@SuppressWarnings({"unchecked", "rawtypes"} )
-	private List getChildrenAsListMitStrichen(List inList, int niveau, TreeNode inNode, boolean istLetzter,
-         boolean VaterIstLetzter, List inStriche) {
+   private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList,
+      int niveau, TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      HashMap map = new HashMap();
+      HashMap<String,Object> map = new HashMap<String,Object>();
       map.put("node", inNode);
-      map.put("niveau", Integer.valueOf(niveau));
-      map.put("islast", Boolean.valueOf(istLetzter));
+      map.put("niveau", niveau);
+      map.put("islast", istLetzter);
 
       // die Striche vorbereiten
-      List striche = new ArrayList(inStriche);
-      striche.add(Boolean.valueOf(VaterIstLetzter));
+      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+      striche.add(vaterIstLetzter);
       map.put("striche", striche);
 
       inList.add(map);
 
       if (inNode.getHasChildren() && inNode.expanded) {
-         for (Iterator it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = (TreeNode) it.next();
+         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+            TreeNode kind = it.next();
             getChildrenAsListMitStrichen(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
          }
       }
@@ -143,25 +142,24 @@ public class TreeNode {
    
    
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List getChildrenAsListAlle(List inList, int niveau, TreeNode inNode, boolean istLetzter,
-         boolean VaterIstLetzter, List inStriche) {
+   private List<HashMap<String, Object>> getChildrenAsListAlle(List<HashMap<String, Object>> inList, int niveau,
+      TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      HashMap map = new HashMap();
+      HashMap<String,Object> map = new HashMap<String,Object>();
       map.put("node", inNode);
-      map.put("niveau", Integer.valueOf(niveau));
-      map.put("islast", Boolean.valueOf(istLetzter));
+      map.put("niveau", niveau);
+      map.put("islast", istLetzter);
 
       // die Striche vorbereiten
-      List striche = new ArrayList(inStriche);
-      striche.add(Boolean.valueOf(VaterIstLetzter));
+      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+      striche.add(vaterIstLetzter);
       map.put("striche", striche);
 
       inList.add(map);
 
       if (inNode.getHasChildren()) {
-         for (Iterator it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = (TreeNode) it.next();
+         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+            TreeNode kind = it.next();
             getChildrenAsListAlle(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
          }
       }

@@ -74,11 +74,11 @@ import de.sub.goobi.persistence.apache.StepObject;
 public class BatchStepHelper {
 
 	private List<Schritt> steps;
-	private ProzessDAO pdao = new ProzessDAO();
-	private SchrittDAO stepDAO = new SchrittDAO();
+	private final ProzessDAO pdao = new ProzessDAO();
+	private final SchrittDAO stepDAO = new SchrittDAO();
 	private static final Logger logger = Logger.getLogger(BatchStepHelper.class);
 	private Schritt currentStep;
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
@@ -90,7 +90,7 @@ public class BatchStepHelper {
 	private String processName = "";
 	private String addToWikiField = "";
 	private String script;
-	private WebDav myDav = new WebDav();
+	private final WebDav myDav = new WebDav();
 	private List<String> processNameList = new ArrayList<String>();
 
 	public BatchStepHelper(List<Schritt> steps) {
@@ -232,7 +232,8 @@ public class BatchStepHelper {
 
 						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
 							if (processPe.getTitel() != null) {
-								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == null ? processPe
+										.getContainer() == null : pe.getContainer().equals(processPe.getContainer())) {
 									processPe.setWert(pe.getWert());
 									match = true;
 									break;

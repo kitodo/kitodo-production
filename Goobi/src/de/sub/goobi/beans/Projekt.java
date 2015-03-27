@@ -499,7 +499,16 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return this.getTitel().equals(((Projekt)obj).getTitel());
+		if (!(obj instanceof Projekt)) {
+			return false;
+		}
+		Projekt other = (Projekt) obj;
+		return this.titel == null ? other.titel == null : this.titel.equals(other.titel);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.titel == null ? 0 : this.titel.hashCode();
 	}
 
 	@XmlElement(name = "field")
