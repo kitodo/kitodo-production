@@ -78,9 +78,6 @@
 										tooltip="true" />
 
 									<%-- Prozesse auflisten --%>
-									<%-- old
-							<%@include file="inc_Prozessverwaltung/Context_Prozesse_Liste.jsp"%>
-							--%>
 									<%@include file="inc_Prozessverwaltung/Prozesse_Liste.jsp"%>
 
 									<%-- abgeschlossene Prozesse 
