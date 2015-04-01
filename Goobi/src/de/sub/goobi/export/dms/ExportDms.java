@@ -506,7 +506,7 @@ public class ExportDms extends ExportMets {
 		if (ocr.exists()) {
 			File[] folder = ocr.listFiles();
 			for (File dir : folder) {
-				if (dir.isDirectory() && dir.list().length > 0) {
+				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
