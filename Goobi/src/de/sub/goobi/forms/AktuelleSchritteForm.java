@@ -332,7 +332,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
 		}
-		// if only one step is asigned for this batch, use the single
+		// if only one step is assigned for this batch, use the single
 
 		// Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
 		if (currentStepsOfBatch.size() == 0) {
@@ -418,7 +418,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		} else {
 			return "AktuelleSchritteBearbeiten";
 		}
-		// if only one step is asigned for this batch, use the single
+		// if only one step is assigned for this batch, use the single
 
 		// Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements in batch");
 
