@@ -23,7 +23,7 @@ configured by providing a build.properties file next to the build.xml build-file
 
 ### Dependencies
 
-All dependent libraries are shipped with the source code. They can be found in the top level directory /lib.
+All dependent libraries are shipped with the source code. They can be found in the directory `/Goobi/WEB-INF/lib/`.
 The only thing that is not shipped is a Tomcat specific servlet API. This should come along with the Tomcat distribution you are building against.
 Its location has to be specified either in the build configuration file build.properties or as a command line parameter to the ant command.
 
