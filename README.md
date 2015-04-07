@@ -45,6 +45,5 @@ Most probably, you will have to adjust these four files:
 * contentServerConfig.xml
 * hibernate.cfg.xml
 * log4j.properties
-* propertyTemplates.xml
 
 Setting up a Goobi instance can be quite tricky. For more help on how to configure Goobi, please check the web sites above or ask questions on the mailing lists.
