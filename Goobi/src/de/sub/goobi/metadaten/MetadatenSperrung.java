@@ -4,7 +4,7 @@ package de.sub.goobi.metadaten;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.metadaten;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -128,7 +128,10 @@ public class MetadatenSperrung implements Serializable {
 	/* =============================================================== */
 
 	/**
-	 * Sperrung f�r Vorgang aufheben
+	 * Remove lock for process.
+	 * 
+	 * @param ProzessID
+	 *            Id of process to unlock
 	 */
 	public static void UnlockProcess(int ProzessID) {
 		HashMap<String, String> temp = sperrungen.get(ProzessID);
@@ -143,8 +146,8 @@ public class MetadatenSperrung implements Serializable {
 	/**
 	 * Sekunden zurückgeben, seit der letzten Bearbeitung der Metadaten
 	 */
-	public long getLockSekunden(long ProzessID) {
-		HashMap<String, String> temp = sperrungen.get(String.valueOf(ProzessID));
+	public long getLockSekunden(int ProzessID) {
+		HashMap<String, String> temp = sperrungen.get(ProzessID);
 		/* wenn der Prozess nicht in der Hashmap ist, gibt es keine Zeit */
 		if (temp == null) {
 			return 0;

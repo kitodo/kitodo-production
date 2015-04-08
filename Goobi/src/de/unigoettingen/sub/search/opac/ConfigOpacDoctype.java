@@ -5,7 +5,7 @@ package de.unigoettingen.sub.search.opac;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.unigoettingen.sub.search.opac;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -38,28 +38,31 @@ import javax.xml.bind.annotation.XmlElement;
 import org.goobi.webapi.beans.Label;
 import org.goobi.webapi.beans.Label.KeyAttribute;
 
+import com.sharkysoft.util.NotImplementedException;
+
 public class ConfigOpacDoctype {
 	private String title = "";
 	private String rulesetType = "";
 	private String tifHeaderType = "";
 	private boolean periodical = false;
 	private boolean multiVolume = false;
-	private boolean containedWork = false;
 	private HashMap<String, String> labels;
 	private ArrayList<String> mappings;
+	private boolean newspaper;
 
-	public ConfigOpacDoctype() { // stupid Jersey API requires no-arg default constructor which is never used
-		throw new UnsupportedOperationException("Not yet implemented");
+	public ConfigOpacDoctype() {
+		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
 	}
 	
-	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical, boolean inMultiVolume,
-			boolean inContainedWork, HashMap<String, String> inLabels, ArrayList<String> inMappings) {
+	ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
+			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
+			ArrayList<String> inMappings) {
 		this.title = inTitle;
 		this.rulesetType = inRulesetType;
 		this.tifHeaderType = inTifHeaderType;
 		this.periodical = inPeriodical;
 		this.multiVolume = inMultiVolume;
-		this.containedWork = inContainedWork;
+		this.newspaper = newspaper;
 		this.labels = inLabels;
 		this.mappings = inMappings;
 	}
@@ -86,14 +89,10 @@ public class ConfigOpacDoctype {
 		return this.multiVolume;
 	}
 
-	public boolean isContainedWork() {
-		return this.containedWork;
+	public boolean isNewspaper() {
+		return this.newspaper;
 	}
 
-	public HashMap<String, String> getLabels() {
-		return this.labels;
-	}
-	
 	@XmlElement(name = "label")
 	public List<Label> getLabelsForJerseyApi() {
 		return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
@@ -102,10 +101,6 @@ public class ConfigOpacDoctype {
 	@XmlElement(name = "receivingValue")
 	public ArrayList<String> getMappings() {
 		return this.mappings;
-	}
-
-	public void setMappings(ArrayList<String> mappings) {
-		this.mappings = mappings;
 	}
 
 	public String getLocalizedLabel() {

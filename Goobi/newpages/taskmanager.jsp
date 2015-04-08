@@ -9,7 +9,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -20,8 +20,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -77,8 +77,9 @@
 										<%-- TaskManager start - stop --%>
 										<h:panelGroup id="id6">
 
-											<h:commandLink id="id7" value="add SampleTask"
-												action="#{LongRunningTasksForm.addNewMasterTask}" />
+											<h:commandLink id="id7" value="#{msgs.addDemoTask}"
+											rendered="#{LongRunningTasksForm.demoTasksLinkShowing}"
+												action="#{LongRunningTasksForm.addDemoTask}" />
 
 											<h:commandLink id="id8" action="#{NavigationForm.Reload}"
 												style="margin-right:15px">
@@ -147,7 +148,7 @@
 											<f:facet name="header">
 												<h:outputText id="id21" value="#{msgs.titel}" />
 											</f:facet>
-											<h:outputText id="id22" value="#{item.title}" />
+											<h:outputText id="id22" value="#{item.name}" />
 										</h:column>
 
 										<x:column id="id23" style="text-align:center">
@@ -160,16 +161,16 @@
 												rendered="true" />
 											<h:graphicImage id="id25"
 												value="/newpages/images/fortschritt/gr.gif"
-												style="width:#{item.statusProgress * 0.8}px;height:10px"
-												rendered="#{item.statusProgress!=-1}" />
+												style="width:#{item.progress * 0.8}px;height:10px"
+												rendered="#{item.progress!=-1}" />
 											<h:graphicImage id="id26"
 												value="/newpages/images/fortschritt/ge.gif"
-												style="width:#{(100 - item.statusProgress) * 0.8}px;height:10px"
-												rendered="#{item.statusProgress!=-1}" />
+												style="width:#{(100 - item.progress) * 0.8}px;height:10px"
+												rendered="#{item.progress!=-1}" />
 											<h:graphicImage id="id27"
 												value="/newpages/images/fortschritt/rt.gif"
 												style="width:#{100 * 0.8}px;height:10px"
-												rendered="#{item.statusProgress==-1}" />
+												rendered="#{item.progress==-1}" />
 											<h:graphicImage
 												value="/newpages/images/fortschritt/ende_rechts.gif"
 												rendered="true" />
@@ -196,7 +197,7 @@
 													value="/newpages/images/icons/exclamation.png" />
 											</x:popup>
 
-											<h:outputText id="id33" value="#{item.statusMessage}" />
+											<h:outputText id="id33" value="#{item.stateDescription}" />
 										</h:column>
 
 										<%-- Action --%>
@@ -224,12 +225,10 @@
 													property="#{LongRunningTasksForm.task}" />
 											</h:commandLink>
 
-											<h:panelGroup id="id38"
-												rendered="#{LongRunningTasksForm.running}">
 												<%-- start --%>
 												<h:commandLink id="id39"
 													action="#{LongRunningTasksForm.executeTask}"
-													title="#{msgs.start}" rendered="#{item.statusProgress<=0}">
+													title="#{msgs.start}" rendered="#{item.startable}">
 													<h:graphicImage
 														value="/newpages/images/icons/start_task.gif" />
 													<x:updateActionListener value="#{item}"
@@ -240,20 +239,18 @@
 												<h:commandLink id="id40"
 													action="#{LongRunningTasksForm.cancelTask}"
 													title="#{msgs.stop}"
-													rendered="#{item.statusProgress>0 && item.statusProgress<100}">
+													rendered="#{item.stopable}">
 													<h:graphicImage id="id41"
 														value="/newpages/images/icons/stop_task.gif" />
 													<x:updateActionListener value="#{item}"
 														property="#{LongRunningTasksForm.task}" />
 												</h:commandLink>
 
-
-											</h:panelGroup>
-											<%-- löschen --%>
+											<%-- delete --%>
 											<h:commandLink id="id42"
 												action="#{LongRunningTasksForm.removeTask}"
 												title="#{msgs.loeschen}"
-												rendered="#{item.statusProgress==100 || item.statusProgress<1}">
+												rendered="#{item.deleteable}">
 												<h:graphicImage
 													value="/newpages/images/icons/progress_rem.gif" />
 												<x:updateActionListener value="#{item}"

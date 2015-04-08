@@ -4,7 +4,7 @@ package de.sub.goobi.beans;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.beans;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -61,6 +61,15 @@ import de.sub.goobi.helper.enums.MetadataFormat;
 // referenced as "fieldConfig" here, not "field" as one might expect.
 public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
+
+	/**
+	 * The constant ANCHOR_SEPARATOR holds the character U+00A6
+	 * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
+	 * if several of them are needed in one project. The anchors must then be
+	 * listed the hierarchical order they have to be applied, that is the
+	 * topmost anchor in first place, followed by the second one and so on.
+	 */
+	public static final String ANCHOR_SEPARATOR = "\u00A6";
 	private Integer id;
 	private String titel;
 	private Set<Benutzer> benutzer;
@@ -490,7 +499,16 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return this.getTitel().equals(((Projekt)obj).getTitel());
+		if (!(obj instanceof Projekt)) {
+			return false;
+		}
+		Projekt other = (Projekt) obj;
+		return this.titel == null ? other.titel == null : this.titel.equals(other.titel);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.titel == null ? 0 : this.titel.hashCode();
 	}
 
 	@XmlElement(name = "field")

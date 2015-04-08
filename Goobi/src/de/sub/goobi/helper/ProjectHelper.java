@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -54,8 +54,8 @@ public class ProjectHelper {
 	 * 
 	 * 
 	 * @param instance
-	 * @returns a GoobiCollection of the following structure:
-	 * @GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
+	 * @return a GoobiCollection of the following structure:
+	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
 	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
 	 * 
 	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The
@@ -218,90 +218,5 @@ public class ProjectHelper {
 			Double d2 = arg1.getAverageStepOrder();
 			return d1.compareTo(d2);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<StepInformation> getWorkFlow(Projekt inProj, Boolean notOnlyCommonFlow) {
-		Long totalNumberOfProc = 0l;
-		// false as default
-		if (notOnlyCommonFlow == null) {
-			notOnlyCommonFlow = false;
-		}
-		List<StepInformation> workFlow = new ArrayList<StepInformation>();
-		Session session = Helper.getHibernateSession();
-	
-
-		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
-		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critTotals.add(Restrictions.eq("proc.projekt", inProj));
-
-		ProjectionList proList = Projections.projectionList();
-
-		proList.add(Projections.count("proc.id"));
-
-		critTotals.setProjection(proList);
-
-		List<Object> list = critTotals.list();
-
-		for (Object obj : list) {
-			Object[] row = (Object[]) obj;
-
-			totalNumberOfProc = (Long) row[FieldList.totalProcessCount.fieldLocation];
-		}
-
-		proList = null;
-		list = null;
-
-	
-		Criteria critSteps = session.createCriteria(Schritt.class);
-
-		critSteps.createCriteria("prozess", "proc");
-		critSteps.addOrder(Order.asc("reihenfolge"));
-
-		critSteps.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critSteps.add(Restrictions.eq("proc.projekt", inProj));
-
-		proList = Projections.projectionList();
-
-		proList.add(Projections.groupProperty(("titel")));
-		proList.add(Projections.count("id"));
-		proList.add(Projections.avg("reihenfolge"));
-
-		
-
-		critSteps.setProjection(proList);
-
-		// now we have to discriminate the hits where the max number of hits doesn't reach numberOfProcs
-		// and extract a workflow, which is the workflow common for all processes according to its titel
-		// the position will be calculated by the average of 'reihenfolge' of steps
-
-		list = critSteps.list();
-
-		String title;
-		Double averageStepOrder;
-		Integer numberOfSteps;
-
-		for (Object obj : list) {
-			Object[] row = (Object[]) obj;
-
-			title = (String) (row[FieldList.stepName.fieldLocation]);
-			numberOfSteps = (Integer) (row[FieldList.stepCount.fieldLocation]);
-			averageStepOrder = (Double) (row[FieldList.stepOrder.fieldLocation]);
-
-			// in this step we only take the steps which are present in each of the workflows unless notOnlyCommonFlow is set to true
-			if (numberOfSteps.equals(totalNumberOfProc) || notOnlyCommonFlow) {
-				// for each step we create a new collection which is child of the collection workFlow created above
-				StepInformation newStep = new StepInformation(title, averageStepOrder);
-				workFlow.add(newStep);
-				// should probably use a different implementation of IGoobiProperty
-				// maybe StandardGoobiProperty
-				// for each field we create a property, which is part of the newStep collection
-
-			}
-		}
-		Comparator<StepInformation> comp = new compareWorkflowSteps();
-		Collections.sort(workFlow, comp);
-		return workFlow;
-
 	}
 }

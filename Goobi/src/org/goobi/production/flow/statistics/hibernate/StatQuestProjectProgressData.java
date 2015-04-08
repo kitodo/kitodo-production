@@ -5,7 +5,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.flow.statistics.hibernate;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -85,7 +85,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * not included means that only min(date) or max(date) - depending on option
 	 * in
 	 * 
-	 * @see historyEventType
+	 * @see HistoryEventType
 	 * 
 	 * @return status of loops included or not
 	 */
@@ -99,7 +99,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns true if all Data for the generation is set
+	 * @return true if all Data for the generation is set
 	 */
 
 	public Boolean isDataComplete() {
@@ -216,7 +216,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns if reference curve is used of average production
+	 * @return if reference curve is used of average production
 	 */
 	public Boolean getReferenceCurve() {
 		return this.flagReferenceCurve;
@@ -440,17 +440,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return dtbl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.goobi.production.flow.statistics.IStatisticalQuestion#getRendererInverted
-	 * (de.intranda.commons.chart.renderer.IRenderer)
-	 */
-	public Boolean getRendererInverted(IRenderer inRenderer) {
-		return null;
-	}
-
 	public void setCommonWorkflow(List<StepInformation> commonWorkFlow) {
 		this.commonWorkFlow = commonWorkFlow;
 		this.isDirty = true;
@@ -468,7 +457,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns List of Steps that are selectable for this View
+	 * @return List of Steps that are selectable for this View
 	 */
 
 	public List<String> getSelectableSteps() {
@@ -522,8 +511,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * 
-	 * @returns DataTable generated from the selected step names and the
-	 *          selected reference curve
+	 * @return DataTable generated from the selected step names and the
+	 *         selected reference curve
 	 */
 	public DataTable getSelectedTable() {
 		getDataTable();

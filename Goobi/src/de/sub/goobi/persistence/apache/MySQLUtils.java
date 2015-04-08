@@ -5,7 +5,7 @@ package de.sub.goobi.persistence.apache;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.persistence.apache;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -29,7 +29,6 @@ package de.sub.goobi.persistence.apache;
  */
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,8 +41,6 @@ import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Regelsatz;
 
 public class MySQLUtils {
-
-	public static SimpleDateFormat sdfShowDateTime = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 
 	public static ResultSetHandler<List<StepObject>> resultSetToStepObjectListHandler = new ResultSetHandler<List<StepObject>>() {
 		@Override
@@ -170,11 +167,9 @@ public class MySQLUtils {
 				int sortHelperDocstructs = rs.getInt("sortHelperDocstructs");
 				int sortHelperMetadata = rs.getInt("sortHelperMetadata");
 				String wikifield = rs.getString("wikifield");
-				int batchID = rs.getInt("batchID");
-				ProcessObject po = new ProcessObject(processId, title, ausgabename, isTemplate, swappedOut, inAuswahllisteAnzeigen, sortHelperStatus,
-						sortHelperImages, sortHelperArticles, erstellungsdatum, projekteID, metadatenKonfigurationID, sortHelperDocstructs,
-						sortHelperMetadata, wikifield, batchID);
-				return po;
+				return new ProcessObject(processId, title, ausgabename, isTemplate, swappedOut, inAuswahllisteAnzeigen,
+						sortHelperStatus, sortHelperImages, sortHelperArticles, erstellungsdatum, projekteID,
+						metadatenKonfigurationID, sortHelperDocstructs, sortHelperMetadata, wikifield);
 			}
 			return null;
 		}

@@ -392,7 +392,7 @@ public class FileManipulation {
 
             }
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/tmp/");
+        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
         File fileuploadFolder = new File(tempDirectory + "fileupload");
         if (!fileuploadFolder.exists()) {
             fileuploadFolder.mkdir();
@@ -486,7 +486,7 @@ public class FileManipulation {
 
     public List<String> getAllImportFolder() {
 
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/tmp/");
+        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
         File fileuploadFolder = new File(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
@@ -514,7 +514,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/opt/digiverso/goobi/tmp/");
+        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
 
         String masterPrefix = "";
         boolean useMasterFolder = false;

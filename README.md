@@ -23,7 +23,7 @@ configured by providing a build.properties file next to the build.xml build-file
 
 ### Dependencies
 
-All dependent libraries are shipped with the source code. They can be found in the top level directory /lib.
+All dependent libraries are shipped with the source code. They can be found in the directory `/Goobi/WEB-INF/lib/`.
 The only thing that is not shipped is a Tomcat specific servlet API. This should come along with the Tomcat distribution you are building against.
 Its location has to be specified either in the build configuration file build.properties or as a command line parameter to the ant command.
 
@@ -45,6 +45,5 @@ Most probably, you will have to adjust these four files:
 * contentServerConfig.xml
 * hibernate.cfg.xml
 * log4j.properties
-* propertyTemplates.xml
 
 Setting up a Goobi instance can be quite tricky. For more help on how to configure Goobi, please check the web sites above or ask questions on the mailing lists.

@@ -3,7 +3,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -14,8 +14,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -41,10 +41,9 @@ import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.forms.ModuleServerForm;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
@@ -69,19 +68,21 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  * @author Steffen Hankiewicz
  */
 public class ExtendedDataImpl extends DataImpl {
-   BeanHelper beanhelp = new BeanHelper();
-
-   private String isProcess = "PROCESS";
-   private String isWorkpiece = "WORKPIECE";
-   private String isTemplate = "TEMPLATE";
+   private final String isProcess = "PROCESS";
+   private final String isWorkpiece = "WORKPIECE";
+   private final String isTemplate = "TEMPLATE";
    
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
-    * @param SessionID, Type, Count, Property
+    * @param sessionId
+    * @param type
+    * @param count
+    * @param pp
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
     * ================================================================*/
-   public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.add(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);
@@ -92,13 +93,13 @@ public class ExtendedDataImpl extends DataImpl {
        * Prozesseigenschaft
       * --------------------------------*/
       if (type.equals("") || type.equals(isProcess)) {
-         if (p.getEigenschaften() == null)
+         if (p.getEigenschaftenInitialized() == null)
             p.setEigenschaften(new HashSet<Prozesseigenschaft>());
          Prozesseigenschaft pe = new Prozesseigenschaft();
          pe.setProzess(p);
          pe.setTitel(gpp.getName());
          pe.setWert(gpp.getValue());
-         p.getEigenschaften().add(pe);
+         p.getEigenschaftenInitialized().add(pe);
       }
 
       /* --------------------------------
@@ -145,11 +146,14 @@ public class ExtendedDataImpl extends DataImpl {
 
    /**
     * Diese Methode wird benötigt um feste Eigenschaften von Metadaten auszulesen.
-    * @param SessionID, Type, Count
+    * @param sessionId
+    * @param type
+    * @param count
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
     * ================================================================*/
-   public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
+   @Override
+public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
       super.getData(sessionId, type, count);
 
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
@@ -192,11 +196,14 @@ public class ExtendedDataImpl extends DataImpl {
 
    /**
     * Diese Methode wird benötigt um Eigenschaften von Metadaten auszulesen
-    * @param SessionID, Type, Count
+    * @param sessionId
+    * @param type
+    * @param count
     * @return Liste von Namen – Wert Paaren
     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
     * ================================================================*/
-   public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
+   @Override
+public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
          throws GoobiException {
       super.getProperties(sessionId, type, count);
       ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
@@ -252,11 +259,15 @@ public class ExtendedDataImpl extends DataImpl {
 
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
-    * @param SessionID, Type, Count, Property
+    * @param sessionId
+    * @param type
+    * @param count
+    * @param pp
     * @return Status (Fehler)
     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
     * ================================================================*/
-   public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
+   @Override
+public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
       super.set(sessionId, type, count, pp);
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       GoobiProcessProperty gpp = new GoobiProcessProperty(pp);

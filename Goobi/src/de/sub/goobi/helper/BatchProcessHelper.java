@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -32,12 +32,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -45,8 +47,8 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class BatchProcessHelper {
 
-	private List<Prozess> processes;
-	private ProzessDAO pdao = new ProzessDAO();
+	private final Set<Prozess> processes;
+	private final ProzessDAO pdao = new ProzessDAO();
 	private static final Logger logger = Logger.getLogger(BatchProcessHelper.class);
 	private Prozess currentProcess;
 	private List<ProcessProperty> processPropertyList;
@@ -54,13 +56,13 @@ public class BatchProcessHelper {
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
 	private Integer container;
 
-	public BatchProcessHelper(List<Prozess> processes) {
-		this.processes = processes;
+	public BatchProcessHelper(Batch batch) {
+		this.processes = batch.getProcesses();
 		for (Prozess p : processes) {
 
 			this.processNameList.add(p.getTitel());
 		}
-		this.currentProcess = processes.get(0);
+		this.currentProcess = processes.iterator().next();
 		this.processName = this.currentProcess.getTitel();
 		loadProcessProperties(this.currentProcess);
 	}
@@ -71,14 +73,6 @@ public class BatchProcessHelper {
 
 	public void setCurrentProcess(Prozess currentProcess) {
 		this.currentProcess = currentProcess;
-	}
-
-	public List<Prozess> getProcesses() {
-		return this.processes;
-	}
-
-	public void setProcesses(List<Prozess> processes) {
-		this.processes = processes;
 	}
 
 	public List<ProcessProperty> getProcessPropertyList() {
@@ -147,7 +141,7 @@ public class BatchProcessHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentProcess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentProcess.getEigenschaften().add(pe);
+				this.currentProcess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -155,11 +149,11 @@ public class BatchProcessHelper {
 			List<Prozesseigenschaft> props = p.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					p.getEigenschaften().remove(pe);
+					p.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.pdao.save(this.currentProcess);
@@ -187,7 +181,7 @@ public class BatchProcessHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentProcess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentProcess.getEigenschaften().add(pe);
+				this.currentProcess.getEigenschaftenInitialized().add(pe);
 			}			
 			this.processProperty.transfer();
 
@@ -205,7 +199,8 @@ public class BatchProcessHelper {
 
 						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
 							if (processPe.getTitel() != null) {
-								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == null ? processPe
+										.getContainer() == null : pe.getContainer().equals(processPe.getContainer())) {
 									processPe.setWert(pe.getWert());
 									match = true;
 									break;
@@ -219,19 +214,19 @@ public class BatchProcessHelper {
 							p.setContainer(pe.getContainer());
 							p.setType(pe.getType());
 							p.setProzess(process);
-							process.getEigenschaften().add(p);
+							process.getEigenschaftenInitialized().add(p);
 						}
 					}
 				} else {
 					if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
-						process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+						process.getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 					}
 				}
 
 				List<Prozesseigenschaft> props = process.getEigenschaftenList();
 				for (Prozesseigenschaft peig : props) {
 					if (peig.getTitel() == null) {
-						process.getEigenschaften().remove(peig);
+						process.getEigenschaftenInitialized().remove(peig);
 					}
 				}
 
@@ -262,7 +257,7 @@ public class BatchProcessHelper {
                 Prozesseigenschaft pe = new Prozesseigenschaft();
                 pe.setProzess(process);
                 pt.setProzesseigenschaft(pe);
-                process.getEigenschaften().add(pe);
+                process.getEigenschaftenInitialized().add(pe);
                 pt.transfer();
             }
 			if (!this.containers.keySet().contains(pt.getContainer())) {

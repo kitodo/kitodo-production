@@ -5,7 +5,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.flow.statistics.hibernate;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -43,7 +43,6 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
@@ -191,7 +190,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameter
-	 * @author Wulf Riebensahm
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepStart(String parameter) {
@@ -204,7 +202,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameter
-	 * @author Wulf Riebensahm
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepEnd(String parameter) {
@@ -218,7 +215,6 @@ public class FilterHelper {
 	 * 
 	 * @param String
 	 *            parameters
-	 * @author Wulf Riebensahm
 	 * @return StepFilter
 	 ****************************************************************************/
 	protected static StepFilter getStepFilter(String parameters) {
@@ -455,26 +451,6 @@ public class FilterHelper {
 		}
 	}
 
-	protected static void filterStepProperty(Conjunction con, String tok, boolean negate) {
-		/* Filtering by signature */
-		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
-		if (!negate) {
-			if (ts.length > 1) {
-				con.add(Restrictions.and(Restrictions.like("schritteig.wert", "%" + ts[1] + "%"),
-						Restrictions.like("schritteig.titel", "%" + ts[0] + "%")));
-			} else {
-				con.add(Restrictions.like("schritteig.wert", "%" + ts[0] + "%"));
-			}
-		} else {
-			if (ts.length > 1) {
-				con.add(Restrictions.not(Restrictions.and(Restrictions.like("schritteig.wert", "%" + ts[1] + "%"),
-						Restrictions.like("schritteig.titel", "%" + ts[0] + "%"))));
-			} else {
-				con.add(Restrictions.not(Restrictions.like("schritteig.wert", "%" + ts[0] + "%")));
-			}
-		}
-	}
-
 	protected static void filterProcessProperty(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
 		/* Filtering by signature */
@@ -613,6 +589,7 @@ public class FilterHelper {
 		Conjunction conjUsers = null;
 		Conjunction conjStepProperties = null;
 		Conjunction conjProcessProperties = null;
+		Conjunction conjBatches = null;
 
 		// this is needed if we filter processes
 		if (flagProcesses) {
@@ -657,11 +634,6 @@ public class FilterHelper {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, false);
-			} else if (tok.toLowerCase().startsWith(FilterString.STEPPROPERTY) || tok.toLowerCase().startsWith(FilterString.SCHRITTEIGENSCHAFT)) {
-				if (conjStepProperties == null) {
-					conjStepProperties = Restrictions.conjunction();
-				}
-				FilterHelper.filterStepProperty(conjStepProperties, tok, false);
 			}
 
 			// search over steps
@@ -745,11 +717,11 @@ public class FilterHelper {
 				}
 				conjProcesses.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
 			} else if (tok.toLowerCase().startsWith(FilterString.BATCH) || tok.toLowerCase().startsWith(FilterString.GRUPPE)) {
-				if (conjProcesses == null) {
-					conjProcesses = Restrictions.conjunction();
+				if (conjBatches == null) {
+					conjBatches = Restrictions.conjunction();
 				}
 				int value = Integer.valueOf(tok.substring(tok.indexOf(":") + 1));
-				conjProcesses.add(Restrictions.eq("batchID", value));
+				conjBatches.add(Restrictions.eq("bat.id", value));
 			} else if (tok.toLowerCase().startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
@@ -762,12 +734,6 @@ public class FilterHelper {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, true);
-			} else if (tok.toLowerCase().startsWith("-" + FilterString.STEPPROPERTY)
-					|| tok.toLowerCase().startsWith("-" + FilterString.SCHRITTEIGENSCHAFT)) {
-				if (conjStepProperties == null) {
-					conjStepProperties = Restrictions.conjunction();
-				}
-				FilterHelper.filterStepProperty(conjStepProperties, tok, true);
 			}
 
 			else if (tok.toLowerCase().startsWith("-" + FilterString.STEPINWORK) || tok.toLowerCase().startsWith("-" + FilterString.SCHRITTINARBEIT)) {
@@ -946,6 +912,15 @@ public class FilterHelper {
 			} else {
 				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
 				inCrit.add(conjUsers);
+			}
+		}
+		if (conjBatches != null) {
+			if (flagSteps) {
+				critProcess.createCriteria("batches", "bat");
+				critProcess.add(conjBatches);
+			} else {
+				crit.createCriteria("batches", "bat");
+				inCrit.add(conjBatches);
 			}
 		}
 		return message;

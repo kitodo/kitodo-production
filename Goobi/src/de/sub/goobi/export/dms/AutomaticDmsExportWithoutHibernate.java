@@ -5,7 +5,7 @@ package de.sub.goobi.export.dms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.export.dms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -54,6 +55,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.metadaten.MetadatenVerifizierungWithoutHibernate;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
@@ -70,6 +72,13 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	private boolean exportFulltext = true;
 	private FolderInformation fi;
 	private ProjectObject project;
+
+	/**
+	 * The field task holds an optional task instance whose progress will be
+	 * updated and whom errors will be passed to to be visible in the task
+	 * manager screen if it’s available.
+	 */
+	private EmptyTask task;
 	
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -87,8 +96,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	/**
 	 * DMS-Export an eine gewünschte Stelle
 	 * 
-	 * @param myProzess
-	 * @param zielVerzeichnis
+	 * @param process
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws WriteException
@@ -140,6 +148,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			gdzfile = newfile;
 
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
@@ -150,17 +161,15 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			try {
 				new DataCopier(rules).process(new CopierData(newfile, process));
 			} catch (ConfigurationException e) {
-				// TODO: When merging with issue #166, add this:
-				// if (task != null) {
-				//     task.setException(e);
-				// }					
+				if (task != null) {
+					task.setException(e);
+				}
 				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
 				return false;
 			} catch (RuntimeException e) {
-				// TODO: When merging with issue #166, add this:
-				// if (task != null) {
-				//     task.setException(e);
-				// }					
+				if (task != null) {
+					task.setException(e);
+				}
 				Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
 				return false;
 			}
@@ -216,6 +225,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			if (!benutzerHome.exists()) {
 				benutzerHome.mkdir();
 			}
+			if (task != null) {
+				task.setProgress(1);
+			}
 		}
 
 		/*
@@ -229,7 +241,13 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			} else if (this.exportFulltext) {
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
+			
+			directoryDownload(process, zielVerzeichnis);
+			
 		} catch (Exception e) {
+			if (task != null) {
+				task.setException(e);
+			}
 			Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
 			return false;
 		}
@@ -241,6 +259,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * --------------------------------
 		 */
 		if (this.project.isUseDmsImport()) {
+			if (task != null) {
+				task.setWorkDetail(atsPpnBand + ".xml");
+			}
 			if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
 				writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
@@ -265,9 +286,10 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					Helper.deleteDir(successFile);
 				}
 			}
-			// return ;
 		}
-	
+		if (task != null) {
+			task.setProgress(100);
+		}
 		return true;
 	}
 
@@ -296,9 +318,6 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	public void fulltextDownload(ProcessObject myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 
-		// Helper help = new Helper();
-		// File tifOrdner = new File(myProzess.getImagesTifDirectory());
-
 		// download sources
 		File sources = new File(fi.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
@@ -309,9 +328,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			}
 			File[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(destination + File.separator
-						+ dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				if(dateien[i].isFile()) {
+					File meinZiel = new File(destination + File.separator
+							+ dateien[i].getName());
+					Helper.copyFile(dateien[i], meinZiel);
+				}
 			}
 		}
 		
@@ -319,7 +340,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		if (ocr.exists()) {
 			File[] folder = ocr.listFiles();
 			for (File dir : folder) {
-				if (dir.isDirectory() && dir.list().length > 0) {
+				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
@@ -327,84 +348,20 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					}
 					File[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						File target = new File(destination + File.separator + files[i].getName());
-						Helper.copyFile(files[i], target);
+						if(files[i].isFile()) {
+							File target = new File(destination + File.separator + files[i].getName());
+							Helper.copyFile(files[i], target);
+						}
 					}
 				}
 			}
 		}
-		
-		
-//		File sources = new File(fi.getSourceDirectory());
-//		if (sources.exists()) {
-//			File destination = new File(benutzerHome + File.separator
-//					+ atsPpnBand + "_src");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = sources.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator
-//						+ dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//		
-//		
-//		File txtFolder = new File(this.fi.getTxtDirectory());
-//		if (txtFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_txt");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = txtFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File wordFolder = new File(this.fi.getWordDirectory());
-//		if (wordFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_wc");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = wordFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
-//
-//		File pdfFolder = new File(this.fi.getPdfDirectory());
-//		if (pdfFolder.exists()) {
-//			File destination = new File(benutzerHome + File.separator + atsPpnBand + "_pdf");
-//			if (!destination.exists()) {
-//				destination.mkdir();
-//			}
-//			File[] dateien = pdfFolder.listFiles();
-//			for (int i = 0; i < dateien.length; i++) {
-//				File meinZiel = new File(destination + File.separator + dateien[i].getName());
-//				Helper.copyFile(dateien[i], meinZiel);
-//			}
-//		}
 	}
 
 	public void imageDownload(ProcessObject myProzess, File benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 		/*
-		 * -------------------------------- erstmal alle Filter
-		 * --------------------------------
-		 */
-		// FilenameFilter filterTifDateien = new FilenameFilter() {
-		// public boolean accept(File dir, String name) {
-		// return name.endsWith(".tif");
-		// }
-		// };
-
-		/*
-		 * -------------------------------- dann den Ausgangspfad ermitteln
+		 * -------------------------------- den Ausgangspfad ermitteln
 		 * --------------------------------
 		 */
 		File tifOrdner = new File(this.fi.getImagesTifDirectory(true));
@@ -428,7 +385,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				 */
 				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());				} catch (Exception e) {
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
+				} catch (Exception e) {
+					if (task != null) {
+						task.setException(e);
+					}
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					myLogger.error("could not create destination directory", e);
 				}
@@ -438,10 +399,58 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
-				File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				if (task != null) {
+					task.setWorkDetail(dateien[i].getName());
+				}
+				if(dateien[i].isFile()) {
+					File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
+					Helper.copyFile(dateien[i], meinZiel);
+				}
+				if (task != null) {
+					task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+					if (task.isInterrupted()) {
+						throw new InterruptedException();
+					}
+				}
+			}
+			if (task != null) {
+				task.setWorkDetail(null);
 			}
 		}
+	}
 
+	/**
+	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
+	 * 
+	 * @param myProzess the process object
+	 * @param zielVerzeichnis the destination directory
+	 * @throws IOException
+	 */		
+	private void directoryDownload(ProcessObject myProzess, String zielVerzeichnis) throws IOException{
+	
+		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+		
+		for(String processDir : processDirs) {
+		
+			File srcDir = new File(FilenameUtils.concat(fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitle())));
+			File dstDir = new File(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
+		
+			if(srcDir.isDirectory()) {
+				Helper.copyDir(srcDir, dstDir);
+			}
+		}
+	}
+
+	/**
+	 * The method setTask() can be used to pass in a task instance. If that is
+	 * passed in, the progress in it will be updated during processing and
+	 * occurring errors will be passed to it to be visible in the task manager
+	 * screen.
+	 * 
+	 * @param task
+	 *            task object to submit progress updates and errors to
+	 */
+	public void setTask(EmptyTask task) {
+		this.task = task;
 	}
 }

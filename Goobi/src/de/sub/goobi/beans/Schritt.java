@@ -5,7 +5,7 @@ package de.sub.goobi.beans;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.beans;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -36,11 +36,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepEditType;
@@ -87,19 +85,17 @@ public class Schritt implements Serializable {
 	private Boolean batchStep = false;
 
 	private Prozess prozess;
-	private Set<Schritteigenschaft> eigenschaften;
 	private Set<Benutzer> benutzer;
 	private Set<Benutzergruppe> benutzergruppen;
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 	
 	private String stepPlugin;
 	private String validationPlugin;
 
 	public Schritt() {
 		this.titel = "";
-		this.eigenschaften = new HashSet<Schritteigenschaft>();
 		this.benutzer = new HashSet<Benutzer>();
 		this.benutzergruppen = new HashSet<Benutzergruppe>();
 		this.prioritaet = Integer.valueOf(0);
@@ -331,17 +327,6 @@ public class Schritt implements Serializable {
 		this.panelAusgeklappt = panelAusgeklappt;
 	}
 
-	public Set<Schritteigenschaft> getEigenschaften() {
-		if (this.eigenschaften == null) {
-			this.eigenschaften = new HashSet<Schritteigenschaft>();
-		}
-		return this.eigenschaften;
-	}
-
-	public void setEigenschaften(Set<Schritteigenschaft> eigenschaften) {
-		this.eigenschaften = eigenschaften;
-	}
-
 	public Set<Benutzer> getBenutzer() {
 		return this.benutzer;
 	}
@@ -361,30 +346,6 @@ public class Schritt implements Serializable {
 	/*
 	 *  Helper
 	 */
-
-	public int getEigenschaftenSize() {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-			return 0;
-		}
-		if (this.eigenschaften == null) {
-			return 0;
-		} else {
-			return this.eigenschaften.size();
-		}
-	}
-
-	public List<Schritteigenschaft> getEigenschaftenList() {
-		try {
-			Hibernate.initialize(this.eigenschaften);
-		} catch (HibernateException e) {
-		}
-		if (this.eigenschaften == null) {
-			return new ArrayList<Schritteigenschaft>();
-		}
-		return new ArrayList<Schritteigenschaft>(this.eigenschaften);
-	}
 
 	public int getBenutzerSize() {
 		try {
@@ -788,25 +749,6 @@ public class Schritt implements Serializable {
 		this.batchStep = batchStep;
 	}
 
-	public boolean getBatchSize() {
-
-		Integer batchNumber = this.prozess.getBatchID();
-		if (batchNumber != null) {
-			// only steps with same title
-			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Schritt.class);
-			crit.add(Restrictions.eq("titel", this.titel));
-			// only steps with same batchid
-			crit.createCriteria("prozess", "proc");
-			crit.add(Restrictions.eq("proc.batchID", batchNumber));
-			crit.add(Restrictions.eq("batchStep", true));
-			if (crit.list().size() > 1) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Get the current object for this row.
 	 * 
@@ -821,7 +763,6 @@ public class Schritt implements Serializable {
 			current = (Schritt) sess.load(Schritt.class, this.getId());
 		}
 		if (!hasOpen) {
-			current.eigenschaften.size();
 			current.benutzer.size();
 			current.benutzergruppen.size();
 			sess.close();
@@ -845,4 +786,13 @@ public class Schritt implements Serializable {
 		this.validationPlugin = validationPlugin;
 	}
 
+	/**
+	 * Returns whether this is a step of a process that is part of at least one
+	 * batch as read-only property "batchSize".
+	 * 
+	 * @return whether this step’s process is in a batch
+	 */
+	public boolean isBatchSize() {
+		return prozess.getBatchesInitialized().size() > 0;
+	}
 }

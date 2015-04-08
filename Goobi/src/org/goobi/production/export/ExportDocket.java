@@ -5,7 +5,7 @@ package org.goobi.production.export;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.export;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -98,7 +97,7 @@ public class ExportDocket implements IProcessDataExport {
 		os.write(pdfBytes);
 	}
 
-	public void startExport(List<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
+	public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

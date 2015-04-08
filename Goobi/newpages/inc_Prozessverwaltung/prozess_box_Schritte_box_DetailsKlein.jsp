@@ -8,7 +8,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -19,8 +19,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -116,17 +116,6 @@
 						<h:outputText value="#{item.typModulName}" />
 					</htm:td>
 				</htm:tr>
-
-				<x:dataList var="intern" value="#{item.eigenschaftenList}" rowCountVar="rowCount" rowIndexVar="rowIndex" rendered="#{item.eigenschaftenSize!=0}">
-					<htm:tr>
-						<htm:td width="150">
-							<h:outputText value="#{intern.titel}:" />
-						</htm:td>
-						<htm:td>
-							<h:outputText value="#{intern.wert}" />
-						</htm:td>
-					</htm:tr>
-				</x:dataList>
 
 			</htm:table>
 		</htm:td>

@@ -3,7 +3,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -14,8 +14,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -111,8 +111,9 @@ public class ShellScript {
 	 *             is thrown if the given executable does not exist.
 	 */
 	public ShellScript(File executable) throws FileNotFoundException {
-		if (!executable.exists())
+		if (!executable.exists()) {
 			throw new FileNotFoundException("Could not find executable: " + executable.getAbsolutePath());
+		}
 		command = executable.getAbsolutePath();
 	}
 
@@ -120,14 +121,11 @@ public class ShellScript {
 	 * The function run() will execute the system command. This is a shorthand
 	 * to run the script without arguments.
 	 * 
+	 * @return the exit value of the script
 	 * @throws IOException
 	 *             If an I/O error occurs.
-	 * @throws InterruptedException
-	 *             If the current thread is interrupted by another thread while
-	 *             it is waiting, then the wait is ended and an
-	 *             InterruptedException is thrown.
 	 */
-	public int run() throws IOException, InterruptedException {
+	public int run() throws IOException {
 		return run(null);
 	}
 
@@ -136,6 +134,10 @@ public class ShellScript {
 	 * sequence is created, including the parameters passed to run(). Then, the
 	 * underlying OS is contacted to run the command. Afterwards, the results
 	 * are being processed and stored.
+	 * 
+	 * On interrupt request, the function will continue waiting for the script
+	 * and then set interrupted state again to allow the executing thread to
+	 * exit gracefully where defined.
 	 * 
 	 * The behaviour is slightly different from the legacy callShell2() command,
 	 * as it returns the error level as reported from the system process. Use
@@ -148,19 +150,17 @@ public class ShellScript {
 	 * 
 	 * @param args
 	 *            A list of arguments passed to the script. May be null.
+	 * @return the exit value of the script
 	 * @throws IOException
 	 *             If an I/O error occurs.
-	 * @throws InterruptedException
-	 *             If the current thread is interrupted by another thread while
-	 *             it is waiting, then the wait is ended and an
-	 *             InterruptedException is thrown.
 	 */
-	public int run(List<String> args) throws IOException, InterruptedException {
+	public int run(List<String> args) throws IOException {
 
 		List<String> commandLine = new ArrayList<String>();
 		commandLine.add(command);
-		if (args != null)
+		if (args != null) {
 			commandLine.addAll(args);
+		}
 		Process process = null;
 		try {
 			String[] callSequence = commandLine.toArray(new String[commandLine
@@ -177,7 +177,20 @@ public class ShellScript {
 				closeStream(process.getErrorStream());
 			}
 		}
-		errorLevel = process.waitFor();
+		boolean interrupted = true;
+		boolean interrupt = false;
+		do {
+			try {
+				errorLevel = process.waitFor();
+				interrupted = false;
+			} catch (InterruptedException e) {
+				Thread.interrupted();
+				interrupt = true;
+			}
+		} while (interrupted);
+		if (interrupt){
+			Thread.currentThread().interrupt();
+		}
 		return errorLevel;
 	}
 
@@ -200,8 +213,9 @@ public class ShellScript {
 				result.add(myLine);
 			}
 		} finally {
-			if (inputLines != null)
+			if (inputLines != null) {
 				inputLines.close();
+			}
 		}
 		return result;
 	}
@@ -213,8 +227,9 @@ public class ShellScript {
 	 *            A stream to close.
 	 */
 	private static void closeStream(Closeable inputStream) {
-		if (inputStream == null)
+		if (inputStream == null) {
 			return;
+		}
 		try {
 			inputStream.close();
 		} catch (IOException e) {

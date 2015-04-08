@@ -5,7 +5,7 @@ package org.goobi.production.flow.jobs;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.flow.jobs;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -42,10 +42,8 @@ import org.hibernate.Session;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.apache.StepManager;
@@ -290,23 +288,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				isDirty = true;
 			}
 
-			if (step.getEigenschaftenSize() > 0) {
-
-				for (Schritteigenschaft prop : step.getEigenschaftenList()) {
-					if (prop.getType().equals(PropertyType.messageError)) {
-						Date myDate = prop.getCreationDate();
-						if (myDate == null && step.getBearbeitungszeitpunkt() != null) {
-							myDate = step.getBearbeitungszeitpunkt();
-						}
-						if (myDate != null) {
-							he = addHistoryEvent(myDate, step.getReihenfolge(), step.getTitel(), HistoryEventType.stepError, inProcess);
-							if (he != null) {
-								isDirty = true;
-							}
-						}
-					}
-				}
-			}
 		}
 
 		// this method removes duplicate items from the history list, which
@@ -331,7 +312,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		HistoryEvent he = new HistoryEvent(timeStamp, stepOrder, stepName, type, inProcess);
 
 		if (!getHistoryContainsEventAlready(he, inProcess)) {
-			inProcess.getHistory().add(he);
+			inProcess.getHistoryInitialized().add(he);
 			return he;
 		} else {
 			return null;
@@ -427,7 +408,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				logger.debug("updating history entries for " + proc.getTitel());
 				try {
 					if (!proc.isSwappedOutGui()) {
-						if (true == updateHistory(proc) | updateHistoryForSteps(proc)) {
+						boolean processHistoryChanged = (true == updateHistory(proc));
+						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
+						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
 							logger.debug("history updated for process " + proc.getId());
 						}

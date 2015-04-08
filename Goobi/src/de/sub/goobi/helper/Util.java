@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -28,15 +28,17 @@ package de.sub.goobi.helper;
  */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
-   Collection of simple utility methods.
-
-   @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
-*/
+ * Collection of simple utility methods.
+ * 
+ * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ */
 
 public final class Util {
 
@@ -89,4 +91,18 @@ public final class Util {
 
     private static ResourceBundle bundle;
     public static final String RESOURCE_BUNDLE = "example_app";
+
+	/**
+	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
+	 * that is to be populated with the given collection and isn’t intended to
+	 * grow any further.
+	 * 
+	 * @param collection
+	 *            collection whose size shall be used to determine the initial
+	 *            capacity for a HashMap
+	 * @return the appropriate capacity
+	 */
+	public static int hashCapacityFor(Collection<?> collection) {
+		return (int) Math.ceil(collection.size() / 0.75);
+	}
 }

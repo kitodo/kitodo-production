@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -44,7 +44,6 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.Helper;
@@ -67,10 +66,6 @@ public class SearchForm {
 	private String templatePropertyTitle = "";
 	private String templatePropertyValue = "";
 
-	private List<String> stepPropertyTitles = new ArrayList<String>(); // stepeig:
-	private String stepPropertyTitle = "";
-	private String stepPropertyValue = "";
-
 	private List<String> stepTitles = new ArrayList<String>(); // step:
 	private List<StepStatus> stepstatus = new ArrayList<StepStatus>();
 	private String status = "";
@@ -88,7 +83,6 @@ public class SearchForm {
 	private String processPropertyOperand = "";
 	private String masterpiecePropertyOperand = "";
 	private String templatePropertyOperand = "";
-	private String stepPropertyOperand = "";
 	private String stepOperand = "";
 
 	@SuppressWarnings("unchecked")
@@ -139,14 +133,6 @@ public class SearchForm {
 			}
 		}
 
-		crit = session.createCriteria(Schritteigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.stepPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.stepPropertyTitles.add((String) it.next());
-		}
-
 		crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
@@ -193,14 +179,6 @@ public class SearchForm {
 
 	public void setProcessPropertyTitles(List<String> processPropertyTitles) {
 		this.processPropertyTitles = processPropertyTitles;
-	}
-
-	public List<String> getStepPropertyTitles() {
-		return this.stepPropertyTitles;
-	}
-
-	public void setStepPropertyTitles(List<String> stepPropertyTitles) {
-		this.stepPropertyTitles = stepPropertyTitles;
 	}
 
 	public List<String> getStepTitles() {
@@ -307,22 +285,6 @@ public class SearchForm {
 		this.templatePropertyValue = templatePropertyValue;
 	}
 
-	public String getStepPropertyTitle() {
-		return this.stepPropertyTitle;
-	}
-
-	public void setStepPropertyTitle(String stepPropertyTitle) {
-		this.stepPropertyTitle = stepPropertyTitle;
-	}
-
-	public String getStepPropertyValue() {
-		return this.stepPropertyValue;
-	}
-
-	public void setStepPropertyValue(String stepPropertyValue) {
-		this.stepPropertyValue = stepPropertyValue;
-	}
-
 	public String getStatus() {
 		return this.status;
 	}
@@ -363,7 +325,7 @@ public class SearchForm {
 			if (!this.processPropertyTitle.isEmpty() && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
 				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
 			} else {
-				search += "\""+ this.masterpiecePropertyOperand+FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
+				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
 			}
 		}
 		if (!this.masterpiecePropertyValue.isEmpty()) {
@@ -378,13 +340,6 @@ public class SearchForm {
 				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
 			} else {
 				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue + "\" ";
-			}
-		}
-		if (!this.stepPropertyValue.isEmpty() && !this.stepname.isEmpty()) {
-			if (!this.stepPropertyTitle.isEmpty() && !this.stepPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.stepPropertyOperand + FilterString.STEPPROPERTY + this.stepPropertyTitle + ":" + this.stepPropertyValue + "\" ";
-			} else {
-				search += "\""+ this.stepPropertyOperand + FilterString.STEPPROPERTY + this.stepPropertyValue + "\" ";
 			}
 		}
 
@@ -443,14 +398,6 @@ public class SearchForm {
 
 	public void setTemplatePropertyOperand(String templatePropertyOperand) {
 		this.templatePropertyOperand = templatePropertyOperand;
-	}
-
-	public String getStepPropertyOperand() {
-		return this.stepPropertyOperand;
-	}
-
-	public void setStepPropertyOperand(String stepPropertyOperand) {
-		this.stepPropertyOperand = stepPropertyOperand;
 	}
 
 	public String getStepOperand() {

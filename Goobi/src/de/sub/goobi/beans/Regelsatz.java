@@ -5,7 +5,7 @@ package de.sub.goobi.beans;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.beans;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -40,7 +40,6 @@ public class Regelsatz implements Serializable {
 	private Integer id;
 	private String titel;
 	private String datei;
-	private Prefs mypreferences;
 	private Boolean orderMetadataByRuleset = false;
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
@@ -77,14 +76,13 @@ public class Regelsatz implements Serializable {
 	}
 
 	public Prefs getPreferences() {
-		this.mypreferences = new Prefs();
+		Prefs mypreferences = new Prefs();
 		try {
-			this.mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis")
-					+ this.datei);
+			mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + getDatei());
 		} catch (PreferencesException e) {
 			logger.error(e);
 		}
-		return this.mypreferences;
+		return mypreferences;
 	}
 
 	public boolean isOrderMetadataByRuleset() {

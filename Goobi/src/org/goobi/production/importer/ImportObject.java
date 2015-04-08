@@ -5,7 +5,7 @@ package org.goobi.production.importer;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.importer;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -28,10 +28,13 @@ package org.goobi.production.importer;
  * exception statement from your version.
  */
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
@@ -40,7 +43,7 @@ public class ImportObject {
 
 	// TODO must end with ".xml" in current implementation
 	private String processTitle ="";
-	private Integer batchId;
+	private final Collection<Batch> batches = new LinkedList<Batch>();
 	
 	private String metsFilename ="";
 
@@ -107,13 +110,11 @@ public class ImportObject {
 	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
 		this.templateProperties = templateProperties;
 	}
-	public Integer getBatchId() {
-		return batchId;
+
+	public Collection<Batch> getBatches() {
+		return batches;
 	}
-	public void setBatchId(Integer batchId) {
-		this.batchId = batchId;
-	}
-	
+
     public String getImportFileName() {
         return importFileName;
     }

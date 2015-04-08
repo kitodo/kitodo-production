@@ -5,7 +5,7 @@ package de.sub.goobi.metadaten;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.metadaten;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -76,8 +76,8 @@ import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 public class MetadatenImagesHelper {
     private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
-    private Prefs myPrefs;
-    private DigitalDocument mydocument;
+    private final Prefs myPrefs;
+    private final DigitalDocument mydocument;
     private int myLastImage = 0;
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
@@ -90,7 +90,6 @@ public class MetadatenImagesHelper {
      * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
      * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
      * 
-     * @return null
      * @throws TypeNotAllowedForParentException
      * @throws TypeNotAllowedForParentException
      * @throws InterruptedException
@@ -104,12 +103,11 @@ public class MetadatenImagesHelper {
             SwapException, DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
-        DocStruct log = this.mydocument.getLogicalDocStruct();
-        if (log.getType().isAnchor()) {
-            if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
-                log = log.getAllChildren().get(0);
-            }
-        }
+		DocStruct log = this.mydocument.getLogicalDocStruct();
+		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+				&& log.getAllChildren().size() > 0) {
+			log = log.getAllChildren().get(0);
+		}
 
         /*-------------------------------- 
          * der physische Baum wird nur
@@ -193,9 +191,11 @@ public class MetadatenImagesHelper {
         }
         try {
             List<String> imageNamesInMediaFolder = getDataFiles(inProzess);
-            for (String imageName : imageNamesInMediaFolder) {
-                if (!assignedImages.containsKey(imageName)) {
-                    imagesWithoutPageElements.add(imageName);
+            if (imageNamesInMediaFolder != null) {
+                for (String imageName : imageNamesInMediaFolder) {
+                    if (!assignedImages.containsKey(imageName)) {
+                        imagesWithoutPageElements.add(imageName);
+                    }
                 }
             }
         } catch (InvalidImagesException e1) {
@@ -337,18 +337,16 @@ public class MetadatenImagesHelper {
         int currentPhysicalOrder = 1;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-            if (physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
-                for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
-                    List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
-                    if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
-                        currentPhysicalOrder++;
-                        break;
-                    }
-                    for (Metadata pageNo : pageNoMetadata) {
-                        pageNo.setValue(String.valueOf(currentPhysicalOrder));
-                    }
+            for (DocStruct page : physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*")) {
+                List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
                     currentPhysicalOrder++;
+                    break;
                 }
+                for (Metadata pageNo : pageNoMetadata) {
+                    pageNo.setValue(String.valueOf(currentPhysicalOrder));
+                }
+                currentPhysicalOrder++;
             }
         }
     }

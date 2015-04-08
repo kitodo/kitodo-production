@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -59,17 +59,17 @@ public class TreeNode {
 
    
 
-   public List<TreeNode> getChildrenAsList() {
-      List<TreeNode> myList = new ArrayList<TreeNode>();
-      getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<TreeNode>());
+   public List<HashMap<String,Object>> getChildrenAsList() {
+      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
+      getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<Boolean>());
       return myList;
    }
 
    
 
-   public List<TreeNode> getChildrenAsListAlle() {
-      List<TreeNode> myList = new ArrayList<TreeNode>();
-      getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<TreeNode>());
+   public List<HashMap<String,Object>> getChildrenAsListAlle() {
+      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
+      getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<Boolean>());
       return myList;
    }
    
@@ -115,25 +115,24 @@ public class TreeNode {
 
    
 
-	@SuppressWarnings({"unchecked", "rawtypes"} )
-	private List getChildrenAsListMitStrichen(List inList, int niveau, TreeNode inNode, boolean istLetzter,
-         boolean VaterIstLetzter, List inStriche) {
+   private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList,
+      int niveau, TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      HashMap map = new HashMap();
+      HashMap<String,Object> map = new HashMap<String,Object>();
       map.put("node", inNode);
-      map.put("niveau", Integer.valueOf(niveau));
-      map.put("islast", Boolean.valueOf(istLetzter));
+      map.put("niveau", niveau);
+      map.put("islast", istLetzter);
 
       // die Striche vorbereiten
-      List striche = new ArrayList(inStriche);
-      striche.add(Boolean.valueOf(VaterIstLetzter));
+      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+      striche.add(vaterIstLetzter);
       map.put("striche", striche);
 
       inList.add(map);
 
       if (inNode.getHasChildren() && inNode.expanded) {
-         for (Iterator it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = (TreeNode) it.next();
+         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+            TreeNode kind = it.next();
             getChildrenAsListMitStrichen(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
          }
       }
@@ -143,25 +142,24 @@ public class TreeNode {
    
    
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List getChildrenAsListAlle(List inList, int niveau, TreeNode inNode, boolean istLetzter,
-         boolean VaterIstLetzter, List inStriche) {
+   private List<HashMap<String, Object>> getChildrenAsListAlle(List<HashMap<String, Object>> inList, int niveau,
+      TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      HashMap map = new HashMap();
+      HashMap<String,Object> map = new HashMap<String,Object>();
       map.put("node", inNode);
-      map.put("niveau", Integer.valueOf(niveau));
-      map.put("islast", Boolean.valueOf(istLetzter));
+      map.put("niveau", niveau);
+      map.put("islast", istLetzter);
 
       // die Striche vorbereiten
-      List striche = new ArrayList(inStriche);
-      striche.add(Boolean.valueOf(VaterIstLetzter));
+      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+      striche.add(vaterIstLetzter);
       map.put("striche", striche);
 
       inList.add(map);
 
       if (inNode.getHasChildren()) {
-         for (Iterator it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = (TreeNode) it.next();
+         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+            TreeNode kind = it.next();
             getChildrenAsListAlle(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
          }
       }

@@ -5,7 +5,7 @@ package de.sub.goobi.beans;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.beans;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -33,8 +33,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -47,14 +50,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
+import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.jdom.JDOMException;
 
+import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -63,6 +70,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
+import de.sub.goobi.beans.Batch.Type;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -97,14 +105,13 @@ public class Prozess implements Serializable {
 	private Set<Werkstueck> werkstuecke;
 	private Set<Vorlage> vorlagen;
 	private Set<Prozesseigenschaft> eigenschaften;
+	private Set<Batch> batches = new HashSet<Batch>(0);
 	private String sortHelperStatus;
 	private Integer sortHelperImages;
 	private Integer sortHelperArticles;
 	private Integer sortHelperMetadata;
 	private Integer sortHelperDocstructs;
 	private Regelsatz regelsatz;
-	// private Batch batch;
-	private Integer batchID;
 	private Boolean swappedOut = false;
 	private Boolean panelAusgeklappt = false;
 	private Boolean selected = false;
@@ -178,7 +185,30 @@ public class Prozess implements Serializable {
 		this.schritte = schritte;
 	}
 
+	/**
+	 * The function getHistory() returns the history events for a process or
+	 * some Hibernate proxy object which may be uninitialized if its contents
+	 * have not been accessed yet. However, this function is also called by
+	 * Hibernate itself when its updating the database and in this case it is
+	 * absolutely fine to return a proxy object uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getHistoryInitialized()} instead.
+	 * 
+	 * @return the history field of the process which may be not yet loaded
+	 */
 	public Set<HistoryEvent> getHistory() {
+		return this.history;
+	}
+
+	/**
+	 * The function getHistoryInitialized() returns the history events for a
+	 * process and takes care that the object is initialized from Hibernate
+	 * already and will not be bothered if the Hibernate session ends.
+	 * 
+	 * @return the history field of the process which is loaded
+	 */
+	public Set<HistoryEvent> getHistoryInitialized() {
 		try {
 			@SuppressWarnings("unused")
 			Session s = Helper.getHibernateSession();
@@ -212,6 +242,71 @@ public class Prozess implements Serializable {
 		this.werkstuecke = werkstuecke;
 	}
 
+	/**
+	 * The function getBatches() returns the batches for a process or some
+	 * Hibernate proxy object which may be uninitialized if its contents have
+	 * not been accessed yet. However, this function is also called by Hibernate
+	 * itself when its updating the database and in this case it is absolutely
+	 * fine to return a proxy object uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getBatchesInitialized()} instead.
+	 * 
+	 * @return the batches field of the process which may be not yet loaded
+	 */
+	public Set<Batch> getBatches() {
+		return this.batches;
+	}
+
+	/**
+	 * Returns the batches of the desired type for a process.
+	 * 
+	 * @param type
+	 *            type of batches to return
+	 * 
+	 * @return all batches of the desired type
+	 */
+	public Set<Batch> getBatchesByType(Type type) {
+		Set<Batch> batches = getBatchesInitialized();
+		if (type != null) {
+			HashSet<Batch> result = new HashSet<Batch>(batches);
+			Iterator<Batch> indicator = result.iterator();
+			while (indicator.hasNext()) {
+				if (!type.equals(indicator.next().getType())) {
+					indicator.remove();
+				}
+			}
+			return result;
+		}
+		return batches;
+	}
+
+	/**
+	 * The function getBatchesInitialized() returns the batches for a process
+	 * and takes care that the object is initialized from Hibernate already and
+	 * will not be bothered if the Hibernate session ends.
+	 * 
+	 * @return the batches field of the process which is loaded
+	 */
+	public Set<Batch> getBatchesInitialized() {
+		if (id != null) {
+			Hibernate.initialize(batches);
+		}
+		return this.batches;
+	}
+
+	/**
+	 * The function setBatches() is intended to be called by Hibernate to inject
+	 * the batches into the process object. To associate a batch with a process,
+	 * use {@link Batch#add(Prozess)}.
+	 * 
+	 * @param batches
+	 *            set to inject
+	 */
+	public void setBatches(Set<Batch> batches) {
+		this.batches = batches;
+	}
+
 	public String getAusgabename() {
 		return this.ausgabename;
 	}
@@ -220,7 +315,32 @@ public class Prozess implements Serializable {
 		this.ausgabename = ausgabename;
 	}
 
+	/**
+	 * The function getEigenschaften() returns the descriptive fields
+	 * (“properties”) for a process or some Hibernate proxy object which may be
+	 * uninitialized if its contents have not been accessed yet. However, this
+	 * function is also called by Hibernate itself when its updating the
+	 * database and in this case it is absolutely fine to return a proxy object
+	 * uninitialized.
+	 * 
+	 * If you want to get the history and be sure it has been loaded, use
+	 * {@link #getEigenschaftenInitialized()} instead.
+	 * 
+	 * @return the properties field of the process which may be not yet loaded
+	 */
 	public Set<Prozesseigenschaft> getEigenschaften() {
+		return this.eigenschaften;
+	}
+
+	/**
+	 * The function getEigenschaftenInitialized() returns the descriptive fields
+	 * (“properties”) for a process and takes care that the object is
+	 * initialized from Hibernate already and will not be bothered if the
+	 * Hibernate session ends.
+	 * 
+	 * @return the properties field of the process which is loaded
+	 */
+	public Set<Prozesseigenschaft> getEigenschaftenInitialized() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
 		} catch (HibernateException e) {
@@ -250,11 +370,11 @@ public class Prozess implements Serializable {
 	}
 
 	public long getMinutenGesperrt() {
-		return this.msp.getLockSekunden(this.id.longValue()) / 60;
+		return this.msp.getLockSekunden(this.id) / 60;
 	}
 
 	public long getSekundenGesperrt() {
-		return this.msp.getLockSekunden(this.id.longValue()) % 60;
+		return this.msp.getLockSekunden(this.id) % 60;
 	}
 
 	/*
@@ -449,10 +569,12 @@ public class Prozess implements Serializable {
 		if (isSwappedOutGui()) {
 			ProcessSwapInTask pst = new ProcessSwapInTask();
 			pst.initialize(this);
-			pst.execute();
-			if (pst.getStatusProgress() == -1) {
+			pst.setProgress(1);
+			pst.setShowMessages(true);
+			pst.run();
+			if (pst.getException() != null) {
 				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists()) {
-					throw new SwapException(pst.getStatusMessage());
+					throw new SwapException(pst.getException().getMessage());
 				} else {
 					setSwappedOutGui(false);
 				}
@@ -505,12 +627,24 @@ public class Prozess implements Serializable {
 		this.projekt = projekt;
 	}
 
-	public Integer getBatchID() {
-		return this.batchID;
-	}
-
-	public void setBatchID(Integer batch) {
-		this.batchID = batch;
+	/**
+	 * The function getBatchID returns the batches the process is associated
+	 * with as readable text as read-only property "batchID".
+	 * 
+	 * @return the batches the process is in
+	 */
+	public String getBatchID() {
+		if (batches == null || batches.size() == 0) {
+			return null;
+		}
+		StringBuilder result = new StringBuilder();
+		for (Batch batch : batches) {
+			if (result.length() > 0) {
+				result.append(", ");
+			}
+			result.append(batch.getLabel());
+		}
+		return result.toString();
 	}
 
 	public Regelsatz getRegelsatz() {
@@ -841,8 +975,8 @@ public class Prozess implements Serializable {
 		return getProcessDataDirectory() + "fulltext.xml";
 	}
 
-	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-			WriteException {
+	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException,
+			SwapException, DAOException {
 		if (!checkForMetadataFile()) {
 			throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath());
 		}
@@ -892,20 +1026,7 @@ public class Prozess implements Serializable {
 		}
 	}
 
-	// private void renameMetadataFile(String oldFileName, String newFileName) {
-	// File oldFile;
-	// File newFile;
-	// // Long lastModified;
-	// if (oldFileName != null && newFileName != null) {
-	// oldFile = new File(oldFileName);
-	// // lastModified = oldFile.lastModified();
-	// newFile = new File(newFileName);
-	// oldFile.renameTo(newFile);
-	// // newFile.setLastModified(lastModified);
-	// }
-	// }
-
-	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException,
 			PreferencesException {
 		boolean result = true;
 		File f = new File(getMetadataFilePath());
@@ -925,22 +1046,19 @@ public class Prozess implements Serializable {
 		return directoryPath + File.separator + temporaryFileName;
 	}
 
-	private void removePrefixFromRelatedMetsAnchorFileFor(String temporaryMetadataFilename) throws IOException {
+	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
-		File temporaryAnchorFile;
-
-		String directoryPath = temporaryFile.getParentFile().getPath();
-		String temporaryAnchorFileName = temporaryFile.getName().replace("meta.xml", "meta_anchor.xml");
-
-		temporaryAnchorFile = new File(directoryPath + File.separator + temporaryAnchorFileName);
-
-		if (temporaryAnchorFile.exists()) {
-			String anchorFileName = temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, "");
-
-			temporaryAnchorFileName = directoryPath + File.separator + temporaryAnchorFileName;
-			anchorFileName = directoryPath + File.separator + anchorFileName;
-
-			FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+		File directoryPath = new File(temporaryFile.getParentFile().getPath());
+		for (File temporaryAnchorFile : directoryPath.listFiles()) {
+			String temporaryAnchorFileName = temporaryAnchorFile.toString();
+			if (temporaryAnchorFile.isFile()
+					&& FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
+				String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+						temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
+				temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+						temporaryAnchorFileName);
+				FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+			}
 		}
 	}
 
@@ -980,7 +1098,7 @@ public class Prozess implements Serializable {
 		if (backupCondition) {
 			createBackupFile();
 			FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
-			removePrefixFromRelatedMetsAnchorFileFor(temporaryMetadataFileName);
+			removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
 		}
 	}
 	
@@ -1178,4 +1296,181 @@ public class Prozess implements Serializable {
 	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
 		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
 	}
+
+	/**
+	 * The addMessageToWikiField() method is a helper method which composes the
+	 * new wiki field using a StringBuilder. The message is encoded using HTML
+	 * entities to prevent certain characters from playing merry havoc when the
+	 * message box shall be rendered in a browser later.
+	 * 
+	 * @param form
+	 *            the AktuelleSchritteForm which is the owner of the wiki field
+	 * @param message
+	 *            the message to append
+	 */
+	public void addToWikiField(String message) {
+		StringBuilder composer = new StringBuilder();
+		if (wikifield != null && wikifield.length() > 0) {
+			composer.append(wikifield);
+			composer.append("\r\n");
+		}
+		composer.append("<p>");
+		composer.append(StringEscapeUtils.escapeHtml(message));
+		composer.append("</p>");
+		wikifield = composer.toString();
+		return;
+	}
+
+	/**
+	 * The method addToWikiField() adds a message with a given level to the wiki
+	 * field of the process. Four level strings will be recognized and result in
+	 * different colors:
+	 * 
+	 * <dl>
+	 * <dt><code>debug</code></dt>
+	 * <dd>gray</dd>
+	 * <dt><code>error</code></dt>
+	 * <dd>red</dd>
+	 * <dt><code>user</code></dt>
+	 * <dd>green</dd>
+	 * <dt><code>warn</code></dt>
+	 * <dd>orange</dd>
+	 * <dt><i>any other value</i></dt>
+	 * <dd>blue</dd>
+	 * <dt>
+	 * 
+	 * @param level
+	 *            message colour, one of: "debug", "error", "info", "user" or
+	 *            "warn"; any other value defaults to "info"
+	 * @param message
+	 *            message text
+	 */
+	public void addToWikiField(String level, String message) {
+		wikifield = WikiFieldHelper.getWikiMessage(this, wikifield, level, message);
+	}
+
+	/**
+	 * The method addToWikiField() adds a message signed by the given user to
+	 * the wiki field of the process.
+	 * 
+	 * @param user
+	 *            user to sign the message with
+	 * @param message
+	 *            message to print
+	 */
+	public void addToWikiField(Benutzer user, String message) {
+		String text = message + " (" + user.getNachVorname() + ")";
+		addToWikiField("user", text);
+	}
+
+	/**
+	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 * @throws DAOException 
+	 * @throws SwapException 
+	 */
+	public void createProcessDirs() throws SwapException, DAOException, IOException, InterruptedException {
+		
+		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+		
+		for(String processDir : processDirs) {
+			
+			FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(), processDir.replace("(processtitle)", this.getTitel())));
+		}
+			
+	}
+
+	/**
+	 * The function getDigitalDocument() returns the digital act of this
+	 * process.
+	 * 
+	 * @return the digital act of this process
+	 * @throws PreferencesException
+	 *             if the no node corresponding to the file format is available
+	 *             in the rule set configured
+	 * @throws ReadException
+	 *             if the meta data file cannot be read
+	 * @throws SwapException
+	 *             if an error occurs while the process is swapped back in
+	 * @throws DAOException
+	 *             if an error occurs while saving the fact that the process has
+	 *             been swapped back in to the database
+	 * @throws IOException
+	 *             if creating the process directory or reading the meta data
+	 *             file fails
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted by another thread while
+	 *             it is waiting for the shell script to create the directory to
+	 *             finish
+	 */
+	public DigitalDocument getDigitalDocument() throws PreferencesException, ReadException, SwapException,
+			DAOException, IOException, InterruptedException {
+		return readMetadataFile().getDigitalDocument();
+	}
+
+	/**
+	 * Filter for correction / solution messages.
+	 *
+	 * @param lpe List of process properties
+	 * @return List of filtered correction / solution messages
+	 */
+	protected List<Prozesseigenschaft> filterForCorrectionSolutionMessages(List<Prozesseigenschaft> lpe) {
+		ArrayList<Prozesseigenschaft> filteredList = new ArrayList<Prozesseigenschaft>();
+		List<String> listOfTranslations = new ArrayList<String>();
+		String propertyTitle = "";
+
+		listOfTranslations.add("Korrektur notwendig");
+		listOfTranslations.add("Korrektur durchgefuehrt");
+		listOfTranslations.add(Helper.getTranslation("Korrektur notwendig"));
+		listOfTranslations.add(Helper.getTranslation("Korrektur durchgefuehrt"));
+
+		if ((lpe == null) || (lpe.size() == 0)) {
+			return filteredList;
+		}
+
+		// filtering for correction and solution messages
+		for (Prozesseigenschaft pe : lpe) {
+			propertyTitle = pe.getTitel();
+			if (listOfTranslations.contains(propertyTitle)) {
+				filteredList.add(pe);
+			}
+		}
+		return filteredList;
+	}
+
+	/**
+	 * Filter and sort after creation date list of process properties for correction and solution messages.
+	 *
+	 * @return list of Prozesseigenschaft objects
+	 */
+	public List<Prozesseigenschaft> getSortedCorrectionSolutionMessages() {
+		List<Prozesseigenschaft> filteredList;
+		List<Prozesseigenschaft> lpe = this.getEigenschaftenList();
+
+		if ((lpe == null) || (lpe.size() == 0)) {
+			return new ArrayList<Prozesseigenschaft>();
+		}
+
+		filteredList = filterForCorrectionSolutionMessages(lpe);
+
+		// sorting after creation date
+		Collections.sort(filteredList, new Comparator<Prozesseigenschaft>() {
+			@Override
+			public int compare(Prozesseigenschaft o1, Prozesseigenschaft o2) {
+				Date o1Date = o1.getCreationDate();
+				Date o2Date = o2.getCreationDate();
+				if (o1Date == null) {
+					o1Date = new Date();
+				}
+				if (o2Date == null) {
+					o2Date = new Date();
+				}
+				return o1Date.compareTo(o2Date);
+			}
+		});
+
+		return new ArrayList<Prozesseigenschaft>(filteredList);
+	}
+
 }

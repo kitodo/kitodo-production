@@ -4,7 +4,7 @@ package de.sub.goobi.helper.tasks;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.helper.tasks;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -43,10 +43,39 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapInTask extends LongRunningTask {
 
+	/**
+	 * No-argument constructor. Creates an empty ProcessSwapInTask. Must be made
+	 * explicit because a constructor taking an argument is present.
+	 */
+	public ProcessSwapInTask() {
+	}
+
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param processSwapInTask
+	 *            copy master to create a clone of
+	 */
+	public ProcessSwapInTask(ProcessSwapInTask processSwapInTask) {
+		super(processSwapInTask);
+	}
+
 	@Override
 	public void initialize(Prozess inProzess) {
 		super.initialize(inProzess);
 		setTitle("Einlagerung: " + inProzess.getTitel());
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("ProcessSwapInTask");
 	}
 
 	/**
@@ -67,7 +96,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 			setStatusProgress(-1);
 			return;
 		}
-		if (swapPath == null || swapPath.length() == 0) {
+		if ((swapPath == null) || (swapPath.length() == 0)) {
 			setStatusMessage("no swappingPath defined");
 			setStatusProgress(-1);
 			return;
@@ -198,6 +227,19 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusMessage("done");
 
 		setStatusProgress(100);
+	}
+
+	/**
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
+	 * 
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+	 */
+	@Override
+	public ProcessSwapInTask replace() {
+		return new ProcessSwapInTask(this);
 	}
 
 }

@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
+import javax.naming.AuthenticationException;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -56,7 +57,6 @@ import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
@@ -75,11 +75,11 @@ import de.sub.goobi.persistence.apache.StepObject;
 public class BatchStepHelper {
 
 	private List<Schritt> steps;
-	private ProzessDAO pdao = new ProzessDAO();
-	private SchrittDAO stepDAO = new SchrittDAO();
+	private final ProzessDAO pdao = new ProzessDAO();
+	private final SchrittDAO stepDAO = new SchrittDAO();
 	private static final Logger logger = Logger.getLogger(BatchStepHelper.class);
 	private Schritt currentStep;
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private List<ProcessProperty> processPropertyList;
 	private ProcessProperty processProperty;
 	private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
@@ -91,7 +91,7 @@ public class BatchStepHelper {
 	private String processName = "";
 	private String addToWikiField = "";
 	private String script;
-	private WebDav myDav = new WebDav();
+	private final WebDav myDav = new WebDav();
 	private List<String> processNameList = new ArrayList<String>();
 
 	public BatchStepHelper(List<Schritt> steps) {
@@ -178,7 +178,7 @@ public class BatchStepHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentStep.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentStep.getProzess().getEigenschaften().add(pe);
+				this.currentStep.getProzess().getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -186,11 +186,11 @@ public class BatchStepHelper {
 			List<Prozesseigenschaft> props = p.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					p.getEigenschaften().remove(pe);
+					p.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.pdao.save(this.currentStep.getProzess());
@@ -215,7 +215,7 @@ public class BatchStepHelper {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.currentStep.getProzess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.currentStep.getProzess().getEigenschaften().add(pe);
+				this.currentStep.getProzess().getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -233,7 +233,8 @@ public class BatchStepHelper {
 
 						for (Prozesseigenschaft processPe : process.getEigenschaftenList()) {
 							if (processPe.getTitel() != null) {
-								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == processPe.getContainer()) {
+								if (pe.getTitel().equals(processPe.getTitel()) && pe.getContainer() == null ? processPe
+										.getContainer() == null : pe.getContainer().equals(processPe.getContainer())) {
 									processPe.setWert(pe.getWert());
 									match = true;
 									break;
@@ -247,19 +248,19 @@ public class BatchStepHelper {
 							p.setContainer(pe.getContainer());
 							p.setType(pe.getType());
 							p.setProzess(process);
-							process.getEigenschaften().add(p);
+							process.getEigenschaftenInitialized().add(p);
 						}
 					}
 				} else {
 					if (!process.getEigenschaftenList().contains(this.processProperty.getProzesseigenschaft())) {
-						process.getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+						process.getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 					}
 				}
 
 				List<Prozesseigenschaft> props = process.getEigenschaftenList();
 				for (Prozesseigenschaft peig : props) {
 					if (peig.getTitel() == null) {
-						process.getEigenschaften().remove(peig);
+						process.getEigenschaftenInitialized().remove(peig);
 					}
 				}
 
@@ -289,7 +290,7 @@ public class BatchStepHelper {
 	                Prozesseigenschaft pe = new Prozesseigenschaft();
 	                pe.setProzess(s.getProzess());
 	                pt.setProzesseigenschaft(pe);
-	                s.getProzess().getEigenschaften().add(pe);
+	                s.getProzess().getEigenschaftenInitialized().add(pe);
 	                pt.transfer();
 	            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -405,7 +406,7 @@ public class BatchStepHelper {
 		List<Prozesseigenschaft> props = p.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				p.getEigenschaften().remove(pe);
+				p.getEigenschaftenInitialized().remove(pe);
 			}
 		}
 		try {
@@ -498,13 +499,15 @@ public class BatchStepHelper {
 				temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
 				temp.setCorrectionStep();
 				temp.setBearbeitungsende(null);
-				Schritteigenschaft se = new Schritteigenschaft();
 
-				se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-				se.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
-				se.setType(PropertyType.messageError);
-				se.setCreationDate(myDate);
-				se.setSchritt(temp);
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
+				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
+				pe.setType(PropertyType.messageError);
+				pe.setCreationDate(myDate);
+				pe.setProzess(this.currentStep.getProzess());
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+
 				String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitel() + ": " + this.problemMessage + " ("
 						+ ben.getNachVorname() + ")";
 				this.currentStep.getProzess()
@@ -512,11 +515,10 @@ public class BatchStepHelper {
 								WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "error",
 										message));
 
-				temp.getEigenschaften().add(se);
 				this.stepDAO.save(temp);
 				this.currentStep
 						.getProzess()
-						.getHistory()
+						.getHistoryInitialized()
 						.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
 								.getProzess()));
 				/*
@@ -532,13 +534,6 @@ public class BatchStepHelper {
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 					step.setCorrectionStep();
 					step.setBearbeitungsende(null);
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
-					seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + this.problemMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 				}
 			}
 			/*
@@ -573,39 +568,50 @@ public class BatchStepHelper {
 	}
 
 	public String SolveProblemForSingle() {
-		solveProblem();
-		saveStep();
-		this.solutionMessage = "";
-		this.mySolutionStep = "";
+		try {
+			solveProblem();
+			saveStep();
+			this.solutionMessage = "";
+			this.mySolutionStep = "";
 
-		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-		return asf.FilterAlleStart();
+			AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+			return asf.FilterAlleStart();
+		} catch (AuthenticationException e) {
+			Helper.setFehlerMeldung(e.getMessage());
+			return "";
+		}
 	}
 
 	public String SolveProblemForAll() {
-		for (Schritt s : this.steps) {
-			this.currentStep = s;
-			solveProblem();
-			saveStep();
-		}
-		this.solutionMessage = "";
-		this.mySolutionStep = "";
+		try {
+			for (Schritt s : this.steps) {
+				this.currentStep = s;
+				solveProblem();
+				saveStep();
+			}
+			this.solutionMessage = "";
+			this.mySolutionStep = "";
 
-		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-		return asf.FilterAlleStart();
+			AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
+			return asf.FilterAlleStart();
+		} catch (AuthenticationException e) {
+			Helper.setFehlerMeldung(e.getMessage());
+			return "";
+		}
 	}
 
-	private void solveProblem() {
+	private void solveProblem() throws AuthenticationException {
+		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (ben == null) {
+			throw new AuthenticationException("userNotFound");
+		}
 		Date now = new Date();
 		this.myDav.UploadFromHome(this.currentStep.getProzess());
 		this.currentStep.setBearbeitungsstatusEnum(StepStatus.DONE);
 		this.currentStep.setBearbeitungsende(now);
 		this.currentStep.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 		currentStep.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (ben != null) {
-			currentStep.setBearbeitungsbenutzer(ben);
-		}
+		currentStep.setBearbeitungsbenutzer(ben);
 
 		try {
 			Schritt temp = null;
@@ -634,24 +640,28 @@ public class BatchStepHelper {
 						step.setBearbeitungsende(null);
 						step.setBearbeitungszeitpunkt(now);
 					}
-					Schritteigenschaft seg = new Schritteigenschaft();
-					seg.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-					seg.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-							+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
-					seg.setSchritt(step);
-					seg.setType(PropertyType.messageImportant);
-					seg.setCreationDate(new Date());
-					step.getEigenschaften().add(seg);
 					this.stepDAO.save(step);
 				}
-			}
-			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
-					+ ben.getNachVorname() + ")";
-			this.currentStep.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess().getWikifield(), "info", message));
+
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
+				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
+						+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "
+						+ this.solutionMessage);
+				pe.setProzess(this.currentStep.getProzess());
+				pe.setType(PropertyType.messageImportant);
+				pe.setCreationDate(new Date());
+				this.currentStep.getProzess().getEigenschaften().add(pe);
+
+				String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "
+						+ this.solutionMessage + " (" + ben.getNachVorname() + ")";
+				this.currentStep.getProzess().setWikifield(
+						WikiFieldHelper.getWikiMessage(this.currentStep.getProzess(), this.currentStep.getProzess()
+								.getWikifield(), "info", message));
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
+			}
 		} catch (DAOException e) {
 		}
 	}

@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -60,10 +61,9 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-import de.sub.goobi.helper.tasks.TiffWriterTask;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -126,8 +126,6 @@ public class GoobiScript {
             importFromFileSystem(inProzesse);
         } else if (this.myParameters.get("action").equals("addUser")) {
             adduser(inProzesse);
-        } else if (this.myParameters.get("action").equals("tiffWriter")) {
-            writeTiffHeader(inProzesse);
         } else if (this.myParameters.get("action").equals("addUserGroup")) {
             addusergroup(inProzesse);
         } else if (this.myParameters.get("action").equals("setTaskProperty")) {
@@ -272,12 +270,10 @@ public class GoobiScript {
      */
     private void swapOutProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapOutTask task = new ProcessSwapOutTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
-
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 
@@ -286,11 +282,10 @@ public class GoobiScript {
      */
     private void swapInProzesses(List<Prozess> inProzesse) {
         for (Prozess p : inProzesse) {
-
             ProcessSwapInTask task = new ProcessSwapInTask();
             task.initialize(p);
-            LongRunningTaskManager.getInstance().addTask(task);
-            LongRunningTaskManager.getInstance().executeTask(task);
+			TaskManager.addTask(task);
+			task.start();
         }
     }
 
@@ -932,18 +927,6 @@ public class GoobiScript {
     }
 
     /**
-     * TiffHeader von den Prozessen neu schreiben ================================================================
-     */
-    private void writeTiffHeader(List<Prozess> inProzesse) {
-        for (Iterator<Prozess> iter = inProzesse.iterator(); iter.hasNext();) {
-            Prozess proz = iter.next();
-            TiffWriterTask task = new TiffWriterTask();
-            task.initialize(proz);
-            LongRunningTaskManager.getInstance().addTask(task);
-        }
-    }
-
-    /**
      * Imagepfad in den Metadaten neu setzen (evtl. vorhandene zunächst löschen) ================================================================
      */
     public void updateImagePath(List<Prozess> inProzesse) {
@@ -986,15 +969,16 @@ public class GoobiScript {
     }
 
     private void exportDms(List<Prozess> processes, String exportImages, boolean exportFulltext) {
-        ExportDms dms;
-        if (exportImages != null && exportImages.equals("false")) {
-            dms = new ExportDms(false);
-            dms.setExportFulltext(exportFulltext);
-        } else {
-            dms = new ExportDms(true);
-        }
+		boolean withoutImages = exportImages != null && exportImages.equals("false");
         for (Prozess prozess : processes) {
             try {
+				Hibernate.initialize(prozess.getProjekt());
+				Hibernate.initialize(prozess.getProjekt().getFilegroups());
+				Hibernate.initialize(prozess.getRegelsatz());
+				ExportDms dms = new ExportDms(!withoutImages);
+				if (withoutImages) {
+					dms.setExportFulltext(exportFulltext);
+				}
                 dms.startExport(prozess);
             } catch (DocStructHasNoTypeException e) {
                 logger.error("DocStructHasNoTypeException", e);

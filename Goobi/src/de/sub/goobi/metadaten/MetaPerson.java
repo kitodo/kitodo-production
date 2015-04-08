@@ -5,7 +5,7 @@ package de.sub.goobi.metadaten;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.metadaten;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -31,10 +31,13 @@ import java.util.ArrayList;
 
 import javax.faces.model.SelectItem;
 
+import org.goobi.production.constants.Parameters;
+
 import ugh.dl.DocStruct;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
+import de.sub.goobi.config.ConfigMain;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
@@ -47,9 +50,9 @@ import ugh.dl.Prefs;
 public class MetaPerson {
    private Person p;
    private int identifier;
-   private Prefs myPrefs;
-   private DocStruct myDocStruct;
-   private MetadatenHelper mdh;
+   private final Prefs myPrefs;
+   private final DocStruct myDocStruct;
+   private final MetadatenHelper mdh;
 
    
 
@@ -88,8 +91,6 @@ public class MetaPerson {
       this.p = p;
    }
 
-   
-
    public String getVorname() {
 	   if (this.p.getFirstname()==null) {
 		   return "";
@@ -104,8 +105,6 @@ public class MetaPerson {
       this.p.setFirstname(inVorname);
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
-
-   
 
    public String getNachname() {
 	   if (this.p.getLastname()==null) {
@@ -122,7 +121,17 @@ public class MetaPerson {
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
 
-   
+	public String getRecord() {
+		String authorityValue = this.p.getAuthorityValue();
+		if (authorityValue == null || authorityValue.isEmpty())
+			authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+		return authorityValue;
+	}
+
+	public void setRecord(String record) {
+		String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
+		this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+	}
 
    public String getRolle() {
       return this.p.getRole();
@@ -138,7 +147,4 @@ public class MetaPerson {
    public ArrayList<SelectItem> getAddableRollen() {
       return this.mdh.getAddablePersonRoles(this.myDocStruct, this.p.getRole());
    }
-
-   
-
 }

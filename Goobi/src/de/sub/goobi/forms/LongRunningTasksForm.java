@@ -1,11 +1,9 @@
-package de.sub.goobi.forms;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +14,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -27,98 +25,118 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.LinkedList;
+package de.sub.goobi.forms;
+import java.util.List;
 
-import org.apache.log4j.Logger;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.tasks.LongRunningTask;
-import de.sub.goobi.helper.tasks.LongRunningTaskManager;
 
 public class LongRunningTasksForm {
-	private Prozess prozess;
-	private LongRunningTask task;
-	private static final Logger logger = Logger.getLogger(LongRunningTask.class);
+	/**
+	 * When adding demo tasks, the task number is incremented and passed in as
+	 * task detail. This is to have some task detail showing, so they can be
+	 * told apart from each other in the screen.
+	 */
+	private static long demoTaskNo = 0;
 
-	public LinkedList<LongRunningTask> getTasks() {
-		return LongRunningTaskManager.getInstance().getTasks();
-	}
+	/**
+	 * The field task can be populated by a task object by the Tomahawk
+	 * updateActionListener tag which updates the value of a backing bean
+	 * property when an action event is fired by the parent UI component. This
+	 * circumvents the JSF object model which expects <em>all</em> actions on
+	 * list items being implemented on the list <em>elements</em>, thus
+	 * rendering a simpler method design passing in an object when it actually
+	 * is the patient acted on—not the agent acting—possible.
+	 */
+	private EmptyTask task;
 
-
-	public void addNewMasterTask() {
-		Prozess p = new Prozess();
-		p.setTitel("hallo Titel " + System.currentTimeMillis());
-		this.task = new LongRunningTask();
-		this.task.initialize(p);
-		LongRunningTaskManager.getInstance().addTask(this.task);
+	/**
+	 * The method getTasks() returns the task list held in the task manager.
+	 * 
+	 * @return the task list
+	 */
+	public List<EmptyTask> getTasks() {
+		return TaskManager.getTaskList();
 	}
 
 	/**
-	 * Thread entweder starten oder restarten ================================================================
+	 * The method addDemoTask() in executed if the user clicks the link to
+	 * "add a sample task" in the task manager. This is—if for anything at
+	 * all—useful for debugging or demonstration purposes only.
 	 */
+	public void addDemoTask() {
+		task = new EmptyTask("#".concat(Long.toString(++demoTaskNo)));
+		TaskManager.addTask(task);
+	}
+
 	public void executeTask() {
-		if (this.task.getStatusProgress() == 0) {
-			LongRunningTaskManager.getInstance().executeTask(this.task);
-		} else {
-			/* Thread lief schon und wurde abgebrochen */
-			try {
-				LongRunningTask lrt = this.task.getClass().newInstance();
-				lrt.initialize(this.task.getProzess());
-				LongRunningTaskManager.getInstance().replaceTask(this.task, lrt);
-				LongRunningTaskManager.getInstance().executeTask(lrt);
-			} catch (InstantiationException e) {
-				logger.error(e);
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-			}
-		}
+		task.start();
 	}
 
 	public void clearFinishedTasks() {
-		LongRunningTaskManager.getInstance().clearFinishedTasks();
+		TaskManager.removeAllFinishedTasks();
 	}
 
 	public void clearAllTasks() {
-		LongRunningTaskManager.getInstance().clearAllTasks();
+		TaskManager.stopAndDeleteAllTasks();
 	}
 
 	public void moveTaskUp() {
-		LongRunningTaskManager.getInstance().moveTaskUp(this.task);
+		TaskManager.runEarlier(task);
 	}
 
 	public void moveTaskDown() {
-		LongRunningTaskManager.getInstance().moveTaskDown(this.task);
+		TaskManager.runLater(task);
 	}
 
 	public void cancelTask() {
-		LongRunningTaskManager.getInstance().cancelTask(this.task);
+		TaskSitter.setAutoRunningThreads(false);
+		task.interrupt(Behaviour.PREPARE_FOR_RESTART);
 	}
 
 	public void removeTask() {
-		LongRunningTaskManager.getInstance().removeTask(this.task);
+		task.interrupt(Behaviour.DELETE_IMMEDIATELY);
 	}
 
-	public Prozess getProzess() {
-		return this.prozess;
+	/**
+	 * The function isDemoTasksLinkShowing() returns true, if the boolean
+	 * parameter <code>taskManager.showSampleTask</code> is set to true in the
+	 * global configuration file. Depending on this an option to
+	 * "add a sample task" in been shown in the task manager. This is—if for
+	 * anything at all—useful for debugging or demonstration purposes only.
+	 * Defaults to false.
+	 * 
+	 * @return whether <code>taskManager.showSampleTask</code> is set true in
+	 *         the configuration
+	 */
+	public boolean isDemoTasksLinkShowing() {
+		return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
 	}
 
-	public void setProzess(Prozess prozess) {
-		this.prozess = prozess;
-	}
-
-	public LongRunningTask getTask() {
-		return this.task;
-	}
-
-	public void setTask(LongRunningTask task) {
+	/**
+	 * The method setTask() provides write access to the property "task" and
+	 * will be called by the Tomahawk updateActionListener tag when an action
+	 * event is fired by the parent UI component. This can be used to pass an
+	 * object to a method when it actually is the patient acted on—not the agent
+	 * acting.
+	 * 
+	 * @param task
+	 *            value to populate the property field
+	 */
+	public void setTask(EmptyTask task) {
 		this.task = task;
 	}
 
 	public boolean isRunning() {
-		return LongRunningTaskManager.getInstance().isRunning();
+		return TaskSitter.isAutoRunningThreads();
 	}
 
 	public void toggleRunning() {
-		LongRunningTaskManager.getInstance().setRunning(!LongRunningTaskManager.getInstance().isRunning());
+		boolean mode = !TaskSitter.isAutoRunningThreads();
+		TaskSitter.setAutoRunningThreads(mode);
 	}
 }

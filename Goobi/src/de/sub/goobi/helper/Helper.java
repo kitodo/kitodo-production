@@ -5,7 +5,7 @@ package de.sub.goobi.helper;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -28,14 +28,10 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -62,9 +58,12 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
+import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 import org.jdom.Element;
 
@@ -101,6 +100,7 @@ public class Helper implements Serializable, Observer {
 	private static Map<Locale, ResourceBundle> localMessages = null;
 
 	public static Map<String, String> activeMQReporting = null;
+	private static String compoundMessage;
 
 	/**
 	 * Ermitteln eines bestimmten Parameters des Requests
@@ -128,7 +128,7 @@ public class Helper implements Serializable, Observer {
 
 	public String getGoobiConfigDirectory() {
 		if (this.myConfigVerzeichnis == null) {
-			this.myConfigVerzeichnis = ConfigMain.getParameter("KonfigurationVerzeichnis");
+			this.myConfigVerzeichnis = ConfigMain.getParameter(Parameters.CONFIG_DIR);
 		}
 		return this.myConfigVerzeichnis;
 	}
@@ -144,11 +144,11 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static void setFehlerMeldung(String meldung, String beschreibung) {
-		setMeldung(null, meldung, beschreibung, false);
+		setMeldung(null, meldung, beschreibung != null ? beschreibung : "", false);
 	}
 
 	public static void setFehlerMeldung(String control, String meldung, String beschreibung) {
-		setMeldung(control, meldung, beschreibung, false);
+		setMeldung(control, meldung, beschreibung != null ? beschreibung : "", false);
 	}
 
 	public static void setFehlerMeldung(Exception e) {
@@ -216,7 +216,7 @@ public class Helper implements Serializable, Observer {
 			beschr = beschreibung;
 		}
 
-		String compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
+		compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
 		if (activeMQReporting != null) {
 			new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"), nurInfo ? ReportLevel.INFO : ReportLevel.ERROR,
 					compoundMessage).send();
@@ -228,6 +228,25 @@ public class Helper implements Serializable, Observer {
 			myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
 
 		}
+	}
+
+	/**
+	 * Returns a Map holding all translations that are configured in the front
+	 * end of a given resource key.
+	 * 
+	 * @param key
+	 *            resource key to get translations for
+	 * @return a map with all language id strings and the corresponding resource
+	 */
+	public static HashMap<String, String> getAllStrings(String key) {
+		HashMap<String, String> result = new HashMap<String, String>(Util.hashCapacityFor(commonMessages.entrySet()));
+		@SuppressWarnings("unchecked")
+		Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
+		while (languages.hasNext()) {
+			Locale language = languages.next();
+			result.put(language.getLanguage(), getString(language, key));
+		}
+		return result;
 	}
 
 	public static String getString(Locale language, String key) {
@@ -284,6 +303,24 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * The procedure removeManagedBean() removes a managed bean from the faces
+	 * context by name. If nothing such is available, nothing happens.
+	 * 
+	 * @param name
+	 *            managed bean to remove
+	 */
+	public static void removeManagedBean(String name) {
+		try {
+			@SuppressWarnings("rawtypes")
+			Map sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			if (sessionMap.containsKey(name)) {
+				sessionMap.remove(name);
+			}
+		} catch (Exception nothingToDo) {
+		}
+	}
+
 	public static Session getHibernateSession() {
 		Session sess;
 		try {
@@ -305,73 +342,6 @@ public class Helper implements Serializable, Observer {
 		hsl.getNewSession();
 	}
 
-	// /**
-	// * Call scripts from console and give back error messages and return value of the called script
-	// *
-	// * @throws IOException
-	// * @throws InterruptedException
-	// *
-	// */
-	// public static Integer callShell2(String command) throws IOException, InterruptedException {
-	// InputStream is = null;
-	// InputStream es = null;
-	// OutputStream out = null;
-	//
-	// try {
-	// myLogger.debug("execute Shellcommand callShell2: " + command);
-	// boolean errorsExist = false;
-	// if (command == null || command.length() == 0) {
-	// return 1;
-	// }
-	// Process process = Runtime.getRuntime().exec(command);
-	// is = process.getInputStream();
-	// es = process.getErrorStream();
-	// out = process.getOutputStream();
-	// Scanner scanner = new Scanner(is);
-	// while (scanner.hasNextLine()) {
-	// String myLine = scanner.nextLine();
-	// setMeldung(myLine);
-	// }
-	//
-	// scanner.close();
-	// scanner = new Scanner(es);
-	// while (scanner.hasNextLine()) {
-	// errorsExist = true;
-	// setFehlerMeldung(scanner.nextLine());
-	// }
-	// scanner.close();
-	// int rueckgabe = process.waitFor();
-	// if (errorsExist) {
-	// return 1;
-	// } else {
-	// return rueckgabe;
-	// }
-	// } finally {
-	// if (is != null) {
-	// try {
-	// is.close();
-	// } catch (IOException e) {
-	// is = null;
-	// }
-	// }
-	// if (es != null) {
-	// try {
-	// es.close();
-	// } catch (IOException e) {
-	// es = null;
-	// }
-	//
-	// }
-	// if (out != null) {
-	// try {
-	// out.close();
-	// } catch (IOException e) {
-	// out = null;
-	// }
-	// }
-	// }
-	// }
-
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
@@ -381,7 +351,7 @@ public class Helper implements Serializable, Observer {
 			while (polyglot.hasNext()) {
 				Locale language = polyglot.next();
 				commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-				File file = new File(ConfigMain.getParameter("localMessages", "/opt/digiverso/goobi/messages/"));
+				File file = new File(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
 				if (file.exists()) {
 					// Load local message bundle from file system only if file exists;
 					// if value not exists in bundle, use default bundle from classpath
@@ -423,6 +393,11 @@ public class Helper implements Serializable, Observer {
 		} else {
 			return getString(Locale.ENGLISH, dbTitel);
 		}
+	}
+
+	public static String getTranslation(String inParameter, String inDefaultIfNull) {
+		String result = getTranslation(inParameter);
+		return result != null && !result.equals(inParameter) ? result : inDefaultIfNull;
 	}
 
 	public static String getTranslation(String dbTitel, List<String> parameterList) {
@@ -490,19 +465,32 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static void copyFile(File src, File dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
-		InputStream in = new FileInputStream(src);
-		OutputStream out = new FileOutputStream(dst);
-
-		// Transfer bytes from in to out
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0) {
-			out.write(buf, 0, len);
-		}
-		in.close();
-		out.close();
+		FileUtils.copyFile(src, dst, false);
 	}
 
+	/**
+	 * copy directory 
+	 * 
+	 * @param srcDir the source directory
+	 * @param dstDir the destination directory
+	 * @throws IOException
+	 */	
+	public static void copyDir(File srcDir, File dstDir) throws IOException {
+
+		File[] files = srcDir.listFiles();
+		if(!dstDir.exists()) {
+			dstDir.mkdirs();
+		}
+		for (File file : files) {
+			if(file.isDirectory()) {
+				copyDir(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+			}
+			else {
+				copyFile(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+			}
+		}
+	}
+	
 	/**
 	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
 	 * to delete and returns false.
@@ -652,4 +640,15 @@ public class Helper implements Serializable, Observer {
 			return fileOk;
 		}
 	};
+
+	/**
+	 * The function getLastMessage() returns the last message processed to be
+	 * shown to the user. This is a last resort only to show the user why
+	 * perhaps something didn’t work if no error message is available otherwise.
+	 * 
+	 * @return the most recent message created to be shown to the user
+	 */
+	public static String getLastMessage() {
+		return compoundMessage;
+	}
 }

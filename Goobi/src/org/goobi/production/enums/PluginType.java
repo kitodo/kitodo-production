@@ -4,7 +4,7 @@ package org.goobi.production.enums;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package org.goobi.production.enums;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -28,15 +28,14 @@ package org.goobi.production.enums;
  */
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
-import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
-
+	// TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“ 
 	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation", IValidatorPlugin.class), 
-	Command(4, "command", ICommandPlugin.class), Opac(5,"opac" ,IOpacPlugin.class);
+ 	Command(4, "command", ICommandPlugin.class), Opac(5, "opac", null);
 	
 	private int id;
 	private String name;
@@ -73,6 +72,12 @@ public enum PluginType {
 		return this.id;
 	}
 	
+	/**
+	 * @deprecated Using this function is discouraged. Use
+	 *             {@link org.goobi.production.plugin.UnspecificPlugin#typeOf(Class)}
+	 *             instead.
+	 */
+	@Deprecated
 	public Class<IPlugin> getInterfaz() {
 		return this.interfaz;
 	}

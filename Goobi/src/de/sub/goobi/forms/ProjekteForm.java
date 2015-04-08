@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -83,7 +83,7 @@ public class ProjekteForm extends BasisForm {
 
 	private Projekt myProjekt = new Projekt();
 	private ProjectFileGroup myFilegroup;
-	private ProjektDAO dao = new ProjektDAO();
+	private final ProjektDAO dao = new ProjektDAO();
 
 	// lists accepting the preliminary actions of adding and delting filegroups
 	// it needs the execution of commit fileGroups to make these changes permanent
@@ -107,7 +107,7 @@ public class ProjekteForm extends BasisForm {
 
 	// making sure its cleaned up
 	@Override
-	public void finalize() {
+	protected void finalize() {
 		this.Cancel();
 	}
 
@@ -120,7 +120,7 @@ public class ProjekteForm extends BasisForm {
 	private void deleteFileGroups(List<Integer> fileGroups) {
 		for (Integer id : fileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
-				if (f.getId() == id) {
+				if (f.getId() == null ? id == null : f.getId().equals(id)) {
 					this.myProjekt.getFilegroups().remove(f);
 					break;
 				}
@@ -280,7 +280,7 @@ public class ProjekteForm extends BasisForm {
 
 		for (Integer id : this.deletedFileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
-				if (f.getId() == id) {
+				if (f.getId() == null ? id == null : f.getId().equals(id)) {
 					filteredFileGroupList.remove(f);
 					break;
 				}
@@ -532,7 +532,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * @returns a StatQuestThroughputCommonFlow for the generation of projekt progress data
+	 * @return a StatQuestThroughputCommonFlow for the generation of projekt progress data
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 

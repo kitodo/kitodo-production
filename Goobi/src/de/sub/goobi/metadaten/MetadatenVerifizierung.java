@@ -5,7 +5,7 @@ package de.sub.goobi.metadaten;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.metadaten;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -46,6 +46,7 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
@@ -83,14 +84,14 @@ public class MetadatenVerifizierung {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + inProzess.getTitel(), e.getMessage());
-			ergebnis = false;
+			return false;
 		}
 
 		DocStruct logical = dd.getLogicalDocStruct();
 		if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
 			Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
 			try {
-				if (!identifierTopStruct.getValue().replaceAll("[\\w|-]", "").equals("")) {
+				if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(logical.getType().getNameByLanguage(metadataLanguage));
@@ -101,7 +102,7 @@ public class MetadatenVerifizierung {
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
-				if (identifierTopStruct.getValue() != null && identifierTopStruct.getValue() != ""
+				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
 					List<String> parameter = new ArrayList<String>();
 					parameter.add(identifierTopStruct.getType().getName());
@@ -110,9 +111,9 @@ public class MetadatenVerifizierung {
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierSame", parameter));
 					ergebnis = false;
 				}
-				if (!identifierFirstChild.getValue().replaceAll("[\\w|-]", "").equals("")) {
+				if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					List<String> parameter = new ArrayList<String>();
-					parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
+					parameter.add(identifierFirstChild.getType().getNameByLanguage(metadataLanguage));
 					parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
 					Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
 					ergebnis = false;
@@ -135,13 +136,14 @@ public class MetadatenVerifizierung {
 		 * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
 		 */
 		DocStruct logicalTop = dd.getLogicalDocStruct();
+		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
 		if (logicalTop == null) {
 			Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationError"));
 			ergebnis = false;
+		} else {
+			this.checkDocStructsOhneSeiten(logicalTop);
 		}
 
-		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
-		this.checkDocStructsOhneSeiten(logicalTop);
 		if (this.docStructsOhneSeiten.size() != 0) {
 			for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
 				DocStruct ds = iter.next();
@@ -256,7 +258,7 @@ public class MetadatenVerifizierung {
 	}
 
 	private void checkDocStructsOhneSeiten(DocStruct inStruct) {
-		if (inStruct.getAllToReferences().size() == 0 && !inStruct.getType().isAnchor()) {
+		if (inStruct.getAllToReferences().size() == 0 && inStruct.getType().getAnchorClass() == null) {
 			this.docStructsOhneSeiten.add(inStruct);
 		}
 		/* alle Kinder des aktuellen DocStructs durchlaufen */

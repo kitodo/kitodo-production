@@ -3,7 +3,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -14,8 +14,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -54,7 +54,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionID
     * @return ProzessID
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
@@ -65,7 +65,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um die Volltextdatei zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -86,7 +86,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um das relative Arbeisverzeichnis zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Arbeitsverzeichnis (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -107,7 +107,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
 
    /**
     * Diese Methode wird benötigt um die Metadatendatei zu erhalten.
-    * @param SessionID
+    * @param sessionId
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
@@ -129,7 +129,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Parameter Struktur
     * @throws GoobiException: 1, 2, 4, 5, 6, 254
     * ================================================================*/
@@ -155,7 +155,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode liefert das Projekt eines Prozesses. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Projekttitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
@@ -167,7 +167,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    /**
     * Diese Methode liefert den Titel eines Prozesses. 
     * Die Implementierung dieser Methode ist optional.
-    * @param SessionID
+    * @param sessionId
     * @return Prozesstitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/

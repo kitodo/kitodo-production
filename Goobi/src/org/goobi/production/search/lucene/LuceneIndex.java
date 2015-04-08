@@ -13,8 +13,8 @@
 // * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // * 
-// * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
-// * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+// * You should have received a copy of the GNU General Public License
+// * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // * 
 // * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
 // * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -46,7 +46,6 @@
 //import de.sub.goobi.Beans.Prozess;
 //import de.sub.goobi.Beans.Prozesseigenschaft;
 //import de.sub.goobi.Beans.Schritt;
-//import de.sub.goobi.Beans.Schritteigenschaft;
 //import de.sub.goobi.Beans.Vorlage;
 //import de.sub.goobi.Beans.Vorlageeigenschaft;
 //import de.sub.goobi.Beans.Werkstueck;
@@ -213,18 +212,6 @@
 //				if (step.getEditTypeEnum() != null) {
 //					doc.add(new Field(step.getNormalizedTitle().toLowerCase(), String.valueOf(step.getEditTypeEnum().getTitle()), Field.Store.YES,
 //							Field.Index.NOT_ANALYZED));
-//				}
-//				if (step.getEigenschaften() != null) {
-//					for (Schritteigenschaft prop : step.getEigenschaftenList()) {
-//						if (prop.getTitel() != null && prop.getWert() != null) {
-//							doc.add(new Field(prop.getNormalizedTitle().toLowerCase(), normalize(prop.getNormalizedValue().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//							doc.add(new Field(SearchEnums.propertyValue.getLuceneTitle(), normalize(prop.getNormalizedValue().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//							doc.add(new Field(SearchEnums.property.getLuceneTitle(), normalize(prop.getNormalizedTitle().toLowerCase()),
-//									Field.Store.YES, Field.Index.NOT_ANALYZED));
-//						}
-//					}
 //				}
 //			}
 //			// Metadata

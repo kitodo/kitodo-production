@@ -8,7 +8,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -19,8 +19,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -37,6 +37,7 @@
 
 	#########################################--%>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
 <f:view locale="#{SpracheForm.locale}">
 	<%@include file="/newpages/inc/head.jsp"%>
@@ -71,6 +72,51 @@
 									<%-- globale Warn- und Fehlermeldungen --%>
 									<h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
+									<%-- Show hit list if several results were found --%>
+
+									<htm:div styleClass="modalBackground"
+										rendered="#{ProzesskopieForm.hitlistShowing}" />
+									<htm:div styleClass="hitlistBoxWrapper"
+										rendered="#{ProzesskopieForm.hitlistShowing}">
+										<htm:div styleClass="hitlistBox">
+											<htm:h3>
+												<h:outputText
+													value="#{msgs['newProcess.catalogueSearch.heading']}" />
+											</htm:h3>
+											<htm:p>
+												<h:outputFormat
+													value="#{msgs['newProcess.catalogueSearch.results']}">
+													<f:param value="#{ProzesskopieForm.numberOfHits}" />
+												</h:outputFormat>
+											</htm:p>
+											<x:dataList layout="unorderedList" var="hit"
+												value="#{ProzesskopieForm.hitlist}">
+												<h:commandLink action="#{hit.selectClick}" rendered="#{not hit.error}">
+													<h:outputText value="#{hit.bibliographicCitation}" escape="false" />
+												</h:commandLink>
+												<h:outputText value="#{msgs['newProcess.catalogueSearch.failed']} "
+													rendered="#{hit.error}" styleClass="text_red" />
+												<h:outputText value="#{hit.errorMessage}"
+													rendered="#{hit.error}" styleClass="text_red" />
+											</x:dataList>
+											<h:commandLink
+												value="#{msgs['newProcess.catalogueSearch.previousPage']}"
+												styleClass="leftText"
+												action="#{ProzesskopieForm.previousPageClick}"
+												rendered="#{!ProzesskopieForm.firstPage}" />
+											<h:commandLink
+												value="#{msgs['newProcess.catalogueSearch.leaveDisplay']}"
+												styleClass="leftText"
+												action="#{ProzesskopieForm.previousPageClick}"
+												rendered="#{ProzesskopieForm.firstPage}" />
+											<h:commandLink
+												value="#{msgs['newProcess.catalogueSearch.nextPage']}"
+												styleClass="rightText"
+												action="#{ProzesskopieForm.nextPageClick}"
+												rendered="#{not ProzesskopieForm.lastPage}" />
+										</htm:div>
+									</htm:div>
+
 									<%-- ===================== Eingabe der Details ====================== --%>
 									<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen">
 
@@ -101,6 +147,9 @@
 												</h:commandButton>
 												<h:commandButton value="#{msgs.speichern}" rendered="#{ProzesskopieForm.prozessKopie.eigenschaftenSize==0}"
 													action="#{ProzesskopieForm.NeuenProzessAnlegen}">
+												</h:commandButton>
+												<h:commandButton value="#{msgs.weiter}" rendered="#{ProzesskopieForm.calendarButtonShowing}"
+													action="ShowCalendarEditor">
 												</h:commandButton>
 											</htm:td>
 										</htm:tr>

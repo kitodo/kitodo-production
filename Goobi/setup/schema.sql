@@ -2,7 +2,7 @@
 -- 
 -- Visit the websites for more information. 
 --     		- http://www.goobi.org
---    		- http://launchpad.net/goobi-production
+--    		- https://github.com/goobi/goobi-production
 -- 		    - http://gdz.sub.uni-goettingen.de
 --			- http://www.intranda.com
 --			- http://digiverso.com 
@@ -13,8 +13,8 @@
 -- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 -- FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 --
--- You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
--- Temple Place, Suite 330, Boston, MA 02111-1307 USA
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --
 -- Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
 -- of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -148,6 +148,7 @@ CREATE TABLE `projectfilegroups` (
   `mimetype` varchar(255) DEFAULT NULL,
   `suffix` varchar(255) DEFAULT NULL,
   `folder` varchar(255) DEFAULT NULL,
+ `previewImage` tinyint(1) DEFAULT NULL,
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
   KEY `FK51AAC2292DFE45A` (`ProjekteID`)
@@ -212,7 +213,6 @@ CREATE TABLE `prozesse` (
   `sortHelperDocstructs` int(11) DEFAULT NULL,
   `sortHelperMetadata` int(11) DEFAULT NULL,
   `erstellungsdatum` datetime DEFAULT NULL,
-  `batchID` int(11) DEFAULT NULL,
   `wikifield` longtext,
   `ProjekteID` int(11) DEFAULT NULL,
   `MetadatenKonfigurationID` int(11) DEFAULT NULL,
@@ -370,5 +370,24 @@ CREATE TABLE `werkstueckeeigenschaften` (
   `werkstueckeID` int(11) DEFAULT NULL,
   PRIMARY KEY (`werkstueckeeigenschaftenID`),
   KEY `FK7B209DC7FBCBC046` (`werkstueckeID`)
+) DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `batchesprozesse` (
+  `ProzesseID` int(11) NOT NULL,
+  `BatchID` int(11) NOT NULL,
+  PRIMARY KEY (`ProzesseID`,`BatchID`),
+  KEY `FK4614E1D551BB26FA` (`ProzesseID`),
+  KEY `FK4614E1D58DC81D49` (`BatchID`)
+) DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `batches` (
+  `BatchID` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `type` varchar(9) DEFAULT NULL,
+  PRIMARY KEY (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

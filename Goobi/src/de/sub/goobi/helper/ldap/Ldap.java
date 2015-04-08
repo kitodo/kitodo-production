@@ -5,7 +5,7 @@ package de.sub.goobi.helper.ldap;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.helper.ldap;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -56,6 +56,8 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
@@ -63,7 +65,6 @@ import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import dubious.sub.goobi.helper.encryption.MD4;
 
 public class Ldap {
 	private static final Logger myLogger = Logger.getLogger(Ldap.class);
@@ -121,7 +122,7 @@ public class Ldap {
 				myLogger.debug("HomeVerzeichnis existiert schon");
 			}
 		} else {
-			Helper.setMeldung(null, Helper.getTranslation("ldapIsReadOnly"));
+			Helper.setMeldung(Helper.getTranslation("ldapIsReadOnly"));
 		}
 	}
 

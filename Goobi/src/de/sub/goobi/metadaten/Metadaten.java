@@ -5,7 +5,7 @@ package de.sub.goobi.metadaten;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.metadaten;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -46,6 +46,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -54,15 +55,17 @@ import org.apache.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IOpacPlugin;
+import org.goobi.production.constants.Parameters;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
+import ugh.dl.MetadataGroup;
+import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
@@ -76,21 +79,18 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.TreeNode;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
+import de.sub.goobi.persistence.ProzessDAO;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
@@ -114,14 +114,13 @@ public class Metadaten {
 	private DigitalDocument mydocument;
 	private Prozess myProzess;
 	private Prefs myPrefs;
-	// private String myProzesseID;
 	private String myBenutzerID;
 	private String tempTyp;
 	private String tempWert;
+	private String tempPersonRecord;
 	private String tempPersonVorname;
 	private String tempPersonNachname;
 	private String tempPersonRolle;
-	// private String myProzessTitel;
 	private String currentTifFolder;
 	private List<String> allTifFolders;
 	/* Variablen für die Zuweisung der Seiten zu Strukturelementen */
@@ -166,7 +165,7 @@ public class Metadaten {
 	private String addDocStructType1;
 	private String addDocStructType2;
 	private String zurueck = "Main";
-	private MetadatenSperrung sperrung = new MetadatenSperrung();
+	private final MetadatenSperrung sperrung = new MetadatenSperrung();
 	private boolean nurLesenModus;
 	private String neuesElementWohin = "1";
 	private boolean modusStrukturelementVerschieben = false;
@@ -179,8 +178,11 @@ public class Metadaten {
 	private String pagesStart = "";
 	private String pagesEnd = "";
 	private HashMap<String, Boolean> treeProperties;
-	private ReentrantLock xmlReadingLock = new ReentrantLock();
+	private final ReentrantLock xmlReadingLock = new ReentrantLock();
     private FileManipulation fileManipulation = null;
+	private boolean addMetadataGroupMode = false;
+
+	private RenderableMetadataGroup newMetadataGroup;
 
 	/**
 	 * Konstruktor ================================================================
@@ -220,6 +222,7 @@ public class Metadaten {
 	public String HinzufuegenPerson() {
 		this.modusHinzufuegenPerson = true;
 		this.tempPersonNachname = "";
+		this.tempPersonRecord = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
 		this.tempPersonVorname = "";
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
@@ -359,9 +362,8 @@ public class Metadaten {
 			per.setFirstname(this.tempPersonVorname);
 			per.setLastname(this.tempPersonNachname);
 			per.setRole(this.tempPersonRolle);
-
-	
-
+			String[] authorityFile = parseAuthorityFileArgs(tempPersonRecord);
+			per.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
 			this.myDocStruct.addPerson(per);
 		} catch (IncompletePersonObjectException e) {
 			Helper.setFehlerMeldung("Incomplete data for person", "");
@@ -377,6 +379,41 @@ public class Metadaten {
 			return "SperrungAbgelaufen";
 		}
 		return "";
+	}
+
+	/**
+	 * The function parseAuthorityFileArgs() parses a valueURI (i.e.
+	 * “http://d-nb.info/gnd/117034592”) and returns the three arguments
+	 * authority, authorityURI and valueURI required to call
+	 * {@link ugh.dl.Metadata#setAutorityFile(String, String, String)}. The
+	 * authorityURI may end in # or / otherwise. The authority’s name id must be
+	 * configured in the main configuration file like referencing the
+	 * authorityURI (remember to escape colons):
+	 * 
+	 * <code>authority.http\://d-nb.info/gnd/.id=gnd</code>
+	 * 
+	 * @param an
+	 *            URI in an authority file
+	 * @return a String[] with authority, authorityURI and valueURI
+	 */
+	static String[] parseAuthorityFileArgs(String valueURI) {
+		String authority = null, authorityURI = null;
+		if (valueURI != null && !valueURI.isEmpty()) {
+			int boundary = valueURI.indexOf('#');
+			if (boundary == -1) {
+				boundary = valueURI.lastIndexOf('/');
+			}
+			if (boundary == -1) {
+				throw new IncompletePersonObjectException("URI_malformed");
+			} else {
+				authorityURI = valueURI.substring(0, boundary + 1);
+				if (!authorityURI.equals(valueURI)) {
+					authority = ConfigMain.getParameter(
+							Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+				}
+			}
+		}
+		return new String[] { authority, authorityURI, valueURI };
 	}
 
 	public String Loeschen() {
@@ -1225,12 +1262,12 @@ public class Metadaten {
 
 		// added new
 		DocStruct log = this.mydocument.getLogicalDocStruct();
-		if (log.getType().isAnchor()) {
-			if (log.getAllChildren() != null && log.getAllChildren().size() > 0) {
-				log = log.getAllChildren().get(0);
-			} else {
-				return "";
-			}
+		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+				&& log.getAllChildren().size() > 0) {
+			log = log.getAllChildren().get(0);
+		}
+		if (log.getType().getAnchorClass() != null) {
+			return "";
 		}
 
 		if (log.getAllChildren() != null) {
@@ -1264,6 +1301,7 @@ public class Metadaten {
 			mydocument = this.gdzfile.getDigitalDocument();
 		} catch (PreferencesException e) {
 			Helper.setMeldung(null, "Can not get DigitalDocument: ", e.getMessage());
+			return;
 		}
 
 		List<DocStruct> meineListe = mydocument.getPhysicalDocStruct().getAllChildren();
@@ -1458,22 +1496,6 @@ public class Metadaten {
 		return null;
 	}
 	
-	
-//	public String Paginierung() {
-//		Pagination p = new Pagination(this.alleSeitenAuswahl, this.alleSeitenNeu, this.paginierungAbSeiteOderMarkierung, this.paginierungArt,
-//				this.paginierungSeitenProImage, this.paginierungWert);
-//		String result = p.doPagination();
-//		/*
-//		 * zum Schluss nochmal alle Seiten neu einlesen
-//		 */
-//		this.alleSeitenAuswahl = null;
-//		retrieveAllImages();
-//		if (!SperrungAktualisieren()) {
-//			return "SperrungAbgelaufen";
-//		}
-//		return result;
-//	}
-
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
 	 */
@@ -1606,14 +1628,8 @@ public class Metadaten {
 
 	        List<String> dataList = new ArrayList<String>();
 	        myLogger.trace("dataList");
-	        //      try {
 	        dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	        myLogger.trace("dataList 2");
-	        //      } catch (InvalidImagesException e) {
-	        //          myLogger.trace("dataList error");
-	        //          myLogger.error("Images could not be read", e);
-	        //          Helper.setFehlerMeldung("images could not be read", e);
-	        //      }
 	        if (dataList == null || dataList.isEmpty()) {
 	            try {
 	                createPagination();
@@ -1659,22 +1675,16 @@ public class Metadaten {
 	                    if (this.currentTifFolder != null) {
 	                        myLogger.trace("currentTifFolder: " + this.currentTifFolder);
 	                        try {
-	                            //                          dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
 	                            if (dataList == null) {
 	                                return;
 	                            }
-	                            //
 	                        } catch (InvalidImagesException e1) {
 	                            myLogger.trace("dataList error");
 	                            myLogger.error("Images could not be read", e1);
 	                            Helper.setFehlerMeldung("images could not be read", e1);
 	                        }
 	                    }
-	                    //                  if (dataList == null) {
-	                    //                      myLogger.trace("dataList: null");
-	                    //                      return;
-	                    //                  }
 	                    /* das aktuelle tif erfassen */
 	                    if (dataList.size() > pos) {
 	                        this.myBild = dataList.get(pos);
@@ -1872,10 +1882,8 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-                ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
-                IOpacPlugin iopac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
-
-                Fileformat addrdf = iopac.search(this.opacSuchfeld, tok, coc, this.myPrefs);
+				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog,
+						QueryBuilder.restrictToField(opacSuchfeld, tok), myPrefs);
 				if (addrdf != null) {
 					this.myDocStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
 					MetadatenalsTree3Einlesen1();
@@ -1897,9 +1905,8 @@ public class Metadaten {
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			try {
-                ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
-                IOpacPlugin iopac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
-                Fileformat addrdf = iopac.search(this.opacSuchfeld, tok, coc, this.myPrefs);
+				Fileformat addrdf = CataloguePlugin.getFirstHit(opacKatalog,
+						QueryBuilder.restrictToField(opacSuchfeld, tok), myPrefs);
 				if (addrdf != null) {
 
 					/* die Liste aller erlaubten Metadatenelemente erstellen */
@@ -2006,7 +2013,6 @@ public class Metadaten {
 	}
 
 	private int pageNumber = 0;
-
 	public int getPageNumber() {
 		return this.pageNumber;
 	}
@@ -2120,24 +2126,8 @@ public class Metadaten {
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildErsteSeiteAnzeigen() {
-        //        this.bildAnzeigen = true;
-        //        if (this.treeProperties.get("showpagesasajax")) {
-        //            for (int i = 0; i < this.alleSeiten.length; i++) {
-        //                SelectItem si = this.alleSeiten[i];
-        //                if (si.getLabel().equals(this.ajaxSeiteStart)) {
-        //                    this.alleSeitenAuswahl_ersteSeite = (String) si.getValue();
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //        try {
-        //            int pageNumber = Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) - this.myBildNummer + 1;
-        //            BildErmitteln(pageNumber);
         myBild = null;
         BildErmitteln(0);
-        //        } catch (Exception e) {
-        //
-        //        }
 		return "";
 	}
 
@@ -2377,6 +2367,14 @@ public class Metadaten {
 		this.tempPersonNachname = tempPersonNachname;
 	}
 
+	public String getTempPersonRecord() {
+		return tempPersonRecord;
+	}
+
+	public void setTempPersonRecord(String tempPersonRecord) {
+		this.tempPersonRecord = tempPersonRecord;
+	}
+
 	public String getTempPersonRolle() {
 		return this.tempPersonRolle;
 	}
@@ -2514,7 +2512,7 @@ public class Metadaten {
 	}
 
 	public String getNeuesElementWohin() {
-		if (this.neuesElementWohin == null || this.neuesElementWohin == "") {
+		if (this.neuesElementWohin == null || this.neuesElementWohin.isEmpty()) {
 			this.neuesElementWohin = "1";
 		}
 		return this.neuesElementWohin;
@@ -2544,19 +2542,19 @@ public class Metadaten {
 		this.alleSeitenAuswahl_letzteSeite = alleSeitenAuswahl_letzteSeite;
 	}
 
-	public List<TreeNode> getStrukturBaum3() {
+	public List<HashMap<String, Object>> getStrukturBaum3() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsList();
 		} else {
-			return new ArrayList<TreeNode>();
+			return Collections.emptyList();
 		}
 	}
 
-	public List<TreeNode> getStrukturBaum3Alle() {
+	public List<HashMap<String, Object>> getStrukturBaum3Alle() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsListAlle();
 		} else {
-			return new ArrayList<TreeNode>();
+			return Collections.emptyList();
 		}
 	}
 
@@ -2820,12 +2818,7 @@ public class Metadaten {
             String imagename = pageToRemove.getImageName();
 
             removeImage(imagename);
-            //            try {
             mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
-            //                pageToRemove.removeContentFile(pageToRemove.getAllContentFiles().get(0));
-            //            } catch (ContentFileNotLinkedException e) {
-            //                myLogger.error(e);
-            //            }
 
             mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
             List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
@@ -3060,4 +3053,158 @@ public class Metadaten {
         return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false); 
     }
     
+	/**
+	 * Saves the input from the subform to create a new metadata group in the
+	 * currently selected docStruct and then toggles the form to show the page
+	 * “Metadata”.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
+	public String addMetadataGroup() throws DocStructHasNoTypeException {
+		try {
+			myDocStruct.addMetadataGroup(newMetadataGroup.toMetadataGroup());
+		} catch (MetadataTypeNotAllowedException e) {
+			myLogger.error("Error while adding metadata (MetadataTypeNotAllowedException): " + e.getMessage());
+		}
+		return showMetadata();
+	}
+
+	/**
+	 * Checks whether a given meta-data group type is available for adding. This
+	 * can be used by a RenderableMetadataGroup to find out whether it can be
+	 * copied or not.
+	 * 
+	 * @param type
+	 *            meta-data group type to look for
+	 * @return whether the type is available to add
+	 */
+	boolean canCreate(MetadataGroupType type) {
+		List<MetadataGroupType> addableTypes = myDocStruct.getAddableMetadataGroupTypes();
+		if (addableTypes == null) {
+			addableTypes = Collections.emptyList();
+		}
+		return addableTypes.contains(type);
+	}
+
+	/**
+	 * Returns a list with backing beans for all metadata groups available for
+	 * the structural element under edit.
+	 * 
+	 * @return backing beans for the metadata groups of the current element
+	 * @throws ConfigurationException
+	 *             if a single value metadata field is configured to show a
+	 *             multi-select input
+	 */
+	public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
+		List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
+		if (records == null) {
+			return Collections.emptyList();
+		}
+		List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
+		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		String projectName = myProzess.getProjekt().getTitel();
+		for (MetadataGroup record : records) {
+			result.add(new RenderableMetadataGroup(record, this, language, projectName));
+		}
+		return result;
+	}
+
+	/**
+	 * Returns a backing bean object to display the form to create a new
+	 * metadata group.
+	 * 
+	 * @return a bean to create a new metadata group
+	 */
+	public RenderableMetadataGroup getNewMetadataGroup() {
+		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		newMetadataGroup.setLanguage(language);
+		return newMetadataGroup;
+	}
+
+	/**
+	 * Returns whether the metadata editor is showing the subpage to add a new
+	 * metadata group.
+	 * 
+	 * @return whether the page to add a new metadata group shows
+	 */
+	public boolean isAddMetadataGroupMode() {
+		return this.addMetadataGroupMode;
+	}
+
+	/**
+	 * Returns whether the metadata editor is showing a link to open the subpage
+	 * to add a new metadata group.
+	 * 
+	 * @return whether the link to add a new metadata group shows
+	 */
+	public boolean isAddNewMetadataGroupLinkShowing() {
+		return myDocStruct.getAddableMetadataGroupTypes() != null;
+	}
+
+	/**
+	 * Deletes the metadata group
+	 * 
+	 * @param metadataGroup
+	 *            metadata group to delete.
+	 */
+	void removeMetadataGroupFromCurrentDocStruct(MetadataGroup metadataGroup) {
+		myDocStruct.removeMetadataGroup(metadataGroup);
+	}
+
+	/**
+	 * Toggles the form to show the subpage to add a new metadata group. The
+	 * form is prepared with the values from the metadata group that the copy
+	 * mode was called from.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
+	String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+		newMetadataGroup = new RenderableMetadataGroup(master, myDocStruct.getAddableMetadataGroupTypes());
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = true;
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
+
+	/**
+	 * Toggles the form to show the subpage to add a new metadata group.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
+	public String showAddNewMetadataGroup() {
+		try {
+			newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes(), myProzess
+					.getProjekt().getTitel());
+		} catch (ConfigurationException e) {
+			Helper.setFehlerMeldung("Form_configuration_mismatch", e.getMessage());
+			myLogger.error(e.getMessage());
+			return "";
+		}
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = true;
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
+
+	/**
+	 * Leaves the subpage to add a new metadata group without saving any input
+	 * and toggles the form to show the page “Metadata”.
+	 * 
+	 * @return "" to indicate JSF not to navigate anywhere or
+	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
+	 *         time is up and the user must leave the editor and open it anew
+	 */
+	public String showMetadata() {
+		modusHinzufuegen = false;
+		modusHinzufuegenPerson = false;
+		addMetadataGroupMode = false;
+		newMetadataGroup = null;
+		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
 }

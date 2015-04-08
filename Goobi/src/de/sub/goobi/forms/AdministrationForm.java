@@ -5,7 +5,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -65,6 +65,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
@@ -74,7 +75,6 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 import dubious.sub.goobi.helper.encryption.DesEncrypter;
-import dubious.sub.goobi.helper.encryption.MD5;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
@@ -96,7 +96,7 @@ public class AdministrationForm implements Serializable {
 		String adminMd5 = ConfigMain.getParameter("superadminpassword");
 		this.istPasswortRichtig = (this.passwort.equals(adminMd5));
 		if (!this.istPasswortRichtig) {
-			Helper.setFehlerMeldung("wrong passworwd", "");
+			Helper.setFehlerMeldung("wrong password", "");
 		}
 		return "";
 	}
@@ -245,7 +245,6 @@ public class AdministrationForm implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public void ImagepfadKorrigieren() throws DAOException {
-		UghHelper ughhelp = new UghHelper();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 
@@ -265,7 +264,7 @@ public class AdministrationForm implements Serializable {
 				try {
 					gdzfile = p.readMetadataFile();
 
-					MetadataType mdt = ughhelp.getMetadataType(myPrefs, "pathimagefiles");
+					MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
 					List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 					if (alleMetadaten != null && alleMetadaten.size() > 0) {
 						Metadata md = alleMetadaten.get(0);
@@ -310,8 +309,6 @@ public class AdministrationForm implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	public void PPNsKorrigieren() throws DAOException {
-		UghHelper ughhelp = new UghHelper();
-
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -340,8 +337,8 @@ public class AdministrationForm implements Serializable {
 						dsFirst = dsTop.getAllChildren().get(0);
 					}
 
-					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDDigital");
-					MetadataType mdtPpnAnalog = ughhelp.getMetadataType(myPrefs, "CatalogIDSource");
+					MetadataType mdtPpnDigital = UghHelper.getMetadataType(myPrefs, "CatalogIDDigital");
+					MetadataType mdtPpnAnalog = UghHelper.getMetadataType(myPrefs, "CatalogIDSource");
 					List<? extends Metadata> alleMetadaten;
 
 					/* digitale PPN korrigieren */
@@ -370,7 +367,7 @@ public class AdministrationForm implements Serializable {
 
 					/* Collections korrigieren */
 					List<String> myKollektionenTitel = new ArrayList<String>();
-					MetadataType coltype = ughhelp.getMetadataType(myPrefs, "singleDigCollection");
+					MetadataType coltype = UghHelper.getMetadataType(myPrefs, "singleDigCollection");
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
@@ -432,7 +429,6 @@ public class AdministrationForm implements Serializable {
 	//TODO: Remove this
 	@SuppressWarnings("unchecked")
 	public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
-		UghHelper ughhelp = new UghHelper();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -448,7 +444,7 @@ public class AdministrationForm implements Serializable {
 				try {
 					Fileformat gdzfile = p.readMetadataFile();
 					DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
-					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDSource");
+					MetadataType mdtPpnDigital = UghHelper.getMetadataType(myPrefs, "CatalogIDSource");
 
 					/* analoge PPN korrigieren */
 					if (dsTop != null) {
@@ -490,8 +486,6 @@ public class AdministrationForm implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
-		UghHelper ughhelp = new UghHelper();
-		BeanHelper bhelp = new BeanHelper();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
@@ -504,8 +498,9 @@ public class AdministrationForm implements Serializable {
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				String ppn = bhelp.WerkstueckEigenschaftErmitteln(p, "PPN digital").replace("PPN ", "").replace("PPN", "");
-				String jahr = bhelp.ScanvorlagenEigenschaftErmitteln(p, "Bandnummer");
+				String ppn = BeanHelper.WerkstueckEigenschaftErmitteln(p, "PPN digital").replace("PPN ", "")
+						.replace("PPN", "");
+				String jahr = BeanHelper.ScanvorlagenEigenschaftErmitteln(p, "Bandnummer");
 				String ppnAufBandebene = "PPN" + ppn + "_" + jahr;
 
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
@@ -517,7 +512,7 @@ public class AdministrationForm implements Serializable {
 						dsFirst = dsTop.getAllChildren().get(0);
 					}
 
-					MetadataType mdtPpnDigital = ughhelp.getMetadataType(myPrefs, "CatalogIDDigital");
+					MetadataType mdtPpnDigital = UghHelper.getMetadataType(myPrefs, "CatalogIDDigital");
 
 					/* digitale PPN korrigieren */
 					if (dsFirst != null) {
@@ -531,7 +526,7 @@ public class AdministrationForm implements Serializable {
 
 					/* Collections korrigieren */
 					List<String> myKollektionenTitel = new ArrayList<String>();
-					MetadataType coltype = ughhelp.getMetadataType(myPrefs, "singleDigCollection");
+					MetadataType coltype = UghHelper.getMetadataType(myPrefs, "singleDigCollection");
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));

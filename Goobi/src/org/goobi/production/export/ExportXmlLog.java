@@ -5,7 +5,7 @@ package org.goobi.production.export;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package org.goobi.production.export;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -54,10 +54,10 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
+import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -172,9 +172,20 @@ public class ExportXmlLog implements IProcessDataExport {
 		comment.setText(process.getWikifield());
 		processElements.add(comment);
 
-		if (process.getBatchID() != null) {
+		StringBuilder batches = new StringBuilder();
+		for (Batch batch : process.getBatchesInitialized()) {
+			if (batch.getType() != null) {
+				batches.append(batch.getTypeTranslated());
+				batches.append(": ");
+			}
+			if (batches.length() != 0) {
+				batches.append(", ");
+			}
+			batches.append(batch.getLabel());
+		}
+		if (batches.length() != 0) {
 			Element batch = new Element("batch", xmlns);
-			batch.setText(String.valueOf(process.getBatchID()));
+			batch.setText(batches.toString());
 			processElements.add(batch);
 		}
 	
@@ -234,28 +245,6 @@ public class ExportXmlLog implements IProcessDataExport {
 			Element editType = new Element("edittype", xmlns);
 			editType.setText(s.getEditTypeEnum().getTitle());
 			stepElement.addContent(editType);
-
-			ArrayList<Element> stepProperties = new ArrayList<Element>();
-			for (Schritteigenschaft prop : s.getEigenschaftenList()) {
-				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitel());
-				if (prop.getWert() != null) {
-					property.setAttribute("value", replacer(prop.getWert()));
-				} else {
-					property.setAttribute("value", "");
-				}
-			
-				Element label = new Element("label", xmlns);
-				
-				label.setText(prop.getTitel());
-				property.addContent(label);
-				stepProperties.add(property);
-			}
-			if (stepProperties.size() != 0) {
-				Element properties = new Element("properties", xmlns);
-				properties.addContent(stepProperties);
-				stepElement.addContent(properties);
-			}
 
 			stepElements.add(stepElement);
 		}
@@ -481,7 +470,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @param xslt
 	 */
 
-	public void startExport(List<Prozess> processList, OutputStream outputStream, String xslt) {
+	public void startExport(Iterable<Prozess> processList, OutputStream outputStream, String xslt) {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);

@@ -5,7 +5,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -29,6 +29,7 @@ package de.sub.goobi.forms;
  */
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
@@ -315,6 +316,25 @@ public class LoginForm {
 
 	public boolean isSchonEingeloggt() {
 		return this.schonEingeloggt;
+	}
+
+	/**
+	 * The function getUserHomeDir() returns the home directory of the currently
+	 * logged in user, if any, or the empty string otherwise.
+	 * 
+	 * @return the home directory of the current user
+	 * @throws InterruptedException
+	 *             If the thread running the script is interrupted by another
+	 *             thread while it is waiting, then the wait is ended and an
+	 *             InterruptedException is thrown.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
+		String result = "";
+		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+		if (loginForm != null)
+			result = loginForm.getMyBenutzer().getHomeDir();
+		return result;
 	}
 
 }

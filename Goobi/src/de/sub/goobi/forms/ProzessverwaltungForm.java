@@ -5,7 +5,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -48,6 +48,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -89,7 +90,6 @@ import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Schritteigenschaft;
 import de.sub.goobi.beans.Vorlage;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
@@ -115,6 +115,9 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
+/**
+ * @author Wulf Riebensahm
+ */
 public class ProzessverwaltungForm extends BasisForm {
 	private static final long serialVersionUID = 2838270843176821134L;
 	private static final Logger logger = Logger.getLogger(ProzessverwaltungForm.class);
@@ -125,7 +128,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	private List<ProcessCounterObject> myAnzahlList;
 	private HashMap<String, Integer> myAnzahlSummary;
 	private Prozesseigenschaft myProzessEigenschaft;
-	private Schritteigenschaft mySchrittEigenschaft;
 	private Benutzer myBenutzer;
 	private Vorlage myVorlage;
 	private Vorlageeigenschaft myVorlageEigenschaft;
@@ -176,7 +178,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	/**
 	 * needed for ExtendedSearch
 	 * 
-	 * @return
+	 * @return always true
 	 */
 	public boolean getInitialize() {
 		return true;
@@ -267,6 +269,21 @@ public class ProzessverwaltungForm extends BasisForm {
 								}
 							}
 						}
+						{
+							// renaming defined direcories
+							String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+							for(String processDir : processDirs) {
+								
+								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
+								
+								File dir = new File(processDirAbsolut);
+								if(dir.isDirectory())
+								{
+									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+								}
+							}
+						}
+						
 					} catch (Exception e) {
 						logger.warn("could not rename folder", e);
 					}
@@ -521,17 +538,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 	public String ProzessEigenschaftLoeschen() {
 		try {
-			myProzess.getEigenschaften().remove(myProzessEigenschaft);
-			dao.save(myProzess);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-		}
-		return "";
-	}
-
-	public String SchrittEigenschaftLoeschen() {
-		try {
-			mySchritt.getEigenschaften().remove(mySchrittEigenschaft);
+			myProzess.getEigenschaftenInitialized().remove(myProzessEigenschaft);
 			dao.save(myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
@@ -564,11 +571,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		return "";
 	}
 
-	public String SchrittEigenschaftNeu() {
-		mySchrittEigenschaft = new Schritteigenschaft();
-		return "";
-	}
-
 	public String VorlageEigenschaftNeu() {
 		myVorlageEigenschaft = new Vorlageeigenschaft();
 		return "";
@@ -580,15 +582,8 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	public String ProzessEigenschaftUebernehmen() {
-		myProzess.getEigenschaften().add(myProzessEigenschaft);
+		myProzess.getEigenschaftenInitialized().add(myProzessEigenschaft);
 		myProzessEigenschaft.setProzess(myProzess);
-		Speichern();
-		return "";
-	}
-
-	public String SchrittEigenschaftUebernehmen() {
-		mySchritt.getEigenschaften().add(mySchrittEigenschaft);
-		mySchrittEigenschaft.setSchritt(mySchritt);
 		Speichern();
 		return "";
 	}
@@ -1089,14 +1084,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.mySchritt = mySchritt;
 	}
 
-	public Schritteigenschaft getMySchrittEigenschaft() {
-		return this.mySchrittEigenschaft;
-	}
-
-	public void setMySchrittEigenschaft(Schritteigenschaft mySchrittEigenschaft) {
-		this.mySchrittEigenschaft = mySchrittEigenschaft;
-	}
-
 	public Vorlage getMyVorlage() {
 		return this.myVorlage;
 	}
@@ -1429,8 +1416,6 @@ public class ProzessverwaltungForm extends BasisForm {
 	/**
 	 * ist called via jsp at the end of building a chart in include file Prozesse_Liste_Statistik.jsp and resets the statistics so that with the next
 	 * reload a chart is not shown anymore
-	 * 
-	 * @author Wulf
 	 */
 	public String getResetStatistic() {
 		this.showStatistics = false;
@@ -1873,7 +1858,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	                Prozesseigenschaft pe = new Prozesseigenschaft();
 	                pe.setProzess(myProzess);
 	                pt.setProzesseigenschaft(pe);
-	                myProzess.getEigenschaften().add(pe);
+	                myProzess.getEigenschaftenInitialized().add(pe);
 	                pt.transfer();
 	            }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1907,18 +1892,18 @@ public class ProzessverwaltungForm extends BasisForm {
 					Prozesseigenschaft pe = new Prozesseigenschaft();
 					pe.setProzess(this.myProzess);
 					p.setProzesseigenschaft(pe);
-					this.myProzess.getEigenschaften().add(pe);
+					this.myProzess.getEigenschaftenInitialized().add(pe);
 				}
 				p.transfer();
-				if (!this.myProzess.getEigenschaften().contains(p.getProzesseigenschaft())) {
-					this.myProzess.getEigenschaften().add(p.getProzesseigenschaft());
+				if (!this.myProzess.getEigenschaftenInitialized().contains(p.getProzesseigenschaft())) {
+					this.myProzess.getEigenschaftenInitialized().add(p.getProzesseigenschaft());
 				}
 			}
 
 			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					this.myProzess.getEigenschaften().remove(pe);
+					this.myProzess.getEigenschaftenInitialized().remove(pe);
 				}
 			}
 
@@ -1947,18 +1932,18 @@ public class ProzessverwaltungForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.myProzess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
+				this.myProzess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
 			List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 			for (Prozesseigenschaft pe : props) {
 				if (pe.getTitel() == null) {
-					this.myProzess.getEigenschaften().remove(pe);
+					this.myProzess.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaften().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.dao.save(this.myProzess);
@@ -2003,14 +1988,14 @@ public class ProzessverwaltungForm extends BasisForm {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processPropertyList.remove(pp);
-			this.myProzess.getEigenschaften().remove(pp.getProzesseigenschaft());
+			this.myProzess.getEigenschaftenInitialized().remove(pp.getProzesseigenschaft());
 
 		}
 
 		List<Prozesseigenschaft> props = this.myProzess.getEigenschaftenList();
 		for (Prozesseigenschaft pe : props) {
 			if (pe.getTitel() == null) {
-				this.myProzess.getEigenschaften().remove(pe);
+				this.myProzess.getEigenschaftenInitialized().remove(pe);
 			}
 		}
 		try {
@@ -2087,7 +2072,7 @@ public class ProzessverwaltungForm extends BasisForm {
 				Prozesseigenschaft pe = new Prozesseigenschaft();
 				pe.setProzess(this.myProzess);
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaften().add(pe);
+				this.myProzess.getEigenschaftenInitialized().add(pe);
 			}
 			this.processProperty.transfer();
 
@@ -2124,5 +2109,4 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList.add(pp);
 		this.processProperty = pp;
 	}
-
 }

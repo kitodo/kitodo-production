@@ -5,7 +5,7 @@ package de.sub.goobi.forms;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.forms;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -28,15 +28,18 @@ package de.sub.goobi.forms;
  * exception statement from your version.
  */
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -44,14 +47,18 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.enums.PluginType;
+import org.goobi.production.constants.FileNames;
+import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IOpacPlugin;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.CataloguePlugin.Hit;
+import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -77,6 +84,7 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.Benutzer;
@@ -106,41 +114,166 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
-	private final Helper help = new Helper();
-	UghHelper ughHelper = new UghHelper();
-	private final BeanHelper bHelper = new BeanHelper();
+
+	/**
+	 * The class SelectableHit represents a hit on the hit list that shows up if
+	 * a catalogue search yielded more than one result. We need an inner class
+	 * for this because Faces is striclty object oriented and the always
+	 * argument-less actions can only be executed relatively to the list entry
+	 * in question this way if they are concerning elements that are rendered by
+	 * iterating along a list.
+	 * 
+	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 */
+	public class SelectableHit {
+		/**
+		 * The field hit holds the hit to be rendered as a list entry.
+		 */
+		private final Hit hit;
+
+		/**
+		 * The field error holds an error message to be rendered as a list entry
+		 * in case that retrieving the hit failed within the plug-in used for
+		 * catalogue access.
+		 */
+		private final String error;
+	
+		/**
+		 * Selectable hit constructor. Creates a new SelectableHit object with a
+		 * hit to show.
+		 * 
+		 * @param hit
+		 *            Hit to show
+		 */
+		public SelectableHit(Hit hit) {
+			this.hit = hit;
+			error = null;
+		}
+	
+		/**
+		 * Selectable hit constructor. Creates a new SelectableHit object with
+		 * an error message to show.
+		 * 
+		 * @param error
+		 *            error message
+		 */
+		public SelectableHit(String error) {
+			hit = null;
+			this.error = error;
+		}
+
+		/**
+		 * The function getBibliographicCitation() returns a summary of this hit
+		 * in bibliographic citation style as HTML as read-only property
+		 * “bibliographicCitation”.
+		 * 
+		 * @return a summary of this hit in bibliographic citation style as HTML
+		 */
+		public String getBibliographicCitation() {
+			return hit.getBibliographicCitation();
+		}
+
+		/**
+		 * The function getErrorMessage() returns an error if that had occurred
+		 * when trying to retrieve that hit from the catalogue as read-only
+		 * property “errorMessage”.
+		 * 
+		 * @return an error message to be rendered as a list entry
+		 */
+		public String getErrorMessage() {
+			return error;
+		}
+
+		/**
+		 * The function isError() returns whether an error occurred when trying
+		 * to retrieve that hit from the catalogue as read-only property
+		 * “error”.
+		 * 
+		 * @return whether an error occurred when retrieving that hit
+		 */
+		public boolean isError() {
+			return hit == null;
+		}
+	
+		/**
+		 * The function selectClick() is called if the user clicks on a
+		 * catalogue hit summary in order to import it into Production.
+		 * 
+		 * @return always "", indicating to Faces to stay on that page
+		 */
+		public String selectClick() {
+			try {
+				importHit(hit);
+			} catch (Exception e) {
+				Helper.setFehlerMeldung("Error on reading opac ", e);
+			} finally {
+				hitlistPage = -1;
+			}
+			return "";
+		}
+	}
+
+	/**
+	 * The constant DEFAULT_HITLIST_PAGE_SIZE holds the fallback number of hits
+	 * to show per page on the hit list if the user conducted a catalogue search
+	 * that yielded more than one result, if none is configured in the
+	 * Production configuration file.
+	 */
+	private static final int DEFAULT_HITLIST_PAGE_SIZE = 10;
+
+	public final static String DIRECTORY_SUFFIX = "_tif";
+
+	static final String NAVI_FIRST_PAGE = "ProzessverwaltungKopie1";
+
+	private String addToWikiField = "";
+	private List<AdditionalField> additionalFields;
+	private String atstsl = "";
+	private List<String> digitalCollections;
+	private String docType;
+	private Integer guessedImages = 0;
+
+	/**
+	 * The field hitlist holds some reference to the hitlist retrieved from a
+	 * library catalogue. The internals of this object are subject to the plugin
+	 * implementation and are not to be accessed directly.
+	 */
+	private Object hitlist;
+
+	/**
+	 * The field hitlistPage holds the zero-based index of the page of the
+	 * hitlist currently showing. A negative value means that the hitlist is
+	 * hidden, otherwise it is showing the respective page.
+	 */
+	private long hitlistPage = -1;
+	/**
+	 * The field hits holds the number of hits in the hitlist last retrieved
+	 * from a library catalogue.
+	 */
+	private long hits;
+
+	/**
+	 * The field importCatalogue holds the catalogue plugin used to access the
+	 * library catalogue.
+	 */
+	private CataloguePlugin importCatalogue;
+
 	private Fileformat myRdf;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
+	private List<String> possibleDigitalCollection;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
-	private IOpacPlugin myImportOpac = null;
-	private ConfigOpac co;
-	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
 	private boolean useTemplates;
-
+	private Integer auswahl;
 	private HashMap<String, Boolean> standardFields;
-	private List<AdditionalField> additionalFields;
-	private List<String> digitalCollections;
 	private String tifHeader_imagedescription = "";
 	private String tifHeader_documentname = "";
-
-	private String naviFirstPage;
-	private Integer auswahl;
-	private String docType;
-	private String atstsl = "";
-	private List<String> possibleDigitalCollection;
-	private Integer guessedImages = 0;
-	private String addToWikiField = "";
-
-	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	public String Prepare() {
 	    atstsl = "";
@@ -160,13 +293,6 @@ public class ProzesskopieForm {
 		}
 
 		clearValues();
-		try {
-			this.co = new ConfigOpac();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
-			return null;
-		}
 		readProjectConfigs();
 		this.myRdf = null;
 		this.prozessKopie = new Prozess();
@@ -181,14 +307,14 @@ public class ProzesskopieForm {
 		/*
 		 *  Kopie der Prozessvorlage anlegen
 		 */
-		this.bHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		this.bHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
 
 		initializePossibleDigitalCollections();
 
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	private void readProjectConfigs() {
@@ -203,10 +329,10 @@ public class ProzesskopieForm {
 			return;
 		}
 
-		this.docType = cp.getParamString("createNewProcess.defaultdoctype", this.co.getAllDoctypes().get(0).getTitle());
+		this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
+				.getTitle());
 		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
 		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-		this.naviFirstPage = "ProzessverwaltungKopie1";
 		if (this.opacKatalog.equals("")) {
 			this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
 		}
@@ -302,41 +428,108 @@ public class ProzesskopieForm {
 		return myProzessTemplates;
 	}
 
-	/* =============================================================== */
-
 	/**
-	 * OpacAnfrage
+	 * The function OpacAuswerten() is executed if a user clicks the command
+	 * link to start a catalogue search. It performs the search and loads the
+	 * hit if it is unique. Otherwise, it will cause a hit list to show up for
+	 * the user to select a hit.
+	 * 
+	 * @return always "", telling JSF to stay on that page
 	 */
 	public String OpacAuswerten() {
-		clearValues();
-		readProjectConfigs();
+		long timeout = CataloguePlugin.getTimeout();
 		try {
-		    ConfigOpacCatalogue coc = new ConfigOpac().getCatalogueByName(opacKatalog);
-		    
-		    myImportOpac = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, coc.getOpacType());
-		    
-			/* den Opac abfragen und ein RDF draus bauen lassen */
-            this.myRdf = this.myImportOpac.search(this.opacSuchfeld, this.opacSuchbegriff, coc, this.prozessKopie.getRegelsatz().getPreferences());
-			if (this.myImportOpac.getOpacDocType() != null) {
-				this.docType = this.myImportOpac.getOpacDocType().getTitle();
+			clearValues();
+			readProjectConfigs();
+			if (!pluginAvailableFor(opacKatalog)) {
+				return "";
 			}
-			this.atstsl = this.myImportOpac.getAtstsl();
-			applyCopyingRules(new CopierData(myRdf, prozessVorlage));
-			fillFieldsFromMetadataFile();
-			/* über die Treffer informieren */
-			if (this.myImportOpac.getHitcount() == 0) {
+
+			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
+			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
+
+			hitlist = importCatalogue.find(query, timeout);
+			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
+
+			switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
+			case 0:
 				Helper.setFehlerMeldung("No hit found", "");
+				break;
+			case 1:
+				importHit(importCatalogue.getHit(hitlist, 0, timeout));
+				break;
+			default:
+				hitlistPage = 0; // show first page of hitlist
+				break;
 			}
-			if (this.myImportOpac.getHitcount() > 1) {
-				Helper.setMeldung(null, "Found more then one hit", " - use first hit");
-			}
+			return "";
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
+			return "";
 		}
-		return "";
 	}
 
-	/* =============================================================== */
+	/**
+	 * The function pluginAvailableFor(catalogue) verifies that a plugin
+	 * suitable for accessing the library catalogue identified by the given
+	 * String is available in the global variable importCatalogue. If
+	 * importCatalogue is empty or the current plugin doesn’t support the given
+	 * catalogue, the function will try to load a suitable plugin. Upon success
+	 * the preferences and the catalogue to use will be configured in the
+	 * plugin, otherwise an error message will be set to be shown.
+	 * 
+	 * @param catalogue
+	 *            identifier string for the catalogue that the plugin shall
+	 *            support
+	 * @return whether a plugin is available in the global varibale
+	 *         importCatalogue
+	 */
+	private boolean pluginAvailableFor(String catalogue) {
+		if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
+			importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
+		}
+		if (importCatalogue == null) {
+			Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", catalogue);
+			return false;
+		} else {
+			importCatalogue.setPreferences(prozessKopie.getRegelsatz().getPreferences());
+			importCatalogue.useCatalogue(catalogue);
+			return true;
+		}
+	}
+
+	/**
+	 * alle Konfigurationseigenschaften und Felder zurücksetzen
+	 * ================================================================
+	 */
+	private void clearValues() {
+		if (this.opacKatalog == null) {
+			this.opacKatalog = "";
+		}
+		this.standardFields = new HashMap<String, Boolean>();
+		this.standardFields.put("collections", true);
+		this.standardFields.put("doctype", true);
+		this.standardFields.put("regelsatz", true);
+		this.standardFields.put("images", true);
+		this.additionalFields = new ArrayList<AdditionalField>();
+		this.tifHeader_documentname = "";
+		this.tifHeader_imagedescription = "";
+	}
+
+	/**
+	 * The method importHit() loads a hit into the display.
+	 * 
+	 * @param hit
+	 *            Hit to load
+	 * @throws PreferencesException
+	 */
+	protected void importHit(Hit hit) throws PreferencesException {
+		myRdf = hit.getFileformat();
+		docType = hit.getDocType();
+		fillFieldsFromMetadataFile();
+		applyCopyingRules(new CopierData(myRdf, prozessVorlage));
+		atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
+	}
 
 	/**
 	 * Creates a DataCopier with the given configuration, lets it process the
@@ -404,8 +597,9 @@ public class ProzesskopieForm {
 							field.setWert(myautoren);
 						} else {
 							/* bei normalen Feldern die Inhalte auswerten */
-							MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), field.getMetadata());
-							Metadata md = this.ughHelper.getMetadata(myTempStruct, mdt);
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								field.setWert(md.getValue());
 								md.setValue(field.getWert().replace("&amp;", "&"));
@@ -421,23 +615,6 @@ public class ProzesskopieForm {
 				} // end if ughbinding
 			}// end for
 		} // end if myrdf==null
-	}
-
-	/**
-	 * alle Konfigurationseigenschaften und Felder zurücksetzen ================================================================
-	 */
-	private void clearValues() {
-		if (this.opacKatalog == null) {
-			this.opacKatalog = "";
-		}
-		this.standardFields = new HashMap<String, Boolean>();
-		this.standardFields.put("collections", true);
-		this.standardFields.put("doctype", true);
-		this.standardFields.put("regelsatz", true);
-		this.standardFields.put("images", true);
-		this.additionalFields = new ArrayList<AdditionalField>();
-		this.tifHeader_documentname = "";
-		this.tifHeader_imagedescription = "";
 	}
 
 	/**
@@ -478,7 +655,7 @@ public class ProzesskopieForm {
 		}
 
 		if (tempProzess.getEigenschaftenSize() > 0) {
-			for (Prozesseigenschaft pe : tempProzess.getEigenschaften()) {
+			for (Prozesseigenschaft pe : tempProzess.getEigenschaftenInitialized()) {
 				if (pe.getTitel().equals("digitalCollection")) {
 					digitalCollections.add(pe.getWert());
 				}
@@ -513,11 +690,14 @@ public class ProzesskopieForm {
 	 * 
 	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
 	 */
-	private boolean isContentValid() {
-		/*
-		 * -------------------------------- Vorbedingungen prüfen --------------------------------
-		 */
+	boolean isContentValid() {
+		return isContentValid(true);
+	}
+
+	boolean isContentValid(boolean criticiseEmptyTitle) {
 		boolean valide = true;
+
+		if (criticiseEmptyTitle) {
 
 		/*
 		 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
@@ -549,6 +729,8 @@ public class ProzesskopieForm {
 			}
 		}
 
+		}
+
 		/*
 		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
 		 */
@@ -576,14 +758,14 @@ public class ProzesskopieForm {
 	/* =============================================================== */
 
 	public String GoToSeite1() {
-		return this.naviFirstPage;
+		return NAVI_FIRST_PAGE;
 	}
 
 	/* =============================================================== */
 
 	public String GoToSeite2() {
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		} else {
 			return "ProzessverwaltungKopie2";
 		}
@@ -602,7 +784,7 @@ public class ProzesskopieForm {
 
 		this.prozessKopie.setId(null);
 		if (!isContentValid()) {
-			return this.naviFirstPage;
+			return NAVI_FIRST_PAGE;
 		}
 		EigenschaftenHinzufuegen();
 
@@ -656,6 +838,29 @@ public class ProzesskopieForm {
 		 * diese ergänzen 
 		 * --------------------------------*/
 		if (this.myRdf != null) {
+
+			// there must be at least one non-anchor level doc struct
+			// if missing, insert logical doc structs until you reach it
+			DocStruct populizer = null;
+			try {
+				populizer = myRdf.getDigitalDocument().getLogicalDocStruct();
+				if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
+					Prefs ruleset = prozessKopie.getRegelsatz().getPreferences();
+					while (populizer.getType().getAnchorClass() != null) {
+						populizer = populizer.createChild(populizer.getType().getAllAllowedDocStructTypes().get(0),
+								myRdf.getDigitalDocument(), ruleset);
+					}
+				}
+			} catch (NullPointerException e) { // if getAllAllowedDocStructTypes() returns null
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
+						populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
+			} catch (IndexOutOfBoundsException e) { // if getAllAllowedDocStructTypes() returns empty list
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
+						.getType().getName());
+			} catch (UGHException catchAll) {
+				Helper.setFehlerMeldung(catchAll.getMessage());
+			}
+
 			for (AdditionalField field : this.additionalFields) {
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
 					/* welches Docstruct */
@@ -688,8 +893,9 @@ public class ProzesskopieForm {
 						 * bis auf die Autoren alle additionals in die Metadaten übernehmen
 						 */
 						if (!field.getMetadata().equals("ListOfCreators")) {
-							MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), field.getMetadata());
-							Metadata md = this.ughHelper.getMetadata(myTempStruct, mdt);
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
 								md.setValue(field.getWert());
 							}
@@ -697,7 +903,7 @@ public class ProzesskopieForm {
 							 * wenn dem Topstruct und dem Firstchild der Wert gegeben werden soll
 							 */
 							if (myTempChild != null) {
-								md = this.ughHelper.getMetadata(myTempChild, mdt);
+								md = UghHelper.getMetadata(myTempChild, mdt);
 								if (md != null) {
 									md.setValue(field.getWert());
 								}
@@ -710,6 +916,71 @@ public class ProzesskopieForm {
 				} // end if ughbinding
 			}// end for
 			
+			/*
+			 * -------------------------- Metadata inheritance and enrichment --------------------------
+			 */
+			if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+				DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
+				Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
+				while (enricher.getAllChildren() != null) {
+					// save higher level metadata for lower enrichment
+					List<Metadata> allMetadata = enricher.getAllMetadata();
+					if (allMetadata == null) {
+						allMetadata = Collections.emptyList();
+					}
+					for (Metadata available : allMetadata) {
+						Map<String, Metadata> availableMetadata = higherLevelMetadata.containsKey(available.getType()
+								.getName()) ? higherLevelMetadata.get(available.getType().getName())
+								: new HashMap<String, Metadata>();
+						if (!availableMetadata.containsKey(available.getValue())) {
+							availableMetadata.put(available.getValue(), available);
+						}
+						higherLevelMetadata.put(available.getType().getName(), availableMetadata);
+					}
+
+					// enrich children with inherited metadata
+					for (DocStruct nextChild : enricher.getAllChildren()) {
+						enricher = nextChild;
+						for (Entry<String, Map<String, Metadata>> availableHigherMetadata : higherLevelMetadata
+								.entrySet()) {
+							String enrichable = availableHigherMetadata.getKey();
+							boolean addable = false;
+							List<MetadataType> addableTypesNotNull = enricher.getAddableMetadataTypes();
+							if (addableTypesNotNull == null) {
+								addableTypesNotNull = Collections.emptyList();
+							}
+							for (MetadataType addableMetadata : addableTypesNotNull) {
+								if (addableMetadata.getName().equals(enrichable)) {
+									addable = true;
+									break;
+								}
+							}
+							if (!addable) {
+								continue;
+							}
+							there: for (Entry<String, Metadata> higherElement : availableHigherMetadata.getValue()
+									.entrySet()) {
+								List<Metadata> amNotNull = enricher.getAllMetadata();
+								if (amNotNull == null) {
+									amNotNull = Collections.emptyList();
+								}
+								for (Metadata existentMetadata : amNotNull) {
+									if (existentMetadata.getType().getName().equals(enrichable)
+											&& existentMetadata.getValue().equals(higherElement.getKey())) {
+										continue there;
+									}
+								}
+								try {
+									enricher.addMetadata(higherElement.getValue());
+								} catch (UGHException didNotWork) {
+									myLogger.info(didNotWork);
+								}
+							}
+						}
+					}
+				}
+			}
+
 			/*
 			 * -------------------------------- Collectionen hinzufügen --------------------------------
 			 */
@@ -729,7 +1000,7 @@ public class ProzesskopieForm {
 			 * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
 			 */
 			try {
-				MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+				MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
 				List<? extends Metadata> alleImagepfade = this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 				if (alleImagepfade != null && alleImagepfade.size() > 0) {
 					for (Metadata md : alleImagepfade) {
@@ -743,7 +1014,7 @@ public class ProzesskopieForm {
 					newmd.setValue("file://" + this.prozessKopie.getImagesDirectory() + this.prozessKopie.getTitel().trim() + DIRECTORY_SUFFIX);
 				}
 				this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-
+								
 				/* Rdf-File schreiben */
 				this.prozessKopie.writeMetadataFile(this.myRdf);
 
@@ -766,11 +1037,16 @@ public class ProzesskopieForm {
 			}
 
 		}
-
+		
+		// Create configured directories
+		
+		this.prozessKopie.createProcessDirs();
+		
+		
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
-            return "";
+			return "";
 		} else {
 			try {
 				new ProzessDAO().save(this.prozessKopie);
@@ -802,7 +1078,8 @@ public class ProzesskopieForm {
 	private void addCollections(DocStruct colStruct) {
 		for (String s : this.digitalCollections) {
 			try {
-				Metadata md = new Metadata(this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection"));
+				Metadata md = new Metadata(UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+						"singleDigCollection"));
 				md.setValue(s);
 				md.setDocStruct(colStruct);
 				colStruct.addMetadata(md);
@@ -824,7 +1101,8 @@ public class ProzesskopieForm {
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
-			MetadataType mdt = this.ughHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(), "singleDigCollection");
+			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
 			if (myCollections != null && myCollections.size() > 0) {
 				for (Metadata md : myCollections) {
@@ -842,7 +1120,7 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
-	private void createNewFileformat() {
+	public void createNewFileformat() {
 		Prefs myPrefs = this.prozessKopie.getRegelsatz().getPreferences();
 		try {
 			DigitalDocument dd = new DigitalDocument();
@@ -854,15 +1132,17 @@ public class ProzesskopieForm {
 			dd.setPhysicalDocStruct(dsBoundBook);
 
 			/* Monographie */
-			if (!this.co.getDoctypeByName(this.docType).isPeriodical() && !this.co.getDoctypeByName(this.docType).isMultiVolume()) {
-				DocStructType dsty = myPrefs.getDocStrctTypeByName(this.co.getDoctypeByName(this.docType).getRulesetType());
+			if (!ConfigOpac.getDoctypeByName(this.docType).isPeriodical()
+					&& !ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
+				DocStructType dsty = myPrefs.getDocStrctTypeByName(ConfigOpac.getDoctypeByName(this.docType)
+						.getRulesetType());
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
 				this.myRdf = ff;
 			}
 
 			/* Zeitschrift */
-			else if (this.co.getDoctypeByName(this.docType).isPeriodical()) {
+			else if (ConfigOpac.getDoctypeByName(this.docType).isPeriodical()) {
 				DocStructType dsty = myPrefs.getDocStrctTypeByName("Periodical");
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
@@ -874,7 +1154,7 @@ public class ProzesskopieForm {
 			}
 
 			/* MultivolumeBand */
-			else if (this.co.getDoctypeByName(this.docType).isMultiVolume()) {
+			else if (ConfigOpac.getDoctypeByName(this.docType).isMultiVolume()) {
 				DocStructType dsty = myPrefs.getDocStrctTypeByName("MultiVolumeWork");
 				DocStruct ds = dd.createDocStruct(dsty);
 				dd.setLogicalDocStruct(ds);
@@ -901,6 +1181,9 @@ public class ProzesskopieForm {
 			myLogger.error(e);
 		} catch (PreferencesException e) {
 			myLogger.error(e);
+		} catch (FileNotFoundException e) {
+			myLogger.error("Error while reading von opac-config", e);
+			Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
 		}
 	}
 
@@ -933,34 +1216,30 @@ public class ProzesskopieForm {
 			this.prozessKopie.setWerkstuecke(werkstuecke);
 		}
 
-		/*
-		 * -------------------------------- jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen --------------------------------
-		 */
-		BeanHelper bh = new BeanHelper();
 		for (AdditionalField field : this.additionalFields) {
 			if (field.getShowDependingOnDoctype()) {
 				if (field.getFrom().equals("werk")) {
-					bh.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
 				}
 				if (field.getFrom().equals("vorlage")) {
-					bh.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
 				}
 				if (field.getFrom().equals("prozess")) {
-					bh.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
+					BeanHelper.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
 				}
 			}
 		}
 		
 		for (String col : digitalCollections) {
-			bh.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
+			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
 		}
 		/* Doctype */
-		bh.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+		BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
 		/* Tiffheader */
-		bh.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-		bh.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
-		bh.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
-		bh.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+		BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+		BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+		BeanHelper.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
+		BeanHelper.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
 	}
 
 	public String getDocType() {
@@ -1038,22 +1317,20 @@ public class ProzesskopieForm {
         }
 	}
 
-	public Collection<SelectItem> getArtists() {
-		ArrayList<SelectItem> artisten = new ArrayList<SelectItem>();
-		StringTokenizer tokenizer = new StringTokenizer(ConfigMain.getParameter("TiffHeaderArtists"), "|");
-		boolean tempBol = true;
-		while (tokenizer.hasMoreTokens()) {
-			String tok = tokenizer.nextToken();
-			if (tempBol) {
-				artisten.add(new SelectItem(tok));
-			}
-			tempBol = !tempBol;
-		}
-		return artisten;
-	}
-
 	public Prozess getProzessVorlage() {
 		return this.prozessVorlage;
+	}
+
+	/**
+	 * The function getProzessVorlageTitel() returns some kind of identifier for
+	 * this ProzesskopieForm. The title of the process template that a process
+	 * will be created from can be considered with some reason to be some good
+	 * identifier for the ProzesskopieForm, too.
+	 * 
+	 * @return a human-readable identifier for this object
+	 */
+	public String getProzessVorlageTitel() {
+		return prozessVorlage != null ? prozessVorlage.getTitel() : null;
 	}
 
 	public void setProzessVorlage(Prozess prozessVorlage) {
@@ -1070,6 +1347,39 @@ public class ProzesskopieForm {
 
 	public List<AdditionalField> getAdditionalFields() {
 		return this.additionalFields;
+	}
+
+	/**
+	 * The method setAdditionalField() sets the value of an AdditionalField held
+	 * by a ProzesskopieForm object.
+	 * 
+	 * @param inputForm
+	 *            a ProzesskopieForm object
+	 * @param key
+	 *            the title of the AdditionalField whose value shall be modified
+	 * @param value
+	 *            the new value for the AdditionalField
+	 * @param strict
+	 *            throw a RuntimeException if the field is unknown
+	 * @throws RuntimeException
+	 *             in case that no field with a matching title was found in the
+	 *             ProzesskopieForm object
+	 */
+	public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
+		boolean unknownField = true;
+		for (AdditionalField field : additionalFields) {
+			if (key.equals(field.getTitel())) {
+				field.setWert(value);
+				unknownField = false;
+			}
+		}
+		if (unknownField && strict) {
+			throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+		}
+	}
+
+	public void setAdditionalFields(List<AdditionalField> additionalFields) {
+		this.additionalFields = additionalFields;
 	}
 
 	/*
@@ -1105,7 +1415,8 @@ public class ProzesskopieForm {
 		this.possibleDigitalCollection = new ArrayList<String>();
 		ArrayList<String> defaultCollections = new ArrayList<String>();
 
-		String filename = this.help.getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+				FileNames.DIGITAL_COLLECTIONS_FILE);
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
@@ -1175,20 +1486,20 @@ public class ProzesskopieForm {
 
 	public List<String> getAllOpacCatalogues() {
 		try {
-			return new ConfigOpac().getAllCatalogueTitles();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			return ConfigOpac.getAllCatalogueTitles();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<String>();
 		}
 	}
 
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-			return new ConfigOpac().getAllDoctypes();
-		} catch (IOException e) {
-			myLogger.error("Error while reading von opac-config", e);
-			Helper.setFehlerMeldung("Error while reading von opac-config", e);
+			return ConfigOpac.getAllDoctypes();
+		} catch (Throwable t) {
+			myLogger.error("Error while reading von opac-config", t);
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<ConfigOpacDoctype>();
 		}
 	}
@@ -1272,6 +1583,14 @@ public class ProzesskopieForm {
 	 * Prozesstitel und andere Details generieren ================================================================
 	 */
 	public void CalcProzesstitel() {
+		try {
+			generateTitle(null);
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("IOException", e.getMessage());
+		}
+	}
+
+	public String generateTitle(Map<String, String> genericFields) throws IOException {
 		String currentAuthors = "";
 		String currentTitle = "";
 		int counter = 0;
@@ -1289,13 +1608,7 @@ public class ProzesskopieForm {
 		}
 		String newTitle = "";
 		String titeldefinition = "";
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
+		ConfigProjects cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
 
 		int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
 		for (int i = 0; i < count; i++) {
@@ -1347,6 +1660,16 @@ public class ProzesskopieForm {
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'")) {
 				newTitle += myString.substring(1, myString.length() - 1);
+			} else if (myString.startsWith("#")) {
+				/*
+				 * resolve strings beginning with # from generic fields
+				 */
+				if (genericFields != null) {
+					String genericValue = genericFields.get(myString);
+					if (genericValue != null) {
+						newTitle += genericValue;
+					}
+				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
@@ -1378,6 +1701,7 @@ public class ProzesskopieForm {
         String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
         prozessKopie.setTitel(filteredTitle);
 		CalcTiffheader();
+		return filteredTitle;
 	}
 
 	/* =============================================================== */
@@ -1447,7 +1771,12 @@ public class ProzesskopieForm {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
 				/* wenn der Doctype angegeben werden soll */
-				this.tifHeader_imagedescription += this.co.getDoctypeByName(this.docType).getTifHeaderType();
+				try {
+					this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
+				} catch (Throwable t) {
+					myLogger.error("Error while reading von opac-config", t);
+					Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+				}
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
@@ -1546,5 +1875,125 @@ public class ProzesskopieForm {
 			}
 		}
 		return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
+	}
+
+	/**
+	 * The function getHitlist returns the hits for the currently showing page of
+	 * the hitlist as read-only property "hitlist".
+	 * 
+	 * @return a list of hits to render in the hitlist
+	 */
+	public List<SelectableHit> getHitlist() {
+		if (hitlistPage < 0) {
+			return Collections.emptyList();
+		}
+		int pageSize = getPageSize();
+		List<SelectableHit> result = new ArrayList<SelectableHit>(pageSize);
+		long firstHit = hitlistPage * pageSize;
+		long lastHit = Math.min(firstHit + pageSize - 1, hits - 1);
+		for (long index = firstHit; index <= lastHit; index++) {
+			try {
+			Hit hit = importCatalogue.getHit(hitlist, index, CataloguePlugin.getTimeout());
+			result.add(new SelectableHit(hit));
+			} catch (RuntimeException e) {
+				result.add(new SelectableHit(e.getMessage()));
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * The function getNumberOfHits() returns the number of hits on the hit list
+	 * as read-only property "numberOfHits".
+	 * 
+	 * @return the number of hits on the hit list
+	 */
+	public long getNumberOfHits() {
+		return hits;
+	}
+
+	/**
+	 * The function getPageSize() retrieves the desired number of hits on one
+	 * page of the hit list from the configuration.
+	 * 
+	 * @return
+	 */
+	private int getPageSize() {
+		return ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
+	}
+
+	/**
+	 * The function isFirstPage() returns whether the currently showing page of
+	 * the hitlist is the first page of it as read-only property "firstPage".
+	 * 
+	 * @return whether the currently showing page of the hitlist is the first
+	 *         one
+	 */
+	public boolean isFirstPage() {
+		return hitlistPage == 0;
+	}
+
+	/**
+	 * The function getHitlistShowing returns whether the hitlist shall be
+	 * rendered or not as read-only property "hitlistShowing".
+	 * 
+	 * @return whether the hitlist is to be shown or not
+	 */
+	public boolean isHitlistShowing() {
+		return hitlistPage >= 0;
+	}
+
+	/**
+	 * The function isLastPage() returns whether the currently showing page of
+	 * the hitlist is the last page of it as read-only property "lastPage".
+	 * 
+	 * @return whether the currently showing page of the hitlist is the last one
+	 */
+	public boolean isLastPage() {
+		return (hitlistPage + 1) * getPageSize() > hits - 1;
+	}
+
+	/**
+	 * The function nextPageClick() is executed if the user clicks the action
+	 * link to flip one page forward in the hit list.
+	 */
+	public void nextPageClick() {
+		hitlistPage++;
+	}
+
+	/**
+	 * The function previousPageClick() is executed if the user clicks the
+	 * action link to flip one page backwards in the hit list.
+	 */
+	public void previousPageClick() {
+		hitlistPage--;
+	}
+
+	/**
+	 * The function isCalendarButtonShowing tells whether the calendar button
+	 * shall show up or not as read-only property "calendarButtonShowing".
+	 * 
+	 * @return whether the calendar button shall show
+	 */
+	public boolean isCalendarButtonShowing() {
+		try {
+			return ConfigOpac.getDoctypeByName(docType).isNewspaper();
+		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of the servlet container
+			return false;
+		} catch (FileNotFoundException e) {
+			myLogger.error("Error while reading von opac-config", e);
+			Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Returns the representation of the file holding the document metadata in
+	 * memory.
+	 * 
+	 * @return the metadata file in memory
+	 */
+	public Fileformat getFileformat() {
+		return myRdf;
 	}
 }

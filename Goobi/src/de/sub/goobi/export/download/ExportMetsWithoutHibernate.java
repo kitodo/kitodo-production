@@ -5,7 +5,7 @@ package de.sub.goobi.export.download;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -16,8 +16,8 @@ package de.sub.goobi.export.download;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -50,6 +50,7 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -196,7 +197,7 @@ public class ExportMetsWithoutHibernate {
 		 * get the topstruct element of the digital document depending on anchor property
 		 */
 		DocStruct topElement = dd.getLogicalDocStruct();
-		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).isAnchor()) {
+		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
 				throw new PreferencesException(process.getTitle()
 						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
@@ -216,7 +217,7 @@ public class ExportMetsWithoutHibernate {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
-				Helper.setFehlerMeldung(process.getTitle() + ": could not found any referenced images, export aborted");
+				Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
 				dd = null;
 				return false;
 			}
@@ -284,12 +285,24 @@ public class ExportMetsWithoutHibernate {
 			mm.setPurlUrl(vp.replace(this.project.getMetsPurl()));
 			mm.setContentIDs(vp.replace(this.project.getMetsContentIDs()));
 
-			String pointer = this.project.getMetsPointerPath();
-			pointer = vp.replace(pointer);
-			mm.setMptrUrl(pointer);
+			// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
+			// pointer used to point to the superordinate (anchor) file, that is
+			// representing a “virtual” group such as a series. Several anchors
+			// pointer paths can be defined/ since it is possible to define several
+			// levels of superordinate structures (such as the complete edition of
+			// a daily newspaper, one year ouf of that edition, …)
+			String anchorPointersToReplace = this.project.getMetsPointerPath();
+			mm.setMptrUrl(null);
+			for (String anchorPointerToReplace : anchorPointersToReplace.split(Projekt.ANCHOR_SEPARATOR)) {
+				String anchorPointer = vp.replace(anchorPointerToReplace);
+				mm.setMptrUrl(anchorPointer);
+			}
 
+			// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
+			// from the (lowest) superordinate (anchor) file to the lowest level
+			// file (the non-anchor file). 
 			String anchor = this.project.getMetsPointerPathAnchor();
-			pointer = vp.replace(anchor);
+			String pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
 
 			List<String> images = new ArrayList<String>();

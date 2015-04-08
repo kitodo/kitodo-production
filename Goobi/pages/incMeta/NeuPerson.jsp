@@ -7,7 +7,7 @@
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -18,8 +18,8 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -49,24 +49,6 @@
 			<htm:td styleClass="eingabeBoxen_row2">
 
 				<h:panelGrid columns="2">
-					<%-- vorname --%>
-					<h:outputLabel for="vorname" value="#{msgs.vorname}" />
-					<h:panelGroup>
-						<h:inputText id="vorname" style="width: 400px;margin-right:15px"
-							value="#{Metadaten.tempPersonVorname}" />
-						<x:message for="vorname" style="color: red"
-							replaceIdWithLabel="true" />
-					</h:panelGroup>
-
-					<%-- nachname --%>
-					<h:outputLabel for="nachname" value="#{msgs.nachname}" />
-					<h:panelGroup>
-						<h:inputText id="nachname" style="width: 400px;margin-right:15px"
-							value="#{Metadaten.tempPersonNachname}" />
-						<x:message for="nachname" style="color: red"
-							replaceIdWithLabel="true" />
-					</h:panelGroup>
-
 					<%-- Rolle --%>
 					<h:outputLabel for="Rolle" value="#{msgs.rolle}" />
 					<h:panelGroup>
@@ -78,6 +60,33 @@
 							replaceIdWithLabel="true" />
 					</h:panelGroup>
 
+					<%-- Link to norm data record --%>
+					<h:outputLabel for="normDataRecord" value="#{msgs.normDataRecord}" />
+					<h:panelGroup>
+						<h:inputText id="normDataRecord" style="width: 400px;margin-right:15px"
+							value="#{Metadaten.tempPersonRecord}" />
+						<x:message for="normDataRecord" style="color: red"
+							replaceIdWithLabel="true" />
+						<h:commandLink onclick="getNormDataNeuPerson(); return false;" value="#{msgs.getNormDataRecord}" />
+					</h:panelGroup>
+
+					<%-- first name --%>
+					<h:outputLabel for="vorname" value="#{msgs.vorname}" />
+					<h:panelGroup>
+						<h:inputText id="vorname" style="width: 400px;margin-right:15px"
+							value="#{Metadaten.tempPersonVorname}" />
+						<x:message for="vorname" style="color: red"
+							replaceIdWithLabel="true" />
+					</h:panelGroup>
+
+					<%-- last name --%>
+					<h:outputLabel for="nachname" value="#{msgs.nachname}" />
+					<h:panelGroup>
+						<h:inputText id="nachname" style="width: 400px;margin-right:15px"
+							value="#{Metadaten.tempPersonNachname}" />
+						<x:message for="nachname" style="color: red"
+							replaceIdWithLabel="true" />
+					</h:panelGroup>
 				</h:panelGrid>
 			</htm:td>
 		</htm:tr>

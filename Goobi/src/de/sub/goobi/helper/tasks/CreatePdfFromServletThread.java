@@ -4,7 +4,7 @@ package de.sub.goobi.helper.tasks;
  * 
  * Visit the websites for more information. 
  *     		- http://www.goobi.org
- *     		- http://launchpad.net/goobi-production
+ *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -15,8 +15,8 @@ package de.sub.goobi.helper.tasks;
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
@@ -64,6 +64,21 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	private String internalServletPath;
 	private URL metsURL;
 
+	public CreatePdfFromServletThread() {
+	}
+
+	/**
+	 * The clone constructor creates a new instance of this object. This is
+	 * necessary for Threads that have terminated in order to render to run them
+	 * again possible.
+	 * 
+	 * @param master
+	 *            copy master to create a clone of
+	 */
+	public CreatePdfFromServletThread(CreatePdfFromServletThread master) {
+		super(master);
+	}
+
 	@Override
 	public void initialize(Prozess inProzess) {
 		super.initialize(inProzess);
@@ -77,7 +92,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	@Override
 	public void run() {
 		setStatusProgress(30);
-		if (this.getProzess() == null || this.targetFolder == null || this.internalServletPath == null) {
+		if ((this.getProzess() == null) || (this.targetFolder == null) || (this.internalServletPath == null)) {
 			setStatusMessage("parameters for temporary and final folder and internal servlet path not defined");
 			setStatusProgress(-1);
 			return;
@@ -99,9 +114,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 
 			
-			if (new MetadatenVerifizierung().validate(this.getProzess()) && this.metsURL != null) {
+			if (new MetadatenVerifizierung().validate(this.getProzess()) && (this.metsURL != null)) {
 				/* if no contentserverurl defined use internal goobiContentServerServlet */
-					if (contentServerUrl == null || contentServerUrl.length() == 0) {
+					if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
 						contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
 					}
 				goobiContentServerUrl = new URL(contentServerUrl + this.metsURL);		
@@ -111,7 +126,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				 * --------------------------------*/
 				
 			} else {
-				if (contentServerUrl == null || contentServerUrl.length() == 0) {
+				if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
 					contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
 				}
 				String url = "";
@@ -154,7 +169,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			FileOutputStream fos = new FileOutputStream(tempPdf);
 			byte[] bytes = new byte[8192];
 			int count = bis.read(bytes);
-			while (count != -1 && count <= 8192) {
+			while ((count != -1) && (count <= 8192)) {
 				fos.write(bytes, 0, count);
 				count = bis.read(bytes);
 			}
@@ -236,4 +251,26 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 		this.metsURL = metsURL;
 	}
 
+	/**
+	 * Calls the clone constructor to create a not yet executed instance of this
+	 * thread object. This is necessary for threads that have terminated in
+	 * order to render possible to restart them.
+	 * 
+	 * @return a not-yet-executed replacement of this thread
+	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+	 */
+	@Override
+	public CreatePdfFromServletThread replace() {
+		return new CreatePdfFromServletThread(this);
+	}
+
+	/**
+	 * Returns the display name of the task to show to the user.
+	 * 
+	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+	 */
+	@Override
+	public String getDisplayName() {
+		return Helper.getTranslation("CreatePdfFromServletThread");
+	}
 }
