@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Benutzer in der �?bersicht
+							Alle Benutzer in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="BenutzergruppenForm" />
@@ -67,7 +67,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.benutzergruppen}" />
 									</htm:h3>

@@ -65,7 +65,7 @@
 					<%-- // Breadcrumb --%>
 					<x:div forceId="true" id="mydiv">
 						<h:form id="myform" style="margin:3px">
-							<%-- �?berschrift --%>
+							<%-- Überschrift --%>
 							<htm:h3>
 								<h:outputText id="id5" value="#{msgs.esIstEinFehlerAufgetreten}" />
 							</htm:h3>

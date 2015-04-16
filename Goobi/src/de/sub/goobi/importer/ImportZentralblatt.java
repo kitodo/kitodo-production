@@ -116,7 +116,7 @@ public class ImportZentralblatt {
 				/* wenn die Zeile nicht leer ist, den Inhalt prüfen */
 			} else {
 
-				/* prüfen ob der String korrekte xml-Zeichen enth�lt */
+				/* prüfen ob der String korrekte xml-Zeichen enthält */
 				String xmlTauglich = xmlTauglichkeitPruefen(line);
 				if (xmlTauglich.length() > 0) {
 					throw new WrongImportFileException("Parsingfehler (nicht druckbares Zeichen) der Importdatei in der Zeile <br/>" + xmlTauglich);

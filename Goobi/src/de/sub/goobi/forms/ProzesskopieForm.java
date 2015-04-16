@@ -1765,7 +1765,7 @@ public class ProzesskopieForm {
 		while (tokenizer.hasMoreTokens()) {
 			String myString = tokenizer.nextToken();
 			/*
-			 * wenn der String mit ' anf�ngt und mit ' endet, dann den Inhalt so übernehmen
+			 * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
 			 */
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);

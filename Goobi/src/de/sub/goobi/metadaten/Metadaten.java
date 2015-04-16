@@ -1381,7 +1381,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * Wenn eine Verkn�pfung zwischen Strukturelement und Bildern sein soll, das richtige Bild anzeigen
+		 * Wenn eine Verknüpfung zwischen Strukturelement und Bildern sein soll, das richtige Bild anzeigen
 		 */
 		if (this.bildZuStrukturelement) {
 			BildErmitteln(imageNr - this.myBildNummer);

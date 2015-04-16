@@ -95,7 +95,7 @@ public class ImportRussland {
          MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
 
       /* --------------------------------
-       * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess geh�rt
+       * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess gehört
        * --------------------------------*/
       this.prozess = inProzess;
       String prozessID = String.valueOf(inProzess.getId().intValue());
@@ -108,7 +108,7 @@ public class ImportRussland {
 	}
 
       if (!line.equals("+ " + prozessID + " (ProzessID)")) {
-		throw new WrongImportFileException("Importfehler: Importdatei geh�rt zu einem anderen Werk ('"
+		throw new WrongImportFileException("Importfehler: Importdatei gehört zu einem anderen Werk ('"
                + prozessID + "' <> '" + line + "')");
 	}
 
@@ -133,7 +133,7 @@ public class ImportRussland {
          //         myLogger.info(line);
          if (line.length() == 0) {
 
-            /* immer wenn die Zeile leer ist, k�nnen die gesammelten 
+            /* immer wenn die Zeile leer ist, können die gesammelten 
              * Daten aus der gesammelten Liste ausgewertet werden */
             AbsatzAuswerten(listeDaten);
             /* Liste wieder zurücksetzen */
@@ -173,7 +173,7 @@ public class ImportRussland {
 		BandDetails(inListe);
 	} else {
 		throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('"
-               + detail + "'), m�glicherweise sind an einer falschen Stelle Zeilenumbr�che eingefügt worden.");
+               + detail + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
 	}
    }
 
@@ -339,7 +339,7 @@ public class ImportRussland {
          }
       } else {
          throw new WrongImportFileException(
-               "Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten erg�nzt werden k�nnten");
+               "Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten ergänzt werden könnten");
       }
    }
 

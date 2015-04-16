@@ -1004,17 +1004,17 @@
 
 														<%-- </ul> --%>
 														<%--<htm:div styleClass="yui-content">
-														
-														
-														
-														
+
+
+
+
 													</htm:div>--%>
 														<%--</htm:div>--%>
 
 													</x:panelTab>
 													<%-- END label="Statistik" --%>
 												</x:panelTabbedPane>
-												<%-- END Gro�?es pane Tab --%>
+												<%-- END Großes pane Tab --%>
 
 												<%--  <htm:div styleClass="yui-skin-sam"> --%>
 

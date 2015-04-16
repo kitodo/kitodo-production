@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Literatureinträge in der �?bersicht
+							Alle Literatureinträge in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="BenutzergruppenForm" />

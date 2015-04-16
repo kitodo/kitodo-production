@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Benutzer in der �?bersicht
+							Alle Benutzer in der Übersicht
 
 	#########################################--%>
 
@@ -83,7 +83,7 @@
 											<htm:tr>
 												<htm:td>
 
-													<%-- �?berschrift --%>
+													<%-- Überschrift --%>
 													<htm:h3>
 														<h:outputText id="id5" value="#{msgs.aktiveModule}" />
 													</htm:h3>

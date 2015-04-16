@@ -292,7 +292,7 @@ public class ExportDms_CorrectRusdml {
 
 	/**
 	 * dabei die zentralen Projekteinstellungen in der xml-Konfiguration
-	 * ber�cksichtigen
+	 * berücksichtigen
 	 * 
 	 * @param inTopStruct
 	 * @param myProzess
@@ -314,7 +314,7 @@ public class ExportDms_CorrectRusdml {
 	}
 
 	/**
-	 * Fehlende Metadaten für Rusdml erg�nzen
+	 * Fehlende Metadaten für Rusdml ergänzen
 	 * 
 	 * @param inTopStruct
 	 * @param myProzess

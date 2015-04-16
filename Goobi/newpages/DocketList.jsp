@@ -68,7 +68,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.dockets}" />
 									</htm:h3>
