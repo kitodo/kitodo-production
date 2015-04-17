@@ -191,7 +191,7 @@ public class StatistikForm {
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critGruppen.createCriteria("prozess", "proz");
-			critGruppen.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
+			critGruppen.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
 
 			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
 			critGruppen.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
@@ -220,7 +220,7 @@ public class StatistikForm {
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critBenutzer.createCriteria("prozess", "proz");
-			critBenutzer.add(Restrictions.eq("proz.istTemplate", Boolean.valueOf(false)));
+			critBenutzer.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
 
 			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
 			critBenutzer.createCriteria("benutzer", "nutzer");

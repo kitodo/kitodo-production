@@ -59,7 +59,7 @@ public class SearchResultGeneration {
 	public HSSFWorkbook getResult() {
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
 		Criteria crit = myFilteredDataSource.getCriteria();
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 		if (!this.showClosedProcesses) {
 			crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
 		}

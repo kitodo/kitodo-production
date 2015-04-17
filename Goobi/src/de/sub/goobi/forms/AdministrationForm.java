@@ -311,7 +311,7 @@ public class AdministrationForm implements Serializable {
 	public void PPNsKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 		crit.createCriteria("projekt", "proj");
 		crit.add(Restrictions.like("proj.titel", "DigiZeitschriften"));
 		
@@ -431,7 +431,7 @@ public class AdministrationForm implements Serializable {
 	public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 		crit.add(Restrictions.like("titel", "statjafud%"));
 		/* alle Prozesse durchlaufen */
 		List<Prozess> pl = crit.list();
@@ -488,7 +488,7 @@ public class AdministrationForm implements Serializable {
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 		crit.createCriteria("projekt", "proj");
 		crit.add(Restrictions.like("proj.titel", "UB-MannheimDigizeit"));
 

@@ -189,11 +189,11 @@ public class Metadaten {
 	 */
 	public Metadaten() {
 		this.treeProperties = new HashMap<String, Boolean>();
-		this.treeProperties.put("showtreelevel", Boolean.valueOf(false));
-		this.treeProperties.put("showtitle", Boolean.valueOf(false));
-		this.treeProperties.put("fullexpanded", Boolean.valueOf(true));
-		this.treeProperties.put("showfirstpagenumber", Boolean.valueOf(false));
-		this.treeProperties.put("showpagesasajax", Boolean.valueOf(true));
+		this.treeProperties.put("showtreelevel", Boolean.FALSE);
+		this.treeProperties.put("showtitle", Boolean.FALSE);
+		this.treeProperties.put("fullexpanded", Boolean.TRUE);
+		this.treeProperties.put("showfirstpagenumber", Boolean.FALSE);
+		this.treeProperties.put("showpagesasajax", Boolean.TRUE);
 	}
 
 	/**

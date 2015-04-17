@@ -730,21 +730,21 @@ public class Schritt implements Serializable {
 
 	public Boolean getBatchStep() {
 		if (this.batchStep == null) {
-			this.batchStep = Boolean.valueOf(false);
+			this.batchStep = Boolean.FALSE;
 		}
 		return this.batchStep;
 	}
 
 	public Boolean isBatchStep() {
 		if (this.batchStep == null) {
-			this.batchStep = Boolean.valueOf(false);
+			this.batchStep = Boolean.FALSE;
 		}
 		return this.batchStep;
 	}
 
 	public void setBatchStep(Boolean batchStep) {
 		if (batchStep == null) {
-			batchStep = Boolean.valueOf(false);
+			batchStep = Boolean.FALSE;
 		}
 		this.batchStep = batchStep;
 	}
