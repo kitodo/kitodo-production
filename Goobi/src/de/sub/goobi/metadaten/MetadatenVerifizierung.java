@@ -54,7 +54,6 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierung {
-	UghHelper ughhelp = new UghHelper();
 	List<DocStruct> docStructsOhneSeiten;
 	Prozess myProzess;
 	boolean autoSave = false;
@@ -240,7 +239,7 @@ public class MetadatenVerifizierung {
 
 	private boolean isValidPathImageFiles(DocStruct phys, Prefs myPrefs) {
 		try {
-			MetadataType mdt = this.ughhelp.getMetadataType(myPrefs, "pathimagefiles");
+			MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
 			List<? extends Metadata> alleMetadaten = phys.getAllMetadataByType(mdt);
 			if (alleMetadaten != null && alleMetadaten.size() > 0) {
 				@SuppressWarnings("unused")
@@ -366,7 +365,7 @@ public class MetadatenVerifizierung {
 			DocStruct myStruct = inStruct;
 			MetadataType mdt = null;
 			try {
-				mdt = this.ughhelp.getMetadataType(inPrefs, prop_metadatatype);
+				mdt = UghHelper.getMetadataType(inPrefs, prop_metadatatype);
 			} catch (UghHelperException e) {
 				Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + "] " + "Metadatatype does not exist: ", prop_metadatatype);
 			}
@@ -392,7 +391,7 @@ public class MetadatenVerifizierung {
 					while (tokenizer.hasMoreTokens()) {
 						String tok = tokenizer.nextToken();
 						try {
-							MetadataType emdete = this.ughhelp.getMetadataType(inPrefs, tok);
+							MetadataType emdete = UghHelper.getMetadataType(inPrefs, tok);
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
 							/*
