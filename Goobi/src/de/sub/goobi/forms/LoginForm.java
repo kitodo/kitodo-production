@@ -108,7 +108,7 @@ public class LoginForm {
 						this.tempBenutzer = b;
 					}
 				} else {
-					Helper.setFehlerMeldung("passwort", "", Helper.getTranslation("wrongPassword"));
+					Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
 				}
 			} else {
 				/* Login nicht vorhanden, also auch keine Passwortprüfung */
