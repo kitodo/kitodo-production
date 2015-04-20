@@ -84,6 +84,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptionCharEscapeMap;
 import org.apache.xmlbeans.XmlOptions;
+import org.goobi.production.GoobiVersion;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -2898,10 +2899,10 @@ public class MetsMods implements ugh.dl.Fileformat {
             agent.setAttribute("OTHERTYPE", "SOFTWARE");
             // createDomAttributeNS(agent, this.metsNamespacePrefix, "OTHERTYPE", "SOFTWARE");
             Element name = createDomElementNS(domDoc, this.metsNamespacePrefix, "name");
-            name.setTextContent(ugh.Version.PROGRAMNAME + " - " + ugh.Version.BUILDVERSION + " - " + ugh.Version.BUILDDATE);
+            name.setTextContent("Goobi - " + GoobiVersion.getBuildversion() + " - " + GoobiVersion.getBuilddate());
             agent.appendChild(name);
             Element note = createDomElementNS(domDoc, this.metsNamespacePrefix, "note");
-            note.setTextContent(ugh.Version.PROGRAMNAME);
+            note.setTextContent("Goobi");
             agent.appendChild(note);
             metsHdr.appendChild(agent);
 
