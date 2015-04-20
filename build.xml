@@ -281,15 +281,18 @@
 		</javac>
 	</target>
 	
-	<target name="compile-PicaPlugin">
+	<target name="compile-PicaPlugin" depends="compile">
 		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
 			destdir="${build.dir.plugins.opac}/PicaPlugin"
 			source="${build.javac.source}"
 			target="${build.javac.target}"
 			encoding="UTF8"
 			debug="true"
-			debuglevel="lines,vars,source"
-			classpathref="compile.classpath">
+			debuglevel="lines,vars,source">
+			<classpath>
+				<pathelement location="${build.classes}"/>
+				<path refid="compile.classpath"/>
+			</classpath>
 		</javac>
 	</target>
 	
