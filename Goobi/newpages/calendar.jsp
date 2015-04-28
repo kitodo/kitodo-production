@@ -322,7 +322,7 @@
 													rendered="#{CalendarForm.blank}" />
 											</h:commandLink>
 											<h:commandLink title="#{msgs['calendar.block.add']}"
-												action="#{CalendarForm.addTitleClick}"
+												action="#{CalendarForm.copyBlockClick}"
 												onclick="if(!addClickQuery()){return false;}"
 												rendered="#{not CalendarForm.blank}" styleClass="actionLink">
 												<h:graphicImage style="vertical-align: text-bottom;"
@@ -331,7 +331,7 @@
 											</h:commandLink>
 											<h:commandLink title="#{msgs['calendar.block.remove']}"
 												style="vertical-align: text-bottom;"
-												action="#{CalendarForm.removeTitleClick}"
+												action="#{CalendarForm.removeBlockClick}"
 												onclick="if(!removeClickQuery()){return false;}"
 												styleClass="actionLink">
 												<h:graphicImage
