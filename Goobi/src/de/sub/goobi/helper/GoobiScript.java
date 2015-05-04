@@ -290,7 +290,7 @@ public class GoobiScript {
     }
 
     /**
-     * voll allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen ================================================================
+     * von allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen ================================================================
      */
     private void importFromFileSystem(List<Prozess> inProzesse) {
         /*
