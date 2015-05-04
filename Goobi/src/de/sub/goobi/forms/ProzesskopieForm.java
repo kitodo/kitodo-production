@@ -396,8 +396,8 @@ public class ProzesskopieForm {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
-		crit.add(Restrictions.eq("inAuswahllisteAnzeigen", Boolean.valueOf(true)));
+		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("inAuswahllisteAnzeigen", Boolean.TRUE));
 		crit.addOrder(Order.asc("titel"));
 
 		/* Einschränkung auf bestimmte Projekte, wenn kein Admin */

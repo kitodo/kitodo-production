@@ -455,9 +455,9 @@ public class ProzessverwaltungForm extends BasisForm {
 
 			/* nur die Vorlagen oder alles */
 			if (this.modusAnzeige.equals("vorlagen")) {
-				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(true)));
+				crit.add(Restrictions.eq("istTemplate", Boolean.TRUE));
 			} else {
-				crit.add(Restrictions.eq("istTemplate", Boolean.valueOf(false)));
+				crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 			}
 			/* alle Suchparameter miteinander kombinieren */
 			if (!this.showClosedProcesses && !this.modusAnzeige.equals("vorlagen")) {

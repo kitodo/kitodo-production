@@ -159,7 +159,7 @@ public class Prozess implements Serializable {
 
 	public boolean isIstTemplate() {
 		if (this.istTemplate == null) {
-			this.istTemplate = Boolean.valueOf(false);
+			this.istTemplate = Boolean.FALSE;
 		}
 		return this.istTemplate;
 	}
