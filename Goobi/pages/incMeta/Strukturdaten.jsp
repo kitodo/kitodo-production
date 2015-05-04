@@ -114,7 +114,7 @@
 	<%-- ++++++++++++++++     // Neues Strukturelement      ++++++++++++++++ --%>
 
 
-	<%-- ++++++++++++++++     Strukturelement verschieben oder l�schen     ++++++++++++++++ --%>
+	<%-- ++++++++++++++++     Strukturelement verschieben oder löschen     ++++++++++++++++ --%>
 	<htm:table cellpadding="3" cellspacing="0" width="350px" styleClass="eingabeBoxen" style="margin-top:20px">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
@@ -144,7 +144,7 @@
 						<x:updateActionListener property="#{Metadaten.modusStrukturelementVerschieben}" value="true" />
 					</h:commandLink>
 
-					<%-- DocstructType �ndern --%>
+					<%-- DocstructType ändern --%>
 					<h:panelGroup>
 						<jd:hideableController for="changeDocStructType" title="#{msgs.docstructTypeAendern}">
 							<h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -166,7 +166,7 @@
 						</jd:hideableArea>
 					</h:panelGroup>
 
-					<%-- zus�tzliche Strukturelemente als Kinder unter das ausgew�hlte Element --%>
+					<%-- zusätzliche Strukturelemente als Kinder unter das ausgewählte Element --%>
 					<h:panelGroup>
 						<jd:hideableController for="addZusaetzlicheDocstructs" title="#{msgs.strukturelementeAusOpacHinzufuegen}">
 							<h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif" style="margin-left:4px;margin-right:6px;vertical-align:middle" />
@@ -239,7 +239,7 @@
 						</jp:popupFrame>
 					</h:panelGroup>--%>
 
-					<%-- Knoten l�schen --%>
+					<%-- Knoten löschen --%>
 					<h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.KnotenDelete}" title="#{msgs.strukturelementLoeschen}" target="links">
 						<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:4px;margin-right:7px;vertical-align:middle" />
 						<h:outputText value="#{msgs.strukturelementLoeschen}" />
@@ -249,7 +249,7 @@
 			</htm:td>
 		</htm:tr>
 	</htm:table>
-	<%-- ++++++++++++++++     // Strukturelement verschieben oder l�schen   ++++++++++++++++ --%>
+	<%-- ++++++++++++++++     // Strukturelement verschieben oder löschen   ++++++++++++++++ --%>
 
 
 	<%-- ########################################

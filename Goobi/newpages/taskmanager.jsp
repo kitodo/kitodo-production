@@ -70,7 +70,7 @@
 									<h:panelGrid id="id4" columns="2"
 										columnClasses="standardTable_Column,standardTable_ColumnRight"
 										width="100%">
-										<%-- �?berschrift --%>
+										<%-- Überschrift --%>
 										<htm:h3>
 											<h:outputText id="id5" value="#{msgs.langLaufendeAufgaben}" />
 										</htm:h3>

@@ -31,9 +31,9 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
 --%>
-<%-- ######################################## 
+<%-- ########################################
 
-							Alle Projekte in der �?bersicht
+							Alle Projekte in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="ProjekteForm" />
@@ -66,7 +66,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.projekte}" />
 									</htm:h3>

@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Ldapgruppen in der �?bersicht
+							Alle Ldapgruppen in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="LdapGruppenForm" />
@@ -68,7 +68,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.ldapgruppen}" />
 									</htm:h3>

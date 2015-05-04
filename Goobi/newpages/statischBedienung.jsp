@@ -32,7 +32,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Literatureinträge in der �?bersicht
+							Alle Literatureinträge in der Übersicht
 
 	#########################################--%>
 

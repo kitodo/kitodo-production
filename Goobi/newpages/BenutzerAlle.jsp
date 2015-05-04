@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Benutzer in der �?bersicht
+							Alle Benutzer in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="BenutzerverwaltungForm" />

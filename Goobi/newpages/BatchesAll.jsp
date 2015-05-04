@@ -35,7 +35,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Aktuellen Schritte in der �?bersicht
+							Alle Aktuellen Schritte in der Übersicht
 
 	#########################################--%>
 <a4j:keepAlive beanName="BatchForm" />

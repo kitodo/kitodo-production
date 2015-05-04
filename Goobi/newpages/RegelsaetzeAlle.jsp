@@ -33,7 +33,7 @@
 --%>
 <%-- ######################################## 
 
-							Alle Regelsaetze in der �?bersicht
+							Alle Regelsaetze in der Übersicht
 
 	#########################################--%>
 
@@ -68,7 +68,7 @@
 							<htm:tr>
 								<htm:td>
 
-									<%-- �?berschrift --%>
+									<%-- Überschrift --%>
 									<htm:h3>
 										<h:outputText id="id4" value="#{msgs.regelsaetze}" />
 									</htm:h3>
