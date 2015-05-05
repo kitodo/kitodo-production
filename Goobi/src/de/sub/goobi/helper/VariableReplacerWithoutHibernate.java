@@ -61,7 +61,6 @@ public class VariableReplacerWithoutHibernate {
 
 	DigitalDocument dd;
 	Prefs prefs;
-	UghHelper uhelp;
 	// $(meta.abc)
 	private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 	// $(abc)
@@ -76,7 +75,6 @@ public class VariableReplacerWithoutHibernate {
 	public VariableReplacerWithoutHibernate(DigitalDocument inDigitalDocument, Prefs inPrefs, ProcessObject p, StepObject s) {
 		this.dd = inDigitalDocument;
 		this.prefs = inPrefs;
-		this.uhelp = new UghHelper();
 		this.process = p;
 		this.step = s;
 	}
@@ -273,7 +271,7 @@ public class VariableReplacerWithoutHibernate {
 			/* MetadataType ermitteln und ggf. Fehler melden */
 			MetadataType mdt;
 			try {
-				mdt = this.uhelp.getMetadataType(this.prefs, metadata);
+				mdt = UghHelper.getMetadataType(this.prefs, metadata);
 			} catch (UghHelperException e) {
 				Helper.setFehlerMeldung(e);
 				return "";

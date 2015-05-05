@@ -68,9 +68,9 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  * @author Steffen Hankiewicz
  */
 public class ExtendedDataImpl extends DataImpl {
-   private final String isProcess = "PROCESS";
-   private final String isWorkpiece = "WORKPIECE";
-   private final String isTemplate = "TEMPLATE";
+   private static final String isProcess = "PROCESS";
+   private static final String isWorkpiece = "WORKPIECE";
+   private static final String isTemplate = "TEMPLATE";
    
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.

@@ -65,7 +65,6 @@ public class VariableReplacer {
 
 	DigitalDocument dd;
 	Prefs prefs;
-	UghHelper uhelp;
 	// $(meta.abc)
 	private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 
@@ -79,7 +78,6 @@ public class VariableReplacer {
 	public VariableReplacer(DigitalDocument inDigitalDocument, Prefs inPrefs, Prozess p, Schritt s) {
 		this.dd = inDigitalDocument;
 		this.prefs = inPrefs;
-		this.uhelp = new UghHelper();
 		this.process = p;
 		this.step = s;
 	}
@@ -284,7 +282,7 @@ public class VariableReplacer {
 			/* MetadataType ermitteln und ggf. Fehler melden */
 			MetadataType mdt;
 			try {
-				mdt = this.uhelp.getMetadataType(this.prefs, metadata);
+				mdt = UghHelper.getMetadataType(this.prefs, metadata);
 			} catch (UghHelperException e) {
 				Helper.setFehlerMeldung(e);
 				return "";
