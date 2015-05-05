@@ -329,6 +329,10 @@
 		<error-code>500</error-code>
 		<location>/newpages/error.jsf</location>
 	</error-page>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/newpages/error.jsf</location>
+	</error-page>
 
  	<servlet>
         <servlet-name>Goobi REST Service based on Jersey</servlet-name>
