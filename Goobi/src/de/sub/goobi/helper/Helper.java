@@ -569,7 +569,7 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
-	public static FilenameFilter imageNameFilter = new FilenameFilter() {
+	public static final FilenameFilter imageNameFilter = new FilenameFilter() {
 		@Override
 		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
@@ -590,7 +590,7 @@ public class Helper implements Serializable, Observer {
 		}
 	};
 
-	public static FilenameFilter dataFilter = new FilenameFilter() {
+	public static final FilenameFilter dataFilter = new FilenameFilter() {
 
 		@Override
 		public boolean accept(File dir, String name) {
