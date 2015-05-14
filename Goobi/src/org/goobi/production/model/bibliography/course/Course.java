@@ -1,26 +1,26 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.goobi.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -57,12 +57,12 @@ import de.sub.goobi.helper.XMLUtils;
 
 /**
  * The class Course represents the course of appearance of a newspaper.
- * 
+ *
  * <p>
  * A course of appearance consists of one or more blocks of time. Interruptions
  * in the course of appearance can be modeled by subsequent blocks.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Course extends ArrayList<Block> {
@@ -77,7 +77,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Attribute <code>index="…"</code> used in the XML representation of a
 	 * course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * The attribute <code>index="…"</code> is optional. It may be used to
 	 * distinguish different blocks if needed and can be omitted if only one
@@ -89,7 +89,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Attribute <code>issue="…"</code> used in the XML representation of a
 	 * course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * The attribute <code>issue="…"</code> holds the name of the issue.
 	 * Newspapers, especially bigger ones, can have several issues that, e.g.,
@@ -102,7 +102,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
 	 * course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * Each <code>&lt;appeared&gt;</code> element represents one issue that
 	 * physically appeared. It has the attributes <code>issue="…"</code>
@@ -115,7 +115,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Element <code>&lt;course&gt;</code> used in the XML representation of a
 	 * course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * <code>&lt;course&gt;</code> is the root element of the XML
 	 * representation. It can hold two children,
@@ -128,7 +128,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Element <code>&lt;description&gt;</code> used in the XML representation
 	 * of a course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * <code>&lt;description&gt;</code> holds a verbal, human-readable
 	 * description of the course of appearance, which is generated only and
@@ -140,7 +140,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Element <code>&lt;process&gt;</code> used in the XML representation of a
 	 * course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * Each <code>&lt;process&gt;</code> element represents one process to be
 	 * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
@@ -152,7 +152,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Element <code>&lt;processes&gt;</code> used in the XML representation of
 	 * a course of appearance.
-	 * 
+	 *
 	 * <p>
 	 * Each <code>&lt;processes&gt;</code> element represents the processes to
 	 * be generated in Goobi Production. It can hold
@@ -167,7 +167,7 @@ public class Course extends ArrayList<Block> {
 	 * a block in time the appeared issues belong to. It has the optional
 	 * attribute <code>index="…"</code> and can hold
 	 * <code>&lt;appeared&gt;</code> elements (of any quantity).
-	 * 
+	 *
 	 * <p>
 	 * Note: In the original design, the element was intended to model title
 	 * name changes. This was given up later, but for historical reasons, the
@@ -195,7 +195,7 @@ public class Course extends ArrayList<Block> {
 
 	/**
 	 * Constructor to create a course from an xml source
-	 * 
+	 *
 	 * @param xml
 	 *            XML document data structure
 	 * @throws NoSuchElementException
@@ -242,7 +242,7 @@ public class Course extends ArrayList<Block> {
 
 	/**
 	 * Appends the specified block to the end of this course.
-	 * 
+	 *
 	 * @param block
 	 *            block to be appended to this course
 	 * @return true (as specified by Collection.add(E))
@@ -266,7 +266,7 @@ public class Course extends ArrayList<Block> {
 	 * appearance set, because in this case the regularly appeared issues in the
 	 * expanded block will show up later, too, which is probably not what you
 	 * want.
-	 * 
+	 *
 	 * @param variant
 	 *            block identifier (may be null)
 	 * @param issueHeading
@@ -315,7 +315,7 @@ public class Course extends ArrayList<Block> {
 	 * The method countIndividualIssues() determines how many stampings of
 	 * issues physically appeared without generating a list of IndividualIssue
 	 * objects.
-	 * 
+	 *
 	 * @return the count of issues
 	 */
 	public long countIndividualIssues() {
@@ -329,7 +329,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Returns the block identified by the optionally given variant, or null if
 	 * no block with the given variant can be found.
-	 * 
+	 *
 	 * @param variant
 	 *            the variant of the block (may be null)
 	 * @return the block identified by the given variant, or null if no block
@@ -357,7 +357,7 @@ public class Course extends ArrayList<Block> {
 	 * The function getIndividualIssues() generates a list of IndividualIssue
 	 * objects, each of them representing a stamping of one physically appeared
 	 * issue.
-	 * 
+	 *
 	 * @return a LinkedHashSet of IndividualIssue objects, each of them
 	 *         representing one physically appeared issue
 	 */
@@ -375,7 +375,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function getFirstAppearance() returns the date the regularity of this
 	 * course of appearance starts with.
-	 * 
+	 *
 	 * @return the date of first appearance
 	 */
 	public LocalDate getFirstAppearance() {
@@ -395,7 +395,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function getLastAppearance() returns the date the regularity of this
 	 * course of appearance ends with.
-	 * 
+	 *
 	 * @return the date of last appearance
 	 */
 	public LocalDate getLastAppearance() {
@@ -415,7 +415,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function getNumberOfProcesses() returns the number of processes into
 	 * which the course of appearance will be split.
-	 * 
+	 *
 	 * @return the number of processes
 	 */
 	public int getNumberOfProcesses() {
@@ -428,7 +428,7 @@ public class Course extends ArrayList<Block> {
 	 * having 40 pages and Sunday issues having six times that size because most
 	 * people buy the Sunday issue most often and therefore advertisers buy the
 	 * most space on that day.
-	 * 
+	 *
 	 * @return a guessed total number of pages for the full course of appearance
 	 */
 	public long guessTotalNumberOfPages() {
@@ -452,7 +452,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function getProcesses() returns the processes to create from the
 	 * course of appearance.
-	 * 
+	 *
 	 * @return the processes
 	 */
 	public List<List<IndividualIssue>> getProcesses() {
@@ -464,7 +464,7 @@ public class Course extends ArrayList<Block> {
 	 * first one that matches a given date. Since there shouldn’t be overlapping
 	 * blocks, there should be at most one block for which this is true. If no
 	 * matching block is found, it will return null.
-	 * 
+	 *
 	 * @param date
 	 *            a LocalDate to examine
 	 * @return the block on which this date is represented, if any
@@ -497,7 +497,7 @@ public class Course extends ArrayList<Block> {
 	 * their indices). Additionally, any references to the object held in the
 	 * map used for resolving are being removed so that the object can be
 	 * garbage-collected.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the element to be removed
 	 * @return the element that was removed from the list
@@ -523,7 +523,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The method splitInto() calculates the processes depending on the given
 	 * BreakMode.
-	 * 
+	 *
 	 * @param mode
 	 *            how the course shall be broken into issues
 	 */
@@ -554,7 +554,7 @@ public class Course extends ArrayList<Block> {
 
 	/**
 	 * The function toXML() transforms a course of appearance to XML.
-	 * 
+	 *
 	 * @param lang
 	 *            language to use for the “description”
 	 * @return XML as String

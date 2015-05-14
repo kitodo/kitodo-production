@@ -2,23 +2,23 @@ package de.sub.goobi.helper;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -104,7 +104,7 @@ public class Helper implements Serializable, Observer {
 
 	/**
 	 * Ermitteln eines bestimmten Parameters des Requests
-	 * 
+	 *
 	 * @return Parameter als String
 	 */
 	@SuppressWarnings("rawtypes")
@@ -196,7 +196,7 @@ public class Helper implements Serializable, Observer {
 		meldung = meldung.replaceAll(">", "&gt;");
 		beschreibung = beschreibung.replaceAll("<", "&lt;");
 		beschreibung = beschreibung.replaceAll(">", "&gt;");
-		
+
 		String msg = "";
 		String beschr = "";
 		Locale language = Locale.ENGLISH;
@@ -223,7 +223,7 @@ public class Helper implements Serializable, Observer {
 		}
 		if (context != null) {
 			context.addMessage(control, new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
-		} else { 
+		} else {
 			// wenn kein Kontext da ist, dann die Meldungen in Log
 			myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
 
@@ -233,7 +233,7 @@ public class Helper implements Serializable, Observer {
 	/**
 	 * Returns a Map holding all translations that are configured in the front
 	 * end of a given resource key.
-	 * 
+	 *
 	 * @param key
 	 *            resource key to get translations for
 	 * @return a map with all language id strings and the corresponding resource
@@ -306,7 +306,7 @@ public class Helper implements Serializable, Observer {
 	/**
 	 * The procedure removeManagedBean() removes a managed bean from the faces
 	 * context by name. If nothing such is available, nothing happens.
-	 * 
+	 *
 	 * @param name
 	 *            managed bean to remove
 	 */
@@ -425,7 +425,7 @@ public class Helper implements Serializable, Observer {
 
 	/**
 	 * for easy access of the implemented Interface Observer
-	 * 
+	 *
 	 * @return Observer -> can be added to an Observable
 	 */
 	public Observer createObserver() {
@@ -434,7 +434,7 @@ public class Helper implements Serializable, Observer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
@@ -469,12 +469,12 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * copy directory 
-	 * 
+	 * copy directory
+	 *
 	 * @param srcDir the source directory
 	 * @param dstDir the destination directory
 	 * @throws IOException
-	 */	
+	 */
 	public static void copyDir(File srcDir, File dstDir) throws IOException {
 
 		File[] files = srcDir.listFiles();
@@ -490,7 +490,7 @@ public class Helper implements Serializable, Observer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
 	 * to delete and returns false.
@@ -645,7 +645,7 @@ public class Helper implements Serializable, Observer {
 	 * The function getLastMessage() returns the last message processed to be
 	 * shown to the user. This is a last resort only to show the user why
 	 * perhaps something didn’t work if no error message is available otherwise.
-	 * 
+	 *
 	 * @return the most recent message created to be shown to the user
 	 */
 	public static String getLastMessage() {
