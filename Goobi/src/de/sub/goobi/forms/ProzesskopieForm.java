@@ -855,8 +855,8 @@ public class ProzesskopieForm {
 				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
 						populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
 			} catch (IndexOutOfBoundsException e) { // if getAllAllowedDocStructTypes() returns empty list
-				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.", populizer
-						.getType().getName());
+				Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
+						populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
 			} catch (UGHException catchAll) {
 				Helper.setFehlerMeldung(catchAll.getMessage());
 			}
