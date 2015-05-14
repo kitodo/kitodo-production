@@ -583,9 +583,7 @@ public class Course extends ArrayList<Block> {
 					blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
 				}
 				Element issueNode = result.createElement(ELEMENT_APPEARED);
-				if (issue != null) {
-					issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
-				}
+				issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
 				issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
 				blockNode.appendChild(issueNode);
 				previous = index;

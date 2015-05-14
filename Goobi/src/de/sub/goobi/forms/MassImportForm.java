@@ -745,7 +745,7 @@ public class MassImportForm {
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
 			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
-			if (this.plugin != null && list != null) {
+			if (list != null) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -755,7 +755,7 @@ public class MassImportForm {
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
 			List<ImportProperty> list = (List<ImportProperty>) o;
-			if (this.plugin != null && list.size() > 0) {
+			if (list.size() > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -774,7 +774,7 @@ public class MassImportForm {
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
 			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
-			if (this.plugin != null && list != null) {
+			if (list != null) {
 				return "MultiMassImportPage2";
 			}
 		} catch (Exception e) {
@@ -845,7 +845,7 @@ public class MassImportForm {
 			Object o = method.invoke(this.plugin);
 			@SuppressWarnings("unchecked")
 			List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
-			if (this.plugin != null && list != null) {
+			if (list != null) {
 				return list;
 			}
 		} catch (Exception e) {

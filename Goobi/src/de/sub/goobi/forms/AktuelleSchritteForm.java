@@ -867,7 +867,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			return;
 		}
 		Helper.setMeldung("module called");
-		if (url != null && url.length() > 0) {
+		if (url.length() > 0) {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			if (!facesContext.getResponseComplete()) {
 				HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
