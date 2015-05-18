@@ -2,23 +2,23 @@ package de.sub.goobi.forms;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -327,7 +327,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			crit.createCriteria("proc.batches", "bat");
 			crit.add(Restrictions.eq("bat.id", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
-			
+
 			currentStepsOfBatch = crit.list();
 		} else {
 			return SchrittDurchBenutzerUebernehmen();
@@ -404,7 +404,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (batches.size() != 0) {
 			Integer batchNumber = batches.iterator().next().getId();
 			// only steps with same title
-		
+
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Schritt.class);
 			crit.add(Restrictions.eq("titel", steptitle));
@@ -542,7 +542,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * Korrekturmeldung an vorherige Schritte 
+	 * Korrekturmeldung an vorherige Schritte
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -848,7 +848,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	/**
 	 * call module for this step ================================================================
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Deprecated
@@ -994,12 +994,12 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/*
-	 * Parameter per Get Ã¼bergeben bekommen und entsprechen den passenden Schritt laden 
+	 * Parameter per Get Ã¼bergeben bekommen und entsprechen den passenden Schritt laden
 	 */
 
 	/**
 	 * prüfen, ob per Parameter vielleicht zunÃ¤chst ein anderer geladen werden soll
-	 * 
+	 *
 	 * @throws DAOException
 	 *             , NumberFormatException
 	 */
@@ -1019,7 +1019,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		}
 	}
 
-	/* 
+	/*
 	 * Auswahl mittels Selectboxen
 	 */
 
@@ -1093,7 +1093,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	/**
 	 * sets new value for wiki field
-	 * 
+	 *
 	 * @param inString
 	 */
 	public void setWikiField(String inString) {

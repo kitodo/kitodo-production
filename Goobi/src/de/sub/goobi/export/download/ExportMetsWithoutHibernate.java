@@ -2,23 +2,23 @@ package de.sub.goobi.export.download;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -76,7 +76,7 @@ public class ExportMetsWithoutHibernate {
 
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis
-	 * 
+	 *
 	 * @param process
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -104,7 +104,7 @@ public class ExportMetsWithoutHibernate {
 
 	/**
 	 * DMS-Export an eine gewünschte Stelle
-	 * 
+	 *
 	 * @param process
 	 * @param zielVerzeichnis
 	 * @throws InterruptedException
@@ -143,7 +143,7 @@ public class ExportMetsWithoutHibernate {
 
 	/**
 	 * prepare user directory
-	 * 
+	 *
 	 * @param inTargetFolder
 	 *            the folder to prove and maybe create it
 	 */
@@ -160,7 +160,7 @@ public class ExportMetsWithoutHibernate {
 
 	/**
 	 * write MetsFile to given Path
-	 * 
+	 *
 	 * @param process
 	 *            the Process to use
 	 * @param targetFileName
@@ -300,7 +300,7 @@ public class ExportMetsWithoutHibernate {
 
 			// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
 			// from the (lowest) superordinate (anchor) file to the lowest level
-			// file (the non-anchor file). 
+			// file (the non-anchor file).
 			String anchor = this.project.getMetsPointerPathAnchor();
 			String pointer = vp.replace(anchor);
 			mm.setMptrAnchorUrl(pointer);
@@ -321,7 +321,7 @@ public class ExportMetsWithoutHibernate {
 						Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
 						return false;
 					}
-				} 
+				}
 			} catch (IndexOutOfBoundsException e) {
 
 				myLogger.error(e);
