@@ -47,7 +47,7 @@ public class FolderInformation {
 
 	private int id;
 	private String title;
-	public static String metadataPath = ConfigMain.getParameter("MetadatenVerzeichnis");
+	public static final String metadataPath = ConfigMain.getParameter("MetadatenVerzeichnis");
 	public static String DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 	public static String DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 

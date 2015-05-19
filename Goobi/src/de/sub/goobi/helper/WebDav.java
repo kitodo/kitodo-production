@@ -144,7 +144,7 @@ public class WebDav implements Serializable {
 		}
 
 		/* prüfen, ob Benutzer Massenupload macht */
-		if (inBenutzer != null && inBenutzer.isMitMassendownload()) {
+		if (inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
 			File projectDirectory = new File (nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
