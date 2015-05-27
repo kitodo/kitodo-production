@@ -5,3 +5,6 @@ dist/
 build.properties
 deploy.properties
 config-local
+/.project
+/.classpath
+/.settings/
