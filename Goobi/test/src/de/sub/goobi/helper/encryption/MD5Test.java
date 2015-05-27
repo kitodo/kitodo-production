@@ -36,7 +36,7 @@
  * your version.
  */
 
-package src.de.sub.goobi.helper.encryption;
+package de.sub.goobi.helper.encryption;
 
 import static org.junit.Assert.assertTrue;
 
