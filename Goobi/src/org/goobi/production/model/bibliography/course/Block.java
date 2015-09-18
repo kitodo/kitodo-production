@@ -343,7 +343,7 @@ public class Block {
 	 * @throws IllegalArgumentException
 	 *             if the date would overlap with another block
 	 */
-	public void setFirstAppearance(LocalDate firstAppearance) throws IllegalArgumentException {
+	public void setFirstAppearance(LocalDate firstAppearance) {
 		prohibitOverlaps(firstAppearance, lastAppearance != null ? lastAppearance : firstAppearance);
 		try {
 			if (!this.firstAppearance.equals(firstAppearance)) {
@@ -430,12 +430,12 @@ public class Block {
 	 * @throws IllegalArgumentException
 	 *             if the check fails
 	 */
-	private void prohibitOverlaps(LocalDate from, LocalDate until) throws IllegalArgumentException {
+	private void prohibitOverlaps(LocalDate from, LocalDate until) {
 		for (Block block : course) {
 			if (!block.equals(this)
 					&& (block.getFirstAppearance().isBefore(until) && !block.getLastAppearance().isBefore(from) || (block
 							.getLastAppearance().isAfter(from) && !block.getFirstAppearance().isAfter(until)))) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException('(' + block.variant + ") " + block.firstAppearance + " - " + block.lastAppearance);
 			}
 		}
 	}

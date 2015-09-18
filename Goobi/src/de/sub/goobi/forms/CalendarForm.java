@@ -1346,6 +1346,10 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("calendar.upload.error", "error.IOException");
 			logger.error(e.getMessage(), e);
 			neglectEmptyBlock();
+		} catch (IllegalArgumentException e) {
+			Helper.setFehlerMeldung("calendar.upload.overlappingDateRanges", e.getMessage());
+			logger.error(e.getMessage(), e);
+			neglectEmptyBlock();
 		} catch (NoSuchElementException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
 			logger.error(e.getMessage(), e);
