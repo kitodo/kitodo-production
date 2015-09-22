@@ -200,6 +200,8 @@ public class Course extends ArrayList<Block> {
 	 *            XML document data structure
 	 * @throws NoSuchElementException
 	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
+	 * @throws IllegalArgumentException
+	 *             if the dates of two blocks do overlap
 	 */
 	public Course(Document xml) throws NoSuchElementException {
 		super();
@@ -274,13 +276,20 @@ public class Course extends ArrayList<Block> {
 	 * @param date
 	 *            date to add
 	 * @return an IndividualIssue representing the added issue
+	 * @throws IllegalArgumentException
+	 *             if the date would cause the block to overlap with another
+	 *             block
 	 */
 	private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
 		Block block = get(variant);
 		if (block == null) {
 			block = new Block(this, variant);
-			block.setFirstAppearance(date);
-			block.setLastAppearance(date);
+			try {
+				block.setFirstAppearance(date);
+				block.setLastAppearance(date);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(e.getMessage() + ", (" + variant + ") " + date, e);
+			}
 			add(block);
 		} else {
 			if (block.getFirstAppearance().isAfter(date)) {
