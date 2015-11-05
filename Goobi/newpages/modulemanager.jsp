@@ -69,7 +69,7 @@
 
 										<h:commandButton id="button1" value="Read configuration"
 											rendered="#{ModuleServerForm.running==false}"
-											action="#{ModuleServerForm.readAllModulesFromConfiguraion}" />
+											action="#{ModuleServerForm.readAllModulesFromConfiguration}" />
 										<h:commandButton id="button2" value="Start all modules"
 											rendered="#{ModuleServerForm.running==true}"
 											action="#{ModuleServerForm.startAllModules}" />

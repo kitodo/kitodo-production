@@ -79,7 +79,7 @@ public class ModuleServerForm {
 	 */
 	public void startAllModules() {
 		if (modulmanager == null)
-			readAllModulesFromConfiguraion();
+			readAllModulesFromConfiguration();
 
 		/*
 		 * -------------------------------- alle Module initialisieren --------------------------------
@@ -101,7 +101,7 @@ public class ModuleServerForm {
 	/**
 	 * Read module configurations von xml-file ================================================================
 	 */
-	public void readAllModulesFromConfiguraion() {
+	public void readAllModulesFromConfiguration() {
 		if (modulmanager == null) {
 			int port = ConfigMain.getIntParameter("goobiModuleServerPort");
 			modulmanager = new GoobiModuleManager(port, new ExtendedProzessImpl(), new ExtendedDataImpl());
