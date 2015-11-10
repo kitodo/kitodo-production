@@ -58,6 +58,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return ProzessID
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
+   @Override
    public String get(String sessionID) throws GoobiException {
       super.get(sessionID);
       return String.valueOf(ModuleServerForm.getProcessFromShortSession(sessionID).getId().intValue());
@@ -69,6 +70,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
+   @Override
    public String getFullTextFile(String sessionId) throws GoobiException {
       super.getFullTextFile(sessionId);
       try {
@@ -90,6 +92,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Arbeitsverzeichnis (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
+   @Override
    public String getImageDir(String sessionId) throws GoobiException {
       super.getImageDir(sessionId);
       try {
@@ -111,6 +114,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Pfad zur XML Datei (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
     * ================================================================*/
+   @Override
    public String getMetadataFile(String sessionId) throws GoobiException {
       super.getMetadataFile(sessionId);
       try {
@@ -133,6 +137,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Parameter Struktur
     * @throws GoobiException: 1, 2, 4, 5, 6, 254
     * ================================================================*/
+   @Override
    public HashMap<String, String> getParams(String sessionId) throws GoobiException {
       super.getParams(sessionId);
       HashMap<String, String> myMap = new HashMap<String, String>();
@@ -159,6 +164,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Projekttitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
+   @Override
    public String getProject(String sessionId) throws GoobiException {
       super.getProject(sessionId);
       return ModuleServerForm.getProcessFromShortSession(sessionId).getProjekt().getTitel();
@@ -171,6 +177,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
     * @return Prozesstitel (String)
     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
     * ================================================================*/
+   @Override
    public String getTitle(String sessionId) throws GoobiException {
       super.getTitle(sessionId);
       return ModuleServerForm.getProcessFromShortSession(sessionId).getTitel();

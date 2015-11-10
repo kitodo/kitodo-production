@@ -40,22 +40,27 @@ public class ProjectTask implements IProjectTask {
 		checkSizes();
 	}
 
+	@Override
 	public String getTitle() {
 		return taskTitle;
 	}
 
+	@Override
 	public Integer getStepsCompleted() {
 		return taskStepsCompleted;
 	}
 
+	@Override
 	public Integer getStepsMax() {
 		return taskStepsMax;
 	}
 
+	@Override
 	public void setStepsCompleted(Integer stepsCompleted) {
 		taskStepsCompleted = stepsCompleted;
 	}
 
+	@Override
 	public void setStepsMax(Integer stepsMax) {
 		taskStepsMax = stepsMax;
 	}
