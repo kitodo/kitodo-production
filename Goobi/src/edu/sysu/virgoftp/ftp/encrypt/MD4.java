@@ -52,11 +52,11 @@ private static int ROUND1(int a,int b,int c,int d,int k,int s) {
 }
 
 private static int ROUND2(int a,int b,int c,int d,int k,int s) {
-    return lshift(a + G(b, c, d) + X[k] + (int)0x5A827999, s);
+    return lshift(a + G(b, c, d) + X[k] + 0x5A827999, s);
 }
 
 private static int ROUND3(int a,int b,int c,int d,int k,int s) {
-    return( lshift(a + H(b,c,d) + X[k] + (int)0x6ED9EBA1,s) );
+    return( lshift(a + H(b,c,d) + X[k] + 0x6ED9EBA1,s) );
 }
 
 
@@ -110,7 +110,7 @@ public static void copy64(int M[], byte in[], int offset)
 		M[i] = ((in[offset + i * 4 + 3] << 24) & 0xFF000000)
 		       | ((in[offset + i * 4 + 2] << 16) & 0xFF0000)
 		       | ((in[offset + i * 4 + 1] << 8) & 0xFF00)
-		       | (((int)in[offset + i * 4 + 0]) & 0xFF);
+		       | ((in[offset + i * 4 + 0]) & 0xFF);
 	}
 }
 
