@@ -17,7 +17,7 @@ CatalogConfiguration resources directly access to internal Goobi API.
 ### Jersey Servlet Configuration
 
 The Jersey Container servlet is responsible for translating requests to Java
-calls and for serializing the returned Java objects. Its configured in the
+calls and for serializing the returned Java objects. It is configured in the
 applications web.xml file by default:
 
  	<servlet>
@@ -44,7 +44,7 @@ Processes and Steps
 
 ### /processes
 
-To get JSON/XML formatted list of all current Processes in the System a GET
+To get JSON/XML formatted list of all current processes in the system a GET
 request to /rest/processes:
 
 $ curl http://localhost:8080/goobi/rest/processes
@@ -124,5 +124,5 @@ CatalogConfiguration
 Projects
 --------
 
-// TODO Add resource documentation for /rest/Projects.
+// TODO Add resource documentation for /rest/projects.
 
