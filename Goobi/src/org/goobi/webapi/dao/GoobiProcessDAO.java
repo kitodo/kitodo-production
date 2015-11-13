@@ -107,7 +107,7 @@ public class GoobiProcessDAO {
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
             @SuppressWarnings(value = "unchecked")
-            List<GoobiProcess> list = (List<GoobiProcess>) criteria.list();
+            List<GoobiProcess> list = criteria.list();
 
             if ((list != null) && (list.size() > 0)) {
                 result.addAll(list);
@@ -144,7 +144,7 @@ public class GoobiProcessDAO {
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class));
 
             @SuppressWarnings(value = "unchecked")
-            List<GoobiProcessStep> list = (List<GoobiProcessStep>) criteria.list();
+            List<GoobiProcessStep> list = criteria.list();
 
             if ((list != null) && (!list.isEmpty())) {
                 result.addAll(list);

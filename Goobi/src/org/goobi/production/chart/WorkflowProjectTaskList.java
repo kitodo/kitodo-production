@@ -47,6 +47,7 @@ import de.sub.goobi.beans.Projekt;
 
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 
+	@Override
 	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
 		calculate(inProject, myTaskList, countImages, inMax);

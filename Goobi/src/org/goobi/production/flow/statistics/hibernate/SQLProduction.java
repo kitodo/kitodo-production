@@ -52,6 +52,7 @@ class SQLProduction extends SQLGenerator {
 	 * 
 	 * @return String
 	 **********************************************************************/
+	@Override
 	public String getSQL() {
 
 		String subQuery = "";

@@ -54,6 +54,7 @@ public class SQLStorage extends SQLGenerator {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
 	 */
+	@Override
 	public String getSQL() {
 
 		String subQuery = "";

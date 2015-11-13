@@ -58,6 +58,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
 	 */
+	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
 		IEvaluableFilter originalFilter;
@@ -111,6 +112,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
 	 */
+	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
 		return inRenderer instanceof HtmlTableRenderer;
 	}
@@ -119,6 +121,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
+	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
 	}
 
@@ -126,6 +129,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
+	@Override
 	public void setTimeUnit(TimeUnit timeUnit) {
 	}
 
@@ -133,6 +137,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
+	@Override
 	public String getNumberFormatPattern() {
 		return "#";
 	}

@@ -113,6 +113,7 @@ public class ModuleServerForm {
 			int period = 1000;
 			messageTimer = new Timer();
 			messageTimer.scheduleAtFixedRate(new TimerTask() {
+				@Override
 				public void run() {
 					ModuleServerForm.check_new_messages(modulmanager);
 				}

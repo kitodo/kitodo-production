@@ -51,6 +51,7 @@ import de.sub.goobi.forms.SessionForm;
 public class SessionCounterFilter implements Filter {
    ServletContext servletContext;
 
+   @Override
    public void init(FilterConfig filterConfig) throws ServletException {
       servletContext = filterConfig.getServletContext();
    }
@@ -59,6 +60,7 @@ public class SessionCounterFilter implements Filter {
 
    /**
     */
+   @Override
    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
          throws IOException, ServletException {
 
@@ -118,6 +120,7 @@ public class SessionCounterFilter implements Filter {
 
    /**
     */
+   @Override
    public void destroy() {
       // Nothing necessary
    }

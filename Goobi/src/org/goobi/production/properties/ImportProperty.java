@@ -194,12 +194,14 @@ public class ImportProperty implements IProperty{
 		}
 	}
 
+	@Override
 	public void setDateValue(Date inDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		value= format.format(inDate);
 	}
 
 	
+	@Override
 	public Date getDateValue() {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		try {

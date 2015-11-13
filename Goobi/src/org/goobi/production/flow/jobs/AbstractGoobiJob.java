@@ -47,6 +47,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.JobExecutionContext)
 	 */
+	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		if (getIsRunning() == false) {
 			logger.trace("Start scheduled Job: " + getJobName());
@@ -63,6 +64,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
 	 */
+	@Override
 	public void setIsRunning(Boolean inisRunning) {
 		isRunning = inisRunning;
 	}
@@ -70,6 +72,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.jobs.IGoobiJob#getIsRunning()
 	 */
+	@Override
 	public Boolean getIsRunning() {
 		return isRunning;
 	}
@@ -77,6 +80,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.jobs.IGoobiJob#getJobName()
 	 */
+	@Override
 	public String getJobName() {
 		return "";
 	}
@@ -84,6 +88,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.jobs.IGoobiJob#execute()
 	 */
+	@Override
 	public void execute() {
 	}
 
