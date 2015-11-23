@@ -64,7 +64,8 @@ public class MD5Test {
 		MD5 md5 = new MD5("");
 		for (String clearText: testData.keySet()) {
 			String encrypted = md5.getMD5(clearText);
-			assertTrue("Encrypted password doesn't match the precomputed one! ", encrypted.equals(testData.get(clearText)));
+			assertTrue("Encrypted password doesn't match the precomputed one!",
+				   encrypted != null && encrypted.equals(testData.get(clearText)));
 		}
 	}
 }
