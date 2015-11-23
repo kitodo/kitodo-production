@@ -64,7 +64,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
-		FilterHelper.criteriaBuilder(session, null, crit, true, null, false, null, clearSession);
+		FilterHelper.criteriaBuilder(session, null, crit, true, null, null, null, clearSession);
 
 		return crit;
 	}
