@@ -29,6 +29,7 @@ import org.goobi.pagination.RomanNumberSequence;
 import ugh.dl.RomanNumeral;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +39,7 @@ import java.util.List;
 public class Paginator {
 
 	public enum Mode {
-		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO
+		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO, DOUBLE_PAGES
 	}
 
 	public enum Type {
@@ -108,10 +109,9 @@ public class Paginator {
 
 	private List createPaginationSequence() {
 
-		int increment = determineIncrementFromPaginationMode();
 		int start = determinePaginationBaseValue();
-		int end = determinePaginationEndValue(increment, start);
-		List sequence = determineSequenceFromPaginationType(increment, start, end);
+		int end = determinePaginationEndValue(start);
+		List sequence = determineSequenceFromPaginationType(start, end);
 
 		if (fictitiousPagination) {
 			sequence = addSquareBracketsToEachInSequence(sequence);
@@ -121,6 +121,13 @@ public class Paginator {
 			return sequence;
 		}
 
+		if (paginationMode.equals(Mode.DOUBLE_PAGES)) {
+			if (paginationType.equals(Type.UNCOUNTED) || paginationType.equals(Type.FREETEXT)){
+				sequence = cloneEachInSequence(sequence);
+			}
+			return scrunchSequence(sequence);
+		}
+		
 		sequence = cloneEachInSequence(sequence);
 
 		if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT ) {
@@ -187,8 +194,9 @@ public class Paginator {
 		return sequence;
 	}
 
-	private List determineSequenceFromPaginationType(int increment, int start, int end) {
+	private List determineSequenceFromPaginationType(int start, int end) {
 		List sequence = null;
+		int increment = paginationMode.equals(Mode.COLUMNS) ? 2 : 1;
 
 		switch (paginationType) {
 		case UNCOUNTED:
@@ -209,15 +217,8 @@ public class Paginator {
 		return sequence;
 	}
 
-	private int determineIncrementFromPaginationMode() {
-		int increment = 1;
-		if (paginationMode == Paginator.Mode.COLUMNS) {
-			increment = 2;
-		}
-		return increment;
-	}
-
-	private int determinePaginationEndValue(int increment, int start) {
+	private int determinePaginationEndValue(int start) {
+		int increment = paginationMode.equals(Mode.COLUMNS) || paginationMode.equals(Mode.DOUBLE_PAGES) ? 2 : 1;
 		int numSelectedPages = selectedPages.length;
 		if (paginationScope == Paginator.Scope.FROMFIRST) {
 			int first = selectedPages[0];
