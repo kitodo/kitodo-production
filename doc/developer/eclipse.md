@@ -2,7 +2,7 @@ Developing Goobi Production using Eclipse
 =========================================
 
 How not to commit the Eclipse `.project` and runtime files
-------------------------------------------------------------
+----------------------------------------------------------
 
  * Go to the file system, find the `.git` folder in your Eclipse Goobi Production project.
  * Find the `info` subfolder (or create it if missing).
@@ -11,7 +11,7 @@ How not to commit the Eclipse `.project` and runtime files
  * Sometimes you need to restart Eclipse for changes to take effect.
  
 Example content:
-```txt
+```
 /.project
 /.classpath
 /.settings/
