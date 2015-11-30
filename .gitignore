@@ -4,11 +4,3 @@
 /config-local
 /deploy.properties
 /dist
-
-# Eclipse
-/.project
-/.classpath
-/.settings/
-
-# Eclipse: /Goobi/ deployed as root of web application
-/Goobi/META-INF/
