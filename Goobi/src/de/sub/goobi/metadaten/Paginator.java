@@ -26,6 +26,8 @@ package de.sub.goobi.metadaten;
 
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
+
+import de.sub.goobi.config.ConfigMain;
 import ugh.dl.RomanNumeral;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ import java.util.List;
  * Sets new labels to a given set of pages.
  */
 public class Paginator {
+
+	private static final int[] ILLEGAL_CHARACTERS = {0, 34};
 
 	public enum Mode {
 		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO, DOUBLE_PAGES
@@ -170,17 +174,32 @@ public class Paginator {
 
 	private List scrunchSequence(List sequence) {
 		List<Object> scrunchedSequence = new ArrayList<Object>((sequence.size() / 2));
+		String sep = getScrunchSeparatorValidated();
 		String prev = "";
 		boolean scrunch = false;
 		for (Object o : sequence) {
 			if (scrunch) {
-				scrunchedSequence.add(prev + " " + o.toString());
+				scrunchedSequence.add(prev + sep + o.toString());
 			} else {
 				prev = o.toString();
 			}
 			scrunch = !scrunch;
 		}
 		return scrunchedSequence;
+	}
+
+	private String getScrunchSeparatorValidated() {
+		String result = ConfigMain.getParameter("scrunchSeparator", " ");
+		for (int i = 0; i < result.length(); i++) {
+			int codePoint = result.codePointAt(i);
+			for (int illegal : ILLEGAL_CHARACTERS) {
+				if (codePoint == illegal) {
+					throw new IllegalArgumentException(String
+							.format("Illegal character %c (U+%04X) at scrunchSeparator index %d.", illegal, illegal, i));
+				}
+			}
+		}
+		return result;
 	}
 
 	private List cloneEachInSequence(List sequence) {
