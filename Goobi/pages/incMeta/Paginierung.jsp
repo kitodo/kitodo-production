@@ -3,6 +3,8 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
+<%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
+
 <%-- 
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -191,6 +193,14 @@
 						title="#{msgs.seitenzaehlungdoppelseiten}" />
 						
 					<htm:br />
+					<htm:div rendered="#{Metadaten.paginierungSeitenProImage>=5}"
+							style=" margin-left: 6px; margin-top: 8px;">
+						<h:outputText value="#{msgs.pageSeparator}: "/>
+						<h:selectOneMenu value="#{Metadaten.paginierungSeparator}">
+						    <si:selectItems var="ps" value="#{Metadaten.paginierungSeparators}"
+						    		itemLabel="#{ps.label}" itemValue="#{ps.id}" />
+						</h:selectOneMenu>
+					</htm:div>
 					<htm:br />
 
 						<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10">

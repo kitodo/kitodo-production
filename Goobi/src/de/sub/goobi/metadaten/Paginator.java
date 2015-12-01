@@ -40,8 +40,6 @@ import java.util.List;
  */
 public class Paginator {
 
-	private static final int[] ILLEGAL_CHARACTERS = {0, 34};
-
 	public enum Mode {
 		PAGES, COLUMNS, FOLIATION, RECTOVERSO_FOLIATION, RECTOVERSO, DOUBLE_PAGES
 	}
@@ -67,6 +65,8 @@ public class Paginator {
 	private Type paginationType = Paginator.Type.UNCOUNTED;
 
 	private boolean fictitiousPagination = false;
+
+	private String sep;
 
 	/**
 	 * Perform pagination.
@@ -174,7 +174,6 @@ public class Paginator {
 
 	private List scrunchSequence(List sequence) {
 		List<Object> scrunchedSequence = new ArrayList<Object>((sequence.size() / 2));
-		String sep = getScrunchSeparatorValidated();
 		String prev = "";
 		boolean scrunch = false;
 		for (Object o : sequence) {
@@ -186,20 +185,6 @@ public class Paginator {
 			scrunch = !scrunch;
 		}
 		return scrunchedSequence;
-	}
-
-	private String getScrunchSeparatorValidated() {
-		String result = ConfigMain.getParameter("scrunchSeparator", " ");
-		for (int i = 0; i < result.length(); i++) {
-			int codePoint = result.codePointAt(i);
-			for (int illegal : ILLEGAL_CHARACTERS) {
-				if (codePoint == illegal) {
-					throw new IllegalArgumentException(String
-							.format("Illegal character %c (U+%04X) at scrunchSeparator index %d.", illegal, illegal, i));
-				}
-			}
-		}
-		return result;
 	}
 
 	private List cloneEachInSequence(List sequence) {
@@ -337,6 +322,18 @@ public class Paginator {
 	 */
 	public Paginator setPaginationScope(Scope paginationScope) {
 		this.paginationScope = paginationScope;
+		return this;
+	}
+
+	/**
+	 * Set separator of pagination.
+	 * 
+	 * @param sep
+	 *            Set the separator to separate pages.
+	 * @return This object for fluent interfacing.
+	 */
+	public Paginator setPaginationSeparator(String sep) {
+		this.sep = sep;
 		return this;
 	}
 

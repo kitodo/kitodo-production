@@ -31,15 +31,7 @@ package de.sub.goobi.metadaten;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.faces.context.FacesContext;
@@ -1480,8 +1472,10 @@ public class Metadaten {
 		}
 
 		try {
-			Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(alleSeitenNeu).setPaginationScope(scope)
-					.setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious).setPaginationStartValue(paginierungWert);
+			Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(alleSeitenNeu)
+					.setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious)
+					.setPaginationSeparator(paginierungSeparators.getObject().getSeparatorString())
+					.setPaginationStartValue(paginierungWert);
 			p.run();
 		} catch (IllegalArgumentException iae) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
@@ -2016,6 +2010,10 @@ public class Metadaten {
 	}
 
 	private int pageNumber = 0;
+	
+	private SelectOne<Separator> paginierungSeparators = new SelectOne<Separator>(Separator.factory(
+			ConfigMain.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
+	
 	public int getPageNumber() {
 		return this.pageNumber;
 	}
@@ -3209,5 +3207,35 @@ public class Metadaten {
 		addMetadataGroupMode = false;
 		newMetadataGroup = null;
 		return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+	}
+
+	/**
+	 * Returns the ID string of the currently selected separator.
+	 * 
+	 * @return the ID of the selected separator
+	 */
+	public String getPaginierungSeparator() {
+		return paginierungSeparators.getSelected();
+	}
+
+	/**
+	 * Sets the currently selected separator by its ID.
+	 * 
+	 * @param selected
+	 *            the ID of the separator to select
+	 */
+	public void setPaginierungSeparator(String selected) {
+		paginierungSeparators.setSelected(selected);
+	}
+
+	/**
+	 * Returns the List of separators the user can select from. Each element of
+	 * the list must be an object that implements the two functions
+	 * {@code String getId()} and {@code String getLabel()}.
+	 * 
+	 * @return the List of separators
+	 */
+	public Collection<Separator> getPaginierungSeparators() {
+		return paginierungSeparators.getItems();
 	}
 }
