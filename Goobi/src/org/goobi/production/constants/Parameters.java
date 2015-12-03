@@ -101,6 +101,12 @@ public class Parameters {
 	public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
 
 	/**
+	 * Comma-separated list of Strings which may be enclosed in double quotes.
+	 * Separators available for double page pagination modes.
+	 */
+	public static final String PAGE_SEPARATORS = "pageSeparators";
+
+	/**
 	 * Points to a folder on the file system that contains Production plug-in
 	 * jars. In the folder, there must be subfolders named as defined in enum
 	 * PluginType (currently: “import”, “step”, “validation”, “command” and
