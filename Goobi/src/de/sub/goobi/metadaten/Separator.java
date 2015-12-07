@@ -38,10 +38,13 @@
 package de.sub.goobi.metadaten;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.compress.utils.Charsets;
 
 /**
  * Object representing a separator.
@@ -109,7 +112,7 @@ public class Separator implements Selectable {
 	 */
 	@Override
 	public String getId() {
-		return new BigInteger(separator.getBytes()).toString(Character.MAX_RADIX);
+		return new BigInteger(separator.getBytes(Charsets.UTF_8)).toString(Character.MAX_RADIX);
 	}
 
 	/**
