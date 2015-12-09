@@ -327,6 +327,7 @@
                     <include name="**/*.png"/>
                     <include name="**/*.jpg"/>
                     <include name="**/*.ico"/>
+                    <include name="**/*.svg"/>
                 </patternset>
             </zipfileset>
             <zipfileset dir="${src.dir}/css" prefix="css"/>
