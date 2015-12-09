@@ -27,7 +27,7 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -208,11 +208,11 @@ public class GoobiScript {
             String title = p.getTitel();
             if (contentOnly) {
                 try {
-                    File ocr = new File(p.getOcrDirectory());
+                    SafeFile ocr = new SafeFile(p.getOcrDirectory());
                     if (ocr.exists()) {
                         Helper.deleteDir(ocr);
                     }
-                    File images = new File(p.getImagesDirectory());
+                    SafeFile images = new SafeFile(p.getImagesDirectory());
                     if (images.exists()) {
                         Helper.deleteDir(images);
                     }
@@ -235,8 +235,8 @@ public class GoobiScript {
 
     private void deleteMetadataDirectory(Prozess p) {
         try {
-            Helper.deleteDir(new File(p.getProcessDataDirectory()));
-            File ocr = new File(p.getOcrDirectory());
+            Helper.deleteDir(new SafeFile(p.getProcessDataDirectory()));
+            SafeFile ocr = new SafeFile(p.getOcrDirectory());
             if (ocr.exists()) {
                 Helper.deleteDir(ocr);
             }
@@ -301,7 +301,7 @@ public class GoobiScript {
             return;
         }
 
-        File sourceFolder = new File(this.myParameters.get("sourcefolder"));
+        SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
         if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
             Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
@@ -309,12 +309,12 @@ public class GoobiScript {
         try {
 
             for (Prozess p : inProzesse) {
-                File imagesFolder = new File(p.getImagesOrigDirectory(false));
+                SafeFile imagesFolder = new SafeFile(p.getImagesOrigDirectory(false));
                 if (imagesFolder.list().length > 0) {
                     Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue()
                             + "] has already data in image folder");
                 } else {
-                    File sourceFolderProzess = new File(sourceFolder, p.getTitel());
+                    SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitel());
                     if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
@@ -914,7 +914,7 @@ public class GoobiScript {
     public void deleteTiffHeaderFile(List<Prozess> inProzesse) {
         for (Prozess proz : inProzesse) {
             try {
-                File tiffheaderfile = new File(proz.getImagesDirectory() + "tiffwriter.conf");
+                SafeFile tiffheaderfile = new SafeFile(proz.getImagesDirectory() + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }

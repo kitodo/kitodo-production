@@ -27,7 +27,7 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -382,13 +382,13 @@ public class Prozess implements Serializable {
 	 */
 
 	public String getImagesTifDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(java.io.File dir, String name) {
 				return (name.endsWith("_" + DIRECTORY_SUFFIX) && !name.startsWith(DIRECTORY_PREFIX + "_"));
 			}
 		};
@@ -418,7 +418,7 @@ public class Prozess implements Serializable {
 		 if (!tifOrdner.equals("") && useFallBack) {
 	            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 	            if (!suffix.equals("")) {
-	                File tif = new File(tifOrdner);
+	                SafeFile tif = new SafeFile(tifOrdner);
 	                String[] files = tif.list();
 	                if (files == null || files.length == 0) {
 	                    String[] folderList = dir.list();
@@ -438,8 +438,8 @@ public class Prozess implements Serializable {
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
 
-		if (!rueckgabe.endsWith(File.separator)) {
-			rueckgabe += File.separator;
+		if (!rueckgabe.endsWith(SafeFile.separator)) {
+			rueckgabe += SafeFile.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
 			FilesystemHelper.createDirectory(rueckgabe);
@@ -451,9 +451,9 @@ public class Prozess implements Serializable {
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
-		File testMe;
+		SafeFile testMe;
 		try {
-			testMe = new File(getImagesTifDirectory(true));
+			testMe = new SafeFile(getImagesTifDirectory(true));
 		} catch (IOException e) {
 			return false;
 		} catch (InterruptedException e) {
@@ -475,13 +475,13 @@ public class Prozess implements Serializable {
 
 	public String getImagesOrigDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
-			File dir = new File(getImagesDirectory());
+			SafeFile dir = new SafeFile(getImagesDirectory());
 			DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 			DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 			FilenameFilter filterVerz = new FilenameFilter() {
 				@Override
-				public boolean accept(File dir, String name) {
+				public boolean accept(java.io.File dir, String name) {
 					return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
 				}
 			};
@@ -508,7 +508,7 @@ public class Prozess implements Serializable {
 			if (!origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					File tif = new File(origOrdner);
+					SafeFile tif = new SafeFile(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
 						String[] folderList = dir.list();
@@ -525,7 +525,7 @@ public class Prozess implements Serializable {
 			if (origOrdner.equals("")) {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
-			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
+			String rueckgabe = getImagesDirectory() + origOrdner + SafeFile.separator;
 			if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false) && this.getSortHelperStatus() != "100000000") {
 				FilesystemHelper.createDirectory(rueckgabe);
 			}
@@ -536,28 +536,28 @@ public class Prozess implements Serializable {
 	}
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
-		String pfad = getProcessDataDirectory() + "images" + File.separator;
+		String pfad = getProcessDataDirectory() + "images" + SafeFile.separator;
 		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
 	public String getSourceDirectory() throws IOException, InterruptedException, SwapException, DAOException {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(java.io.File dir, String name) {
 				return (name.endsWith("_" + "source"));
 			}
 		};
-		File sourceFolder = null;
+		SafeFile sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
 		if (verzeichnisse == null || verzeichnisse.length == 0) {
-			sourceFolder = new File(dir, titel + "_source");
+			sourceFolder = new SafeFile(dir, titel + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
 				sourceFolder.mkdir();
 			}
 		} else {
-			sourceFolder = new File(dir, verzeichnisse[0]);
+			sourceFolder = new SafeFile(dir, verzeichnisse[0]);
 		}
 
 		return sourceFolder.getAbsolutePath();
@@ -573,7 +573,7 @@ public class Prozess implements Serializable {
 			pst.setShowMessages(true);
 			pst.run();
 			if (pst.getException() != null) {
-				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists()) {
+				if (!new SafeFile(pfad, "images").exists() && !new SafeFile(pfad, "meta.xml").exists()) {
 					throw new SwapException(pst.getException().getMessage());
 				} else {
 					setSwappedOutGui(false);
@@ -585,31 +585,31 @@ public class Prozess implements Serializable {
 	}
 
 	public String getOcrDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getProcessDataDirectory() + "ocr" + File.separator;
+		return getProcessDataDirectory() + "ocr" + SafeFile.separator;
 	}
 
 	public String getTxtDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_txt" + File.separator;
+		return getOcrDirectory() + this.titel + "_txt" + SafeFile.separator;
 	}
 
 	public String getWordDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_wc" + File.separator;
+		return getOcrDirectory() + this.titel + "_wc" + SafeFile.separator;
 	}
 
 	public String getPdfDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_pdf" + File.separator;
+		return getOcrDirectory() + this.titel + "_pdf" + SafeFile.separator;
 	}
 
 	public String getAltoDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_alto" + File.separator;
+		return getOcrDirectory() + this.titel + "_alto" + SafeFile.separator;
 	}
 
 	public String getImportDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getProcessDataDirectory() + "import" + File.separator;
+		return getProcessDataDirectory() + "import" + SafeFile.separator;
 	}
 
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
-		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
+		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + SafeFile.separator;
 		pfad = pfad.replaceAll(" ", "__");
 		FilesystemHelper.createDirectory(pfad);
 		return pfad;
@@ -1029,7 +1029,7 @@ public class Prozess implements Serializable {
 	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException,
 			PreferencesException {
 		boolean result = true;
-		File f = new File(getMetadataFilePath());
+		SafeFile f = new SafeFile(getMetadataFilePath());
 		if (!f.exists()) {
 			result = false;
 		}
@@ -1039,17 +1039,17 @@ public class Prozess implements Serializable {
 
 	private String getTemporaryMetadataFileName(String fileName) {
 
-		File temporaryFile = new File(fileName);
+		SafeFile temporaryFile = new SafeFile(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
 		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
-		return directoryPath + File.separator + temporaryFileName;
+		return directoryPath + SafeFile.separator + temporaryFileName;
 	}
 
 	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
-		File temporaryFile = new File(temporaryMetadataFilename);
-		File directoryPath = new File(temporaryFile.getParentFile().getPath());
-		for (File temporaryAnchorFile : directoryPath.listFiles()) {
+		SafeFile temporaryFile = new SafeFile(temporaryMetadataFilename);
+		SafeFile directoryPath = new SafeFile(temporaryFile.getParentFile().getPath());
+		for (SafeFile temporaryAnchorFile : directoryPath.listFiles()) {
 			String temporaryAnchorFileName = temporaryAnchorFile.toString();
 			if (temporaryAnchorFile.isFile()
 					&& FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
@@ -1066,7 +1066,7 @@ public class Prozess implements Serializable {
 			PreferencesException {
 		boolean backupCondition;
 		boolean writeResult;
-		File temporaryMetadataFile;
+		SafeFile temporaryMetadataFile;
 
 		Fileformat ff;
 		String metadataFileName;
@@ -1093,7 +1093,7 @@ public class Prozess implements Serializable {
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		// ff.write(getMetadataFilePath());
 		writeResult = ff.write(temporaryMetadataFileName);
-		temporaryMetadataFile = new File(temporaryMetadataFileName);
+		temporaryMetadataFile = new SafeFile(temporaryMetadataFileName);
 		backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
 		if (backupCondition) {
 			createBackupFile();
@@ -1111,7 +1111,7 @@ public class Prozess implements Serializable {
 	public Fileformat readMetadataAsTemplateFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
 			DAOException {
 		Hibernate.initialize(getRegelsatz());
-		if (new File(getTemplateFilePath()).exists()) {
+		if (new SafeFile(getTemplateFilePath()).exists()) {
 			Fileformat ff = null;
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
 			myLogger.debug("current template.xml file type: " + type);
@@ -1205,9 +1205,9 @@ public class Prozess implements Serializable {
 
 		myLogger.debug("generate docket for process " + this.id);
 		String rootpath = ConfigMain.getParameter("xsltFolder");
-		File xsltfile = new File(rootpath, "docket.xsl");
+		SafeFile xsltfile = new SafeFile(rootpath, "docket.xsl");
 		if (docket != null) {
-			xsltfile = new File(rootpath, docket.getFile());
+			xsltfile = new SafeFile(rootpath, docket.getFile());
 			if (!xsltfile.exists()) {
 				Helper.setFehlerMeldung("docketMissing");
 				return "";
@@ -1267,7 +1267,7 @@ public class Prozess implements Serializable {
 			String folder = this.getImagesTifDirectory(false);
 			folder = folder.substring(0, folder.lastIndexOf("_"));
 			folder = folder + "_" + methodName;
-			if (new File(folder).exists()) {
+			if (new SafeFile(folder).exists()) {
 				return folder;
 			}
 

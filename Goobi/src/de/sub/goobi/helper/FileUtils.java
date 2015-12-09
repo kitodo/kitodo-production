@@ -28,7 +28,7 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 
 /**
@@ -48,7 +48,7 @@ public class FileUtils {
 	 *            the file extension to use for counting, not case sensitive
 	 * @return number of files as Integer
 	 */
-	public static Integer getNumberOfFiles(File inDir) {
+	public static Integer getNumberOfFiles(SafeFile inDir) {
 		int anzahl = 0;
 		if (inDir.isDirectory()) {
 			/* --------------------------------
@@ -61,14 +61,14 @@ public class FileUtils {
 			 * --------------------------------*/
 			String[] children = inDir.list();
 			for (int i = 0; i < children.length; i++) {
-				anzahl += getNumberOfFiles(new File(inDir, children[i]));
+				anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
 				}
 		}
 		return anzahl;
 	}
 	
 	public static Integer getNumberOfFiles(String inDir) {
-		return getNumberOfFiles(new File(inDir));
+		return getNumberOfFiles(new SafeFile(inDir));
 	}
 	
 
@@ -82,7 +82,7 @@ public class FileUtils {
 		    this.name = name;
 		  }
 		  @Override
-		public boolean accept(File directory, String filename) {
+		public boolean accept(java.io.File directory, String filename) {
 		    boolean fileOK = true;
 		    if (this.name != null) {
 		      fileOK &= filename.matches(this.name);

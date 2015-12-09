@@ -27,7 +27,7 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
@@ -49,12 +49,12 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
 
 	private String name;
-	private File folder;
+	private SafeFile folder;
 	private Integer template;
 	private String updateStrategy;
 	private String collection;
 
-	public GoobiHotfolder(String name, File folder, Integer template, String updateStrategy, String collection) {
+	public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
 		this.setName(name);
 		this.folder = folder;
 		this.setTemplate(template);
@@ -68,9 +68,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 
 	@Override
-	public List<File> getCurrentFiles() {
-		List<File> files = new ArrayList<File>();
-		File[] data = this.folder.listFiles();
+	public List<java.io.File> getCurrentFiles() {
+		List<java.io.File> files = new ArrayList<java.io.File>();
+		java.io.File[] data = this.folder.listFiles();
 		if (data != null) {
 			files = Arrays.asList(data);
 		}
@@ -113,17 +113,17 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 
 	@Override
-	public List<File> getFilesByFilter(FilenameFilter filter) {
-		return Arrays.asList(this.folder.listFiles(filter));
+	public List<java.io.File> getFilesByFilter(FilenameFilter filter) {
+		return Arrays.asList((java.io.File[]) this.folder.listFiles(filter));
 	}
 
 	@Override
 	public String getFolderAsString() {
-		return this.folder.getAbsolutePath() + File.separator;
+		return this.folder.getAbsolutePath() + SafeFile.separator;
 	}
 
 	@Override
-	public File getFolderAsFile() {
+	public SafeFile getFolderAsFile() {
 		return this.folder;
 	}
 
@@ -138,7 +138,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 	public static final FilenameFilter filter = new FilenameFilter() {
 		@Override
-		public boolean accept(File dir, String name) {
+		public boolean accept(java.io.File dir, String name) {
 			if (!name.contains("anchor") && !name.endsWith("_") && name.endsWith(".xml")) {
 				return true;
 			} else {
@@ -171,7 +171,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 				logger.trace("config 7");
 				String name = config.getString("hotfolder(" + i + ")[@name]");
 				logger.trace("config 8");
-				File folder = new File(config.getString("hotfolder(" + i + ")[@folder]"));
+				SafeFile folder = new SafeFile(config.getString("hotfolder(" + i + ")[@folder]"));
 				logger.trace("config 9");
 				Integer template = config.getInt("hotfolder(" + i + ")[@template]");
 				logger.trace("config 10");
@@ -266,8 +266,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		return this.collection;
 	}
 
-	public File getLockFile() {
-		return new File(this.folder, ".lock");
+	public SafeFile getLockFile() {
+		return new SafeFile(this.folder, ".lock");
 
 	}
 
@@ -276,14 +276,14 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	public void lock() throws IOException {
-		File f = getLockFile();
+		SafeFile f = getLockFile();
 		if (!f.exists()) {
 			f.createNewFile();
 		}
 	}
 
 	public void unlock() throws IOException {
-		File f = getLockFile();
+		SafeFile f = getLockFile();
 		if (f.exists()) {
 			FileUtils.forceDelete(f);
 		}

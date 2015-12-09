@@ -27,7 +27,7 @@ package de.sub.goobi.export.download;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -199,7 +199,7 @@ public class ExportMets {
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = myProzess.getImagesDirectory();
-		File imageFolder = new File(imageFolderPath);
+		SafeFile imageFolder = new SafeFile(imageFolderPath);
 		/*
 		 * before creating mets file, change relative path to absolute -
 		 */
@@ -255,7 +255,7 @@ public class ExportMets {
 				location = "file://" + location;
 			}
 			URL url = new URL(location);
-			File f = new File(imageFolder, url.getFile());
+			SafeFile f = new SafeFile(imageFolder, url.getFile());
 			cf.setLocation(f.toURI().toString());
 		}
 
@@ -274,7 +274,7 @@ public class ExportMets {
 			for (ProjectFileGroup pfg : myFilegroups) {
 				// check if source files exists
 				if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-					File folder = new File(myProzess.getMethodFromName(pfg.getFolder()));
+					SafeFile folder = new SafeFile(myProzess.getMethodFromName(pfg.getFolder()));
 					if (folder != null && folder.exists() && folder.list().length > 0) {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());

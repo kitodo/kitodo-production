@@ -28,7 +28,7 @@ package de.sub.goobi.export.dms;
  * exception statement from your version.
  */
 import java.io.BufferedReader;
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FileReader;
 
 import org.apache.log4j.Logger;
@@ -39,10 +39,10 @@ import de.sub.goobi.helper.Helper;
 
 public class DmsImportThread extends Thread {
 	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
-	private File fileError;
-	private File fileXml;
-	private File fileSuccess;
-	private File folderImages;
+	private SafeFile fileError;
+	private SafeFile fileXml;
+	private SafeFile fileSuccess;
+	private SafeFile folderImages;
 	private long timeFileSuccess;
 	private long timeFileError;
 
@@ -54,18 +54,18 @@ public class DmsImportThread extends Thread {
 		setDaemon(true);
 		/* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber in neuem FehlerOrdner */
 		if (inProzess.getProjekt().getDmsImportErrorPath() == null || inProzess.getProjekt().getDmsImportErrorPath().length() == 0) {
-			this.fileError = new File(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
+			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
 		} else {
-			this.fileError = new File(inProzess.getProjekt().getDmsImportErrorPath(), inAts + ".log");
+			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportErrorPath(), inAts + ".log");
 		}
 
-		this.fileXml = new File(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
-		this.fileSuccess = new File(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
+		this.fileXml = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
+		this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
 		if (inProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-			this.fileSuccess = new File(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
+			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + SafeFile.separator + inAts + ".xml");
 		}
 
-		this.folderImages = new File(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
+		this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
 
 		if (this.fileError.exists()) {
 			this.timeFileError = this.fileError.getAbsoluteFile().lastModified();

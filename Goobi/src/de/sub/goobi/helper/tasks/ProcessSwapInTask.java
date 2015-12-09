@@ -26,7 +26,7 @@ package de.sub.goobi.helper.tasks;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,7 +101,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 			setStatusProgress(-1);
 			return;
 		}
-		File swapFile = new File(swapPath);
+		SafeFile swapFile = new SafeFile(swapPath);
 		if (!swapFile.exists()) {
 			setStatusMessage("Swap folder does not exist or is not mounted");
 			setStatusProgress(-1);
@@ -117,8 +117,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 			return;
 		}
 
-		File fileIn = new File(processDirectory);
-		File fileOut = new File(swapPath + getProzess().getId() + File.separator);
+		SafeFile fileIn = new SafeFile(processDirectory);
+		SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + SafeFile.separator);
 
 		if (!fileOut.exists()) {
 			setStatusMessage(getProzess().getTitel() + ": swappingOutTarget does not exist");
@@ -134,7 +134,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		SAXBuilder builder = new SAXBuilder();
 		Document docOld;
 		try {
-			File swapLogFile = new File(processDirectory, "swapped.xml");
+			SafeFile swapLogFile = new SafeFile(processDirectory, "swapped.xml");
 			docOld = builder.build(swapLogFile);
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {

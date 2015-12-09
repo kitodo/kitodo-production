@@ -27,7 +27,7 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,16 +61,16 @@ public class JobCreation {
         logger.trace("mets filename is " + metsfilename);
         String basepath = metsfilename.substring(0, metsfilename.length() - 4);
         logger.trace("basepath is " + basepath);
-        File metsfile = new File(metsfilename);
+        SafeFile metsfile = new SafeFile(metsfilename);
         Prozess p = null;
         if (!testTitle(processTitle)) {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
-            File imagesFolder = new File(basepath);
+            SafeFile imagesFolder = new SafeFile(basepath);
             if (imagesFolder.exists() && imagesFolder.isDirectory()) {
                 deleteDirectory(imagesFolder);
             } else {
-                imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
+                imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
                 if (imagesFolder.exists() && imagesFolder.isDirectory()) {
                     deleteDirectory(imagesFolder);
                 }
@@ -81,7 +81,7 @@ public class JobCreation {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
-            File anchor = new File(basepath + "_anchor.xml");
+            SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
                 FileUtils.deleteQuietly(anchor);
             }
@@ -152,11 +152,11 @@ public class JobCreation {
     }
 
     @SuppressWarnings("static-access")
-    public static void moveFiles(File metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
+    public static void moveFiles(SafeFile metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
         if (ConfigMain.getBooleanParameter("importUseOldConfiguration", false)) {
-            File imagesFolder = new File(basepath);
+            SafeFile imagesFolder = new SafeFile(basepath);
             if (!imagesFolder.exists()) {
-                imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
+                imagesFolder = new SafeFile(basepath + "_" + p.DIRECTORY_SUFFIX);
             }
             if (imagesFolder.exists() && imagesFolder.isDirectory()) {
                 List<String> imageDir = new ArrayList<String>();
@@ -166,33 +166,33 @@ public class JobCreation {
                     imageDir.add(files[i]);
                 }
                 for (String file : imageDir) {
-                    File image = new File(imagesFolder, file);
-                    File dest = new File(p.getImagesOrigDirectory(false) + image.getName());
+                    SafeFile image = new SafeFile(imagesFolder, file);
+                    SafeFile dest = new SafeFile(p.getImagesOrigDirectory(false) + image.getName());
                     FileUtils.moveFile(image, dest);
                 }
                 deleteDirectory(imagesFolder);
             }
 
             // copy pdf files
-            File pdfs = new File(basepath + "_pdf" + File.separator);
+            SafeFile pdfs = new SafeFile(basepath + "_pdf" + SafeFile.separator);
             if (pdfs.isDirectory()) {
-                FileUtils.moveDirectory(pdfs, new File(p.getPdfDirectory()));
+                FileUtils.moveDirectory(pdfs, new SafeFile(p.getPdfDirectory()));
             }
 
             // copy fulltext files
 
-            File fulltext = new File(basepath + "_txt");
+            SafeFile fulltext = new SafeFile(basepath + "_txt");
 
             if (fulltext.isDirectory()) {
 
-                FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
+                FileUtils.moveDirectory(fulltext, new SafeFile(p.getTxtDirectory()));
             }
 
             // copy source files
 
-            File sourceDir = new File(basepath + "_src" + File.separator);
+            SafeFile sourceDir = new SafeFile(basepath + "_src" + SafeFile.separator);
             if (sourceDir.isDirectory()) {
-                FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
+                FileUtils.moveDirectory(sourceDir, new SafeFile(p.getImportDirectory()));
             }
 
             try {
@@ -201,7 +201,7 @@ public class JobCreation {
                 logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
 
             }
-            File anchor = new File(basepath + "_anchor.xml");
+            SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
                 FileUtils.deleteQuietly(anchor);
             }
@@ -209,45 +209,45 @@ public class JobCreation {
 
         else {
             // new folder structure for process imports
-            File importFolder = new File(basepath);
+            SafeFile importFolder = new SafeFile(basepath);
             if (importFolder.exists() && importFolder.isDirectory()) {
-                File[] folderList = importFolder.listFiles();
-                for (File directory : folderList) {
+                SafeFile[] folderList = importFolder.listFiles();
+                for (SafeFile directory : folderList) {
                     if (directory.getName().contains("images")) {
-                        File[] imageList = directory.listFiles();
-                        for (File imagedir : imageList) {
+                        SafeFile[] imageList = directory.listFiles();
+                        for (SafeFile imagedir : imageList) {
                             if (imagedir.isDirectory()) {
-                                for (File file : imagedir.listFiles()) {
-                                    FileUtils.moveFile(file, new File(p.getImagesDirectory() + imagedir.getName(), file.getName()));
+                                for (SafeFile file : imagedir.listFiles()) {
+                                    FileUtils.moveFile(file, new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()));
                                 }
                             } else {
-                                FileUtils.moveFile(imagedir, new File(p.getImagesDirectory(), imagedir.getName()));
+                                FileUtils.moveFile(imagedir, new SafeFile(p.getImagesDirectory(), imagedir.getName()));
                             }
                         }
                     } else if (directory.getName().contains("ocr")) {
-                        File ocr = new File(p.getOcrDirectory());
+                        SafeFile ocr = new SafeFile(p.getOcrDirectory());
                         if (!ocr.exists()) {
                             ocr.mkdir();
                         }
-                        File[] ocrList = directory.listFiles();
-                        for (File ocrdir : ocrList) {
+                        SafeFile[] ocrList = directory.listFiles();
+                        for (SafeFile ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
-                                FileUtils.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
+                                FileUtils.moveDirectory(ocrdir, new SafeFile(ocr, ocrdir.getName()));
                             } else {
-                                FileUtils.moveFile(ocrdir, new File(ocr, ocrdir.getName()));
+                                FileUtils.moveFile(ocrdir, new SafeFile(ocr, ocrdir.getName()));
                             }
                         }
                     } else {
-                        File i = new File(p.getImportDirectory());
+                        SafeFile i = new SafeFile(p.getImportDirectory());
                         if (!i.exists()) {
                             i.mkdir();
                         }
-                        File[] importList = directory.listFiles();
-                        for (File importdir : importList) {
+                        SafeFile[] importList = directory.listFiles();
+                        for (SafeFile importdir : importList) {
                             if (importdir.isDirectory()) {
-                                FileUtils.moveDirectory(importdir, new File(i, importdir.getName()));
+                                FileUtils.moveDirectory(importdir, new SafeFile(i, importdir.getName()));
                             } else {
-                                FileUtils.moveFile(importdir, new File(i, importdir.getName()));
+                                FileUtils.moveFile(importdir, new SafeFile(i, importdir.getName()));
                             }
                         }
                     }
@@ -264,7 +264,7 @@ public class JobCreation {
         }
     }
 
-    private static void deleteDirectory(File directory) {
+    private static void deleteDirectory(SafeFile directory) {
         try {
             FileUtils.deleteDirectory(directory);
         } catch (IOException e) {

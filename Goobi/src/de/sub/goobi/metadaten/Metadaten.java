@@ -28,7 +28,7 @@ package de.sub.goobi.metadaten;
  * exception statement from your version.
  */
 
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
@@ -749,7 +749,7 @@ public class Metadaten {
 		this.myProzess.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
 		this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
 		try {
-			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new File(this.myProzess.getImagesOrigDirectory(true))));
+			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(this.myProzess.getImagesOrigDirectory(true))));
 			new ProzessDAO().save(this.myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
@@ -1579,15 +1579,15 @@ public class Metadaten {
 
 	public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
 		this.allTifFolders = new ArrayList<String>();
-		File dir = new File(this.myProzess.getImagesDirectory());
+		SafeFile dir = new SafeFile(this.myProzess.getImagesDirectory());
 
 		/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 		// TODO: Remove this, we have several implementions of this, use an
 		// existing one.
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(File indir, String name) {
-				return (new File(indir + File.separator + name).isDirectory());
+			public boolean accept(java.io.File indir, String name) {
+				return (new SafeFile(indir + SafeFile.separator + name).isDirectory());
 			}
 		};
 
@@ -1607,7 +1607,7 @@ public class Metadaten {
 		}
 
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
-			this.currentTifFolder = new File(this.myProzess.getImagesTifDirectory(true)).getName();
+			this.currentTifFolder = new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName();
 		}
 	}
 
@@ -1709,12 +1709,12 @@ public class Metadaten {
 
 	                    /* das neue Bild zuweisen */
 	                    try {
-	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
+	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + SafeFile.separator + this.myBild;
 	                        myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
-	                        if (!new File(tiffconverterpfad).exists()) {
+	                        if (!new SafeFile(tiffconverterpfad).exists()) {
 	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
 	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
-	                                    + this.currentTifFolder + ", using image from " + new File(this.myProzess.getImagesTifDirectory(true)).getName());
+	                                    + this.currentTifFolder + ", using image from " + new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName());
 	                        }
 	                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
 	                        myLogger.trace("scaleFile");
@@ -1734,7 +1734,7 @@ public class Metadaten {
 		boolean exists = false;
 		try {
 			if (this.currentTifFolder != null && this.myBild != null) {
-				exists = (new File(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
+				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + SafeFile.separator + this.myBild)).exists();
 			} 
 		} catch (Exception e) {
 			this.myBildNummer = -1;
@@ -2890,18 +2890,18 @@ public class Metadaten {
 
         for (String imagename : oldfilenames) {
             for (String folder : allTifFolders) {
-                File filename = new File(imageDirectory + folder, imagename);
-                File newFileName = new File(imageDirectory + folder, imagename + "_bak");
+                SafeFile filename = new SafeFile(imageDirectory + folder, imagename);
+                SafeFile newFileName = new SafeFile(imageDirectory + folder, imagename + "_bak");
                 filename.renameTo(newFileName);
             }
 
             try {
-                File ocr = new File(myProzess.getOcrDirectory());
+                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
-                    for (File folder : allOcrFolder) {
-                        File filename = new File(folder, imagename);
-                        File newFileName = new File(folder, imagename + "_bak");
+                    SafeFile[] allOcrFolder = ocr.listFiles();
+                    for (SafeFile folder : allOcrFolder) {
+                        SafeFile filename = new SafeFile(folder, imagename);
+                        SafeFile newFileName = new SafeFile(folder, imagename + "_bak");
                         filename.renameTo(newFileName);
                     }
                 }
@@ -2920,22 +2920,22 @@ public class Metadaten {
         for (String imagename : oldfilenames) {
             String newfilenamePrefix = generateFileName(counter);
             for (String folder : allTifFolders) {
-                File fileToSort = new File(imageDirectory + folder, imagename);
+                SafeFile fileToSort = new SafeFile(imageDirectory + folder, imagename);
                 String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                File tempFileName = new File(imageDirectory + folder, fileToSort.getName() + "_bak");
-                File sortedName = new File(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
+                SafeFile tempFileName = new SafeFile(imageDirectory + folder, fileToSort.getName() + "_bak");
+                SafeFile sortedName = new SafeFile(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
                 tempFileName.renameTo(sortedName);
                 mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.toURI().toString());
             }
             try {
-                File ocr = new File(myProzess.getOcrDirectory());
+                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
-                    for (File folder : allOcrFolder) {
-                        File fileToSort = new File(folder, imagename);
+                    SafeFile[] allOcrFolder = ocr.listFiles();
+                    for (SafeFile folder : allOcrFolder) {
+                        SafeFile fileToSort = new SafeFile(folder, imagename);
                         String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                        File tempFileName = new File(folder, fileToSort.getName() + "_bak");
-                        File sortedName = new File(folder, newfilenamePrefix + fileExtension.toLowerCase());
+                        SafeFile tempFileName = new SafeFile(folder, fileToSort.getName() + "_bak");
+                        SafeFile sortedName = new SafeFile(folder, newfilenamePrefix + fileExtension.toLowerCase());
                         tempFileName.renameTo(sortedName);
                     }
                 }
@@ -2960,8 +2960,8 @@ public class Metadaten {
             // TODO check what happens with .tar.gz
             String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
             for (String folder : allTifFolders) {
-                File[] filesInFolder = new File(myProzess.getImagesDirectory() + folder).listFiles();
-                for (File currentFile : filesInFolder) {
+                SafeFile[] filesInFolder = new SafeFile(myProzess.getImagesDirectory() + folder).listFiles();
+                for (SafeFile currentFile : filesInFolder) {
                     String filename = currentFile.getName();
                     String filenamePrefix = filename.replace(getFileExtension(filename), "");
                     if (filenamePrefix.equals(fileToDeletePrefix)) {
@@ -2970,13 +2970,13 @@ public class Metadaten {
                 }
             }
 
-            File ocr = new File(myProzess.getOcrDirectory());
+            SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
             if (ocr.exists()) {
-                File[] folder = ocr.listFiles();
-                for (File dir : folder) {
+                SafeFile[] folder = ocr.listFiles();
+                for (SafeFile dir : folder) {
                     if (dir.isDirectory() && dir.list().length > 0) {
-                        File[] filesInFolder = dir.listFiles();
-                        for (File currentFile : filesInFolder) {
+                        SafeFile[] filesInFolder = dir.listFiles();
+                        for (SafeFile currentFile : filesInFolder) {
                             String filename = currentFile.getName();
                             String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
                             if (filenamePrefix.equals(fileToDeletePrefix)) {

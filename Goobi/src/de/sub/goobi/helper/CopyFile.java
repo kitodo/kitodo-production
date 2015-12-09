@@ -27,7 +27,7 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class CopyFile {
    // program options initialized to default values
    private static int bufferSize = 4 * 1024;
 
-   public static Long copyFile(File srcFile, File destFile) throws IOException {
+   public static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
       InputStream in = new FileInputStream(srcFile);
       OutputStream out = new FileOutputStream(destFile);
 
@@ -63,7 +63,7 @@ public class CopyFile {
 
    }
 
-   public static Long createChecksum(File file) throws IOException {
+   public static Long createChecksum(SafeFile file) throws IOException {
       InputStream in = new FileInputStream(file);
       CRC32 checksum = new CRC32();
       checksum.reset();
@@ -76,7 +76,7 @@ public class CopyFile {
       return Long.valueOf(checksum.getValue());
    }
 
-   public static Long start(File srcFile, File destFile) throws IOException {
+   public static Long start(SafeFile srcFile, SafeFile destFile) throws IOException {
       // make sure the source file is indeed a readable file
       if (!srcFile.isFile() || !srcFile.canRead()) {
          System.err.println("Not a readable file: " + srcFile.getName());
@@ -105,7 +105,7 @@ public class CopyFile {
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
 	 * will be created.
 	 */
-	public static void copyDirectory(File srcDir, File dstDir) throws IOException {
+	public static void copyDirectory(SafeFile srcDir, SafeFile dstDir) throws IOException {
 		if (srcDir.isDirectory()) {
 			if (!dstDir.exists()) {
 				dstDir.mkdir();
@@ -113,7 +113,7 @@ public class CopyFile {
 
 			String[] children = srcDir.list();
 			for (int i = 0; i < children.length; i++) {
-				copyDirectory(new File(srcDir, children[i]), new File(dstDir, children[i]));
+				copyDirectory(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]));
 			}
 		} else {
 			copyFile(srcDir, dstDir);

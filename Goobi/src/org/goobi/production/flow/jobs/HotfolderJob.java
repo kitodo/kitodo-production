@@ -27,7 +27,7 @@ package org.goobi.production.flow.jobs;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			logger.trace("2");
 			for (GoobiHotfolder hotfolder : hotlist) {
 				logger.trace("3");
-				List<File> list = hotfolder.getCurrentFiles();
+				List<SafeFile> list = SafeFile.createAll(hotfolder.getCurrentFiles());
 				logger.trace("4");
 				long size = getSize(list);
 				logger.trace("5");
@@ -98,7 +98,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 							logger.trace("6");
 							Thread.sleep(10000);
 							logger.trace("7");
-							list = hotfolder.getCurrentFiles();
+							list = SafeFile.createAll(hotfolder.getCurrentFiles());
 							logger.trace("8");
 							if (size == getSize(list)) {
 								hotfolder.lock();
@@ -131,9 +131,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 									// // TODO Errorhandling
 									logger.trace("17");
 									for (String filename : failedData.keySet()) {
-										File oldFile = new File(hotfolder.getFolderAsFile(), filename);
+										SafeFile oldFile = new SafeFile(hotfolder.getFolderAsFile(), filename);
 										if (oldFile.exists()) {
-											File newFile = new File(oldFile.getAbsolutePath() + "_");
+											SafeFile newFile = new SafeFile(oldFile.getAbsolutePath() + "_");
 											oldFile.renameTo(newFile);
 										}
 										logger.error("error while importing file: " + filename + " with error code " + failedData.get(filename));
@@ -162,12 +162,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 		}
 	}
 
-	private long getSize(List<File> list) {
+	private long getSize(List<SafeFile> list) {
 		long size = 0;
-		for (File f : list) {
+		for (SafeFile f : list) {
 			if (f.isDirectory()) {
-				File[] subdir = f.listFiles();
-				for (File sub : subdir) {
+				SafeFile[] subdir = f.listFiles();
+				for (SafeFile sub : subdir) {
 					size += sub.length();
 				}
 			} else {
@@ -177,14 +177,14 @@ public class HotfolderJob extends AbstractGoobiJob {
 		return size;
 	}
 
-	public static int generateProcess(String processTitle, Prozess vorlage, File dir, String digitalCollection, String updateStrategy) {
+	public static int generateProcess(String processTitle, Prozess vorlage, SafeFile dir, String digitalCollection, String updateStrategy) {
 		// wenn keine anchor Datei, dann Vorgang anlegen
 		if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
 			if (!updateStrategy.equals("ignore")) {
 				boolean test = testTitle(processTitle.substring(0, processTitle.length() - 4));
 				if (!test && updateStrategy.equals("error")) {
-					File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
-							+ File.separator);
+					SafeFile images = new SafeFile(dir.getAbsoluteFile() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ SafeFile.separator);
 					List<String> imageDir = new ArrayList<String>();
 					if (images.isDirectory()) {
 						String[] files = images.list();
@@ -197,12 +197,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 						}
 					}
 					try {
-						FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+						FileUtils.forceDelete(new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle));
 					} catch (Exception e) {
 						logger.error("Can not delete file " + processTitle, e);
 						return 30;
 					}
-					File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+					SafeFile anchor = new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
 							+ "_anchor.xml");
 					if (anchor.exists()) {
 						FileUtils.deleteQuietly(anchor);
@@ -210,8 +210,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 					return 27;
 				} else if (!test && updateStrategy.equals("update")) {
 					// TODO UPDATE mets data
-					File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
-							+ File.separator);
+					SafeFile images = new SafeFile(dir.getAbsoluteFile() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
+							+ SafeFile.separator);
 					List<String> imageDir = new ArrayList<String>();
 					if (images.isDirectory()) {
 						String[] files = images.list();
@@ -224,12 +224,12 @@ public class HotfolderJob extends AbstractGoobiJob {
 						}
 					}
 					try {
-						FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+						FileUtils.forceDelete(new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle));
 					} catch (Exception e) {
 						logger.error("Can not delete file " + processTitle, e);
 						return 30;
 					}
-					File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+					SafeFile anchor = new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
 							+ "_anchor.xml");
 					if (anchor.exists()) {
 						FileUtils.deleteQuietly(anchor);
@@ -239,7 +239,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			}
 			CopyProcess form = new CopyProcess();
 			form.setProzessVorlage(vorlage);
-			form.metadataFile = dir.getAbsolutePath() + File.separator + processTitle;
+			form.metadataFile = dir.getAbsolutePath() + SafeFile.separator + processTitle;
 			form.Prepare();
 			form.getProzessKopie().setTitel(processTitle.substring(0, processTitle.length() - 4));
 			if (form.testTitle()) {
@@ -258,8 +258,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 					if (p.getId() != null) {
 
 						// copy image files to new directory
-						File images = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
-								+ File.separator);
+						SafeFile images = new SafeFile(dir.getAbsoluteFile() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ SafeFile.separator);
 						List<String> imageDir = new ArrayList<String>();
 						if (images.isDirectory()) {
 							String[] files = images.list();
@@ -267,8 +267,8 @@ public class HotfolderJob extends AbstractGoobiJob {
 								imageDir.add(files[i]);
 							}
 							for (String file : imageDir) {
-								File image = new File(images, file);
-								File dest = new File(p.getImagesOrigDirectory(false) + image.getName());
+								SafeFile image = new SafeFile(images, file);
+								SafeFile dest = new SafeFile(p.getImagesOrigDirectory(false) + image.getName());
 								FileUtils.moveFile(image, dest);
 							}
 							FileUtils.deleteDirectory(images);
@@ -276,28 +276,28 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 						// copy fulltext files
 
-						File fulltext = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
-								+ "_txt" + File.separator);
+						SafeFile fulltext = new SafeFile(dir.getAbsoluteFile() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ "_txt" + SafeFile.separator);
 						if (fulltext.isDirectory()) {
 					
-							FileUtils.moveDirectory(fulltext, new File(p.getTxtDirectory()));
+							FileUtils.moveDirectory(fulltext, new SafeFile(p.getTxtDirectory()));
 						}
 
 						// copy source files
 
-						File sourceDir = new File(dir.getAbsoluteFile() + File.separator + processTitle.substring(0, processTitle.length() - 4)
-								+ "_src" + File.separator);
+						SafeFile sourceDir = new SafeFile(dir.getAbsoluteFile() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
+								+ "_src" + SafeFile.separator);
 						if (sourceDir.isDirectory()) {
-							FileUtils.moveDirectory(sourceDir, new File(p.getImportDirectory()));
+							FileUtils.moveDirectory(sourceDir, new SafeFile(p.getImportDirectory()));
 						}
 
 						try {
-							FileUtils.forceDelete(new File(dir.getAbsolutePath() + File.separator + processTitle));
+							FileUtils.forceDelete(new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle));
 						} catch (Exception e) {
 							logger.error("Can not delete file " + processTitle + " after importing " + p.getTitel() + " into goobi", e);
 							return 30;
 						}
-						File anchor = new File(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
+						SafeFile anchor = new SafeFile(dir.getAbsolutePath() + SafeFile.separator + processTitle.substring(0, processTitle.length() - 4)
 								+ "_anchor.xml");
 						if (anchor.exists()) {
 							FileUtils.deleteQuietly(anchor);
@@ -367,16 +367,16 @@ public class HotfolderJob extends AbstractGoobiJob {
 		logger.trace("mets filename is " + metsfilename);
 		String basepath = metsfilename.substring(0, metsfilename.length() - 4);
 		logger.trace("basepath is " + basepath);
-		File metsfile = new File(metsfilename);
+		SafeFile metsfile = new SafeFile(metsfilename);
 		Prozess p = null;
 		if (!testTitle(processTitle)) {
 			logger.trace("wrong title");
 			// removing all data
-			File imagesFolder = new File(basepath);
+			SafeFile imagesFolder = new SafeFile(basepath);
 			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
 				deleteDirectory(imagesFolder);
 			} else {
-				imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
+				imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
 				if (imagesFolder.exists() && imagesFolder.isDirectory()) {
 					deleteDirectory(imagesFolder);
 				}
@@ -387,7 +387,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 				logger.error("Can not delete file " + processTitle, e);
 				return null;
 			}
-			File anchor = new File(basepath + "_anchor.xml");
+			SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
 			if (anchor.exists()) {
 				FileUtils.deleteQuietly(anchor);
 			}
@@ -436,7 +436,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 	}
 
-	private static void deleteDirectory(File directory) {
+	private static void deleteDirectory(SafeFile directory) {
 		try {
 			FileUtils.deleteDirectory(directory);
 		} catch (IOException e) {

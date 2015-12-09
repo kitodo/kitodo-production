@@ -27,7 +27,7 @@ package de.sub.goobi.persistence.apache;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -58,13 +58,13 @@ public class FolderInformation {
 
 
 	public String getImagesTifDirectory(boolean useFallBack) {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(java.io.File dir, String name) {
 				return (name.endsWith("_" + DIRECTORY_SUFFIX) && !name.startsWith(DIRECTORY_PREFIX + "_"));
 			}
 		};
@@ -93,7 +93,7 @@ public class FolderInformation {
 		if (!tifOrdner.equals("") && useFallBack) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 			if (!suffix.equals("")) {
-				File tif = new File(tifOrdner);
+				SafeFile tif = new SafeFile(tifOrdner);
 				String[] files = tif.list();
 				if (files == null || files.length == 0) {
 					String[] folderList = dir.list();
@@ -113,8 +113,8 @@ public class FolderInformation {
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
 
-		if (!rueckgabe.endsWith(File.separator)) {
-			rueckgabe += File.separator;
+		if (!rueckgabe.endsWith(SafeFile.separator)) {
+			rueckgabe += SafeFile.separator;
 		}
 
 		return rueckgabe;
@@ -124,9 +124,9 @@ public class FolderInformation {
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
-		File testMe;
+		SafeFile testMe;
 
-		testMe = new File(getImagesTifDirectory(true));
+		testMe = new SafeFile(getImagesTifDirectory(true));
 
 		if (testMe.list() == null) {
 			return false;
@@ -140,13 +140,13 @@ public class FolderInformation {
 
 	public String getImagesOrigDirectory(boolean useFallBack) {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
-			File dir = new File(getImagesDirectory());
+			SafeFile dir = new SafeFile(getImagesDirectory());
 			DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 			DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 			FilenameFilter filterVerz = new FilenameFilter() {
 				@Override
-				public boolean accept(File dir, String name) {
+				public boolean accept(java.io.File dir, String name) {
 					return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
 				}
 			};
@@ -172,7 +172,7 @@ public class FolderInformation {
 			if (!origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					File tif = new File(origOrdner);
+					SafeFile tif = new SafeFile(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
 						String[] folderList = dir.list();
@@ -190,7 +190,7 @@ public class FolderInformation {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
 			}
 
-			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
+			String rueckgabe = getImagesDirectory() + origOrdner + SafeFile.separator;
 
 			return rueckgabe;
 		} else {
@@ -199,39 +199,39 @@ public class FolderInformation {
 	}
 
 	public String getImagesDirectory() {
-		String pfad = getProcessDataDirectory() + "images" + File.separator;
+		String pfad = getProcessDataDirectory() + "images" + SafeFile.separator;
 
 		return pfad;
 	}
 
 	public String getProcessDataDirectory() {
-		String pfad = metadataPath + this.id + File.separator;
+		String pfad = metadataPath + this.id + SafeFile.separator;
 		pfad = pfad.replaceAll(" ", "__");
 		return pfad;
 	}
 
 	public String getOcrDirectory() {
-		return getProcessDataDirectory() + "ocr" + File.separator;
+		return getProcessDataDirectory() + "ocr" + SafeFile.separator;
 	}
 
 	public String getTxtDirectory() {
-		return getOcrDirectory() + this.title + "_txt" + File.separator;
+		return getOcrDirectory() + this.title + "_txt" + SafeFile.separator;
 	}
 
 	public String getWordDirectory() {
-		return getOcrDirectory() + this.title + "_wc" + File.separator;
+		return getOcrDirectory() + this.title + "_wc" + SafeFile.separator;
 	}
 
 	public String getPdfDirectory() {
-		return getOcrDirectory() + this.title + "_pdf" + File.separator;
+		return getOcrDirectory() + this.title + "_pdf" + SafeFile.separator;
 	}
 
 	public String getAltoDirectory() {
-		return getOcrDirectory() + this.title + "_alto" + File.separator;
+		return getOcrDirectory() + this.title + "_alto" + SafeFile.separator;
 	}
 
 	public String getImportDirectory() {
-		return getProcessDataDirectory() + "import" + File.separator;
+		return getProcessDataDirectory() + "import" + SafeFile.separator;
 	}
 
 	public String getMetadataFilePath() {
@@ -239,22 +239,22 @@ public class FolderInformation {
 	}
 
 	public String getSourceDirectory() {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(java.io.File dir, String name) {
 				return (name.endsWith("_" + "source"));
 			}
 		};
-		File sourceFolder = null;
+		SafeFile sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
 		if (verzeichnisse == null || verzeichnisse.length == 0) {
-			sourceFolder = new File(dir, title + "_source");
+			sourceFolder = new SafeFile(dir, title + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
 				sourceFolder.mkdir();
 			}
 		} else {
-			sourceFolder = new File(dir, verzeichnisse[0]);
+			sourceFolder = new SafeFile(dir, verzeichnisse[0]);
 		}
 
 		return sourceFolder.getAbsolutePath();
@@ -271,26 +271,26 @@ public class FolderInformation {
 		String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
 		String sourcepath = getSourceDirectory().replace("\\", "/");
 		String importpath = getImportDirectory().replace("\\", "/");
-		if (tifpath.endsWith(File.separator)) {
-			tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
+		if (tifpath.endsWith(SafeFile.separator)) {
+			tifpath = tifpath.substring(0, tifpath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (imagepath.endsWith(File.separator)) {
-			imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
+		if (imagepath.endsWith(SafeFile.separator)) {
+			imagepath = imagepath.substring(0, imagepath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (origpath.endsWith(File.separator)) {
-			origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
+		if (origpath.endsWith(SafeFile.separator)) {
+			origpath = origpath.substring(0, origpath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (processpath.endsWith(File.separator)) {
-			processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
+		if (processpath.endsWith(SafeFile.separator)) {
+			processpath = processpath.substring(0, processpath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (sourcepath.endsWith(File.separator)) {
-			sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
+		if (sourcepath.endsWith(SafeFile.separator)) {
+			sourcepath = sourcepath.substring(0, sourcepath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (ocrBasisPath.endsWith(File.separator)) {
-			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
+		if (ocrBasisPath.endsWith(SafeFile.separator)) {
+			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
-		if (ocrPlaintextPath.endsWith(File.separator)) {
-			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
+		if (ocrPlaintextPath.endsWith(SafeFile.separator)) {
+			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - SafeFile.separator.length()).replace("\\", "/");
 		}
 		if (SystemUtils.IS_OS_WINDOWS) {
 			answer.put("(tifurl)", "file:/" + tifpath);
@@ -336,16 +336,16 @@ public class FolderInformation {
 		String folder = this.getImagesTifDirectory(false);
 		folder = folder.substring(0, folder.lastIndexOf("_"));
 		folder = folder + "_" + methodName;
-		if (new File(folder).exists()) {
+		if (new SafeFile(folder).exists()) {
 			return folder;
 		}
 		return null;
 	}
 
 	public List<String> getDataFiles() throws InvalidImagesException {
-		File dir;
+		SafeFile dir;
 		try {
-			dir = new File(getImagesTifDirectory(true));
+			dir = new SafeFile(getImagesTifDirectory(true));
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}

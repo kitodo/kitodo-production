@@ -27,7 +27,7 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -351,7 +351,7 @@ public class Helper implements Serializable, Observer {
 			while (polyglot.hasNext()) {
 				Locale language = polyglot.next();
 				commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-				File file = new File(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
+				SafeFile file = new SafeFile(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
 				if (file.exists()) {
 					// Load local message bundle from file system only if file exists;
 					// if value not exists in bundle, use default bundle from classpath
@@ -463,7 +463,7 @@ public class Helper implements Serializable, Observer {
 	/**
 	 * Copies src file to dst file. If the dst file does not exist, it is created
 	 */
-	public static void copyFile(File src, File dst) throws IOException {
+	public static void copyFile(SafeFile src, SafeFile dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
 		FileUtils.copyFile(src, dst, false);
 	}
@@ -475,18 +475,18 @@ public class Helper implements Serializable, Observer {
 	 * @param dstDir the destination directory
 	 * @throws IOException
 	 */
-	public static void copyDir(File srcDir, File dstDir) throws IOException {
+	public static void copyDir(SafeFile srcDir, SafeFile dstDir) throws IOException {
 
-		File[] files = srcDir.listFiles();
+		SafeFile[] files = srcDir.listFiles();
 		if(!dstDir.exists()) {
 			dstDir.mkdirs();
 		}
-		for (File file : files) {
+		for (SafeFile file : files) {
 			if(file.isDirectory()) {
-				copyDir(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+				copyDir(file, new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
 			}
 			else {
-				copyFile(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+				copyFile(file, new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
 			}
 		}
 	}
@@ -495,14 +495,14 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
 	 * to delete and returns false.
 	 */
-	public static boolean deleteDir(File dir) {
+	public static boolean deleteDir(SafeFile dir) {
 		if (!dir.exists()) {
 			return true;
 		}
 		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
+				boolean success = deleteDir(new SafeFile(dir, children[i]));
 				if (!success) {
 					return false;
 				}
@@ -515,11 +515,11 @@ public class Helper implements Serializable, Observer {
 	/**
 	 * Deletes all files and subdirectories under dir. But not the dir itself
 	 */
-	public static boolean deleteInDir(File dir) {
+	public static boolean deleteInDir(SafeFile dir) {
 		if (dir.exists() && dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
+				boolean success = deleteDir(new SafeFile(dir, children[i]));
 				if (!success) {
 					return false;
 				}
@@ -531,12 +531,12 @@ public class Helper implements Serializable, Observer {
 	/**
 	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
-	public static boolean deleteDataInDir(File dir) {
+	public static boolean deleteDataInDir(SafeFile dir) {
 		if (dir.exists() && dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {
-					boolean success = deleteDir(new File(dir, children[i]));
+					boolean success = deleteDir(new SafeFile(dir, children[i]));
 					if (!success) {
 						return false;
 					}
@@ -550,7 +550,7 @@ public class Helper implements Serializable, Observer {
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
 	 */
 
-	public static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int goobipathlength, Element inRoot) throws IOException {
+	public static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot) throws IOException {
 		if (srcDir.isDirectory()) {
 			if (!dstDir.exists()) {
 				dstDir.mkdir();
@@ -558,7 +558,7 @@ public class Helper implements Serializable, Observer {
 			}
 			String[] children = srcDir.list();
 			for (int i = 0; i < children.length; i++) {
-				copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]), goobipathlength, inRoot);
+				copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]), goobipathlength, inRoot);
 			}
 		} else {
 			Long crc = CopyFile.start(srcDir, dstDir);
@@ -571,7 +571,7 @@ public class Helper implements Serializable, Observer {
 
 	public static final FilenameFilter imageNameFilter = new FilenameFilter() {
 		@Override
-		public boolean accept(File dir, String name) {
+		public boolean accept(java.io.File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
 
@@ -593,7 +593,7 @@ public class Helper implements Serializable, Observer {
 	public static final FilenameFilter dataFilter = new FilenameFilter() {
 
 		@Override
-		public boolean accept(File dir, String name) {
+		public boolean accept(java.io.File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
 			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
