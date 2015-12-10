@@ -111,7 +111,7 @@ public class CopyFile {
 				dstDir.mkdir();
 			}
 
-			String[] children = srcDir.list();
+			String[] children = FilesystemHelper.list(srcDir);
 			for (int i = 0; i < children.length; i++) {
 				copyDirectory(new File(srcDir, children[i]), new File(dstDir, children[i]));
 			}

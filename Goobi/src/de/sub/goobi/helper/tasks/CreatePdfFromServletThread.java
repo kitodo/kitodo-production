@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
@@ -132,7 +133,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				String url = "";
 				FilenameFilter filter = Helper.imageNameFilter;
 				File imagesDir = new File(this.getProzess().getImagesTifDirectory(true));
-				File[] meta = imagesDir.listFiles(filter);
+				File[] meta = FilesystemHelper.listFiles(imagesDir, filter);
 				ArrayList<String> filenames = new ArrayList<String>();
 				for (File data : meta) {
 					String file = "";

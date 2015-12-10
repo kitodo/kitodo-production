@@ -477,7 +477,7 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static void copyDir(File srcDir, File dstDir) throws IOException {
 
-		File[] files = srcDir.listFiles();
+		File[] files = FilesystemHelper.listFiles(srcDir);
 		if(!dstDir.exists()) {
 			dstDir.mkdirs();
 		}
@@ -500,7 +500,7 @@ public class Helper implements Serializable, Observer {
 			return true;
 		}
 		if (dir.isDirectory()) {
-			String[] children = dir.list();
+			String[] children = FilesystemHelper.list(dir);
 			for (int i = 0; i < children.length; i++) {
 				boolean success = deleteDir(new File(dir, children[i]));
 				if (!success) {
@@ -517,7 +517,7 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static boolean deleteInDir(File dir) {
 		if (dir.exists() && dir.isDirectory()) {
-			String[] children = dir.list();
+			String[] children = FilesystemHelper.list(dir);
 			for (int i = 0; i < children.length; i++) {
 				boolean success = deleteDir(new File(dir, children[i]));
 				if (!success) {
@@ -533,7 +533,7 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static boolean deleteDataInDir(File dir) {
 		if (dir.exists() && dir.isDirectory()) {
-			String[] children = dir.list();
+			String[] children = FilesystemHelper.list(dir);
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {
 					boolean success = deleteDir(new File(dir, children[i]));
@@ -556,7 +556,7 @@ public class Helper implements Serializable, Observer {
 				dstDir.mkdir();
 				dstDir.setLastModified(srcDir.lastModified());
 			}
-			String[] children = srcDir.list();
+			String[] children = FilesystemHelper.list(srcDir);
 			for (int i = 0; i < children.length; i++) {
 				copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]), goobipathlength, inRoot);
 			}

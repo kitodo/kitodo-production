@@ -405,7 +405,7 @@ public class Prozess implements Serializable {
 		if (tifOrdner.equals("") && useFallBack) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 			if (!suffix.equals("")) {
-				String[] folderList = dir.list();
+				String[] folderList = FilesystemHelper.list(dir);
 				for (String folder : folderList) {
 					if (folder.endsWith(suffix)) {
 						tifOrdner = folder;
@@ -421,7 +421,7 @@ public class Prozess implements Serializable {
 	                File tif = new File(tifOrdner);
 	                String[] files = tif.list();
 	                if (files == null || files.length == 0) {
-	                    String[] folderList = dir.list();
+	                    String[] folderList = FilesystemHelper.list(dir);
 	                    for (String folder : folderList) {
 	                        if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
 	                            tifOrdner = folder;
@@ -466,7 +466,7 @@ public class Prozess implements Serializable {
 		if (testMe.list() == null) {
 			return false;
 		}
-		if (testMe.exists() && testMe.list().length > 0) {
+		if (testMe.exists() && FilesystemHelper.list(testMe).length > 0) {
 			return true;
 		} else {
 			return false;
@@ -487,7 +487,7 @@ public class Prozess implements Serializable {
 			};
 
 			String origOrdner = "";
-			String[] verzeichnisse = dir.list(filterVerz);
+			String[] verzeichnisse = FilesystemHelper.list(dir, filterVerz);
 			for (int i = 0; i < verzeichnisse.length; i++) {
 				origOrdner = verzeichnisse[i];
 			}
@@ -495,7 +495,7 @@ public class Prozess implements Serializable {
 			if (origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					String[] folderList = dir.list();
+					String[] folderList = FilesystemHelper.list(dir);
 					for (String folder : folderList) {
 						if (folder.endsWith(suffix)) {
 							origOrdner = folder;
@@ -511,7 +511,7 @@ public class Prozess implements Serializable {
 					File tif = new File(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
-						String[] folderList = dir.list();
+						String[] folderList = FilesystemHelper.list(dir);
 						for (String folder : folderList) {
 							if (folder.endsWith(suffix)) {
 								origOrdner = folder;
@@ -1049,7 +1049,7 @@ public class Prozess implements Serializable {
 	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
 		File temporaryFile = new File(temporaryMetadataFilename);
 		File directoryPath = new File(temporaryFile.getParentFile().getPath());
-		for (File temporaryAnchorFile : directoryPath.listFiles()) {
+		for (File temporaryAnchorFile : FilesystemHelper.listFiles(directoryPath)) {
 			String temporaryAnchorFileName = temporaryAnchorFile.toString();
 			if (temporaryAnchorFile.isFile()
 					&& FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {

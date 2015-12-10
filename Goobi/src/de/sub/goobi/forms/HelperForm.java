@@ -46,6 +46,7 @@ import org.goobi.production.plugin.PluginLoader;
 import de.sub.goobi.beans.Docket;
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -226,7 +227,7 @@ public class HelperForm {
 			}
 		};
 
-		String[] dateien = cssDir.list(filter);
+		String[] dateien = FilesystemHelper.list(cssDir, filter);
 		for (String string : dateien) {
 			myList.add(new SelectItem("/css/" + string, string));
 		}
@@ -253,7 +254,7 @@ public class HelperForm {
 			}
 		};
 
-		String[] dateien = cssDir.list(filter);
+		String[] dateien = FilesystemHelper.list(cssDir, filter);
 		for (String string : dateien) {
 			if ((CSS_PATH + "/" + string).equals(cssFileName)) {
 				return cssFileName;

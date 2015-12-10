@@ -31,15 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -84,28 +76,14 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.beans.*;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.export.download.ExportPdf;
 import de.sub.goobi.export.download.Multipage;
 import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.GoobiScript;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.PropertyListObject;
-import de.sub.goobi.helper.WebDav;
+import de.sub.goobi.helper.*;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -248,7 +226,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							String imageDirectory = myProzess.getImagesDirectory();
 							File dir = new File(imageDirectory);
 							if (dir.exists() && dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
+								File[] subdirs = FilesystemHelper.listFiles(dir);
 								for (File imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
 										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
@@ -261,7 +239,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							String ocrDirectory = myProzess.getOcrDirectory();
 							File dir = new File(ocrDirectory);
 							if (dir.exists() && dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
+								File[] subdirs = FilesystemHelper.listFiles(dir);
 								for (File imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
 										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
@@ -1630,7 +1608,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		List<String> answer = new ArrayList<String>();
 		File folder = new File("xsltFolder");
 		if (folder.isDirectory() && folder.exists()) {
-			String[] files = folder.list();
+			String[] files = FilesystemHelper.list(folder);
 
 			for (String file : files) {
 				if (file.endsWith(".xslt") || file.endsWith(".xsl")) {

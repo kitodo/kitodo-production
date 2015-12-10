@@ -40,6 +40,7 @@ import java.util.Map;
 import org.apache.commons.lang.SystemUtils;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
@@ -81,7 +82,7 @@ public class FolderInformation {
 		if (tifOrdner.equals("") && useFallBack) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 			if (!suffix.equals("")) {
-				String[] folderList = dir.list();
+				String[] folderList = FilesystemHelper.list(dir);
 				for (String folder : folderList) {
 					if (folder.endsWith(suffix)) {
 						tifOrdner = folder;
@@ -96,7 +97,7 @@ public class FolderInformation {
 				File tif = new File(tifOrdner);
 				String[] files = tif.list();
 				if (files == null || files.length == 0) {
-					String[] folderList = dir.list();
+					String[] folderList = FilesystemHelper.list(dir);
 					for (String folder : folderList) {
 						if (folder.endsWith(suffix)) {
 							tifOrdner = folder;
@@ -131,7 +132,7 @@ public class FolderInformation {
 		if (testMe.list() == null) {
 			return false;
 		}
-		if (testMe.exists() && testMe.list().length > 0) {
+		if (testMe.exists() && FilesystemHelper.list(testMe).length > 0) {
 			return true;
 		} else {
 			return false;
@@ -152,7 +153,7 @@ public class FolderInformation {
 			};
 
 			String origOrdner = "";
-			String[] verzeichnisse = dir.list(filterVerz);
+			String[] verzeichnisse = FilesystemHelper.list(dir, filterVerz);
 			for (int i = 0; i < verzeichnisse.length; i++) {
 				origOrdner = verzeichnisse[i];
 			}
@@ -160,7 +161,7 @@ public class FolderInformation {
 			if (origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					String[] folderList = dir.list();
+					String[] folderList = FilesystemHelper.list(dir);
 					for (String folder : folderList) {
 						if (folder.endsWith(suffix)) {
 							origOrdner = folder;
@@ -175,7 +176,7 @@ public class FolderInformation {
 					File tif = new File(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
-						String[] folderList = dir.list();
+						String[] folderList = FilesystemHelper.list(dir);
 						for (String folder : folderList) {
 							if (folder.endsWith(suffix)) {
 								origOrdner = folder;

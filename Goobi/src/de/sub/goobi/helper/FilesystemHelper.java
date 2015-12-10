@@ -30,6 +30,7 @@ package de.sub.goobi.helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -102,6 +103,71 @@ public class FilesystemHelper {
 	}
 
 	/**
+	 * Returns the contents of the given directory, or an empty array if the
+	 * {@code list()} result is {@code null}. This implementation is helpful if
+	 * the result is to be looped over and in case of {@code null} the loop
+	 * should simply do nothing.
+	 * 
+	 * @param file
+	 *            directory to list
+	 * @return the {@code list()} result, or an empty array if {@code null}
+	 */
+	public static String[] list(File file) {
+		String[] result = file.list();
+		return result != null ? result : new String[0];
+	}
+
+	/**
+	 * Returns the contents of the given directory, or an empty array if the
+	 * {@code list()} result is {@code null}. This implementation is helpful if
+	 * the result is to be looped over and in case of {@code null} the loop
+	 * should simply do nothing.
+	 * 
+	 * @param file
+	 *            directory to list
+	 * @param filter
+	 *            filter to filter the list
+	 * @return the {@code list()} result, or an empty array if {@code null}
+	 */
+	public static String[] list(File file, FilenameFilter filter) {
+		String[] result = file.list(filter);
+		return result != null ? result : new String[0];
+	}
+
+	/**
+	 * Returns the contents of the given directory, or an empty array if the
+	 * {@code list()} result is {@code null}. This implementation is helpful if
+	 * the result is to be looped over and in case of {@code null} the loop
+	 * should simply do nothing.
+	 * 
+	 * @param file
+	 *            directory to list
+	 * @return the {@code list()} result, or an empty array if {@code null}
+	 */
+	public static File[] listFiles(File file) {
+		File[] result = file.listFiles();
+		return result != null ? result : new File[0];
+	}
+
+	/**
+	 * Returns the contents of the given directory, or an empty array if the
+	 * {@code list()} result is {@code null}. This implementation is helpful if
+	 * the result is to be looped over and in case of {@code null} the loop
+	 * should simply do nothing.
+	 * 
+	 * @param file
+	 *            directory to list
+	 * @param filter
+	 *            filter to filter the list
+	 * @return the {@code list()} result, or an empty array if {@code null}
+	 */
+	public static File[] listFiles(File file, FilenameFilter filter) {
+		File[] result = file.listFiles(filter);
+		return result != null ? result : new File[0];
+	
+	}
+
+	/**
 	 * This function implements file renaming. Renaming of files is full of mischief under Windows which unaccountably holds locks on files. Sometimes
 	 * running the JVM’s garbage collector puts things right.
 	 * 
@@ -165,7 +231,7 @@ public class FilesystemHelper {
 		}
 
 		if (millisWaited > 0) {
-			logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
+			logger.info("Rename finally succeeded after " + Integer.toString(millisWaited) + " milliseconds.");
 		}
 	}
 }

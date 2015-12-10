@@ -483,13 +483,13 @@ public class ExportDms extends ExportMets {
 		
 		// download sources
 		File sources = new File(myProzess.getSourceDirectory());
-		if (sources.exists() && sources.list().length > 0) {
+		if (sources.exists() && FilesystemHelper.list(sources).length > 0) {
 			File destination = new File(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
 			}
-			File[] dateien = sources.listFiles();
+			File[] dateien = FilesystemHelper.listFiles(sources);
 			for (int i = 0; i < dateien.length; i++) {
 				if(dateien[i].isFile()) {
 					if (exportDmsTask != null) {
@@ -504,15 +504,15 @@ public class ExportDms extends ExportMets {
 		
 		File ocr = new File(myProzess.getOcrDirectory());
 		if (ocr.exists()) {
-			File[] folder = ocr.listFiles();
+			File[] folder = FilesystemHelper.listFiles(ocr);
 			for (File dir : folder) {
-				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
+				if (dir.isDirectory() && FilesystemHelper.list(dir).length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
 					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
-					File[] files = dir.listFiles();
+					File[] files = FilesystemHelper.listFiles(dir);
 					for (int i = 0; i < files.length; i++) {
 						if(files[i].isFile()) {
 							if (exportDmsTask != null) {
@@ -544,7 +544,7 @@ public class ExportDms extends ExportMets {
 		 * -------------------------------- jetzt die Ausgangsordner in die
 		 * Zielordner kopieren --------------------------------
 		 */
-		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
+		if (tifOrdner.exists() && FilesystemHelper.list(tifOrdner).length > 0) {
 			File zielTif = new File(benutzerHome + File.separator + atsPpnBand
 					+ ordnerEndung);
 
@@ -583,7 +583,7 @@ public class ExportDms extends ExportMets {
 
 			/* jetzt den eigentlichen Kopiervorgang */
 
-			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
+			File[] dateien = FilesystemHelper.listFiles(tifOrdner, Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
 				if (exportDmsTask != null) {
 					exportDmsTask.setWorkDetail(dateien[i].getName());

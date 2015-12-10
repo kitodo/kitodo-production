@@ -56,6 +56,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import de.schlichtherle.io.FileInputStream;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -323,7 +324,7 @@ public class FileManipulation {
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         try {
-            File[] filesInFolder = new File(metadataBean.getMyProzess().getImagesDirectory() + currentFolder).listFiles();
+            File[] filesInFolder = FilesystemHelper.listFiles(new File(metadataBean.getMyProzess().getImagesDirectory() + currentFolder));
             for (File currentFile : filesInFolder) {
                 String currentFileName = currentFile.getName();
                 String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
@@ -430,7 +431,7 @@ public class FileManipulation {
             String processTitle = metadataBean.getMyProzess().getTitel();
             for (String folder : metadataBean.getAllTifFolders()) {
                 try {
-                    File[] filesInFolder = new File(metadataBean.getMyProzess().getImagesDirectory() + folder).listFiles();
+                    File[] filesInFolder = FilesystemHelper.listFiles(new File(metadataBean.getMyProzess().getImagesDirectory() + folder));
                     for (File currentFile : filesInFolder) {
 
                         String filenameInFolder = currentFile.getName();
@@ -514,7 +515,7 @@ public class FileManipulation {
 
         allImportFolder = new ArrayList<String>();
         if (fileuploadFolder.exists() && fileuploadFolder.isDirectory()) {
-            allImportFolder.addAll(Arrays.asList(fileuploadFolder.list(directoryFilter)));
+            allImportFolder.addAll(Arrays.asList(FilesystemHelper.list(fileuploadFolder, directoryFilter)));
         }
         return allImportFolder;
     }
@@ -549,7 +550,7 @@ public class FileManipulation {
         List<String> importedFilenames = new ArrayList<String>();
         for (String importName : selectedFiles) {
             File importfolder = new File(tempDirectory + "fileupload" + File.separator + importName);
-            File[] subfolderList = importfolder.listFiles();
+            File[] subfolderList = FilesystemHelper.listFiles(importfolder);
             for (File subfolder : subfolderList) {
 
                 if (useMasterFolder) {
@@ -561,7 +562,7 @@ public class FileManipulation {
                             if (!masterDirectory.exists()) {
                                 masterDirectory.mkdir();
                             }
-                            File[] objectInFolder = subfolder.listFiles();
+                            File[] objectInFolder = FilesystemHelper.listFiles(subfolder);
                             List<File> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
                            for (File object : sortedList) {
@@ -584,7 +585,7 @@ public class FileManipulation {
                             if (folderName != null) {
                                 try {
                                     File directory = new File(folderName);
-                                    File[] objectInFolder = subfolder.listFiles();
+                                    File[] objectInFolder = FilesystemHelper.listFiles(subfolder);
                                     List<File> sortedList = Arrays.asList(objectInFolder);
                                     Collections.sort(sortedList);
                                     for (File object : sortedList) {
@@ -616,7 +617,7 @@ public class FileManipulation {
                         String folderName = currentProcess.getMethodFromName(folderSuffix);
                         if (folderName != null) {
                             File directory = new File(folderName);
-                            File[] objectInFolder = subfolder.listFiles();
+                            File[] objectInFolder = FilesystemHelper.listFiles(subfolder);
                             List<File> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
                             for (File object : sortedList) {
