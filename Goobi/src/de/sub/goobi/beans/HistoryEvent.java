@@ -254,4 +254,15 @@ public class HistoryEvent implements Serializable {
 
 		return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + getHistoryType().hashCode();
+		result = prime * result + ((numericValue == null) ? 0 : numericValue.hashCode());
+		result = prime * result + ((stringValue == null) ? 0 : stringValue.hashCode());
+		return result;
+	}
 }
