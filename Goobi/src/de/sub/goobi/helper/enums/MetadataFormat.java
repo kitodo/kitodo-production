@@ -31,6 +31,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.XStream;
 
+@SuppressWarnings("deprecation")
 public enum MetadataFormat {
 /*
  *
