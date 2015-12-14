@@ -37,6 +37,7 @@
     <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
     <property name="build.javac.target" value="1.5"/>
     <property name="build.javac.source" value="1.5"/>
+    <property name="build.javac.args" value="-Xpkginfo:nonempty"/>
     <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
     <property name="test.report.dir" value="${build.dir}/test-reports/"/>
     
@@ -241,6 +242,7 @@
 			debug="true"
 			debuglevel="lines,vars,source"
 			classpathref="compile.classpath">
+            <compilerarg value="${build.javac.args}" />
         </javac>
     </target>
 
@@ -253,6 +255,7 @@
                debug="true"
                debuglevel="lines,vars,source"
                classpathref="test.classpath">
+            <compilerarg value="${build.javac.args}"/>
         </javac>
     </target>
 
@@ -278,6 +281,7 @@
 				<pathelement location="${build.classes}"/>
 				<path refid="compile.classpath"/>
 			</classpath>
+			<compilerarg value="${build.javac.args}"/>
 		</javac>
 	</target>
 	
@@ -293,6 +297,7 @@
 				<pathelement location="${build.classes}"/>
 				<path refid="compile.classpath"/>
 			</classpath>
+			<compilerarg value="${build.javac.args}"/>
 		</javac>
 	</target>
 	
