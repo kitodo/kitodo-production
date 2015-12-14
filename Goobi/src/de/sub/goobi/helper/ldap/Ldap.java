@@ -565,6 +565,9 @@ public class Ldap {
 				ks.setCertificateEntry("PDC", servercert);
 
 				ks.store(ksos, password);
+
+				certFile2.close();
+				cacertFile.close();
 				ksos.close();
 			} catch (Exception e) {
 				myLogger.error(e);
