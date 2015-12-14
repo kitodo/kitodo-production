@@ -81,7 +81,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class Cell {
+	public static class Cell {
 		/**
 		 * The field date holds the date that this cell represents in the course
 		 * of time.
@@ -486,7 +486,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class IssueOption {
+	public static class IssueOption {
 		/**
 		 * The field colour holds the colour representative for optically
 		 * distinguishing the given issue
