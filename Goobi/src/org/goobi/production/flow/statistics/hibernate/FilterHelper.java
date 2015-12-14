@@ -576,7 +576,7 @@ public class FilterHelper {
 
 		// to collect and return feedback about erroneous use of filter
 		// expressions
-		String message = new String("");
+		String message = "";
 
 		StrTokenizer tokenizer = new StrTokenizer(inFilter, ' ', '\"');
 
