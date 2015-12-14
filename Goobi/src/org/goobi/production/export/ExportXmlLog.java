@@ -428,7 +428,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 */
 
 	public void XmlTransformation(OutputStream out, Document doc, String filename) throws XSLTransformException, IOException {
-		Document docTrans = new Document();
+		Document docTrans;
 		if (filename != null && filename.equals("")) {
 			XSLTransformer transformer;
 			transformer = new XSLTransformer(filename);
