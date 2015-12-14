@@ -88,25 +88,24 @@ class Catalogue {
 	 */
 	private void parseIktList(String iktList) {
 		InputSource iktSource = new InputSource(new StringReader(iktList));
-		DocumentBuilder docBuilder = null;
-		Document document = null;
 		try {
-			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder docBuilder =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			//get xml-docment
-			document = docBuilder.parse(iktSource);
+			Document document = docBuilder.parse(iktSource);
+
+			//get all keys
+			NodeList keys = document.getElementsByTagName("KEY");
+
+			//go through all keys and put them into their hashmap
+			for (int i = 0; i < keys.getLength(); i++) {
+				picaToKey.put(((Element) keys.item(i)).getAttribute("mnemonic"),
+					keys.item(i).getFirstChild().getNodeValue());
+				picaToDescription.put(((Element) keys.item(i)).getAttribute("mnemonic"),
+					((Element) keys.item(i)).getAttribute("description").toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		//get all keys
-		NodeList keys = document.getElementsByTagName("KEY");
-
-		//go through all keys and put them into their hashmap
-		for (int i = 0; i < keys.getLength(); i++) {
-			picaToKey.put(((Element) keys.item(i)).getAttribute("mnemonic"), keys.item(i).getFirstChild()
-					.getNodeValue());
-			picaToDescription.put(((Element) keys.item(i)).getAttribute("mnemonic"), ((Element) keys.item(i))
-					.getAttribute("description").toString());
 		}
 	}
 
