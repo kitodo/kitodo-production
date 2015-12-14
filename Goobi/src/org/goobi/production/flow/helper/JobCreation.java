@@ -67,11 +67,11 @@ public class JobCreation {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
             File imagesFolder = new File(basepath);
-            if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+            if (imagesFolder.isDirectory()) {
                 deleteDirectory(imagesFolder);
             } else {
                 imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
-                if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+                if (imagesFolder.isDirectory()) {
                     deleteDirectory(imagesFolder);
                 }
             }
@@ -158,7 +158,7 @@ public class JobCreation {
             if (!imagesFolder.exists()) {
                 imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
             }
-            if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+            if (imagesFolder.isDirectory()) {
                 List<String> imageDir = new ArrayList<String>();
 
                 String[] files = imagesFolder.list();
@@ -210,7 +210,7 @@ public class JobCreation {
         else {
             // new folder structure for process imports
             File importFolder = new File(basepath);
-            if (importFolder.exists() && importFolder.isDirectory()) {
+            if (importFolder.isDirectory()) {
                 File[] folderList = importFolder.listFiles();
                 for (File directory : folderList) {
                     if (directory.getName().contains("images")) {

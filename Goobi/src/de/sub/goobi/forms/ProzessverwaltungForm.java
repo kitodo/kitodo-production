@@ -247,7 +247,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							// renaming image directories
 							String imageDirectory = myProzess.getImagesDirectory();
 							File dir = new File(imageDirectory);
-							if (dir.exists() && dir.isDirectory()) {
+							if (dir.isDirectory()) {
 								File[] subdirs = dir.listFiles();
 								for (File imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
@@ -260,7 +260,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							// renaming ocr directories
 							String ocrDirectory = myProzess.getOcrDirectory();
 							File dir = new File(ocrDirectory);
-							if (dir.exists() && dir.isDirectory()) {
+							if (dir.isDirectory()) {
 								File[] subdirs = dir.listFiles();
 								for (File imagedir : subdirs) {
 									if (imagedir.isDirectory()) {

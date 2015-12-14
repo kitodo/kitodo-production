@@ -511,7 +511,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself
 	 */
 	public static boolean deleteInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				boolean success = deleteDir(new File(dir, children[i]));
@@ -527,7 +527,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
 	public static boolean deleteDataInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {

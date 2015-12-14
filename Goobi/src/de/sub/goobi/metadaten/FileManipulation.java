@@ -513,7 +513,7 @@ public class FileManipulation {
         File fileuploadFolder = new File(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
-        if (fileuploadFolder.exists() && fileuploadFolder.isDirectory()) {
+        if (fileuploadFolder.isDirectory()) {
             allImportFolder.addAll(Arrays.asList(fileuploadFolder.list(directoryFilter)));
         }
         return allImportFolder;
@@ -527,7 +527,7 @@ public class FileManipulation {
         @Override
         public boolean accept(final File dir, final String name) {
             File toTest = new File(dir, name);
-            return toTest.exists() && toTest.isDirectory();
+            return toTest.isDirectory();
         }
     };
 
