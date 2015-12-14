@@ -395,7 +395,7 @@ public class MySQLHelper {
 			String propNames = "Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate, BenutzerID";
 			Object[] param = { "_filter", filterstring, false, 5, null, datetime, userId };
 			String sql = "INSERT INTO " + "benutzereigenschaften" + " (" + propNames + ") VALUES ( ?, ?,? ,? ,? ,?,? )";
-			logger.debug(sql.toString() + ", " + Arrays.toString(param));
+			logger.debug(sql + ", " + Arrays.toString(param));
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
@@ -408,7 +408,7 @@ public class MySQLHelper {
 			QueryRunner run = new QueryRunner();
 			Object[] param = { userId, filterstring };
 			String sql = "DELETE FROM benutzereigenschaften WHERE Titel = '_filter' AND BenutzerID = ? AND Wert = ?";
-			logger.debug(sql.toString() + ", " + Arrays.toString(param));
+			logger.debug(sql + ", " + Arrays.toString(param));
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
