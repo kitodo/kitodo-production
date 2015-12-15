@@ -45,6 +45,7 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -166,7 +167,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 		long size = 0;
 		for (File f : list) {
 			if (f.isDirectory()) {
-				File[] subdir = f.listFiles();
+				File[] subdir = FilesystemHelper.listFiles(f);
 				for (File sub : subdir) {
 					size += sub.length();
 				}
@@ -187,7 +188,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 							+ File.separator);
 					List<String> imageDir = new ArrayList<String>();
 					if (images.isDirectory()) {
-						String[] files = images.list();
+						String[] files = FilesystemHelper.list(images);
 						for (int i = 0; i < files.length; i++) {
 							imageDir.add(files[i]);
 						}
@@ -214,7 +215,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 							+ File.separator);
 					List<String> imageDir = new ArrayList<String>();
 					if (images.isDirectory()) {
-						String[] files = images.list();
+						String[] files = FilesystemHelper.list(images);
 						for (int i = 0; i < files.length; i++) {
 							imageDir.add(files[i]);
 						}
@@ -262,7 +263,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 								+ File.separator);
 						List<String> imageDir = new ArrayList<String>();
 						if (images.isDirectory()) {
-							String[] files = images.list();
+							String[] files = FilesystemHelper.list(images);
 							for (int i = 0; i < files.length; i++) {
 								imageDir.add(files[i]);
 							}

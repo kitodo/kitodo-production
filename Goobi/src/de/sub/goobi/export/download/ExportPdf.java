@@ -54,6 +54,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -137,7 +138,7 @@ public class ExportPdf extends ExportMets {
 					String url = "";
 					FilenameFilter filter = new FileListFilter("\\d*\\.tif");
 					File imagesDir = new File(myProzess.getImagesTifDirectory(true));
-					File[] meta = imagesDir.listFiles(filter);
+					File[] meta = FilesystemHelper.listFiles(imagesDir, filter);
 					ArrayList<String> filenames = new ArrayList<String>();
 					for (File data : meta) {
 						String file = "";

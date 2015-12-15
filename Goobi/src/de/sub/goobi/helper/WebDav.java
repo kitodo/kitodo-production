@@ -266,7 +266,7 @@ public class WebDav implements Serializable {
 					return name.endsWith("]");
 				}
 			};
-			return benutzerHome.list(filter).length;
+			return FilesystemHelper.list(benutzerHome, filter).length;
 		} catch (Exception e) {
 			myLogger.error(e);
 			return 0;

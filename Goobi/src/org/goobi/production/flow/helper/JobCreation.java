@@ -42,6 +42,7 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -161,7 +162,7 @@ public class JobCreation {
             if (imagesFolder.exists() && imagesFolder.isDirectory()) {
                 List<String> imageDir = new ArrayList<String>();
 
-                String[] files = imagesFolder.list();
+                String[] files = FilesystemHelper.list(imagesFolder);
                 for (int i = 0; i < files.length; i++) {
                     imageDir.add(files[i]);
                 }
@@ -211,13 +212,13 @@ public class JobCreation {
             // new folder structure for process imports
             File importFolder = new File(basepath);
             if (importFolder.exists() && importFolder.isDirectory()) {
-                File[] folderList = importFolder.listFiles();
+                File[] folderList = FilesystemHelper.listFiles(importFolder);
                 for (File directory : folderList) {
                     if (directory.getName().contains("images")) {
-                        File[] imageList = directory.listFiles();
+                        File[] imageList = FilesystemHelper.listFiles(directory);
                         for (File imagedir : imageList) {
                             if (imagedir.isDirectory()) {
-                                for (File file : imagedir.listFiles()) {
+                                for (File file : FilesystemHelper.listFiles(imagedir)) {
                                     FileUtils.moveFile(file, new File(p.getImagesDirectory() + imagedir.getName(), file.getName()));
                                 }
                             } else {
@@ -229,7 +230,7 @@ public class JobCreation {
                         if (!ocr.exists()) {
                             ocr.mkdir();
                         }
-                        File[] ocrList = directory.listFiles();
+                        File[] ocrList = FilesystemHelper.listFiles(directory);
                         for (File ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
                                 FileUtils.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
@@ -242,7 +243,7 @@ public class JobCreation {
                         if (!i.exists()) {
                             i.mkdir();
                         }
-                        File[] importList = directory.listFiles();
+                        File[] importList = FilesystemHelper.listFiles(directory);
                         for (File importdir : importList) {
                             if (importdir.isDirectory()) {
                                 FileUtils.moveDirectory(importdir, new File(i, importdir.getName()));

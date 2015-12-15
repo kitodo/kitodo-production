@@ -72,12 +72,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
+import de.sub.goobi.helper.*;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
@@ -1591,7 +1586,7 @@ public class Metadaten {
 			}
 		};
 
-		String[] verzeichnisse = dir.list(filterVerz);
+		String[] verzeichnisse = FilesystemHelper.list(dir, filterVerz);
 		for (int i = 0; i < verzeichnisse.length; i++) {
 			this.allTifFolders.add(verzeichnisse[i]);
 		}
@@ -2898,7 +2893,7 @@ public class Metadaten {
             try {
                 File ocr = new File(myProzess.getOcrDirectory());
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
+                    File[] allOcrFolder = FilesystemHelper.listFiles(ocr);
                     for (File folder : allOcrFolder) {
                         File filename = new File(folder, imagename);
                         File newFileName = new File(folder, imagename + "_bak");
@@ -2930,7 +2925,7 @@ public class Metadaten {
             try {
                 File ocr = new File(myProzess.getOcrDirectory());
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
+                    File[] allOcrFolder = FilesystemHelper.listFiles(ocr);
                     for (File folder : allOcrFolder) {
                         File fileToSort = new File(folder, imagename);
                         String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
@@ -2960,7 +2955,7 @@ public class Metadaten {
             // TODO check what happens with .tar.gz
             String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
             for (String folder : allTifFolders) {
-                File[] filesInFolder = new File(myProzess.getImagesDirectory() + folder).listFiles();
+                File[] filesInFolder = FilesystemHelper.listFiles(new File(myProzess.getImagesDirectory() + folder));
                 for (File currentFile : filesInFolder) {
                     String filename = currentFile.getName();
                     String filenamePrefix = filename.replace(getFileExtension(filename), "");
@@ -2972,10 +2967,10 @@ public class Metadaten {
 
             File ocr = new File(myProzess.getOcrDirectory());
             if (ocr.exists()) {
-                File[] folder = ocr.listFiles();
+                File[] folder = FilesystemHelper.listFiles(ocr);
                 for (File dir : folder) {
-                    if (dir.isDirectory() && dir.list().length > 0) {
-                        File[] filesInFolder = dir.listFiles();
+                    if (dir.isDirectory() && FilesystemHelper.list(dir).length > 0) {
+                        File[] filesInFolder = FilesystemHelper.listFiles(dir);
                         for (File currentFile : filesInFolder) {
                             String filename = currentFile.getName();
                             String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));

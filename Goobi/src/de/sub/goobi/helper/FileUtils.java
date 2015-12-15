@@ -54,12 +54,12 @@ public class FileUtils {
 			/* --------------------------------
 			 * die Images zählen
 			 * --------------------------------*/
-			anzahl = inDir.list(Helper.imageNameFilter).length;
+			anzahl = FilesystemHelper.list(inDir, Helper.imageNameFilter).length;
 
 			/* --------------------------------
 			 * die Unterverzeichnisse durchlaufen
 			 * --------------------------------*/
-			String[] children = inDir.list();
+			String[] children = FilesystemHelper.list(inDir);
 			for (int i = 0; i < children.length; i++) {
 				anzahl += getNumberOfFiles(new File(inDir, children[i]));
 				}
