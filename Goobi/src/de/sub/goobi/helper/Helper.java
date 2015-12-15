@@ -465,7 +465,7 @@ public class Helper implements Serializable, Observer {
 	 */
 	public static void copyFile(SafeFile src, SafeFile dst) throws IOException {
 		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
-		FileUtils.copyFile(src, dst, false);
+		FileUtils.copyFile(src.toFile(), dst.toFile(), false);
 	}
 
 	/**

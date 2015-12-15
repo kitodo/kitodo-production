@@ -28,6 +28,8 @@ package de.sub.goobi.persistence.apache;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -113,8 +115,8 @@ public class FolderInformation {
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
 
-		if (!rueckgabe.endsWith(SafeFile.separator)) {
-			rueckgabe += SafeFile.separator;
+		if (!rueckgabe.endsWith(File.separator)) {
+			rueckgabe += File.separator;
 		}
 
 		return rueckgabe;
@@ -190,7 +192,7 @@ public class FolderInformation {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
 			}
 
-			String rueckgabe = getImagesDirectory() + origOrdner + SafeFile.separator;
+			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 
 			return rueckgabe;
 		} else {
@@ -199,39 +201,39 @@ public class FolderInformation {
 	}
 
 	public String getImagesDirectory() {
-		String pfad = getProcessDataDirectory() + "images" + SafeFile.separator;
+		String pfad = getProcessDataDirectory() + "images" + File.separator;
 
 		return pfad;
 	}
 
 	public String getProcessDataDirectory() {
-		String pfad = metadataPath + this.id + SafeFile.separator;
+		String pfad = metadataPath + this.id + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
 		return pfad;
 	}
 
 	public String getOcrDirectory() {
-		return getProcessDataDirectory() + "ocr" + SafeFile.separator;
+		return getProcessDataDirectory() + "ocr" + File.separator;
 	}
 
 	public String getTxtDirectory() {
-		return getOcrDirectory() + this.title + "_txt" + SafeFile.separator;
+		return getOcrDirectory() + this.title + "_txt" + File.separator;
 	}
 
 	public String getWordDirectory() {
-		return getOcrDirectory() + this.title + "_wc" + SafeFile.separator;
+		return getOcrDirectory() + this.title + "_wc" + File.separator;
 	}
 
 	public String getPdfDirectory() {
-		return getOcrDirectory() + this.title + "_pdf" + SafeFile.separator;
+		return getOcrDirectory() + this.title + "_pdf" + File.separator;
 	}
 
 	public String getAltoDirectory() {
-		return getOcrDirectory() + this.title + "_alto" + SafeFile.separator;
+		return getOcrDirectory() + this.title + "_alto" + File.separator;
 	}
 
 	public String getImportDirectory() {
-		return getProcessDataDirectory() + "import" + SafeFile.separator;
+		return getProcessDataDirectory() + "import" + File.separator;
 	}
 
 	public String getMetadataFilePath() {
@@ -271,26 +273,26 @@ public class FolderInformation {
 		String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
 		String sourcepath = getSourceDirectory().replace("\\", "/");
 		String importpath = getImportDirectory().replace("\\", "/");
-		if (tifpath.endsWith(SafeFile.separator)) {
-			tifpath = tifpath.substring(0, tifpath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (tifpath.endsWith(File.separator)) {
+			tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (imagepath.endsWith(SafeFile.separator)) {
-			imagepath = imagepath.substring(0, imagepath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (imagepath.endsWith(File.separator)) {
+			imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (origpath.endsWith(SafeFile.separator)) {
-			origpath = origpath.substring(0, origpath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (origpath.endsWith(File.separator)) {
+			origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (processpath.endsWith(SafeFile.separator)) {
-			processpath = processpath.substring(0, processpath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (processpath.endsWith(File.separator)) {
+			processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (sourcepath.endsWith(SafeFile.separator)) {
-			sourcepath = sourcepath.substring(0, sourcepath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (sourcepath.endsWith(File.separator)) {
+			sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (ocrBasisPath.endsWith(SafeFile.separator)) {
-			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (ocrBasisPath.endsWith(File.separator)) {
+			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
 		}
-		if (ocrPlaintextPath.endsWith(SafeFile.separator)) {
-			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - SafeFile.separator.length()).replace("\\", "/");
+		if (ocrPlaintextPath.endsWith(File.separator)) {
+			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
 		}
 		if (SystemUtils.IS_OS_WINDOWS) {
 			answer.put("(tifurl)", "file:/" + tifpath);

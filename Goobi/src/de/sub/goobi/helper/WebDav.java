@@ -28,6 +28,8 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 import java.io.BufferedWriter;
+import java.io.File;
+
 import org.goobi.io.SafeFile;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -145,7 +147,7 @@ public class WebDav implements Serializable {
 
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer.isMitMassendownload()) {
-			nach += myProzess.getProjekt().getTitel() + SafeFile.separator;
+			nach += myProzess.getProjekt().getTitel() + File.separator;
 			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
@@ -201,7 +203,7 @@ public class WebDav implements Serializable {
 		String processLinkName = myProzess.getTitel() + "__[" + myProzess.getId() + "]";
 		String nach = userHome;
 		if (aktuellerBenutzer.isMitMassendownload() && myProzess.getProjekt() != null) {
-			nach += myProzess.getProjekt().getTitel() + SafeFile.separator;
+			nach += myProzess.getProjekt().getTitel() + File.separator;
 		}
 		nach += processLinkName;
 

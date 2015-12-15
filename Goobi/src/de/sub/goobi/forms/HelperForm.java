@@ -28,6 +28,8 @@ package de.sub.goobi.forms;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -217,7 +219,7 @@ public class HelperForm {
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/css") + SafeFile.separator;
+		String filename = session.getServletContext().getRealPath("/css") + File.separator;
 		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
@@ -244,7 +246,7 @@ public class HelperForm {
 	public String getCssLinkIfExists(String cssFileName) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath(CSS_PATH) + SafeFile.separator;
+		String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
 		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override

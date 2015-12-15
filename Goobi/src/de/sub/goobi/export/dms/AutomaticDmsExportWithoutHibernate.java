@@ -28,6 +28,8 @@ package de.sub.goobi.export.dms;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -202,7 +204,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 		/* ggf. noch einen Vorgangsordner anlegen */
 		if (this.project.isDmsImportCreateProcessFolder()) {
-			benutzerHome = new SafeFile(benutzerHome + SafeFile.separator + process.getTitle());
+			benutzerHome = new SafeFile(benutzerHome + File.separator + process.getTitle());
 			zielVerzeichnis = benutzerHome.getAbsolutePath();
 			/* alte Import-Ordner löschen */
 			if (!Helper.deleteDir(benutzerHome)) {
@@ -210,13 +212,13 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				return false;
 			}
 			/* alte Success-Ordner löschen */
-			SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + SafeFile.separator + process.getTitle());
+			SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
 			if (!Helper.deleteDir(successFile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Success folder could not be cleared");
 				return false;
 			}
 			/* alte Error-Ordner löschen */
-			SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath() + SafeFile.separator + process.getTitle());
+			SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
 			if (!Helper.deleteDir(errorfile)) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Error folder could not be cleared");
 				return false;
@@ -264,15 +266,15 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			}
 			if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
-				writeMetsFile(process, benutzerHome + SafeFile.separator + atsPpnBand + ".xml", gdzfile, false);
+				writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				/* ...wenn nicht, nur ein Fileformat schreiben. */
-				gdzfile.write(benutzerHome + SafeFile.separator + atsPpnBand + ".xml");
+				gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
 			}
 
 			/* ggf. sollen im Export mets und rdf geschrieben werden */
 			if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-				writeMetsFile(process, benutzerHome + SafeFile.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+				writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
 			}
 
 			Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
@@ -282,7 +284,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				
 				/* Success-Ordner wieder löschen */
 				if (this.project.isDmsImportCreateProcessFolder()) {
-					SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + SafeFile.separator + process.getTitle());
+					SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
 					Helper.deleteDir(successFile);
 				}
 			}
@@ -321,7 +323,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		// download sources
 		SafeFile sources = new SafeFile(fi.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
-			SafeFile destination = new SafeFile(benutzerHome + SafeFile.separator
+			SafeFile destination = new SafeFile(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
@@ -329,7 +331,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			SafeFile[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
 				if(dateien[i].isFile()) {
-					SafeFile meinZiel = new SafeFile(destination + SafeFile.separator
+					SafeFile meinZiel = new SafeFile(destination + File.separator
 							+ dateien[i].getName());
 					Helper.copyFile(dateien[i], meinZiel);
 				}
@@ -342,14 +344,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			for (SafeFile dir : folder) {
 				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					SafeFile destination = new SafeFile(benutzerHome + SafeFile.separator + atsPpnBand + suffix);
+					SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
 					SafeFile[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
 						if(files[i].isFile()) {
-							SafeFile target = new SafeFile(destination + SafeFile.separator + files[i].getName());
+							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
 							Helper.copyFile(files[i], target);
 						}
 					}
@@ -371,7 +373,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		 * Zielordner kopieren --------------------------------
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-			SafeFile zielTif = new SafeFile(benutzerHome + SafeFile.separator + atsPpnBand + ordnerEndung);
+			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
 			if (this.project.isUseDmsImport()) {
@@ -403,7 +405,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					task.setWorkDetail(dateien[i].getName());
 				}
 				if(dateien[i].isFile()) {
-					SafeFile meinZiel = new SafeFile(zielTif + SafeFile.separator + dateien[i].getName());
+					SafeFile meinZiel = new SafeFile(zielTif + File.separator + dateien[i].getName());
 					Helper.copyFile(dateien[i], meinZiel);
 				}
 				if (task != null) {

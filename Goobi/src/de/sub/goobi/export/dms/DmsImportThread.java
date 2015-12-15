@@ -28,6 +28,8 @@ package de.sub.goobi.export.dms;
  * exception statement from your version.
  */
 import java.io.BufferedReader;
+import java.io.File;
+
 import org.goobi.io.SafeFile;
 import java.io.FileReader;
 
@@ -62,7 +64,7 @@ public class DmsImportThread extends Thread {
 		this.fileXml = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
 		this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
 		if (inProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + SafeFile.separator + inAts + ".xml");
+			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
 		}
 
 		this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
@@ -86,7 +88,7 @@ public class DmsImportThread extends Thread {
 						/* die Logdatei mit der Fehlerbeschreibung einlesen */
 						StringBuffer myBuf = new StringBuffer();
 						myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-						BufferedReader r = new BufferedReader(new FileReader(this.fileError));
+						BufferedReader r = new BufferedReader(new FileReader(this.fileError.toFile()));
 						String aLine = r.readLine();
 						while (aLine != null) {
 							myBuf.append(aLine);

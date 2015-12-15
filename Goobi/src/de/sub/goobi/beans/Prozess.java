@@ -28,6 +28,8 @@ package de.sub.goobi.beans;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -438,8 +440,8 @@ public class Prozess implements Serializable {
 
 		String rueckgabe = getImagesDirectory() + tifOrdner;
 
-		if (!rueckgabe.endsWith(SafeFile.separator)) {
-			rueckgabe += SafeFile.separator;
+		if (!rueckgabe.endsWith(File.separator)) {
+			rueckgabe += File.separator;
 		}
 		if (!ConfigMain.getBooleanParameter("useOrigFolder", true) && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
 			FilesystemHelper.createDirectory(rueckgabe);
@@ -525,7 +527,7 @@ public class Prozess implements Serializable {
 			if (origOrdner.equals("")) {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
-			String rueckgabe = getImagesDirectory() + origOrdner + SafeFile.separator;
+			String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 			if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false) && this.getSortHelperStatus() != "100000000") {
 				FilesystemHelper.createDirectory(rueckgabe);
 			}
@@ -536,7 +538,7 @@ public class Prozess implements Serializable {
 	}
 
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
-		String pfad = getProcessDataDirectory() + "images" + SafeFile.separator;
+		String pfad = getProcessDataDirectory() + "images" + File.separator;
 		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
@@ -585,31 +587,31 @@ public class Prozess implements Serializable {
 	}
 
 	public String getOcrDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getProcessDataDirectory() + "ocr" + SafeFile.separator;
+		return getProcessDataDirectory() + "ocr" + File.separator;
 	}
 
 	public String getTxtDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_txt" + SafeFile.separator;
+		return getOcrDirectory() + this.titel + "_txt" + File.separator;
 	}
 
 	public String getWordDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_wc" + SafeFile.separator;
+		return getOcrDirectory() + this.titel + "_wc" + File.separator;
 	}
 
 	public String getPdfDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_pdf" + SafeFile.separator;
+		return getOcrDirectory() + this.titel + "_pdf" + File.separator;
 	}
 
 	public String getAltoDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getOcrDirectory() + this.titel + "_alto" + SafeFile.separator;
+		return getOcrDirectory() + this.titel + "_alto" + File.separator;
 	}
 
 	public String getImportDirectory() throws SwapException, DAOException, IOException, InterruptedException {
-		return getProcessDataDirectory() + "import" + SafeFile.separator;
+		return getProcessDataDirectory() + "import" + File.separator;
 	}
 
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException, DAOException {
-		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + SafeFile.separator;
+		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
 		FilesystemHelper.createDirectory(pfad);
 		return pfad;
@@ -1043,7 +1045,7 @@ public class Prozess implements Serializable {
 		String directoryPath = temporaryFile.getParentFile().getPath();
 		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
-		return directoryPath + SafeFile.separator + temporaryFileName;
+		return directoryPath + File.separator + temporaryFileName;
 	}
 
 	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {

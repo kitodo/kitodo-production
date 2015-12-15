@@ -42,8 +42,8 @@ public class CopyFile {
    private static int bufferSize = 4 * 1024;
 
    public static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
-      InputStream in = new FileInputStream(srcFile);
-      OutputStream out = new FileOutputStream(destFile);
+      InputStream in = new FileInputStream(srcFile.toFile());
+      OutputStream out = new FileOutputStream(destFile.toFile());
 
       //TODO use a better checksumming algorithm like SHA-1
       CRC32 checksum = new CRC32();
@@ -64,7 +64,7 @@ public class CopyFile {
    }
 
    public static Long createChecksum(SafeFile file) throws IOException {
-      InputStream in = new FileInputStream(file);
+      InputStream in = new FileInputStream(file.toFile());
       CRC32 checksum = new CRC32();
       checksum.reset();
       byte[] buffer = new byte[bufferSize];

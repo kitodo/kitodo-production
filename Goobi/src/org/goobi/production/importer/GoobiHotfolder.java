@@ -28,6 +28,8 @@ package org.goobi.production.importer;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
@@ -69,12 +71,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 	@Override
 	public List<java.io.File> getCurrentFiles() {
-		List<java.io.File> files = new ArrayList<java.io.File>();
-		java.io.File[] data = this.folder.listFiles();
-		if (data != null) {
-			files = Arrays.asList(data);
-		}
-		return files;
+		return this.folder.getCurrentFiles();
 	}
 
 	/**
@@ -113,18 +110,18 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 
 	@Override
-	public List<java.io.File> getFilesByFilter(FilenameFilter filter) {
-		return Arrays.asList((java.io.File[]) this.folder.listFiles(filter));
+	public List<File> getFilesByFilter(FilenameFilter filter) {
+		return this.folder.getFilesByFilter(filter);
 	}
 
 	@Override
 	public String getFolderAsString() {
-		return this.folder.getAbsolutePath() + SafeFile.separator;
+		return this.folder.getAbsolutePath() + File.separator;
 	}
 
 	@Override
-	public SafeFile getFolderAsFile() {
-		return this.folder;
+	public File getFolderAsFile() {
+		return this.folder.toFile();
 	}
 
 	@Override
@@ -285,7 +282,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	public void unlock() throws IOException {
 		SafeFile f = getLockFile();
 		if (f.exists()) {
-			FileUtils.forceDelete(f);
+			FileUtils.forceDelete(f.toFile());
 		}
 	}
 }

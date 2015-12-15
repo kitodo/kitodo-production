@@ -27,6 +27,8 @@ package de.sub.goobi.helper.tasks;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -120,7 +122,7 @@ public void run() {
       }
 
       SafeFile fileIn = new SafeFile(processDirectory);
-      SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + SafeFile.separator);
+      SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
       if (fileOut.exists()) {
          setStatusMessage(getProzess().getTitel() + ": swappingOutTarget already exists");
          setStatusProgress(-1);
@@ -167,7 +169,7 @@ public void run() {
       try {
          setStatusMessage("writing swapped.xml");
          XMLOutputter xmlOut = new XMLOutputter(format);
-         FileOutputStream fos = new FileOutputStream(processDirectory + SafeFile.separator + "swapped.xml");
+         FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml");
          xmlOut.output(doc, fos);
          fos.close();
          //TODO: Don't catch Exception (the super class)

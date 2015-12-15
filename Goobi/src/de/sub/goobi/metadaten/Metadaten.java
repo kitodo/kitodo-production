@@ -29,6 +29,8 @@ package de.sub.goobi.metadaten;
  */
 
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
@@ -1587,7 +1589,7 @@ public class Metadaten {
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
 			public boolean accept(java.io.File indir, String name) {
-				return (new SafeFile(indir + SafeFile.separator + name).isDirectory());
+				return (new SafeFile(indir + File.separator + name).isDirectory());
 			}
 		};
 
@@ -1709,7 +1711,7 @@ public class Metadaten {
 
 	                    /* das neue Bild zuweisen */
 	                    try {
-	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + SafeFile.separator + this.myBild;
+	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
 	                        myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
 	                        if (!new SafeFile(tiffconverterpfad).exists()) {
 	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
@@ -1734,7 +1736,7 @@ public class Metadaten {
 		boolean exists = false;
 		try {
 			if (this.currentTifFolder != null && this.myBild != null) {
-				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + SafeFile.separator + this.myBild)).exists();
+				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
 			} 
 		} catch (Exception e) {
 			this.myBildNummer = -1;

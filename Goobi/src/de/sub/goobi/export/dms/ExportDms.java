@@ -28,6 +28,8 @@ package de.sub.goobi.export.dms;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -268,7 +270,7 @@ public class ExportDms extends ExportMets {
 
 			/* ggf. noch einen Vorgangsordner anlegen */
 			if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-				benutzerHome = new SafeFile(benutzerHome + SafeFile.separator
+				benutzerHome = new SafeFile(benutzerHome + File.separator
 						+ myProzess.getTitel());
 				zielVerzeichnis = benutzerHome.getAbsolutePath();
 				/* alte Import-Ordner löschen */
@@ -281,7 +283,7 @@ public class ExportDms extends ExportMets {
 				/* alte Success-Ordner löschen */
 				SafeFile successFile = new SafeFile(myProzess.getProjekt()
 						.getDmsImportSuccessPath()
-						+ SafeFile.separator
+						+ File.separator
 						+ myProzess.getTitel());
 				if (!Helper.deleteDir(successFile)) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
@@ -292,7 +294,7 @@ public class ExportDms extends ExportMets {
 				/* alte Error-Ordner löschen */
 				SafeFile errorfile = new SafeFile(myProzess.getProjekt()
 						.getDmsImportErrorPath()
-						+ SafeFile.separator
+						+ File.separator
 						+ myProzess.getTitel());
 				if (!Helper.deleteDir(errorfile)) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
@@ -307,7 +309,7 @@ public class ExportDms extends ExportMets {
 			}
 
 		} else {
-			zielVerzeichnis = inZielVerzeichnis + atsPpnBand + SafeFile.separator;
+			zielVerzeichnis = inZielVerzeichnis + atsPpnBand + File.separator;
 			// wenn das Home existiert, erst löschen und dann neu anlegen
 			benutzerHome = new SafeFile(zielVerzeichnis);
 			if (!Helper.deleteDir(benutzerHome)) {
@@ -362,18 +364,18 @@ public class ExportDms extends ExportMets {
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
-				writeMetsFile(myProzess, benutzerHome + SafeFile.separator
+				writeMetsFile(myProzess, benutzerHome + File.separator
 						+ atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				/* ...wenn nicht, nur ein Fileformat schreiben. */
-				gdzfile.write(benutzerHome + SafeFile.separator + atsPpnBand
+				gdzfile.write(benutzerHome + File.separator + atsPpnBand
 						+ ".xml");
 			}
 
 			/* ggf. sollen im Export mets und rdf geschrieben werden */
 			if (MetadataFormat.findFileFormatsHelperByName(myProzess
 					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-				writeMetsFile(myProzess, benutzerHome + SafeFile.separator
+				writeMetsFile(myProzess, benutzerHome + File.separator
 						+ atsPpnBand + ".mets.xml", gdzfile, false);
 			}
 
@@ -419,7 +421,7 @@ public class ExportDms extends ExportMets {
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
 						SafeFile successFile = new SafeFile(myProzess.getProjekt()
 								.getDmsImportSuccessPath()
-								+ SafeFile.separator
+								+ File.separator
 								+ myProzess.getTitel());
 						Helper.deleteDir(successFile);
 					}
@@ -484,7 +486,7 @@ public class ExportDms extends ExportMets {
 		// download sources
 		SafeFile sources = new SafeFile(myProzess.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
-			SafeFile destination = new SafeFile(benutzerHome + SafeFile.separator
+			SafeFile destination = new SafeFile(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
@@ -495,7 +497,7 @@ public class ExportDms extends ExportMets {
 					if (exportDmsTask != null) {
 						exportDmsTask.setWorkDetail(dateien[i].getName());
 					}
-					SafeFile meinZiel = new SafeFile(destination + SafeFile.separator
+					SafeFile meinZiel = new SafeFile(destination + File.separator
 							+ dateien[i].getName());
 					Helper.copyFile(dateien[i], meinZiel);
 				}
@@ -508,7 +510,7 @@ public class ExportDms extends ExportMets {
 			for (SafeFile dir : folder) {
 				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					SafeFile destination = new SafeFile(benutzerHome + SafeFile.separator + atsPpnBand + suffix);
+					SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
@@ -518,7 +520,7 @@ public class ExportDms extends ExportMets {
 							if (exportDmsTask != null) {
 								exportDmsTask.setWorkDetail(files[i].getName());
 							}
-							SafeFile target = new SafeFile(destination + SafeFile.separator + files[i].getName());
+							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
 							Helper.copyFile(files[i], target);
 						}
 					}
@@ -545,7 +547,7 @@ public class ExportDms extends ExportMets {
 		 * Zielordner kopieren --------------------------------
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-			SafeFile zielTif = new SafeFile(benutzerHome + SafeFile.separator + atsPpnBand
+			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand
 					+ ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
@@ -588,7 +590,7 @@ public class ExportDms extends ExportMets {
 				if (exportDmsTask != null) {
 					exportDmsTask.setWorkDetail(dateien[i].getName());
 				}
-				SafeFile meinZiel = new SafeFile(zielTif + SafeFile.separator
+				SafeFile meinZiel = new SafeFile(zielTif + File.separator
 						+ dateien[i].getName());
 				Helper.copyFile(dateien[i], meinZiel);
 				if (exportDmsTask != null) {

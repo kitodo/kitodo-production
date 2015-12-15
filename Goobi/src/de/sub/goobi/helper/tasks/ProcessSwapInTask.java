@@ -27,6 +27,8 @@ package de.sub.goobi.helper.tasks;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -118,7 +120,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		}
 
 		SafeFile fileIn = new SafeFile(processDirectory);
-		SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + SafeFile.separator);
+		SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
 
 		if (!fileOut.exists()) {
 			setStatusMessage(getProzess().getTitel() + ": swappingOutTarget does not exist");
@@ -135,7 +137,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		Document docOld;
 		try {
 			SafeFile swapLogFile = new SafeFile(processDirectory, "swapped.xml");
-			docOld = builder.build(swapLogFile);
+			docOld = builder.build(swapLogFile.toFile());
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
