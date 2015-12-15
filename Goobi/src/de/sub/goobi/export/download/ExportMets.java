@@ -254,8 +254,8 @@ public class ExportMets {
 			if (!location.contains("://")) {
 				location = "file://" + location;
 			}
-			URL url = new URL(location);
-			File f = new File(imageFolder, url.getFile());
+			String url = new URL(location).getFile();
+			File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
 			cf.setLocation(f.toURI().toString());
 		}
 
