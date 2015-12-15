@@ -136,8 +136,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 		SAXBuilder builder = new SAXBuilder();
 		Document docOld;
 		try {
-			SafeFile swapLogFile = new SafeFile(processDirectory, "swapped.xml");
-			docOld = builder.build(swapLogFile.toFile());
+			File swapLogFile = new File(processDirectory, "swapped.xml");
+			docOld = builder.build(swapLogFile);
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);

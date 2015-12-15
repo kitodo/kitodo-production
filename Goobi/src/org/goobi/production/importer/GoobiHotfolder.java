@@ -121,7 +121,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 	@Override
 	public File getFolderAsFile() {
-		return this.folder.toFile();
+		return new File(this.folder.getPath());
 	}
 
 	@Override
@@ -282,7 +282,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	public void unlock() throws IOException {
 		SafeFile f = getLockFile();
 		if (f.exists()) {
-			FileUtils.forceDelete(f.toFile());
+			f.forceDelete();
 		}
 	}
 }

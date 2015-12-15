@@ -166,7 +166,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
 			InputStream inStream = method.getResponseBodyAsStream();
 			BufferedInputStream bis = new BufferedInputStream(inStream);
-			FileOutputStream fos = new FileOutputStream(tempPdf.toFile());
+			FileOutputStream fos = tempPdf.createFileOutputStream();
 			byte[] bytes = new byte[8192];
 			int count = bis.read(bytes);
 			while ((count != -1) && (count <= 8192)) {
@@ -205,7 +205,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			String text = "error while pdf creation: " + e.getMessage();
 			SafeFile file = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
 			try {
-				output = new BufferedWriter(new FileWriter(file.toFile()));
+				output = new BufferedWriter(file.createFileWriter());
 				output.write(text);
 				output.close();
 			} catch (IOException e1) {

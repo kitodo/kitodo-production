@@ -70,22 +70,22 @@ public class JobCreation {
             // removing all data
             SafeFile imagesFolder = new SafeFile(basepath);
             if (imagesFolder.exists() && imagesFolder.isDirectory()) {
-                deleteDirectory(imagesFolder);
+            	imagesFolder.deleteQuietly();
             } else {
                 imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
                 if (imagesFolder.exists() && imagesFolder.isDirectory()) {
-                    deleteDirectory(imagesFolder);
+                	imagesFolder.deleteQuietly();
                 }
             }
             try {
-                FileUtils.forceDelete(metsfile.toFile());
+            	metsfile.forceDelete();
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
-                FileUtils.deleteQuietly(anchor.toFile());
+            	anchor.deleteQuietly();
             }
             return null;
         }
@@ -170,15 +170,15 @@ public class JobCreation {
                 for (String file : imageDir) {
                     SafeFile image = new SafeFile(imagesFolder, file);
                     SafeFile dest = new SafeFile(p.getImagesOrigDirectory(false) + image.getName());
-                    FileUtils.moveFile(image.toFile(), dest.toFile());
+                    image.moveFile(dest);
                 }
-                deleteDirectory(imagesFolder);
+                imagesFolder.deleteDirectory();
             }
 
             // copy pdf files
             SafeFile pdfs = new SafeFile(basepath + "_pdf" + File.separator);
             if (pdfs.isDirectory()) {
-                FileUtils.moveDirectory(pdfs.toFile(), new SafeFile(p.getPdfDirectory()).toFile());
+            	pdfs.moveDirectory(p.getPdfDirectory());
             }
 
             // copy fulltext files
@@ -187,25 +187,25 @@ public class JobCreation {
 
             if (fulltext.isDirectory()) {
 
-                FileUtils.moveDirectory(fulltext.toFile(), new SafeFile(p.getTxtDirectory()).toFile());
+            	fulltext.moveDirectory(p.getTxtDirectory());
             }
 
             // copy source files
 
             SafeFile sourceDir = new SafeFile(basepath + "_src" + File.separator);
             if (sourceDir.isDirectory()) {
-                FileUtils.moveDirectory(sourceDir.toFile(), new SafeFile(p.getImportDirectory()).toFile());
+            	sourceDir.moveDirectory(p.getImportDirectory());
             }
 
             try {
-                FileUtils.forceDelete(metsfile.toFile());
+            	metsfile.forceDelete();
             } catch (Exception e) {
                 logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
 
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
-                FileUtils.deleteQuietly(anchor.toFile());
+            	anchor.deleteQuietly();
             }
         }
 
@@ -220,10 +220,10 @@ public class JobCreation {
                         for (SafeFile imagedir : imageList) {
                             if (imagedir.isDirectory()) {
                                 for (SafeFile file : imagedir.listFiles()) {
-                                    FileUtils.moveFile(file.toFile(), new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()).toFile());
+                                	file.moveFile(new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()));
                                 }
                             } else {
-                                FileUtils.moveFile(imagedir.toFile(), new SafeFile(p.getImagesDirectory(), imagedir.getName()).toFile());
+                            	imagedir.moveFile(new SafeFile(p.getImagesDirectory(), imagedir.getName()));
                             }
                         }
                     } else if (directory.getName().contains("ocr")) {
@@ -234,9 +234,9 @@ public class JobCreation {
                         SafeFile[] ocrList = directory.listFiles();
                         for (SafeFile ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
-                                FileUtils.moveDirectory(ocrdir.toFile(), new SafeFile(ocr, ocrdir.getName()).toFile());
+                            	ocrdir.moveDirectory(new SafeFile(ocr, ocrdir.getName()));
                             } else {
-                                FileUtils.moveFile(ocrdir.toFile(), new SafeFile(ocr, ocrdir.getName()).toFile());
+                            	ocrdir.moveFile(new SafeFile(ocr, ocrdir.getName()));
                             }
                         }
                     } else {
@@ -247,30 +247,18 @@ public class JobCreation {
                         SafeFile[] importList = directory.listFiles();
                         for (SafeFile importdir : importList) {
                             if (importdir.isDirectory()) {
-                                FileUtils.moveDirectory(importdir.toFile(), new SafeFile(i, importdir.getName()).toFile());
+                            	importdir.moveDirectory(new SafeFile(i, importdir.getName()));
                             } else {
-                                FileUtils.moveFile(importdir.toFile(), new SafeFile(i, importdir.getName()).toFile());
+                            	importdir.moveFile(new SafeFile(i, importdir.getName()));
                             }
                         }
                     }
                 }
-                deleteDirectory(importFolder);
+                importFolder.deleteDirectory();
 
-                try {
-                    FileUtils.forceDelete(metsfile.toFile());
-                } catch (Exception e) {
-
-                }
+               	metsfile.deleteQuietly();
             }
 
-        }
-    }
-
-    private static void deleteDirectory(SafeFile directory) {
-        try {
-            FileUtils.deleteDirectory(directory.toFile());
-        } catch (IOException e) {
-            logger.error(e);
         }
     }
 }

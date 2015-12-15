@@ -359,7 +359,7 @@ public class FileManipulation {
             InputStream in = null;
             ServletOutputStream out = null;
             try {
-                in = new FileInputStream(downloadFile.toFile());
+                in = downloadFile.createFileInputStream();
                 out = response.getOutputStream();
                 byte[] buffer = new byte[4096];
                 int length;
@@ -442,7 +442,7 @@ public class FileManipulation {
                             //                            if (deleteFilesAfterMove) {
                             //                                currentFile.renameTo(destinationFile);
                             //                            } else {
-                            FileUtils.copyFile(currentFile.toFile(), destinationFile.toFile());
+                            currentFile.copyFile(destinationFile);
                             //                            }
                             break;
 
@@ -561,7 +561,7 @@ public class FileManipulation {
                             List<SafeFile> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
                            for (SafeFile object : sortedList) {
-                                FileUtils.copyFileToDirectory(object.toFile(), masterDirectory.toFile());
+                        	   object.copyFileToDirectory(masterDirectory);
                             }
                         } catch (SwapException e) {
                             logger.error(e);
@@ -587,7 +587,7 @@ public class FileManipulation {
                                         if (currentProcess.getImagesTifDirectory(false).equals(folderName + File.separator)) {
                                             importedFilenames.add(object.getName());
                                         }
-                                        FileUtils.copyFileToDirectory(object.toFile(), directory.toFile());
+                                        object.copyFileToDirectory(directory);
                                     }
 
                                 }
@@ -620,7 +620,7 @@ public class FileManipulation {
                                     if (currentProcess.getImagesTifDirectory(false).equals(folderName + File.separator)) {
                                         importedFilenames.add(object.getName());
                                     }
-                                    FileUtils.copyFileToDirectory(object.toFile(), directory.toFile());
+                                    object.copyFileToDirectory(directory);
                                 } catch (IOException e) {
                                     logger.error(e);
                                 } catch (SwapException e) {
@@ -665,11 +665,7 @@ public class FileManipulation {
 
         for (String importName : selectedFiles) {
             SafeFile importfolder = new SafeFile(tempDirectory + "fileupload" + File.separator + importName);
-            try {
-                FileUtils.deleteDirectory(importfolder.toFile());
-            } catch (IOException e) {
-                logger.error(e);
-            }
+           	importfolder.deleteQuietly();
         }
         metadataBean.retrieveAllImages();
         metadataBean.BildErmitteln(0);
