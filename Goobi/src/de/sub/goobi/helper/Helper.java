@@ -492,23 +492,18 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
+	 * Deletes all files and subdirectories under dir.
+	 * Returns true if all deletions were successful or if dir does not exist.
+	 * If a deletion fails, the method stops attempting
 	 * to delete and returns false.
 	 */
 	public static boolean deleteDir(File dir) {
 		if (!dir.exists()) {
 			return true;
+		} else if (!deleteInDir(dir)) {
+			return false;
 		}
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		// The directory is now empty so delete it
+		// The directory is now empty, so delete it.
 		return dir.delete();
 	}
 
@@ -516,7 +511,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself
 	 */
 	public static boolean deleteInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				boolean success = deleteDir(new File(dir, children[i]));
@@ -532,7 +527,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
 	public static boolean deleteDataInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {

@@ -373,11 +373,11 @@ public class HotfolderJob extends AbstractGoobiJob {
 			logger.trace("wrong title");
 			// removing all data
 			File imagesFolder = new File(basepath);
-			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+			if (imagesFolder.isDirectory()) {
 				deleteDirectory(imagesFolder);
 			} else {
 				imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
-				if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+				if (imagesFolder.isDirectory()) {
 					deleteDirectory(imagesFolder);
 				}
 			}

@@ -302,7 +302,7 @@ public class GoobiScript {
         }
 
         File sourceFolder = new File(this.myParameters.get("sourcefolder"));
-        if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
+        if (!sourceFolder.isDirectory()) {
             Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
@@ -315,7 +315,7 @@ public class GoobiScript {
                             + "] has already data in image folder");
                 } else {
                     File sourceFolderProzess = new File(sourceFolder, p.getTitel());
-                    if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
+                    if (!sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
