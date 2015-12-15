@@ -390,7 +390,7 @@ public class Prozess implements Serializable {
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File dir, String name) {
+			public boolean accept(File dir, String name) {
 				return (name.endsWith("_" + DIRECTORY_SUFFIX) && !name.startsWith(DIRECTORY_PREFIX + "_"));
 			}
 		};
@@ -483,7 +483,7 @@ public class Prozess implements Serializable {
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 			FilenameFilter filterVerz = new FilenameFilter() {
 				@Override
-				public boolean accept(java.io.File dir, String name) {
+				public boolean accept(File dir, String name) {
 					return (name.endsWith("_" + DIRECTORY_SUFFIX) && name.startsWith(DIRECTORY_PREFIX + "_"));
 				}
 			};
@@ -547,7 +547,7 @@ public class Prozess implements Serializable {
 		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File dir, String name) {
+			public boolean accept(File dir, String name) {
 				return (name.endsWith("_" + "source"));
 			}
 		};

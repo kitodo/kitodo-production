@@ -84,7 +84,7 @@ public class WebDav implements Serializable {
 
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File dir, String name) {
+			public boolean accept(File dir, String name) {
 				return name.endsWith("]");
 			}
 		};
@@ -264,7 +264,7 @@ public class WebDav implements Serializable {
 			SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 			FilenameFilter filter = new FilenameFilter() {
 				@Override
-				public boolean accept(java.io.File dir, String name) {
+				public boolean accept(File dir, String name) {
 					return name.endsWith("]");
 				}
 			};

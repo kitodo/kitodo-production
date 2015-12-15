@@ -223,7 +223,7 @@ public class HelperForm {
 		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File dir, String name) {
+			public boolean accept(File dir, String name) {
 				return (name.endsWith(".css"));
 			}
 		};
@@ -250,7 +250,7 @@ public class HelperForm {
 		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File dir, String name) {
+			public boolean accept(File dir, String name) {
 				return (name.endsWith(".css"));
 			}
 		};

@@ -29,6 +29,8 @@ package de.sub.goobi.helper;
  */
 
 import org.goobi.io.SafeFile;
+
+import java.io.File;
 import java.io.FilenameFilter;
 
 /**
@@ -82,7 +84,7 @@ public class FileUtils {
 		    this.name = name;
 		  }
 		  @Override
-		public boolean accept(java.io.File directory, String filename) {
+		public boolean accept(File directory, String filename) {
 		    boolean fileOK = true;
 		    if (this.name != null) {
 		      fileOK &= filename.matches(this.name);

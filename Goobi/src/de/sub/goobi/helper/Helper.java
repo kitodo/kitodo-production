@@ -28,13 +28,8 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 import org.goobi.io.SafeFile;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -571,7 +566,7 @@ public class Helper implements Serializable, Observer {
 
 	public static final FilenameFilter imageNameFilter = new FilenameFilter() {
 		@Override
-		public boolean accept(java.io.File dir, String name) {
+		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
 
@@ -593,7 +588,7 @@ public class Helper implements Serializable, Observer {
 	public static final FilenameFilter dataFilter = new FilenameFilter() {
 
 		@Override
-		public boolean accept(java.io.File dir, String name) {
+		public boolean accept(File dir, String name) {
 			boolean fileOk = false;
 			String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
 			if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {

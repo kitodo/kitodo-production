@@ -1588,7 +1588,7 @@ public class Metadaten {
 		// existing one.
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
-			public boolean accept(java.io.File indir, String name) {
+			public boolean accept(File indir, String name) {
 				return (new SafeFile(indir + File.separator + name).isDirectory());
 			}
 		};
