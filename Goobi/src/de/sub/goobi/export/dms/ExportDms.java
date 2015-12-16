@@ -27,6 +27,8 @@ package de.sub.goobi.export.dms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -261,40 +263,40 @@ public class ExportDms extends ExportMets {
 		 * downloaden --------------------------------
 		 */
 		String zielVerzeichnis;
-		File benutzerHome;
+		SafeFile benutzerHome;
 		if (myProzess.getProjekt().isUseDmsImport()) {
 			zielVerzeichnis = myProzess.getProjekt().getDmsImportImagesPath();
-			benutzerHome = new File(zielVerzeichnis);
+			benutzerHome = new SafeFile(zielVerzeichnis);
 
 			/* ggf. noch einen Vorgangsordner anlegen */
 			if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-				benutzerHome = new File(benutzerHome + File.separator
+				benutzerHome = new SafeFile(benutzerHome + File.separator
 						+ myProzess.getTitel());
 				zielVerzeichnis = benutzerHome.getAbsolutePath();
 				/* alte Import-Ordner löschen */
-				if (!Helper.deleteDir(benutzerHome)) {
+				if (!benutzerHome.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Import folder could not be cleared");
 					return false;
 				}
 				/* alte Success-Ordner löschen */
-				File successFile = new File(myProzess.getProjekt()
+				SafeFile successFile = new SafeFile(myProzess.getProjekt()
 						.getDmsImportSuccessPath()
 						+ File.separator
 						+ myProzess.getTitel());
-				if (!Helper.deleteDir(successFile)) {
+				if (!successFile.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Success folder could not be cleared");
 					return false;
 				}
 				/* alte Error-Ordner löschen */
-				File errorfile = new File(myProzess.getProjekt()
+				SafeFile errorfile = new SafeFile(myProzess.getProjekt()
 						.getDmsImportErrorPath()
 						+ File.separator
 						+ myProzess.getTitel());
-				if (!Helper.deleteDir(errorfile)) {
+				if (!errorfile.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Error folder could not be cleared");
@@ -309,8 +311,8 @@ public class ExportDms extends ExportMets {
 		} else {
 			zielVerzeichnis = inZielVerzeichnis + atsPpnBand + File.separator;
 			// wenn das Home existiert, erst löschen und dann neu anlegen
-			benutzerHome = new File(zielVerzeichnis);
-			if (!Helper.deleteDir(benutzerHome)) {
+			benutzerHome = new SafeFile(zielVerzeichnis);
+			if (!benutzerHome.deleteDir()) {
 				Helper.setFehlerMeldung(
 						"Export canceled: " + myProzess.getTitel(),
 						"could not delete home directory");
@@ -417,11 +419,11 @@ public class ExportDms extends ExportMets {
 					}
 					/* Success-Ordner wieder löschen */
 					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-						File successFile = new File(myProzess.getProjekt()
+						SafeFile successFile = new SafeFile(myProzess.getProjekt()
 								.getDmsImportSuccessPath()
 								+ File.separator
 								+ myProzess.getTitel());
-						Helper.deleteDir(successFile);
+						successFile.deleteDir();
 					}
 				}
 			}
@@ -477,49 +479,49 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	public void fulltextDownload(Prozess myProzess, File benutzerHome,
+	public void fulltextDownload(Prozess myProzess, SafeFile benutzerHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 		
 		// download sources
-		File sources = new File(myProzess.getSourceDirectory());
+		SafeFile sources = new SafeFile(myProzess.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
-			File destination = new File(benutzerHome + File.separator
+			SafeFile destination = new SafeFile(benutzerHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
 			}
-			File[] dateien = sources.listFiles();
+			SafeFile[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
 				if(dateien[i].isFile()) {
 					if (exportDmsTask != null) {
 						exportDmsTask.setWorkDetail(dateien[i].getName());
 					}
-					File meinZiel = new File(destination + File.separator
+					SafeFile meinZiel = new SafeFile(destination + File.separator
 							+ dateien[i].getName());
-					Helper.copyFile(dateien[i], meinZiel);
+					dateien[i].copyFile(meinZiel, false);
 				}
 			}
 		}
 		
-		File ocr = new File(myProzess.getOcrDirectory());
+		SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
 		if (ocr.exists()) {
-			File[] folder = ocr.listFiles();
-			for (File dir : folder) {
+			SafeFile[] folder = ocr.listFiles();
+			for (SafeFile dir : folder) {
 				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					File destination = new File(benutzerHome + File.separator + atsPpnBand + suffix);
+					SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
-					File[] files = dir.listFiles();
+					SafeFile[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
 						if(files[i].isFile()) {
 							if (exportDmsTask != null) {
 								exportDmsTask.setWorkDetail(files[i].getName());
 							}
-							File target = new File(destination + File.separator + files[i].getName());
-							Helper.copyFile(files[i], target);
+							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
+							files[i].copyFile(target, false);
 						}
 					}
 				}
@@ -530,7 +532,7 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	public void imageDownload(Prozess myProzess, File benutzerHome,
+	public void imageDownload(Prozess myProzess, SafeFile benutzerHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 
@@ -538,14 +540,14 @@ public class ExportDms extends ExportMets {
 		 * -------------------------------- dann den Ausgangspfad ermitteln
 		 * --------------------------------
 		 */
-		File tifOrdner = new File(myProzess.getImagesTifDirectory(true));
+		SafeFile tifOrdner = new SafeFile(myProzess.getImagesTifDirectory(true));
 
 		/*
 		 * -------------------------------- jetzt die Ausgangsordner in die
 		 * Zielordner kopieren --------------------------------
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-			File zielTif = new File(benutzerHome + File.separator + atsPpnBand
+			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand
 					+ ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
@@ -583,14 +585,14 @@ public class ExportDms extends ExportMets {
 
 			/* jetzt den eigentlichen Kopiervorgang */
 
-			File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
+			SafeFile[] dateien = tifOrdner.listFiles(Helper.dataFilter);
 			for (int i = 0; i < dateien.length; i++) {
 				if (exportDmsTask != null) {
 					exportDmsTask.setWorkDetail(dateien[i].getName());
 				}
-				File meinZiel = new File(zielTif + File.separator
+				SafeFile meinZiel = new SafeFile(zielTif + File.separator
 						+ dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				dateien[i].copyFile(meinZiel, false);
 				if (exportDmsTask != null) {
 					exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
 					if (exportDmsTask.isInterrupted()) {
@@ -621,11 +623,11 @@ public class ExportDms extends ExportMets {
 		
 		for(String processDir : processDirs) {
 			
-			File srcDir = new File(FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel())));
-			File dstDir = new File(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
+			SafeFile srcDir = new SafeFile(FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel())));
+			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
 
 			if(srcDir.isDirectory()) {
-				Helper.copyDir(srcDir, dstDir);
+			    srcDir.copyDir(dstDir);
 			}
 		}	
 	}

@@ -27,7 +27,7 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -163,7 +163,7 @@ public class AdministrationForm implements Serializable {
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
 				auf.setSortHelperMetadata(zaehlen.getNumberOfUghElements(auf, CountType.METADATA));
-				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new File(auf.getImagesOrigDirectory(true))));
+				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(auf.getImagesOrigDirectory(true))));
 				dao.save(auf);
 			} catch (RuntimeException e) {
 				myLogger.error("Fehler bei Band: " + auf.getTitel(), e);

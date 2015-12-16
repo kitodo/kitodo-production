@@ -29,6 +29,8 @@ package de.sub.goobi.helper;
  */
 import java.io.BufferedWriter;
 import java.io.File;
+
+import org.goobi.io.SafeFile;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
@@ -78,7 +80,7 @@ public class WebDav implements Serializable {
 			return rueckgabe;
 		}
 
-		File benutzerHome = new File(VerzeichnisAlle);
+		SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
@@ -146,7 +148,7 @@ public class WebDav implements Serializable {
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
-			File projectDirectory = new File (nach = nach.replaceAll(" ", "__"));
+			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
 				param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -159,7 +161,7 @@ public class WebDav implements Serializable {
 
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
-		File benutzerHome = new File(nach);
+		SafeFile benutzerHome = new SafeFile(nach);
 
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
@@ -180,10 +182,10 @@ public class WebDav implements Serializable {
 			 * existieren
 			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
-				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
+				SafeFile projekt = new SafeFile(userHome + myProzess.getProjekt().getTitel());
                 FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
-				projekt = new File(userHome + DONEDIRECTORYNAME);
+				projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
                 FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
@@ -211,8 +213,8 @@ public class WebDav implements Serializable {
 		myLogger.info("von: " + von);
 		myLogger.info("nach: " + nach);
 
-		File imagePfad = new File(von);
-		File benutzerHome = new File(nach);
+		SafeFile imagePfad = new SafeFile(von);
+		SafeFile benutzerHome = new SafeFile(nach);
 
 		// wenn der Ziellink schon existiert, dann abbrechen
 		if (benutzerHome.exists()) {
@@ -241,7 +243,7 @@ public class WebDav implements Serializable {
 	private void saveTiffHeader(Prozess inProzess) {
 		try {
 			/* prüfen, ob Tiff-Header schon existiert */
-			if (new File(inProzess.getImagesDirectory() + "tiffwriter.conf").exists()) {
+			if (new SafeFile(inProzess.getImagesDirectory() + "tiffwriter.conf").exists()) {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
@@ -259,7 +261,7 @@ public class WebDav implements Serializable {
 		try {
 			Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 			String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-			File benutzerHome = new File(VerzeichnisAlle);
+			SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 			FilenameFilter filter = new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {

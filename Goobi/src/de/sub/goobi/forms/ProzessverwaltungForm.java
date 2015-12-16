@@ -27,7 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -56,6 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -246,12 +246,12 @@ public class ProzessverwaltungForm extends BasisForm {
 						{
 							// renaming image directories
 							String imageDirectory = myProzess.getImagesDirectory();
-							File dir = new File(imageDirectory);
+							SafeFile dir = new SafeFile(imageDirectory);
 							if (dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
-								for (File imagedir : subdirs) {
+								SafeFile[] subdirs = dir.listFiles();
+								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -259,12 +259,12 @@ public class ProzessverwaltungForm extends BasisForm {
 						{
 							// renaming ocr directories
 							String ocrDirectory = myProzess.getOcrDirectory();
-							File dir = new File(ocrDirectory);
+							SafeFile dir = new SafeFile(ocrDirectory);
 							if (dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
-								for (File imagedir : subdirs) {
+								SafeFile[] subdirs = dir.listFiles();
+								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -276,10 +276,10 @@ public class ProzessverwaltungForm extends BasisForm {
 								
 								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
 								
-								File dir = new File(processDirAbsolut);
+								SafeFile dir = new SafeFile(processDirAbsolut);
 								if(dir.isDirectory())
 								{
-									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+									dir.renameTo(new SafeFile(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 								}
 							}
 						}
@@ -332,13 +332,13 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String ContentLoeschen() {
 		// deleteMetadataDirectory();
 		try {
-			File ocr = new File(this.myProzess.getOcrDirectory());
+			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
-			File images = new File(this.myProzess.getImagesDirectory());
+			SafeFile images = new SafeFile(this.myProzess.getImagesDirectory());
 			if (images.exists()) {
-				Helper.deleteDir(images);
+			    images.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -354,10 +354,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			deleteSymlinksFromUserHomes();
 		}
 		try {
-			Helper.deleteDir(new File(this.myProzess.getProcessDataDirectory()));
-			File ocr = new File(this.myProzess.getOcrDirectory());
+		    new SafeFile(this.myProzess.getProcessDataDirectory()).deleteDir();
+			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -1628,7 +1628,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public List<String> getXsltList() {
 		List<String> answer = new ArrayList<String>();
-		File folder = new File("xsltFolder");
+		SafeFile folder = new SafeFile("xsltFolder");
 		if (folder.isDirectory() && folder.exists()) {
 			String[] files = folder.list();
 

@@ -28,7 +28,7 @@ package de.sub.goobi.export.download;
  * exception statement from your version.
  */
 import java.io.BufferedWriter;
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class ExportPdf extends ExportMets {
 		/*
 		 * -------------------------------- first of all write mets-file in images-Folder of process --------------------------------
 		 */
-		File metsTempFile = File.createTempFile(myProzess.getTitel(), ".xml");
+		SafeFile metsTempFile = SafeFile.createTempFile(myProzess.getTitel(), ".xml");
 		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile, true);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
@@ -99,7 +99,7 @@ public class ExportPdf extends ExportMets {
 			 */
 			CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
 			pdf.setMetsURL(metsTempFile.toURI().toURL());
-			pdf.setTargetFolder(new File(zielVerzeichnis));
+			pdf.setTargetFolder(new SafeFile(zielVerzeichnis));
 			pdf.setInternalServletPath(myBasisUrl);
 			myLogger.debug("Taget directory: " + zielVerzeichnis);
 			myLogger.debug("Using ContentServer2 base URL: " + myBasisUrl);
@@ -136,10 +136,10 @@ public class ExportPdf extends ExportMets {
 					}
 					String url = "";
 					FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-					File imagesDir = new File(myProzess.getImagesTifDirectory(true));
-					File[] meta = imagesDir.listFiles(filter);
+					SafeFile imagesDir = new SafeFile(myProzess.getImagesTifDirectory(true));
+					SafeFile[] meta = imagesDir.listFiles(filter);
 					ArrayList<String> filenames = new ArrayList<String>();
-					for (File data : meta) {
+					for (SafeFile data : meta) {
 						String file = "";
 						file += data.toURI().toURL();
 						filenames.add(file);
@@ -172,7 +172,7 @@ public class ExportPdf extends ExportMets {
 					context.responseComplete();
 				}
 				if (metsTempFile.toURI().toURL() != null) {
-					File tempMets = new File(metsTempFile.toURI().toURL().toString());
+					SafeFile tempMets = new SafeFile(metsTempFile.toURI().toURL().toString());
 					tempMets.delete();
 				}
 			} catch (Exception e) {
@@ -182,9 +182,9 @@ public class ExportPdf extends ExportMets {
 				 */
 				Writer output = null;
 				String text = "error while pdf creation: " + e.getMessage();
-				File file = new File(zielVerzeichnis, myProzess.getTitel() + ".PDF-ERROR.log");
+				SafeFile file = new SafeFile(zielVerzeichnis, myProzess.getTitel() + ".PDF-ERROR.log");
 				try {
-					output = new BufferedWriter(new FileWriter(file));
+					output = new BufferedWriter(file.createFileWriter());
 					output.write(text);
 					output.close();
 				} catch (IOException e1) {
