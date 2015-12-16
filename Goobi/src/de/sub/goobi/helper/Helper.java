@@ -477,24 +477,6 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
-	 */
-	public static boolean deleteDataInDir(SafeFile dir) {
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].endsWith(".xml")) {
-					boolean success = new SafeFile(dir, children[i]).deleteDir();
-					if (!success) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
 	 */
 

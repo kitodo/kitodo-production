@@ -46,6 +46,24 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
+    /**
+     * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
+     */
+    static boolean deleteDataInDir(SafeFile dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                if (!children[i].endsWith(".xml")) {
+                    boolean success = new SafeFile(dir, children[i]).deleteDir();
+                    if (!success) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
 	/**
 	 * No-argument constructor. Creates an empty ProcessSwapOutTask. Must be
 	 * made explicit because a constructor taking an argument is present.
@@ -159,7 +177,7 @@ public void run() {
          return;
       }
       setStatusProgress(80);
-      Helper.deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
+      deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
 
       /* ---------------------
        * xml-Datei schreiben
@@ -209,5 +227,4 @@ public void run() {
 	public ProcessSwapOutTask replace() {
 		return new ProcessSwapOutTask(this);
 	}
-
 }
