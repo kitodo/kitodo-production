@@ -319,7 +319,7 @@ public class GoobiScript {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
-                        CopyFile.copyDirectory(sourceFolderProzess, imagesFolder);
+                    	sourceFolderProzess.copyDir(imagesFolder);
                         Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is copied");
                     }

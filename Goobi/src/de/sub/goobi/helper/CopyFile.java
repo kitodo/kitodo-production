@@ -35,13 +35,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
 
-
+// Only useage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
 
    // program options initialized to default values
-   private static int bufferSize = 4 * 1024;
+   private static final int BUFFER_SIZE = 4 * 1024;
 
-   public static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
+   private static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
       InputStream in = srcFile.createFileInputStream();
       OutputStream out = destFile.createFileOutputStream();
 
@@ -49,7 +49,7 @@ public class CopyFile {
       CRC32 checksum = new CRC32();
       checksum.reset();
 
-      byte[] buffer = new byte[bufferSize];
+      byte[] buffer = new byte[BUFFER_SIZE];
       int bytesRead;
       while ((bytesRead = in.read(buffer)) >= 0) {
 
@@ -63,11 +63,11 @@ public class CopyFile {
 
    }
 
-   public static Long createChecksum(SafeFile file) throws IOException {
+   private static Long createChecksum(SafeFile file) throws IOException {
       InputStream in = file.createFileInputStream();
       CRC32 checksum = new CRC32();
       checksum.reset();
-      byte[] buffer = new byte[bufferSize];
+      byte[] buffer = new byte[BUFFER_SIZE];
       int bytesRead;
       while ((bytesRead = in.read(buffer)) >= 0) {
          checksum.update(buffer, 0, bytesRead);
@@ -97,26 +97,5 @@ public class CopyFile {
       } else {
          return Long.valueOf(0);
       }
-
    }
-   
-	
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
-	 * will be created.
-	 */
-	public static void copyDirectory(SafeFile srcDir, SafeFile dstDir) throws IOException {
-		if (srcDir.isDirectory()) {
-			if (!dstDir.exists()) {
-				dstDir.mkdir();
-			}
-
-			String[] children = srcDir.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectory(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]));
-			}
-		} else {
-			copyFile(srcDir, dstDir);
-		}
-	}
 }
