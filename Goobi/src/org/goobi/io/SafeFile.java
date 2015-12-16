@@ -47,6 +47,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+
+import de.sub.goobi.helper.Helper;
 
 /**
  * A {@link java.io.File} delegate class that does not return {@code null} from
@@ -74,6 +77,8 @@ public class SafeFile implements Comparable<SafeFile> {
 	}
 
 	private final File delegate;
+
+    private static final Logger LOGGER = Logger.getLogger(Helper.class);
 
 	public SafeFile(File path) {
 		delegate = new File(path.getPath());
@@ -112,9 +117,16 @@ public class SafeFile implements Comparable<SafeFile> {
 		FileUtils.copyFile(delegate, destFile.delegate);
 	}
 
-	public void copyFile(SafeFile destFile, boolean preserveFileDate) throws IOException {
-		FileUtils.copyFile(delegate, destFile.delegate, preserveFileDate);
-	}
+    /**
+     * Copies src file to dst file. If the dst file does not exist, it is
+     * created.
+     */
+    public void copyFile(SafeFile destFile, boolean preserveFileDate) throws IOException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("copy " + delegate.getCanonicalPath() + " to " + destFile.delegate.getCanonicalPath());
+        }
+        FileUtils.copyFile(delegate, destFile.delegate, preserveFileDate);
+    }
 
 	public void copyFileToDirectory(SafeFile destDir) throws IOException {
 		FileUtils.copyFileToDirectory(delegate, destDir.delegate);

@@ -499,7 +499,7 @@ public class ExportDms extends ExportMets {
 					}
 					SafeFile meinZiel = new SafeFile(destination + File.separator
 							+ dateien[i].getName());
-					Helper.copyFile(dateien[i], meinZiel);
+					dateien[i].copyFile(meinZiel, false);
 				}
 			}
 		}
@@ -521,7 +521,7 @@ public class ExportDms extends ExportMets {
 								exportDmsTask.setWorkDetail(files[i].getName());
 							}
 							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
-							Helper.copyFile(files[i], target);
+							files[i].copyFile(target, false);
 						}
 					}
 				}
@@ -592,7 +592,7 @@ public class ExportDms extends ExportMets {
 				}
 				SafeFile meinZiel = new SafeFile(zielTif + File.separator
 						+ dateien[i].getName());
-				Helper.copyFile(dateien[i], meinZiel);
+				dateien[i].copyFile(meinZiel, false);
 				if (exportDmsTask != null) {
 					exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
 					if (exportDmsTask.isInterrupted()) {

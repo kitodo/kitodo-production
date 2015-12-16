@@ -461,14 +461,6 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Copies src file to dst file. If the dst file does not exist, it is created
-	 */
-	public static void copyFile(SafeFile src, SafeFile dst) throws IOException {
-		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
-		src.copyFile(dst, false);
-	}
-
-	/**
 	 * copy directory
 	 *
 	 * @param srcDir the source directory
@@ -486,7 +478,7 @@ public class Helper implements Serializable, Observer {
 				copyDir(file, new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
 			}
 			else {
-				copyFile(file, new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
+			    file.copyFile(new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())), false);
 			}
 		}
 	}

@@ -186,7 +186,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * copy pdf from temp to final destination
 			 * --------------------------------*/
 			logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to " + finalPdf.getAbsolutePath());
-			Helper.copyFile(tempPdf, finalPdf);
+			tempPdf.copyFile(finalPdf, false);
 			logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
 			tempPdf.delete();
 			if (this.metsURL != null) {

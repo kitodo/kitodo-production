@@ -333,7 +333,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				if(dateien[i].isFile()) {
 					SafeFile meinZiel = new SafeFile(destination + File.separator
 							+ dateien[i].getName());
-					Helper.copyFile(dateien[i], meinZiel);
+					dateien[i].copyFile(meinZiel, false);
 				}
 			}
 		}
@@ -352,7 +352,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					for (int i = 0; i < files.length; i++) {
 						if(files[i].isFile()) {
 							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
-							Helper.copyFile(files[i], target);
+							files[i].copyFile(target, false);
 						}
 					}
 				}
@@ -406,7 +406,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				}
 				if(dateien[i].isFile()) {
 					SafeFile meinZiel = new SafeFile(zielTif + File.separator + dateien[i].getName());
-					Helper.copyFile(dateien[i], meinZiel);
+					dateien[i].copyFile(meinZiel, false);
 				}
 				if (task != null) {
 					task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
