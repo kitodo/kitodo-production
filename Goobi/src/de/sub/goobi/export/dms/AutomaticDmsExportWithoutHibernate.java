@@ -438,7 +438,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
 		
 			if(srcDir.isDirectory()) {
-				Helper.copyDir(srcDir, dstDir);
+			    srcDir.copyDir(dstDir);
 			}
 		}
 	}

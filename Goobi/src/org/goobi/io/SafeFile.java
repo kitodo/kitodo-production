@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.helper.Helper;
@@ -113,6 +114,19 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.compareTo(other.delegate);
 	}
 
+	/**
+     * Copy directory.
+     *
+     * @param destDir the destination directory
+     * @throws IOException
+     */
+    public void copyDir(SafeFile destDir) throws IOException {
+        if(!destDir.exists()) {
+            destDir.mkdirs();
+        }
+        FileUtils.copyDirectory(delegate, destDir.delegate, false);
+    }
+	
 	public void copyFile(SafeFile destFile) throws IOException {
 		FileUtils.copyFile(delegate, destFile.delegate);
 	}

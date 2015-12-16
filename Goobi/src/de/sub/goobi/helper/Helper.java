@@ -461,29 +461,6 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * copy directory
-	 *
-	 * @param srcDir the source directory
-	 * @param dstDir the destination directory
-	 * @throws IOException
-	 */
-	public static void copyDir(SafeFile srcDir, SafeFile dstDir) throws IOException {
-
-		SafeFile[] files = srcDir.listFiles();
-		if(!dstDir.exists()) {
-			dstDir.mkdirs();
-		}
-		for (SafeFile file : files) {
-			if(file.isDirectory()) {
-				copyDir(file, new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
-			}
-			else {
-			    file.copyFile(new SafeFile(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())), false);
-			}
-		}
-	}
-
-	/**
 	 * Deletes all files and subdirectories under dir.
 	 * Returns true if all deletions were successful or if dir does not exist.
 	 * If a deletion fails, the method stops attempting

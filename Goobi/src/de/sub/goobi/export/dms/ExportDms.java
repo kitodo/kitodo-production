@@ -627,7 +627,7 @@ public class ExportDms extends ExportMets {
 			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
 
 			if(srcDir.isDirectory()) {
-				Helper.copyDir(srcDir, dstDir);
+			    srcDir.copyDir(dstDir);
 			}
 		}	
 	}
