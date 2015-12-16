@@ -29,7 +29,7 @@ package de.sub.goobi.helper;
  */
 
 
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -173,8 +173,8 @@ public class HelperSchritteWithoutHibernate {
 		}
 		ProcessObject po = ProcessManager.getProcessObjectForId(processId);
 		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
-			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))), processId);
+		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true)))) {
+			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))), processId);
 		}
 		logger.debug("update process status");
 		updateProcessStatus(processId);
