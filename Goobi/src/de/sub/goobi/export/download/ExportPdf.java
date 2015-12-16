@@ -29,13 +29,11 @@ package de.sub.goobi.export.download;
  */
 import java.io.BufferedWriter;
 import org.goobi.io.SafeFile;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.TreeSet;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -134,24 +132,31 @@ public class ExportPdf extends ExportMets {
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
 						contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
 					}
-					String url = "";
 					FilenameFilter filter = new FileListFilter("\\d*\\.tif");
 					SafeFile imagesDir = new SafeFile(myProzess.getImagesTifDirectory(true));
 					SafeFile[] meta = imagesDir.listFiles(filter);
-					ArrayList<String> filenames = new ArrayList<String>();
+					int capacity = 19 + contentServerUrl.length() + myProzess.getTitel().length();
+					TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
 					for (SafeFile data : meta) {
-						String file = "";
-						file += data.toURI().toURL();
+						String file = data.toURI().toURL().toString();
 						filenames.add(file);
+						capacity += (file.length() + 1);
 					}
-					Collections.sort(filenames, new MetadatenHelper(null, null));
+					StringBuilder url = new StringBuilder(capacity);
+					url.append(contentServerUrl);
+					boolean subsequent = false;
 					for (String f : filenames) {
-						url = url + f + "$";
+						if(subsequent){
+							url.append('$');
+						}else{
+							subsequent = true;
+						}
+						url.append(f);
 					}
-					String imageString = url.substring(0, url.length() - 1);
-					String targetFileName = "&targetFileName=" + myProzess.getTitel() + ".pdf";
-					goobiContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
-					
+					url.append("&targetFileName=");
+					url.append(myProzess.getTitel());
+					url.append(".pdf");
+					goobiContentServerUrl = new URL(url.toString());
 				}
 
 				/*
