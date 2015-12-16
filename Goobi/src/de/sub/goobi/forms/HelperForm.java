@@ -27,6 +27,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -218,7 +220,7 @@ public class HelperForm {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		String filename = session.getServletContext().getRealPath("/css") + File.separator;
-		File cssDir = new File(filename);
+		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -245,7 +247,7 @@ public class HelperForm {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
-		File cssDir = new File(filename);
+		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {

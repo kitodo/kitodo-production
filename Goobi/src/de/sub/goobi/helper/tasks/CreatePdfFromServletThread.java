@@ -28,7 +28,7 @@ package de.sub.goobi.helper.tasks;
  */
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -60,7 +60,7 @@ import de.sub.goobi.metadaten.MetadatenVerifizierung;
  *************************************************************************************/
 public class CreatePdfFromServletThread extends LongRunningTask {
 	private static final Logger logger = Logger.getLogger(CreatePdfFromServletThread.class);
-	private File targetFolder;
+	private SafeFile targetFolder;
 	private String internalServletPath;
 	private URL metsURL;
 
@@ -104,9 +104,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 			URL goobiContentServerUrl = null;
 			String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
-			new File("");
-			File tempPdf = File.createTempFile(this.getProzess().getTitel(), ".pdf");
-			File finalPdf = new File(this.targetFolder, this.getProzess().getTitel() + ".pdf");
+			new SafeFile("");
+			SafeFile tempPdf = SafeFile.createTempFile(this.getProzess().getTitel(), ".pdf");
+			SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".pdf");
 			Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
 			
 			/* --------------------------------
@@ -131,10 +131,10 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				}
 				String url = "";
 				FilenameFilter filter = Helper.imageNameFilter;
-				File imagesDir = new File(this.getProzess().getImagesTifDirectory(true));
-				File[] meta = imagesDir.listFiles(filter);
+				SafeFile imagesDir = new SafeFile(this.getProzess().getImagesTifDirectory(true));
+				SafeFile[] meta = imagesDir.listFiles(filter);
 				ArrayList<String> filenames = new ArrayList<String>();
-				for (File data : meta) {
+				for (SafeFile data : meta) {
 					String file = "";
 					file +=data.toURI().toURL();
 					filenames.add(file);
@@ -166,7 +166,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
 			InputStream inStream = method.getResponseBodyAsStream();
 			BufferedInputStream bis = new BufferedInputStream(inStream);
-			FileOutputStream fos = new FileOutputStream(tempPdf);
+			FileOutputStream fos = tempPdf.createFileOutputStream();
 			byte[] bytes = new byte[8192];
 			int count = bis.read(bytes);
 			while ((count != -1) && (count <= 8192)) {
@@ -186,11 +186,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * copy pdf from temp to final destination
 			 * --------------------------------*/
 			logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to " + finalPdf.getAbsolutePath());
-			Helper.copyFile(tempPdf, finalPdf);
+			tempPdf.copyFile(finalPdf, false);
 			logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
 			tempPdf.delete();
 			if (this.metsURL != null) {
-				File tempMets = new File(this.metsURL.toString());
+				SafeFile tempMets = new SafeFile(this.metsURL.toString());
 				tempMets.delete();
 			}
 		} catch (Exception e) {
@@ -203,9 +203,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 			Writer output = null;
 			String text = "error while pdf creation: " + e.getMessage();
-			File file = new File(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
+			SafeFile file = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
 			try {
-				output = new BufferedWriter(new FileWriter(file));
+				output = new BufferedWriter(file.createFileWriter());
 				output.write(text);
 				output.close();
 			} catch (IOException e1) {
@@ -229,7 +229,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	 * @param targetFolder
 	 *            the targetFolder to set
 	 **************************************************************************************/
-	public void setTargetFolder(File targetFolder) {
+	public void setTargetFolder(SafeFile targetFolder) {
 		this.targetFolder = targetFolder;
 	}
 

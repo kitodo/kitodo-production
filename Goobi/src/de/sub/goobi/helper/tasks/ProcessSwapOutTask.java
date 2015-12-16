@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.goobi.io.SafeFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -38,12 +39,57 @@ import org.jdom.output.XMLOutputter;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
+
+	/**
+	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created. 
+	 */
+
+	static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
+			throws IOException {
+		if (srcDir.isDirectory()) {
+			if (!dstDir.exists()) {
+				dstDir.mkdir();
+				dstDir.setLastModified(srcDir.lastModified());
+			}
+			String[] children = srcDir.list();
+			for (int i = 0; i < children.length; i++) {
+				copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
+						goobipathlength, inRoot);
+			}
+		} else {
+			Long crc = CopyFile.start(srcDir, dstDir);
+			Element file = new Element("file");
+			file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
+			file.setAttribute("crc32", String.valueOf(crc));
+			inRoot.addContent(file);
+		}
+	}
+
+	/**
+	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files.
+	 */
+	static boolean deleteDataInDir(SafeFile dir) {
+		if (dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++) {
+				if (!children[i].endsWith(".xml")) {
+					boolean success = new SafeFile(dir, children[i]).deleteDir();
+					if (!success) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * No-argument constructor. Creates an empty ProcessSwapOutTask. Must be
 	 * made explicit because a constructor taking an argument is present.
@@ -119,8 +165,8 @@ public void run() {
          return;
       }
 
-      File fileIn = new File(processDirectory);
-      File fileOut = new File(swapPath + getProzess().getId() + File.separator);
+      SafeFile fileIn = new SafeFile(processDirectory);
+      SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
       if (fileOut.exists()) {
          setStatusMessage(getProzess().getTitel() + ": swappingOutTarget already exists");
          setStatusProgress(-1);
@@ -149,7 +195,7 @@ public void run() {
       setStatusProgress(50);
       try {
         setStatusMessage("copying process folder");
-        Helper.copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
+        copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
       } catch (IOException e) {
     	  logger.warn("IOException:", e);
          setStatusMessage("IOException in copyDirectory: " + e.getMessage());
@@ -157,7 +203,7 @@ public void run() {
          return;
       }
       setStatusProgress(80);
-      Helper.deleteDataInDir(new File(fileIn.getAbsolutePath()));
+      deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
 
       /* ---------------------
        * xml-Datei schreiben
