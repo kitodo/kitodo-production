@@ -40,12 +40,37 @@ import org.jdom.output.XMLOutputter;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
+
+    /**
+     * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
+     */
+
+    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!dstDir.exists()) {
+                dstDir.mkdir();
+                dstDir.setLastModified(srcDir.lastModified());
+            }
+            String[] children = srcDir.list();
+            for (int i = 0; i < children.length; i++) {
+                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]), goobipathlength, inRoot);
+            }
+        } else {
+            Long crc = CopyFile.start(srcDir, dstDir);
+            Element file = new Element("file");
+            file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
+            file.setAttribute("crc32", String.valueOf(crc));
+            inRoot.addContent(file);
+        }
+    }    
+    
     /**
      * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
      */
@@ -169,7 +194,7 @@ public void run() {
       setStatusProgress(50);
       try {
         setStatusMessage("copying process folder");
-        Helper.copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
+        copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
       } catch (IOException e) {
     	  logger.warn("IOException:", e);
          setStatusMessage("IOException in copyDirectory: " + e.getMessage());

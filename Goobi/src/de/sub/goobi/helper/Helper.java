@@ -460,29 +460,6 @@ public class Helper implements Serializable, Observer {
 		return login != null ? login.getMyBenutzer() : null;
 	}
 
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
-	 */
-
-	public static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot) throws IOException {
-		if (srcDir.isDirectory()) {
-			if (!dstDir.exists()) {
-				dstDir.mkdir();
-				dstDir.setLastModified(srcDir.lastModified());
-			}
-			String[] children = srcDir.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]), goobipathlength, inRoot);
-			}
-		} else {
-			Long crc = CopyFile.start(srcDir, dstDir);
-			Element file = new Element("file");
-			file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
-			file.setAttribute("crc32", String.valueOf(crc));
-			inRoot.addContent(file);
-		}
-	}
-
 	public static final FilenameFilter imageNameFilter = new FilenameFilter() {
 		@Override
 		public boolean accept(File dir, String name) {
