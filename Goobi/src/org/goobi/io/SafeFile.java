@@ -37,7 +37,15 @@
  */
 package org.goobi.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -47,10 +55,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.helper.Helper;
 
 /**
  * A {@link java.io.File} delegate class that does not return {@code null} from
@@ -60,6 +65,8 @@ import de.sub.goobi.helper.Helper;
  * @author Matthias Ronge
  */
 public class SafeFile implements Comparable<SafeFile> {
+
+	private static final Logger LOGGER = Logger.getLogger(SafeFile.class);
 
 	private static final SafeFile[] NO_FILE = new SafeFile[0];
 
@@ -78,8 +85,6 @@ public class SafeFile implements Comparable<SafeFile> {
 	}
 
 	private final File delegate;
-
-    private static final Logger LOGGER = Logger.getLogger(Helper.class);
 
 	public SafeFile(File path) {
 		delegate = new File(path.getPath());
@@ -115,32 +120,33 @@ public class SafeFile implements Comparable<SafeFile> {
 	}
 
 	/**
-     * Copy directory.
-     *
-     * @param destDir the destination directory
-     * @throws IOException
-     */
-    public void copyDir(SafeFile destDir) throws IOException {
-        if(!destDir.exists()) {
-            destDir.mkdirs();
-        }
-        FileUtils.copyDirectory(delegate, destDir.delegate, false);
-    }
-	
+	 * Copy directory.
+	 *
+	 * @param destDir
+	 *            the destination directory
+	 * @throws IOException
+	 */
+	public void copyDir(SafeFile destDir) throws IOException {
+		if (!destDir.exists()) {
+			destDir.mkdirs();
+		}
+		FileUtils.copyDirectory(delegate, destDir.delegate, false);
+	}
+
 	public void copyFile(SafeFile destFile) throws IOException {
 		FileUtils.copyFile(delegate, destFile.delegate);
 	}
 
-    /**
-     * Copies src file to dst file. If the dst file does not exist, it is
-     * created.
-     */
-    public void copyFile(SafeFile destFile, boolean preserveFileDate) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("copy " + delegate.getCanonicalPath() + " to " + destFile.delegate.getCanonicalPath());
-        }
-        FileUtils.copyFile(delegate, destFile.delegate, preserveFileDate);
-    }
+	/**
+	 * Copies src file to dst file. If the dst file does not exist, it is
+	 * created.
+	 */
+	public void copyFile(SafeFile destFile, boolean preserveFileDate) throws IOException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("copy " + delegate.getCanonicalPath() + " to " + destFile.delegate.getCanonicalPath());
+		}
+		FileUtils.copyFile(delegate, destFile.delegate, preserveFileDate);
+	}
 
 	public void copyFileToDirectory(SafeFile destDir) throws IOException {
 		FileUtils.copyFileToDirectory(delegate, destDir.delegate);
@@ -177,21 +183,23 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.delete();
 	}
 
-    /**
-     * Deletes all files and subdirectories under dir. Returns true if all
-     * deletions were successful or if dir does not exist. If a deletion fails,
-     * the method stops attempting to delete and returns false.
-     */
-    public boolean deleteDir() {
-        if (!delegate.exists()) { return true; }
-        try {
-            FileUtils.deleteDirectory(delegate);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    
+	/**
+	 * Deletes all files and subdirectories under dir. Returns true if all
+	 * deletions were successful or if dir does not exist. If a deletion fails,
+	 * the method stops attempting to delete and returns false.
+	 */
+	public boolean deleteDir() {
+		if (!delegate.exists()) {
+			return true;
+		}
+		try {
+			FileUtils.deleteDirectory(delegate);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public void deleteDirectory() throws IOException {
 		FileUtils.deleteDirectory(delegate);
 	}
@@ -324,7 +332,7 @@ public class SafeFile implements Comparable<SafeFile> {
 	}
 
 	@Deprecated
-    public URL toURL() throws MalformedURLException {
-        return delegate.toURL();
-    }
+	public URL toURL() throws MalformedURLException {
+		return delegate.toURL();
+	}
 }
