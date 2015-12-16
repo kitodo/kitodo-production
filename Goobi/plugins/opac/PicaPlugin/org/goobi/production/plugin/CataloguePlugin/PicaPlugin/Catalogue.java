@@ -28,18 +28,6 @@
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 class Catalogue {
 
