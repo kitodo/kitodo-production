@@ -207,19 +207,19 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			benutzerHome = new SafeFile(benutzerHome + File.separator + process.getTitle());
 			zielVerzeichnis = benutzerHome.getAbsolutePath();
 			/* alte Import-Ordner löschen */
-			if (!Helper.deleteDir(benutzerHome)) {
+			if (!benutzerHome.deleteDir()) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Import folder could not be cleared");
 				return false;
 			}
 			/* alte Success-Ordner löschen */
 			SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-			if (!Helper.deleteDir(successFile)) {
+			if (!successFile.deleteDir()) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Success folder could not be cleared");
 				return false;
 			}
 			/* alte Error-Ordner löschen */
 			SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
-			if (!Helper.deleteDir(errorfile)) {
+			if (!errorfile.deleteDir()) {
 				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Error folder could not be cleared");
 				return false;
 			}
@@ -285,7 +285,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				/* Success-Ordner wieder löschen */
 				if (this.project.isDmsImportCreateProcessFolder()) {
 					SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-					Helper.deleteDir(successFile);
+					successFile.deleteDir();
 				}
 			}
 		}

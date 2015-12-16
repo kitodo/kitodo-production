@@ -461,29 +461,13 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir.
-	 * Returns true if all deletions were successful or if dir does not exist.
-	 * If a deletion fails, the method stops attempting
-	 * to delete and returns false.
-	 */
-	public static boolean deleteDir(SafeFile dir) {
-		if (!dir.exists()) {
-			return true;
-		} else if (!deleteInDir(dir)) {
-			return false;
-		}
-		// The directory is now empty, so delete it.
-		return dir.delete();
-	}
-
-	/**
 	 * Deletes all files and subdirectories under dir. But not the dir itself
 	 */
 	public static boolean deleteInDir(SafeFile dir) {
 		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new SafeFile(dir, children[i]));
+				boolean success = new SafeFile(dir, children[i]).deleteDir();
 				if (!success) {
 					return false;
 				}
@@ -500,7 +484,7 @@ public class Helper implements Serializable, Observer {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {
-					boolean success = deleteDir(new SafeFile(dir, children[i]));
+					boolean success = new SafeFile(dir, children[i]).deleteDir();
 					if (!success) {
 						return false;
 					}

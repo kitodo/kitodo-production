@@ -334,11 +334,11 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
 			SafeFile images = new SafeFile(this.myProzess.getImagesDirectory());
 			if (images.exists()) {
-				Helper.deleteDir(images);
+			    images.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -354,10 +354,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			deleteSymlinksFromUserHomes();
 		}
 		try {
-			Helper.deleteDir(new SafeFile(this.myProzess.getProcessDataDirectory()));
+		    new SafeFile(this.myProzess.getProcessDataDirectory()).deleteDir();
 			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);

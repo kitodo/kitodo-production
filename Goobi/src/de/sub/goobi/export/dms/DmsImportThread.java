@@ -109,7 +109,7 @@ public class DmsImportThread extends Thread {
 		}
 		if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 			/* Images wieder löschen */
-			Helper.deleteDir(this.folderImages);
+		    this.folderImages.deleteDir();
 		}
 	}
 

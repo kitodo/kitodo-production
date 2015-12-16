@@ -210,11 +210,11 @@ public class GoobiScript {
                 try {
                     SafeFile ocr = new SafeFile(p.getOcrDirectory());
                     if (ocr.exists()) {
-                        Helper.deleteDir(ocr);
+                        ocr.deleteDir();
                     }
                     SafeFile images = new SafeFile(p.getImagesDirectory());
                     if (images.exists()) {
-                        Helper.deleteDir(images);
+                        images.deleteDir();
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (Exception e) {
@@ -235,10 +235,10 @@ public class GoobiScript {
 
     private void deleteMetadataDirectory(Prozess p) {
         try {
-            Helper.deleteDir(new SafeFile(p.getProcessDataDirectory()));
+            new SafeFile(p.getProcessDataDirectory()).deleteDir();
             SafeFile ocr = new SafeFile(p.getOcrDirectory());
             if (ocr.exists()) {
-                Helper.deleteDir(ocr);
+                ocr.deleteDir();
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);

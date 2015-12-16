@@ -274,7 +274,7 @@ public class ExportDms extends ExportMets {
 						+ myProzess.getTitel());
 				zielVerzeichnis = benutzerHome.getAbsolutePath();
 				/* alte Import-Ordner löschen */
-				if (!Helper.deleteDir(benutzerHome)) {
+				if (!benutzerHome.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Import folder could not be cleared");
@@ -285,7 +285,7 @@ public class ExportDms extends ExportMets {
 						.getDmsImportSuccessPath()
 						+ File.separator
 						+ myProzess.getTitel());
-				if (!Helper.deleteDir(successFile)) {
+				if (!successFile.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Success folder could not be cleared");
@@ -296,7 +296,7 @@ public class ExportDms extends ExportMets {
 						.getDmsImportErrorPath()
 						+ File.separator
 						+ myProzess.getTitel());
-				if (!Helper.deleteDir(errorfile)) {
+				if (!errorfile.deleteDir()) {
 					Helper.setFehlerMeldung("Export canceled, Process: "
 							+ myProzess.getTitel(),
 							"Error folder could not be cleared");
@@ -312,7 +312,7 @@ public class ExportDms extends ExportMets {
 			zielVerzeichnis = inZielVerzeichnis + atsPpnBand + File.separator;
 			// wenn das Home existiert, erst löschen und dann neu anlegen
 			benutzerHome = new SafeFile(zielVerzeichnis);
-			if (!Helper.deleteDir(benutzerHome)) {
+			if (!benutzerHome.deleteDir()) {
 				Helper.setFehlerMeldung(
 						"Export canceled: " + myProzess.getTitel(),
 						"could not delete home directory");
@@ -423,7 +423,7 @@ public class ExportDms extends ExportMets {
 								.getDmsImportSuccessPath()
 								+ File.separator
 								+ myProzess.getTitel());
-						Helper.deleteDir(successFile);
+						successFile.deleteDir();
 					}
 				}
 			}

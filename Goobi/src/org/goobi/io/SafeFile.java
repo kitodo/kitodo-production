@@ -177,6 +177,21 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.delete();
 	}
 
+    /**
+     * Deletes all files and subdirectories under dir. Returns true if all
+     * deletions were successful or if dir does not exist. If a deletion fails,
+     * the method stops attempting to delete and returns false.
+     */
+    public boolean deleteDir() {
+        if (!delegate.exists()) { return true; }
+        try {
+            FileUtils.deleteDirectory(delegate);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
 	public void deleteDirectory() throws IOException {
 		FileUtils.deleteDirectory(delegate);
 	}

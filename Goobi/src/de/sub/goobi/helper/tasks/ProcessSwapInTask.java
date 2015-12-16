@@ -214,7 +214,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(90);
 
 		/* in Prozess speichern */
-		Helper.deleteDir(fileOut);
+		fileOut.deleteDir();
 		try {
 			setStatusMessage("saving process");
 			Prozess myProzess = dao.get(getProzess().getId());
