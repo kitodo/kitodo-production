@@ -23,7 +23,6 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1000,15 +999,12 @@ public class PicaPlugin implements Plugin {
 	 * 
 	 * @param catalogueID
 	 *            a String indentifying the catalogue
-	 * @throws IOException
-	 *             If the retrieval of the list failed in
-	 *             {@link Catalogue#retrieveIktList()}
 	 * @throws ParserConfigurationException
 	 *             if a DocumentBuilder cannot be created which satisfies the
 	 *             configuration requested
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
-	public void useCatalogue(String catalogueID) throws IOException, ParserConfigurationException {
+	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		this.configuration = ConfigOpac.getCatalogueByName(catalogueID);
 		this.catalogue = new Catalogue(configuration);
 		GetOpac catalogueClient = new GetOpac(catalogue);

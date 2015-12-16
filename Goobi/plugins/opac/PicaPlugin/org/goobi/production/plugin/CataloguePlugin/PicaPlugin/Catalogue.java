@@ -27,8 +27,6 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.io.IOException;
-
 class Catalogue {
 
 	private String cbs = "";
@@ -37,7 +35,7 @@ class Catalogue {
 	private final String serverAddress;
 	private final int port;
 
-	Catalogue(ConfigOpacCatalogue coc) throws IOException {
+	Catalogue(ConfigOpacCatalogue coc) {
 		this.serverAddress = coc.getAddress();
 		this.port = coc.getPort();
 		this.dataBase = coc.getDatabase();
