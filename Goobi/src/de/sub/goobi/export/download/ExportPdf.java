@@ -80,7 +80,6 @@ public class ExportPdf extends ExportMets {
 		/*
 		 * -------------------------------- first of all write mets-file in images-Folder of process --------------------------------
 		 */
-		new SafeFile("");
 		SafeFile metsTempFile = SafeFile.createTempFile(myProzess.getTitel(), ".xml");
 		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile, true);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");

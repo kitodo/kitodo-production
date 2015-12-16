@@ -27,7 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -56,6 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -247,7 +247,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							// renaming image directories
 							String imageDirectory = myProzess.getImagesDirectory();
 							SafeFile dir = new SafeFile(imageDirectory);
-							if (dir.exists() && dir.isDirectory()) {
+							if (dir.isDirectory()) {
 								SafeFile[] subdirs = dir.listFiles();
 								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
@@ -260,7 +260,7 @@ public class ProzessverwaltungForm extends BasisForm {
 							// renaming ocr directories
 							String ocrDirectory = myProzess.getOcrDirectory();
 							SafeFile dir = new SafeFile(ocrDirectory);
-							if (dir.exists() && dir.isDirectory()) {
+							if (dir.isDirectory()) {
 								SafeFile[] subdirs = dir.listFiles();
 								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {

@@ -23,9 +23,13 @@
 
 package de.sub.goobi.metadaten;
 
-import org.goobi.io.SafeFile;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,11 +40,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.goobi.io.SafeFile;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -50,12 +59,6 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import de.schlichtherle.io.FileInputStream;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.beans.Prozess;
 
 public class FileManipulation {
     private static final Logger logger = Logger.getLogger(FileManipulation.class);
@@ -509,7 +512,7 @@ public class FileManipulation {
         SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
-        if (fileuploadFolder.exists() && fileuploadFolder.isDirectory()) {
+        if (fileuploadFolder.isDirectory()) {
             allImportFolder.addAll(Arrays.asList(fileuploadFolder.list(directoryFilter)));
         }
         return allImportFolder;
@@ -523,7 +526,7 @@ public class FileManipulation {
         @Override
         public boolean accept(final java.io.File dir, final String name) {
             SafeFile toTest = new SafeFile(dir, name);
-            return toTest.exists() && toTest.isDirectory();
+            return toTest.isDirectory();
         }
     };
 

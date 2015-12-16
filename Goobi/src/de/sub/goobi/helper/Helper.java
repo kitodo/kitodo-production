@@ -27,9 +27,14 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
-
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -53,10 +58,10 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
@@ -487,23 +492,18 @@ public class Helper implements Serializable, Observer {
 	}
 
 	/**
-	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
+	 * Deletes all files and subdirectories under dir.
+	 * Returns true if all deletions were successful or if dir does not exist.
+	 * If a deletion fails, the method stops attempting
 	 * to delete and returns false.
 	 */
 	public static boolean deleteDir(SafeFile dir) {
 		if (!dir.exists()) {
 			return true;
+		} else if (!deleteInDir(dir)) {
+			return false;
 		}
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new SafeFile(dir, children[i]));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		// The directory is now empty so delete it
+		// The directory is now empty, so delete it.
 		return dir.delete();
 	}
 
@@ -511,7 +511,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself
 	 */
 	public static boolean deleteInDir(SafeFile dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				boolean success = deleteDir(new SafeFile(dir, children[i]));
@@ -527,7 +527,7 @@ public class Helper implements Serializable, Observer {
 	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
 	 */
 	public static boolean deleteDataInDir(SafeFile dir) {
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].endsWith(".xml")) {

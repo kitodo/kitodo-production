@@ -230,8 +230,8 @@ public class ExportMetsWithoutHibernate {
 			if (!location.contains("://")) {
 				location = "file://" + location;
 			}
-			URL url = new URL(location);
-			SafeFile f = new SafeFile(imageFolder, url.getFile());
+			String url = new URL(location).getFile();
+			SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
 			cf.setLocation(f.toURI().toString());
 		}
 

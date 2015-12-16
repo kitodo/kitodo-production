@@ -38,7 +38,9 @@
 package org.goobi.io;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -280,4 +282,8 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.toURI();
 	}
 
+	@Deprecated
+    public URL toURL() throws MalformedURLException {
+        return delegate.toURL();
+    }
 }

@@ -27,24 +27,19 @@ package org.goobi.production.flow.jobs;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -54,6 +49,9 @@ import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.WriteException;
 
 /**
  * 
@@ -369,11 +367,11 @@ public class HotfolderJob extends AbstractGoobiJob {
 			logger.trace("wrong title");
 			// removing all data
 			SafeFile imagesFolder = new SafeFile(basepath);
-			if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+			if (imagesFolder.isDirectory()) {
 				imagesFolder.deleteQuietly();
 			} else {
 				imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
-				if (imagesFolder.exists() && imagesFolder.isDirectory()) {
+				if (imagesFolder.isDirectory()) {
 					imagesFolder.deleteQuietly();
 				}
 			}

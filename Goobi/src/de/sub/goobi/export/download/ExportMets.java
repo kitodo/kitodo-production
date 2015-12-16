@@ -1,5 +1,3 @@
-package de.sub.goobi.export.download;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,7 +25,8 @@ package de.sub.goobi.export.download;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
+package de.sub.goobi.export.download;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,20 +35,8 @@ import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Projekt;
@@ -70,6 +57,19 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
+import ugh.dl.ContentFile;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
+import ugh.dl.VirtualFileGroup;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
 	protected Helper help = new Helper();
@@ -254,8 +254,8 @@ public class ExportMets {
 			if (!location.contains("://")) {
 				location = "file://" + location;
 			}
-			URL url = new URL(location);
-			SafeFile f = new SafeFile(imageFolder, url.getFile());
+			String url = new URL(location).getFile();
+			SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
 			cf.setLocation(f.toURI().toString());
 		}
 

@@ -27,7 +27,6 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,17 +38,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 import org.hibernate.Hibernate;
 
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -71,6 +62,15 @@ import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 
 //TODO: Delete me, this should be part of the Plugins...
 //TODO: Break this up into multiple classes with a common interface
@@ -302,7 +302,7 @@ public class GoobiScript {
         }
 
         SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
-        if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
+        if (!sourceFolder.isDirectory()) {
             Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
@@ -315,7 +315,7 @@ public class GoobiScript {
                             + "] has already data in image folder");
                 } else {
                     SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitel());
-                    if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
+                    if (!sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
