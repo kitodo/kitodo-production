@@ -788,7 +788,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		}
 		/* im ATS-TSL die Umlaute ersetzen */
 		if (FacesContext.getCurrentInstance() != null) {
-			new UghUtils();
 			myAtsTsl = UghUtils.convertUmlaut(myAtsTsl);
 		}
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
