@@ -58,14 +58,11 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
-import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
@@ -351,7 +348,7 @@ public class Helper implements Serializable, Observer {
 			while (polyglot.hasNext()) {
 				Locale language = polyglot.next();
 				commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-				SafeFile file = new SafeFile(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
+				File file = new File(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
 				if (file.exists()) {
 					// Load local message bundle from file system only if file exists;
 					// if value not exists in bundle, use default bundle from classpath
