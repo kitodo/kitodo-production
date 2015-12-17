@@ -35,6 +35,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
 import de.sub.goobi.config.ConfigMain;
 
@@ -144,8 +145,10 @@ public class FilesystemHelper {
 
 		do {
 			if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
-				logger.warn("Renaming " + oldFileName
-						+ " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+				if(logger.isEnabledFor(Priority.WARN)){
+					logger.warn("Renaming " + oldFileName
+							+ " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+				}
 				System.gc();
 			}
 			success = oldFile.renameTo(newFile);

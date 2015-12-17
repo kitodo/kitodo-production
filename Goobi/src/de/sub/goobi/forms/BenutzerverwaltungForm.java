@@ -45,6 +45,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -340,7 +341,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		try {
 			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());
 		} catch (Exception e) {
-			logger.warn("Could not generate ldap entry: " + e.getMessage());
+			if(logger.isEnabledFor(Priority.WARN)){
+				logger.warn("Could not generate ldap entry: " + e.getMessage());
+			}
 			Helper.setFehlerMeldung(e.getMessage());
 		}
 		return "";
