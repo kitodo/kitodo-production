@@ -360,11 +360,17 @@ public class HotfolderJob extends AbstractGoobiJob {
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
-		logger.trace("processtitle is " + processTitle);
+		if(logger.isTraceEnabled()){
+			logger.trace("processtitle is " + processTitle);
+		}
 		String metsfilename = io.getMetsFilename();
-		logger.trace("mets filename is " + metsfilename);
+		if(logger.isTraceEnabled()){
+			logger.trace("mets filename is " + metsfilename);
+		}
 		String basepath = metsfilename.substring(0, metsfilename.length() - 4);
-		logger.trace("basepath is " + basepath);
+		if(logger.isTraceEnabled()){
+			logger.trace("basepath is " + basepath);
+		}
 		SafeFile metsfile = new SafeFile(metsfilename);
 		Prozess p = null;
 		if (!testTitle(processTitle)) {

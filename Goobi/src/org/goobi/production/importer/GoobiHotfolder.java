@@ -196,7 +196,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 			logger.trace("config 18");
 
 		} catch (Exception e) {
-			logger.trace("config 19" + e.getMessage());
+			if(logger.isTraceEnabled()){
+				logger.trace("config 19" + e.getMessage());
+			}
 			return new ArrayList<GoobiHotfolder>();
 		}
 		logger.trace("config 20");
