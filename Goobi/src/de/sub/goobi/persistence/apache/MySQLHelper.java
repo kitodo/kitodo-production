@@ -292,7 +292,9 @@ public class MySQLHelper {
 			// String propNames = "numericValue, stringvalue, type, date, processId";
 			Object[] param = { order, value, type, datetime, processId };
 			String sql = "INSERT INTO " + "history" + " (numericValue, stringvalue, type, date, processId) VALUES ( ?, ?, ?, ? ,?)";
-			logger.trace("added history event " + sql + ", " + Arrays.toString(param));
+			if(logger.isTraceEnabled()){
+				logger.trace("added history event " + sql + ", " + Arrays.toString(param));
+			}
 			run.update(connection, sql, param);
 		} finally {
 			closeConnection(connection);
