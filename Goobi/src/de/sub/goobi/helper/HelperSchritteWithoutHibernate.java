@@ -88,7 +88,9 @@ public class HelperSchritteWithoutHibernate {
 	}
 
 	private void closeStepObject(StepObject currentStep, int processId, boolean requestFromGUI) {
-		logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
+		if(logger.isDebugEnabled()){
+			logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
+		}
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		logger.debug("set new date for edit time");
@@ -133,7 +135,9 @@ public class HelperSchritteWithoutHibernate {
 		}
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			logger.debug("found " + allehoeherenSchritte.size() + " tasks");
+			if(logger.isDebugEnabled()){
+				logger.debug("found " + allehoeherenSchritte.size() + " tasks");
+			}
 			int reihenfolge = 0;
 			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {
@@ -145,7 +149,9 @@ public class HelperSchritteWithoutHibernate {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
-					logger.debug("open step " + myStep.getTitle());
+					if(logger.isDebugEnabled()){
+						logger.debug("open step " + myStep.getTitle());
+					}
 					myStep.setBearbeitungsstatus(1);
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);
@@ -153,7 +159,9 @@ public class HelperSchritteWithoutHibernate {
 					StepManager.addHistory(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
-					logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
+					if(logger.isDebugEnabled()){
+						logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
+					}
 					if (myStep.isTypAutomatisch()) {
 						logger.debug("add step to list of automatic tasks");
 						automatischeSchritte.add(myStep);
@@ -178,15 +186,21 @@ public class HelperSchritteWithoutHibernate {
 		}
 		logger.debug("update process status");
 		updateProcessStatus(processId);
-		logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
+		if(logger.isDebugEnabled()){
+			logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
+		}
 		for (StepObject automaticStep : automatischeSchritte) {
-			logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
-					+ automaticStep.getProcessId());
+			if(logger.isDebugEnabled()){
+				logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
+						+ automaticStep.getProcessId());
+			}
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
 			TaskManager.addTask(myThread);
 		}
 		for (StepObject finish : stepsToFinish) {
-			logger.debug("closing task " + finish.getTitle());
+			if(logger.isDebugEnabled()){
+				logger.debug("closing task " + finish.getTitle());
+			}
 			CloseStepObjectAutomatic(finish);
 		}
 		// TODO remove this later
@@ -246,7 +260,9 @@ public class HelperSchritteWithoutHibernate {
 		int size = scriptpaths.size();
 		int returnParameter = 0;
 		for (String script : scriptpaths) {
-			logger.debug("starting script " + script);
+			if(logger.isDebugEnabled()){
+				logger.debug("starting script " + script);
+			}
 			if (returnParameter != 0) {
 				abortStep(step);
 				break;

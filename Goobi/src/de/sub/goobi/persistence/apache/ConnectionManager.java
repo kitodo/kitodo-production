@@ -155,8 +155,10 @@ public class ConnectionManager {
 
 	public static void printDriverStats() throws Exception {
 		ObjectPool connectionPool = ConnectionManager._pool;
-		logger.debug("NumActive: " + connectionPool.getNumActive());
-		logger.debug("NumIdle: " + connectionPool.getNumIdle());
+		if(logger.isDebugEnabled()){
+			logger.debug("NumActive: " + connectionPool.getNumActive());
+			logger.debug("NumIdle: " + connectionPool.getNumIdle());
+		}
 	}
 
 	/**
@@ -180,7 +182,9 @@ public class ConnectionManager {
 				}
 			}
 		} catch (Exception e) {
-			logger.debug("Failed to get get Locked Connections - Exception: " + e.toString());
+			if(logger.isDebugEnabled()){
+				logger.debug("Failed to get get Locked Connections - Exception: " + e.toString());
+			}
 		} finally {
 			try {
 				if (rs != null) {

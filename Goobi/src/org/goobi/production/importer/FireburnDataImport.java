@@ -120,7 +120,9 @@ public class FireburnDataImport {
 		FireburnDataImport fdi = new FireburnDataImport();
 		// get all properties from xml file
 		fdi.pList.addAll(fdi.loadDataFromXml(filename));
-		logger.debug("Data is loaded from XML,  " + fdi.pList.size() + " Properties.");
+		if(logger.isDebugEnabled()){
+			logger.debug("Data is loaded from XML,  " + fdi.pList.size() + " Properties.");
+		}
 
 		// debug
 		boolean search1 = true;
@@ -150,8 +152,10 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			logger.debug("Found: " + fdi.pFoundList.size());
-			logger.debug("Not found: " + fdi.pNotFoundList.size());
+			if(logger.isDebugEnabled()){
+				logger.debug("Found: " + fdi.pFoundList.size());
+				logger.debug("Not found: " + fdi.pNotFoundList.size());
+			}
 		}
 		boolean search2 = true;
 		if (search2) {
@@ -182,8 +186,10 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			logger.debug("Found: " + fdi.pFoundList.size());
-			logger.debug("Not found: " + fdi.pNotFoundList.size());
+			if(logger.isDebugEnabled()){
+				logger.debug("Found: " + fdi.pFoundList.size());
+				logger.debug("Not found: " + fdi.pNotFoundList.size());
+			}
 		}
 		// -----------------------------------------------------------------------
 		// search in Werkstueckeeigenschaften
@@ -212,8 +218,10 @@ public class FireburnDataImport {
 		} catch (SQLException e) {
 			logger.error(e);
 		}
-		logger.debug("Found: " + fdi.pFoundList.size());
-		logger.debug("Not found: " + fdi.pNotFoundList.size());
+		if(logger.isDebugEnabled()){
+			logger.debug("Found: " + fdi.pFoundList.size());
+			logger.debug("Not found: " + fdi.pNotFoundList.size());
+		}
 		// -----------------------------------------------------------------------
 		// write all properties without process in separate xml file
 		// -----------------------------------------------------------------------
@@ -359,7 +367,9 @@ public class FireburnDataImport {
 
 		if (rs.next()) {
 			String weId = rs.getString("werkstueckeID");
-			logger.debug("weId, gefunden mit shortPPN: " + weId + "  Title: " + p.titel);
+			if(logger.isDebugEnabled()){
+				logger.debug("weId, gefunden mit shortPPN: " + weId + "  Title: " + p.titel);
+			}
 			return weId;
 		}
 		// Search with full PPN
@@ -369,7 +379,9 @@ public class FireburnDataImport {
 			rs = this.stmt.executeQuery(sql);
 			if (rs.next()) {
 				String weId = rs.getString("werkstueckeID");
-				logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
+				if(logger.isDebugEnabled()){
+					logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
+				}
 				return weId;
 			}
 		}
@@ -405,7 +417,9 @@ public class FireburnDataImport {
 		ResultSet rs = this.stmt.executeQuery(sql);
 		if (rs.next()) {
 			String vorlagenId = rs.getString("vorlagenID");
-			logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
+			if(logger.isDebugEnabled()){
+				logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
+			}
 			return vorlagenId;
 		}
 		// Search with full PPN
@@ -415,8 +429,10 @@ public class FireburnDataImport {
 			rs = this.stmt.executeQuery(sql);
 			if (rs.next()) {
 				String vorlagenId = rs.getString("vorlagenID");
-				logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
-				logger.debug(vorlagenId);
+				if(logger.isDebugEnabled()){
+					logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
+					logger.debug(vorlagenId);
+				}
 				return vorlagenId;
 			}
 		}
@@ -446,7 +462,9 @@ public class FireburnDataImport {
 		// Execute the insert statement
 		this.stmt.executeUpdate(sql);
 		// logger.debug(sql);
-		logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
+		if(logger.isDebugEnabled()){
+			logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
+		}
 
 	}
 

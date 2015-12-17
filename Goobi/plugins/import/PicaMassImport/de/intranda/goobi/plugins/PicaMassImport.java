@@ -158,7 +158,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
 		currentIdentifier = data;
 
-		logger.debug("retrieving pica record for " + currentIdentifier  + " with server address: " + this.getOpacAddress());
+		if (logger.isDebugEnabled()) {
+			logger.debug("retrieving pica record for " + currentIdentifier  + " with server address: " + this.getOpacAddress());
+		}
 		String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
 		logger.trace(search);
 		try {
@@ -504,7 +506,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 					MetsMods mm = new MetsMods(this.prefs);
 					mm.setDigitalDocument(ff.getDigitalDocument());
 					String fileName = getImportFolder() + getProcessTitle() + ".xml";
-					logger.debug("Writing '" + fileName + "' into given folder...");
+					if (logger.isDebugEnabled()) {
+						logger.debug("Writing '" + fileName + "' into given folder...");
+					}
 					mm.write(fileName);
 					io.setMetsFilename(fileName);
 					io.setImportReturnValue(ImportReturnValue.ExportFinished);
@@ -567,7 +571,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 								if (value.trim().matches(PPN_PATTERN)) {
 									// remove date and time from list
 									if (value.length() > 6) {
-										logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+										if (logger.isDebugEnabled()) {
+											logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+										}
 										// found numbers and character 'X' as last sign
 										Record r = new Record();
 										r.setId(value.trim());
@@ -606,7 +612,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 									if (value.trim().matches(PPN_PATTERN)) {
 										// remove date and time from list
 										if (value.length() > 6) {
-											logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+											if (logger.isDebugEnabled()) {
+												logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
+											}
 											// found numbers and character 'X' as last sign
 											Record r = new Record();
 											r.setId(value.trim());

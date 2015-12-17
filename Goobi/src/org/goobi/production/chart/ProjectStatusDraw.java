@@ -191,7 +191,9 @@ public class ProjectStatusDraw {
 		if (duration==0) {
 			duration=1;
 		}
-		myLogger.debug(datePosition + " / " + duration);
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug(datePosition + " / " + duration);
+		}
 		float dash1[] = { 2.0f };
 		BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);
 		g2d.setStroke(dashed);

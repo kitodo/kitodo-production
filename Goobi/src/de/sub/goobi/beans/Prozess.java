@@ -985,7 +985,9 @@ public class Prozess implements Serializable {
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
-		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
+		if (myLogger.isDebugEnabled()) {
+			myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
+		}
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
 			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
@@ -1116,7 +1118,9 @@ public class Prozess implements Serializable {
 		if (new SafeFile(getTemplateFilePath()).exists()) {
 			Fileformat ff = null;
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
-			myLogger.debug("current template.xml file type: " + type);
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("current template.xml file type: " + type);
+			}
 			if (type.equals("mets")) {
 				ff = new MetsMods(this.regelsatz.getPreferences());
 			} else if (type.equals("xstream")) {
@@ -1205,7 +1209,9 @@ public class Prozess implements Serializable {
 
 	public String downloadDocket() {
 
-		myLogger.debug("generate docket for process " + this.id);
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("generate docket for process " + this.id);
+		}
 		String rootpath = ConfigMain.getParameter("xsltFolder");
 		SafeFile xsltfile = new SafeFile(rootpath, "docket.xsl");
 		if (docket != null) {

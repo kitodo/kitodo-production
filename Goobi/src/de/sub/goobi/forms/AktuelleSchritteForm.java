@@ -564,8 +564,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			Helper.setFehlerMeldung("userNotFound");
 			return "";
 		}
-		myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
-		myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
+			myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+		}
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		Date myDate = new Date();
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.LOCKED);

@@ -137,7 +137,9 @@ public class BackupFileRotation {
 			try {
 				FilesystemHelper.renameFile(oldName, newName);
 			} catch (FileNotFoundException oldNameNotYetPresent) {
-				myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				}
 				continue;
 			}
 		}

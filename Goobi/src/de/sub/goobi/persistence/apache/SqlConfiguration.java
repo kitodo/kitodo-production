@@ -70,26 +70,40 @@ public class SqlConfiguration {
 			logger.debug("found session-factory element");
 			@SuppressWarnings("unchecked")
 			List<Element> properties = sessionFactory.getChildren("property");
-			logger.debug("found " + properties.size() + " property elements");
+			if(logger.isDebugEnabled()){
+				logger.debug("found " + properties.size() + " property elements");
+			}
 			for (Element property : properties) {
 				if (property.getAttribute("name").getValue().equals("hibernate.connection.url")) {
 					this.dbURI = property.getText().replace("&", "&amp;").trim();
-					logger.debug("found uri element: " + this.dbURI);
+					if(logger.isDebugEnabled()){
+						logger.debug("found uri element: " + this.dbURI);
+					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.driver_class")) {
 					this.dbDriverName = property.getText().trim();
-					logger.debug("found driver element: " + this.dbDriverName);
+					if(logger.isDebugEnabled()){
+						logger.debug("found driver element: " + this.dbDriverName);
+					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.username")) {
 					this.dbUser = property.getText().trim();
-					logger.debug("found user element: " + this.dbUser);
+					if(logger.isDebugEnabled()){
+						logger.debug("found user element: " + this.dbUser);
+					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.password")) {
 					this.dbPassword = property.getText().trim();
-					logger.debug("found password element: " + this.dbPassword);
+					if(logger.isDebugEnabled()){
+						logger.debug("found password element: " + this.dbPassword);
+					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.max_size")) {
 					this.dbPoolMaxSize = new Integer(property.getText().trim()).intValue();
-					logger.debug("found max poolsize element: " + this.dbPoolMaxSize);
+					if(logger.isDebugEnabled()){
+						logger.debug("found max poolsize element: " + this.dbPoolMaxSize);
+					}
 				}else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.min_size")) {
 					this.dbPoolMinSize = new Integer(property.getText().trim()).intValue();
-					logger.debug("found min poolsize element: " + this.dbPoolMinSize);
+					if(logger.isDebugEnabled()){
+						logger.debug("found min poolsize element: " + this.dbPoolMinSize);
+					}
 				}
 
 			}

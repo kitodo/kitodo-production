@@ -1041,7 +1041,9 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenUp(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			}
 		}
 		return MetadatenalsTree3Einlesen1();
 	}
@@ -1053,7 +1055,9 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenDown(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			}
 		}
 		return MetadatenalsTree3Einlesen1();
 	}

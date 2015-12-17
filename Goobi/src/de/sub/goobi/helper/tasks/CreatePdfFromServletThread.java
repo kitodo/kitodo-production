@@ -153,14 +153,18 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 
 			HttpClient httpclient = new HttpClient();
-			logger.debug("Retrieving: " + goobiContentServerUrl.toString());
+			if(logger.isDebugEnabled()){
+				logger.debug("Retrieving: " + goobiContentServerUrl.toString());
+			}
 			method = new GetMethod(goobiContentServerUrl.toString());
 			try {
 			method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
 			int statusCode = httpclient.executeMethod(method);
 			if (statusCode != HttpStatus.SC_OK) {
 				logger.error("HttpStatus nicht ok", null);
-				logger.debug("Response is:\n" + method.getResponseBodyAsString());
+				if(logger.isDebugEnabled()){
+					logger.debug("Response is:\n" + method.getResponseBodyAsString());
+				}
 				return;
 			}
 
@@ -185,9 +189,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			/* --------------------------------
 			 * copy pdf from temp to final destination
 			 * --------------------------------*/
-			logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to " + finalPdf.getAbsolutePath());
+			if(logger.isDebugEnabled()){
+				logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to " + finalPdf.getAbsolutePath());
+			}
 			tempPdf.copyFile(finalPdf, false);
-			logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
+			if(logger.isDebugEnabled()){
+				logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
+			}
 			tempPdf.delete();
 			if (this.metsURL != null) {
 				SafeFile tempMets = new SafeFile(this.metsURL.toString());

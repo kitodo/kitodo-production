@@ -125,7 +125,9 @@ public class ProductionDataImport {
 		// load data from xml
 		logger.debug("Load Production Data from xml.");
 		ArrayList<ProductionData> dataList = load(filename);
-		logger.debug("Got " + dataList.size() + " items");
+		if(logger.isDebugEnabled()){
+			logger.debug("Got " + dataList.size() + " items");
+		}
 
 
 		Prozess template = new Prozess();
@@ -177,7 +179,9 @@ public class ProductionDataImport {
 						if (w != null) {
 							Prozess p = w.getProzess();
 							if (p != null) {
-								logger.debug("Add new Properties for Process : " + p.getTitel());
+								if(logger.isDebugEnabled()){
+									logger.debug("Add new Properties for Process : " + p.getTitel());
+								}
 								addNewPropertiesForExistingProcesses(session, p.getId(), pd);
 								added = true;
 								oldProj++;
@@ -206,8 +210,10 @@ public class ProductionDataImport {
 					"UTF8");
 			xstream.toXML(conflicts, fw);
 		}
-		logger.debug("Neue Prozesse: " + newProj);
-		logger.debug("Zu " + oldProj + " existierenden Prozessen wurden Properties hinzugefügt");
+		if(logger.isDebugEnabled()){
+			logger.debug("Neue Prozesse: " + newProj);
+			logger.debug("Zu " + oldProj + " existierenden Prozessen wurden Properties hinzugefügt");
+		}
 	}
 
 	private void generateNewPropertiesForNewProzess(Session session, Regelsatz ruleset, Projekt project, ProductionData pd)

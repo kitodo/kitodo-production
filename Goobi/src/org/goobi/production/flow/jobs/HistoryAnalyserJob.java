@@ -405,14 +405,18 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			while (it.hasNext()) {
 				i++;
 				Prozess proc = it.next();
-				logger.debug("updating history entries for " + proc.getTitel());
+				if(logger.isDebugEnabled()){
+					logger.debug("updating history entries for " + proc.getTitel());
+				}
 				try {
 					if (!proc.isSwappedOutGui()) {
 						boolean processHistoryChanged = (true == updateHistory(proc));
 						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
 						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
-							logger.debug("history updated for process " + proc.getId());
+							if(logger.isDebugEnabled()){
+								logger.debug("history updated for process " + proc.getId());
+							}
 						}
 					}
 

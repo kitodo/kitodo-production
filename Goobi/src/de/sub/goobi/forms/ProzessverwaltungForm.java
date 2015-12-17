@@ -1158,14 +1158,18 @@ public class ProzessverwaltungForm extends BasisForm {
 			try {
 				Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
-				logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
+				if(logger.isDebugEnabled()){
+					logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
+				}
 			}
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
 			try {
 				Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
-				logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
+				if(logger.isDebugEnabled()){
+					logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
+				}
 			}
 		}
 		return "";

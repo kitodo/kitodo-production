@@ -135,7 +135,9 @@ public class HibernateUtilOld {
 		try {
 			if (s == null) {
 				if (getInterceptor() != null) {
-					log.debug("Using interceptor: " + getInterceptor().getClass());
+					if(log.isDebugEnabled()){
+						log.debug("Using interceptor: " + getInterceptor().getClass());
+					}
 					s = getSessionFactory().openSession();
 				} else {
 					s = getSessionFactory().openSession();

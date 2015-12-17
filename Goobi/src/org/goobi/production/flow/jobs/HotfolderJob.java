@@ -113,7 +113,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 								logger.trace("12");
 
 								for (String filename : metsfiles) {
-									logger.debug("found file: " + filename);
+									if(logger.isDebugEnabled()){
+										logger.debug("found file: " + filename);
+									}
 									logger.trace("13");
 
 									int returnValue = generateProcess(filename, template, new SafeFile(hotfolder.getFolderAsFile()), hotfolder.getCollection(),
@@ -124,7 +126,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 										failedData.put(filename, returnValue);
 										logger.trace("16");
 									} else {
-										logger.debug("finished file: " + filename);
+										if(logger.isDebugEnabled()){
+											logger.debug("finished file: " + filename);
+										}
 									}
 								}
 								if (!failedData.isEmpty()) {
