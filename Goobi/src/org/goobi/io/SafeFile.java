@@ -95,7 +95,7 @@ public class SafeFile implements Comparable<SafeFile> {
 	}
 
 	public SafeFile(SafeFile parent, String child) {
-		delegate = new File(parent.delegate, child);
+		delegate = new File(parent != null ? parent.delegate : null, child);
 	}
 
 	public SafeFile(String pathname) {
