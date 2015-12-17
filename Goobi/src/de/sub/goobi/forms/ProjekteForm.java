@@ -94,7 +94,7 @@ public class ProjekteForm extends BasisForm {
 	private StatisticsManager statisticsManager2 = null;
 	private StatisticsManager statisticsManager3 = null;
 	private StatisticsManager statisticsManager4 = null;
-	private StatQuestProjectProgressData projectProgressData = null;
+	private final StatQuestProjectProgressData projectProgressData = new StatQuestProjectProgressData();
 
 	private String projectProgressImage;
 	private String projectStatImages;
@@ -536,9 +536,6 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 
-			if (this.projectProgressData == null) { // initialize datasource with default selection
-				this.projectProgressData = new StatQuestProjectProgressData();
-			}
 			synchronized (this.projectProgressData) {
 			try {
 
