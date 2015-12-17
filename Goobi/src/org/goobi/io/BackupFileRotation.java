@@ -77,7 +77,9 @@ public class BackupFileRotation {
 		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
 		if (metaFiles.length < 1) {
-			myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			if(myLogger.isInfoEnabled()){
+				myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			}
 			return;
 		}
 

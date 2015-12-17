@@ -150,7 +150,7 @@ public class FilesystemHelper {
 			}
 			success = oldFile.renameTo(newFile);
 			if (!success) {
-				if (millisWaited == 0) {
+				if (millisWaited == 0 && logger.isInfoEnabled()) {
 					logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
 				}
 				try {
@@ -166,7 +166,7 @@ public class FilesystemHelper {
 			throw new IOException("Renaming of " + oldFileName + " into " + newFileName + " failed.");
 		}
 
-		if (millisWaited > 0) {
+		if (millisWaited > 0 && logger.isInfoEnabled()) {
 			logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
 		}
 	}

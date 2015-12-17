@@ -113,7 +113,9 @@ public class JobManager implements ServletContextListener {
 			trigger.setStartTime(new Date());
 			trigger.setName(goobiJob.getJobName() + "_trigger");
 
-			logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
+			if(logger.isInfoEnabled()){
+				logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
+			}
 			sched.scheduleJob(jobDetail, trigger);
 		}
 	}

@@ -71,7 +71,9 @@ public class WikiFieldHelper {
 		if (p != null) {
 			processname = "processname: " + p.getTitel() + ", message: ";
 		}
-		logger.info(timestamp + " " + processname + " " + value );
+		if(logger.isInfoEnabled()){
+			logger.info(timestamp + " " + processname + " " + value );
+		}
 		message = message + timestamp + ": " + value + ENDTAG;
 		return message;
 	}

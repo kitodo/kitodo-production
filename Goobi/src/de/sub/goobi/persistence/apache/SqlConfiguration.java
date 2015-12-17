@@ -55,7 +55,9 @@ public class SqlConfiguration {
 	private SqlConfiguration() {
 		try {
 			File f = new File(Loader.getResource("hibernate.cfg.xml").getFile());
-			logger.info("loading configuration from " + f.getAbsolutePath());
+			if(logger.isInfoEnabled()){
+				logger.info("loading configuration from " + f.getAbsolutePath());
+			}
 			SAXBuilder sb = new SAXBuilder(false);
 			sb.setValidation(false);
 			sb.setFeature("http://xml.org/sax/features/validation", false);

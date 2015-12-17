@@ -314,7 +314,9 @@ public class HelperSchritteWithoutHibernate {
 		script = replacer.replace(script);
 		int rueckgabe = -1;
 		try {
-			logger.info("Calling the shell: " + script);
+			if(logger.isInfoEnabled()){
+				logger.info("Calling the shell: " + script);
+			}
             rueckgabe = ShellScript.legacyCallShell2(script);
             if (automatic) {
 				if (rueckgabe == 0) {
