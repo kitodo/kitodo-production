@@ -242,7 +242,6 @@ public class ExportMets {
 					Helper.setFehlerMeldung(myProzess.getTitel()
 							+ ": could not find any referenced images, export aborted");
 				}
-				dd = null;
 				return false;
 			}
 		}
@@ -330,11 +329,10 @@ public class ExportMets {
 		String metsPointer = vp.replace(metsPointerToReplace);
 		mm.setMptrAnchorUrl(metsPointer);
 
-		List<String> images = new ArrayList<String>();
 		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen
-				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+				List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				if (images != null) {
 					int sizeOfImages = images.size();

@@ -218,7 +218,6 @@ public class ExportMetsWithoutHibernate {
 				}
 			} else {
 				Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
-				dd = null;
 				return false;
 			}
 		}
@@ -304,10 +303,9 @@ public class ExportMetsWithoutHibernate {
 		String pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
-		List<String> images = new ArrayList<String>();
 		try {
 			// TODO andere Dateigruppen nicht mit image Namen ersetzen
-			images = this.fi.getDataFiles();
+			List<String> images = this.fi.getDataFiles();
 			if (images != null) {
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				int sizeOfImages = images.size();
