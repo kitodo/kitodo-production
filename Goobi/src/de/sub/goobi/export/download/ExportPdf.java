@@ -63,6 +63,9 @@ import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 public class ExportPdf extends ExportMets {
 
+	private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
+	private static final String PDF_EXTENSION = ".pdf";
+
 	@Override
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
 			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
@@ -123,7 +126,7 @@ public class ExportPdf extends ExportMets {
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
 						contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
 					}
-					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL() + "&targetFileName=" + myProzess.getTitel() + ".pdf");
+					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL() + AND_TARGET_FILE_NAME_IS + myProzess.getTitel() + PDF_EXTENSION);
 					/*
 					 * -------------------------------- mets data does not exist or is invalid --------------------------------
 					 */
@@ -135,12 +138,13 @@ public class ExportPdf extends ExportMets {
 					FilenameFilter filter = new FileListFilter("\\d*\\.tif");
 					SafeFile imagesDir = new SafeFile(myProzess.getImagesTifDirectory(true));
 					SafeFile[] meta = imagesDir.listFiles(filter);
-					int capacity = 19 + contentServerUrl.length() + myProzess.getTitel().length();
+					int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
+							+ myProzess.getTitel().length() + PDF_EXTENSION.length();
 					TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
 					for (SafeFile data : meta) {
 						String file = data.toURI().toURL().toString();
 						filenames.add(file);
-						capacity += (file.length() + 1);
+						capacity += file.length();
 					}
 					StringBuilder url = new StringBuilder(capacity);
 					url.append(contentServerUrl);
@@ -153,9 +157,9 @@ public class ExportPdf extends ExportMets {
 						}
 						url.append(f);
 					}
-					url.append("&targetFileName=");
+					url.append(AND_TARGET_FILE_NAME_IS);
 					url.append(myProzess.getTitel());
-					url.append(".pdf");
+					url.append(PDF_EXTENSION);
 					goobiContentServerUrl = new URL(url.toString());
 				}
 
@@ -168,7 +172,7 @@ public class ExportPdf extends ExportMets {
 
 				if (!context.getResponseComplete()) {
 					HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-					String fileName = myProzess.getTitel() + ".pdf";
+					String fileName = myProzess.getTitel() + PDF_EXTENSION;
 					ServletContext servletContext = (ServletContext) context.getExternalContext().getContext();
 					String contentType = servletContext.getMimeType(fileName);
 					response.setContentType(contentType);
