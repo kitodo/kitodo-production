@@ -38,12 +38,16 @@ public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
 	public static void refreshProcess(int processID) {
-		logger.debug("refreshing process with id " + processID);
+		if(logger.isDebugEnabled()){
+			logger.debug("refreshing process with id " + processID);
+		}
 		try {
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
 			if (session != null) {
-				logger.debug("session is connected: " + session.isConnected());
-				logger.debug("session is open: " + session.isOpen());
+				if(logger.isDebugEnabled()){
+					logger.debug("session is connected: " + session.isConnected());
+					logger.debug("session is open: " + session.isOpen());
+				}
 			} else {
 				logger.debug("session is null");
 			}
@@ -69,7 +73,9 @@ public class RefreshObject {
 	}
 
 	public static void refreshProcess_GUI(int processID) {
-		logger.debug("refreshing process with id " + processID);
+		if(logger.isDebugEnabled()){
+			logger.debug("refreshing process with id " + processID);
+		}
 		try {
 			Session session = Helper.getHibernateSession();
 			if (session == null || !session.isOpen() || !session.isConnected()) {

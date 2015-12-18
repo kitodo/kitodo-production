@@ -258,7 +258,9 @@ public class AdministrationForm implements Serializable {
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				myLogger.debug("Prozess: " + p.getTitel());
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug("Prozess: " + p.getTitel());
+				}
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				Fileformat gdzfile;
 				try {

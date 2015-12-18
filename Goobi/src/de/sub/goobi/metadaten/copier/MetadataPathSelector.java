@@ -202,19 +202,23 @@ public class MetadataPathSelector extends MetadataSelector {
 				// copy rules aren’t related to the rule set but depend on it,
 				// so copy rules that don’t work with the current rule set are
 				// ignored
-				LOG.debug("Cannot create structural element " + docStructType + " as child of "
-						+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
-						+ " because it isn’t allowed by the rule set.");
+				if(LOG.isDebugEnabled()){
+					LOG.debug("Cannot create structural element " + docStructType + " as child of "
+							+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+							+ " because it isn’t allowed by the rule set.");
+				}
 				return;
 			} catch (TypeNotAllowedForParentException e) {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
 			} catch (Exception e) {
 				// copy rule failed, skip it
-				LOG.debug(
-						"Cannot create structural element " + docStructType + " as child of "
-								+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
-								+ ": Accessing the rule set failed with exception: "
-								+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+				if(LOG.isDebugEnabled()){
+					LOG.debug(
+							"Cannot create structural element " + docStructType + " as child of "
+									+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+									+ ": Accessing the rule set failed with exception: "
+									+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+				}
 				return;
 			}
 		}

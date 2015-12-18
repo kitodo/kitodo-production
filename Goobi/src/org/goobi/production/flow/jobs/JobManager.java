@@ -113,7 +113,9 @@ public class JobManager implements ServletContextListener {
 			trigger.setStartTime(new Date());
 			trigger.setName(goobiJob.getJobName() + "_trigger");
 
-			logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
+			if(logger.isInfoEnabled()){
+				logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
+			}
 			sched.scheduleJob(jobDetail, trigger);
 		}
 	}
@@ -166,8 +168,10 @@ public class JobManager implements ServletContextListener {
 
 		Calendar calNow = Calendar.getInstance();
 		
-		logger.debug(calNow.getTime() + " --- "+ cal.getTime());
-		logger.debug("60 seconds from now in milliseconds from 0:00 are " + (calNow.getTimeInMillis()-cal.getTimeInMillis() + 60000));
+		if(logger.isDebugEnabled()){
+			logger.debug(calNow.getTime() + " --- "+ cal.getTime());
+			logger.debug("60 seconds from now in milliseconds from 0:00 are " + (calNow.getTimeInMillis()-cal.getTimeInMillis() + 60000));
+		}
 		
 	}
 	

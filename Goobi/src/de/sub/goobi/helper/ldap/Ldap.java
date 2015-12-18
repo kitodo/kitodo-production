@@ -196,8 +196,10 @@ public class Ldap {
 			myLogger.debug("ldap environment set");
 
 			try {
-				myLogger.debug("start classic ldap authentification");
-				myLogger.debug("user DN is " + getUserDN(inBenutzer));
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug("start classic ldap authentification");
+					myLogger.debug("user DN is " + getUserDN(inBenutzer));
+				}
 
 				if (ConfigMain.getParameter("ldap_AttributeToTest") == null) {
 					myLogger.debug("ldap attribute to test is null");
@@ -222,7 +224,9 @@ public class Ldap {
 					}
 				}
 			} catch (NamingException e) {
-				myLogger.debug("login not allowed for " + inBenutzer.getLogin(), e);
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug("login not allowed for " + inBenutzer.getLogin(), e);
+				}
 				return false;
 			}
 		}
@@ -334,7 +338,9 @@ public class Ldap {
 
 			while (answer.hasMore()) {
 				SearchResult sr = answer.next();
-				myLogger.debug(">>>" + sr.getName());
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug(">>>" + sr.getName());
+				}
 				Attributes attrs = sr.getAttributes();
 				String givenName = " ";
 				String surName = " ";

@@ -1041,7 +1041,9 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenUp(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			}
 		}
 		return MetadatenalsTree3Einlesen1();
 	}
@@ -1053,7 +1055,9 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenDown(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
+			}
 		}
 		return MetadatenalsTree3Einlesen1();
 	}
@@ -1650,20 +1654,30 @@ public class Metadaten {
 	            this.myBildLetztes = dataList.size();
 	            myLogger.trace("myBildLetztes");
 	            for (int i = 0; i < dataList.size(); i++) {
-	                myLogger.trace("file: " + i);
+	            	if(myLogger.isTraceEnabled()){
+	            		myLogger.trace("file: " + i);
+	            	}
 	                if (this.myBild == null) {
 	                    this.myBild = dataList.get(0);
 	                }
-	                myLogger.trace("myBild: " + this.myBild);
+	                if(myLogger.isTraceEnabled()){
+	                	myLogger.trace("myBild: " + this.myBild);
+	                }
 	                String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
-	                myLogger.trace("index: " + index);
+	                if(myLogger.isTraceEnabled()){
+	                	myLogger.trace("index: " + index);
+	                }
 	                String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
-	                myLogger.trace("myPicture: " + myPicture);
+	                if(myLogger.isTraceEnabled()){
+	                	myLogger.trace("myPicture: " + myPicture);
+	                }
 	                /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
 	                if (index.equals(myPicture)) {
 	                    myLogger.trace("index == myPicture");
 	                    int pos = i + welches;
-	                    myLogger.trace("pos: " + pos);
+	                    if(myLogger.isTraceEnabled()){
+	                    	myLogger.trace("pos: " + pos);
+	                    }
 	                    /* aber keine Indexes ausserhalb des Array erlauben */
 	                    if (pos < 0) {
 	                        pos = 0;
@@ -1672,7 +1686,9 @@ public class Metadaten {
 	                        pos = dataList.size() - 1;
 	                    }
 	                    if (this.currentTifFolder != null) {
-	                        myLogger.trace("currentTifFolder: " + this.currentTifFolder);
+	                    	if(myLogger.isTraceEnabled()){
+	                    		myLogger.trace("currentTifFolder: " + this.currentTifFolder);
+	                    	}
 	                        try {
 	                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
 	                            if (dataList == null) {
@@ -1693,15 +1709,21 @@ public class Metadaten {
 	                    myLogger.trace("found myBild");
 	                    /* die korrekte Seitenzahl anzeigen */
 	                    this.myBildNummer = pos + 1;
-	                    myLogger.trace("myBildNummer: " + this.myBildNummer);
+	                    if(myLogger.isTraceEnabled()){
+	                    	myLogger.trace("myBildNummer: " + this.myBildNummer);
+	                    }
 	                    /* Pages-Verzeichnis ermitteln */
 	                    String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
-	                    myLogger.trace("myPfad: " + myPfad);
+	                    if(myLogger.isTraceEnabled()){
+	                    	myLogger.trace("myPfad: " + myPfad);
+	                    }
 	                    /*
 	                     * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
 	                     */
 	                    this.myBildCounter++;
-	                    myLogger.trace("myBildCounter: " + this.myBildCounter);
+	                    if(myLogger.isTraceEnabled()){
+	                    	myLogger.trace("myBildCounter: " + this.myBildCounter);
+	                    }
 
 	                    /* Session ermitteln */
 	                    FacesContext context = FacesContext.getCurrentInstance();
@@ -1712,7 +1734,9 @@ public class Metadaten {
 	                    /* das neue Bild zuweisen */
 	                    try {
 	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
-	                        myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
+	                        if(myLogger.isTraceEnabled()){
+	                        	myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
+	                        }
 	                        if (!new SafeFile(tiffconverterpfad).exists()) {
 	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
 	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "

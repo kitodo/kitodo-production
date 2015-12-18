@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
@@ -299,7 +300,9 @@ public class VariableReplacer {
 			case FIRSTCHILD:
 				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
 				if (resultFirst == null) {
-					logger.info("Can not replace firstChild-variable for METS: " + metadata);
+					if(logger.isInfoEnabled()){
+						logger.info("Can not replace firstChild-variable for METS: " + metadata);
+					}
 					result = "";
 				} else {
 					result = resultFirst;
@@ -309,7 +312,9 @@ public class VariableReplacer {
 			case TOPSTRUCT:
 				if (resultTop == null) {
 					result = "";
-					logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+					if(logger.isEnabledFor(Priority.WARN)){
+						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+					}
 				} else {
 					result = resultTop;
 				}
@@ -322,7 +327,9 @@ public class VariableReplacer {
 					result = resultTop;
 				} else {
 					result = "";
-					logger.warn("Can not replace variable for METS: " + metadata);
+					if(logger.isEnabledFor(Priority.WARN)){
+						logger.warn("Can not replace variable for METS: " + metadata);
+					}
 				}
 				break;
 

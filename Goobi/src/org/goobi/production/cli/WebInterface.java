@@ -97,7 +97,9 @@ public class WebInterface extends HttpServlet {
 				generateAnswer(resp, 400,"Empty command", "No command given. Use help as command to get more information.");
 				return;
 			}
-			logger.debug("command: " + this.command);
+			if(logger.isDebugEnabled()){
+				logger.debug("command: " + this.command);
+			}
 
 			// check if command is allowed for used IP
 			List<String> allowedCommandos = WebInterfaceConfig.getCredencials(ip, password);

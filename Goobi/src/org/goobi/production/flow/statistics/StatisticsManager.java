@@ -165,8 +165,10 @@ public class StatisticsManager implements Serializable {
 		 * -------------------------------- some debugging here
 		 * --------------------------------
 		 */
-		logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
-				+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
+		if(logger.isDebugEnabled()){
+			logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
+					+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
+		}
 
 		/*
 		 * -------------------------------- calculate the statistical results and

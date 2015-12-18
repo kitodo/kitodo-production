@@ -365,7 +365,9 @@ public class MetadatenImagesHelper {
         if (tmpSize < 1) {
             tmpSize = 1;
         }
-        logger.trace("tmpSize: " + tmpSize);
+        if(logger.isTraceEnabled()){
+        	logger.trace("tmpSize: " + tmpSize);
+        }
         if (ConfigMain.getParameter("goobiContentServerUrl", "").equals("")) {
             logger.trace("api");
             ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
@@ -383,7 +385,9 @@ public class MetadatenImagesHelper {
         } else {
             String cs = ConfigMain.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
-            logger.trace("url: " + cs);
+            if(logger.isTraceEnabled()){
+            	logger.trace("url: " + cs);
+            }
             URL csUrl = new URL(cs);
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
@@ -394,7 +398,9 @@ public class MetadatenImagesHelper {
             if (statusCode != HttpStatus.SC_OK) {
                 return;
             }
-            logger.trace("statusCode: " + statusCode);
+            if(logger.isTraceEnabled()){
+            	logger.trace("statusCode: " + statusCode);
+            }
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
             BufferedInputStream bis = new BufferedInputStream(inStream);

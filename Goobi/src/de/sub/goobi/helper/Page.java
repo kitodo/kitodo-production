@@ -82,7 +82,9 @@ public class Page implements Serializable { // implements Iterator
 			
 		} catch (HibernateException e) {
 			// no hits found, error is thrown
-			logger.debug("Failed to get paginated results: " + e);
+			if(logger.isDebugEnabled()){
+				logger.debug("Failed to get paginated results: " + e);
+			}
 		}
 	}
 

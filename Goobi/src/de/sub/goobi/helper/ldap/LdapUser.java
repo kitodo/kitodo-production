@@ -176,8 +176,10 @@ public class LdapUser implements DirContext {
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-		myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
-		myLogger.debug("Replace outstring: " + rueckgabe);
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
+			myLogger.debug("Replace outstring: " + rueckgabe);
+		}
 		return rueckgabe;
 	}
 

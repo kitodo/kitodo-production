@@ -210,8 +210,10 @@ public class WebDav implements Serializable {
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
 
-		myLogger.info("von: " + von);
-		myLogger.info("nach: " + nach);
+		if(myLogger.isInfoEnabled()){
+			myLogger.info("von: " + von);
+			myLogger.info("nach: " + nach);
+		}
 
 		SafeFile imagePfad = new SafeFile(von);
 		SafeFile benutzerHome = new SafeFile(nach);

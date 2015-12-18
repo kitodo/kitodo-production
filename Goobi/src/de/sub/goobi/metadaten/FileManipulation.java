@@ -121,10 +121,14 @@ public class FileManipulation {
                 basename = uploadedFileName;
                 
             }
-            logger.trace("folder to import: " + currentFolder);
+            if(logger.isTraceEnabled()){
+            	logger.trace("folder to import: " + currentFolder);
+            }
             String filename = metadataBean.getMyProzess().getImagesDirectory() + currentFolder + File.separator + basename;
 
-            logger.trace("filename to import: " + filename);
+            if(logger.isTraceEnabled()){
+            	logger.trace("filename to import: " + filename);
+            }
 
             if (new SafeFile(filename).exists()) {
                 List<String> parameterList = new ArrayList<String>();
@@ -141,11 +145,15 @@ public class FileManipulation {
             while ((len = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, len);
             }
-            logger.trace(filename + " was imported");
+            if(logger.isTraceEnabled()){
+            	logger.trace(filename + " was imported");
+            }
             // if file was uploaded into media folder, update pagination sequence
             if (metadataBean.getMyProzess().getImagesTifDirectory(false).equals(
                     metadataBean.getMyProzess().getImagesDirectory() + currentFolder + File.separator)) {
-                logger.trace("update pagination for " + metadataBean.getMyProzess().getTitel());
+            	if(logger.isTraceEnabled()){
+            		logger.trace("update pagination for " + metadataBean.getMyProzess().getTitel());
+            	}
                 updatePagination(filename);
 
             }

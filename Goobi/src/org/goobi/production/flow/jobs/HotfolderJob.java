@@ -113,7 +113,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 								logger.trace("12");
 
 								for (String filename : metsfiles) {
-									logger.debug("found file: " + filename);
+									if(logger.isDebugEnabled()){
+										logger.debug("found file: " + filename);
+									}
 									logger.trace("13");
 
 									int returnValue = generateProcess(filename, template, new SafeFile(hotfolder.getFolderAsFile()), hotfolder.getCollection(),
@@ -124,7 +126,9 @@ public class HotfolderJob extends AbstractGoobiJob {
 										failedData.put(filename, returnValue);
 										logger.trace("16");
 									} else {
-										logger.debug("finished file: " + filename);
+										if(logger.isDebugEnabled()){
+											logger.debug("finished file: " + filename);
+										}
 									}
 								}
 								if (!failedData.isEmpty()) {
@@ -356,11 +360,17 @@ public class HotfolderJob extends AbstractGoobiJob {
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
-		logger.trace("processtitle is " + processTitle);
+		if(logger.isTraceEnabled()){
+			logger.trace("processtitle is " + processTitle);
+		}
 		String metsfilename = io.getMetsFilename();
-		logger.trace("mets filename is " + metsfilename);
+		if(logger.isTraceEnabled()){
+			logger.trace("mets filename is " + metsfilename);
+		}
 		String basepath = metsfilename.substring(0, metsfilename.length() - 4);
-		logger.trace("basepath is " + basepath);
+		if(logger.isTraceEnabled()){
+			logger.trace("basepath is " + basepath);
+		}
 		SafeFile metsfile = new SafeFile(metsfilename);
 		Prozess p = null;
 		if (!testTitle(processTitle)) {

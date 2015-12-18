@@ -37,6 +37,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.goobi.production.constants.FileNames;
 import org.joda.time.Duration;
 
@@ -57,8 +58,10 @@ public class ConfigMain {
 					try {
 						initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 					} catch (ConfigurationException e) {
-						myLogger.warn("Loading of " + FileNames.CONFIG_FILE
-								+ " failed. Trying to start with empty configuration.", e);
+						if(myLogger.isEnabledFor(Priority.WARN)){
+							myLogger.warn("Loading of " + FileNames.CONFIG_FILE
+									+ " failed. Trying to start with empty configuration.", e);
+						}
 						initialized = new PropertiesConfiguration();
 					}
 					initialized.setListDelimiter('&');

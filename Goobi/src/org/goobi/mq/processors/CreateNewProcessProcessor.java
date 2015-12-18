@@ -149,7 +149,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			String state = newProcess.NeuenProzessAnlegen();
 			if (!state.equals("ProzessverwaltungKopie3"))
 				throw new RuntimeException();
-			logger.info("Created new process: " + id);
+			if(logger.isInfoEnabled()){
+				logger.info("Created new process: " + id);
+			}
 		} catch (Exception exited) {
 			logger.error("Failed to create new process: " + id, exited);
 			throw exited;

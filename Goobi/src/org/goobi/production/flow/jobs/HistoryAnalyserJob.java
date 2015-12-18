@@ -405,14 +405,18 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			while (it.hasNext()) {
 				i++;
 				Prozess proc = it.next();
-				logger.debug("updating history entries for " + proc.getTitel());
+				if(logger.isDebugEnabled()){
+					logger.debug("updating history entries for " + proc.getTitel());
+				}
 				try {
 					if (!proc.isSwappedOutGui()) {
 						boolean processHistoryChanged = (true == updateHistory(proc));
 						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
 						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
-							logger.debug("history updated for process " + proc.getId());
+							if(logger.isDebugEnabled()){
+								logger.debug("history updated for process " + proc.getId());
+							}
 						}
 					}
 
@@ -479,7 +483,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				Calendar cal = Calendar.getInstance();
 				cal.set(2007, 0, 1, 0, 0, 0);
 				eventTimestamp = cal.getTime();
-				logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString() + "' for a history event as a fallback");
+				if(logger.isInfoEnabled()){
+					logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString() + "' for a history event as a fallback");
+				}
 			}
 
 		}
