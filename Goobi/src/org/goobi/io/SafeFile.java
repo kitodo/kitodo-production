@@ -327,6 +327,11 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.setLastModified(time);
 	}
 
+	@Override
+	public String toString() {
+		return delegate.toString();
+	}
+
 	public URI toURI() {
 		return delegate.toURI();
 	}
