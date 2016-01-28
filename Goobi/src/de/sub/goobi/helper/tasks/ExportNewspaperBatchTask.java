@@ -614,14 +614,65 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 		try {
 			return parent.getChild(type, identifierField, identifier);
 		} catch (NoSuchElementException nose) {
-			DocStruct child = parent.createChild(type, act, ruleset);
+			DocStruct child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
 			child.addMetadata(identifierField, identifier);
 			try {
 				child.addMetadata(optionalField, identifier);
 			} catch (MetadataTypeNotAllowedException e) {
 			}
+			
+			Integer rank = null;
+			try {
+				rank = Integer.valueOf(identifier);
+			} catch (NumberFormatException e) {
+			}
+			parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
+			
 			return child;
 		}
+	}
+
+	/**
+	 * Returns the index of the child to insert between its siblings depending
+	 * on its rank. A return value of {@code null} will indicate that no
+	 * position could be determined which will cause
+	 * {@link DocStruct#addChild(Integer, DocStruct)} to simply append the new
+	 * child at the end.
+	 * 
+	 * @param siblings
+	 *            brothers and sisters of the child to add
+	 * @param metadataType
+	 *            field indicating the rank value
+	 * @param rank
+	 *            rank of the child to insert
+	 * @return the index position to insert the child
+	 */
+	private static Integer positionByRank(List<DocStruct> siblings, String metadataType, Integer rank) {
+		int result = 0;
+
+		if (siblings == null || rank == null) {
+			return null;
+		}
+
+		SIBLINGS: for (DocStruct aforeborn : siblings) {
+			List<Metadata> allMetadata = aforeborn.getAllMetadata();
+			if (allMetadata != null) {
+				for (Metadata metadataElement : allMetadata) {
+					if (metadataElement.getType().getName().equals(metadataType)) {
+						try {
+							if (Integer.parseInt(metadataElement.getValue()) < rank) {
+								result++;
+								continue SIBLINGS;
+							} else {
+								return result;
+							}
+						} catch (NumberFormatException e) { }
+					}
+				}
+			}
+			return null;
+		}
+		return result;
 	}
 
 	/**
