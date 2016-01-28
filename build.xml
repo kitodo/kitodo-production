@@ -307,7 +307,7 @@
         ==================================================-->
 
     <!-- Build of war file. -->
-    <target name="war" depends="compile, copy-config, create-plugin-jar-files">
+    <target name="war" depends="compile, copy-config, create-plugin-jar-files, extract-from-ics-1.1.5.jar">
 
         <war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
 
@@ -371,7 +371,18 @@
             <fileset dir="${config.local.dir}" includes="*.*"/>
         </copy>
     </target>
-	
+
+	<!-- extract errorfile.jpg from ics-1.1.5.jar as missing while creating pdf files -->
+	<target name="extract-from-ics-1.1.5.jar">
+		<unzip src="${lib.dir}/ics-1.1.5.jar" dest="${build.classes}">
+			<patternset>
+				<include name="**/errorfile.jpg" />
+				<include name="**/sRGB.icc" />
+			</patternset>
+		</unzip>
+	</target>
+
+
 	<!-- Build of plugin jars -->
 
 	<target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar">
