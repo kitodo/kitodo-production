@@ -377,6 +377,7 @@
 		<unzip src="${lib.dir}/ics-1.1.5.jar" dest="${build.classes}">
 			<patternset>
 				<include name="**/errorfile.jpg" />
+				<include name="**/sRGB.icc" />
 			</patternset>
 		</unzip>
 	</target>
