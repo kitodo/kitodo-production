@@ -50,10 +50,12 @@
     <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
 
     <property name="build.tomcat.compile.jsp" value="false"/>
-    <property name="build.tomcat.dir.lib" value="${basedir}"/>
 
     <property name="src.dir" value="${basedir}/Goobi"/>
     <property name="lib.dir" value="${src.dir}/WEB-INF/lib"/>
+
+    <!-- build.tomcat.dir.lib is normally overridden in build.properties -->
+    <property name="build.tomcat.dir.lib" value="${lib.dir}"/>
 
     <property name="config.dir" value="${src.dir}/config"/>
     <property name="config.local.dir" value="${basedir}/config-local"/>
