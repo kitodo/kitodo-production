@@ -45,8 +45,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
@@ -614,14 +614,78 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 		try {
 			return parent.getChild(type, identifierField, identifier);
 		} catch (NoSuchElementException nose) {
-			DocStruct child = parent.createChild(type, act, ruleset);
+			DocStruct child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
 			child.addMetadata(identifierField, identifier);
 			try {
 				child.addMetadata(optionalField, identifier);
 			} catch (MetadataTypeNotAllowedException e) {
+				logger.warn(e.getMessage());
 			}
+			
+			Integer rank = null;
+			try {
+				rank = Integer.valueOf(identifier);
+			} catch (NumberFormatException e) {
+				if (logger.isEnabledFor(Priority.WARN)) {
+					logger.warn("Cannot place " + type + " \"" + identifier
+							+ "\" correctly because its sorting criterion is not numeric.");
+				}
+			}
+			parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
+			
 			return child;
 		}
+	}
+
+	/**
+	 * Returns the index of the child to insert between its siblings depending
+	 * on its rank. A return value of {@code null} will indicate that no
+	 * position could be determined which will cause
+	 * {@link DocStruct#addChild(Integer, DocStruct)} to simply append the new
+	 * child at the end.
+	 * 
+	 * @param siblings
+	 *            brothers and sisters of the child to add
+	 * @param metadataType
+	 *            field indicating the rank value
+	 * @param rank
+	 *            rank of the child to insert
+	 * @return the index position to insert the child
+	 */
+	private static Integer positionByRank(List<DocStruct> siblings, String metadataType, Integer rank) {
+		int result = 0;
+
+		if (siblings == null || rank == null) {
+			return null;
+		}
+
+		SIBLINGS: for (DocStruct aforeborn : siblings) {
+			List<Metadata> allMetadata = aforeborn.getAllMetadata();
+			if (allMetadata != null) {
+				for (Metadata metadataElement : allMetadata) {
+					if (metadataElement.getType().getName().equals(metadataType)) {
+						try {
+							if (Integer.parseInt(metadataElement.getValue()) < rank) {
+								result++;
+								continue SIBLINGS;
+							} else {
+								return result;
+							}
+						} catch (NumberFormatException e) {
+							if (logger.isEnabledFor(Priority.WARN)) {
+								String typeName = aforeborn.getType() != null && aforeborn.getType().getName() != null
+										? aforeborn.getType().getName() : "cross-reference";
+								logger.warn("Cannot determine position to place " + typeName
+										+ " correctly because the sorting criterion of one of its siblings is \""
+										+ metadataElement.getValue() + "\", but must be numeric.");
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+		return result;
 	}
 
 	/**
