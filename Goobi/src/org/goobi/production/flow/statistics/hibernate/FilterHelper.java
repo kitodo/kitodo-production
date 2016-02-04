@@ -587,7 +587,6 @@ public class FilterHelper {
 		Conjunction conjProcesses = null;
 		Conjunction conjTemplates = null;
 		Conjunction conjUsers = null;
-		Conjunction conjStepProperties = null;
 		Conjunction conjProcessProperties = null;
 		Conjunction conjBatches = null;
 
@@ -870,27 +869,6 @@ public class FilterHelper {
 
 				inCrit.createAlias("eigenschaften", "prozesseig");
 				inCrit.add(conjProcessProperties);
-			}
-		}
-
-		if (conjStepProperties != null) {
-			if (!flagSteps) {
-				Criteria stepCrit = session.createCriteria(Prozess.class);
-				stepCrit.createCriteria("schritte", "steps");
-				stepCrit.createAlias("steps.eigenschaften", "schritteig");
-				stepCrit.add(conjStepProperties);
-				stepCrit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-				List<Integer> myIds = new ArrayList<Integer>();
-
-				for (@SuppressWarnings("unchecked")
-				Iterator<Prozess> it = stepCrit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-					Prozess p = it.next();
-					myIds.add(p.getId());
-				}
-				crit.add(Restrictions.in("id", myIds));
-			} else {
-				critProcess.createAlias("steps.eigenschaften", "schritteig");
-				inCrit.add(conjStepProperties);
 			}
 		}
 
