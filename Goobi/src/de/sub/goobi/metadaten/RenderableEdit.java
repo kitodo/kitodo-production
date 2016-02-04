@@ -165,7 +165,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 						found.setLastname(value);
 						break;
 					case NORMDATA_RECORD:
-						if (value != null & value.length() > 0
+						if (value != null && value.length() > 0
 								&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
 							String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
 							found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
