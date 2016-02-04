@@ -619,7 +619,9 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 			try {
 				child.addMetadata(optionalField, identifier);
 			} catch (MetadataTypeNotAllowedException e) {
-				logger.warn(e.getMessage());
+				if(logger.isInfoEnabled()){
+					logger.info(e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
+				}
 			}
 			
 			Integer rank = null;
