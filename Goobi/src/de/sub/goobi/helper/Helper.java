@@ -334,11 +334,6 @@ public class Helper implements Serializable, Observer {
 		return sess;
 	}
 
-	public static void createNewHibernateSession() {
-		HibernateSessionLong hsl = (HibernateSessionLong) getManagedBeanValue("#{HibernateSessionLong}");
-		hsl.getNewSession();
-	}
-
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
