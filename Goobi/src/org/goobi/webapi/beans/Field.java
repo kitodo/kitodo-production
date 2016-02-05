@@ -79,7 +79,7 @@ public class Field {
 		this.key = toCopy.key;
 		this.option = toCopy.option != null ? new ArrayList<Label>(toCopy.option) : null;
 		this.required = toCopy.required;
-		this.ughbinding = toCopy.ughbinding != null ? new Boolean(toCopy.ughbinding) : null;
+		this.ughbinding = toCopy.ughbinding != null ? Boolean.valueOf(toCopy.ughbinding) : null;
 	}
 
 	public static List<Field> getFieldConfigForProject(Projekt project) throws IOException {
