@@ -294,7 +294,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 			throw new NullPointerException(e.getMessage());
 		}
 		String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
-		if (normdataRecord != null & normdataRecord.length() > 0
+		if (normdataRecord != null && normdataRecord.length() > 0
 				&& !normdataRecord.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
 			String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
 			person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
