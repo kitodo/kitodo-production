@@ -145,8 +145,7 @@ public class SRUClient {
             String version) throws MalformedURLException {
         // Make sure our URL is valid first
         try {
-            @SuppressWarnings("unused")
-			URL url = new URL(baseUrl);
+            new URL(baseUrl);
             this.baseUrl = baseUrl;
         } catch (MalformedURLException ex) {
             log.error("Invalid URL passed to constructor: ", ex);
