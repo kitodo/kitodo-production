@@ -127,13 +127,6 @@
 		<filter-class>de.sub.goobi.helper.servletfilter.SecurityCheckFilter</filter-class>
 	</filter>
 
-    <!-- 	
-    <filter>
-		<filter-name>HibernateFilter</filter-name>
-		<filter-class>de.sub.goobi.persistence.HibernateSessionConversationFilter</filter-class> 
-	</filter>
-	 -->
-	
 	<filter>
         <filter-name>HibernateFilter</filter-name>
         <filter-class>de.sub.goobi.helper.servletfilter.HibernateSessionFilter2</filter-class> 
