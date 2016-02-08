@@ -87,6 +87,9 @@ public class SearchForm {
 
 	@SuppressWarnings("unchecked")
 	public SearchForm() {
+
+		List<String> results;
+
 		for (StepStatus s : StepStatus.values()) {
 			this.stepstatus.add(s);
 		}
@@ -110,25 +113,28 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.masterpiecePropertyTitles.add((String) it.next());
+
+		results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+		for (String result : results) {
+			this.masterpiecePropertyTitles.add(result);
 		}
 
 		crit = session.createCriteria(Vorlageeigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.templatePropertyTitles.add((String) it.next());
+		results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+		for (String result : results) {
+			this.templatePropertyTitles.add(result);
 		}
 
 		crit = session.createCriteria(Prozesseigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			String itstr = (String) it.next();
-			if (itstr!=null){
+		results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+		for (String itstr : results) {
+			if (itstr != null) {
 				this.processPropertyTitles.add(itstr);
 			}
 		}
@@ -137,8 +143,9 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.stepTitles.add((String) it.next());
+		results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()
+		for (String result : results) {
+			this.stepTitles.add(result);
 		}
 
 		crit = session.createCriteria(Benutzer.class);
