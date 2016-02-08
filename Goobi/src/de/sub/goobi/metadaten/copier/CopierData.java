@@ -149,6 +149,21 @@ public class CopierData {
 	}
 
 	/**
+	 * Returns the process title.
+	 * 
+	 * @return the process title
+	 */
+	public String getProcessTitle() {
+		if (process instanceof Prozess) {
+			return ((Prozess) process).getTitel();
+		} else if (process instanceof ProcessObject) {
+			return ((ProcessObject) process).getTitle();
+		} else {
+			return String.valueOf(process);
+		}
+	}
+	
+	/**
 	 * Returns a string that textually represents this bean.
 	 * 
 	 * @return a string representation of this object
@@ -156,6 +171,6 @@ public class CopierData {
 	 */
 	@Override
 	public String toString() {
-		return "{fileformat: " + fileformat.toString() + ", process: " + process.toString() + '}';
+		return "{fileformat: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
 	}
 }
