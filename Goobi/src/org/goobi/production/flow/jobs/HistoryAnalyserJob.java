@@ -91,7 +91,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @param inProcess
 	 *            the {@link Prozess} to use
 	 * 
-	 * @return true, if any history event is updated, so the process has to to saved to database
+	 * @return true, if any history event is updated, so the process has to be saved to database
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws InterruptedException

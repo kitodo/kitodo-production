@@ -73,9 +73,9 @@ public class ExportDms extends ExportMets {
 	private boolean exportFulltext = true;
 
 	/**
-	 * The field exportDmsTask holds an optional task instance whose progress
-	 * will be updated and whom errors will be passed to to be visible in the
-	 * task manager screen if it’s available.
+	 * The field exportDmsTask holds an optional task instance. Its progress
+	 * and its errors will be passed to the task manager screen (if available)
+	 * for visualisation.
 	 */
 	public EmptyTask exportDmsTask = null;
 
