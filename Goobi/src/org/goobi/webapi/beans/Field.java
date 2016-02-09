@@ -53,35 +53,6 @@ public class Field {
 	@XmlElement(name="insertionLevel")
 	private String docstruct;
 
-	/**
-	 * Default constructor is required to be explicitly coded because copy
-	 * constructor is given. Java only provides an implicit default constructor
-	 * as long as no other constructors are given.
-	 */
-	public Field() {
-		// there is nothing to do
-	}
-
-	/**
-	 * Copy Constructor to instantiate an already populated Field. Copying is
-	 * done that way that copies are created of the List and Boolean object—if
-	 * present—so modifying one of them will *not* influence the one in the
-	 * Field the copy was derived from. However, no copies are created of the
-	 * list *entries*, so modifying a Label in the List *will* modify the equal
-	 * Label in the List the copy was derived from.
-	 * 
-	 * @param toCopy
-	 *            Field to create a copy from
-	 */
-	public Field(Field toCopy) {
-		this.docstruct = toCopy.docstruct;
-		this.from = toCopy.from;
-		this.key = toCopy.key;
-		this.option = toCopy.option != null ? new ArrayList<Label>(toCopy.option) : null;
-		this.required = toCopy.required;
-		this.ughbinding = toCopy.ughbinding != null ? Boolean.valueOf(toCopy.ughbinding) : null;
-	}
-
 	public static List<Field> getFieldConfigForProject(Projekt project) throws IOException {
 		List<Field> fields = new ArrayList<Field>();
 
