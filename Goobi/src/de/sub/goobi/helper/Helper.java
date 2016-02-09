@@ -69,6 +69,7 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
+import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.persistence.HibernateSessionLong;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
@@ -319,9 +320,11 @@ public class Helper implements Serializable, Observer {
 	}
 
 	public static Session getHibernateSession() {
-		Session sess;
+		Session sess = null;
 		try {
-			sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
+			if (!(Thread.currentThread() instanceof ExportNewspaperBatchTask)) {
+				sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
+			}
 			if (sess == null) {
 				sess = HibernateUtilOld.getSession();
 			}
