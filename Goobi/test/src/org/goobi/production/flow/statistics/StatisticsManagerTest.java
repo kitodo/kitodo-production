@@ -43,10 +43,7 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.jfree.data.general.DefaultValueDataset;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigMain;
@@ -65,7 +62,10 @@ public class StatisticsManagerTest {
 
 		testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
 		testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
+	}
 
+	@Before
+	public void initTestManager() {
 		Calendar cal1 = Calendar.getInstance();
 		Calendar cal2 = Calendar.getInstance();
 		cal1.set(2009, 01, 01, 0, 0, 0);
@@ -83,6 +83,7 @@ public class StatisticsManagerTest {
 		testManager.setTargetTimeUnit(sourceTimeUnit);
 		testManager.setTargetCalculationUnit(targetCalculationUnit);
 		testManager.setTargetResultOutput(targetResultOutput);
+
 	}
 
 	@AfterClass
