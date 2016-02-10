@@ -33,6 +33,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -50,6 +51,11 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepStatus;
 
 public class SearchForm {
+
+	/**
+	 * Logger instance.
+	 */
+	private static final Logger logger = Logger.getLogger(SearchForm.class);
 
 	private List<String> projects = new ArrayList<String>(); // proj:
 	private String project = "";
@@ -87,6 +93,9 @@ public class SearchForm {
 
 	@SuppressWarnings("unchecked")
 	public SearchForm() {
+
+		List<String> results;
+
 		for (StepStatus s : StepStatus.values()) {
 			this.stepstatus.add(s);
 		}
@@ -110,35 +119,58 @@ public class SearchForm {
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.masterpiecePropertyTitles.add((String) it.next());
+		try {
+			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.masterpiecePropertyTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			session = Helper.getHibernateSession();
 		}
 
 		crit = session.createCriteria(Vorlageeigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.templatePropertyTitles.add((String) it.next());
+		try {
+			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.templatePropertyTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			session = Helper.getHibernateSession();
 		}
 
 		crit = session.createCriteria(Prozesseigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			String itstr = (String) it.next();
-			if (itstr!=null){
-				this.processPropertyTitles.add(itstr);
+		try {
+			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String itstr : results) {
+				if (itstr != null) {
+					this.processPropertyTitles.add(itstr);
+				}
 			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			session = Helper.getHibernateSession();
 		}
 
 		crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.stepTitles.add((String) it.next());
+		try {
+			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.stepTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			session = Helper.getHibernateSession();
 		}
 
 		crit = session.createCriteria(Benutzer.class);
