@@ -1629,9 +1629,8 @@ public class Metadaten {
 	        myLogger.trace("ocr BildErmitteln");
 	        this.ocrResult = "";
 
-	        List<String> dataList = new ArrayList<String>();
 	        myLogger.trace("dataList");
-	        dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+	        List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	        myLogger.trace("dataList 2");
 	        if (dataList == null || dataList.isEmpty()) {
 	            try {
