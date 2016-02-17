@@ -178,7 +178,12 @@ public class SearchForm {
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
 		crit.addOrder(Order.asc("vorname"));
-		this.user.addAll(crit.list());
+		try {
+			this.user.addAll(crit.list());
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+		}
+
 	}
 
 	public List<String> getProjects() {
