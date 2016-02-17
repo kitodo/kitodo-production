@@ -164,7 +164,7 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%-- user --%>
-													<h:outputText value="#{msgs.user}: "/>
+													<h:outputText value="#{msgs.stepDoneByUser}: "/>
 													<h:panelGroup>
 														<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
 															<si:selectItems value="#{SearchForm.user}"
