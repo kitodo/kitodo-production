@@ -107,7 +107,7 @@ public class SearchForm {
 				this.masterpiecePropertyTitles.add(result);
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of master piece property titles could be empty!");
 		}
 	}
 
@@ -132,7 +132,7 @@ public class SearchForm {
 				this.projects.add(p.getTitel());
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of projects could be empty!");
 		}
 	}
 
@@ -154,7 +154,7 @@ public class SearchForm {
 				}
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of process property titles could be empty!");
 		}
 	}
 
@@ -183,7 +183,7 @@ public class SearchForm {
 				this.stepTitles.add(result);
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of step titles could be empty!");
 		}
 	}
 
@@ -203,7 +203,7 @@ public class SearchForm {
 				this.templatePropertyTitles.add(result);
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of template property titles could be empty!");
 		}
 	}
 
@@ -220,7 +220,7 @@ public class SearchForm {
 		try {
 			this.user.addAll(crit.list());
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException.");
+			logger.warn("Catched RuntimeException. List of users could be empty!");
 		}
 	}
 
