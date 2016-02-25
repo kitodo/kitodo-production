@@ -205,23 +205,14 @@ public class SearchForm {
 		} catch (RuntimeException rte) {
 			logger.warn("Catched RuntimeException.");
 		}
-
 	}
 
-	@SuppressWarnings("unchecked")
-	public SearchForm() {
-
-		initStepStatus();
-		initProjects();
-		initMasterpiecePropertyTitles();
-		initTemplatePropertyTitles();
-		initProcessPropertyTitles();
-		initStepTitles();
-
+	/**
+	 * Initialise drop down list of user list
+	 */
+	protected void initUserList() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit;
-
-		crit = session.createCriteria(Benutzer.class);
+		Criteria crit = session.createCriteria(Benutzer.class);
 		crit.add(Restrictions.isNull("isVisible"));
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
@@ -229,9 +220,18 @@ public class SearchForm {
 		try {
 			this.user.addAll(crit.list());
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			logger.warn("Catched RuntimeException.");
 		}
+	}
 
+	public SearchForm() {
+		initStepStatus();
+		initProjects();
+		initMasterpiecePropertyTitles();
+		initTemplatePropertyTitles();
+		initProcessPropertyTitles();
+		initStepTitles();
+		initUserList();
 	}
 
 	public List<String> getProjects() {
