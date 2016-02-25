@@ -145,6 +145,27 @@ public class SearchForm {
 		}
 	}
 
+	/**
+	 * Initialise drop down list of template property titles
+	 */
+	protected void initTemplatePropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Vorlageeigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.templatePropertyTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException.");
+		}
+
+	}
+
 	@SuppressWarnings("unchecked")
 	public SearchForm() {
 
@@ -153,23 +174,10 @@ public class SearchForm {
 		initStepStatus();
 		initProjects();
 		initMasterpiecePropertyTitles();
+		initTemplatePropertyTitles();
 
 		Session session = Helper.getHibernateSession();
 		Criteria crit;
-
-		crit = session.createCriteria(Vorlageeigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-			for (String result : results) {
-				this.templatePropertyTitles.add(result);
-			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
-		}
 
 		crit = session.createCriteria(Prozesseigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
