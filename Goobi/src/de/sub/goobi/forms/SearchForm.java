@@ -137,6 +137,28 @@ public class SearchForm {
 	}
 
 	/**
+	 * Initialise drop down list of process property titles
+	 */
+	protected void initProcessPropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Prozesseigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String itstr : results) {
+				if (itstr != null) {
+					this.processPropertyTitles.add(itstr);
+				}
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException.");
+		}
+	}
+
+	/**
 	 * Initialise drop down list of step status
 	 */
 	protected void initStepStatus() {
@@ -175,25 +197,10 @@ public class SearchForm {
 		initProjects();
 		initMasterpiecePropertyTitles();
 		initTemplatePropertyTitles();
+		initProcessPropertyTitles();
 
 		Session session = Helper.getHibernateSession();
 		Criteria crit;
-
-		crit = session.createCriteria(Prozesseigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
-		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-			for (String itstr : results) {
-				if (itstr != null) {
-					this.processPropertyTitles.add(itstr);
-				}
-			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
-		}
 
 		crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("titel"));
