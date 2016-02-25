@@ -91,14 +91,22 @@ public class SearchForm {
 	private String templatePropertyOperand = "";
 	private String stepOperand = "";
 
+	/**
+	 * Initialise drop down list of step status
+	 */
+	protected void initStepStatus() {
+		for (StepStatus s : StepStatus.values()) {
+			this.stepstatus.add(s);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public SearchForm() {
 
 		List<String> results;
 
-		for (StepStatus s : StepStatus.values()) {
-			this.stepstatus.add(s);
-		}
+		initStepStatus();
+
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
 
