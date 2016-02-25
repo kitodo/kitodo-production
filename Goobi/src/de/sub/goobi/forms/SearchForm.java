@@ -92,6 +92,31 @@ public class SearchForm {
 	private String stepOperand = "";
 
 	/**
+	 * Initialise drop down list of projects
+	 */
+	protected void initProjects() {
+		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
+		Session session = Helper.getHibernateSession();
+        Criteria crit = session.createCriteria(Projekt.class);
+
+		crit.addOrder(Order.asc("titel"));
+		if (restriction > 2) {
+			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
+		}
+		this.projects.add(Helper.getTranslation("notSelected"));
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<Projekt> projektList = crit.list();
+			for (Projekt p : projektList) {
+				this.projects.add(p.getTitel());
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException.");
+		}
+	}
+
+	/**
 	 * Initialise drop down list of step status
 	 */
 	protected void initStepStatus() {
@@ -106,22 +131,10 @@ public class SearchForm {
 		List<String> results;
 
 		initStepStatus();
+		initProjects();
 
-		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
-
-		// projects
-		Criteria crit = session.createCriteria(Projekt.class);
-		crit.addOrder(Order.asc("titel"));
-		if (restriction > 2) {
-			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
-		}
-		this.projects.add(Helper.getTranslation("notSelected"));
-		
-		List<Projekt> projektList = crit.list();
-		for (Projekt p : projektList) {
-			this.projects.add(p.getTitel());
-		}
+		Criteria crit;
 
 		crit = session.createCriteria(Werkstueckeigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
