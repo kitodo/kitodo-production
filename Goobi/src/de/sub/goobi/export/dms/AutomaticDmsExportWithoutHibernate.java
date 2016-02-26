@@ -76,9 +76,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	private ProjectObject project;
 
 	/**
-	 * The field task holds an optional task instance whose progress will be
-	 * updated and whom errors will be passed to to be visible in the task
-	 * manager screen if it’s available.
+	 * The field task holds an optional task instance. Its progress
+	 * and its errors will be passed to the task manager screen (if available)
+	 * for visualisation.
 	 */
 	private EmptyTask task;
 	

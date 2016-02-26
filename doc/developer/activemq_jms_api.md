@@ -6,7 +6,7 @@ JMS
 
 Active Message Queue is an open source Java Messaging (JMS) implementation
 provided by the Apache Software Foundation. It is intended to be used to
-to connect software components in a flexible way. The core is the Active MQ
+connect software components in a flexible way. The core is the Active MQ
 server which can be pictured like a post office. The mail boxes are named
 “queue” or “topic”. Queues work as expected: A producer sends a message where
 a consumer can pick it up. Topics can be pictured as black boards: The main
