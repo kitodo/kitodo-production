@@ -265,4 +265,23 @@ public abstract class BaseDAO implements Serializable {
 		}
 	}
 
+	/**
+	 * Retrieve list of objects by query string and namend parameter.
+	 *
+	 * @param queryString Query string
+	 * @param namedParameter Name of named parameter
+	 * @param parameter Parameter value
+	 * @return List
+	 * @throws DAOException
+	 */
+	protected List retrieveObjs(String queryString, String namedParameter, String parameter) throws DAOException {
+		try {
+			Session session = Helper.getHibernateSession();
+			Query q = session.createQuery(queryString);
+			q.setString(namedParameter, parameter);
+			return q.list();
+		} catch (HibernateException he) {
+			throw new DAOException(he);
+		}
+	}
 }
