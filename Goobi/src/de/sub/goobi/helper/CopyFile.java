@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
 
-// Only useage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
+// Only usage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
 
    // program options initialized to default values

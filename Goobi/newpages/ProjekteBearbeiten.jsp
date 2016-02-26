@@ -223,7 +223,6 @@
 																	monthYearRowClass="monthYearRowClass"
 																	imageLocation="/newpages/images/calendarImages"
 																	popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
-																<%--popupButtonImageUrl="images/calender.gif"--%>
 
 																<h:outputText id="vwid36a"
 																	value="#{msgs.projectIsArchived}: " />

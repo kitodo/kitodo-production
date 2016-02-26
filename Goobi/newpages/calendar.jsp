@@ -461,7 +461,7 @@
 										</htm:div>
 									</htm:div>
 
-									<%-- Calender sheet --%>
+									<%-- Calendar sheet --%>
 
 									<htm:table styleClass="calendarSheet">
 										<htm:caption>

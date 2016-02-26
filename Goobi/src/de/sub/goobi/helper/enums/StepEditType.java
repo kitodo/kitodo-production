@@ -36,7 +36,7 @@ import de.sub.goobi.helper.Helper;
  */
 public enum StepEditType {
 	/**
-	 * default type is unknown for all steps, which still dont have a specific
+	 * default type is unknown for all steps, which still don't have a specific
 	 * type
 	 */
 	UNNOWKN(0, "unbekannt"),

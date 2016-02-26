@@ -558,7 +558,7 @@ public class Ldap {
 				char[] password = passwd.toCharArray();
 
 				// TODO: Let this method really load a keystore if configured
-				// initalize the keystore, if file is available, load the keystore
+				// initialize the keystore, if file is available, load the keystore
 				ks.load(null);
 
 				ks.setCertificateEntry("ROOTCERT", cacert);
