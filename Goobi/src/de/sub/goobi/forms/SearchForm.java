@@ -91,89 +91,128 @@ public class SearchForm {
 	private String templatePropertyOperand = "";
 	private String stepOperand = "";
 
-	@SuppressWarnings("unchecked")
-	public SearchForm() {
-
-		List<String> results;
-
-		for (StepStatus s : StepStatus.values()) {
-			this.stepstatus.add(s);
+	/**
+	 * Initialise drop down list of master piece property titles
+	 */
+	protected void initMasterpiecePropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Werkstueckeigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.masterpiecePropertyTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. List of master piece property titles could be empty!");
 		}
+	}
+
+	/**
+	 * Initialise drop down list of projects
+	 */
+	protected void initProjects() {
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
+        Criteria crit = session.createCriteria(Projekt.class);
 
-		// projects
-		Criteria crit = session.createCriteria(Projekt.class);
 		crit.addOrder(Order.asc("titel"));
 		if (restriction > 2) {
 			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
 		}
 		this.projects.add(Helper.getTranslation("notSelected"));
-		
-		List<Projekt> projektList = crit.list();
-		for (Projekt p : projektList) {
-			this.projects.add(p.getTitel());
-		}
 
-		crit = session.createCriteria(Werkstueckeigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
 		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-			for (String result : results) {
-				this.masterpiecePropertyTitles.add(result);
+			@SuppressWarnings("unchecked")
+			List<Projekt> projektList = crit.list();
+			for (Projekt p : projektList) {
+				this.projects.add(p.getTitel());
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
+			logger.warn("Catched RuntimeException. List of projects could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Vorlageeigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
-			for (String result : results) {
-				this.templatePropertyTitles.add(result);
-			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
-		}
-
-		crit = session.createCriteria(Prozesseigenschaft.class);
+	/**
+	 * Initialise drop down list of process property titles
+	 */
+	protected void initProcessPropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Prozesseigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
 		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 			for (String itstr : results) {
 				if (itstr != null) {
 					this.processPropertyTitles.add(itstr);
 				}
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
+			logger.warn("Catched RuntimeException. List of process property titles could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Schritt.class);
+	/**
+	 * Initialise drop down list of step status
+	 */
+	protected void initStepStatus() {
+		for (StepStatus s : StepStatus.values()) {
+			this.stepstatus.add(s);
+		}
+	}
+
+	/**
+	 * Initialise drop down list of step titles
+	 */
+	protected void initStepTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
 		try {
-			results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 			for (String result : results) {
 				this.stepTitles.add(result);
 			}
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
-			session = Helper.getHibernateSession();
+			logger.warn("Catched RuntimeException. List of step titles could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Benutzer.class);
+	/**
+	 * Initialise drop down list of template property titles
+	 */
+	protected void initTemplatePropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Vorlageeigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.templatePropertyTitles.add(result);
+			}
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. List of template property titles could be empty!");
+		}
+	}
+
+	/**
+	 * Initialise drop down list of user list
+	 */
+	protected void initUserList() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Benutzer.class);
 		crit.add(Restrictions.isNull("isVisible"));
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
@@ -181,9 +220,18 @@ public class SearchForm {
 		try {
 			this.user.addAll(crit.list());
 		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. Hibernate session maybe corrupted - recreating new hibernate session!");
+			logger.warn("Catched RuntimeException. List of users could be empty!");
 		}
+	}
 
+	public SearchForm() {
+		initStepStatus();
+		initProjects();
+		initMasterpiecePropertyTitles();
+		initTemplatePropertyTitles();
+		initProcessPropertyTitles();
+		initStepTitles();
+		initUserList();
 	}
 
 	public List<String> getProjects() {
