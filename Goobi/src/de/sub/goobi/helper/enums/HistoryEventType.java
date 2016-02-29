@@ -36,7 +36,7 @@ import de.sub.goobi.helper.Helper;
  */
 public enum HistoryEventType {
 	/**
-	 * default type is unknown for all properties, which still dont have a specific
+	 * default type is unknown for all properties, which still don't have a specific
 	 * type
 	 */
 	unknown(0, "unknown",false, false, null),
