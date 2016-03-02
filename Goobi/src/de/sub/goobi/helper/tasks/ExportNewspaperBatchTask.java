@@ -74,6 +74,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.BatchDAO;
 
 public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
@@ -107,7 +108,7 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	/**
 	 * The field batch holds the batch whose processes are to export.
 	 */
-	private final Batch batch;
+	private Batch batch;
 
 	/**
 	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
@@ -145,6 +146,12 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	private final double divisor;
 
 	private final HashMap<Integer, String> collectedYears;
+	
+	/**
+	 * The field batchId holds the ID number of the batch whose processes are to
+	 * export.
+	 */
+	private Integer batchId;
 
 	/**
 	 * Constructor to create an ExportNewspaperBatchTask.
@@ -175,11 +182,10 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
 		super(batch.getLabel());
-		this.batch = batch;
+		batchId = batch.getId();
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
 		collectedYears = new HashMap<Integer, String>();
-		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
 		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
 		DocStruct dsNewspaper = batch.getProcesses().iterator().next().getDigitalDocument().getLogicalDocStruct();
@@ -227,6 +233,10 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	public void run() {
 		Prozess process = null;
 		try {
+			if(processesIterator == null){
+				batch = BatchDAO.read(batchId);
+				processesIterator = batch.getProcesses().iterator();
+			}
 			if (action == 1) {
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
