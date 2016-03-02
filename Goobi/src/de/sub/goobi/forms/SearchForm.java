@@ -36,6 +36,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -106,8 +107,8 @@ public class SearchForm {
 			for (String result : results) {
 				this.masterpiecePropertyTitles.add(result);
 			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of master piece property titles could be empty!");
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of master piece property titles could be empty!");
 		}
 	}
 
@@ -131,8 +132,8 @@ public class SearchForm {
 			for (Projekt p : projektList) {
 				this.projects.add(p.getTitel());
 			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of projects could be empty!");
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of projects could be empty!");
 		}
 	}
 
@@ -153,8 +154,8 @@ public class SearchForm {
 					this.processPropertyTitles.add(itstr);
 				}
 			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of process property titles could be empty!");
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of process property titles could be empty!");
 		}
 	}
 
@@ -182,8 +183,8 @@ public class SearchForm {
 			for (String result : results) {
 				this.stepTitles.add(result);
 			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of step titles could be empty!");
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of step titles could be empty!");
 		}
 	}
 
@@ -202,8 +203,8 @@ public class SearchForm {
 			for (String result : results) {
 				this.templatePropertyTitles.add(result);
 			}
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of template property titles could be empty!");
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of template property titles could be empty!");
 		}
 	}
 
