@@ -136,6 +136,9 @@ public class QueryBuilder {
 			int codePoint = query.charAt(index);
 			switch (codePoint) {
 			case ' ':
+			case '(':
+			case ')':
+			case '|':
 				if (!stringLiteral)
 					appendField = true;
 				result.appendCodePoint(codePoint);
@@ -147,26 +150,11 @@ public class QueryBuilder {
 				appendField = stringLiteral;
 				result.appendCodePoint(codePoint);
 				break;
-			case '(':
-				if (!stringLiteral)
-					appendField = true;
-				result.appendCodePoint(codePoint);
-				break;
-			case ')':
-				if (!stringLiteral)
-					appendField = true;
-				result.appendCodePoint(codePoint);
-				break;
 			case '-':
 				result.appendCodePoint(codePoint);
 				if (appendField)
 					result.append(prefix);
 				appendField = false;
-				break;
-			case '|':
-				if (!stringLiteral)
-					appendField = true;
-				result.appendCodePoint(codePoint);
 				break;
 			default:
 				if (appendField)
