@@ -43,7 +43,6 @@ public abstract class AbstractGoobiException extends Exception {
    private static final long serialVersionUID = 967941638835011325L;
 
    protected Exception exception;
-   protected boolean fatal;
 
    public AbstractGoobiException() {
 		super();
@@ -60,19 +59,6 @@ public abstract class AbstractGoobiException extends Exception {
 	public AbstractGoobiException(Exception e, String message) {
 		super(message);
 		this.exception = e;
-	}
-
-	public AbstractGoobiException(Exception e, String message, boolean fatal) {
-		this(e, message);
-		setFatal(fatal);
-	}
-
-	public boolean isFatal() {
-		return this.fatal;
-	}
-
-	public void setFatal(boolean fatal) {
-		this.fatal = fatal;
 	}
 
 	@Override
