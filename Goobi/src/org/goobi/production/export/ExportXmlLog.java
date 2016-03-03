@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.sub.goobi.helper.enums.StepStatus;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -237,7 +238,9 @@ public class ExportXmlLog implements IProcessDataExport {
 			end.setText(String.valueOf(s.getBearbeitungsendeAsFormattedString()));
 			stepElement.addContent(end);
 
-			if (s.getBearbeitungsbenutzer() != null && s.getBearbeitungsbenutzer().getNachVorname() != null) {
+			if ((!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
+					&& (s.getBearbeitungsbenutzer() != null)
+					&& (s.getBearbeitungsbenutzer().getNachVorname() != null)) {
 				Element user = new Element("user", xmlns);
 				user.setText(s.getBearbeitungsbenutzer().getNachVorname());
 				stepElement.addContent(user);
