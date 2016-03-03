@@ -313,7 +313,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
 	}
 
-	protected class Parameters {
+	protected static class Parameters {
 		private Boolean flagCriticalQuery = false;
 		private Integer exactStepDone = null;
 
