@@ -238,9 +238,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			end.setText(String.valueOf(s.getBearbeitungsendeAsFormattedString()));
 			stepElement.addContent(end);
 
-			if ((!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
-					&& (s.getBearbeitungsbenutzer() != null)
-					&& (s.getBearbeitungsbenutzer().getNachVorname() != null)) {
+			if (isOpenAndHasRegularUser(s)) {
 				Element user = new Element("user", xmlns);
 				user.setText(s.getBearbeitungsbenutzer().getNachVorname());
 				stepElement.addContent(user);
@@ -419,7 +417,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method transforms the xml log using a xslt file and opens a new window with the output file
-	 * 
+	 *
 	 * @param out
 	 *            ServletOutputStream
 	 * @param doc
@@ -467,7 +465,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method exports the production metadata for al list of processes as a single file to a given stream.
-	 * 
+	 *
 	 * @param processList
 	 * @param outputStream
 	 * @param xslt
@@ -495,7 +493,7 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-		
+
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 
@@ -559,6 +557,18 @@ public class ExportXmlLog implements IProcessDataExport {
 		}
 		return nss;
 
+	}
+
+	/**
+	 * Check step for non-open step state and step has a reqular user assigned
+	 *
+	 * @param s step to check
+	 * @return boolean
+	 */
+	private boolean isOpenAndHasRegularUser(Schritt s) {
+		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
+				&& (s.getBearbeitungsbenutzer() != null)
+				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
 	}
 
 }
