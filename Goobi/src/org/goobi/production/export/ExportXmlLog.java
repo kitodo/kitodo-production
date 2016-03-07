@@ -238,7 +238,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			end.setText(String.valueOf(s.getBearbeitungsendeAsFormattedString()));
 			stepElement.addContent(end);
 
-			if (isOpenAndHasRegularUser(s)) {
+			if (isNonOpenStateAndHasRegularUser(s)) {
 				Element user = new Element("user", xmlns);
 				user.setText(s.getBearbeitungsbenutzer().getNachVorname());
 				stepElement.addContent(user);
@@ -565,7 +565,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @param s step to check
 	 * @return boolean
 	 */
-	private boolean isOpenAndHasRegularUser(Schritt s) {
+	private boolean isNonOpenStateAndHasRegularUser(Schritt s) {
 		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
 				&& (s.getBearbeitungsbenutzer() != null)
 				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
