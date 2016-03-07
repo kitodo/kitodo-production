@@ -1312,16 +1312,14 @@ public class Metadaten {
 		this.alleSeitenNeu = new MetadatumImpl[zaehler];
 		zaehler = 0;
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
-		if (meineListe != null && meineListe.size() > 0) {
-			for (DocStruct mySeitenDocStruct : meineListe) {
-				List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
-				for (Metadata meineSeite : mySeitenDocStructMetadaten) {
-					this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
-					this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
-							MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue());
-				}
-				zaehler++;
+		for (DocStruct mySeitenDocStruct : meineListe) {
+			List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
+			for (Metadata meineSeite : mySeitenDocStructMetadaten) {
+				this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
+				this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
+					MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue());
 			}
+			zaehler++;
 		}
 	}
 
