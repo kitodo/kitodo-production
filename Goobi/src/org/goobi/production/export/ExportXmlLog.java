@@ -568,6 +568,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	private boolean isNonOpenStateAndHasRegularUser(Schritt s) {
 		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
 				&& (s.getBearbeitungsbenutzer() != null)
+				&& (s.getBearbeitungsbenutzer().getId() != 0)
 				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
 	}
 
