@@ -1617,21 +1617,6 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	public String getMyProcessId() {
-		return String.valueOf(this.myProzess.getId());
-	}
-
-	public void setMyProcessId(String id) {
-		try {
-			int myid = new Integer(id);
-			this.myProzess = this.dao.get(myid);
-		} catch (DAOException e) {
-			logger.error(e);
-		} catch (NumberFormatException e) {
-			logger.warn(e);
-		}
-	}
-
 	public List<String> getXsltList() {
 		List<String> answer = new ArrayList<String>();
 		SafeFile folder = new SafeFile("xsltFolder");
