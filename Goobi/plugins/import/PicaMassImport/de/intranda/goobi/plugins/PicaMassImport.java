@@ -2,20 +2,20 @@ package de.intranda.goobi.plugins;
 
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
- * 
- * Visit the websites for more information. 
- * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ *
+ * Visit the websites for more information.
+ * - http://www.intranda.com
+ * - http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -378,7 +378,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * If the record contains a volume of a serial publication, then the series
 	 * data will be prepended to it.
-	 * 
+	 *
 	 * @param volumeRecord
 	 *            hitlist with one hit which will may be a volume of a serial
 	 *            publication
@@ -421,7 +421,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * Reads a field value from an XML record. Returns the empty string if not
 	 * found.
-	 * 
+	 *
 	 * @param record
 	 *            record data to parse
 	 * @param field
@@ -445,7 +445,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * Reads a sub field value from an XML node. Returns the empty string if not
 	 * found.
-	 * 
+	 *
 	 * @param inElement
 	 *            XML node to look into
 	 * @param attributeValue
@@ -807,56 +807,56 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
 	}
-	
+
 	/**
 	 * @param the opac catalogue
-	 */	
+	 */
 	@Override
 	public void setOpacCatalogue(String opacCatalogue) {
 		this.opacCatalogue = opacCatalogue ;
 	}
-	
+
 	/**
 	* @return the opac catalogue
-	*/	
+	*/
 	private String getOpacCatalogue() {
 		return this.opacCatalogue;
 	}
-	
+
 	/**
 	* @param the goobi config directory
-	*/	
+	*/
 	@Override
 	public void setGoobiConfigDirectory(String configDir) {
 		this.configDir = configDir ;
 	}
-	
+
 	/**
 	* @return the goobi config directory
-	*/	
+	*/
 	private String getGoobiConfigDirectory() {
 		return configDir ;
-	}	
-	
+	}
+
 	/**
 	* @return the address of the opac catalogue
-	* @throws ImportPluginException 
-	*/	
+	* @throws ImportPluginException
+	*/
 	private String getOpacAddress() throws ImportPluginException {
-		
+
 		String address = "";
-		
+
 		try {
-			
+
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			
+
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			
+
 			Document xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
-			
+
 			XPath xPath = XPathFactory.newInstance().newXPath();
-			
-			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);	
+
+			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);
 
 			address = node.getAttributes().getNamedItem("address").getNodeValue();
 
@@ -873,7 +873,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 			logger.error(e.getMessage(), e);
 			throw new ImportPluginException(e);
 		}
-		
+
 		return address;
-	}	
+	}
 }
