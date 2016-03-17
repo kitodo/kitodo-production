@@ -2,20 +2,20 @@ package de.intranda.goobi.plugins;
 
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
- * 
- * Visit the websites for more information. 
- * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ *
+ * Visit the websites for more information.
+ * - http://www.intranda.com
+ * - http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -173,182 +173,177 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 			}
 			pica = addParentDataForVolume(pica);
 			Fileformat ff = SRUHelper.parsePicaFormat(pica, prefs);
-			if (ff != null) {
-				DigitalDocument dd = ff.getDigitalDocument();
-				boolean multivolue = false;
-				DocStruct logicalDS = dd.getLogicalDocStruct();
-				DocStruct child = null;
-				if (logicalDS.getType().getAnchorClass() != null) {
-					child = logicalDS.getAllChildren().get(0);
-					multivolue = true;
-				}
-				// reading title
-				MetadataType titleType = prefs.getMetadataTypeByName("TitleDocMain");
-				List<? extends Metadata> mdList = logicalDS.getAllMetadataByType(titleType);
+			DigitalDocument dd = ff.getDigitalDocument();
+			boolean multivolue = false;
+			DocStruct logicalDS = dd.getLogicalDocStruct();
+			DocStruct child = null;
+			if (logicalDS.getType().getAnchorClass() != null) {
+				child = logicalDS.getAllChildren().get(0);
+				multivolue = true;
+			}
+			// reading title
+			MetadataType titleType = prefs.getMetadataTypeByName("TitleDocMain");
+			List<? extends Metadata> mdList = logicalDS.getAllMetadataByType(titleType);
+			if (mdList != null && mdList.size() > 0) {
+				Metadata title = mdList.get(0);
+				currentTitle = title.getValue();
+
+			}
+			// reading identifier
+			MetadataType identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
+			List<? extends Metadata> childMdList = null;
+			if (child != null) {
+				childMdList = child.getAllMetadataByType(identifierType);
+			}
+			if (childMdList != null) {
+				mdList = childMdList;
+			} else {
+				mdList = logicalDS.getAllMetadataByType(identifierType);
+			}
+			if (mdList != null && mdList.size() > 0) {
+				Metadata identifier = mdList.get(0);
+				currentIdentifier = identifier.getValue();
+			} else {
+				currentIdentifier = String.valueOf(System.currentTimeMillis());
+			}
+
+			// reading author
+
+			MetadataType authorType = prefs.getMetadataTypeByName("Author");
+			List<Person> personList = logicalDS.getAllPersonsByType(authorType);
+			if (personList != null && personList.size() > 0) {
+				Person authorMetadata = personList.get(0);
+				author = authorMetadata.getDisplayname();
+
+			}
+
+			// reading volume number
+			if (child != null) {
+				MetadataType mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
+				mdList = child.getAllMetadataByType(mdt);
 				if (mdList != null && mdList.size() > 0) {
-					Metadata title = mdList.get(0);
-					currentTitle = title.getValue();
-
-				}
-				// reading identifier
-				MetadataType identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-				List<? extends Metadata> childMdList = null;
-				if (child != null) {
-					childMdList = child.getAllMetadataByType(identifierType);
-				}
-				if (childMdList != null) {
-					mdList = childMdList;
+					Metadata md = mdList.get(0);
+					volumeNumber = md.getValue();
 				} else {
-					mdList = logicalDS.getAllMetadataByType(identifierType);
-				}
-				if (mdList != null && mdList.size() > 0) {
-					Metadata identifier = mdList.get(0);
-					currentIdentifier = identifier.getValue();
-				} else {
-					currentIdentifier = String.valueOf(System.currentTimeMillis());
-				}
-
-				// reading author
-
-				MetadataType authorType = prefs.getMetadataTypeByName("Author");
-				List<Person> personList = logicalDS.getAllPersonsByType(authorType);
-				if (personList != null && personList.size() > 0) {
-					Person authorMetadata = personList.get(0);
-					author = authorMetadata.getDisplayname();
-
-				}
-
-				// reading volume number
-				if (child != null) {
-					MetadataType mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
+					mdt = prefs.getMetadataTypeByName("DateIssuedSort");
 					mdList = child.getAllMetadataByType(mdt);
 					if (mdList != null && mdList.size() > 0) {
 						Metadata md = mdList.get(0);
 						volumeNumber = md.getValue();
-					} else {
-						mdt = prefs.getMetadataTypeByName("DateIssuedSort");
-						mdList = child.getAllMetadataByType(mdt);
-						if (mdList != null && mdList.size() > 0) {
-							Metadata md = mdList.get(0);
-							volumeNumber = md.getValue();
-						}
 					}
 				}
+			}
 
-				// reading ats
-				MetadataType atsType = prefs.getMetadataTypeByName("TSL_ATS");
-				mdList = logicalDS.getAllMetadataByType(atsType);
-				if (mdList != null && mdList.size() > 0) {
-					Metadata atstsl = mdList.get(0);
-					ats = atstsl.getValue();
-				} else {
-					// generating ats
-					ats = createAtstsl(currentTitle, author);
-					Metadata atstsl = new Metadata(atsType);
-					atstsl.setValue(ats);
-					logicalDS.addMetadata(atstsl);
-				}
+			// reading ats
+			MetadataType atsType = prefs.getMetadataTypeByName("TSL_ATS");
+			mdList = logicalDS.getAllMetadataByType(atsType);
+			if (mdList != null && mdList.size() > 0) {
+				Metadata atstsl = mdList.get(0);
+				ats = atstsl.getValue();
+			} else {
+				// generating ats
+				ats = createAtstsl(currentTitle, author);
+				Metadata atstsl = new Metadata(atsType);
+				atstsl.setValue(ats);
+				logicalDS.addMetadata(atstsl);
+			}
 
-				{
+			{
+			    Vorlageeigenschaft prop = new Vorlageeigenschaft();
+				prop.setTitel("Titel");
+				prop.setWert(currentTitle);
+				templateProperties.add(prop);
+			}
+			{
+				if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
 				    Vorlageeigenschaft prop = new Vorlageeigenschaft();
-					prop.setTitel("Titel");
-					prop.setWert(currentTitle);
+					prop.setTitel("Bandnummer");
+					prop.setWert(volumeNumber);
 					templateProperties.add(prop);
 				}
-				{
-					if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
-					    Vorlageeigenschaft prop = new Vorlageeigenschaft();
-						prop.setTitel("Bandnummer");
-						prop.setWert(volumeNumber);
-						templateProperties.add(prop);
-					}
-				}
-				{
-					MetadataType identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
-					mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
-					if (mdList != null && mdList.size() > 0) {
-						String analog = mdList.get(0).getValue();
+			}
+			{
+				MetadataType identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
+				mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
+				if (mdList != null && mdList.size() > 0) {
+					String analog = mdList.get(0).getValue();
 
-						Vorlageeigenschaft prop = new Vorlageeigenschaft();
-						prop.setTitel("Identifier");
-						prop.setWert(analog);
-						templateProperties.add(prop);
-
-					}
-				}
-
-				{
-					if (child != null) {
-						mdList = child.getAllMetadataByType(identifierType);
-						if (mdList != null && mdList.size() > 0) {
-							Metadata identifier = mdList.get(0);
-							Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-							prop.setTitel("Identifier Band");
-							prop.setWert(identifier.getValue());
-							workProperties.add(prop);
-						}
-
-					}
-				}
-				{
-				    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-					prop.setTitel("Artist");
-					prop.setWert(author);
-					workProperties.add(prop);
-				}
-				{
-				    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-					prop.setTitel("ATS");
-					prop.setWert(ats);
-					workProperties.add(prop);
-				}
-				{
-				    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
+					Vorlageeigenschaft prop = new Vorlageeigenschaft();
 					prop.setTitel("Identifier");
-					prop.setWert(currentIdentifier);
-					workProperties.add(prop);
+					prop.setWert(analog);
+					templateProperties.add(prop);
+
 				}
+			}
 
-				try {
-					// pathimagefiles
-					MetadataType mdt = prefs.getMetadataTypeByName("pathimagefiles");
-					Metadata newmd = new Metadata(mdt);
-					newmd.setValue("/images/");
-					dd.getPhysicalDocStruct().addMetadata(newmd);
+			{
+				if (child != null) {
+					mdList = child.getAllMetadataByType(identifierType);
+					if (mdList != null && mdList.size() > 0) {
+						Metadata identifier = mdList.get(0);
+						Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
+						prop.setTitel("Identifier Band");
+						prop.setWert(identifier.getValue());
+						workProperties.add(prop);
+					}
 
-					// collections
-					if (this.currentCollectionList != null) {
-						MetadataType mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
-						DocStruct topLogicalStruct = dd.getLogicalDocStruct();
-						List<DocStruct> volumes = topLogicalStruct.getAllChildren();
-						if (volumes == null) {
-							volumes = Collections.emptyList();
-						}
-						for (String collection : this.currentCollectionList) {
-							Metadata mdCollection = new Metadata(mdTypeCollection);
-							mdCollection.setValue(collection);
-							topLogicalStruct.addMetadata(mdCollection);
-							for (DocStruct volume : volumes) {
-								try {
-									Metadata mdCollectionForVolume = new Metadata(mdTypeCollection);
-									mdCollectionForVolume.setValue(collection);
-									volume.addMetadata(mdCollectionForVolume);
-								} catch (MetadataTypeNotAllowedException e) {
-									logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-								}
+				}
+			}
+			{
+			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
+				prop.setTitel("Artist");
+				prop.setWert(author);
+				workProperties.add(prop);
+			}
+			{
+			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
+				prop.setTitel("ATS");
+				prop.setWert(ats);
+				workProperties.add(prop);
+			}
+			{
+			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
+				prop.setTitel("Identifier");
+				prop.setWert(currentIdentifier);
+				workProperties.add(prop);
+			}
+
+			try {
+				// pathimagefiles
+				MetadataType mdt = prefs.getMetadataTypeByName("pathimagefiles");
+				Metadata newmd = new Metadata(mdt);
+				newmd.setValue("/images/");
+				dd.getPhysicalDocStruct().addMetadata(newmd);
+
+				// collections
+				if (this.currentCollectionList != null) {
+					MetadataType mdTypeCollection = this.prefs.getMetadataTypeByName("singleDigCollection");
+					DocStruct topLogicalStruct = dd.getLogicalDocStruct();
+					List<DocStruct> volumes = topLogicalStruct.getAllChildren();
+					if (volumes == null) {
+						volumes = Collections.emptyList();
+					}
+					for (String collection : this.currentCollectionList) {
+						Metadata mdCollection = new Metadata(mdTypeCollection);
+						mdCollection.setValue(collection);
+						topLogicalStruct.addMetadata(mdCollection);
+						for (DocStruct volume : volumes) {
+							try {
+								Metadata mdCollectionForVolume = new Metadata(mdTypeCollection);
+								mdCollectionForVolume.setValue(collection);
+								volume.addMetadata(mdCollectionForVolume);
+							} catch (MetadataTypeNotAllowedException e) {
+								logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
 							}
 						}
 					}
-
-				} catch (MetadataTypeNotAllowedException e) {
-					logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
 				}
 
-				return ff;
-			} else {
-				logger.error("pica record for " + currentIdentifier + " is empty");
-				throw new ImportPluginException("pica record for " + currentIdentifier + " is empty");
+			} catch (MetadataTypeNotAllowedException e) {
+				logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
 			}
+
+			return ff;
 		} catch (ReadException e) {
 			logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
 			throw new ImportPluginException(e);
@@ -378,7 +373,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * If the record contains a volume of a serial publication, then the series
 	 * data will be prepended to it.
-	 * 
+	 *
 	 * @param volumeRecord
 	 *            hitlist with one hit which will may be a volume of a serial
 	 *            publication
@@ -421,7 +416,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * Reads a field value from an XML record. Returns the empty string if not
 	 * found.
-	 * 
+	 *
 	 * @param record
 	 *            record data to parse
 	 * @param field
@@ -445,7 +440,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	/**
 	 * Reads a sub field value from an XML node. Returns the empty string if not
 	 * found.
-	 * 
+	 *
 	 * @param inElement
 	 *            XML node to look into
 	 * @param attributeValue
@@ -807,56 +802,56 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
 		return myAtsTsl;
 	}
-	
+
 	/**
 	 * @param the opac catalogue
-	 */	
+	 */
 	@Override
 	public void setOpacCatalogue(String opacCatalogue) {
 		this.opacCatalogue = opacCatalogue ;
 	}
-	
+
 	/**
 	* @return the opac catalogue
-	*/	
+	*/
 	private String getOpacCatalogue() {
 		return this.opacCatalogue;
 	}
-	
+
 	/**
 	* @param the goobi config directory
-	*/	
+	*/
 	@Override
 	public void setGoobiConfigDirectory(String configDir) {
 		this.configDir = configDir ;
 	}
-	
+
 	/**
 	* @return the goobi config directory
-	*/	
+	*/
 	private String getGoobiConfigDirectory() {
 		return configDir ;
-	}	
-	
+	}
+
 	/**
 	* @return the address of the opac catalogue
-	* @throws ImportPluginException 
-	*/	
+	* @throws ImportPluginException
+	*/
 	private String getOpacAddress() throws ImportPluginException {
-		
+
 		String address = "";
-		
+
 		try {
-			
+
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			
+
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			
+
 			Document xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
-			
+
 			XPath xPath = XPathFactory.newInstance().newXPath();
-			
-			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);	
+
+			Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config").evaluate(xmlDocument, XPathConstants.NODE);
 
 			address = node.getAttributes().getNamedItem("address").getNodeValue();
 
@@ -873,7 +868,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 			logger.error(e.getMessage(), e);
 			throw new ImportPluginException(e);
 		}
-		
+
 		return address;
-	}	
+	}
 }
