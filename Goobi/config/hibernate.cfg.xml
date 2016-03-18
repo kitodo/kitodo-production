@@ -65,8 +65,8 @@
 		<property name="show_sql">false</property>
 		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 
-		<!-- Update database schema on startup -->
-		<property name="hbm2ddl.auto">update</property>
+		<!-- Validate database schema on startup -->
+		<property name="hbm2ddl.auto">validate</property>
 
 		<!-- Die einzelnen Mappings -->
 		<mapping resource="de/sub/goobi/beans/Batch.hbm.xml"/>
