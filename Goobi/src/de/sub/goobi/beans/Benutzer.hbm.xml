@@ -43,13 +43,19 @@
 		<property name="login" column="login" type="string"/>
 		<property name="ldaplogin" column="ldaplogin" type="string"/>
 		<property name="passwort" column="passwort" type="string"/>
-		<property name="istAktiv" column="IstAktiv"/>
+		<property name="istAktiv" type="java.lang.Boolean">
+			<column name="IstAktiv" sql-type="bit"/>
+		</property>
 		<property name="isVisible" column="isVisible" type="string"/>
 		<property name="standort" column="Standort" type="string"/>
 		<property name="metadatenSprache" column="metadatensprache" type="string"/>
 		<property name="css" column="css" type="string"/>
-		<property name="mitMassendownload" column="mitMassendownload"/>
-		<property name="confVorgangsdatumAnzeigen" column="confVorgangsdatumAnzeigen"/>
+		<property name="mitMassendownload" type="java.lang.Boolean">
+			<column name="mitMassendownload" sql-type="bit"/>
+		</property>
+		<property name="confVorgangsdatumAnzeigen" type="java.lang.Boolean">
+			<column name="confVorgangsdatumAnzeigen" sql-type="bit"/>
+		</property>
 		<property name="tabellengroesse" column="Tabellengroesse" type="integer"/>
 		<property name="sessiontimeout" column="sessiontimeout" type="integer"/>
 		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID"/>

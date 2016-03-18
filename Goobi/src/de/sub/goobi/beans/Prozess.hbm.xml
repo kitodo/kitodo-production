@@ -39,9 +39,15 @@
 		
 		<property name="titel" column="Titel" type="string"/>
 		<property name="ausgabename" column="ausgabename" type="string"/>
-		<property name="istTemplate" column="IstTemplate"/>
-		<property name="swappedOutHibernate" column="swappedOut" />
-		<property name="inAuswahllisteAnzeigen" column="inAuswahllisteAnzeigen"/>
+		<property name="istTemplate" type="java.lang.Boolean">
+			<column name="IstTemplate" sql-type="bit"/>
+		</property>
+		<property name="swappedOutHibernate" type="java.lang.Boolean">
+			<column name="swappedOut" sql-type="bit"/>
+		</property>
+		<property name="inAuswahllisteAnzeigen" type="java.lang.Boolean">
+			<column name="inAuswahllisteAnzeigen" sql-type="bit"/>
+		</property>
 		<property name="sortHelperStatus" column="sortHelperStatus" type="string"/>
 		<property name="sortHelperImages" column="sortHelperImages" type="integer"/>
 		<property name="sortHelperArticles" column="sortHelperArticles" type="integer"/>

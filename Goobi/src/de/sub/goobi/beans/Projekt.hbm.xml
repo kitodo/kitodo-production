@@ -39,13 +39,17 @@
 		
 		<property name="titel" column="Titel" type="string"/>
 		
-		<property name="useDmsImport" column="useDmsImport"/>
+		<property name="useDmsImport" type="java.lang.Boolean">
+			<column name="useDmsImport" sql-type="bit"/>
+		</property>
 		<property name="dmsImportTimeOut" column="dmsImportTimeOut" type="integer"/>
 		<property name="dmsImportRootPath" column="dmsImportRootPath" type="string"/>
 		<property name="dmsImportImagesPath" column="dmsImportImagesPath" type="string"/>
 		<property name="dmsImportSuccessPath" column="dmsImportSuccessPath" type="string"/>
 		<property name="dmsImportErrorPath" column="dmsImportErrorPath" type="string"/>
-		<property name="dmsImportCreateProcessFolderHibernate" column="dmsImportCreateProcessFolder"/>
+		<property name="dmsImportCreateProcessFolderHibernate" type="java.lang.Boolean">
+			<column name="dmsImportCreateProcessFolder" sql-type="bit"/>
+		</property>
 		
 		<!-- 
 		<property name="metsFormatDmsExportHibernate" column="metsFormatDmsExport"/>
@@ -72,7 +76,9 @@
 		<property name="numberOfPages" column="numberOfPages" type="integer"/>
 		<property name="numberOfVolumes" column="numberOfVolumes" type="integer"/>
 		
-		<property name="projectIsArchived" column="projectIsArchived"/>
+		<property name="projectIsArchived" type="java.lang.Boolean">
+			<column name="projectIsArchived" sql-type="bit"/>
+		</property>
 	
 		
 		<set name="filegroups" cascade="all,delete-orphan" inverse="true">
