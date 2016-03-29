@@ -43,7 +43,7 @@
 		<property name="suffix" column="suffix" type="string"/>
 		<property name="folder" column="folder" type="string"/>
 		<property name="previewImage" type="java.lang.Boolean">
-			<column name="previewImage" sql-type="tinyint"/>
+			<column name="previewImage" sql-type="bit"/>
 		</property>
 		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
 				
