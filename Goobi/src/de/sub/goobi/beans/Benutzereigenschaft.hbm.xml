@@ -44,7 +44,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 				
-		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID"/>
+		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID" foreign-key="FK_BenutzerID"/>
 		
 	</class>
 

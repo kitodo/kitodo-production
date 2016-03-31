@@ -50,11 +50,11 @@
 		<property name="erstellungsdatum" column="erstellungsdatum" type="timestamp"/>
 		<property name="wikifield" column="wikifield" type="text"/>
 		
-		<many-to-one name="projekt" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
+		<many-to-one name="projekt" class="de.sub.goobi.beans.Projekt" column="ProjekteID" foreign-key="FK_ProjekteID"/>
 		
-		<many-to-one name="regelsatz" class="de.sub.goobi.beans.Regelsatz" column="MetadatenKonfigurationID"/>
+		<many-to-one name="regelsatz" class="de.sub.goobi.beans.Regelsatz" column="MetadatenKonfigurationID" foreign-key="FK_MetadatenKonfigurationID"/>
 	
-		<many-to-one name="docket" class="de.sub.goobi.beans.Docket" column="docketID"/>
+		<many-to-one name="docket" class="de.sub.goobi.beans.Docket" column="docketID" foreign-key="FK_DocketID"/>
 		
 		<set name="schritte" cascade="all,delete-orphan" inverse="true" order-by="Reihenfolge" lazy="true">
 			<key column="ProzesseID"/>

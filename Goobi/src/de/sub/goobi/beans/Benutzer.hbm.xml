@@ -52,7 +52,7 @@
 		<property name="confVorgangsdatumAnzeigen" column="confVorgangsdatumAnzeigen"/>
 		<property name="tabellengroesse" column="Tabellengroesse" type="integer"/>
 		<property name="sessiontimeout" column="sessiontimeout" type="integer"/>
-		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID"/>
+		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID" foreign-key="FK_LdapgruppenID"/>
 		
 		<set name="bearbeitungsschritte" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="BearbeitungsBenutzerID"/>

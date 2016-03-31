@@ -43,7 +43,7 @@
 		<property name="suffix" column="suffix" type="string"/>
 		<property name="folder" column="folder" type="string"/>
 		<property name="previewImage" column="previewImage" type="boolean"/>
-		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
+		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID" foreign-key="FK_ProjekteID"/>
 				
 	</class>
 
