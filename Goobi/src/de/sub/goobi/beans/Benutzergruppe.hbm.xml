@@ -40,13 +40,13 @@
 		<property name="berechtigung" column="berechtigung" type="integer" />
 		
 		<set name="benutzer" table="benutzergruppenmitgliedschaft" inverse="true">
-			    <key column="BenutzerGruppenID"/>
-			    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer"/>
+			    <key column="BenutzerGruppenID" foreign-key="FK_BenutzerGruppenID"/>
+			    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_BenutzerID"/>
 			</set>
 			
 		<set name="schritte" table="schritteberechtigtegruppen" inverse="true">
-			<key column="BenutzerGruppenID"/>
-			<many-to-many column="schritteID" class="de.sub.goobi.beans.Schritt"/>
+			<key column="BenutzerGruppenID" foreign-key="FK_BenutzerGruppenID"/>
+			<many-to-many column="schritteID" class="de.sub.goobi.beans.Schritt" foreign-key="FK_schritteID"/>
 		</set>
 		
 	</class>

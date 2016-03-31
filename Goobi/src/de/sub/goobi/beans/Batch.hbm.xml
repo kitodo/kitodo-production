@@ -57,8 +57,8 @@
 		</property>
 
 		<set name="processes" table="batchesprozesse" lazy="true">
-			<key column="BatchID" />
-			<many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess" />
+			<key column="BatchID" foreign-key="FK_BatchID"/>
+			<many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess" foreign-key="FK_ProzesseID"/>
 		</set>
 	</class>
 </hibernate-mapping>
