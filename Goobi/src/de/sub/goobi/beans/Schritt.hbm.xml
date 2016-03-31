@@ -81,12 +81,12 @@
 		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_ProzesseID"/>
 		
 		<set name="benutzer" table="schritteberechtigtebenutzer">
-		    <key column="schritteID" foreign-key="FK_schritteID"/>
+		    <key column="schritteID" foreign-key="FK_SchritteID"/>
 		    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_BenutzerID"/>
 		</set>
 		
 		<set name="benutzergruppen" table="schritteberechtigtegruppen">
-		    <key column="schritteID" foreign-key="FK_schritteID"/>
+		    <key column="schritteID" foreign-key="FK_SchritteID"/>
 		    <many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_BenutzerGruppenID"/>
 		</set>
 
