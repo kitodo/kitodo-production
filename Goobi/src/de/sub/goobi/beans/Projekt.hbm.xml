@@ -81,8 +81,8 @@
         </set>
         
         <set name="benutzer" table="projektbenutzer" inverse="true">
-			<key column="ProjekteID" foreign-key="FK_ProjekteID"/>
-			<many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_BenutzerID"/>
+			<key column="ProjekteID"/>
+			<many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer"/>
 		</set>
 
         <set name="prozesse" cascade="all,delete-orphan" inverse="true"

@@ -82,8 +82,8 @@
 		</set>
 		
         <set name="batches" table="batchesprozesse" inverse="true" lazy="true">
-            <key column="ProzesseID" foreign-key="FK_ProzesseID"/>
-            <many-to-many column="BatchID" class="de.sub.goobi.beans.Batch" foreign-key="FK_BatchID"/>
+            <key column="ProzesseID"/>
+            <many-to-many column="BatchID" class="de.sub.goobi.beans.Batch"/>
         </set>		
 	</class>
 
