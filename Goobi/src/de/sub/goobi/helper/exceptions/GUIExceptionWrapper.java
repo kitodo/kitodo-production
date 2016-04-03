@@ -94,8 +94,8 @@ public class GUIExceptionWrapper extends Exception {
 	/**
 	 * Exception Class catching unhandled exceptions to wrap it for GUI
 	 *
-	 * @param message,  additional info, like which class called this constructor
-	 * @param cause, last Exception cought with this wrapper
+	 * @param message additional info, like which class called this constructor
+	 * @param cause   last Exception cought with this wrapper
 	 */
 	public GUIExceptionWrapper(String message, Throwable cause) {
 		this(cause);

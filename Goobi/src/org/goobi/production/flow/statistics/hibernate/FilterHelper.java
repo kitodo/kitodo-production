@@ -68,8 +68,6 @@ public class FilterHelper {
 
 	/**
 	 * limit query to project (formerly part of ProzessverwaltungForm)
-	 *
-	 * @param crit
 	 */
 	protected static void limitToUserAccessRights(Conjunction con) {
 		/* restriction to specific projects if not with admin rights */
@@ -188,8 +186,8 @@ public class FilterHelper {
 	/**
 	 * This functions extracts the Integer from the parameters passed with the step filter in first position.
 	 *
-	 * @param String
-	 *            parameter
+	 * @param parameter
+	 *
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepStart(String parameter) {
@@ -200,8 +198,7 @@ public class FilterHelper {
 	/**
 	 * This functions extracts the Integer from the parameters passed with the step filter in last position.
 	 *
-	 * @param String
-	 *            parameter
+	 * @param parameter
 	 * @return Integer
 	 ****************************************************************************/
 	protected static Integer getStepEnd(String parameter) {
@@ -213,8 +210,7 @@ public class FilterHelper {
 	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further processing it reduces the necessity to
 	 * apply some filter keywords
 	 *
-	 * @param String
-	 *            parameters
+	 * @param parameters
 	 * @return StepFilter
 	 ****************************************************************************/
 	protected static StepFilter getStepFilter(String parameters) {
@@ -252,11 +248,11 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps range
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
-	 * @param tok
-	 *            part of filter string to use
+	 * @param con
+	 * @param parameters
 	 * @param inStatus
+	 * @param negate
+	 * @param prefix
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
 	protected static void filterStepRange(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
@@ -278,8 +274,6 @@ public class FilterHelper {
 	 *
 	 * @param inStatus
 	 *            {@link StepStatus} of searched step
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param parameters
 	 *            part of filter string to use
 	 ****************************************************************************/
@@ -299,12 +293,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes for steps name with given status
 	 *
-	 * @param inStatus
-	 *            {@link StepStatus} of searched step
-	 * @param crit
-	 *            {@link Criteria} to extend
-	 * @param parameters
-	 *            part of filter string to use
 	 ****************************************************************************/
 	protected static void filterAutomaticSteps(Conjunction con, String tok, boolean flagSteps) {
 		if (con == null) {
@@ -328,8 +316,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps min
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param parameters
 	 *            part of filter string to use
 	 * @param inStatus
@@ -351,8 +337,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps max
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param parameters
 	 *            part of filter string to use
 	 * @param inStatus
@@ -374,8 +358,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps exact
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param parameters
 	 *            part of filter string to use
 	 * @param inStatus
@@ -394,8 +376,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps by user
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param tok
 	 *            part of filter string to use
 	 ****************************************************************************/
@@ -410,8 +390,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes by project
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param tok
 	 *            part of filter string to use
 	 ****************************************************************************/
@@ -427,8 +405,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes by scan template
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param tok
 	 *            part of filter string to use
 	 ****************************************************************************/
@@ -475,8 +451,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes by Ids
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param tok
 	 *            part of filter string to use
 	 ****************************************************************************/
@@ -502,8 +476,6 @@ public class FilterHelper {
 	/**
 	 * Filter processes by workpiece
 	 *
-	 * @param crit
-	 *            {@link Criteria} to extend
 	 * @param tok
 	 *            part of filter string to use
 	 ****************************************************************************/

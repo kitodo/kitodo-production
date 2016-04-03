@@ -186,7 +186,7 @@ public class ConfigOpac {
 	 * @param title
 	 *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
 	 *            examine
-	 * @return
+	 * @return List
 	 * @throws FileNotFoundException
 	 */
 	public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {

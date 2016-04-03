@@ -532,8 +532,8 @@ public class MassImportForm {
 	}
 
 	/**
-	 * @param process
-	 *            the process to set
+	 * @param processes
+	 *            the process list to set
 	 */
 	public void setProcess(List<Prozess> processes) {
 		this.processes = processes;
@@ -577,8 +577,8 @@ public class MassImportForm {
 	}
 
 	/**
-	 * @param opacCatalogues
-	 *            the opacCatalogues to set
+	 * @param opacCatalogue
+	 *            the opacCatalogue to set
 	 */
 
 	public void setOpacCatalogue(String opacCatalogue) {

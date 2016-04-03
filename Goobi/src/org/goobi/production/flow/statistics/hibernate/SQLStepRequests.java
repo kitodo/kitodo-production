@@ -60,7 +60,7 @@ public class SQLStepRequests extends SQLGenerator {
 	 * @param typeSelection - operates as additional filter
 	 * @param stepOrder - operates as additional filter
 	 * @param stepOrderGrouping - adding 'stepOrder' and 'stepName' fields in select and in group by clause
-	 * @param includeCorrections - adding additional stepOpen from Correction and other loops
+	 * @param includeLoops - adding additional stepOpen from Correction and other loops
 	 *
 	 * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
 	 */

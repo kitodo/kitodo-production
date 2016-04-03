@@ -43,17 +43,9 @@ import org.hibernate.transform.ResultTransformer;
  * The source for this code was found at the web address http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 and
  * changed by retaining the class name of the class which was used to instantiate the current instance of PaginatingCriteria
  *
- *
  * Implementation of Criteria specifically for paginated searches.
  *
- * When used with HibernatePaginatedList the count() method produces SELECT count(*) SQL for search to query total number of elements.
- *
- *
- *
- *
- * @see com.sobyteme.pagination.HibernatePaginatedList
  * @see org.hibernate.Criteria
- * @see org.hibernate.CriteriaImpl
  *
  * @author Steve
  *
@@ -134,7 +126,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param assocationPath
+	 * @param associationPath
 	 * @param mode
 	 * @return Criteria
 	 * @see Criteria#setFetchMode(java.lang.String, org.hibernate.FetchMode)
@@ -382,8 +374,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	/**
 	 * Gets the row count applicable for this PaginatingCriteria.
 	 *
-	 * @return
-	 * @return Integer
+	 * @return Integer row count
 	 * @throws HibernateException
 	 * @see Criteria#uniqueResult()
 	 */

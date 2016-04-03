@@ -564,8 +564,6 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function toXML() transforms a course of appearance to XML.
 	 *
-	 * @param lang
-	 *            language to use for the “description”
 	 * @return XML as String
 	 */
 	public Document toXML() {

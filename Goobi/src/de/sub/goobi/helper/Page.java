@@ -58,8 +58,6 @@ public class Page implements Serializable { // implements Iterator
 	 * @param criteria the Hibernate Criteria
 	 *
 	 * @param page the page number (zero-based)
-	 *
-	 * @param pageSize the number of results to display on the page
 	 */
 	public Page(Criteria criteria, int page) {
 		this.page = page;

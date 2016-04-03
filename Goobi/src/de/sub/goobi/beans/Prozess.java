@@ -1311,8 +1311,6 @@ public class Prozess implements Serializable {
 	 * entities to prevent certain characters from playing merry havoc when the
 	 * message box shall be rendered in a browser later.
 	 *
-	 * @param form
-	 *            the AktuelleSchritteForm which is the owner of the wiki field
 	 * @param message
 	 *            the message to append
 	 */

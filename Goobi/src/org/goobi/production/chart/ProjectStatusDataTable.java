@@ -61,8 +61,7 @@ public class ProjectStatusDataTable implements Serializable {
 	/************************************************************************************
 	 * public constructor, the name is set here
 	 *
-	 * @param title
-	 *            the title to set
+	 * @param inName the name to set
 	 ************************************************************************************/
 	public ProjectStatusDataTable(String inName, Date begin, Date end) {
 		super();
@@ -90,12 +89,7 @@ public class ProjectStatusDataTable implements Serializable {
 	/************************************************************************************
 	 * Add a task to the list
 	 *
-	 * @param title
-	 * 		The title of the task to add
-	 * @param stepsCompleted
-	 * 		Number of steps completed
-	 * @param
-	 * 		Total number of steps
+	 * @param inTask The task to add
 	 *
 	 ************************************************************************************/
 	public void addTask(IProjectTask inTask) {

@@ -52,8 +52,7 @@ public class ProjectHelper {
 	/**
 	 * static to reduce load
 	 *
-	 *
-	 * @param instance
+	 * @param project
 	 * @return a GoobiCollection of the following structure:
 	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
 	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method

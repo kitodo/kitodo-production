@@ -265,9 +265,7 @@ public class ProjectStatusDraw {
 	/************************************************************************************
 	 * Get size of Image for rendering
 	 *
-	 * @param pData Proj
-	 *            the color index (0=green, 1=yellow, 2=red)
-	 * @return the color as {@link Color}
+	 * @param count
 	 ************************************************************************************/
 	public static int getImageHeight(int count) {
 		return BORDERTOP + count * BARSPACING;

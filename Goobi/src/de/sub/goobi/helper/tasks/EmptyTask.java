@@ -489,7 +489,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * The procedure setProgress() may be used to set the task’s progress in
 	 * percent (i.e., from 0 to 100).
 	 *
-	 * @param progress
+	 * @param statusProgress
 	 *            the tasks progress
 	 */
 	protected void setProgress(double statusProgress) {

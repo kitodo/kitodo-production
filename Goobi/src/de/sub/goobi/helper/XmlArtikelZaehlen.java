@@ -94,7 +94,8 @@ public class XmlArtikelZaehlen {
 
 	/**
 	 * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen
-	 * @param myProzess
+	 * @param inStruct
+	 * @param inType
 	 */
 	public int getNumberOfUghElements(DocStruct inStruct, CountType inType) {
 		int rueckgabe = 0;

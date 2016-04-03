@@ -48,7 +48,7 @@ public interface IProvideProjectTaskList {
 	 *
 	 * @param inProject
 	 * @param countImages
-	 * @return
+	 * @return List
 	 */
 
 	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax);

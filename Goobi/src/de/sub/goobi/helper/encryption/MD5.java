@@ -45,7 +45,7 @@ public class MD5
 
     /**
      * <u>Zur&uuml;ckgabe des MD5-Hashes, bei Initialisierter Membervariable 'text'</u>
-     * @return
+     * @return MD5 hash string for member variable 'text'
      */
     public String getMD5() {
         if (text == null) {
@@ -58,7 +58,7 @@ public class MD5
     /**
      * <u>Zur&uuml;ckgabe des MD5-Hashes</u>
      * @param text
-     * @return
+     * @return MD5 hash string
      */
     public String getMD5(String text) {
         this.text = text;

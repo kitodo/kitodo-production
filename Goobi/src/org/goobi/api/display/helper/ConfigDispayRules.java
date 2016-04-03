@@ -342,14 +342,13 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 *
-	 * @param project
+	 * @param myproject
 	 *            project of element
-	 * @param bind
+	 * @param mybind
 	 *            create or edit
-	 * @param elementName
+	 * @param myelementName
 	 *            name of element
-	 * @return returns type of element
+	 * @return type of element
 	 */
 
 	public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName) {
@@ -385,13 +384,13 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * @param project
+	 * @param myproject
 	 *            name of project as String
-	 * @param bind
+	 * @param mybind
 	 *            create or edit
-	 * @param elementName
+	 * @param myelementName
 	 *            name of the element
-	 * @param displayType
+	 * @param mydisplayType
 	 *            type of the element
 	 * @return ArrayList with all values of given element
 	 */

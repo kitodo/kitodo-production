@@ -333,8 +333,6 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	/**
 	 * Ldap-Konfiguration für den Benutzer schreiben
-	 *
-	 * @return
 	 */
 	public String LdapKonfigurationSchreiben() {
 		Ldap myLdap = new Ldap();

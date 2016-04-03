@@ -437,7 +437,7 @@ public class HelperSchritteWithoutHibernate {
 	 * occurring errors will be passed to it to be visible in the task manager
 	 * screen.
 	 *
-	 * @param task
+	 * @param obj
 	 *            task object to submit progress updates and errors to
 	 */
 	public void setTask(EmptyTask obj) {

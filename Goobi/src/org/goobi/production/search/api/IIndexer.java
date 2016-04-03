@@ -37,20 +37,20 @@ import de.sub.goobi.beans.Prozess;
 public interface IIndexer {
 
 	/**
-	 * adds am Object to index
-	 * @param p the process to add
+	 * adds an object to index
+	 * @param process the process to add
 	 */
 	public void addObject(Prozess process);
 
 	/**
-	 * removes an Object from index
-	 * @param p the process to remove
+	 * removes an object from index
+	 * @param process the process to remove
 	 */
 	public void removeObject(Prozess process);
 
 	/**
-	 * updates an Object in index
-	 * @param p the process to update
+	 * updates an object in index
+	 * @param process the process to update
 	 */
 	public void updateObject(Prozess process);
 

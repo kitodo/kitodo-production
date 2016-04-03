@@ -1353,8 +1353,6 @@ public class ProzesskopieForm {
 	 * The method setAdditionalField() sets the value of an AdditionalField held
 	 * by a ProzesskopieForm object.
 	 *
-	 * @param inputForm
-	 *            a ProzesskopieForm object
 	 * @param key
 	 *            the title of the AdditionalField whose value shall be modified
 	 * @param value

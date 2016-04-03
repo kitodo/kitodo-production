@@ -416,9 +416,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/*************************************************************************************
-	 * Getter for NumberOfPages
+	 * Getter for numberOfPages
 	 *
-	 * @return the NumberOfPages
+	 * @return the number of pages
 	 *************************************************************************************/
 	public Integer getNumberOfPages() {
 		if (this.numberOfPages == null) {
@@ -428,19 +428,19 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**************************************************************************************
-	 * Setter for NumberOfPages
+	 * Setter for numberOfPages
 	 *
-	 * @param NumberOfPages
-	 *            the NumberOfPages to set
+	 * @param numberOfPages
+	 *            the number of pages to set
 	 **************************************************************************************/
 	public void setNumberOfPages(Integer numberOfPages) {
 		this.numberOfPages = numberOfPages;
 	}
 
 	/*************************************************************************************
-	 * Getter for StartDate
+	 * Getter for startDate
 	 *
-	 * @return the StartDate
+	 * @return the start date
 	 *************************************************************************************/
 	public Date getStartDate() {
 		if (this.startDate == null) {
@@ -450,19 +450,19 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**************************************************************************************
-	 * Setter for StartDate
+	 * Setter for startDate
 	 *
-	 * @param StartDate
-	 *            the StartDate to set
+	 * @param startDate
+	 *            the start date to set
 	 **************************************************************************************/
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
 	/*************************************************************************************
-	 * Getter for EndDate
+	 * Getter for endDate
 	 *
-	 * @return the EndDate
+	 * @return the end date
 	 *************************************************************************************/
 	public Date getEndDate() {
 		if (this.endDate == null) {
@@ -472,10 +472,10 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**************************************************************************************
-	 * Setter for EndDate
+	 * Setter for endDate
 	 *
-	 * @param EndDate
-	 *            the EndDate to set
+	 * @param endDate
+	 *            the end date to set
 	 **************************************************************************************/
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;

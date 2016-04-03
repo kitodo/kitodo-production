@@ -103,9 +103,9 @@ public class DateUtils {
 	 * system presumed. Two dates are considered to be in the same year exactly
 	 * if none of them is null and their year fields are equal.
 	 *
-	 * @param compared
+	 * @param current
 	 *            date to compare against
-	 * @param comparee
+	 * @param next
 	 *            date to compare, may be null
 	 * @return whether the two dates are in the same year
 	 */

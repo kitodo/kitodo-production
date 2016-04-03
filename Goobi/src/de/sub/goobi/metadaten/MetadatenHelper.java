@@ -596,10 +596,9 @@ public class MetadatenHelper implements Comparator<Object> {
 	/**
 	 * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt sind
 	 *
-	 * @param Strukturtyp
-	 * @param Rollenname
-	 *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird ================================================
-	 *            ================
+	 * @param myDocStruct
+	 * @param inRoleName
+	 *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird
 	 */
 	public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();

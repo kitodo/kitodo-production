@@ -46,8 +46,6 @@ public class FileUtils {
 	 *
 	 * @param inDir
 	 *            the directory to run through
-	 * @param ext
-	 *            the file extension to use for counting, not case sensitive
 	 * @return number of files as Integer
 	 */
 	public static Integer getNumberOfFiles(SafeFile inDir) {

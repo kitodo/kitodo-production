@@ -77,7 +77,7 @@ public class ImportRussland {
 
    /**
     * @param reader
-    * @param myProzesseID
+    * @param inProzess
     * @throws IOException
     * @throws WrongImportFileException
     * @throws TypeNotAllowedForParentException

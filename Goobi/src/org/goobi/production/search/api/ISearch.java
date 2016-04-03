@@ -38,7 +38,7 @@ public interface ISearch {
 
 	/**
 	 *
-	 * @param qery the search query
+	 * @param query the search query
 	 * @return an ArrayList with identifier for the resulting objects
 	 */
 

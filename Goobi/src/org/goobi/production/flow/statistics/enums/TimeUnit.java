@@ -159,12 +159,11 @@ public enum TimeUnit {
 
 
 	/**
-	 * function allows to retrieve a datarow based on startdaten enddate and intervall
+	 * function allows to retrieve a date row based on start and end date
 	 *
 	 * @param start
 	 * @param end
-	 * @param intervall
-	 * @return
+	 * @return date row
 	 */
 	public List<String> getDateRow(Date start, Date end){
 		List<String> dateRow = new ArrayList<String>();

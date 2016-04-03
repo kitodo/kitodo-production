@@ -102,7 +102,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
 	 * necessary for Threads that have terminated in order to render to run them
 	 * again possible.
 	 *
-	 * @param processSwapInTask
+	 * @param processSwapOutTask
 	 *            copy master to create a clone of
 	 */
 	public ProcessSwapOutTask(ProcessSwapOutTask processSwapOutTask) {

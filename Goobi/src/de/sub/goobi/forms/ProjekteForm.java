@@ -142,8 +142,6 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * this needs to be executed in order to rollback adding of filegroups
-	 *
-	 * @return
 	 */
 	public String Cancel() {
 		// flushing new fileGroups
@@ -298,8 +296,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 *
-	 * @return instance of {@link StatisticsMode.PRODUCTION} {@link StatisticsManager}
+	 * @return instance of {@link StatisticsMode#PRODUCTION} {@link StatisticsManager}
 	 */
 
 	public StatisticsManager getStatisticsManager1() {
@@ -311,8 +308,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 *
-	 * @return instance of {@link StatisticsMode.THROUGHPUT} {@link StatisticsManager}
+	 * @return instance of {@link StatisticsMode#THROUGHPUT} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager2() {
 		if (this.statisticsManager2 == null) {
@@ -323,8 +319,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 *
-	 * @return instance of {@link StatisticsMode.CORRECTIONS} {@link StatisticsManager}
+	 * @return instance of {@link StatisticsMode#CORRECTIONS} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager3() {
 		if (this.statisticsManager3 == null) {
@@ -335,8 +330,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 *
-	 * @return instance of {@link StatisticsMode.STORAGE} {@link StatisticsManager}
+	 * @return instance of {@link StatisticsMode#STORAGE} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager4() {
 		if (this.statisticsManager4 == null) {

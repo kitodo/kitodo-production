@@ -73,14 +73,14 @@ public class Ldap {
 
 	}
 
-	private String getUserDN(Benutzer inBenutzer) {
-		String userDN = inBenutzer.getLdapGruppe().getUserDN();
-		userDN = userDN.replaceAll("\\{login\\}", inBenutzer.getLogin());
-		if (inBenutzer.getLdaplogin() != null) {
-			userDN = userDN.replaceAll("\\{ldaplogin\\}", inBenutzer.getLdaplogin());
+	private String getUserDN(Benutzer inUser) {
+		String userDN = inUser.getLdapGruppe().getUserDN();
+		userDN = userDN.replaceAll("\\{login\\}", inUser.getLogin());
+		if (inUser.getLdaplogin() != null) {
+			userDN = userDN.replaceAll("\\{ldaplogin\\}", inUser.getLdaplogin());
 		}
-		userDN = userDN.replaceAll("\\{firstname\\}", inBenutzer.getVorname());
-		userDN = userDN.replaceAll("\\{lastname\\}", inBenutzer.getNachname());
+		userDN = userDN.replaceAll("\\{firstname\\}", inUser.getVorname());
+		userDN = userDN.replaceAll("\\{lastname\\}", inUser.getNachname());
 		return userDN;
 	}
 
@@ -321,7 +321,7 @@ public class Ldap {
 	/**
 	 * check if User already exists on system
 	 *
-	 * @param inBenutzer
+	 * @param inLogin
 	 * @return path as string
 	 */
 	public boolean isUserAlreadyExists(String inLogin) {
@@ -451,7 +451,7 @@ public class Ldap {
 	 * @return boolean about result of change
 	 * @throws NoSuchAlgorithmException
 	 */
-	public boolean changeUserPassword(Benutzer inBenutzer, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
+	public boolean changeUserPassword(Benutzer inUser, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
@@ -504,7 +504,7 @@ public class Ldap {
 				mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
 				mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
 				mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
-				ctx.modifyAttributes(getUserDN(inBenutzer), mods);
+				ctx.modifyAttributes(getUserDN(inUser), mods);
 
 				// Close the context when we're done
 				ctx.close();

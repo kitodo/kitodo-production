@@ -42,7 +42,7 @@ public interface IProjectTask {
 
 	/**
 	 *
-	 * @return
+	 * @return maximum number of steps
 	 */
 	public abstract Integer getStepsMax();
 
