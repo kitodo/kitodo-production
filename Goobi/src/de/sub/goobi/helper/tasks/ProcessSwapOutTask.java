@@ -1,23 +1,23 @@
 package de.sub.goobi.helper.tasks;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -48,7 +48,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
 
 
 	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created. 
+	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
 	 */
 
 	static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
@@ -89,7 +89,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * No-argument constructor. Creates an empty ProcessSwapOutTask. Must be
 	 * made explicit because a constructor taking an argument is present.
@@ -101,7 +101,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
 	 * The clone constructor creates a new instance of this object. This is
 	 * necessary for Threads that have terminated in order to render to run them
 	 * again possible.
-	 * 
+	 *
 	 * @param processSwapInTask
 	 *            copy master to create a clone of
 	 */
@@ -111,7 +111,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -124,7 +124,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
       super.initialize(inProzess);
       setTitle("Auslagerung: " + inProzess.getTitel());
    }
-   
+
    /**
     * Aufruf als Thread
     * ================================================================*/
@@ -223,8 +223,8 @@ public void run() {
          setStatusProgress(-1);
          return;
       }
-      setStatusProgress(90);      
-      
+      setStatusProgress(90);
+
       /* in Prozess speichern */
       try {
          setStatusMessage("saving process");
@@ -245,7 +245,7 @@ public void run() {
 	 * Calls the clone constructor to create a not yet executed instance of this
 	 * thread object. This is necessary for threads that have terminated in
 	 * order to render possible to restart them.
-	 * 
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */

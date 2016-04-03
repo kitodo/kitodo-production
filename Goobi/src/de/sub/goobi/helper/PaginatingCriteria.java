@@ -42,21 +42,21 @@ import org.hibernate.transform.ResultTransformer;
 /**
  * The source for this code was found at the web address http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 and
  * changed by retaining the class name of the class which was used to instantiate the current instance of PaginatingCriteria
- * 
- * 
+ *
+ *
  * Implementation of Criteria specifically for paginated searches.
- * 
+ *
  * When used with HibernatePaginatedList the count() method produces SELECT count(*) SQL for search to query total number of elements.
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  * @see com.sobyteme.pagination.HibernatePaginatedList
  * @see org.hibernate.Criteria
  * @see org.hibernate.CriteriaImpl
- * 
+ *
  * @author Steve
- * 
+ *
  */
 public class PaginatingCriteria implements Criteria, Serializable {
 	private static final long serialVersionUID = 5298336852980154554L;
@@ -68,7 +68,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Constructor. Create 'real' Criteria and clone Criteria to do row count.
-	 * 
+	 *
 	 * @param clazz
 	 * @param session
 	 */
@@ -82,7 +82,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Used internally.
-	 * 
+	 *
 	 * @param criteria
 	 * @param clone
 	 */
@@ -112,7 +112,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Adds Criterion to both the internal Criteria instances.
-	 * 
+	 *
 	 * @param criterion
 	 * @return Criteria
 	 * @see Criteria#add(org.hibernate.criterion.Criterion)
@@ -310,7 +310,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Sets a comment on both internal Criteria instances
-	 * 
+	 *
 	 * @param comment
 	 * @return Criteria
 	 * @see Criteria#setComment(java.lang.String)
@@ -381,7 +381,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Gets the row count applicable for this PaginatingCriteria.
-	 * 
+	 *
 	 * @return
 	 * @return Integer
 	 * @throws HibernateException
@@ -394,7 +394,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * Returns the class name of the class returned by criteria.list()
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getClassName() {

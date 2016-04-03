@@ -1,23 +1,23 @@
 package de.sub.goobi.importer;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -53,10 +53,10 @@ import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
- * mit dessen Eigenschaften und erlaubt die Bearbeitung 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt
+ * mit dessen Eigenschaften und erlaubt die Bearbeitung
  * der Schrittdetails
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
@@ -64,8 +64,8 @@ public class ImportRussland {
    private static final Logger myLogger = Logger.getLogger(ImportRussland.class);
    private DocStruct logicalTopstruct;
    private Prozess prozess;
-   
-   
+
+
 
    /**
     * Allgemeiner Konstruktor ()
@@ -73,7 +73,7 @@ public class ImportRussland {
    public ImportRussland() {
    }
 
-   
+
 
    /**
     * @param reader
@@ -83,12 +83,12 @@ public class ImportRussland {
     * @throws TypeNotAllowedForParentException
     * @throws TypeNotAllowedAsChildException
     * @throws MetadataTypeNotAllowedException
-    * @throws ReadException 
-    * @throws InterruptedException 
-    * @throws PreferencesException 
-    * @throws DAOException 
-    * @throws SwapException 
-    * @throws WriteException 
+    * @throws ReadException
+    * @throws InterruptedException
+    * @throws PreferencesException
+    * @throws DAOException
+    * @throws SwapException
+    * @throws WriteException
     */
    protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException,
          WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
@@ -133,7 +133,7 @@ public class ImportRussland {
          //         myLogger.info(line);
          if (line.length() == 0) {
 
-            /* immer wenn die Zeile leer ist, können die gesammelten 
+            /* immer wenn die Zeile leer ist, können die gesammelten
              * Daten aus der gesammelten Liste ausgewertet werden */
             AbsatzAuswerten(listeDaten);
             /* Liste wieder zurücksetzen */
@@ -154,7 +154,7 @@ public class ImportRussland {
       myLogger.debug("ParsenRussland() - Ende");
    }
 
-   
+
 
    private void AbsatzAuswerten(List<String> inListe) throws ugh.exceptions.MetadataTypeNotAllowedException,
          WrongImportFileException {
@@ -177,7 +177,7 @@ public class ImportRussland {
 	}
    }
 
-   
+
 
    private void ZeitschriftDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       /* zunächst alle Details durchlaufen und der Zeitschrift hinzufügenl  */
@@ -209,7 +209,7 @@ public class ImportRussland {
       }
    }
 
-   
+
 
    private void BandDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       DocStruct ds = this.logicalTopstruct.getAllChildren().get(0);
@@ -233,7 +233,7 @@ public class ImportRussland {
 
    }
 
-   
+
 
    private void ArtikelDetails(List<String> inListe) throws MetadataTypeNotAllowedException, WrongImportFileException {
       boolean artikelGefunden = false;
@@ -343,7 +343,7 @@ public class ImportRussland {
       }
    }
 
-   
+
 
    private void RussischeDatenLoeschen(DocStruct inStrukturelement) {
       /* --------------------------------
@@ -389,7 +389,7 @@ public class ImportRussland {
       }
    }
 
-   
+
 
    private void MetadatumHinzufuegen(DocStruct inStruct, String inMdtName, String inDetail)
          throws MetadataTypeNotAllowedException {
@@ -412,12 +412,12 @@ public class ImportRussland {
          //               myLogger.debug(md.getValue());
          //               if (md.getValue().equals(zblID)) {
          //                  myLogger.info("------------ Artikel gefunden -------------");
-         //         
+         //
          inStruct.addMetadata(md);
       } catch (Exception e) {
          myLogger.error("Import fehlgeschlagen: " + inDetail, e);
       }
-   } 
+   }
 
    private void PersonHinzufuegen(DocStruct inStruct, String inRole, String inDetail)
          throws MetadataTypeNotAllowedException, WrongImportFileException {

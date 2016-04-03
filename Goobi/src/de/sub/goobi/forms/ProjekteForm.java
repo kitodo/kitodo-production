@@ -1,23 +1,23 @@
 package de.sub.goobi.forms;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -113,7 +113,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * this method deletes filegroups by their id's in the list
-	 * 
+	 *
 	 * @param List
 	 *            <Integer> fileGroups
 	 */
@@ -142,7 +142,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * this needs to be executed in order to rollback adding of filegroups
-	 * 
+	 *
 	 * @return
 	 */
 	public String Cancel() {
@@ -272,7 +272,7 @@ public class ProjekteForm extends BasisForm {
 	/**
 	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups marked for delete are not shown
 	 * anymore
-	 * 
+	 *
 	 * @return modified ArrayList
 	 */
 	public ArrayList<ProjectFileGroup> getFileGroupList() {
@@ -298,7 +298,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return instance of {@link StatisticsMode.PRODUCTION} {@link StatisticsManager}
 	 */
 
@@ -311,7 +311,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return instance of {@link StatisticsMode.THROUGHPUT} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager2() {
@@ -323,7 +323,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return instance of {@link StatisticsMode.CORRECTIONS} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager3() {
@@ -335,7 +335,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return instance of {@link StatisticsMode.STORAGE} {@link StatisticsManager}
 	 */
 	public StatisticsManager getStatisticsManager4() {
@@ -371,7 +371,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate pages per volume depending on given values, requested multiple times via ajax
-	 * 
+	 *
 	 * @return Integer of calculation
 	 */
 	public Integer getCalcImagesPerVolume() {
@@ -386,7 +386,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * get calculated duration from start and end date
-	 * 
+	 *
 	 * @return String of duration
 	 */
 	public Integer getCalcDuration() {
@@ -397,7 +397,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of volumes per year
-	 * 
+	 *
 	 * @return calculation
 	 */
 
@@ -413,7 +413,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of pages per year
-	 * 
+	 *
 	 * @return calculation
 	 */
 	public Integer getCalcThroughputPagesPerYear() {
@@ -428,7 +428,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of volumes per quarter
-	 * 
+	 *
 	 * @return calculation
 	 */
 
@@ -442,7 +442,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of pages per quarter
-	 * 
+	 *
 	 * @return calculation
 	 */
 	public Integer getCalcTroughputPagesPerQuarter() {
@@ -455,7 +455,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of volumes per month
-	 * 
+	 *
 	 * @return calculation
 	 */
 	public Integer getCalcThroughputPerMonth() {
@@ -468,7 +468,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of pages per month
-	 * 
+	 *
 	 * @return calculation
 	 */
 	public Integer getCalcThroughputPagesPerMonth() {
@@ -495,7 +495,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of volumes per day
-	 * 
+	 *
 	 * @return calculation
 	 */
 
@@ -505,7 +505,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of pages per day
-	 * 
+	 *
 	 * @return calculation
 	 */
 
@@ -524,7 +524,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**
 	 * calculate throughput of pages per day
-	 * 
+	 *
 	 * @return calculation
 	 */
 	public Integer getCalcPagesPerDay() {
@@ -556,7 +556,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if calculation is finished
 	 */
 
@@ -568,7 +568,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return path to rendered image of statistics
 	 */
 	public String getProjectProgressImage() {
@@ -614,7 +614,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string of image file projectStatVolumes
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -664,23 +664,23 @@ public class ProjekteForm extends BasisForm {
 		File outputfile = new File(localImagePath + inName);
 		ImageIO.write(image, "png", outputfile);
 	}
-	
+
 	private StatisticsRenderingElement myCurrentTable;
-	
+
 	public void setMyCurrentTable(StatisticsRenderingElement myCurrentTable) {
 		this.myCurrentTable = myCurrentTable;
 	}
-	
+
 	public StatisticsRenderingElement getMyCurrentTable() {
 		return this.myCurrentTable;
 	}
-	
+
 	public void CreateExcel() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
 
 			/*
-			 *  Vorbereiten der Header-Informationen 
+			 *  Vorbereiten der Header-Informationen
 			 */
 			HttpServletResponse response = (HttpServletResponse) facesContext
 					.getExternalContext().getResponse();
@@ -698,15 +698,15 @@ public class ProjekteForm extends BasisForm {
 				facesContext.responseComplete();
 
 			} catch (IOException e) {
-				
+
 			}
 		}
 	}
-	
+
 
 	/*************************************************************************************
 	 * Getter for showStatistics
-	 * 
+	 *
 	 * @return the showStatistics
 	 *************************************************************************************/
 	public boolean getShowStatistics() {
@@ -715,7 +715,7 @@ public class ProjekteForm extends BasisForm {
 
 	/**************************************************************************************
 	 * Setter for showStatistics
-	 * 
+	 *
 	 * @param showStatistics
 	 *            the showStatistics to set
 	 **************************************************************************************/
