@@ -2,23 +2,23 @@ package org.goobi.production.chart;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -47,7 +47,7 @@ import de.intranda.commons.chart.results.DataTable;
  * ProjectStatusDraw class creates and paints the chart depending on given parameters.
  * The value parameters are transferred as {@link ProjectStatusDataTable}-Object.
  * Width and height have to be set as pixel values.
- * 
+ *
  * @author Karsten Köhler
  * @author Hendrik Söhnholz
  * @author Steffen Hankiewicz
@@ -66,7 +66,7 @@ public class ProjectStatusDraw {
 	private ProjectStatusDataTable dataTable;
 
 	// dimensions of the whole graphic
-	// Only the width is given as an argument. The height of the image should be 
+	// Only the width is given as an argument. The height of the image should be
 	// adjusted according to the number of tasks to be shown.
 	private int width;
 	private int height;
@@ -81,7 +81,7 @@ public class ProjectStatusDraw {
 
 	/************************************************************************************
 	 * Instantiates a new ProjectStatusDraw.
-	 * 
+	 *
 	 * @param inDataTable
 	 *            the {@link DataTable} (contains the {@link DataRow}-objects)
 	 * @param g2d
@@ -221,7 +221,7 @@ public class ProjectStatusDraw {
 
 	/************************************************************************************
 	 * Draw centered string.
-	 * 
+	 *
 	 * @param str
 	 *            the string to show
 	 * @param xpos
@@ -235,21 +235,21 @@ public class ProjectStatusDraw {
 
 	/************************************************************************************
 	 * Draw left aligned string.
-	 * 
+	 *
 	 * @param str
 	 *            the string to show
 	 * @param xpos
 	 *            the x-position (start of string)
 	 * @param ypos
 	 *            the y-position
-	 ************************************************************************************/  
+	 ************************************************************************************/
 	private void drawLeftAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
 	/************************************************************************************
 	 * Draw right aligned string.
-	 * 
+	 *
 	 * @param str
 	 *            the string to show
 	 * @param xpos
@@ -264,10 +264,8 @@ public class ProjectStatusDraw {
 
 	/************************************************************************************
 	 * Get size of Image for rendering
-	 * 
-	 * @param pData Proj
-	 *            the color index (0=green, 1=yellow, 2=red)
-	 * @return the color as {@link Color}
+	 *
+	 * @param count
 	 ************************************************************************************/
 	public static int getImageHeight(int count) {
 		return BORDERTOP + count * BARSPACING;

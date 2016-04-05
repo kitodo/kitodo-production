@@ -106,7 +106,7 @@ public class ExportMetsWithoutHibernate {
 	 * DMS-Export an eine gewünschte Stelle
 	 *
 	 * @param process
-	 * @param zielVerzeichnis
+	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws PreferencesException

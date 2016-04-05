@@ -2,23 +2,23 @@ package de.sub.goobi.helper.ldap;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -73,20 +73,20 @@ public class Ldap {
 
 	}
 
-	private String getUserDN(Benutzer inBenutzer) {
-		String userDN = inBenutzer.getLdapGruppe().getUserDN();
-		userDN = userDN.replaceAll("\\{login\\}", inBenutzer.getLogin());
-		if (inBenutzer.getLdaplogin() != null) {
-			userDN = userDN.replaceAll("\\{ldaplogin\\}", inBenutzer.getLdaplogin());
+	private String getUserDN(Benutzer inUser) {
+		String userDN = inUser.getLdapGruppe().getUserDN();
+		userDN = userDN.replaceAll("\\{login\\}", inUser.getLogin());
+		if (inUser.getLdaplogin() != null) {
+			userDN = userDN.replaceAll("\\{ldaplogin\\}", inUser.getLdaplogin());
 		}
-		userDN = userDN.replaceAll("\\{firstname\\}", inBenutzer.getVorname());
-		userDN = userDN.replaceAll("\\{lastname\\}", inBenutzer.getNachname());
+		userDN = userDN.replaceAll("\\{firstname\\}", inUser.getVorname());
+		userDN = userDN.replaceAll("\\{lastname\\}", inUser.getNachname());
 		return userDN;
 	}
 
 	/**
 	 * create new user in LDAP-directory
-	 * 
+	 *
 	 * @param inBenutzer
 	 * @param inPasswort
 	 * @throws NamingException
@@ -128,7 +128,7 @@ public class Ldap {
 
 	/**
 	 * Check if connection with login and password possible
-	 * 
+	 *
 	 * @param inBenutzer
 	 * @param inPasswort
 	 * @return Login correct or not
@@ -234,7 +234,7 @@ public class Ldap {
 
 	/**
 	 * retrieve home directory of given user
-	 * 
+	 *
 	 * @param inBenutzer
 	 * @return path as string
 	 */
@@ -320,8 +320,8 @@ public class Ldap {
 
 	/**
 	 * check if User already exists on system
-	 * 
-	 * @param inBenutzer
+	 *
+	 * @param inLogin
 	 * @return path as string
 	 */
 	public boolean isUserAlreadyExists(String inLogin) {
@@ -389,7 +389,7 @@ public class Ldap {
 
 	/**
 	 * Get next free uidNumber
-	 * 
+	 *
 	 * @return next free uidNumber
 	 * @throws NamingException
 	 */
@@ -414,7 +414,7 @@ public class Ldap {
 
 	/**
 	 * Set next free uidNumber
-	 * 
+	 *
 	 * @throws NamingException
 	 */
 	private void setNextUidNumber() {
@@ -444,14 +444,14 @@ public class Ldap {
 
 	/**
 	 * change password of given user, needs old password for authentification
-	 * 
+	 *
 	 * @param inUser
 	 * @param inOldPassword
 	 * @param inNewPassword
 	 * @return boolean about result of change
 	 * @throws NoSuchAlgorithmException
 	 */
-	public boolean changeUserPassword(Benutzer inBenutzer, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
+	public boolean changeUserPassword(Benutzer inUser, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
@@ -460,7 +460,7 @@ public class Ldap {
 			try {
 				DirContext ctx = new InitialDirContext(env);
 
-		
+
 				/*
 				 * -------------------------------- Encryption of password and Base64-Encoding --------------------------------
 				 */
@@ -504,7 +504,7 @@ public class Ldap {
 				mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, lanmgrpassword);
 				mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, ntlmpassword);
 				mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, sambaPwdLastSet);
-				ctx.modifyAttributes(getUserDN(inBenutzer), mods);
+				ctx.modifyAttributes(getUserDN(inUser), mods);
 
 				// Close the context when we're done
 				ctx.close();

@@ -2,23 +2,23 @@ package de.sub.goobi.helper;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -51,16 +51,15 @@ public class ProjectHelper {
 
 	/**
 	 * static to reduce load
-	 * 
-	 * 
-	 * @param instance
+	 *
+	 * @param project
 	 * @return a GoobiCollection of the following structure:
 	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
 	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
-	 * 
+	 *
 	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The
 	 *                  workflow order is returned according to the average order returen by a grouping by step titel
-	 * 
+	 *
 	 *                  consider workflow structure to be a prototype, it would probably make things easier, to either assemble the underlying
 	 *                  construction in separate classes or to create a new class with these properties
 	 */
@@ -72,7 +71,7 @@ public class ProjectHelper {
 
 		Session session = Helper.getHibernateSession();
 
-	
+
 
 		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
 		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
@@ -98,7 +97,7 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
-	
+
 
 		Criteria critSteps = session.createCriteria(Schritt.class);
 
@@ -114,7 +113,7 @@ public class ProjectHelper {
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
 
-	
+
 		critSteps.setProjection(proList);
 
 		// now we have to discriminate the hits where the max number of hits doesn't reach numberOfProcs

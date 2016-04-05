@@ -2,23 +2,23 @@ package de.sub.goobi.forms;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -126,7 +126,7 @@ public class ProzesskopieForm {
 	 * argument-less actions can only be executed relatively to the list entry
 	 * in question this way if they are concerning elements that are rendered by
 	 * iterating along a list.
-	 * 
+	 *
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	public class SelectableHit {
@@ -141,11 +141,11 @@ public class ProzesskopieForm {
 		 * catalogue access.
 		 */
 		private final String error;
-	
+
 		/**
 		 * Selectable hit constructor. Creates a new SelectableHit object with a
 		 * hit to show.
-		 * 
+		 *
 		 * @param hit
 		 *            Hit to show
 		 */
@@ -153,11 +153,11 @@ public class ProzesskopieForm {
 			this.hit = hit;
 			error = null;
 		}
-	
+
 		/**
 		 * Selectable hit constructor. Creates a new SelectableHit object with
 		 * an error message to show.
-		 * 
+		 *
 		 * @param error
 		 *            error message
 		 */
@@ -170,7 +170,7 @@ public class ProzesskopieForm {
 		 * The function getBibliographicCitation() returns a summary of this hit
 		 * in bibliographic citation style as HTML as read-only property
 		 * “bibliographicCitation”.
-		 * 
+		 *
 		 * @return a summary of this hit in bibliographic citation style as HTML
 		 */
 		public String getBibliographicCitation() {
@@ -181,7 +181,7 @@ public class ProzesskopieForm {
 		 * The function getErrorMessage() returns an error if that had occurred
 		 * when trying to retrieve that hit from the catalogue as read-only
 		 * property “errorMessage”.
-		 * 
+		 *
 		 * @return an error message to be rendered as a list entry
 		 */
 		public String getErrorMessage() {
@@ -192,17 +192,17 @@ public class ProzesskopieForm {
 		 * The function isError() returns whether an error occurred when trying
 		 * to retrieve that hit from the catalogue as read-only property
 		 * “error”.
-		 * 
+		 *
 		 * @return whether an error occurred when retrieving that hit
 		 */
 		public boolean isError() {
 			return hit == null;
 		}
-	
+
 		/**
 		 * The function selectClick() is called if the user clicks on a
 		 * catalogue hit summary in order to import it into Production.
-		 * 
+		 *
 		 * @return always "", indicating to Faces to stay on that page
 		 */
 		public String selectClick() {
@@ -318,8 +318,8 @@ public class ProzesskopieForm {
 	}
 
 	private void readProjectConfigs() {
-		/*-------------------------------- 
-		 * projektabhängig die richtigen Felder in der Gui anzeigen 
+		/*--------------------------------
+		 * projektabhängig die richtigen Felder in der Gui anzeigen
 		 * --------------------------------*/
 		ConfigProjects cp = null;
 		try {
@@ -433,7 +433,7 @@ public class ProzesskopieForm {
 	 * link to start a catalogue search. It performs the search and loads the
 	 * hit if it is unique. Otherwise, it will cause a hit list to show up for
 	 * the user to select a hit.
-	 * 
+	 *
 	 * @return always "", telling JSF to stay on that page
 	 */
 	public String OpacAuswerten() {
@@ -477,7 +477,7 @@ public class ProzesskopieForm {
 	 * catalogue, the function will try to load a suitable plugin. Upon success
 	 * the preferences and the catalogue to use will be configured in the
 	 * plugin, otherwise an error message will be set to be shown.
-	 * 
+	 *
 	 * @param catalogue
 	 *            identifier string for the catalogue that the plugin shall
 	 *            support
@@ -518,7 +518,7 @@ public class ProzesskopieForm {
 
 	/**
 	 * The method importHit() loads a hit into the display.
-	 * 
+	 *
 	 * @param hit
 	 *            Hit to load
 	 * @throws PreferencesException
@@ -534,7 +534,7 @@ public class ProzesskopieForm {
 	/**
 	 * Creates a DataCopier with the given configuration, lets it process the
 	 * given data and wraps any errors to display in the front end.
-	 * 
+	 *
 	 * @param data
 	 *            data to process
 	 */
@@ -558,7 +558,7 @@ public class ProzesskopieForm {
 	/**
 	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
 	 * füllen
-	 * 
+	 *
 	 * @throws PreferencesException
 	 */
 	private void fillFieldsFromMetadataFile() throws PreferencesException {
@@ -619,7 +619,7 @@ public class ProzesskopieForm {
 
 	/**
 	 * Auswahl des Prozesses auswerten
-	 * 
+	 *
 	 * @throws DAOException
 	 * @throws NamingException
      * @throws SQLException ============================================================== ==
@@ -687,7 +687,7 @@ public class ProzesskopieForm {
 
 	/**
 	 * Validierung der Eingaben
-	 * 
+	 *
 	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
 	 */
 	boolean isContentValid() {
@@ -773,7 +773,7 @@ public class ProzesskopieForm {
 
 	/**
 	 * Anlegen des Prozesses und Speichern der Metadaten ================================================================
-	 * 
+	 *
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -832,10 +832,10 @@ public class ProzesskopieForm {
 			createNewFileformat();
 		}
 
-		/*-------------------------------- 
+		/*--------------------------------
 		 * wenn eine RDF-Konfiguration
 		 * vorhanden ist (z.B. aus dem Opac-Import, oder frisch angelegt), dann
-		 * diese ergänzen 
+		 * diese ergänzen
 		 * --------------------------------*/
 		if (this.myRdf != null) {
 
@@ -915,7 +915,7 @@ public class ProzesskopieForm {
 					}
 				} // end if ughbinding
 			}// end for
-			
+
 			/*
 			 * -------------------------- Metadata inheritance and enrichment --------------------------
 			 */
@@ -1014,7 +1014,7 @@ public class ProzesskopieForm {
 					newmd.setValue("file://" + this.prozessKopie.getImagesDirectory() + this.prozessKopie.getTitel().trim() + DIRECTORY_SUFFIX);
 				}
 				this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-								
+
 				/* Rdf-File schreiben */
 				this.prozessKopie.writeMetadataFile(this.myRdf);
 
@@ -1037,12 +1037,12 @@ public class ProzesskopieForm {
 			}
 
 		}
-		
+
 		// Create configured directories
-		
+
 		this.prozessKopie.createProcessDirs();
-		
-		
+
+
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
@@ -1061,7 +1061,7 @@ public class ProzesskopieForm {
 
 		/* damit die Sortierung stimmt nochmal einlesen */
 		Helper.getHibernateSession().refresh(this.prozessKopie);
-		
+
 		List<StepObject> steps = StepManager.getStepsForProcess(prozessKopie.getId());
 		for (StepObject s : steps) {
 			if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch() ) {
@@ -1229,7 +1229,7 @@ public class ProzesskopieForm {
 				}
 			}
 		}
-		
+
 		for (String col : digitalCollections) {
 			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "digitalCollection", col);
 		}
@@ -1326,7 +1326,7 @@ public class ProzesskopieForm {
 	 * this ProzesskopieForm. The title of the process template that a process
 	 * will be created from can be considered with some reason to be some good
 	 * identifier for the ProzesskopieForm, too.
-	 * 
+	 *
 	 * @return a human-readable identifier for this object
 	 */
 	public String getProzessVorlageTitel() {
@@ -1352,9 +1352,7 @@ public class ProzesskopieForm {
 	/**
 	 * The method setAdditionalField() sets the value of an AdditionalField held
 	 * by a ProzesskopieForm object.
-	 * 
-	 * @param inputForm
-	 *            a ProzesskopieForm object
+	 *
 	 * @param key
 	 *            the title of the AdditionalField whose value shall be modified
 	 * @param value
@@ -1384,7 +1382,7 @@ public class ProzesskopieForm {
 
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
-	 * 
+	 *
 	 * @author Wulf
 	 */
 	public boolean isSingleChoiceCollection() {
@@ -1394,7 +1392,7 @@ public class ProzesskopieForm {
 
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use this choice
-	 * 
+	 *
 	 * @author Wulf
 	 */
 	public String getDigitalCollectionIfSingleChoice() {
@@ -1437,11 +1435,11 @@ public class ProzesskopieForm {
 					List<Element> myCols = projekt.getChildren("DigitalCollection");
 					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 						Element col = it2.next();
-						
+
 						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
 							digitalCollections.add(col.getText());
 						}
-					
+
 						defaultCollections.add(col.getText());
 					}
 				} else {
@@ -1454,11 +1452,11 @@ public class ProzesskopieForm {
 							List<Element> myCols = projekt.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
-								
+
 								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
 									digitalCollections.add(col.getText());
 								}
-							
+
 								this.possibleDigitalCollection.add(col.getText());
 							}
 						}
@@ -1478,7 +1476,7 @@ public class ProzesskopieForm {
 		}
 
 		// if only one collection is possible take it directly
-	
+
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}
@@ -1631,7 +1629,7 @@ public class ProzesskopieForm {
 				titeldefinition = titel;
 				break;
 			}
-		      
+
             /* wenn beides angegeben wurde */
             if (!isdoctype.equals("") && !isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)
                     && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
@@ -1880,7 +1878,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function getHitlist returns the hits for the currently showing page of
 	 * the hitlist as read-only property "hitlist".
-	 * 
+	 *
 	 * @return a list of hits to render in the hitlist
 	 */
 	public List<SelectableHit> getHitlist() {
@@ -1905,7 +1903,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function getNumberOfHits() returns the number of hits on the hit list
 	 * as read-only property "numberOfHits".
-	 * 
+	 *
 	 * @return the number of hits on the hit list
 	 */
 	public long getNumberOfHits() {
@@ -1915,7 +1913,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function getPageSize() retrieves the desired number of hits on one
 	 * page of the hit list from the configuration.
-	 * 
+	 *
 	 * @return
 	 */
 	private int getPageSize() {
@@ -1925,7 +1923,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function isFirstPage() returns whether the currently showing page of
 	 * the hitlist is the first page of it as read-only property "firstPage".
-	 * 
+	 *
 	 * @return whether the currently showing page of the hitlist is the first
 	 *         one
 	 */
@@ -1936,7 +1934,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function getHitlistShowing returns whether the hitlist shall be
 	 * rendered or not as read-only property "hitlistShowing".
-	 * 
+	 *
 	 * @return whether the hitlist is to be shown or not
 	 */
 	public boolean isHitlistShowing() {
@@ -1946,7 +1944,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function isLastPage() returns whether the currently showing page of
 	 * the hitlist is the last page of it as read-only property "lastPage".
-	 * 
+	 *
 	 * @return whether the currently showing page of the hitlist is the last one
 	 */
 	public boolean isLastPage() {
@@ -1972,7 +1970,7 @@ public class ProzesskopieForm {
 	/**
 	 * The function isCalendarButtonShowing tells whether the calendar button
 	 * shall show up or not as read-only property "calendarButtonShowing".
-	 * 
+	 *
 	 * @return whether the calendar button shall show
 	 */
 	public boolean isCalendarButtonShowing() {
@@ -1990,7 +1988,7 @@ public class ProzesskopieForm {
 	/**
 	 * Returns the representation of the file holding the document metadata in
 	 * memory.
-	 * 
+	 *
 	 * @return the metadata file in memory
 	 */
 	public Fileformat getFileformat() {

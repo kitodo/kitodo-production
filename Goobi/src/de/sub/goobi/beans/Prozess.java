@@ -2,23 +2,23 @@ package de.sub.goobi.beans;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -193,10 +193,10 @@ public class Prozess implements Serializable {
 	 * have not been accessed yet. However, this function is also called by
 	 * Hibernate itself when its updating the database and in this case it is
 	 * absolutely fine to return a proxy object uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getHistoryInitialized()} instead.
-	 * 
+	 *
 	 * @return the history field of the process which may be not yet loaded
 	 */
 	public Set<HistoryEvent> getHistory() {
@@ -207,7 +207,7 @@ public class Prozess implements Serializable {
 	 * The function getHistoryInitialized() returns the history events for a
 	 * process and takes care that the object is initialized from Hibernate
 	 * already and will not be bothered if the Hibernate session ends.
-	 * 
+	 *
 	 * @return the history field of the process which is loaded
 	 */
 	public Set<HistoryEvent> getHistoryInitialized() {
@@ -250,10 +250,10 @@ public class Prozess implements Serializable {
 	 * not been accessed yet. However, this function is also called by Hibernate
 	 * itself when its updating the database and in this case it is absolutely
 	 * fine to return a proxy object uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getBatchesInitialized()} instead.
-	 * 
+	 *
 	 * @return the batches field of the process which may be not yet loaded
 	 */
 	public Set<Batch> getBatches() {
@@ -262,10 +262,10 @@ public class Prozess implements Serializable {
 
 	/**
 	 * Returns the batches of the desired type for a process.
-	 * 
+	 *
 	 * @param type
 	 *            type of batches to return
-	 * 
+	 *
 	 * @return all batches of the desired type
 	 */
 	public Set<Batch> getBatchesByType(Type type) {
@@ -287,7 +287,7 @@ public class Prozess implements Serializable {
 	 * The function getBatchesInitialized() returns the batches for a process
 	 * and takes care that the object is initialized from Hibernate already and
 	 * will not be bothered if the Hibernate session ends.
-	 * 
+	 *
 	 * @return the batches field of the process which is loaded
 	 */
 	public Set<Batch> getBatchesInitialized() {
@@ -301,7 +301,7 @@ public class Prozess implements Serializable {
 	 * The function setBatches() is intended to be called by Hibernate to inject
 	 * the batches into the process object. To associate a batch with a process,
 	 * use {@link Batch#add(Prozess)}.
-	 * 
+	 *
 	 * @param batches
 	 *            set to inject
 	 */
@@ -324,10 +324,10 @@ public class Prozess implements Serializable {
 	 * function is also called by Hibernate itself when its updating the
 	 * database and in this case it is absolutely fine to return a proxy object
 	 * uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getEigenschaftenInitialized()} instead.
-	 * 
+	 *
 	 * @return the properties field of the process which may be not yet loaded
 	 */
 	public Set<Prozesseigenschaft> getEigenschaften() {
@@ -339,7 +339,7 @@ public class Prozess implements Serializable {
 	 * (“properties”) for a process and takes care that the object is
 	 * initialized from Hibernate already and will not be bothered if the
 	 * Hibernate session ends.
-	 * 
+	 *
 	 * @return the properties field of the process which is loaded
 	 */
 	public Set<Prozesseigenschaft> getEigenschaftenInitialized() {
@@ -416,7 +416,7 @@ public class Prozess implements Serializable {
 				}
 			}
 		}
-		
+
 		 if (!tifOrdner.equals("") && useFallBack) {
 	            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 	            if (!suffix.equals("")) {
@@ -433,7 +433,7 @@ public class Prozess implements Serializable {
 	                }
 	            }
 	        }
-		
+
 		if (tifOrdner.equals("")) {
 			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
 		}
@@ -506,7 +506,7 @@ public class Prozess implements Serializable {
 					}
 				}
 			}
-			
+
 			if (!origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
@@ -523,7 +523,7 @@ public class Prozess implements Serializable {
 					}
 				}
 			}
-			
+
 			if (origOrdner.equals("")) {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
@@ -632,7 +632,7 @@ public class Prozess implements Serializable {
 	/**
 	 * The function getBatchID returns the batches the process is associated
 	 * with as readable text as read-only property "batchID".
-	 * 
+	 *
 	 * @return the batches the process is in
 	 */
 	public String getBatchID() {
@@ -1105,7 +1105,7 @@ public class Prozess implements Serializable {
 			removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
 		}
 	}
-	
+
 
 	public void writeMetadataAsTemplateFile(Fileformat inFile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
@@ -1299,7 +1299,7 @@ public class Prozess implements Serializable {
 	public void setDocket(Docket docket) {
 		this.docket = docket;
 	}
-	
+
 	@XmlElement(name = "collection")
 	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
 		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
@@ -1310,9 +1310,7 @@ public class Prozess implements Serializable {
 	 * new wiki field using a StringBuilder. The message is encoded using HTML
 	 * entities to prevent certain characters from playing merry havoc when the
 	 * message box shall be rendered in a browser later.
-	 * 
-	 * @param form
-	 *            the AktuelleSchritteForm which is the owner of the wiki field
+	 *
 	 * @param message
 	 *            the message to append
 	 */
@@ -1333,7 +1331,7 @@ public class Prozess implements Serializable {
 	 * The method addToWikiField() adds a message with a given level to the wiki
 	 * field of the process. Four level strings will be recognized and result in
 	 * different colors:
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>debug</code></dt>
 	 * <dd>gray</dd>
@@ -1346,7 +1344,7 @@ public class Prozess implements Serializable {
 	 * <dt><i>any other value</i></dt>
 	 * <dd>blue</dd>
 	 * <dt>
-	 * 
+	 *
 	 * @param level
 	 *            message colour, one of: "debug", "error", "info", "user" or
 	 *            "warn"; any other value defaults to "info"
@@ -1360,7 +1358,7 @@ public class Prozess implements Serializable {
 	/**
 	 * The method addToWikiField() adds a message signed by the given user to
 	 * the wiki field of the process.
-	 * 
+	 *
 	 * @param user
 	 *            user to sign the message with
 	 * @param message
@@ -1373,26 +1371,26 @@ public class Prozess implements Serializable {
 
 	/**
 	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 * @throws DAOException 
-	 * @throws SwapException 
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws DAOException
+	 * @throws SwapException
 	 */
 	public void createProcessDirs() throws SwapException, DAOException, IOException, InterruptedException {
-		
+
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
-		
+
 		for(String processDir : processDirs) {
-			
+
 			FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(), processDir.replace("(processtitle)", this.getTitel())));
 		}
-			
+
 	}
 
 	/**
 	 * The function getDigitalDocument() returns the digital act of this
 	 * process.
-	 * 
+	 *
 	 * @return the digital act of this process
 	 * @throws PreferencesException
 	 *             if the no node corresponding to the file format is available

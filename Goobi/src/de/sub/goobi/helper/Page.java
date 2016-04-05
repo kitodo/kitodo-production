@@ -1,23 +1,23 @@
 package de.sub.goobi.helper;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -38,7 +38,7 @@ import de.sub.goobi.forms.LoginForm;
 /**
  * This class provides pagination for displaying results from a large result set over a number of pages (i.e. with a given number of results per
  * page). Taken from http://blog.hibernate.org/cgi-bin/blosxom.cgi/2004/08/14#fn.html.
- * 
+ *
  * @author Gavin King
  * @author Eric Broyles
  */
@@ -54,12 +54,10 @@ public class Page implements Serializable { // implements Iterator
 	private static final Logger logger = Logger.getLogger(Page.class);
 
 	/** Construct a new Page with a Criteria. Page numbers are zero-based, so the first page is page 0.
-	 * 
+	 *
 	 * @param criteria the Hibernate Criteria
-	 * 
+	 *
 	 * @param page the page number (zero-based)
-	 * 
-	 * @param pageSize the number of results to display on the page
 	 */
 	public Page(Criteria criteria, int page) {
 		this.page = page;
@@ -79,7 +77,7 @@ public class Page implements Serializable { // implements Iterator
 				logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by PaginatingCriteria, if performance or memory is going down");
 				this.totalResults = criteria.list().size();
 			}
-			
+
 		} catch (HibernateException e) {
 			// no hits found, error is thrown
 			if(logger.isDebugEnabled()){
@@ -116,7 +114,7 @@ public class Page implements Serializable { // implements Iterator
 		return this.criteria.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 	}
 
-	public int getTotalResults() {	
+	public int getTotalResults() {
 		return this.totalResults;
 	}
 

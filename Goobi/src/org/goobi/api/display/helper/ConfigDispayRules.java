@@ -2,23 +2,23 @@ package org.goobi.api.display.helper;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.goobi.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -48,9 +48,9 @@ public final class ConfigDispayRules {
 	private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>>();
 
 	/**
-	 * 
+	 *
 	 * reads given xml file into XMLConfiguration
-	 * 
+	 *
 	 * @throws ConfigurationException
 	 */
 
@@ -72,7 +72,7 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * 
+	 *
 	 * creates hierarchical HashMap with values for each element of given data
 	 */
 	private synchronized void getDisplayItems() {
@@ -140,7 +140,7 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param project
 	 *            name of project as String
 	 * @param bind
@@ -195,7 +195,7 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param project
 	 *            name of project as String
 	 * @param bind
@@ -251,7 +251,7 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param project
 	 *            name of project as String
 	 * @param bind
@@ -342,14 +342,13 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * 
-	 * @param project
+	 * @param myproject
 	 *            project of element
-	 * @param bind
+	 * @param mybind
 	 *            create or edit
-	 * @param elementName
+	 * @param myelementName
 	 *            name of element
-	 * @return returns type of element
+	 * @return type of element
 	 */
 
 	public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName) {
@@ -385,13 +384,13 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * @param project
+	 * @param myproject
 	 *            name of project as String
-	 * @param bind
+	 * @param mybind
 	 *            create or edit
-	 * @param elementName
+	 * @param myelementName
 	 *            name of the element
-	 * @param displayType
+	 * @param mydisplayType
 	 *            type of the element
 	 * @return ArrayList with all values of given element
 	 */
@@ -432,7 +431,7 @@ public final class ConfigDispayRules {
 
 	/**
 	 * refreshes the hierarchical HashMap with values from xml file. If HashMap is used by another thread, the function will wait until
-	 * 
+	 *
 	 */
 
 	public void refresh() {
