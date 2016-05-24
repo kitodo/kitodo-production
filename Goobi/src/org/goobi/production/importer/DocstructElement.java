@@ -3,7 +3,7 @@ package org.goobi.production.importer;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. - http://www.goobi.org - https://github.com/goobi/goobi-production - http://gdz.sub.uni-goettingen.de -
+ * Visit the websites for more information. - http://www.kitodo.org - https://github.com/goobi/goobi-production - http://gdz.sub.uni-goettingen.de -
  * http://www.intranda.com - http://digiverso.com
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free

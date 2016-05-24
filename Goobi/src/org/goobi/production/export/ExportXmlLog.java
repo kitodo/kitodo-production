@@ -4,7 +4,7 @@ package org.goobi.production.export;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -139,14 +139,14 @@ public class ExportXmlLog implements IProcessDataExport {
 
 		processElm.setAttribute("processID", String.valueOf(process.getId()));
 
-		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
 		processElm.setNamespace(xmlns);
 		// namespace declaration
 		if (addNamespace) {
 
 			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			processElm.addNamespaceDeclaration(xsi);
-			Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
 			processElm.setAttribute(attSchema);
 		}
 		// process information
@@ -475,12 +475,12 @@ public class ExportXmlLog implements IProcessDataExport {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);
-		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
 
 		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.addNamespaceDeclaration(xsi);
 		root.setNamespace(xmlns);
-		Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+		Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
 		root.setAttribute(attSchema);
 		for (Prozess p : processList) {
 			Document doc = createDocument(p, false);
