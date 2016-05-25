@@ -48,18 +48,40 @@
 		<property name="bearbeitungsende" column="BearbeitungsEnde" type="timestamp"/>
 		<!-- 	<property name="typ" column="Typ" type="integer"/>  -->
 		<property name="homeverzeichnisNutzen" column="homeverzeichnisNutzen" type="short"/>
-		
-		<property name="typMetadaten" column="typMetadaten" />
-		<property name="typAutomatisch" column="typAutomatisch" />
-		<property name="typImportFileUpload" column="typImportFileUpload" />
-		<property name="typExportRus" column="typExportRus" />
-		<property name="typImagesLesen" column="typImagesLesen" />
-		<property name="typImagesSchreiben" column="typImagesSchreiben" />
-		<property name="typExportDMS" column="typExportDMS" />
-		<property name="typBeimAnnehmenModul" column="typBeimAnnehmenModul" />
-		<property name="typBeimAnnehmenAbschliessen" column="typBeimAnnehmenAbschliessen" />
-		<property name="typBeimAnnehmenModulUndAbschliessen" column="typBeimAnnehmenModulUndAbschliessen" />
-		<property name="typScriptStep" column="typScriptStep" type="boolean"/>
+
+		<property name="typMetadaten" type="java.lang.Boolean">
+			<column name="typMetadaten" sql-type="bit"/>
+		</property>
+		<property name="typAutomatisch" type="java.lang.Boolean">
+			<column name="typAutomatisch" sql-type="bit"/>
+		</property>
+		<property name="typImportFileUpload" type="java.lang.Boolean">
+			<column name="typImportFileUpload" sql-type="bit"/>
+		</property>
+		<property name="typExportRus" type="java.lang.Boolean">
+			<column name="typExportRus" sql-type="bit"/>
+		</property>
+		<property name="typImagesLesen" type="java.lang.Boolean">
+			<column name="typImagesLesen" sql-type="bit"/>
+		</property>
+		<property name="typImagesSchreiben" type="java.lang.Boolean">
+			<column name="typImagesSchreiben" sql-type="bit"/>
+		</property>
+		<property name="typExportDMS" type="java.lang.Boolean">
+			<column name="typExportDMS" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenModul" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenModul" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenAbschliessen" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenAbschliessen" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenModulUndAbschliessen" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenModulUndAbschliessen" sql-type="bit"/>
+		</property>
+		<property name="typScriptStep" type="java.lang.Boolean">
+			<column name="typScriptStep" sql-type="bit"/>
+		</property>
 		<property name="scriptname1" column="scriptName1" type="string"/>
 		<property name="typAutomatischScriptpfad" column="typAutomatischScriptpfad" type="string"/>
 		<property name="scriptname2" column="scriptName2" type="string"/>
@@ -70,9 +92,13 @@
 		<property name="typAutomatischScriptpfad4" column="typAutomatischScriptpfad4" type="string"/>
 		<property name="scriptname5" column="scriptName5" type="string"/>
 		<property name="typAutomatischScriptpfad5" column="typAutomatischScriptpfad5" type="string"/>
-		<property name="typBeimAbschliessenVerifizieren" column="typBeimAbschliessenVerifizieren" />
+		<property name="typBeimAbschliessenVerifizieren" type="java.lang.Boolean">
+			<column name="typBeimAbschliessenVerifizieren" sql-type="bit"/>
+		</property>
 		<property name="typModulName" column="typModulName" type="string"/>
-		<property name="batchStep" column="batchStep" type="boolean"  />
+		<property name="batchStep" type="java.lang.Boolean">
+			<column name="batchStep" sql-type="bit"/>
+		</property>
 		
 		<property name="stepPlugin" column="stepPlugin" type="string"/>
 		<property name="validationPlugin" column="validationPlugin" type="string"/>

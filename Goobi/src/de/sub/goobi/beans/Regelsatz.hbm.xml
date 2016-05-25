@@ -39,7 +39,9 @@
 		
 		<property name="titel" column="Titel" type="string"/>
 		<property name="datei" column="Datei" type="string"/>
-		<property name="orderMetadataByRulesetHibernate" column="orderMetadataByRuleset"/>
+		<property name="orderMetadataByRulesetHibernate" type="java.lang.Boolean">
+			<column name="orderMetadataByRuleset" sql-type="bit"/>
+		</property>
 		
 	</class>
 

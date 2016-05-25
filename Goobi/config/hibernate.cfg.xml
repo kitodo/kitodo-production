@@ -27,9 +27,9 @@
  * exception statement from your version.
  -->
 <!DOCTYPE hibernate-configuration PUBLIC
-        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 
- "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
 
@@ -54,37 +54,39 @@
 		<property name="hibernate.c3p0.validate">true</property>
 
 		<!-- use the C3P0 connection pool -->
-		<property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
+		<property name="connection.provider_class">
+			org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
+		</property>
 
 		<!-- Enable Hibernate's automatic session context management -->
 		<property name="current_session_context_class">managed</property>
-        
+
 		<!-- Don't echo all executed SQL to stdout -->
 		<property name="show_sql">false</property>
 		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
-		
-		<!-- Update database schema on startup -->
- 		<property name="hbm2ddl.auto">update</property> 
-		
+
+		<!-- Validate database schema on startup -->
+		<property name="hbm2ddl.auto">validate</property>
+
 		<!-- Die einzelnen Mappings -->
-		<mapping resource="de/sub/goobi/beans/Batch.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Benutzergruppe.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Benutzer.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Benutzereigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Docket.hbm.xml" />		
-		<mapping resource="de/sub/goobi/beans/Prozess.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Prozesseigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Schritt.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Werkstueck.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Werkstueckeigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Vorlage.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Vorlageeigenschaft.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Projekt.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/Regelsatz.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/LdapGruppe.hbm.xml" />
-		<mapping resource="de/sub/goobi/beans/ProjectFileGroup.hbm.xml" />
-        <mapping resource="de/sub/goobi/beans/HistoryEvent.hbm.xml" />
-        
+		<mapping resource="de/sub/goobi/beans/Batch.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Benutzergruppe.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Benutzer.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Benutzereigenschaft.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Docket.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Prozess.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Prozesseigenschaft.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Schritt.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Werkstueck.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Werkstueckeigenschaft.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Vorlage.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Vorlageeigenschaft.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Projekt.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/Regelsatz.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/LdapGruppe.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/ProjectFileGroup.hbm.xml"/>
+		<mapping resource="de/sub/goobi/beans/HistoryEvent.hbm.xml"/>
+
 	</session-factory>
 
 </hibernate-configuration>
