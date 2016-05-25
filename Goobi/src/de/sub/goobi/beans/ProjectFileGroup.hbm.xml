@@ -45,7 +45,7 @@
 		<property name="previewImage" type="java.lang.Boolean">
 			<column name="previewImage" sql-type="bit"/>
 		</property>
-		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID"/>
+		<many-to-one name="project" class="de.sub.goobi.beans.Projekt" column="ProjekteID" foreign-key="FK_ProjekteID"/>
 				
 	</class>
 
