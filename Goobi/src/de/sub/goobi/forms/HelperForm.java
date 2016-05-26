@@ -83,7 +83,7 @@ public class HelperForm {
 
 	public String getApplicationLogo() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-		logo += ConfigMain.getParameter("ApplicationLogo", "goobi_meta_klein.jpg");
+		logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-165x48.png");
 
 		return logo;
 	}
@@ -269,7 +269,7 @@ public class HelperForm {
 	}
 
 	public String getLogoUrl() {
-		return getServletPathWithHostAsUrl() + "/newpages/images/template/goobiVersionLogoBig.jpg";
+		return getServletPathWithHostAsUrl() + "/newpages/images/template/kitodo-640x186.png";
 	}
 
 	public boolean getMassImportAllowed() {
