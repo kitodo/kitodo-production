@@ -6,7 +6,7 @@ Goobi.Production is a workflow tool suite for the support of mass digitization. 
 Goobi is an open source software suite intended to support mass digitization projects for cultural heritage institutions. Goobi is widely-used and cooperatively maintained by major German libraries and digitization service providers. The software implements international standards such as METS, MODS and other formats maintained by the Library of Congress. Goobi consists of several independent modules serving different purposes such as controlling the digitization workflow, enriching descriptive and structural metadata, and presenting the results to the public in a modern and convenient way.
 
 To get more information, visit the following web sites:
-http://www.goobi.org
+http://www.kitodo.org
 http://wiki.goobi.org
 
 You can also follow Goobi News on Twitter at @Goobi\_org

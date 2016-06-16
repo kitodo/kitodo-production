@@ -1,4 +1,4 @@
-Goobi Community Edition Installationshandbuch
+Kitodo Community Edition Installationshandbuch
 =============================================
 
 Einfuehrung
