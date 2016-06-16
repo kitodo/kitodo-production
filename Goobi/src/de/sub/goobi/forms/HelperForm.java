@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -83,7 +83,7 @@ public class HelperForm {
 
 	public String getApplicationLogo() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-		logo += ConfigMain.getParameter("ApplicationLogo", "goobi_meta_klein.jpg");
+		logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-165x48.png");
 
 		return logo;
 	}
@@ -269,7 +269,7 @@ public class HelperForm {
 	}
 
 	public String getLogoUrl() {
-		return getServletPathWithHostAsUrl() + "/newpages/images/template/goobiVersionLogoBig.jpg";
+		return getServletPathWithHostAsUrl() + "/newpages/images/template/kitodo-640x186.png";
 	}
 
 	public boolean getMassImportAllowed() {
