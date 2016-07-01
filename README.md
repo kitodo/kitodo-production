@@ -33,7 +33,7 @@ In order to build the application with (the rather useless) default configuratio
 1. Use the example `build.properties.templates` file to create an actual `build.properties` file.
 	cp build.properties.template build.properties
 2. Edit the file and provide the path to your Tomcat distributions `lib/` directory in the `tomcat.dir.lib` parameter.
-3. Execute ant to generate Goobi.Production distributable WAR and JAR files. All build artifacts (class files, javadoc, test results) will end up in the `build/` directory. All distributables end up in the `dist/` directory.
+3. Execute ant to generate Kitodo.Production distributable WAR and JAR files. All build artifacts (class files, javadoc, test results) will end up in the `build/` directory. All distributables end up in the `dist/` directory.
 
 ### Configuring your distribution
 
