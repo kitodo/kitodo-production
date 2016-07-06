@@ -67,6 +67,7 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.ProjectManager;
 import de.sub.goobi.persistence.apache.ProjectObject;
 
+@SuppressWarnings("deprecation")
 public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHibernate {
 	private static final Logger myLogger = Logger.getLogger(AutomaticDmsExportWithoutHibernate.class);
 	ConfigProjects cp;

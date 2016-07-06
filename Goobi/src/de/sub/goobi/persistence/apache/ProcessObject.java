@@ -44,6 +44,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.metadaten.MetadatenHelper;
 
+@SuppressWarnings("deprecation")
 public class ProcessObject {
 
 	private int id;

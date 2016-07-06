@@ -66,6 +66,7 @@ import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
+@SuppressWarnings("deprecation")
 public class ExportDms extends ExportMets {
 	private static final Logger myLogger = Logger.getLogger(ExportDms.class);
 	ConfigProjects cp;

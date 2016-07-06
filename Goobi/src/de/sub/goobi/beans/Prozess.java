@@ -87,6 +87,7 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 
+@SuppressWarnings("deprecation")
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
 // elements. Further XML elements can be added as needed by annotating with
