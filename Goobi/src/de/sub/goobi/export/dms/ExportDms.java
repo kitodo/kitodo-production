@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
 	 *             declared in
 	 *             {@link ugh.dl.DigitalDocument#createDocStruct(DocStructType)}
 	 *             but never thrown, see
-	 *             https://github.com/goobi/goobi-ugh/issues/2
+	 *             https://github.com/kitodo/kitodo-ugh/issues/2
 	 */
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
 			throws IOException, InterruptedException, WriteException, PreferencesException,

@@ -209,7 +209,8 @@ public class MetadataPathSelector extends MetadataSelector {
 				}
 				return;
 			} catch (TypeNotAllowedForParentException e) {
-				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
+				// see https://github.com/kitodo/kitodo-ugh/issues/2
+				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
 			} catch (Exception e) {
 				// copy rule failed, skip it
 				if(LOG.isDebugEnabled()){
