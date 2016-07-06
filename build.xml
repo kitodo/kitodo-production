@@ -40,7 +40,7 @@
     <property name="build.javac.args" value="-Xpkginfo:nonempty"/>
     <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
     <property name="test.report.dir" value="${build.dir}/test-reports/"/>
-    
+
     <property name="build.dist.dir" value="${basedir}/dist"/>
     <property name="build.dist.name" value="goobi-ce"/>
     <property name="build.dist.version" value="1.11.2" />
@@ -63,16 +63,16 @@
 
     <property name="java.src.dir" value="${src.dir}/src"/>
     <property name="java.src.dubious.dir" value="${src.dir}/src-dubious"/>
-	
+
 	<!-- Plugins -->
 	<property name="build.dir.plugins.import" value="${build.dir}/plugins/import"/>
 	<property name="build.dist.dir.plugins.import" value="${build.dist.dir}/plugins/import"/>
 	<property name="src.dir.plugins.import" value="${src.dir}/plugins/import"/>
-	
+
 	<property name="build.dir.plugins.opac" value="${build.dir}/plugins/opac"/>
 	<property name="build.dist.dir.plugins.opac" value="${build.dist.dir}/plugins/opac"/>
 	<property name="src.dir.plugins.opac" value="${src.dir}/plugins/opac"/>
-	
+
     <!--==================================================
         Datatype declarations
         ==================================================-->
@@ -266,9 +266,9 @@
 	<target name="compile-jsp" if="jsp.compilation.requested">
 		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
 		<jasper
-			validateXml="false" 
-			uriroot="${basedir}" 
-			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
+			validateXml="false"
+			uriroot="${basedir}"
+			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml"
 			outputDir="${build.jsp.src}" />
 	</target>
 
@@ -288,7 +288,7 @@
 			<compilerarg value="${build.javac.args}"/>
 		</javac>
 	</target>
-	
+
 	<target name="compile-PicaPlugin" depends="compile">
 		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
 			destdir="${build.dir.plugins.opac}/PicaPlugin"
@@ -304,8 +304,8 @@
 			<compilerarg value="${build.javac.args}"/>
 		</javac>
 	</target>
-	
-	
+
+
     <!--==================================================
         Distribution
         ==================================================-->
@@ -318,11 +318,11 @@
             <classes dir="${build.classes}"/>
 
             <lib dir="${lib.dir}"/>
-        	
+
         	<fileset dir="${src.dir}"
                 includes="WEB-INF/*.*, index.jsp, LICENSE"
                 excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
-     	
+
             <zipfileset dir="${src.dir}/pages" prefix="pages">
                 <patternset>
                     <include name="**/*.jsp"/>
@@ -343,7 +343,7 @@
             <zipfileset dir="${src.dir}/js" prefix="js" />
 
         	<zipfileset dir="${build.dist.dir}/plugins" prefix="plugins"/>
-        	
+
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
                 <attribute name="Implementation-Version" value="${build.dist.version}"/>
@@ -361,7 +361,7 @@
         <copy todir="${build.classes}">
             <fileset dir="${config.dir}" includes="*.*"/>
         </copy>
-        
+
         <condition property="config.local.available">
             <available file="${config.local.dir}" property="config.local.available"/>
         </condition>
@@ -375,12 +375,12 @@
             <fileset dir="${config.local.dir}" includes="*.*"/>
         </copy>
     </target>
-	
+
 	<!-- Build of plugin jars -->
 
 	<target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar">
 	</target>
-	
+
 	<target name="create-PicaMassImport-jar" depends="compile-PicaMassImport">
 		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport.jar" basedir="${build.dir.plugins.import}/PicaMassImport" />
 	</target>
