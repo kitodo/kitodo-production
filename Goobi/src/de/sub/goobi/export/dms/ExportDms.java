@@ -2,23 +2,23 @@ package de.sub.goobi.export.dms;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -94,7 +94,7 @@ public class ExportDms extends ExportMets {
 
 	/**
 	 * DMS-Export an eine gewünschte Stelle
-	 * 
+	 *
 	 * @param myProzess
 	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
@@ -129,7 +129,7 @@ public class ExportDms extends ExportMets {
 	 * addition, it accepts an optional ExportDmsTask object. If that is passed
 	 * in, the progress in it will be updated during processing and occurring
 	 * errors will be passed to it to be visible in the task manager screen.
-	 * 
+	 *
 	 * @param myProzess
 	 *            process to export
 	 * @param inZielVerzeichnis
@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
 	 *             declared in
 	 *             {@link ugh.dl.DigitalDocument#createDocStruct(DocStructType)}
 	 *             but never thrown, see
-	 *             https://github.com/goobi/goobi-ugh/issues/2
+	 *             https://github.com/kitodo/kitodo-ugh/issues/2
 	 */
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
 			throws IOException, InterruptedException, WriteException, PreferencesException,
@@ -184,7 +184,7 @@ public class ExportDms extends ExportMets {
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
-		
+
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
 		String atsPpnBand = myProzess.getTitel();
@@ -338,9 +338,9 @@ public class ExportDms extends ExportMets {
 				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
 						DIRECTORY_SUFFIX);
 			}
-			
+
 			directoryDownload(myProzess, zielVerzeichnis);
-			
+
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setException(e);
@@ -449,7 +449,7 @@ public class ExportDms extends ExportMets {
 	/**
 	 * Setter method to pass in a task thread to whom progress and error
 	 * messages shall be reported.
-	 * 
+	 *
 	 * @param task
 	 *            task implementation
 	 */
@@ -482,7 +482,7 @@ public class ExportDms extends ExportMets {
 	public void fulltextDownload(Prozess myProzess, SafeFile benutzerHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
-		
+
 		// download sources
 		SafeFile sources = new SafeFile(myProzess.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
@@ -503,7 +503,7 @@ public class ExportDms extends ExportMets {
 				}
 			}
 		}
-		
+
 		SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
 		if (ocr.exists()) {
 			SafeFile[] folder = ocr.listFiles();
@@ -605,30 +605,30 @@ public class ExportDms extends ExportMets {
 			}
 		}
 	}
-	
+
 	/**
-	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
-	 * 
+	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder
+	 *
 	 * @param myProzess the process object
 	 * @param zielVerzeichnis the destination directory
 	 * @throws SwapException
 	 * @throws DAOException
 	 * @throws IOException
 	 * @throws InterruptedException
-	 * 
-	 */		
+	 *
+	 */
 	private void directoryDownload(Prozess myProzess, String zielVerzeichnis) throws SwapException, DAOException, IOException, InterruptedException{
-		
+
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
-		
+
 		for(String processDir : processDirs) {
-			
+
 			SafeFile srcDir = new SafeFile(FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel())));
 			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
 
 			if(srcDir.isDirectory()) {
 			    srcDir.copyDir(dstDir);
 			}
-		}	
+		}
 	}
 }

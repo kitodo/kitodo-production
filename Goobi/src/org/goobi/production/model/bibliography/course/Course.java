@@ -172,7 +172,7 @@ public class Course extends ArrayList<Block> {
 	 * Note: In the original design, the element was intended to model title
 	 * name changes. This was given up later, but for historical reasons, the
 	 * XML element’s name is still “title”. For the original design, see
-	 * https://github.com/goobi/goobi-production/issues/51#issuecomment-38035674
+	 * https://github.com/kitodo/kitodo-production/issues/51#issuecomment-38035674
 	 * </p>
 	 */
 	private static final String ELEMENT_BLOCK = "title";

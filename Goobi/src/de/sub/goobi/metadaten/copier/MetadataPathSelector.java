@@ -1,26 +1,26 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digitalisieren im Verein e. V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -55,7 +55,7 @@ import com.sharkysoft.util.UnreachableCodeException;
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
  * structure nodes on a document structure node.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class MetadataPathSelector extends MetadataSelector {
@@ -105,7 +105,7 @@ public class MetadataPathSelector extends MetadataSelector {
 
 	/**
 	 * Creates a new MetadataPathSelector.
-	 * 
+	 *
 	 * @param path
 	 *            path to create sub-selector, passed to {
 	 *            {@link #create(String)}.
@@ -137,7 +137,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Creates a new metadata path selector as specified by the arguments
 	 * passed.
-	 * 
+	 *
 	 * @param docStructType
 	 *            docStructType name to match
 	 * @param index
@@ -158,7 +158,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * This works recursively, by calling itself on the subnode, if found, or
 	 * returning null otherwise. Metadata creation is, by definition, always
 	 * done in a {@link LocalMetadataSelector}.
-	 * 
+	 *
 	 * @param data
 	 *            data to work on
 	 * @param logicalNode
@@ -182,7 +182,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * creates the path and metadatum. This works recursively. Metadata creation
 	 * is done in a {@link LocalMetadataSelector}. If the DocStructType is set
 	 * to "*", no path will be created if no path exists.
-	 * 
+	 *
 	 * @param data
 	 *            data to work on
 	 * @param logicalNode
@@ -209,7 +209,8 @@ public class MetadataPathSelector extends MetadataSelector {
 				}
 				return;
 			} catch (TypeNotAllowedForParentException e) {
-				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown"); // see https://github.com/goobi/goobi-ugh/issues/2
+				// see https://github.com/kitodo/kitodo-ugh/issues/2
+				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
 			} catch (Exception e) {
 				// copy rule failed, skip it
 				if(LOG.isDebugEnabled()){
@@ -231,11 +232,11 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * The function findAll() returns all concrete metadata selectors the
 	 * potentially generic metadata selector expression resolves to.
-	 * 
+	 *
 	 * @param logicalNode
 	 *            Node of the logical document structure to work on
 	 * @return all metadata selectors the expression resolves to
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
 	 */
 	@Override
@@ -263,7 +264,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * the metadata selector, or null if either the path or the metadatum at the
 	 * end of the path aren’t available. This works recursively, by calling
 	 * itself on the subnode, if found, or returning null otherwise.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
 	 */
 	@Override
@@ -280,7 +281,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * Returns the numeric index of the metadata selector, if any. If no index
 	 * is specified ({@code null}), or generically refers to all or the last
 	 * element, {@code -1} is returned.
-	 * 
+	 *
 	 * @return the index number of the metadata selector
 	 */
 	public int getIndex() {
@@ -297,7 +298,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * The function getIndexValue() returns the numerical value represented by
 	 * the symbolic (String) representation passed in. Since the method is
 	 * called from the constructor it must not be overridden in subclasses.
-	 * 
+	 *
 	 * @param indexSymbol
 	 *            an integer value or ">" to refer to Integer.MAX_VALUE
 	 * @return the integer value of the string, or Integer.MAX_VALUE for the
@@ -317,7 +318,7 @@ public class MetadataPathSelector extends MetadataSelector {
 
 	/**
 	 * Returns the selector for the rest of the expression.
-	 * 
+	 *
 	 * @return the subsequent selector
 	 */
 	public MetadataSelector getSelector() {
@@ -327,7 +328,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Returns the subnode identified by the path segment this metadata path
 	 * selector is responsible for. Returns null if no such node can be found.
-	 * 
+	 *
 	 * @param logicalNode
 	 *            document structure node to retrieve the subnode from
 	 * @return the subnode in question
@@ -382,7 +383,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * <li>generically to the last element, and the given index is the last
 	 * index.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param childIndex
 	 *            index to check
 	 * @param lastChildIndex
@@ -404,7 +405,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * The function matchCurrentPathSegment() returns the path segment this
 	 * metadata path selector is responsible to represent. Since the method is
 	 * called from the constructor it must not be overridden in subclasses.
-	 * 
+	 *
 	 * @param path
 	 *            path expression to parse
 	 * @return the path segment for this selector
@@ -422,7 +423,7 @@ public class MetadataPathSelector extends MetadataSelector {
 
 	/**
 	 * Returns a string that textually represents this MetadataPathSelector.
-	 * 
+	 *
 	 * @return a string representation of this MetadataPathSelector
 	 * @see java.lang.Object#toString()
 	 */
@@ -448,7 +449,7 @@ public class MetadataPathSelector extends MetadataSelector {
 	 * <li>the metadata path selector specifies all children, or</li>
 	 * <li>the metadata path selector specifies exactly the type of the child.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param child
 	 *            child whose type shall be checked
 	 * @return whether the child type is to be matched
