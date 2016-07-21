@@ -1,5 +1,5 @@
-Active MQ web services for Goobi
-================================
+Active MQ web services for Kitodo
+=================================
 
 JMS
 ---
@@ -18,7 +18,7 @@ new messages.
 API Implementation
 ------------------
 
-This behaviour has already been implemented to Goobi: The org.goobi.mq.
+This behaviour has already been implemented to Kitodo: The org.goobi.mq.
 ActiveMQDirector is a ServletContextListener which is registered in web.xml.
 On application startup, it registers all consumers from its “services” variable
 to the server configured in “activeMQ.hostURL”.
@@ -35,7 +35,7 @@ is a class MapMessageObjectReader which shall be used to type safe retrieve
 complex objects from MapMessages. You must add your new class to the “services”
 variable of ActiveMQDirector then.
 
-The Goobi server administrator shall be in control which processors are being
+The Kitodo server administrator shall be in control which processors are being
 started, and which queue names they listen on. Implementation of this
 configurability is designed this way: The implementing class must pass its
 queue name to the constructor of the parent class. This is done by implementing
@@ -90,7 +90,7 @@ only:
 Process Creation Service
 ------------------------
 
-Goobi.Production is equipped with a web service interface to automatically
+Kitodo.Production is equipped with a web service interface to automatically
 create new processes based on a given template. This allows the digitization
 process to be initiated from outside the application, for example by assigning
 a new digital ID to a record in a library catalogue (or—at choice of the
@@ -104,7 +104,7 @@ port 61616 of the machine in question.
 
 The “activeMQ.hostURL” must be set in goobi_config.properties to point to this
 server. The “activeMQ.createNewProcess.queue” must be set to point to a queue
-of your choice where Goobi.Production shall pick up orders to create new
+of your choice where Kitodo.Production shall pick up orders to create new
 processes.
 
 Orders must be javax.jms.MapMessage objects with the following key-value-pairs
@@ -199,11 +199,11 @@ folder are required on the classpath:
 Service to finalize steps
 -------------------------
 
-Goobi.Production is equipped with a web service interface to automatically
+Kitodo.Production is equipped with a web service interface to automatically
 finalize steps. This allows external software contributing to a workflow to
 report their success from outside the application. Additionally, properties
 can be populated and a message can be added to the processes’ log (in former
-versions of Goobi known as “wiki field”).
+versions of Kitodo known as “wiki field”).
 
 The web service infrastructure is provided by an Active MQ server (see
 http://activemq.apache.org/ for details) which needs to be downloaded and
@@ -212,7 +212,7 @@ port 61616 of the machine in question.
 
 The “activeMQ.hostURL” must be set in goobi_config.properties to point to this
 server. The “activeMQ.finaliseStep.queue” must be set to point to a queue
-of your choice where Goobi.Production shall pick up orders to finalize steps.
+of your choice where Kitodo.Production shall pick up orders to finalize steps.
 
 Orders must be javax.jms.MapMessage objects with the following key-value-pairs
 provided:
