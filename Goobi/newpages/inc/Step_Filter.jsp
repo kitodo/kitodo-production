@@ -66,7 +66,7 @@
 			<h:graphicImage id="aslsid10" alt="reload" value="/newpages/images/buttons/reload.gif" />
 		</h:commandLink>
 
-		<h:outputLink id="aslsid11" target="_blank" value="http://wiki.goobi.org/index.php/Filter_f%C3%BCr_Vorg%C3%A4nge">
+		<h:outputLink id="aslsid11" target="_blank" value="https://github.com/kitodo/kitodo-production/wiki/Suche-und-Filtern">
 			<h:graphicImage id="aslsid12" alt="help" title="#{msgs.hilfeZumFilter}" value="/newpages/images/buttons/help.png" style="margin-left:5px" />
 		</h:outputLink>
 		
