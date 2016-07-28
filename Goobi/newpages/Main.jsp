@@ -79,8 +79,7 @@
 									infoClass="text_blue" showDetail="true" showSummary="true"
 									tooltip="true" />
 
-								<htm:img src="#{HelperForm.logoUrl}"
-									style="display: block; margin-top: 20px; margin-left: auto; margin-right: auto" />
+								<htm:img src="#{HelperForm.logoUrl}" />
 
 								<htm:h3 style="margin-top:15px">
 									<h:outputText id="id7" value="#{msgs.startseite}" />
