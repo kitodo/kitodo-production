@@ -99,9 +99,20 @@ public class Paginator {
 		}
 	}
 
+	/**
+	 * Throws NumberFormatException if `paginationStartValue` isn’t a valid
+	 * number of the type specified by `paginationType`.
+	 * 
+	 * @throws NumberFormatException
+	 *             if `paginationStartValue` isn’t valid
+	 */
 	private void assertValidPaginationStartValue() {
 		// arabic numbers
 		if (paginationType == Paginator.Type.ARABIC) {
+			/* coverity[USELESS_CALL]
+			 * Integer.parseInt() throws NumberFormatException if
+			 * paginationStartValue cannot be parsed to an `int`, and this is
+			 * what we want here. */
 			Integer.parseInt(paginationStartValue);
 		}
 		// roman numbers
