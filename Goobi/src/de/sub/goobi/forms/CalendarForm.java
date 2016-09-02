@@ -1354,6 +1354,10 @@ public class CalendarForm {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
 			logger.error(e.getMessage(), e);
 			neglectEmptyBlock();
+		} catch (NullPointerException e) {
+			Helper.setFehlerMeldung("calendar.upload.missingMandatoryValue", e.getMessage());
+			logger.error(e.getMessage(), e);
+			neglectEmptyBlock();
 		} finally {
 			uploadedFile = null;
 			uploadShowing = false;

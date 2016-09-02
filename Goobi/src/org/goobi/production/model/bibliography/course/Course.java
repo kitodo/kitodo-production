@@ -202,6 +202,8 @@ public class Course extends ArrayList<Block> {
 	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
 	 * @throws IllegalArgumentException
 	 *             if the dates of two blocks do overlap
+	 * @throws NullPointerException
+	 *             if a mandatory element is absent
 	 */
 	public Course(Document xml) throws NoSuchElementException {
 		super();
@@ -231,6 +233,9 @@ public class Course extends ArrayList<Block> {
 						issue = "";
 					}
 					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
+					if (date == null) {
+						throw new NullPointerException(ATTRIBUTE_DATE);
+					}
 					IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
 					process.add(individualIssue);
 				}
