@@ -37,6 +37,8 @@ import org.hibernate.Transaction;
 import org.hibernate.auction.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
 // the newer version follows on bottom  of this class
 
@@ -58,6 +60,7 @@ public class HibernateUtilOld {
 	private static final ThreadLocal<Session> threadSession = new ThreadLocal<Session>();
 	private static final ThreadLocal<Transaction> threadTransaction = new ThreadLocal<Transaction>();
 	private static final ThreadLocal<Interceptor> threadInterceptor = new ThreadLocal<Interceptor>();
+	private static final Object sessionFactoryRebuildLock = new Object();
 
 	// Create the initial SessionFactory from the default configuration files
 	static {
@@ -98,7 +101,7 @@ public class HibernateUtilOld {
 	 * 
 	 */
 	public static void rebuildSessionFactory() throws InfrastructureException {
-		synchronized (sessionFactory) {
+		synchronized (sessionFactoryRebuildLock) {
 			try {
 				sessionFactory = getConfiguration().buildSessionFactory();
 			} catch (Exception ex) {
@@ -113,7 +116,7 @@ public class HibernateUtilOld {
 	 * @param cfg
 	 */
 	public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
-		synchronized (sessionFactory) {
+		synchronized (sessionFactoryRebuildLock) {
 			try {
 				sessionFactory = cfg.buildSessionFactory();
 				configuration = cfg;
