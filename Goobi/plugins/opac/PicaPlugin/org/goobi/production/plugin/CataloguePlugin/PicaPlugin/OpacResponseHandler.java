@@ -73,7 +73,11 @@ class OpacResponseHandler extends DefaultHandler {
 		}
 
 		if (localName.equals("SET")) {
-			numberOfHits = Integer.valueOf(atts.getValue("hits")).intValue();
+			String hits = atts.getValue("hits");
+			if (hits == null) {
+				throw new NumberFormatException("null");
+			}
+			numberOfHits = Integer.parseInt(hits);
 		}
 
 		if (localName.equals("SHORTTITLE")) {
