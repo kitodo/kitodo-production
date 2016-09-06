@@ -37,8 +37,6 @@ import org.hibernate.Transaction;
 import org.hibernate.auction.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
 // the newer version follows on bottom  of this class
 
