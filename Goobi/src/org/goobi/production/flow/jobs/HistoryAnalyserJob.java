@@ -496,7 +496,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * method iterates through the event list and checks if there are duplicate entries, if so it will remove the entry and return a true
 	 * 
 	 * @param inProcess
-	 * @return
+	 * @return true if there are duplicate entries, false otherwise
 	 */
 	private static Boolean getHistoryEventDuplicated(Prozess inProcess) {
 		Boolean duplicateEventRemoved = false;

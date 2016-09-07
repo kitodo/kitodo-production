@@ -880,7 +880,7 @@ public class FilterHelper {
 	 *
 	 * @param conjSteps
 	 * @param filterPart
-	 * @return
+	 * @return empty string
 	 */
 	private static String createHistoricFilter(Conjunction conjSteps, String filterPart, Boolean stepCriteria) {
 		/* filtering by a certain minimal status */
@@ -918,7 +918,7 @@ public class FilterHelper {
 	 * @param flagCriticalQuery
 	 * @param crit
 	 * @param parameters
-	 * @return
+	 * @return String
 	 ************************************************************************************/
 	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart, StepStatus inStatus, boolean negate,
 			String filterPrefix) {

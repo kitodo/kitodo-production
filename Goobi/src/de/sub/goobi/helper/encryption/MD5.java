@@ -67,7 +67,7 @@ public class MD5
 
     /**
      * <u>MD5-Hash erzeugen</u>
-     * @return
+     * @return MD5 hash string
      */
     private String makeMD5() {
         MessageDigest md = null;

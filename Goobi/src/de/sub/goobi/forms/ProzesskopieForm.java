@@ -1914,7 +1914,7 @@ public class ProzesskopieForm {
 	 * The function getPageSize() retrieves the desired number of hits on one
 	 * page of the hit list from the configuration.
 	 *
-	 * @return
+	 * @return desired number of hits on one page of the hit list from the configuration
 	 */
 	private int getPageSize() {
 		return ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
