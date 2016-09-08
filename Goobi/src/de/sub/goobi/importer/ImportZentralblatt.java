@@ -240,7 +240,7 @@ public class ImportZentralblatt {
 	 * 
 	 * @param dsPeriodicalVolume
 	 * @param myRight
-	 * @return
+	 * @return DocStruct of periodical
 	 * @throws TypeNotAllowedForParentException
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws TypeNotAllowedAsChildException
