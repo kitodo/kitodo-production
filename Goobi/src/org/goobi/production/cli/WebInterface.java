@@ -52,8 +52,6 @@ public class WebInterface extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(WebInterface.class);
 	private static final long serialVersionUID = 6187229284187412768L;
 
-	private String command = null;
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html");
@@ -91,32 +89,32 @@ public class WebInterface extends HttpServlet {
 				return;
 			}
 
-			this.command = parameter.get("command")[0];
-			if (this.command == null) {
+			String command = parameter.get("command")[0];
+			if (command == null) {
 				// error, no command found
 				generateAnswer(resp, 400,"Empty command", "No command given. Use help as command to get more information.");
 				return;
 			}
 			if(logger.isDebugEnabled()){
-				logger.debug("command: " + this.command);
+				logger.debug("command: " + command);
 			}
 
 			// check if command is allowed for used IP
 			List<String> allowedCommandos = WebInterfaceConfig.getCredencials(ip, password);
-			if (!allowedCommandos.contains(this.command)) {
+			if (!allowedCommandos.contains(command)) {
 				// error, no command found
-				generateAnswer(resp, 401, "command not allowed", "command " + this.command + " not allowed for your IP (" + ip + ")");
+				generateAnswer(resp, 401, "command not allowed", "command " + command + " not allowed for your IP (" + ip + ")");
 				return;
 			}
 
-			if (this.command.equals("help")) {
+			if (command.equals("help")) {
 				generateHelp(resp);
 				return;
 			}
 			
 			
 			// get correct plugin from list
-			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, this.command);
+			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, command);
 			if (myCommandPlugin == null) {
 				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;
