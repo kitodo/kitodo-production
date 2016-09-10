@@ -91,11 +91,15 @@ public class ExportXmlLog implements IProcessDataExport {
 	 */
 
 	public void startExport(Prozess p, String destination) throws FileNotFoundException, IOException {
-		startExport(p, new FileOutputStream(destination), null);
+		try (FileOutputStream ostream = new FileOutputStream(destination)) {
+			startExport(p, ostream, null);
+		}
 	}
 
 	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
-		startExport(p, new FileOutputStream(dest), null);
+		try (FileOutputStream ostream = new FileOutputStream(dest)) {
+			startExport(p, ostream, null);
+		}
 	}
 
 	/**
