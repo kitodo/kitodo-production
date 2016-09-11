@@ -405,19 +405,19 @@ public class MetadatenImagesHelper {
             logger.trace("inStream");
             BufferedInputStream bis = new BufferedInputStream(inStream);
             logger.trace("BufferedInputStream");
-            FileOutputStream fos = new FileOutputStream(outFileName);
-            logger.trace("FileOutputStream");
-            byte[] bytes = new byte[8192];
-            int count = bis.read(bytes);
-            while (count != -1 && count <= 8192) {
-                fos.write(bytes, 0, count);
-                count = bis.read(bytes);
-            }
-            if (count != -1) {
-                fos.write(bytes, 0, count);
+            try (FileOutputStream fos = new FileOutputStream(outFileName)) {
+                logger.trace("FileOutputStream");
+                byte[] bytes = new byte[8192];
+                int count = bis.read(bytes);
+                while (count != -1 && count <= 8192) {
+                    fos.write(bytes, 0, count);
+                    count = bis.read(bytes);
+                }
+                if (count != -1) {
+                    fos.write(bytes, 0, count);
+                }
             }
             logger.trace("write");
-            fos.close();
             bis.close();
         }
         logger.trace("end scaleFile");
