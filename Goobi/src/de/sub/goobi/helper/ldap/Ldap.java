@@ -544,11 +544,12 @@ public class Ldap {
 		/* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
 		File myPfad = new File(path);
 		if (!myPfad.exists()) {
-			try {
+			try (
 				FileOutputStream ksos = new FileOutputStream(path);
 				// TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
 				FileInputStream cacertFile = new FileInputStream(ConfigMain.getParameter("ldap_cert_root"));
-				FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"));
+				FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))
+			) {
 
 				CertificateFactory cf = CertificateFactory.getInstance("X.509");
 				X509Certificate cacert = (X509Certificate) cf.generateCertificate(cacertFile);
@@ -563,12 +564,7 @@ public class Ldap {
 
 				ks.setCertificateEntry("ROOTCERT", cacert);
 				ks.setCertificateEntry("PDC", servercert);
-
 				ks.store(ksos, password);
-
-				certFile2.close();
-				cacertFile.close();
-				ksos.close();
 			} catch (Exception e) {
 				myLogger.error(e);
 			}
