@@ -1085,7 +1085,7 @@ public class CalendarForm {
 		int[] numbers = new int[3];
 		if (dateParser.matches()) {
 			for (int i = 0; i < 3; i++) {
-				numbers[i] = Integer.valueOf(dateParser.group(i + 1));
+				numbers[i] = Integer.parseInt(dateParser.group(i + 1));
 			}
 			if (numbers[2] < 100) {
 				new LocalDate();
