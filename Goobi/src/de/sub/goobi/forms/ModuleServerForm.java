@@ -337,21 +337,17 @@ public class ModuleServerForm {
 						 * beschrieben
 						 */
 						if (message.body.type.equals("trigger")) {
-							// behandlung aller trigger messages
+							// Behandlung aller trigger messages
 							/*
 							 * Behandlung von "trigger - END"
 							 */
-							if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
-								try {
-									modules.get(i - 1).getModuleClient().stop(gmp);
-								} catch (GoobiModuleException e) {
-									logger.error(e);
-								} catch (XmlRpcException e) {
-									logger.error(e);
-								}
+							try {
+								modules.get(i - 1).getModuleClient().stop(gmp);
+							} catch (GoobiModuleException e) {
+								logger.error(e);
+							} catch (XmlRpcException e) {
+								logger.error(e);
 							}
-						} else if (message.body.type.equals("log")) {
-							// behandlung aller log messages
 						}
 					}
 				}
