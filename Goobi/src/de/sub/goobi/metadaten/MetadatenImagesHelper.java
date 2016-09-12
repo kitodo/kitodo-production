@@ -2,23 +2,23 @@ package de.sub.goobi.metadaten;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -89,7 +89,7 @@ public class MetadatenImagesHelper {
      * Markus baut eine Seitenstruktur aus den vorhandenen Images ---------------- Steps - ---------------- Validation of images compare existing
      * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
      * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
-     * 
+     *
      * @throws TypeNotAllowedForParentException
      * @throws TypeNotAllowedForParentException
      * @throws InterruptedException
@@ -109,7 +109,7 @@ public class MetadatenImagesHelper {
 			log = log.getAllChildren().get(0);
 		}
 
-        /*-------------------------------- 
+        /*--------------------------------
          * der physische Baum wird nur
          * angelegt, wenn er noch nicht existierte
          * --------------------------------*/
@@ -117,7 +117,7 @@ public class MetadatenImagesHelper {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
             physicaldocstruct = this.mydocument.createDocStruct(dst);
 
-            /*-------------------------------- 
+            /*--------------------------------
              * Probleme mit dem FilePath
              * -------------------------------- */
             MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
@@ -141,7 +141,7 @@ public class MetadatenImagesHelper {
             checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesDirectory() + directory);
         }
 
-        /*------------------------------- 
+        /*-------------------------------
          * retrieve existing pages/images
          * -------------------------------*/
         DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
@@ -150,7 +150,7 @@ public class MetadatenImagesHelper {
             oldPages = new ArrayList<DocStruct>();
         }
 
-        /*-------------------------------- 
+        /*--------------------------------
          * add new page/images if necessary
          * --------------------------------*/
 
@@ -353,7 +353,7 @@ public class MetadatenImagesHelper {
 
     /**
      * scale given image file to png using internal embedded content server
-     * 
+     *
      * @throws ImageManagerException
      * @throws IOException
      * @throws ImageManipulatorException
@@ -405,19 +405,19 @@ public class MetadatenImagesHelper {
             logger.trace("inStream");
             BufferedInputStream bis = new BufferedInputStream(inStream);
             logger.trace("BufferedInputStream");
-            FileOutputStream fos = new FileOutputStream(outFileName);
-            logger.trace("FileOutputStream");
-            byte[] bytes = new byte[8192];
-            int count = bis.read(bytes);
-            while (count != -1 && count <= 8192) {
-                fos.write(bytes, 0, count);
-                count = bis.read(bytes);
-            }
-            if (count != -1) {
-                fos.write(bytes, 0, count);
+            try (FileOutputStream fos = new FileOutputStream(outFileName)) {
+                logger.trace("FileOutputStream");
+                byte[] bytes = new byte[8192];
+                int count = bis.read(bytes);
+                while (count != -1 && count <= 8192) {
+                    fos.write(bytes, 0, count);
+                    count = bis.read(bytes);
+                }
+                if (count != -1) {
+                    fos.write(bytes, 0, count);
+                }
             }
             logger.trace("write");
-            fos.close();
             bis.close();
         }
         logger.trace("end scaleFile");
@@ -427,7 +427,7 @@ public class MetadatenImagesHelper {
 
     /**
      * die Images eines Prozesses auf Vollständigkeit prüfen ================================================================
-     * 
+     *
      * @throws DAOException
      * @throws SwapException
      */
@@ -435,9 +435,9 @@ public class MetadatenImagesHelper {
         boolean isValid = true;
         this.myLastImage = 0;
 
-        /*-------------------------------- 
+        /*--------------------------------
          * alle Bilder durchlaufen und dafür
-         * die Seiten anlegen 
+         * die Seiten anlegen
          * --------------------------------*/
         File dir = new File(folder);
         if (dir.exists()) {
@@ -502,7 +502,7 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * 
+     *
      * @param myProzess current process
      * @return sorted list with strings representing images of process
      * @throws InvalidImagesException
@@ -559,7 +559,7 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * 
+     *
      * @param myProzess current process
      * @param directory current folder
      * @return sorted list with strings representing images of process

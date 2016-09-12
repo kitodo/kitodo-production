@@ -210,12 +210,10 @@ public void run() {
       * -------------------*/
       Format format = Format.getPrettyFormat();
       format.setEncoding("UTF-8");
-      try {
+      try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
          setStatusMessage("writing swapped.xml");
          XMLOutputter xmlOut = new XMLOutputter(format);
-         FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml");
          xmlOut.output(doc, fos);
-         fos.close();
          //TODO: Don't catch Exception (the super class)
       } catch (Exception e) {
     	  logger.warn("Exception:", e);

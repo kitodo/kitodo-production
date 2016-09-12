@@ -841,13 +841,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
 		String address = "";
 
-		try {
+		try (FileInputStream istream = new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml"))) {
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 			DocumentBuilder builder = factory.newDocumentBuilder();
 
-			Document xmlDocument = builder.parse(new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml")));
+			Document xmlDocument = builder.parse(istream);
 
 			XPath xPath = XPathFactory.newInstance().newXPath();
 
