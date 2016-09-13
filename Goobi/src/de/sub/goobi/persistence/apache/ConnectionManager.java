@@ -183,7 +183,7 @@ public class ConnectionManager {
 			logger.error(ex.toString());
 		} catch (Exception e) {
 			if(logger.isDebugEnabled()){
-				logger.debug("Failed to get get Locked Connections - Exception: " + e.toString());
+				logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
 			}
 		}
 		return num_locked_connections;
