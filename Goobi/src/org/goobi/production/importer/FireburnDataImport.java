@@ -487,7 +487,9 @@ public class FireburnDataImport {
 		for (Object oProp : ePropList) {
 			Element eProp = (Element) oProp;
 			returnList.add(new FireburnProperty(eProp.getAttributeValue("cdName"), eProp.getAttributeValue("titel"), eProp.getAttributeValue("date"),
-					new Integer(eProp.getAttributeValue("cdnumber")), eProp.getAttributeValue("type"), new Long(eProp.getAttributeValue("size"))
+					Integer.parseInt(eProp.getAttributeValue("cdnumber")),
+					eProp.getAttributeValue("type"),
+					Long.parseLong(eProp.getAttributeValue("size"))
 
 			));
 		}

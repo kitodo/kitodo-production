@@ -691,7 +691,7 @@ public class FilterHelper {
 				if (conjBatches == null) {
 					conjBatches = Restrictions.conjunction();
 				}
-				int value = Integer.valueOf(tok.substring(tok.indexOf(":") + 1));
+				int value = Integer.parseInt(tok.substring(tok.indexOf(":") + 1));
 				conjBatches.add(Restrictions.eq("bat.id", value));
 			} else if (tok.toLowerCase().startsWith(FilterString.WORKPIECE) || tok.toLowerCase().startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {

@@ -97,12 +97,12 @@ public class SqlConfiguration {
 						logger.debug("found password element: " + this.dbPassword);
 					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.max_size")) {
-					this.dbPoolMaxSize = new Integer(property.getText().trim()).intValue();
+					this.dbPoolMaxSize = Integer.parseInt(property.getText().trim());
 					if(logger.isDebugEnabled()){
 						logger.debug("found max poolsize element: " + this.dbPoolMaxSize);
 					}
 				}else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.min_size")) {
-					this.dbPoolMinSize = new Integer(property.getText().trim()).intValue();
+					this.dbPoolMinSize = Integer.parseInt(property.getText().trim());
 					if(logger.isDebugEnabled()){
 						logger.debug("found min poolsize element: " + this.dbPoolMinSize);
 					}
