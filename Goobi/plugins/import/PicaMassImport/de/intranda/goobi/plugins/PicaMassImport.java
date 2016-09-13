@@ -538,8 +538,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	public List<Record> generateRecordsFromFile() {
 		List<Record> records = new ArrayList<Record>();
 
-		try {
-			InputStream myxls = new FileInputStream(importFile);
+		try (InputStream myxls = new FileInputStream(importFile)) {
 			if (importFile.getName().endsWith(".xlsx")) {
 				XSSFWorkbook wb = new XSSFWorkbook(myxls);
 				XSSFSheet sheet = wb.getSheetAt(0); // first sheet

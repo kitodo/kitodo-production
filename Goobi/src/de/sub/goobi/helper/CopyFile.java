@@ -42,37 +42,35 @@ public class CopyFile {
    private static final int BUFFER_SIZE = 4 * 1024;
 
    private static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
-      InputStream in = srcFile.createFileInputStream();
-      OutputStream out = destFile.createFileOutputStream();
-
       //TODO use a better checksumming algorithm like SHA-1
       CRC32 checksum = new CRC32();
       checksum.reset();
 
-      byte[] buffer = new byte[BUFFER_SIZE];
-      int bytesRead;
-      while ((bytesRead = in.read(buffer)) >= 0) {
-
-         checksum.update(buffer, 0, bytesRead);
-
-         out.write(buffer, 0, bytesRead);
+      try (
+         InputStream in = srcFile.createFileInputStream();
+         OutputStream out = destFile.createFileOutputStream();
+      ) {
+         byte[] buffer = new byte[BUFFER_SIZE];
+         int bytesRead;
+         while ((bytesRead = in.read(buffer)) >= 0) {
+            checksum.update(buffer, 0, bytesRead);
+            out.write(buffer, 0, bytesRead);
+         }
       }
-      out.close();
-      in.close();
       return Long.valueOf(checksum.getValue());
 
    }
 
    private static Long createChecksum(SafeFile file) throws IOException {
-      InputStream in = file.createFileInputStream();
       CRC32 checksum = new CRC32();
       checksum.reset();
-      byte[] buffer = new byte[BUFFER_SIZE];
-      int bytesRead;
-      while ((bytesRead = in.read(buffer)) >= 0) {
-         checksum.update(buffer, 0, bytesRead);
+      try (InputStream in = file.createFileInputStream()) {
+         byte[] buffer = new byte[BUFFER_SIZE];
+         int bytesRead;
+         while ((bytesRead = in.read(buffer)) >= 0) {
+            checksum.update(buffer, 0, bytesRead);
+         }
       }
-      in.close();
       return Long.valueOf(checksum.getValue());
    }
 
