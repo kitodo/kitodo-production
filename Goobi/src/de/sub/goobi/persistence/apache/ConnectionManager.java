@@ -169,35 +169,21 @@ public class ConnectionManager {
 	 */
 	public int getNumLockedProcesses() {
 		int num_locked_connections = 0;
-		Connection con = null;
-		PreparedStatement p_stmt = null;
-		ResultSet rs = null;
-		try {
-			con = this.ds.getConnection();
-			p_stmt = con.prepareStatement("SHOW PROCESSLIST");
-			rs = p_stmt.executeQuery();
+		try (
+			Connection con = this.ds.getConnection();
+			PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
+			ResultSet rs = p_stmt.executeQuery()
+		) {
 			while (rs.next()) {
 				if (rs.getString("State") != null && rs.getString("State").equals("Locked")) {
 					num_locked_connections++;
 				}
 			}
+		} catch (java.sql.SQLException ex) {
+			logger.error(ex.toString());
 		} catch (Exception e) {
 			if(logger.isDebugEnabled()){
-				logger.debug("Failed to get get Locked Connections - Exception: " + e.toString());
-			}
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (p_stmt != null) {
-					p_stmt.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (java.sql.SQLException ex) {
-				logger.error(ex.toString());
+				logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
 			}
 		}
 		return num_locked_connections;
