@@ -88,14 +88,14 @@ public class DmsImportThread extends Thread {
 						/* die Logdatei mit der Fehlerbeschreibung einlesen */
 						StringBuffer myBuf = new StringBuffer();
 						myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-						BufferedReader r = new BufferedReader(this.fileError.createFileReader());
-						String aLine = r.readLine();
-						while (aLine != null) {
-							myBuf.append(aLine);
-							myBuf.append(" ");
-							aLine = r.readLine();
+						try (BufferedReader r = new BufferedReader(this.fileError.createFileReader())) {
+							String aLine = r.readLine();
+							while (aLine != null) {
+								myBuf.append(aLine);
+								myBuf.append(" ");
+								aLine = r.readLine();
+							}
 						}
-						r.close();
 						this.rueckgabe = myBuf.toString();
 
 					}

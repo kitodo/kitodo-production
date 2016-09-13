@@ -193,13 +193,10 @@ public class ExportPdf extends ExportMets {
 				/*
 				 * -------------------------------- report Error to User as Error-Log --------------------------------
 				 */
-				Writer output = null;
 				String text = "error while pdf creation: " + e.getMessage();
 				SafeFile file = new SafeFile(zielVerzeichnis, myProzess.getTitel() + ".PDF-ERROR.log");
-				try {
-					output = new BufferedWriter(file.createFileWriter());
+				try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
 					output.write(text);
-					output.close();
 				} catch (IOException e1) {
 				}
 				return false;

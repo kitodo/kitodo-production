@@ -249,10 +249,13 @@ public class WebDav implements Serializable {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
-			BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-					+ "tiffwriter.conf"), "utf-8"));
-			outfile.write(tif.getTiffAlles());
-			outfile.close();
+			try (
+				BufferedWriter outfile =
+					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
+						+ "tiffwriter.conf"), "utf-8"));
+			) {
+				outfile.write(tif.getTiffAlles());
+			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Download aborted", e);
 			myLogger.error(e);
