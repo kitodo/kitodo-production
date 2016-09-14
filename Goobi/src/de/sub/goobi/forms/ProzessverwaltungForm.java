@@ -419,7 +419,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			Prozess einziger = (Prozess) this.page.getListReload().get(0);
 			ProzesskopieForm pkf = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
 			pkf.setProzessVorlage(einziger);
-			return pkf.Prepare();
+			return pkf.prepare();
 		} else {
 			return "ProzessverwaltungAlle";
 		}

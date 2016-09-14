@@ -275,7 +275,7 @@ public class ProzesskopieForm {
 	private String tifHeader_imagedescription = "";
 	private String tifHeader_documentname = "";
 
-	public String Prepare() {
+	public String prepare() {
 	    atstsl = "";
 		Helper.getHibernateSession().refresh(this.prozessVorlage);
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {

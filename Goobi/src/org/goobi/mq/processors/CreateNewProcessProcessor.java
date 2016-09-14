@@ -173,7 +173,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
 		Prozess selectedTemplate = getTemplateByTitle(templateTitle);
 		result.setProzessVorlage(selectedTemplate);
-		result.Prepare();
+		result.prepare();
 		return result;
 	}
 

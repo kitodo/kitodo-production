@@ -466,7 +466,7 @@
 				value="/newpages/images/buttons/dmsGreyed.png" style="margin-right:2px" title="#{msgs.importDms}" />
 
 			<%-- ProzessKopie-Schaltknopf --%>
-			<h:commandLink action="#{ProzesskopieForm.Prepare}" id="action22"
+			<h:commandLink action="#{ProzesskopieForm.prepare}" id="action22"
 				title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}"
 				rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen'}">
 				<h:graphicImage value="/newpages/images/buttons/star_blue.gif" style="margin-right:3px" rendered="#{!item.containsUnreachableSteps}" />
@@ -475,7 +475,7 @@
 			</h:commandLink>
 
 			<%-- MassenImport --%>
-			<h:commandLink action="#{MassImportForm.Prepare}" id="action222" title="#{msgs.MassenImport}"
+			<h:commandLink action="#{MassImportForm.prepare}" id="action222" title="#{msgs.MassenImport}"
 				rendered="#{ProzessverwaltungForm.modusAnzeige=='vorlagen' && HelperForm.massImportAllowed}">
 				<h:graphicImage value="/newpages/images/buttons/star_blue_multi.png" style="margin-right:3px" rendered="#{!item.containsUnreachableSteps}" />
 				<h:graphicImage value="/newpages/images/buttons/star_red.gif" style="margin-right:3px" rendered="#{item.containsUnreachableSteps}" />
