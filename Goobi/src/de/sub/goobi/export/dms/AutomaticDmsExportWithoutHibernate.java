@@ -138,9 +138,6 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				break;
 
 			case METS_AND_RDF:
-				newfile = new RDFFile(this.myPrefs);
-				break;
-
 			default:
 				newfile = new RDFFile(this.myPrefs);
 				break;

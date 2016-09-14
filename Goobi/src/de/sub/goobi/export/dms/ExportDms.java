@@ -202,9 +202,6 @@ public class ExportDms extends ExportMets {
 				break;
 
 			case METS_AND_RDF:
-				gdzfile = new RDFFile(this.myPrefs);
-				break;
-
 			default:
 				gdzfile = new RDFFile(this.myPrefs);
 				break;
