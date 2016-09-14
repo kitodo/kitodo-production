@@ -31,13 +31,12 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import org.goobi.io.SafeFile;
-import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 public class DmsImportThread extends Thread {
 	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
@@ -88,12 +87,22 @@ public class DmsImportThread extends Thread {
 						/* die Logdatei mit der Fehlerbeschreibung einlesen */
 						StringBuffer myBuf = new StringBuffer();
 						myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-						try (BufferedReader r = new BufferedReader(this.fileError.createFileReader())) {
+						BufferedReader r = null;
+						try {
+							r = new BufferedReader(this.fileError.createFileReader());
 							String aLine = r.readLine();
 							while (aLine != null) {
 								myBuf.append(aLine);
 								myBuf.append(" ");
 								aLine = r.readLine();
+							}
+						} finally {
+							if (r != null) {
+								try {
+									r.close();
+								} catch (IOException e) {
+									myLogger.error(e);
+								}
 							}
 						}
 						this.rueckgabe = myBuf.toString();

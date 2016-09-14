@@ -27,16 +27,18 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
 
+import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
+
 // Only usage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
+
+	private static final Logger logger = Logger.getLogger(CopyFile.class);
 
    // program options initialized to default values
    private static final int BUFFER_SIZE = 4 * 1024;
@@ -46,16 +48,32 @@ public class CopyFile {
       CRC32 checksum = new CRC32();
       checksum.reset();
 
-      try (
-         InputStream in = srcFile.createFileInputStream();
-         OutputStream out = destFile.createFileOutputStream();
-      ) {
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = srcFile.createFileInputStream();
+			out = destFile.createFileOutputStream();
          byte[] buffer = new byte[BUFFER_SIZE];
          int bytesRead;
          while ((bytesRead = in.read(buffer)) >= 0) {
             checksum.update(buffer, 0, bytesRead);
             out.write(buffer, 0, bytesRead);
          }
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
       }
       return Long.valueOf(checksum.getValue());
 
@@ -64,12 +82,22 @@ public class CopyFile {
    private static Long createChecksum(SafeFile file) throws IOException {
       CRC32 checksum = new CRC32();
       checksum.reset();
-      try (InputStream in = file.createFileInputStream()) {
+		InputStream in = null;
+		try {
+			in = file.createFileInputStream();
          byte[] buffer = new byte[BUFFER_SIZE];
          int bytesRead;
          while ((bytesRead = in.read(buffer)) >= 0) {
             checksum.update(buffer, 0, bytesRead);
          }
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
       }
       return Long.valueOf(checksum.getValue());
    }

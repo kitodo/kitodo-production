@@ -33,6 +33,7 @@ import java.io.File;
 import org.goobi.io.SafeFile;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -249,12 +250,20 @@ public class WebDav implements Serializable {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
-			try (
-				BufferedWriter outfile =
+			BufferedWriter outfile = null;
+			try {
+				outfile =
 					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
 						+ "tiffwriter.conf"), "utf-8"));
-			) {
 				outfile.write(tif.getTiffAlles());
+			} finally {
+				if (outfile != null) {
+					try {
+						outfile.close();
+					} catch (IOException e) {
+						myLogger.error(e);
+					}
+				}
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Download aborted", e);
