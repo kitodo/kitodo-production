@@ -59,9 +59,12 @@ public class ProcessProperty implements IProperty, Serializable {
 	private boolean currentStepDuplicationAllowed = false;
 	
 	public ProcessProperty() {
+		this.container = 0;
+		this.value = "";
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
+		this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -291,9 +294,6 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 
 	public void save(Schritt step) {
-		if (this.prozesseigenschaft != null) {
-
-		}
 	}
 
 	/*
