@@ -122,13 +122,9 @@ public abstract class SQLGenerator {
 					+ dateToSqlTimestamp(timeFrom) + "','%Y%m%d%H%i%s')+0";
 		}
 
-		if (timeTo != null) {
-			return " date_format(" + timeLimiter
-					+ ",'%Y%m%d%H%i%s')+0<=date_format('"
-					+ dateToSqlTimestamp(timeTo) + "','%Y%m%d%H%i%s')+0";
-		}
-		return "";
-
+		return " date_format(" + timeLimiter
+				+ ",'%Y%m%d%H%i%s')+0<=date_format('"
+				+ dateToSqlTimestamp(timeTo) + "','%Y%m%d%H%i%s')+0";
 	}
 
 	/*****************************************************************
