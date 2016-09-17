@@ -524,7 +524,7 @@ public class MetadatenImagesHelper {
                 dataList.add(s);
             }
             /* alle Dateien durchlaufen */
-            if (dataList != null && dataList.size() != 0) {
+            if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageFileComparator());
             }
             return dataList;
@@ -549,7 +549,7 @@ public class MetadatenImagesHelper {
                 dataList.add(s);
             }
             /* alle Dateien durchlaufen */
-            if (dataList != null && dataList.size() != 0) {
+            if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageFileComparator());
             }
             return dataList;
@@ -584,7 +584,7 @@ public class MetadatenImagesHelper {
             /* alle Dateien durchlaufen */
         }
         List<String> orderedFilenameList = new ArrayList<String>();
-        if (dataList != null && dataList.size() != 0) {
+        if (dataList.size() != 0) {
             List<DocStruct> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
             if (pagesList != null) {
                 for (DocStruct page : pagesList) {

@@ -253,10 +253,8 @@ public class ExportXmlLog implements IProcessDataExport {
 
 			stepElements.add(stepElement);
 		}
-		if (stepElements != null) {
-			steps.addContent(stepElements);
-			processElements.add(steps);
-		}
+		steps.addContent(stepElements);
+		processElements.add(steps);
 
 		// template information
 		Element templates = new Element("originals", xmlns);
@@ -300,10 +298,8 @@ public class ExportXmlLog implements IProcessDataExport {
 			}
 			templateElements.add(template);
 		}
-		if (templateElements != null) {
-			templates.addContent(templateElements);
-			processElements.add(templates);
-		}
+		templates.addContent(templateElements);
+		processElements.add(templates);
 
 		// digital document information
 		Element digdoc = new Element("digitalDocuments", xmlns);
@@ -335,10 +331,8 @@ public class ExportXmlLog implements IProcessDataExport {
 			}
 			docElements.add(dd);
 		}
-		if (docElements != null) {
-			digdoc.addContent(docElements);
-			processElements.add(digdoc);
-		}
+		digdoc.addContent(docElements);
+		processElements.add(digdoc);
 
 		// METS information
 		Element metsElement = new Element("metsInformation", xmlns);
@@ -384,10 +378,8 @@ public class ExportXmlLog implements IProcessDataExport {
 				}
 			}
 
-			if (metadataElements != null) {
-				metsElement.addContent(metadataElements);
-				processElements.add(metsElement);
-			}
+			metsElement.addContent(metadataElements);
+			processElements.add(metsElement);
 
 		} catch (SwapException e) {
 			logger.error(e);

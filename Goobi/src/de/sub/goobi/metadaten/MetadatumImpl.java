@@ -179,7 +179,7 @@ public class MetadatumImpl implements Metadatum {
 		this.selectedItems = new ArrayList<String>();
 		String values = this.md.getValue();
 		if (values != null && values.length() != 0) {
-			while (values != null && values.length() != 0) {
+			while (!values.isEmpty()) {
 				int semicolon = values.indexOf(";");
 				if (semicolon != -1) {
 					String value = values.substring(0, semicolon);

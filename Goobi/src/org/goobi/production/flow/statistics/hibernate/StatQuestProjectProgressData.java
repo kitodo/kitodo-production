@@ -379,11 +379,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		DataTable dtbl = new DataTable("");
 
-		// if headerRow is set then add it to the DataTable to set columns
-		// needs to be removed later
-		if (headerRow != null) {
-			dtbl.addDataRow(headerRow);
-		}
+		// Set columns to be removed later.
+		dtbl.addDataRow(headerRow);
 
 		DataRow dataRow = null;
 
@@ -433,9 +430,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		}
 
 		// now removing headerRow
-		if (headerRow != null) {
-			dtbl.removeDataRow(headerRow);
-		}
+		dtbl.removeDataRow(headerRow);
 
 		return dtbl;
 	}

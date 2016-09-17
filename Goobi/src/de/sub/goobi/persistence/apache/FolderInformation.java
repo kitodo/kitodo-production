@@ -360,7 +360,7 @@ public class FolderInformation {
 				dataList.add(s);
 			}
 			/* alle Dateien durchlaufen */
-			if (dataList != null && dataList.size() != 0) {
+			if (dataList.size() != 0) {
 				Collections.sort(dataList, new GoobiImageFileComparator());
 			}
 			return dataList;

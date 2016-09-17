@@ -72,14 +72,6 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 			String stepsCompleted = String.valueOf(step.getNumberOfStepsDone());
 			String imagesCompleted = String.valueOf(step.getNumberOfImagesDone());
 
-			if (stepsCompleted == null) {
-				stepsCompleted = "0";
-			}
-
-			if (imagesCompleted == null) {
-				imagesCompleted = "0";
-			}
-
 			if (countImages) {
 				usedMax = step.getNumberOfTotalImages();
 				if (usedMax > inMax) {
