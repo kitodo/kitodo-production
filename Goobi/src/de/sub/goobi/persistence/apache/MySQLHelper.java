@@ -65,6 +65,8 @@ public class MySQLHelper {
 			return connection;
 		}
 
+		connection.close();
+
 		for (int i = 0; i < MAX_TRIES_NEW_CONNECTION; i++) {
 
 			if(logger.isEnabledFor(Priority.WARN)){
@@ -76,6 +78,8 @@ public class MySQLHelper {
 			if (connection.isValid(TIME_FOR_CONNECTION_VALID_CHECK)) {
 				return connection;
 			}
+
+			connection.close();
 		}
 
 		logger.warn("Connection failed: Trying to get a connection from a new ConnectionManager");
@@ -486,19 +490,20 @@ public class MySQLHelper {
 		String propNames = "ProzesseID, Titel, IstTemplate, erstellungsdatum, ProjekteID, MetadatenKonfigurationID,inAuswahllisteAnzeigen, sortHelperStatus";
 		StringBuilder propValues = new StringBuilder();
 		Timestamp datetime = new Timestamp(new Date().getTime());
-		Connection connection = helper.getConnection();
-		QueryRunner run = new QueryRunner();
-		for (int processId = start; processId <= end; processId++) {
-			propValues.append("(" + processId + ", 'title" + processId + "', false, '" + datetime + "', 3, 1, false, '020000080' ),");
+		try (Connection connection = helper.getConnection()) {
+			QueryRunner run = new QueryRunner();
+			for (int processId = start; processId <= end; processId++) {
+				propValues.append("(" + processId + ", 'title" + processId + "', false, '" + datetime + "', 3, 1, false, '020000080' ),");
 
-			if (processId % 5000 == 0) {
-				String values = propValues.toString();
-				values = values.substring(0, values.length() - 1);
-				String sql = "INSERT INTO " + "prozesse" + " (" + propNames + ") VALUES " + values + ";";
-				run.update(connection, sql);
-				propValues = new StringBuilder();
+				if (processId % 5000 == 0) {
+					String values = propValues.toString();
+					values = values.substring(0, values.length() - 1);
+					String sql = "INSERT INTO " + "prozesse" + " (" + propNames + ") VALUES " + values + ";";
+					run.update(connection, sql);
+					propValues = new StringBuilder();
+				}
+
 			}
-
 		}
 	}
 
@@ -506,16 +511,17 @@ public class MySQLHelper {
 		String propNames = "Titel, WERT, IstObligatorisch, DatentypenID, Auswahl, prozesseID, creationDate,container";
 		StringBuilder propValues = new StringBuilder();
 		Timestamp datetime = new Timestamp(new Date().getTime());
-		Connection connection = helper.getConnection();
-		QueryRunner run = new QueryRunner();
-		for (int processId = start; processId <= end; processId++) {
-			propValues.append("('title', '" + processId + "', false, 5, NULL, " + processId + ",'" + datetime + "',0" + "),");
-			if (processId % 5000 == 0) {
-				String values = propValues.toString();
-				values = values.substring(0, values.length() - 1);
-				String sql = "INSERT INTO " + "prozesseeigenschaften" + " (" + propNames + ") VALUES " + values + ";";
-				run.update(connection, sql);
-				propValues = new StringBuilder();
+		try (Connection connection = helper.getConnection()) {
+			QueryRunner run = new QueryRunner();
+			for (int processId = start; processId <= end; processId++) {
+				propValues.append("('title', '" + processId + "', false, 5, NULL, " + processId + ",'" + datetime + "',0" + "),");
+				if (processId % 5000 == 0) {
+					String values = propValues.toString();
+					values = values.substring(0, values.length() - 1);
+					String sql = "INSERT INTO " + "prozesseeigenschaften" + " (" + propNames + ") VALUES " + values + ";";
+					run.update(connection, sql);
+					propValues = new StringBuilder();
+				}
 			}
 		}
 	}
@@ -528,54 +534,55 @@ public class MySQLHelper {
 		StringBuilder userProps = new StringBuilder();
 		int stepId = 100000;
 		StringBuilder propValues = new StringBuilder();
-		Connection connection = helper.getConnection();
-		QueryRunner run = new QueryRunner();
-		for (int processId = start; processId <= end; processId++) {
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'start',1,1,1,false, ''," + processId
-					+ ", false, '', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch01',1,2,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch02',1,3,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch03',1,4,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch04',1,5,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch05',1,6,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch06',1,7,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch07',1,8,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch08',1,9,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch09',1,10,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			userProps.append("(" + stepId + ", 1 ),");
-			propValues.append("(" + stepId++ + ",'automatisch10',1,11,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
-					+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
-			if (processId % 5000 == 0) {
-				String values = propValues.toString();
-				values = values.substring(0, values.length() - 1);
-				String sql = "INSERT INTO " + "schritte" + " (" + propNames + ") VALUES " + values + ";";
-				run.update(connection, sql);
-				propValues = new StringBuilder();
+		try (Connection connection = helper.getConnection()) {
+			QueryRunner run = new QueryRunner();
+			for (int processId = start; processId <= end; processId++) {
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'start',1,1,1,false, ''," + processId
+						+ ", false, '', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch01',1,2,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch02',1,3,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch03',1,4,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch04',1,5,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch05',1,6,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch06',1,7,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch07',1,8,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch08',1,9,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch09',1,10,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				userProps.append("(" + stepId + ", 1 ),");
+				propValues.append("(" + stepId++ + ",'automatisch10',1,11,0,true, '/bin/bash /usr/local/goobi/scripts/dummy2.sh (stepid)',"
+						+ processId + ", true, 'dummy', 0, false, false, false, false, false, false, false, false, false, false" + "),");
+				if (processId % 5000 == 0) {
+					String values = propValues.toString();
+					values = values.substring(0, values.length() - 1);
+					String sql = "INSERT INTO " + "schritte" + " (" + propNames + ") VALUES " + values + ";";
+					run.update(connection, sql);
+					propValues = new StringBuilder();
 
-				String userValues = userProps.toString();
-				userValues = userValues.substring(0, userValues.length() - 1);
-				String userSql = "INSERT INTO " + "schritteberechtigtebenutzer" + " (" + userNames + ") VALUES " + userValues + ";";
-				run.update(connection, userSql);
-				userProps = new StringBuilder();
+					String userValues = userProps.toString();
+					userValues = userValues.substring(0, userValues.length() - 1);
+					String userSql = "INSERT INTO " + "schritteberechtigtebenutzer" + " (" + userNames + ") VALUES " + userValues + ";";
+					run.update(connection, userSql);
+					userProps = new StringBuilder();
+				}
 			}
 		}
 	}
