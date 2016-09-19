@@ -103,19 +103,19 @@ public class SessionForm {
 				mybrowser = "-";
 			}
 			map.put("browser", mybrowser);
-			if (mybrowser.indexOf("Gecko") >= 0) {
+			if (mybrowser.contains("Gecko")) {
 				map.put("browserIcon", "mozilla.png");
-			} else if (mybrowser.indexOf("Firefox") >= 0) {
+			} else if (mybrowser.contains("Firefox")) {
 				map.put("browserIcon", "firefox.png");
-			} else if (mybrowser.indexOf("MSIE") >= 0) {
+			} else if (mybrowser.contains("MSIE")) {
 				map.put("browserIcon", "ie.png");
-			} else if (mybrowser.indexOf("Opera") >= 0) {
+			} else if (mybrowser.contains("Opera")) {
 				map.put("browserIcon", "opera.gif");
-			} else if (mybrowser.indexOf("Safari") >= 0) {
+			} else if (mybrowser.contains("Safari")) {
 				map.put("browserIcon", "safari.gif");
-			} else if (mybrowser.indexOf("Konqueror") >= 0) {
+			} else if (mybrowser.contains("Konqueror")) {
 				map.put("browserIcon", "konqueror.gif");
-			} else if (mybrowser.indexOf("Netscape") >= 0) {
+			} else if (mybrowser.contains("Netscape")) {
 				map.put("browserIcon", "netscape.gif");
 			}
 		}
