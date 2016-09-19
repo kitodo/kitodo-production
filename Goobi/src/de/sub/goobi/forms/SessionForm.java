@@ -103,20 +103,20 @@ public class SessionForm {
 				mybrowser = "-";
 			}
 			map.put("browser", mybrowser);
-			if (mybrowser.indexOf("Gecko") >= 0) {
-				map.put("browserIcon", "mozilla.png");
-			} else if (mybrowser.indexOf("Firefox") >= 0) {
-				map.put("browserIcon", "firefox.png");
-			} else if (mybrowser.indexOf("MSIE") >= 0) {
-				map.put("browserIcon", "ie.png");
-			} else if (mybrowser.indexOf("Opera") >= 0) {
-				map.put("browserIcon", "opera.gif");
-			} else if (mybrowser.indexOf("Safari") >= 0) {
-				map.put("browserIcon", "safari.gif");
-			} else if (mybrowser.indexOf("Konqueror") >= 0) {
-				map.put("browserIcon", "konqueror.gif");
-			} else if (mybrowser.indexOf("Netscape") >= 0) {
+			if (mybrowser.contains("Netscape")) {
 				map.put("browserIcon", "netscape.gif");
+			} else if (mybrowser.contains("Konqueror")) {
+				map.put("browserIcon", "konqueror.gif");
+			} else if (mybrowser.contains("Opera") || mybrowser.contains("OPR")) {
+				map.put("browserIcon", "opera.gif");
+			} else if (mybrowser.contains("Safari")) {
+				map.put("browserIcon", "safari.gif");
+			} else if (mybrowser.contains("MSIE")) {
+				map.put("browserIcon", "ie.png");
+			} else if (mybrowser.contains("Firefox")) {
+				map.put("browserIcon", "firefox.png");
+			} else if (mybrowser.contains("Gecko")) {
+				map.put("browserIcon", "mozilla.png");
 			}
 		}
 		this.alleSessions.add(map);
