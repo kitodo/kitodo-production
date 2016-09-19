@@ -290,15 +290,6 @@ public class ProcessProperty implements IProperty, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.properties.IProperty#save(de.sub.goobi.Beans.Schritt)
-	 */
-
-	public void save(Schritt step) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
 	 */
 
