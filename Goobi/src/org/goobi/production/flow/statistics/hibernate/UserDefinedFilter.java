@@ -325,11 +325,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 			this.exactStepDone = exactStepDone;
 		}
 
-		@SuppressWarnings("unused")
-		private Boolean getCriticalQuery() {
-			return flagCriticalQuery;
-		}
-
 		private Integer getExactStepDone() {
 			return exactStepDone;
 		}
