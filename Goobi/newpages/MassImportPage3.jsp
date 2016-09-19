@@ -99,7 +99,7 @@
 														<h:outputText value="#{msgs.laufzettelDrucken}" />
 													</h:commandLink>
 
-													<h:commandLink id="utid20" action="#{MassImportForm.Prepare}">
+													<h:commandLink id="utid20" action="#{MassImportForm.prepare}">
 														<h:graphicImage id="utid25" alt="/newpages/images/buttons/star_blue.gif" 
 														value="/newpages/images/buttons/star_blue.gif"
 															style="vertical-align:middle" />

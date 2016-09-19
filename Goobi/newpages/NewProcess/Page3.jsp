@@ -103,7 +103,7 @@
 												</h:commandLink>
 
 												<h:commandLink id="utid20"
-													action="#{ProzesskopieForm.Prepare}">
+													action="#{ProzesskopieForm.prepare}">
 													<h:graphicImage id="utid25"
 														alt="/newpages/images/buttons/star_blue.gif"
 														value="/newpages/images/buttons/star_blue.gif"

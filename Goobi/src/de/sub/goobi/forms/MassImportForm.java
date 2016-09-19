@@ -111,7 +111,7 @@ public class MassImportForm {
 				.getImportPluginsForType(ImportType.FOLDER);
 	}
 
-	public String Prepare() {
+	public String prepare() {
 		if (this.template.getContainsUnreachableSteps()) {
 			if (this.template.getSchritteList().size() == 0) {
 				Helper.setFehlerMeldung("noStepsInWorkflow");

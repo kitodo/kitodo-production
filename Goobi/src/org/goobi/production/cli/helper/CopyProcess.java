@@ -121,7 +121,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
-	public String Prepare(ImportObject io) {
+	public String prepare(ImportObject io) {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			return "";
 		}
@@ -159,7 +159,7 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	@Override
-	public String Prepare() {
+	public String prepare() {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			for (Schritt s : this.prozessVorlage.getSchritteList()) {
 				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
