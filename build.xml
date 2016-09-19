@@ -21,7 +21,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project name="Goobi" default="dist">
+<project name="Kitodo" default="dist">
 
     <!--==================================================
         Property declarations
@@ -212,8 +212,8 @@
         <javadoc destdir="${doc.javadocs.dir}"
                  sourcepath="${java.src.dir}:${java.src.dubious.dir}" Author="true"
                  version="true"
-                 Use="true" noindex="true" Windowtitle="Goobi JavaDoc References" Doctitle="Goobi JavaDoc References"
-                 bottom="Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ)." encoding="UTF8">
+                 Use="true" noindex="true" Windowtitle="Kitodo JavaDoc References" Doctitle="Kitodo JavaDoc References"
+                 bottom="Copyright 2016, Kitodo. Key to digital objects e. V." encoding="UTF8">
             <classpath>
                 <path refid="compile.classpath"/>
                 <pathelement location="${build.classes}"/>
