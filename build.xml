@@ -247,6 +247,7 @@
 			debuglevel="lines,vars,source"
 			classpathref="compile.classpath">
             <compilerarg value="${build.javac.args}" />
+            <exclude name="**/package-info.java"/>
         </javac>
     </target>
 
@@ -302,6 +303,7 @@
 				<path refid="compile.classpath"/>
 			</classpath>
 			<compilerarg value="${build.javac.args}"/>
+			<exclude name="**/package-info.java"/>
 		</javac>
 	</target>
 
