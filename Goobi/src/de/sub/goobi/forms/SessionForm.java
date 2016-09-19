@@ -107,10 +107,10 @@ public class SessionForm {
 				map.put("browserIcon", "netscape.gif");
 			} else if (mybrowser.contains("Konqueror")) {
 				map.put("browserIcon", "konqueror.gif");
+			} else if (mybrowser.contains("Opera") || mybrowser.contains("OPR")) {
+				map.put("browserIcon", "opera.gif");
 			} else if (mybrowser.contains("Safari")) {
 				map.put("browserIcon", "safari.gif");
-			} else if (mybrowser.contains("Opera")) {
-				map.put("browserIcon", "opera.gif");
 			} else if (mybrowser.contains("MSIE")) {
 				map.put("browserIcon", "ie.png");
 			} else if (mybrowser.contains("Firefox")) {
