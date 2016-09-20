@@ -1104,7 +1104,7 @@ public class ProzesskopieForm {
 			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
 					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
-			if (myCollections != null && myCollections.size() > 0) {
+			if (myCollections.size() > 0) {
 				for (Metadata md : myCollections) {
 					colStruct.removeMetadata(md);
 				}

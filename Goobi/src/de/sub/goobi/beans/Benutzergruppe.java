@@ -176,7 +176,7 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 			return false;
 		}
 		Benutzergruppe other = (Benutzergruppe) obj;
-		return this.getTitel() == null ? other.getTitel() == null : this.getTitel().equals(other.getTitel());
+		return this.getTitel().equals(other.getTitel());
 	}
 
 	@Override

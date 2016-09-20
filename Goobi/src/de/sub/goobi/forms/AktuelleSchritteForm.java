@@ -679,9 +679,7 @@ public class AktuelleSchritteForm extends BasisForm {
 					step.setBearbeitungszeitpunkt(now);
 				}
 				mySchritt.setBearbeitungszeitpunkt(new Date());
-				if (ben != null) {
-					mySchritt.setBearbeitungsbenutzer(ben);
-				}
+				mySchritt.setBearbeitungsbenutzer(ben);
 				dao.save(step);
 			}
 

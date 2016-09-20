@@ -373,7 +373,7 @@ public class AdministrationForm implements Serializable {
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 							
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -387,7 +387,7 @@ public class AdministrationForm implements Serializable {
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype) != null) {
 						myKollektionenTitel = new ArrayList<String>();
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 //								Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -532,7 +532,7 @@ public class AdministrationForm implements Serializable {
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -546,7 +546,7 @@ public class AdministrationForm implements Serializable {
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype).size() > 0) {
 						myKollektionenTitel = new ArrayList<String>();
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {

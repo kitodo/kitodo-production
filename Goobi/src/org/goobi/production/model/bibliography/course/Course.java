@@ -229,9 +229,6 @@ public class Course extends ArrayList<Block> {
 						continue;
 					}
 					String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
-					if (issue == null) {
-						issue = "";
-					}
 					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
 					if (date == null) {
 						throw new NullPointerException(ATTRIBUTE_DATE);

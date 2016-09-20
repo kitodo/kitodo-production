@@ -1454,7 +1454,7 @@ public class Prozess implements Serializable {
 		List<Prozesseigenschaft> filteredList;
 		List<Prozesseigenschaft> lpe = this.getEigenschaftenList();
 
-		if ((lpe == null) || (lpe.size() == 0)) {
+		if (lpe.isEmpty()) {
 			return new ArrayList<Prozesseigenschaft>();
 		}
 

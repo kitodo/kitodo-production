@@ -59,9 +59,12 @@ public class ProcessProperty implements IProperty, Serializable {
 	private boolean currentStepDuplicationAllowed = false;
 	
 	public ProcessProperty() {
+		this.container = 0;
+		this.value = "";
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
+		this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -281,18 +284,6 @@ public class ProcessProperty implements IProperty, Serializable {
 			return matcher.matches();
 		} else {
 			return true;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.properties.IProperty#save(de.sub.goobi.Beans.Schritt)
-	 */
-
-	public void save(Schritt step) {
-		if (this.prozesseigenschaft != null) {
-
 		}
 	}
 
