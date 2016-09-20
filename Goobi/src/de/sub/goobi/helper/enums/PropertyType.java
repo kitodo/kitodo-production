@@ -88,11 +88,6 @@ public enum PropertyType {
 		return this.name.toLowerCase();
 	}
 
-	@SuppressWarnings("unused")
-	//here for jsf compatibility
-	private void setName(String name) {
-	}
-
 	@Override
 	public java.lang.String toString() {
 		return this.name(); 
