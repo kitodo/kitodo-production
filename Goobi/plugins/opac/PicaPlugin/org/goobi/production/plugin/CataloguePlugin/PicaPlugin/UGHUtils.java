@@ -198,8 +198,7 @@ class UGHUtils {
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
 	static String convertLanguage(String inLanguage) {
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
-		try {
-			BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE);
+		try (BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE)) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
@@ -207,7 +206,6 @@ class UGHUtils {
 					return str.split(" ")[0];
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 		}
 		return inLanguage;
