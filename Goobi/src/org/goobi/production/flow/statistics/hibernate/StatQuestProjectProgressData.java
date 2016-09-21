@@ -416,11 +416,15 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 						// date/time extraction based on the group
 						dataRow = new DataRow(intervall);
 					}
-					Double count = new Converter(objArr[0]).getDouble();
-					dataRow.addValue(stepName, count);
+					if (dataRow != null) {
+						Double count = new Converter(objArr[0]).getDouble();
+						dataRow.addValue(stepName, count);
+					}
 
 				} catch (Exception e) {
-					dataRow.addValue(e.getMessage(), new Double(0));
+					if (dataRow != null) {
+						dataRow.addValue(e.getMessage(), new Double(0));
+					}
 				}
 			}
 		}
