@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
@@ -37,9 +37,8 @@
  */
 
 /**
- * The package org.goobi.production.model.bibliography.course contains objects
- * to model a course of appearance of a newspaper.
+ * Contains objects to model the course of appearance of a newspaper.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 package org.goobi.production.model.bibliography.course;
