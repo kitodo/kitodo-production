@@ -42,8 +42,8 @@ public class PluginInfo {
 		System.out.println("This plugin file contains the following plugins:");
 
 		String bla = convertStreamToString(PluginInfo.class.getResourceAsStream("plugins.txt"));
-		bla = bla.replaceAll(".class", "");
-		bla = bla.replaceAll(" ", "\n");
+		bla = bla.replace(".class", "");
+		bla = bla.replace(" ", "\n");
 		System.out.println("\n" + bla);
 
 		System.out.println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -54,7 +54,7 @@ public class PluginInfo {
 		char[] tmp = new char[4096];
 
 		try {
-			InputStreamReader reader = new InputStreamReader(is);
+			InputStreamReader reader = new InputStreamReader(is, "UTF-8");
 			for (int cnt; (cnt = reader.read(tmp)) > 0;)
 				sb.append(tmp, 0, cnt);
 		} finally {
