@@ -203,7 +203,8 @@ public class Ldap {
 
 				if (ConfigMain.getParameter("ldap_AttributeToTest") == null) {
 					myLogger.debug("ldap attribute to test is null");
-					new InitialDirContext(env);
+					DirContext ctx = new InitialDirContext(env);
+					ctx.close();
 					return true;
 				} else {
 					myLogger.debug("ldap attribute to test is not null");
