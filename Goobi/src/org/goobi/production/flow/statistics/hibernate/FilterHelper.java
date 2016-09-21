@@ -950,7 +950,6 @@ public class FilterHelper {
 		case max:
 			try {
 				FilterHelper.filterStepMax(con, parameters, inStatus, negate, filterPrefix);
-				returnParameters.setCriticalQuery();
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
 			} catch (Exception e) {
@@ -961,7 +960,6 @@ public class FilterHelper {
 		case min:
 			try {
 				FilterHelper.filterStepMin(con, parameters, inStatus, negate, filterPrefix);
-				returnParameters.setCriticalQuery();
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
 			} catch (Exception e) {
@@ -985,7 +983,6 @@ public class FilterHelper {
 		case range:
 			try {
 				FilterHelper.filterStepRange(con, parameters, inStatus, negate, filterPrefix);
-				returnParameters.setCriticalQuery();
 			} catch (NullPointerException e) {
 				message = "stepdone is preset, don't use 'step' filters";
 			} catch (NumberFormatException e) {

@@ -314,12 +314,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	protected static class Parameters {
-		private Boolean flagCriticalQuery = false;
 		private Integer exactStepDone = null;
-
-		protected void setCriticalQuery() {
-			flagCriticalQuery = true;
-		}
 
 		protected void setStepDone(Integer exactStepDone) {
 			this.exactStepDone = exactStepDone;
