@@ -185,10 +185,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
 				+ "goobi_loginBlacklist.txt";
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
-		try {
+		try (
 			FileInputStream fis = new FileInputStream(filename);
 			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
 			BufferedReader in = new BufferedReader(isr);
+		) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
@@ -196,7 +197,6 @@ public class BenutzerverwaltungForm extends BasisForm {
 					Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 		}
 		return valide;
