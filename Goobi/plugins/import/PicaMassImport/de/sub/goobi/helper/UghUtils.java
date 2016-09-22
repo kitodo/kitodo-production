@@ -51,15 +51,13 @@ public class UghUtils {
 	 */
 	// TODO: Try to replace this with an external library
 	public static String convertUmlaut(String line) {
-		try {
-			BufferedReader in = open("goobi_opacUmlaut.txt");
+		try (BufferedReader in = open("goobi_opacUmlaut.txt")) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0) {
 					line = line.replaceAll(str.split(" ")[0], str.split(" ")[1]);
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 			myLogger.error("IOException bei Umlautkonvertierung", e);
 		}
