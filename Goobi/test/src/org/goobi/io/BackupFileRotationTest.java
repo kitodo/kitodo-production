@@ -197,12 +197,13 @@ public class BackupFileRotationTest {
 
 	private void assertFileHasContent(String fileName, String expectedContent) throws IOException {
 		File testFile = new File(fileName);
-		FileReader reader = new FileReader(testFile);
-		BufferedReader br = new BufferedReader(reader);
-		String content = br.readLine();
-		br.close();
-		reader.close();
-		assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
+		try (
+			FileReader reader = new FileReader(testFile);
+			BufferedReader br = new BufferedReader(reader);
+		) {
+			String content = br.readLine();
+			assertEquals("File " + fileName + " does not contain expected content:", expectedContent, content);
+		}
 	}
 
 	private void assertFileExists(String fileName) {
@@ -232,9 +233,9 @@ public class BackupFileRotationTest {
 
 	private void writeFile(String fileName, String content) throws IOException {
 		File testFile = new File(fileName);
-		FileWriter writer = new FileWriter(testFile);
-		writer.write(content);
-		writer.close();
+		try (FileWriter writer = new FileWriter(testFile)) {
+			writer.write(content);
+		}
 	}
 
 }
