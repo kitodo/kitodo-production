@@ -49,7 +49,7 @@ import de.sub.goobi.helper.Helper;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class ExportDmsTask extends EmptyTask implements INameableTask {
+public class ExportDmsTask extends EmptyTask {
 
 	private final ExportDms exportDms;
 	private final Prozess process;

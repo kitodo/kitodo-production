@@ -73,7 +73,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class ExportSerialBatchTask extends EmptyTask implements INameableTask {
+public class ExportSerialBatchTask extends EmptyTask {
 
 	/**
 	 * The batch to export

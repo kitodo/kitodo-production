@@ -42,7 +42,7 @@ import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
-public class ScriptThreadWithoutHibernate extends EmptyTask implements INameableTask {
+public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
