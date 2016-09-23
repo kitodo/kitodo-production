@@ -260,12 +260,12 @@ public class FilterHelper {
 			con.add(Restrictions.and(
 					Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 							Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue())));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
 			con.add(Restrictions.not(Restrictions.and(
 					Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 							Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue()))));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
@@ -283,10 +283,10 @@ public class FilterHelper {
 		}
 		if (!negate) {
 			con.add(Restrictions.and(Restrictions.like(prefix + "titel", "%" + parameters + "%"),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue())));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
 			con.add(Restrictions.not(Restrictions.and(Restrictions.like(prefix + "titel", "%" + parameters + "%"),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue()))));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
@@ -327,10 +327,10 @@ public class FilterHelper {
 		}
 		if (!negate) {
 			con.add(Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue())));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
 			con.add(Restrictions.not(Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue()))));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
@@ -348,10 +348,10 @@ public class FilterHelper {
 		}
 		if (!negate) {
 			con.add(Restrictions.and(Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue())));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
 			con.add(Restrictions.not(Restrictions.and(Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue()))));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
@@ -366,10 +366,10 @@ public class FilterHelper {
 	protected static void filterStepExact(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
 		if (!negate) {
 			con.add(Restrictions.and(Restrictions.eq(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue())));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
 			con.add(Restrictions.not(Restrictions.and(Restrictions.eq(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue().intValue()))));
+					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
