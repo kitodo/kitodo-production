@@ -219,7 +219,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 					newProcess.setDocType(pattern.getDocType());
 					newProcess.setAdditionalFields(pattern.getAdditionalFields());
 					currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
-					if (currentTitle == "") {
+					if (currentTitle.equals("")) {
 						setException(new RuntimeException("Couldn’t create process title for issue "
 								+ issues.get(0).toString()));
 						return;
