@@ -65,7 +65,6 @@ import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
@@ -91,14 +90,34 @@ public class ExportXmlLog implements IProcessDataExport {
 	 */
 
 	public void startExport(Prozess p, String destination) throws FileNotFoundException, IOException {
-		try (FileOutputStream ostream = new FileOutputStream(destination)) {
+		FileOutputStream ostream = null;
+		try {
+			ostream = new FileOutputStream(destination);
 			startExport(p, ostream, null);
+		} finally {
+			if (ostream != null) {
+				try {
+					ostream.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
 		}
 	}
 
 	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
-		try (FileOutputStream ostream = new FileOutputStream(dest)) {
+		FileOutputStream ostream = null;
+		try {
+			ostream = new FileOutputStream(dest);
 			startExport(p, ostream, null);
+		} finally {
+			if (ostream != null) {
+				try {
+					ostream.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
 		}
 	}
 

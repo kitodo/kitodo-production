@@ -31,7 +31,6 @@ import java.io.BufferedWriter;
 import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.util.TreeSet;
 
@@ -195,9 +194,20 @@ public class ExportPdf extends ExportMets {
 				 */
 				String text = "error while pdf creation: " + e.getMessage();
 				SafeFile file = new SafeFile(zielVerzeichnis, myProzess.getTitel() + ".PDF-ERROR.log");
-				try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
+				BufferedWriter output = null;
+				try {
+					output = new BufferedWriter(file.createFileWriter());
 					output.write(text);
 				} catch (IOException e1) {
+					myLogger.error(e1);
+				} finally {
+					if (output != null) {
+						try {
+							output.close();
+						} catch (IOException e1) {
+							myLogger.error(e1);
+						}
+					}
 				}
 				return false;
 			} finally {

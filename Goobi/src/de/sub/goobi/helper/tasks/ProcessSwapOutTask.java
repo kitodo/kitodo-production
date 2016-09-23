@@ -210,7 +210,9 @@ public void run() {
       * -------------------*/
       Format format = Format.getPrettyFormat();
       format.setEncoding("UTF-8");
-      try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml");
          setStatusMessage("writing swapped.xml");
          XMLOutputter xmlOut = new XMLOutputter(format);
          xmlOut.output(doc, fos);
@@ -220,6 +222,14 @@ public void run() {
          setStatusMessage(e.getClass().getName() + " in xmlOut.output: " + e.getMessage());
          setStatusProgress(-1);
          return;
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
       }
       setStatusProgress(90);
 

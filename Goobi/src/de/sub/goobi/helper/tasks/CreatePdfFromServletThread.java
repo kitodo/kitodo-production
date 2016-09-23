@@ -30,11 +30,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import org.goobi.io.SafeFile;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -169,10 +167,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			}
 
 			InputStream inStream = method.getResponseBodyAsStream();
-			try (
-				BufferedInputStream bis = new BufferedInputStream(inStream);
-				FileOutputStream fos = tempPdf.createFileOutputStream();
-			) {
+			BufferedInputStream bis = null;
+			FileOutputStream fos = null;
+			try {
+				bis = new BufferedInputStream(inStream);
+				fos = tempPdf.createFileOutputStream();
 				byte[] bytes = new byte[8192];
 				int count = bis.read(bytes);
 				while ((count != -1) && (count <= 8192)) {
@@ -181,6 +180,21 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				}
 				if (count != -1) {
 					fos.write(bytes, 0, count);
+				}
+			} finally {
+				if (bis != null) {
+					try {
+						bis.close();
+					} catch (IOException e1) {
+						logger.error(e1);
+					}
+				}
+				if (fos != null) {
+					try {
+						fos.close();
+					} catch (IOException e1) {
+						logger.error(e1);
+					}
 				}
 			}
 			setStatusProgress(80);
@@ -212,10 +226,20 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			 * --------------------------------*/
 			String text = "error while pdf creation: " + e.getMessage();
 			SafeFile file = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
-			try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
+			BufferedWriter output = null;
+			try {
+				output = new BufferedWriter(file.createFileWriter());
 				output.write(text);
 			} catch (IOException e1) {
 				logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
+			} finally {
+				if (output != null) {
+					try {
+						output.close();
+					} catch (IOException e1) {
+						logger.error(e1);
+					}
+				}
 			}
 			return;
 		} finally {

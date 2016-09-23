@@ -31,6 +31,7 @@ package de.sub.goobi.persistence.apache;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -169,11 +170,13 @@ public class ConnectionManager {
 	 */
 	public int getNumLockedProcesses() {
 		int num_locked_connections = 0;
-		try (
-			Connection con = this.ds.getConnection();
-			PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
-			ResultSet rs = p_stmt.executeQuery()
-		) {
+		Connection con = null;
+		PreparedStatement p_stmt = null;
+		ResultSet rs = null;
+		try {
+			con = this.ds.getConnection();
+			p_stmt = con.prepareStatement("SHOW PROCESSLIST");
+			rs = p_stmt.executeQuery();
 			while (rs.next()) {
 				if (rs.getString("State") != null && rs.getString("State").equals("Locked")) {
 					num_locked_connections++;
@@ -184,6 +187,28 @@ public class ConnectionManager {
 		} catch (Exception e) {
 			if(logger.isDebugEnabled()){
 				logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
+			}
+		} finally {
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+			if (p_stmt != null) {
+				try {
+					p_stmt.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
 			}
 		}
 		return num_locked_connections;
