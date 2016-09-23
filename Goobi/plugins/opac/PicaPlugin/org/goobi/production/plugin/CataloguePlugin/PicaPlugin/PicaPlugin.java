@@ -263,7 +263,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
 				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
-				if (multiVolumePpn != "") {
+				if (!multiVolumePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
 					myQuery = new Query(multiVolumePpn, "12");
@@ -302,7 +302,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
 				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
-				if (serialPublicationPpn != "") {
+				if (!serialPublicationPpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
 					myQuery = new Query(serialPublicationPpn, "12");
@@ -342,7 +342,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
 				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
-				if (ueberGeordnetePpn != "") {
+				if (!ueberGeordnetePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 					myQuery = new Query(ueberGeordnetePpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
