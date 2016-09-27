@@ -403,9 +403,11 @@ public class MetadatenImagesHelper {
             }
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
-            BufferedInputStream bis = new BufferedInputStream(inStream);
-            logger.trace("BufferedInputStream");
-            try (FileOutputStream fos = new FileOutputStream(outFileName)) {
+            try (
+                BufferedInputStream bis = new BufferedInputStream(inStream);
+                FileOutputStream fos = new FileOutputStream(outFileName);
+            ) {
+                logger.trace("BufferedInputStream");
                 logger.trace("FileOutputStream");
                 byte[] bytes = new byte[8192];
                 int count = bis.read(bytes);
@@ -418,7 +420,6 @@ public class MetadatenImagesHelper {
                 }
             }
             logger.trace("write");
-            bis.close();
         }
         logger.trace("end scaleFile");
     }
