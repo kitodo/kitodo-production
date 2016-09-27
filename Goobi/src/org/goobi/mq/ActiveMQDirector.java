@@ -188,11 +188,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
 	/**
 	 * The method contextDestroyed is called by the web container on shutdown. It shuts down all listeners, the session and last, the connection.
 	 *
-<<<<<<< a24338ea0322123d6965ace94fda94a9e47d6680
-	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet. ServletContextEvent)
-=======
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
->>>>>>> Fix Javadoc warnings
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent destruction) {
