@@ -323,7 +323,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			Helper.setFehlerMeldung("could not delete ", e);
 			return "";
 		}
-		if (this.modusAnzeige == "vorlagen") {
+		if (this.modusAnzeige.equals("vorlagen")) {
 			return FilterVorlagen();
 		} else {
 			return FilterAlleStart();
