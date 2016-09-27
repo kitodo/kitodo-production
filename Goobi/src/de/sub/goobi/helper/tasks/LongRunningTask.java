@@ -37,7 +37,7 @@ import de.sub.goobi.helper.Helper;
  * @deprecated New task implementations should directly implement EmptyTask.
  */
 @Deprecated
-public abstract class LongRunningTask extends EmptyTask implements INameableTask {
+public abstract class LongRunningTask extends EmptyTask {
 	/**
 	 * No-argument constructor. Creates an empty long running task. Must be made
 	 * explicit because a constructor taking an argument is present.

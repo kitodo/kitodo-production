@@ -76,7 +76,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.BatchDAO;
 
-public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask {
+public class ExportNewspaperBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;

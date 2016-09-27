@@ -75,7 +75,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateNewspaperProcessesTask extends EmptyTask implements INameableTask {
+public class CreateNewspaperProcessesTask extends EmptyTask {
 
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
