@@ -93,15 +93,6 @@ public class DesEncrypter {
 	}
 
 	/**
-	 * Create new class instance with own passphrase.
-	 *
-	 * @param passPhrase Passphrase used for en- and decryption
-	 */
-	public DesEncrypter(String passPhrase) {
-		initialise(passPhrase);
-	}
-
-	/**
 	 * Encrypt a given string.
 	 *
 	 * @param messageToEncrypt String to encrypt
