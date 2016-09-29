@@ -62,7 +62,6 @@
     <property name="tests.src.dir" value="${src.dir}/test/src"/>
 
     <property name="java.src.dir" value="${src.dir}/src"/>
-    <property name="java.src.dubious.dir" value="${src.dir}/src-dubious"/>
 
 	<!-- Plugins -->
 	<property name="build.dir.plugins.import" value="${build.dir}/plugins/import"/>
@@ -210,7 +209,7 @@
     <!-- building javadoc for sources -->
     <target name="javadoc" depends="init">
         <javadoc destdir="${doc.javadocs.dir}"
-                 sourcepath="${java.src.dir}:${java.src.dubious.dir}" Author="true"
+                 sourcepath="${java.src.dir}" Author="true"
                  version="true"
                  Use="true" noindex="true" Windowtitle="Kitodo JavaDoc References" Doctitle="Kitodo JavaDoc References"
                  bottom="Copyright 2016, Kitodo. Key to digital objects e. V." encoding="UTF8">
@@ -238,7 +237,7 @@
 
     <!-- Compile application -->
     <target name="compile" depends="init, copy-hibernate-resources, compile-jsp">
-        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${build.jsp.src}"
 			destdir="${build.classes}"
 			source="${build.javac.source}"
 			target="${build.javac.target}"
