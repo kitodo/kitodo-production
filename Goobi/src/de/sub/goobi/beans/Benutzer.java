@@ -40,10 +40,10 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
-import dubious.sub.goobi.helper.encryption.DesEncrypter;
 
 public class Benutzer implements Serializable {
 	private static final long serialVersionUID = -7482853955996650586L;

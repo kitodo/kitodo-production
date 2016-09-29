@@ -65,6 +65,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -74,7 +75,6 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
-import dubious.sub.goobi.helper.encryption.DesEncrypter;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
