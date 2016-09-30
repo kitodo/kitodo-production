@@ -39,8 +39,9 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
+import org.kitodo.encryption.DesEncrypter;
+
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;

@@ -26,7 +26,7 @@
  * exception statement from your version.
  */
 
-package de.sub.goobi.helper.encryption;
+package org.kitodo.encryption;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;

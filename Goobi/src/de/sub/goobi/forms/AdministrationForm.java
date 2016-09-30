@@ -44,6 +44,9 @@ import org.goobi.production.flow.jobs.JobManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+
+import org.kitodo.encryption.DesEncrypter;
+
 import org.quartz.SchedulerException;
 
 import ugh.dl.DocStruct;
@@ -65,7 +68,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.encryption.DesEncrypter;
 import de.sub.goobi.helper.encryption.MD5;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;

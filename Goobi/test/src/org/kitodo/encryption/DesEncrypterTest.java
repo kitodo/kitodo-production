@@ -25,7 +25,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package de.sub.goobi.helper.encryption;
+package org.kitodo.encryption;
 
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import de.sub.goobi.helper.encryption.DesEncrypter;
+import org.kitodo.encryption.DesEncrypter;
 
 public class DesEncrypterTest {
 	static Map<String, String> testData;  
