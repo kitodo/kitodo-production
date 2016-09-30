@@ -44,6 +44,9 @@ import org.goobi.production.flow.jobs.JobManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+
+import org.kitodo.encryption.DesEncrypter;
+
 import org.quartz.SchedulerException;
 
 import ugh.dl.DocStruct;
@@ -74,7 +77,6 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
-import dubious.sub.goobi.helper.encryption.DesEncrypter;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
