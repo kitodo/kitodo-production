@@ -143,7 +143,7 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 		            for(i = 0; i < row.length;i++){
 		            	message = message + "|" + row[i];
 	            	}
-					logger.debug(new Integer(rowCount).toString() + message);
+					logger.debug(Integer.toString(rowCount) + message);
 	            
 	          }
 	        }

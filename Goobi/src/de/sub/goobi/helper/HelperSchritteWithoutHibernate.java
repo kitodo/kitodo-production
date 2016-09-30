@@ -119,7 +119,7 @@ public class HelperSchritteWithoutHibernate {
 
 		logger.debug("create history events for step");
 
-		StepManager.addHistory(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
+		StepManager.addHistory(myDate, currentStep.getReihenfolge(), currentStep.getTitle(),
 				HistoryEventType.stepDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
@@ -156,7 +156,7 @@ public class HelperSchritteWithoutHibernate {
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);
 					logger.debug("create history events for next step");
-					StepManager.addHistory(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
+					StepManager.addHistory(myDate, myStep.getReihenfolge(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if(logger.isDebugEnabled()){

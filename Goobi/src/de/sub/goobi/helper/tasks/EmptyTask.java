@@ -493,7 +493,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 *            the tasks progress
 	 */
 	protected void setProgress(double statusProgress) {
-		setProgress(new Double(Math.ceil(statusProgress)).intValue());
+		setProgress((int)Math.ceil(statusProgress));
 	}
 
 	/**
