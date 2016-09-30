@@ -423,7 +423,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 				} catch (Exception e) {
 					if (dataRow != null) {
-						dataRow.addValue(e.getMessage(), new Double(0));
+						dataRow.addValue(e.getMessage(), 0.0);
 					}
 				}
 			}

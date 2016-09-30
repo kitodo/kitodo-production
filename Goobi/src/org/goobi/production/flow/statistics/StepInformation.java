@@ -30,7 +30,7 @@ public class StepInformation {
 
 	// step identifier in workflow
 	private String title = "";
-	private Double averageStepOrder = new Double(0);
+	private Double averageStepOrder = 0.0;
 	
 	// information about all steps of these type
 	private int numberOfTotalSteps = 0;

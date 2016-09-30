@@ -199,8 +199,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 				// fall back, if conversion triggers an exception
 			} catch (Exception e) {
-				dataRowChart.addValue(e.getMessage(), new Double(0));
-				dataRow.addValue(e.getMessage(), new Double(0));
+				dataRowChart.addValue(e.getMessage(), 0.0);
+				dataRow.addValue(e.getMessage(), 0.0);
 			}
 
 			// finally adding dataRow to DataTable and fetching next row
