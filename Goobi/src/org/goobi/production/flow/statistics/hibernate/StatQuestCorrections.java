@@ -147,7 +147,7 @@ public class StatQuestCorrections implements
 						(new Converter(objArr[0]).getDouble()));
 
 			} catch (Exception e) {
-				dataRow.addValue(e.getMessage(), new Double(0));
+				dataRow.addValue(e.getMessage(), 0.0);
 			}
 
 			//finally adding dataRow to DataTable and fetching next row

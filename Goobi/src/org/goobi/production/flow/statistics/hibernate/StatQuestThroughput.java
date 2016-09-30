@@ -377,7 +377,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 							+ ")", (new Converter(objArr[0]).getDouble()));
 
 				} catch (Exception e) {
-					headerRow.addValue(e.getMessage(), new Double(0));
+					headerRow.addValue(e.getMessage(), 0.0);
 				}
 			}
 
@@ -439,7 +439,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 						(new Converter(objArr[0]).getDouble()));
 
 			} catch (Exception e) {
-				dataRow.addValue(e.getMessage(), new Double(0));
+				dataRow.addValue(e.getMessage(), 0.0);
 			}
 		}
 		// to add the last row
