@@ -76,21 +76,29 @@ public class RefreshObject {
 		if(logger.isDebugEnabled()){
 			logger.debug("refreshing process with id " + processID);
 		}
+		Session session = null;
+		boolean needsClose = false;
 		try {
-			Session session = Helper.getHibernateSession();
+			session = Helper.getHibernateSession();
 			if (session == null || !session.isOpen() || !session.isConnected()) {
 				logger.debug("session is closed, creating a new session");
 				HibernateUtilOld.rebuildSessionFactory();
 				session = HibernateUtilOld.getSessionFactory().openSession();
+				needsClose = true;
 			}
 			Prozess o = (Prozess) session.get(Prozess.class, processID);
 			logger.debug("loaded process");
 			session.refresh(o);
 			logger.debug("refreshed process");
-			// session.close();
-			// logger.debug("closed session");
+			if (needsClose) {
+				session.close();
+				logger.debug("closed session");
+			}
 		} catch (Throwable e) {
 			logger.error("cannot refresh process with id " + processID);
+			if (needsClose) {
+				session.close();
+			}
 		}
 	}
 
