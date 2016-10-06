@@ -27,6 +27,7 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -40,6 +41,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -278,6 +282,8 @@ class GetOpac {
 		}
 		xmlResult.append("  </" + PICA_COLLECTION_RECORDS + ">\n");
 
+		//System.out.println("[retrievePica]: xmlResult = " + xmlResult.toString());
+		
 		return xmlResult.toString();
 	}
 
@@ -332,7 +338,26 @@ class GetOpac {
 		return opacResult;
 	}
 
+	private void saveStringToXMLFile(String xmlString, String filename){
+		SAXBuilder saxBuilder = new SAXBuilder();
+		XMLOutputter xmlOutputter = new XMLOutputter();
+		try {
+			xmlOutputter.output(saxBuilder.build(new StringReader(xmlString)), new FileWriter(filename));
+		} catch (IOException | JDOMException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
 	private String xmlFormatPica(String picaXmlRecord) {
+		
+		System.out.println("**************");
+		System.out.println("picaXMLRecord:");
+		System.out.println(picaXmlRecord);
+		System.out.println("**************");
+
+		saveStringToXMLFile(picaXmlRecord, "rawPica.xml");
+		
 		StringBuffer result = new StringBuffer("  <" + PICA_RECORD + ">\n");
 		try {
 			int startField = picaXmlRecord.indexOf("LONGTITLE");
@@ -363,7 +388,17 @@ class GetOpac {
 			e.printStackTrace();
 		}
 		result.append("  </" + PICA_RECORD + ">\n");
-		return result.toString();
+		
+		String resultString = result.toString();
+		
+		System.out.println("**************");
+		System.out.println("result:");
+		System.out.println(resultString);
+		System.out.println("**************");
+		
+		saveStringToXMLFile(resultString, "transformedPica.xml");
+		
+		return resultString;
 	}
 
 	private StringBuffer parseRecordField(String field) {
@@ -433,6 +468,8 @@ class GetOpac {
 		String request = "http://" + cat.getServerAddress()
 				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getCbs();
 
+		System.out.println("[PicaPlugin/GetOpac/retrieveDataFromOPAC]: request URL = " + request);
+		
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
@@ -458,6 +495,13 @@ class GetOpac {
 
 	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
 			ParserConfigurationException {
+		
+		
+		System.out.println("***********");
+		System.out.println("opacResponse:");
+		System.out.println("-------------");
+		System.out.println(opacResponse);
+		System.out.println("***********");
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
 				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
@@ -470,7 +514,7 @@ class GetOpac {
 
 		parser.setContentHandler(ids);
 		parser.parse(new InputSource(new StringReader(opacResponse)));
-
+		
 		return ids;
 	}
 

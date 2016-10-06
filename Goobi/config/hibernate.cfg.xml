@@ -39,7 +39,7 @@
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
 		<property name="hibernate.connection.url">
-			jdbc:mysql://localhost/kitodo?autoReconnect=true&amp;autoReconnectForPools=true
+			jdbc:mysql://db/goobi?autoReconnect=true&amp;autoReconnectForPools=true
 		</property>
 		<property name="hibernate.connection.username">kitodo</property>
 		<property name="hibernate.connection.password">kitodo</property>

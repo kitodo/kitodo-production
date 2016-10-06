@@ -81,9 +81,20 @@ public class PluginLoader {
 	 * @return the first plug-in that supports the given catalogue
 	 */
 	public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
-		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class))
-			if (plugin.supportsCatalogue(catalogue))
-				return plugin;
+		System.out.println("[PluginLoader/getCataloguePluginForCatalogue]: searching for plugin for catalogue '" + catalogue + "'");
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
+			System.out.println(" ****************** ");
+			System.out.println("[PluginLoader/getCataloguePluginForCatalogue]: test if plugin '" + plugin.getTitle(Locale.ENGLISH) + "' supports cataglogue '" + catalogue + "'...");
+			if (plugin.supportsCatalogue(catalogue)){
+				System.out.println("[PluginLoader/getCataloguePluginForCatalogue]: success! Plugin '" + plugin.getTitle(Locale.ENGLISH) + "' supports cataglogue '" + catalogue + "'...");
+				System.out.println(" ****************** ");
+				return plugin;	
+			}
+			else{
+				System.out.println("[PluginLoader/getCataloguePluginForCatalogue]: error! Plugin '" + plugin.getTitle(Locale.ENGLISH) + "' does NOT support cataglogue '" + catalogue + "'...");
+				System.out.println(" ****************** ");
+			}
+		}
 		return null;
 	}
 
@@ -190,12 +201,14 @@ public class PluginLoader {
 		ArrayList<T> result;
 
 		PluginType type = UnspecificPlugin.typeOf(clazz);
+		System.out.println("[PluginLoader/getPlugins]: " + type.toString() + " plugins:");
 		PluginManagerUtil pluginLoader = getPluginLoader(type);
 		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
 		result = new ArrayList<T>(plugins.size() - INTERNAL_CLASSES_COUNT);
 		for (Plugin implementation : plugins) {
 			if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX))
 				continue; // Skip plugin API internal classes
+			System.out.println("[PluginLoader/getPlugins]:  - " + implementation.toString());
 			try {
 				T plugin = (T) UnspecificPlugin.create(type, implementation);
 				plugin.configure(getPluginConfiguration());

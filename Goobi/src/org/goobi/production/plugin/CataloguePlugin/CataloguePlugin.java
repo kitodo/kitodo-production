@@ -37,7 +37,10 @@
  */
 package org.goobi.production.plugin.CataloguePlugin;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +52,8 @@ import org.goobi.production.plugin.UnspecificPlugin;
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import de.sub.goobi.config.ConfigMain;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library
@@ -168,6 +173,10 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * supportsCatalogue() of the plug-in implementation class.
 	 */
 	private final Method supportsCatalogue;
+	
+	private final Method getSupportedCatalogues;
+	
+	private final Method getAllConfigDocTypes;
 
 	/**
 	 * The field useCatalogue holds a Method reference to the method
@@ -202,6 +211,8 @@ public class CataloguePlugin extends UnspecificPlugin {
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
 		setPreferences = getDeclaredMethod("setPreferences", Prefs.class, Void.TYPE);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", String.class, boolean.class);
+		getSupportedCatalogues = getDeclaredMethod("getSupportedCatalogues", Object.class, List.class);
+		getAllConfigDocTypes = getDeclaredMethod("getAllConfigDocTypes", Object.class, List.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
 	}
 
@@ -271,6 +282,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	public Hit getHit(Object searchResult, long index, long timeout) {
 		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
 				Map.class);
+		System.out.println("data: " + data.toString());
 		return new Hit(data);
 	}
 
@@ -340,6 +352,27 @@ public class CataloguePlugin extends UnspecificPlugin {
 		return invokeQuietly(plugin, supportsCatalogue, catalogue, boolean.class);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<String> getSupportedCatalogues(Object dummyObject){
+		return invokeQuietly(plugin, getSupportedCatalogues, Object.class, List.class);
+	}
+	
+	public List<ConfigOpacDoctype> getAllConfigDocTypes(Object dummyObject){
+		List<ConfigOpacDoctype> result = new ArrayList<ConfigOpacDoctype>();
+		for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
+			System.out.println(" doctype: " + cod.getTitle());
+		}
+		for(Object obj : invokeQuietly(plugin, getAllConfigDocTypes, Object.class, List.class)){
+			try {
+				result.add(ConfigOpac.getDoctypeByName((String)obj));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * The function useCatalogue() shall tell the plugin to use a catalogue
 	 * connection identified by the given String literal. If the plugin doesn’t
