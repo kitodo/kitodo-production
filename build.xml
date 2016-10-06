@@ -101,10 +101,6 @@
         <delete dir="${build.dir}"/>
         <delete dir="${build.dist.dir}"/>
         <delete dir="${doc.javadocs.dir}"/>
-        <delete file="goobi.log"/>
-        <delete file="goobi_xml.log"/>
-        <!-- TODO Determine log configuration and configure build-path for logging -->
-        <delete file="goobicontentserver.log"/>
     </target>
 
     <target name="debug" description="Print diagnosis information">
