@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opacCatalogues>
+	<doctypes>
+		<type isContainedWork="false" isMultiVolume="true" isPeriodical="false" isNewspaper="false" rulesetType="Folder" tifHeaderType="Folder" title="folder">
+			<label language="de">Mappe</label>
+			<label language="en">Folder</label>
+			<mapping>text</mapping>
+		</type>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Letter" tifHeaderType="letter" title="letter">
+			<label language="de">Brief</label>
+			<label language="en">Letter</label>
+			<mapping>text</mapping>
+		</type>
+	</doctypes>
+	<catalogue title="Kalliope">
+		<config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
+	</catalogue>
+</opacCatalogues>
