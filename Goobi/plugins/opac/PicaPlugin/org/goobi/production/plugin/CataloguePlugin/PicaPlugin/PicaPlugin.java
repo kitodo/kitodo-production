@@ -23,8 +23,6 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,15 +34,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
-import org.goobi.production.plugin.CataloguePlugin.PicaPlugin.ConfigOpac;
-import org.goobi.production.plugin.CataloguePlugin.PicaPlugin.ConfigOpacDoctype;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.jdom.output.XMLOutputter;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
@@ -234,8 +228,6 @@ public class PicaPlugin implements Plugin {
 			throw new ClassCastException();
 		}
 		Query myQuery = ((FindResult) searchResult).getQuery();
-		
-		XMLOutputter xmlOutputter = new XMLOutputter();
 
 		Element myFirstHit;
 		String gattung;
@@ -248,7 +240,7 @@ public class PicaPlugin implements Plugin {
 			 * --------------------------------
 			 */
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
-						
+
 			/* Opac-Beautifier aufrufen */
 			myHitlist = configuration.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
@@ -256,9 +248,6 @@ public class PicaPlugin implements Plugin {
 
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
-			System.out.println("_____________");
-			System.out.println(" GATTUNG: " + gattung);
-			System.out.println("_____________");
 			cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
 					configuration.getTitle());
 			if (cod == null) {
@@ -389,21 +378,6 @@ public class PicaPlugin implements Plugin {
 			 * erzeugen --------------------------------
 			 */
 
-			Document hitlistJDOM = new DOMBuilder().build(myHitlist.getOwnerDocument());
-			Element hitlistElement = hitlistJDOM.getRootElement();
-			String tempFileName = "picaMetsModsGoobi.xml";
-			try {
-				System.out.println("********************");
-				System.out.println("Instatiate PicaPlus class with parameter the following XML:");
-				System.out.println("-----------");
-				xmlOutputter.output(hitlistElement, System.out);
-				xmlOutputter.output(hitlistElement, new FileWriter(tempFileName));
-				System.out.println("********************");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			/* zugriff auf ugh-Klassen */
 			PicaPlus pp = new PicaPlus(preferences);
 			pp.read(myHitlist);
@@ -416,19 +390,6 @@ public class PicaPlugin implements Plugin {
 			dd.setPhysicalDocStruct(dsBoundBook);
 			/* Inhalt des RDF-Files überprüfen und ergänzen */
 			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
-			//System.out.println("digital document: " + ff.getDigitalDocument().toString());
-			
-			try {
-				System.out.println("********************");
-				System.out.println("myFirstHit:");
-				System.out.println("-----------");
-				xmlOutputter.output(myFirstHit, System.out);
-				System.out.println("********************");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -602,15 +563,7 @@ public class PicaPlugin implements Plugin {
 		 * Stelle nachsehen (vor allem bei Contained-Work)
 		 */
 		if (myTitle == null || myTitle.length() == 0) {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("PicaPlugin/checkMyOpacResult: Title is null => get title element from 'myFirstHit'");
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
-		}
-		else{
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("PicaPlugin/checkMyOpacResult: Title found: '"+myTitle+"'");
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
@@ -949,12 +902,7 @@ public class PicaPlugin implements Plugin {
 
 		result.put("url", getElementFieldValue(hit, "209R", "a"));
 		result.put("year", getElementFieldValue(hit, "011@", "a"));
-		
-		System.out.println("PicaPlus result map:");
-		for(Map.Entry<String, Object> entry : result.entrySet()){
-			System.out.println("  - " + entry.getKey() + ": " + entry.getValue());
-		}
-		
+
 		return result;
 	}
 

@@ -68,7 +68,6 @@ class Query {
 	 *             expressions
 	 */
 	Query(String queryString) {
-		System.out.println("[PicaPlugin/Query]: creating query from string '" + queryString + "' for PicaPlugin...");
 		int state = 0;
 		String operator = null;
 		StringBuilder field = new StringBuilder();
@@ -162,7 +161,6 @@ class Query {
 		}
 		if (state != 3 && state != 5)
 			throw new IllegalArgumentException(INCOMPLETE);
-		System.out.println("[PicaPlugin/Query]: created query URL " + this.queryUrl);
 	}
 
 	//operation must be Query.AND, .OR, .NOT 

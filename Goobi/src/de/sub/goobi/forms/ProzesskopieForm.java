@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -438,28 +437,19 @@ public class ProzesskopieForm {
 	 * @return always "", telling JSF to stay on that page
 	 */
 	public String OpacAuswerten() {
-		System.out.println("------------------------");
-		System.out.println("OpacAuswerten triggered!");
-		System.out.println("------------------------");
 		long timeout = CataloguePlugin.getTimeout();
 		try {
 			clearValues();
 			readProjectConfigs();
-			System.out.println("[ProzessKopieForm/OpacAuswerten]: Check if plugin is available for catalogue '" + opacKatalog+ "'");
 			if (!pluginAvailableFor(opacKatalog)) {
-				System.out.println("[ProzessKopieForm/OpacAuswerten]: NO plugin found for catalogue '" + opacKatalog+ "'!");
 				return "";
 			}
-			System.out.println("[ProzessKopieForm/OpacAuswerten]: Plugin found for catalogue '" + opacKatalog+ "'!");
 
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
 			
 			hitlist = importCatalogue.find(query, timeout);
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
-			
-			System.out.println(" >>> Number of hits: " + hits);
-			
 			switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
 			case 0:
 				Helper.setFehlerMeldung("No hit found", "");
@@ -474,7 +464,6 @@ public class ProzesskopieForm {
 			return "";
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on reading opac ", e);
-			e.printStackTrace();
 			return "";
 		}
 	}
@@ -535,13 +524,10 @@ public class ProzesskopieForm {
 	 */
 	protected void importHit(Hit hit) throws PreferencesException {
 		myRdf = hit.getFileformat();
-		System.out.println("[ProzesskopieForm/importHit]: ...found fileFormat '" + myRdf + "'");
 		docType = hit.getDocType();
-		System.out.println("[ProzesskopieForm/importHit]: ...found docType '" + docType + "'");
 		fillFieldsFromMetadataFile();
 		applyCopyingRules(new CopierData(myRdf, prozessVorlage));
 		atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
-		System.out.println("[ProzesskopieForm/importHit]: created Atstsl: '" + atstsl +"'");
 	}
 
 	/**
@@ -578,38 +564,19 @@ public class ProzesskopieForm {
 		if (this.myRdf != null) {
 
 			for (AdditionalField field : this.additionalFields) {
-				System.out.println("---------------------------");
-				System.out.println(" field: " + field.getTitel());
 				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
 					/* welches Docstruct */
 					DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
 					if (field.getDocstruct().equals("firstchild")) {
-						System.out.println(" found firstchild");
-						try {
-							myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-						} catch (RuntimeException e) {
-							System.err.println("RUNTIME EXCEPTION!!!");
-						}
+						myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
 					}
 					if (field.getDocstruct().equals("boundbook")) {
-						System.out.println("   found docstruct of type 'boundbook'");
 						myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
 					}
-					
-//					System.out.println("    Docstruct: " + myTempStruct);
-//					System.out.println("      id: " + myTempStruct.getIdentifier());
-//					System.out.println("      metadata:");
-//					System.out.println("      -----------");
-//					if(!Objects.equals(myTempStruct.getAllMetadata(), null)){
-//						for(Metadata _md : myTempStruct.getAllMetadata()){
-//							System.out.println("        - " + _md.getType().getName() + ": " + _md.getValue());
-//						}
-//					}
 					
 					/* welches Metadatum */
 					try {
 						if (field.getMetadata().equals("ListOfCreators")) {
-							System.out.println("   found 'listOfCreators'...");
 							/* bei Autoren die Namen zusammenstellen */
 							String myautoren = "";
 							if (myTempStruct.getAllPersons() != null) {
@@ -631,12 +598,8 @@ public class ProzesskopieForm {
 									.getPreferences(), field.getMetadata());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null && md.getValue() != null) {
-								System.out.println("       Metadata for type '"+field.getMetadata()+"' found: '"+md.getValue()+"' (class: " + md.getValue().getClass().getName() + ")!");
 								field.setWert(md.getValue());
 								md.setValue(field.getWert().replace("&amp;", "&"));
-							}
-							else{
-								System.err.println("       ! Metadata for type '"+field.getMetadata()+"' is NULL !");
 							}
 						}
 					} catch (UghHelperException e) {
@@ -647,11 +610,11 @@ public class ProzesskopieForm {
 						field.setWert(field.getWert().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
-//				else{
-//					System.err.println("    Skip field '"+field.getTitel()+"': ");
-//					System.err.println("      - isUghbinding = " + field.isUghbinding());
-//					System.err.println("      - getShowDependingOnDoctype = " + field.getShowDependingOnDoctype());
-//				}
+				else{
+					System.err.println("    Skip field '"+field.getTitel()+"': ");
+					System.err.println("      - isUghbinding = " + field.isUghbinding());
+					System.err.println("      - getShowDependingOnDoctype = " + field.getShowDependingOnDoctype());
+				}
 			}// end for
 		} // end if myrdf==null
 	}
@@ -1528,22 +1491,13 @@ public class ProzesskopieForm {
 		try {
 			ArrayList<String> allCatalogueTitles = new ArrayList<String>();
 			
-			System.out.println("========");
-			System.out.println("[ProzessKopieForm/getAllOpacCatalogues]: Trying to load plugins using the Plugin loader: ");
-			System.out.println(PluginLoader.getPlugins(CataloguePlugin.class));
 			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
-				System.out.println("[ProzessKopieForm/getAllOpacCatalogues]:  Plugin: " + plugin.getTitle(Locale.ENGLISH));
-				System.out.println("[ProzessKopieForm/getAllOpacCatalogues]:   supports catalogues:");
 				for(String catalogue : plugin.getSupportedCatalogues(null)){
-					System.out.println("[ProzessKopieForm/getAllOpacCatalogues]:     - " + catalogue);
 					if(!allCatalogueTitles.contains(catalogue)){
 						allCatalogueTitles.add(catalogue);
 					}
 				}
-			}
-
-			System.out.println("[ProzessKopieForm/getAllOpacCatalogues]: allCatalogueTitles = " + allCatalogueTitles);
-			
+			}			
 			return allCatalogueTitles;
 			//return ConfigOpac.getAllCatalogueTitles();
 		} catch (Throwable t) {
@@ -1556,14 +1510,8 @@ public class ProzesskopieForm {
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
 //			ArrayList<ConfigOpacDoctype> allDocTypes = new ArrayList<ConfigOpacDoctype>();
-//			
-//			System.out.println("=======");
-//			System.out.println("[ProzessKopieForm/getAllDoctypes]: Trying to load supported doctypes from plugins using the Plugin loader... ");
 //			for(CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
-//				System.out.println("[ProzessKopieForm/getAllDoctypes]:  Plugin: " + plugin.getTitle(Locale.ENGLISH));
-//				System.out.println("[ProzessKopieForm/getAllDoctypes]:   supports doctypes:");
 //				for(ConfigOpacDoctype cod : plugin.getAllConfigDocTypes(null)){
-//					System.out.println("[ProzessKopieForm/getAllDoctypes]:     - " + cod.getTitle());
 //					if(!allDocTypes.contains(cod)){
 //						allDocTypes.add(cod);
 //					}

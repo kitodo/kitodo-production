@@ -31,12 +31,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
@@ -49,7 +46,6 @@ class ConfigOpac {
 			return config;
 		}
 		String configPfad = FilenameUtils.concat(PicaPlugin.getConfigDir(), PicaPlugin.OPAC_CONFIGURATION_FILE);
-		System.out.println("[PicaPlugin/ConfigOpac/getConfig]: Setting config path to " + configPfad);
 		if (!new File(configPfad).exists()) {
 			String message = "File not found: ".concat(configPfad);
 			throw new RuntimeException(message, new FileNotFoundException(message));
@@ -62,17 +58,6 @@ class ConfigOpac {
 		}
 		config.setListDelimiter('&');
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
-		
-		/*
-		System.out.println("[PicaPlugin.ConfigOpac]: config keys:");
-		Iterator<String> keyIterator = config.getKeys();
-		while(keyIterator.hasNext()){
-			String key = keyIterator.next();
-			System.out.println(" - key     : " + key);
-			System.out.println(" - property: " + config.getProperty(key));
-		}
-		*/
-		
 		return config;
 	}
 
@@ -92,10 +77,8 @@ class ConfigOpac {
 	 */
 	static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
-		System.out.println("[PicaPlugin/ConfigOpac/getCatalogueByName]: " + (countCatalogues+1) + " catalogues for this plugin: ");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
-			System.out.println("[PicaPlugin/ConfigOpac/getCatalogueByName]:  " + (i+1) + ": " + title);
 			if (title.equals(inTitle)) {
 				String description = getConfig().getString("catalogue(" + i + ").config[@description]");
 				String address = getConfig().getString("catalogue(" + i + ").config[@address]");

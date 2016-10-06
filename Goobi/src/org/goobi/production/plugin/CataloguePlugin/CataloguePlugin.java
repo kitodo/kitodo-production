@@ -282,7 +282,6 @@ public class CataloguePlugin extends UnspecificPlugin {
 	public Hit getHit(Object searchResult, long index, long timeout) {
 		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
 				Map.class);
-		System.out.println("data: " + data.toString());
 		return new Hit(data);
 	}
 
