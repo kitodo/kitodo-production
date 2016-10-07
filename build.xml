@@ -309,7 +309,7 @@
 
     <!-- Build of war file. -->
     <target name="war"
-            depends="compile, copy-config, copy-scripts, create-plugin-jar-files">
+            depends="compile, copy-files, create-plugin-jar-files">
 
         <war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
 
@@ -340,9 +340,10 @@
             <zipfileset dir="${src.dir}/css" prefix="css"/>
             <zipfileset dir="${src.dir}/js" prefix="js" />
 
-        	<zipfileset dir="${build.dist.dir}/plugins" prefix="plugins"/>
+            <zipfileset dir="${build.dist.dir}/plugins" prefix="plugins"/>
 
             <zipfileset dir="${build.dir}/scripts" prefix="scripts"/>
+            <zipfileset dir="${build.dir}/database-setup" prefix="database-setup"/>
 
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
@@ -354,6 +355,9 @@
 
         </war>
 
+    </target>
+
+    <target name="copy-files" depends="copy-config, copy-scripts, copy-sql-files">
     </target>
 
     <!-- Copy configuration files to build directory -->
@@ -380,6 +384,14 @@
     <target name="copy-scripts">
         <copy todir="${build.dir}/scripts">
             <fileset dir="${src.dir}/scripts" includes="*.*"/>
+        </copy>
+    </target>
+
+    <!-- Copy script files to build directory -->
+    <target name="copy-sql-files">
+        <copy todir="${build.dir}/database-setup">
+            <file file="${src.dir}/setup/schema.sql"/>
+            <file file="${src.dir}/setup/default.sql"/>
         </copy>
     </target>
 
