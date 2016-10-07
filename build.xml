@@ -196,6 +196,8 @@
         <mkdir dir="${test.report.dir}"/>
     	<mkdir dir="${build.dir.plugins.import}/PicaMassImport"/>
         <mkdir dir="${build.dir.plugins.opac}/PicaPlugin"/>
+        <mkdir dir="${build.dir}/scripts"/>
+        <mkdir dir="${build.dir}/database-setup"/>
     </target>
 
     <!--==================================================
