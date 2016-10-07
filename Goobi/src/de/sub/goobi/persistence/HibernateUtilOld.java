@@ -34,7 +34,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.auction.exceptions.InfrastructureException;
+import org.kitodo.persistence.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
