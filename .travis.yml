@@ -1,4 +1,4 @@
-# Travis continuous integration for goobi-production
+# Travis continuous integration for kitodo-production
 
 language: java
 
