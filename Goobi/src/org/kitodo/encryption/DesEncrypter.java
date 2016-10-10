@@ -106,7 +106,7 @@ public class DesEncrypter {
 		try {
 			byte[] utf8 = messageToEncrypt.getBytes("UTF8");
 			byte[] enc = encryptionCipher.doFinal(utf8);
-			return new String(Base64.encodeBase64(enc));
+			return new String(Base64.encodeBase64(enc), "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Catched UnsupportedEncodingException with message: " + e.getMessage());
 		} catch (BadPaddingException e) {
