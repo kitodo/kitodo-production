@@ -50,7 +50,7 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new ProzessDAO().get(new Integer(value));
+				return new ProzessDAO().get(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";
