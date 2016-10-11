@@ -229,7 +229,7 @@ public class FireburnDataImport {
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.processAnnotations(FireburnDataImport.class);
 		xstream.processAnnotations(FireburnProperty.class);
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), "UTF8");
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), "UTF-8");
 		xstream.toXML(fdi.pNotFoundList, fw);
 		// DEBUG
 		long time2 = System.currentTimeMillis();

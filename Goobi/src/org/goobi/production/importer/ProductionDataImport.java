@@ -207,7 +207,7 @@ public class ProductionDataImport {
 			XStream xstream = new XStream();
 			xstream.setMode(XStream.NO_REFERENCES);
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(ConfigMain.getParameter("tempfolder") + conflictFilename)),
-					"UTF8");
+					"UTF-8");
 			xstream.toXML(conflicts, fw);
 		}
 		if(logger.isDebugEnabled()){

@@ -187,7 +187,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
 		try (
 			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+			InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
 			BufferedReader in = new BufferedReader(isr);
 		) {
 			String str;
