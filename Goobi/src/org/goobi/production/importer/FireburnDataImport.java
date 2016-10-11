@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -229,7 +230,7 @@ public class FireburnDataImport {
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.processAnnotations(FireburnDataImport.class);
 		xstream.processAnnotations(FireburnProperty.class);
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), "UTF-8");
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), StandardCharsets.UTF_8);
 		xstream.toXML(fdi.pNotFoundList, fw);
 		// DEBUG
 		long time2 = System.currentTimeMillis();
