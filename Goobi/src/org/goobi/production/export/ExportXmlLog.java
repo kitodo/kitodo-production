@@ -434,7 +434,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			docTrans = doc;
 		}
 		Format format = Format.getPrettyFormat();
-		format.setEncoding("utf-8");
+		format.setEncoding("UTF-8");
 		XMLOutputter xmlOut = new XMLOutputter(format);
 
 		xmlOut.output(docTrans, out);
