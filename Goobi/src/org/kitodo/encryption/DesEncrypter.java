@@ -104,9 +104,9 @@ public class DesEncrypter {
 		}
 
 		try {
-			byte[] utf8 = messageToEncrypt.getBytes("UTF8");
+			byte[] utf8 = messageToEncrypt.getBytes("UTF-8");
 			byte[] enc = encryptionCipher.doFinal(utf8);
-			return new String(Base64.encodeBase64(enc));
+			return new String(Base64.encodeBase64(enc), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Catched UnsupportedEncodingException with message: " + e.getMessage());
 		} catch (BadPaddingException e) {
@@ -127,9 +127,9 @@ public class DesEncrypter {
 	public String decrypt(String messageToDecrypt) {
 
 		try {
-			byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes("UTF8"));
+			byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes("UTF-8"));
 			byte[] utf8 = decryptionCipher.doFinal(dec);
-			return new String(utf8, "UTF8");
+			return new String(utf8, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Catched UnsupportedEncodingException with message: " + e.getMessage());
 		} catch (IllegalBlockSizeException e) {
