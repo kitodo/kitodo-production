@@ -52,7 +52,7 @@ public class IntegerSequence extends ArrayList<Integer> {
 		this.ensureCapacity(end - start);
 
 		for (int i = start; i <= end; i = (i + increment)) {
-			this.add(new Integer(i));
+			this.add(Integer.valueOf(i));
 		}
 	}
 
