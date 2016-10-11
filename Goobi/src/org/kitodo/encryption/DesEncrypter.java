@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -104,11 +104,9 @@ public class DesEncrypter {
 		}
 
 		try {
-			byte[] utf8 = messageToEncrypt.getBytes("UTF-8");
+			byte[] utf8 = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
 			byte[] enc = encryptionCipher.doFinal(utf8);
-			return new String(Base64.encodeBase64(enc), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.warn("Catched UnsupportedEncodingException with message: " + e.getMessage());
+			return new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
 		} catch (BadPaddingException e) {
 			logger.warn("Catched BadPaddingException with message: " + e.getMessage());
 		} catch (IllegalBlockSizeException e) {
@@ -127,11 +125,9 @@ public class DesEncrypter {
 	public String decrypt(String messageToDecrypt) {
 
 		try {
-			byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes("UTF-8"));
+			byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
 			byte[] utf8 = decryptionCipher.doFinal(dec);
-			return new String(utf8, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.warn("Catched UnsupportedEncodingException with message: " + e.getMessage());
+			return new String(utf8, StandardCharsets.UTF_8);
 		} catch (IllegalBlockSizeException e) {
 			logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
 		} catch (BadPaddingException e) {
