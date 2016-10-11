@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -40,7 +41,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -257,7 +257,7 @@ class UGHUtils {
 			path = FilenameUtils.concat(session.getServletContext().getRealPath("/WEB-INF"), "classes");
 		}
 		String file = FilenameUtils.concat(path, fileName);
-		return new BufferedReader(new InputStreamReader(new FileInputStream(file), CharEncoding.UTF_8));
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 	}
 
 }
