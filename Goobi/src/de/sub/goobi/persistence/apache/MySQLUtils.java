@@ -349,7 +349,7 @@ public class MySQLUtils {
 		public List<Integer> handle(ResultSet rs) throws SQLException {
 			List<Integer> answer = new ArrayList<Integer>();
 			while (rs.next()) {
-				answer.add(new Integer(rs.getInt(1)));
+				answer.add(Integer.valueOf(rs.getInt(1)));
 			}
 			return answer;
 		}
@@ -360,7 +360,7 @@ public class MySQLUtils {
 		public Integer handle(ResultSet rs) throws SQLException {
 			Integer answer = null;
 			if (rs.next()) {
-				answer = new Integer(rs.getInt(1));
+				answer = Integer.valueOf(rs.getInt(1));
 			}
 			return answer;
 		}
