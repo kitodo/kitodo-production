@@ -35,7 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -109,17 +109,16 @@ public class ProductionDataImport {
 	 * @throws ConfigurationException
 	 * @throws DAOException
 	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 */
 
 	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException, DAOException,
-			UnsupportedEncodingException, FileNotFoundException {
+			FileNotFoundException {
 		new ProductionDataImport().importData();
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void importData() throws DAOException, HibernateException, ConfigurationException, SQLException, UnsupportedEncodingException,
+	private void importData() throws DAOException, HibernateException, ConfigurationException, SQLException,
 			FileNotFoundException {
 		filename = ConfigMain.getParameter("tempfolder") + "produktionsDb.xml";
 		// load data from xml
@@ -207,7 +206,7 @@ public class ProductionDataImport {
 			XStream xstream = new XStream();
 			xstream.setMode(XStream.NO_REFERENCES);
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(ConfigMain.getParameter("tempfolder") + conflictFilename)),
-					"UTF-8");
+					StandardCharsets.UTF_8);
 			xstream.toXML(conflicts, fw);
 		}
 		if(logger.isDebugEnabled()){

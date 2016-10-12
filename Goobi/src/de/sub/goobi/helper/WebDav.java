@@ -27,14 +27,15 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.BufferedWriter;
-import java.io.File;
 
 import org.goobi.io.SafeFile;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -252,7 +253,7 @@ public class WebDav implements Serializable {
 			try (
 				BufferedWriter outfile =
 					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-						+ "tiffwriter.conf"), "utf-8"));
+						+ "tiffwriter.conf"), StandardCharsets.UTF_8));
 			) {
 				outfile.write(tif.getTiffAlles());
 			}

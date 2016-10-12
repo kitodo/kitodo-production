@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -187,7 +188,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
 		try (
 			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+			InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 		) {
 			String str;
