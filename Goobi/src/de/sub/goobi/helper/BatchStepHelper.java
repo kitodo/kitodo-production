@@ -504,7 +504,6 @@ public class BatchStepHelper {
 				pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
 				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
 				pe.setType(PropertyType.messageError);
-				pe.setCreationDate(myDate);
 				pe.setProzess(this.currentStep.getProzess());
 				this.currentStep.getProzess().getEigenschaften().add(pe);
 
@@ -650,7 +649,6 @@ public class BatchStepHelper {
 						+ this.solutionMessage);
 				pe.setProzess(this.currentStep.getProzess());
 				pe.setType(PropertyType.messageImportant);
-				pe.setCreationDate(new Date());
 				this.currentStep.getProzess().getEigenschaften().add(pe);
 
 				String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "

@@ -587,7 +587,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
 			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
 			pe.setType(PropertyType.messageError);
-			pe.setCreationDate(myDate);
 			pe.setProzess(this.mySchritt.getProzess());
 			this.mySchritt.getProzess().getEigenschaften().add(pe);
 
@@ -696,7 +695,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
 					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
 			pe.setType(PropertyType.messageImportant);
-			pe.setCreationDate(new Date());
 			pe.setProzess(this.mySchritt.getProzess());
 			this.mySchritt.getProzess().getEigenschaften().add(pe);
 
