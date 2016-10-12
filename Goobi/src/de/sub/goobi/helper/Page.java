@@ -90,7 +90,7 @@ public class Page implements Serializable { // implements Iterator
 		/*
 		 * We use the Math.floor() method because page numbers are zero-based (i.e. the first page is page 0).
 		 */
-		int rueckgabe = new Double(Math.floor(this.totalResults / this.pageSize)).intValue();
+		int rueckgabe = Double.valueOf(Math.floor(this.totalResults / this.pageSize)).intValue();
 		if (this.totalResults % this.pageSize == 0) {
 			rueckgabe--;
 		}

@@ -598,7 +598,7 @@ public class Metadaten {
 
 		Modes.setBindState(BindState.edit);
 		try {
-			Integer id = new Integer(Helper.getRequestParameter("ProzesseID"));
+			Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
 			this.myProzess = new ProzessDAO().get(id);
 		} catch (NumberFormatException e1) {
 			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
@@ -708,7 +708,7 @@ public class Metadaten {
             for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
                 if (md.getType().getName().equals("_representative")) {
                     try {
-                    Integer value = new Integer(md.getValue());
+                    Integer value = Integer.valueOf(md.getValue());
                     currentRepresentativePage = String.valueOf(value-1);
                     } catch (Exception e) {
                         
@@ -774,7 +774,7 @@ public class Metadaten {
                     && this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
                 for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
                     if (md.getType().getName().equals("_representative")) {
-                        Integer value = new Integer(currentRepresentativePage);
+                        Integer value = Integer.valueOf(currentRepresentativePage);
                         md.setValue(String.valueOf(value +1));
                         match = true;
                     }
@@ -784,7 +784,7 @@ public class Metadaten {
                 MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
                 try {
                     Metadata md = new Metadata(mdt);
-                    Integer value = new Integer(currentRepresentativePage);
+                    Integer value = Integer.valueOf(currentRepresentativePage);
                     md.setValue(String.valueOf(value +1));
                     this.mydocument.getPhysicalDocStruct().addMetadata(md);
                 } catch (MetadataTypeNotAllowedException e) {

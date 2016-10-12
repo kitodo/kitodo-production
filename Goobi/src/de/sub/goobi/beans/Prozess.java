@@ -363,7 +363,7 @@ public class Prozess implements Serializable {
 		if (MetadatenSperrung.isLocked(this.id.intValue())) {
 			String benutzerID = this.msp.getLockBenutzer(this.id.intValue());
 			try {
-				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
+				rueckgabe = new BenutzerDAO().get(Integer.valueOf(benutzerID));
 			} catch (Exception e) {
 				Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
 			}

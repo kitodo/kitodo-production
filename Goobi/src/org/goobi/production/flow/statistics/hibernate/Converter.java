@@ -101,7 +101,7 @@ class Converter {
 	protected Double getDouble() {
 		if (this.myObject instanceof Integer) {
 
-			return new Double(((Integer) this.myObject).intValue());
+			return Double.valueOf(((Integer) this.myObject).intValue());
 		} else if (this.myObject instanceof Double) {
 
 			return (Double) this.myObject;

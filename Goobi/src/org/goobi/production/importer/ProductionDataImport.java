@@ -788,13 +788,13 @@ public class ProductionDataImport {
 				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
 				try {
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.bitonal, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.grayScale, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.color, p));
 
 				} catch (NumberFormatException e) {

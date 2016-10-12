@@ -49,7 +49,7 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new DocketDAO().get(new Integer(value));
+				return new DocketDAO().get(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";
