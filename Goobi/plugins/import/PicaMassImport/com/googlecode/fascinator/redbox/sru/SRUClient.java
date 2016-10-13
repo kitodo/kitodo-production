@@ -20,6 +20,7 @@ package com.googlecode.fascinator.redbox.sru;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -219,8 +220,12 @@ public class SRUClient {
      */
     public void testResponseResource(String fileName) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        IOUtils.copy(getClass().getResourceAsStream("/" + fileName), out);
-        testingResponseString = out.toString("UTF-8");
+        InputStream in = getClass().getResourceAsStream("/" + fileName);
+        if (in != null) {
+            IOUtils.copy(in, out);
+            testingResponseString = out.toString("UTF-8");
+            in.close();
+        }
     }
 
     /**
