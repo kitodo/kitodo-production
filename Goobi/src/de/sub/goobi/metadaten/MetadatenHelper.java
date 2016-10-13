@@ -28,8 +28,10 @@ package de.sub.goobi.metadaten;
  * exception statement from your version.
  */
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -229,15 +231,17 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 
-		/* anschliessend die Childs entfernen */
-		for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-			parent.removeChild(iter.next());
-		}
+		if (alleDS != null) {
+			/* anschliessend die Childs entfernen */
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.removeChild(iter.next());
+			}
 
-		/* anschliessend die Childliste korrigieren */
-		// parent.addChild(myStrukturelement);
-		for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-			parent.addChild(iter.next());
+			/* anschliessend die Childliste korrigieren */
+			// parent.addChild(myStrukturelement);
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.addChild(iter.next());
+			}
 		}
 	}
 
@@ -507,7 +511,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
 		try (
-			FileReader input = new FileReader(file);
+			InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
 			BufferedReader bufRead = new BufferedReader(input);
 		) {
 			char[] buffer = new char[200];
