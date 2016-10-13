@@ -122,7 +122,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	/**
 	 * getter for datentyp set to private for hibernate
 	 * 
-	 * for use in programm use getType instead
+	 * for use in program use getType instead
 	 * 
 	 * @return datentyp as integer
 	 */

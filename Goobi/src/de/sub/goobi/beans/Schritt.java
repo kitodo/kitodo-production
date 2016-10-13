@@ -148,7 +148,7 @@ public class Schritt implements Serializable {
 	/**
 	 * getter for editType set to private for hibernate
 	 * 
-	 * for use in programm use getEditTypeEnum instead
+	 * for use in program use getEditTypeEnum instead
 	 * 
 	 * @return editType as integer
 	 */
@@ -188,9 +188,9 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * getter for Bearbeitunsstatus set to private for hibernate
+	 * getter for bearbeitungsstatus (set to private for hibernate)
 	 * 
-	 * for use in programm use getBearbeitungsstatusEnum instead
+	 * for use in program use getBearbeitungsstatusEnum instead
 	 * 
 	 * @return bearbeitungsstatus as integer
 	 */
