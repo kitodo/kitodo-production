@@ -349,7 +349,7 @@ public class GoobiScript {
             ProzessDAO pdao = new ProzessDAO();
             List<Regelsatz> rulesets = rdao.search("from Regelsatz where titel='" + this.myParameters.get("ruleset") + "'");
             if (rulesets == null || rulesets.size() == 0) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Could not found ruleset: ", "ruleset");
+                Helper.setFehlerMeldung("goobiScriptfield", "Could not find ruleset: ", "ruleset");
                 return;
             }
             Regelsatz regelsatz = rulesets.get(0);
