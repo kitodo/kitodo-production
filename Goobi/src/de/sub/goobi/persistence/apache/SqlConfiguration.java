@@ -29,10 +29,11 @@ package de.sub.goobi.persistence.apache;
  */
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.helpers.Loader;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -45,7 +46,6 @@ public class SqlConfiguration {
 	private String dbPassword = "CHANGEIT";
 	private String dbURI = "jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true";
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
-					
 
 	private int dbPoolMinSize = 1;
 	private int dbPoolMaxSize = 20;
@@ -54,7 +54,13 @@ public class SqlConfiguration {
 
 	private SqlConfiguration() {
 		try {
-			File f = new File(Loader.getResource("hibernate.cfg.xml").getFile());
+			ClassLoader classLoader = getClass().getClassLoader();
+			URL fileResource = classLoader.getResource("hibernate.cfg.xml");
+			if (fileResource == null) {
+				throw new RuntimeException("Could not find file hibernate.cfg.xml through class loader!");
+			}
+
+			File f = new File(fileResource.toURI());
 			if(logger.isInfoEnabled()){
 				logger.info("loading configuration from " + f.getAbsolutePath());
 			}
@@ -63,7 +69,7 @@ public class SqlConfiguration {
 			sb.setFeature("http://xml.org/sax/features/validation", false);
 			sb.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			sb.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			
+
 			Document doc = sb.build(f);
 			logger.debug("could read configuration file");
 			Element root = doc.getRootElement();
@@ -114,6 +120,8 @@ public class SqlConfiguration {
 			logger.error(e1);
 		} catch (IOException e1) {
 			logger.error(e1);
+		} catch (URISyntaxException e) {
+			logger.error(e);
 		}
 	}
 
