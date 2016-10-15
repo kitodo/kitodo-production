@@ -37,7 +37,7 @@ import de.sub.goobi.helper.Helper;
 
 public class WebInterfaceConfig {
 
-	public static List<String> getCredencials(String requestIp, String requestPassword) {
+	public static List<String> getCredentials(String requestIp, String requestPassword) {
 		ArrayList<String> allowed = new ArrayList<String>();
 		try {
 			XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() +"goobi_webapi.xml");

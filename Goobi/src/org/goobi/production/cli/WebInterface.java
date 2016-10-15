@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -100,10 +101,12 @@ public class WebInterface extends HttpServlet {
 			}
 
 			// check if command is allowed for used IP
-			List<String> allowedCommandos = WebInterfaceConfig.getCredencials(ip, password);
-			if (!allowedCommandos.contains(command)) {
+			List<String> allowedCommands = WebInterfaceConfig.getCredentials(ip, password);
+			if (!allowedCommands.contains(command)) {
 				// error, no command found
-				generateAnswer(resp, 401, "command not allowed", "command " + command + " not allowed for your IP (" + ip + ")");
+				generateAnswer(resp, 401, "command not allowed",
+					"command " + StringEscapeUtils.escapeHtml(command) +
+					" not allowed for your IP (" + StringEscapeUtils.escapeHtml(ip) + ")");
 				return;
 			}
 
