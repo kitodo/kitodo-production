@@ -1737,6 +1737,8 @@ public class ProzessverwaltungForm extends BasisForm {
 				out.flush();
 				facesContext.responseComplete();
 
+			} catch (RuntimeException e) {
+				throw e;
 			} catch (Exception e) {
 			}
 		}
