@@ -349,26 +349,21 @@ public class MetadataPathSelector extends MetadataSelector {
 			if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
 				return children.get(0);
 			}
-		default:
-			if (index == null) {
-				throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
-						+ docStructType);
-			} else {
-				if (!(index instanceof Integer)) {
-					throw new RuntimeException("Could not resolve metadata path: In this regard, index \"" + index
-							+ "\" is not allowed.");
-				} else {
-					if (index.equals(Long.MAX_VALUE)) {
-						return children.get(children.size() - 1);
-					}
-					if (children.size() >= ((Integer) index).intValue()) {
-						return children.get(((Integer) index).intValue());
-					} else {
-						return null;
-					}
-				}
-			}
 		}
+
+		if (index == null) {
+			throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
+					+ docStructType);
+		} else if (!(index instanceof Integer)) {
+			throw new RuntimeException("Could not resolve metadata path: In this regard, index \""
+					+ index + "\" is not allowed.");
+		} else if (index.equals(Long.MAX_VALUE)) {
+			return children.get(children.size() - 1);
+		} else if (children.size() >= ((Integer) index).intValue()) {
+			return children.get(((Integer) index).intValue());
+		}
+
+		return null;
 	}
 
 	/**
