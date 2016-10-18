@@ -357,7 +357,7 @@ public class MetadataPathSelector extends MetadataSelector {
 		} else if (!(index instanceof Integer)) {
 			throw new RuntimeException("Could not resolve metadata path: In this regard, index \""
 					+ index + "\" is not allowed.");
-		} else if (index.equals(Long.MAX_VALUE)) {
+		} else if (index.equals(Integer.MAX_VALUE)) {
 			return children.get(children.size() - 1);
 		} else if (children.size() >= ((Integer) index).intValue()) {
 			return children.get(((Integer) index).intValue());
