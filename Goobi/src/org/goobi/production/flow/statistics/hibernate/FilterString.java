@@ -36,7 +36,6 @@ public class FilterString {
 	public static final String STEPOPEN = "stepopen:";
 	public static final String STEPDONE = "stepdone:";	
 	public static final String STEPDONETITLE = "stepdonetitle:";
-	public static final String STEPDONEUSER = "stepdoneuser:";
 	public static final String PROJECT = "project:";
 	public static final String TEMPLATE = "template:";
 	public static final String ID = "id:";
@@ -53,7 +52,6 @@ public class FilterString {
 	public static final String SCHRITTOFFEN = "schrittoffen:";
 	public static final String SCHRITTABGESCHLOSSEN = "schrittabgeschlossen:";	
 	public static final String ABGESCHLOSSENERSCHRITTTITEL = "abgeschlossenerschritttitel:";
-	public static final String ABGESCHLOSSENERSCHRITTBENUTZER = "abgeschlossenerschrittbenutzer:";
 	public static final String PROJEKT = "projekt:";
 	public static final String VORLAGE = "vorlage:";
 	public static final String PROZESS = "prozess:";
