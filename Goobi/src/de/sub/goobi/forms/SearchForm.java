@@ -207,23 +207,6 @@ public class SearchForm {
 		}
 	}
 
-	/**
-	 * Initialise drop down list of user list
-	 */
-	protected void initUserList() {
-		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Benutzer.class);
-		crit.add(Restrictions.isNull("isVisible"));
-		crit.add(Restrictions.eq("istAktiv", true));
-		crit.addOrder(Order.asc("nachname"));
-		crit.addOrder(Order.asc("vorname"));
-		try {
-			this.user.addAll(crit.list());
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of users could be empty!");
-		}
-	}
-
 	public SearchForm() {
 		initStepStatus();
 		initProjects();
@@ -231,7 +214,6 @@ public class SearchForm {
 		initTemplatePropertyTitles();
 		initProcessPropertyTitles();
 		initStepTitles();
-		initUserList();
 	}
 
 	public List<String> getProjects() {
