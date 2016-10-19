@@ -71,16 +71,6 @@ public class HelperForm {
 		return GoobiVersion.getBuildversion();
 	}
 
-	/**
-	 * @return returns dynamically resolved path for Version Logo
-	 */
-	public String getApplicationVersionLogo() {
-		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-		logo += ConfigMain.getParameter("ApplicationVersionLogo", "Goobi151Logo.jpg");
-		return logo;
-
-	}
-
 	public String getApplicationLogo() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
 		logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
