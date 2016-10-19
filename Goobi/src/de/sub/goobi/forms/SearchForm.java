@@ -77,10 +77,6 @@ public class SearchForm {
 	private String status = "";
 	private String stepname = "";
 
-	private List<Benutzer> user = new ArrayList<Benutzer>();
-	private String stepdonetitle = "";
-	private String stepdoneuser = "";
-
 	private String idin = "";
 	private String processTitle = ""; // proc:
 
@@ -264,22 +260,6 @@ public class SearchForm {
 		this.stepstatus = stepstatus;
 	}
 
-	public String getStepdonetitle() {
-		return this.stepdonetitle;
-	}
-
-	public void setStepdonetitle(String stepdonetitle) {
-		this.stepdonetitle = stepdonetitle;
-	}
-
-	public String getStepdoneuser() {
-		return this.stepdoneuser;
-	}
-
-	public void setStepdoneuser(String stepdoneuser) {
-		this.stepdoneuser = stepdoneuser;
-	}
-
 	public String getIdin() {
 		return this.idin;
 	}
@@ -368,14 +348,6 @@ public class SearchForm {
 		this.stepname = stepname;
 	}
 
-	public List<Benutzer> getUser() {
-		return this.user;
-	}
-
-	public void setUser(List<Benutzer> user) {
-		this.user = user;
-	}
-
 	public String filter() {
 		String search = "";
 		if (!this.processTitle.isEmpty()) {
@@ -412,9 +384,6 @@ public class SearchForm {
 
 		if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
 			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
-		}
-		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty() && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))) {
-			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
 		}
 		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
 				.get("ProzessverwaltungForm");
