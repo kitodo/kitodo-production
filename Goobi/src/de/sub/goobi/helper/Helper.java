@@ -69,7 +69,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
-import de.sub.goobi.persistence.HibernateSessionLong;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
 public class Helper implements Serializable, Observer {

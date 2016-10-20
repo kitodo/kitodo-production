@@ -29,7 +29,6 @@ package org.goobi.production.flow.statistics.hibernate;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,7 +39,6 @@ import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Paramete
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;

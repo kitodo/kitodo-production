@@ -37,7 +37,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
 import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.INameableTask;
 import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;

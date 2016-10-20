@@ -27,11 +27,9 @@ package de.sub.goobi.metadaten;
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
 
-import de.sub.goobi.config.ConfigMain;
 import ugh.dl.RomanNumeral;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 

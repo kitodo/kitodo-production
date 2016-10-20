@@ -31,7 +31,6 @@ import java.io.BufferedWriter;
 import org.goobi.io.SafeFile;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.URL;
 import java.util.TreeSet;
 
