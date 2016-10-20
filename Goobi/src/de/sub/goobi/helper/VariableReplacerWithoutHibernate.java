@@ -35,8 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -301,7 +301,7 @@ public class VariableReplacerWithoutHibernate {
 			case TOPSTRUCT:
 				if (resultTop == null) {
 					result = "";
-					if(logger.isEnabledFor(Priority.WARN)){
+					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
 					}
 				} else {
@@ -316,7 +316,7 @@ public class VariableReplacerWithoutHibernate {
 					result = resultTop;
 				} else {
 					result = "";
-					if(logger.isEnabledFor(Priority.WARN)){
+					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn("Can not replace variable for METS: " + metadata);
 					}
 				}

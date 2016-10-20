@@ -36,8 +36,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.goobi.production.constants.FileNames;
 import org.joda.time.Duration;
 
@@ -58,7 +58,7 @@ public class ConfigMain {
 					try {
 						initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 					} catch (ConfigurationException e) {
-						if(myLogger.isEnabledFor(Priority.WARN)){
+						if (myLogger.isEnabledFor(Level.WARN)) {
 							myLogger.warn("Loading of " + FileNames.CONFIG_FILE
 									+ " failed. Trying to start with empty configuration.", e);
 						}

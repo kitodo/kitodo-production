@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Regelsatz;
@@ -69,7 +69,7 @@ public class MySQLHelper {
 
 		for (int i = 0; i < MAX_TRIES_NEW_CONNECTION; i++) {
 
-			if(logger.isEnabledFor(Priority.WARN)){
+			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn("Connection failed: Trying to get new connection. Attempt:" + i);
 			}
 
