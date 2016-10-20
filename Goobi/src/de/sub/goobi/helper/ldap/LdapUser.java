@@ -29,6 +29,7 @@ package de.sub.goobi.helper.ldap;
  */
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -152,8 +153,8 @@ public class LdapUser implements DirContext {
 			 */
 
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
-			md.update(inPassword.getBytes());
-			String digestBase64 = new String(Base64.encodeBase64(md.digest()));
+			md.update(inPassword.getBytes(StandardCharsets.UTF_8));
+			String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 		}
 	}
