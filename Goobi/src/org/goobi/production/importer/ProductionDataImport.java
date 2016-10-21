@@ -287,7 +287,6 @@ public class ProductionDataImport {
 	private void generateWerkProperty(Session session, Werkstueck w, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Werkstueckeigenschaft property = new Werkstueckeigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setWerkstueck(w);
@@ -302,7 +301,6 @@ public class ProductionDataImport {
 	private void generateVorlageProperty(Session session, Vorlage s, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Vorlageeigenschaft property = new Vorlageeigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setVorlage(s);
@@ -317,7 +315,6 @@ public class ProductionDataImport {
 	private void generateProzessProperty(Session session, Prozess s, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Prozesseigenschaft property = new Prozesseigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setProzess(s);
