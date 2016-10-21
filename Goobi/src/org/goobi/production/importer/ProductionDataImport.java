@@ -552,14 +552,13 @@ public class ProductionDataImport {
 		List<Prozesseigenschaft> eig = p.getEigenschaftenList();
 		if (p.getProjekt().getTitel().equals("DigiWunschBuch")) {
 			boolean sponsor = false;
-			if (eig != null) {
 
-				for (Prozesseigenschaft pe : eig) {
-					if (pe.getTitel().contains("Besteller") && (pe.getWert() != null)) {
-						sponsor = true;
-					}
+			for (Prozesseigenschaft pe : eig) {
+				if (pe.getTitel().contains("Besteller") && (pe.getWert() != null)) {
+					sponsor = true;
 				}
 			}
+
 			if (!sponsor) {
 				// SponsorNaming
 				generateProzessProperty(session, p, "Patennennung", String.valueOf(pd.getPatennennung()), PropertyType.Integer, 0, false);
