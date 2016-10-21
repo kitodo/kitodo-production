@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.encryption;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 /*
@@ -75,7 +76,7 @@ public class MD5
 
         try {
             md = MessageDigest.getInstance("MD5");   // getting a 'MD5-Instance'
-            encryptMsg = md.digest(text.getBytes()); // solving the MD5-Hash
+            encryptMsg = md.digest(text.getBytes(StandardCharsets.UTF_8)); // solving the MD5-Hash
         } catch (NoSuchAlgorithmException e) {
         	throw new RuntimeException(e.getMessage(), e);
         }

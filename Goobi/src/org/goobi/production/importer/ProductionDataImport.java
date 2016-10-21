@@ -893,7 +893,7 @@ public class ProductionDataImport {
 		XStream xstream = new XStream();
 		try {
 			xstream.alias("ProductionData", ProductionData.class);
-			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(new FileInputStream(filename))));
+			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8)));
 		} catch (FileNotFoundException e) {
 			logger.debug(e);
 		}

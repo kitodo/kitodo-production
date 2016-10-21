@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -466,8 +467,8 @@ public class Ldap {
 				 * -------------------------------- Encryption of password and Base64-Encoding --------------------------------
 				 */
 				MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
-				md.update(inNewPassword.getBytes());
-				String digestBase64 = new String(Base64.encodeBase64(md.digest()));
+				md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
+				String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 				ModificationItem[] mods = new ModificationItem[4];
 
 				/*

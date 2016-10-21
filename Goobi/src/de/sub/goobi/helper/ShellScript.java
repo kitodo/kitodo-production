@@ -207,7 +207,7 @@ public class ShellScript {
 		LinkedList<String> result = new LinkedList<String>();
 		Scanner inputLines = null;
 		try {
-			inputLines = new Scanner(myInputStream);
+			inputLines = new Scanner(myInputStream, "UTF-8");
 			while (inputLines.hasNextLine()) {
 				String myLine = inputLines.nextLine();
 				result.add(myLine);
