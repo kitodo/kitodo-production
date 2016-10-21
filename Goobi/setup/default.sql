@@ -83,3 +83,62 @@ INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) V
 INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) VALUES
  (6,6);
 /*!40000 ALTER TABLE `benutzergruppenmitgliedschaft` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `metadatenkonfigurationen` DISABLE KEYS */;
+INSERT INTO `metadatenkonfigurationen` (`MetadatenKonfigurationID`, `Titel`, `Datei`, `orderMetadataByRuleset`) VALUES
+(1, 'SLUB', 'slub.xml', b'0');
+/*!40000 ALTER TABLE `metadatenkonfigurationen` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `dockets` DISABLE KEYS */;
+INSERT INTO `dockets` (`docketID`, `name`, `file`) VALUES
+(1, 'default', 'docket.xsl');
+/*!40000 ALTER TABLE `dockets` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `projekte` DISABLE KEYS */;
+INSERT INTO `projekte` (`ProjekteID`, `Titel`, `useDmsImport`, `dmsImportTimeOut`, `dmsImportRootPath`, `dmsImportImagesPath`, `dmsImportSuccessPath`, `dmsImportErrorPath`, `dmsImportCreateProcessFolder`, `fileFormatInternal`, `fileFormatDmsExport`, `metsRightsOwner`, `metsRightsOwnerLogo`, `metsRightsOwnerSite`, `metsDigiprovReference`, `metsDigiprovPresentation`, `metsDigiprovReferenceAnchor`, `metsDigiprovPresentationAnchor`, `metsPointerPath`, `metsPointerPathAnchor`, `metsPurl`, `metsContentIDs`, `metsRightsOwnerMail`, `startDate`, `endDate`, `numberOfPages`, `numberOfVolumes`, `projectIsArchived`) VALUES
+(1, 'Example Project', b'1', 3600000, '/usr/local/goobi/hotfolder/', '/usr/local/goobi/hotfolder/', '/usr/local/goobi/success/', '/usr/local/goobi/error_mets/', b'0', 'Mets', 'Mets', 'Digital Library Kitodo', 'http://www.kitodo.org/fileadmin/groups/kitodo/Logo/kitodo_logo_rgb.png', 'http://www.kitodo.org', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml', 'http://www.kitodo.org/content/$(meta.firstchild.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml ', 'http://www.kitodo.org/resolver?id=$(meta.CatalogIDDigital)', '', 'info@kitodo.org', '2016-01-01 00:00:00', '2019-12-31 00:00:00', 0, 0, b'0');
+/*!40000 ALTER TABLE `projekte` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `projektbenutzer` DISABLE KEYS */;
+INSERT INTO `projektbenutzer` (`BenutzerID`, `ProjekteID`) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(5, 1),
+(6, 1);
+/*!40000 ALTER TABLE `projektbenutzer` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `projectfilegroups` DISABLE KEYS */;
+INSERT INTO `projectfilegroups` (`ProjectFileGroupID`, `name`, `path`, `mimetype`, `suffix`, `ProjekteID`, `folder`, `previewImage`) VALUES
+(1, 'MAX', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/max/', 'image/jpeg', 'jpg', 1, '', 0),
+(2, 'DEFAULT', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/default/', 'image/jpeg', 'jpg', 1, '', 0),
+(3, 'THUMBS', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/thumbs/', 'image/jpeg', 'jpg', 1, '', 0),
+(4, 'FULLTEXT', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/ocr/alto/', 'text/xml', 'xml', 1, '', 0),
+(5, 'DOWNLOAD', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/pdf/', 'application/pdf', 'pdf', 1, '', 0);
+/*!40000 ALTER TABLE `projectfilegroups` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `prozesse` DISABLE KEYS */;
+INSERT INTO `prozesse` (`ProzesseID`, `Titel`, `ausgabename`, `IstTemplate`, `swappedOut`, `inAuswahllisteAnzeigen`, `sortHelperStatus`, `sortHelperImages`, `sortHelperArticles`, `erstellungsdatum`, `ProjekteID`, `MetadatenKonfigurationID`, `sortHelperDocstructs`, `sortHelperMetadata`, `wikifield`, `docketID`) VALUES
+(1, 'Example_Workflow', NULL, b'1', b'0', b'0', '000014086', 0, 0, '2016-10-01 16:49:48', 1, 1, 0, 0, NULL, 1);
+/*!40000 ALTER TABLE `prozesse` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `schritte` DISABLE KEYS */;
+INSERT INTO `schritte` (`SchritteID`, `Titel`, `Prioritaet`, `Reihenfolge`, `Bearbeitungsstatus`, `BearbeitungsZeitpunkt`, `BearbeitungsBeginn`, `BearbeitungsEnde`, `homeverzeichnisNutzen`, `typMetadaten`, `typAutomatisch`, `typImportFileUpload`, `typExportRus`, `typImagesLesen`, `typImagesSchreiben`, `typExportDMS`, `typBeimAnnehmenModul`, `typBeimAnnehmenAbschliessen`, `typBeimAnnehmenModulUndAbschliessen`, `typAutomatischScriptpfad`, `typBeimAbschliessenVerifizieren`, `typModulName`, `BearbeitungsBenutzerID`, `ProzesseID`, `edittype`, `scriptName1`, `scriptName2`, `typAutomatischScriptpfad2`, `scriptName3`, `typAutomatischScriptpfad3`, `scriptName4`, `typAutomatischScriptpfad4`, `scriptName5`, `typAutomatischScriptpfad5`, `typScriptStep`, `batchStep`, `stepPlugin`, `validationPlugin`) VALUES
+(3, 'Structure and metadata', 0, 3, 0, '2016-02-03 16:49:48', NULL, NULL, 0, b'1', b'0', b'0', b'0', b'0', b'0', b'0', b'1', b'0', b'0', '', b'0', NULL, 1, 1, 4, '', '', '', '', '', '', '', '', '', b'0', b'0', '', ''),
+(1, 'Scanning', 0, 1, 1, '2016-03-02 11:38:28', NULL, NULL, 0, b'0', b'0', b'0', b'0', b'1', b'1', b'0', b'0', b'0', b'0', '', b'0', NULL, 1, 1, 4, '', '', '', '', '', '', '', '', '', b'0', b'0', '', ''),
+(2, 'QC', 0, 2, 0, '2016-02-03 16:49:48', NULL, NULL, 0, b'0', b'0', b'0', b'0', b'1', b'0', b'0', b'0', b'0', b'0', '', b'0', NULL, 1, 1, 4, '', '', '', '', '', '', '', '', '', b'0', b'0', '', ''),
+(4, 'Export DMS', 0, 4, 0, '2016-02-03 16:49:48', NULL, NULL, 0, b'0', b'0', b'0', b'0', b'0', b'0', b'1', b'0', b'0', b'0', '', b'0', NULL, 1, 1, 4, '', '', '', '', '', '', '', '', '', b'0', b'0', '', '');
+/*!40000 ALTER TABLE `schritte` ENABLE KEYS */;
+
+/*!40000 ALTER TABLE `schritteberechtigtegruppen` DISABLE KEYS */;
+INSERT INTO `schritteberechtigtegruppen` (`BenutzerGruppenID`, `schritteID`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(2, 1),
+(3, 2),
+(5, 3),
+(6, 4);
+/*!40000 ALTER TABLE `schritteberechtigtegruppen` ENABLE KEYS */;
