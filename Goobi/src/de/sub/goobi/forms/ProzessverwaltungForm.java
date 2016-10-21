@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -947,7 +947,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void debug(String message, List<Schritt> bla) {
-		if(!logger.isEnabledFor(Priority.WARN)) return;
+		if (!logger.isEnabledFor(Level.WARN)) return;
 		for (Schritt s : bla) {
 			logger.warn(message + " " + s.getTitel() + "   " + s.getReihenfolge());
 		}
@@ -1839,7 +1839,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			this.myProzess = this.dao.get(this.myProzess.getId());
 		} catch (Exception e) {
-			if(logger.isEnabledFor(Priority.WARN)){
+			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
 			}
 		}

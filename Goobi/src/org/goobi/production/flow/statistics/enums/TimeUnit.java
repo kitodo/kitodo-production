@@ -50,11 +50,7 @@ public enum TimeUnit {
 	weeks("2", "weeks", "week", "week", true, 5.0),
 	months("3", "months", "month", "month", true, 21.3 ),
 	quarters("4", "quarters","quarter", "quarter", true, 64.0 ),
-	years("5", "years", "year", "year", true, 256.0),
-	simpleSum("6", "alltime", null, null, false, -1.0);
-
-
-
+	years("5", "years", "year", "year", true, 256.0);
 
 	private String id;
 	private String title;
@@ -185,7 +181,6 @@ public enum TimeUnit {
 
 		case days:
 		case months:
-		case simpleSum:
 		case weeks:
 		case years:
 			return new DateTime(inDate).toString(getFormatter());
@@ -211,9 +206,6 @@ public enum TimeUnit {
 
 		case quarters:
 			return new DateTime(inDate).plusMonths(3).toDate();
-
-		case simpleSum:
-			return inDate;
 
 		case weeks:
 			return new DateTime(inDate).plusWeeks(1).toDate();

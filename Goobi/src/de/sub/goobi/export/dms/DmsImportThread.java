@@ -31,13 +31,11 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import org.goobi.io.SafeFile;
-import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 public class DmsImportThread extends Thread {
 	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);

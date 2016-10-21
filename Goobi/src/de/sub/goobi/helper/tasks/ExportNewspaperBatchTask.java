@@ -45,8 +45,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
 import org.joda.time.LocalDate;
@@ -638,7 +638,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 			try {
 				rank = Integer.valueOf(identifier);
 			} catch (NumberFormatException e) {
-				if (logger.isEnabledFor(Priority.WARN)) {
+				if (logger.isEnabledFor(Level.WARN)) {
 					logger.warn("Cannot place " + type + " \"" + identifier
 							+ "\" correctly because its sorting criterion is not numeric.");
 				}
@@ -684,7 +684,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 								return result;
 							}
 						} catch (NumberFormatException e) {
-							if (logger.isEnabledFor(Priority.WARN)) {
+							if (logger.isEnabledFor(Level.WARN)) {
 								String typeName = aforeborn.getType() != null && aforeborn.getType().getName() != null
 										? aforeborn.getType().getName() : "cross-reference";
 								logger.warn("Cannot determine position to place " + typeName

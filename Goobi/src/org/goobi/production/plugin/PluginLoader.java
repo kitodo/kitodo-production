@@ -50,8 +50,9 @@ import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -200,12 +201,12 @@ public class PluginLoader {
 				plugin.configure(getPluginConfiguration());
 				result.add(plugin);
 			} catch (NoSuchMethodException e) {
-				if(logger.isEnabledFor(Priority.WARN)){
+				if (logger.isEnabledFor(Level.WARN)) {
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}
 			} catch (SecurityException e) {
-				if(logger.isEnabledFor(Priority.WARN)){
+				if (logger.isEnabledFor(Level.WARN)) {
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}

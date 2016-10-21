@@ -35,8 +35,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
@@ -312,7 +313,7 @@ public class VariableReplacer {
 			case TOPSTRUCT:
 				if (resultTop == null) {
 					result = "";
-					if(logger.isEnabledFor(Priority.WARN)){
+					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
 					}
 				} else {
@@ -327,7 +328,7 @@ public class VariableReplacer {
 					result = resultTop;
 				} else {
 					result = "";
-					if(logger.isEnabledFor(Priority.WARN)){
+					if (logger.isEnabledFor(Level.WARN)) {
 						logger.warn("Can not replace variable for METS: " + metadata);
 					}
 				}

@@ -39,7 +39,6 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.sharkysoft.util.NotImplementedException;

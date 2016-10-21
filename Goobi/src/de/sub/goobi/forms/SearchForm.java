@@ -27,7 +27,6 @@ package de.sub.goobi.forms;
  * exception statement from your version.
  */
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
