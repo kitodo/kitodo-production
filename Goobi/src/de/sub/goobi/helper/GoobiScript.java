@@ -153,7 +153,7 @@ public class GoobiScript {
         } else if (this.myParameters.get("action").equals("exportDms")) {
             exportDms(inProzesse, this.myParameters.get("exportImages"), true);
         } else if (this.myParameters.get("action").equals("export")) {
-            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.getBoolean(this.myParameters.get("exportOcr")));
+            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.valueOf(this.myParameters.get("exportOcr")));
         } else if (this.myParameters.get("action").equals("doit")) {
             exportDms(inProzesse, "false", false);
         } else if (this.myParameters.get("action").equals("doit2")) {
