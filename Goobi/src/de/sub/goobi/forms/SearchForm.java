@@ -32,6 +32,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import de.sub.goobi.config.ConfigMain;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
@@ -431,7 +432,10 @@ public class SearchForm {
 		if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
 			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
 		}
-		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty() && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))) {
+		if (!this.stepdonetitle.isEmpty()
+				&& !this.stepdoneuser.isEmpty()
+				&& !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
+				&& ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
 			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
 		}
 		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()

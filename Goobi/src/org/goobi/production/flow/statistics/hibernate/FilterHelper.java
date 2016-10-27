@@ -653,8 +653,9 @@ public class FilterHelper {
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, false, filterPrefix);
 
-			} else if (tokLowerCase.startsWith(FilterString.STEPDONEUSER)
-					|| tokLowerCase.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER)) {
+			} else if ((tokLowerCase.startsWith(FilterString.STEPDONEUSER)
+					|| tokLowerCase.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER))
+					&& ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
 				if (conjUsers == null) {
 					conjUsers = Restrictions.conjunction();
 				}

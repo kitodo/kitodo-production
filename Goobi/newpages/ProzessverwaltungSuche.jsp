@@ -164,8 +164,8 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%-- user --%>
-													<h:outputText value="#{msgs.stepDoneByUser}: "/>
-													<h:panelGroup>
+													<h:outputText value="#{msgs.stepDoneByUser}: " rendered="#{HelperForm.userStepDoneSearchEnabled}"/>
+													<h:panelGroup rendered="#{HelperForm.userStepDoneSearchEnabled}">
 														<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
 															<si:selectItems value="#{SearchForm.user}"
 																var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
