@@ -373,20 +373,6 @@ public class FilterHelper {
 	}
 
 	/**
-	 * Filter processes for done steps by user
-	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
-	protected static void filterStepDoneUser(Conjunction con, String tok) {
-		/*
-		 * filtering by a certain done step, which the current user finished
-		 */
-		String login = tok.substring(tok.indexOf(":") + 1);
-		con.add(Restrictions.eq("user.login", login));
-	}
-
-	/**
 	 * Filter processes by project
 	 *
 	 * @param tok
@@ -557,7 +543,6 @@ public class FilterHelper {
 		Conjunction conjSteps = null;
 		Conjunction conjProcesses = null;
 		Conjunction conjTemplates = null;
-		Conjunction conjUsers = null;
 		Conjunction conjProcessProperties = null;
 		Conjunction conjBatches = null;
 
@@ -653,12 +638,6 @@ public class FilterHelper {
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, false, filterPrefix);
 
-			} else if (tokLowerCase.startsWith(FilterString.STEPDONEUSER)
-					|| tokLowerCase.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER)) {
-				if (conjUsers == null) {
-					conjUsers = Restrictions.conjunction();
-				}
-				FilterHelper.filterStepDoneUser(conjUsers, tok);
 			} else if (tokLowerCase.startsWith(FilterString.STEPAUTOMATIC) || tokLowerCase.startsWith(FilterString.SCHRITTAUTOMATISCH)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
@@ -855,15 +834,7 @@ public class FilterHelper {
 				inCrit.add(conjWorkPiece);
 			}
 		}
-		if (conjUsers != null) {
-			if (flagSteps) {
-				critProcess.createCriteria("bearbeitungsbenutzer", "user");
-				critProcess.add(conjUsers);
-			} else {
-				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
-				inCrit.add(conjUsers);
-			}
-		}
+
 		if (conjBatches != null) {
 			if (flagSteps) {
 				critProcess.createCriteria("batches", "bat");

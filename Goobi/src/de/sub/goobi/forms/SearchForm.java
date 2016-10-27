@@ -77,10 +77,6 @@ public class SearchForm {
 	private String status = "";
 	private String stepname = "";
 
-	private List<Benutzer> user = new ArrayList<Benutzer>();
-	private String stepdonetitle = "";
-	private String stepdoneuser = "";
-
 	private String idin = "";
 	private String processTitle = ""; // proc:
 
@@ -207,23 +203,6 @@ public class SearchForm {
 		}
 	}
 
-	/**
-	 * Initialise drop down list of user list
-	 */
-	protected void initUserList() {
-		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Benutzer.class);
-		crit.add(Restrictions.isNull("isVisible"));
-		crit.add(Restrictions.eq("istAktiv", true));
-		crit.addOrder(Order.asc("nachname"));
-		crit.addOrder(Order.asc("vorname"));
-		try {
-			this.user.addAll(crit.list());
-		} catch (RuntimeException rte) {
-			logger.warn("Catched RuntimeException. List of users could be empty!");
-		}
-	}
-
 	public SearchForm() {
 		initStepStatus();
 		initProjects();
@@ -231,7 +210,6 @@ public class SearchForm {
 		initTemplatePropertyTitles();
 		initProcessPropertyTitles();
 		initStepTitles();
-		initUserList();
 	}
 
 	public List<String> getProjects() {
@@ -280,22 +258,6 @@ public class SearchForm {
 
 	public void setStepstatus(List<StepStatus> stepstatus) {
 		this.stepstatus = stepstatus;
-	}
-
-	public String getStepdonetitle() {
-		return this.stepdonetitle;
-	}
-
-	public void setStepdonetitle(String stepdonetitle) {
-		this.stepdonetitle = stepdonetitle;
-	}
-
-	public String getStepdoneuser() {
-		return this.stepdoneuser;
-	}
-
-	public void setStepdoneuser(String stepdoneuser) {
-		this.stepdoneuser = stepdoneuser;
 	}
 
 	public String getIdin() {
@@ -386,14 +348,6 @@ public class SearchForm {
 		this.stepname = stepname;
 	}
 
-	public List<Benutzer> getUser() {
-		return this.user;
-	}
-
-	public void setUser(List<Benutzer> user) {
-		this.user = user;
-	}
-
 	public String filter() {
 		String search = "";
 		if (!this.processTitle.isEmpty()) {
@@ -430,9 +384,6 @@ public class SearchForm {
 
 		if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
 			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
-		}
-		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty() && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))) {
-			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
 		}
 		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
 				.get("ProzessverwaltungForm");

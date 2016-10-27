@@ -163,18 +163,6 @@
 															</h:selectOneMenu>
 														</h:panelGroup>
 													</h:panelGroup>
-													<%-- user --%>
-													<h:outputText value="#{msgs.stepDoneByUser}: "/>
-													<h:panelGroup>
-														<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
-															<si:selectItems value="#{SearchForm.user}"
-																var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
-														</h:selectOneMenu>
-														<h:selectOneMenu value="#{SearchForm.stepdonetitle}">
-														<si:selectItems value="#{SearchForm.stepTitles}"
-															var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}" />
-														</h:selectOneMenu>
-													</h:panelGroup>
 
 													<%-- process id --%>
 													<h:outputText value="#{msgs.id}: " />
