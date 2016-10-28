@@ -138,4 +138,11 @@ public class Parameters {
 	 * given they have the same meta data type addable. Defaults to false.
 	 */
 	public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
+
+	/**
+	 * Boolean. Set to false to disable automatic pagination changes in the
+	 * metadata editor. If false, pagination must be updated manually by
+	 * clicking the link “Read in pagination from images”.
+	 */
+	public static final String WITH_AUTOMATIC_PAGINATION = "MetsEditorWithAutomaticPagination";
 }
