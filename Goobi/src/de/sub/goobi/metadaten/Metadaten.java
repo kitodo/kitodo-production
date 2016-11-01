@@ -695,8 +695,8 @@ public class Metadaten {
 
 		BildErmitteln(0);
 		retrieveAllImages();
-		if (this.mydocument.getPhysicalDocStruct() == null || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
-				|| this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0) {
+		if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (this.mydocument.getPhysicalDocStruct() == null || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
+				|| this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
 			try {
 				createPagination();
 			} catch (TypeNotAllowedForParentException e) {
@@ -1630,7 +1630,7 @@ public class Metadaten {
 	        myLogger.trace("dataList");
 	        List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	        myLogger.trace("dataList 2");
-	        if (dataList == null || dataList.isEmpty()) {
+	        if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (dataList == null || dataList.isEmpty())) {
 	            try {
 	                createPagination();
 	                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
