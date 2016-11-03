@@ -96,7 +96,7 @@ INSERT INTO `dockets` (`docketID`, `name`, `file`) VALUES
 
 /*!40000 ALTER TABLE `projekte` DISABLE KEYS */;
 INSERT INTO `projekte` (`ProjekteID`, `Titel`, `useDmsImport`, `dmsImportTimeOut`, `dmsImportRootPath`, `dmsImportImagesPath`, `dmsImportSuccessPath`, `dmsImportErrorPath`, `dmsImportCreateProcessFolder`, `fileFormatInternal`, `fileFormatDmsExport`, `metsRightsOwner`, `metsRightsOwnerLogo`, `metsRightsOwnerSite`, `metsDigiprovReference`, `metsDigiprovPresentation`, `metsDigiprovReferenceAnchor`, `metsDigiprovPresentationAnchor`, `metsPointerPath`, `metsPointerPathAnchor`, `metsPurl`, `metsContentIDs`, `metsRightsOwnerMail`, `startDate`, `endDate`, `numberOfPages`, `numberOfVolumes`, `projectIsArchived`) VALUES
-(1, 'Example Project', b'1', 3600000, '/usr/local/kitodo/hotfolder/', '/usr/local/kitodo/hotfolder/', '/usr/local/kitodo/success/', '/usr/local/kitodo/error_mets/', b'0', 'Mets', 'Mets', 'Digital Library Kitodo', 'http://www.kitodo.org/fileadmin/groups/kitodo/Logo/kitodo_logo_rgb.png', 'http://www.kitodo.org', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml', 'http://www.kitodo.org/content/$(meta.firstchild.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml ', 'http://www.kitodo.org/resolver?id=$(meta.CatalogIDDigital)', '', 'info@kitodo.org', '2016-01-01 00:00:00', '2019-12-31 00:00:00', 0, 0, b'0');
+(1, 'Example Project', b'1', 3600000, '/usr/local/kitodo/hotfolder/', '/usr/local/kitodo/hotfolder/', '/usr/local/kitodo/success/', '/usr/local/kitodo/error_mets/', b'0', 'Mets', 'Mets', 'Digital Library Kitodo', 'http://www.example.com/fileadmin/groups/kitodo/Logo/kitodo_logo_rgb.png', 'http://www.example.com', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.example.com/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN=$(meta.topstruct.CatalogIDDigital)', 'http://www.example.com/resolver?id=$(meta.topstruct.CatalogIDDigital)', 'http://www.example.com/content/$(meta.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml', 'http://www.example.com/content/$(meta.firstchild.CatalogIDDigital)/$(meta.topstruct.CatalogIDDigital).xml ', 'http://www.example.com/resolver?id=$(meta.CatalogIDDigital)', '', 'info@kitodo.org', '2016-01-01 00:00:00', '2019-12-31 00:00:00', 0, 0, b'0');
 /*!40000 ALTER TABLE `projekte` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `projektbenutzer` DISABLE KEYS */;
@@ -111,11 +111,11 @@ INSERT INTO `projektbenutzer` (`BenutzerID`, `ProjekteID`) VALUES
 
 /*!40000 ALTER TABLE `projectfilegroups` DISABLE KEYS */;
 INSERT INTO `projectfilegroups` (`ProjectFileGroupID`, `name`, `path`, `mimetype`, `suffix`, `ProjekteID`, `folder`, `previewImage`) VALUES
-(1, 'MAX', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/max/', 'image/jpeg', 'jpg', 1, '', 0),
-(2, 'DEFAULT', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/default/', 'image/jpeg', 'jpg', 1, '', 0),
-(3, 'THUMBS', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/jpgs/thumbs/', 'image/jpeg', 'jpg', 1, '', 0),
-(4, 'FULLTEXT', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/ocr/alto/', 'text/xml', 'xml', 1, '', 0),
-(5, 'DOWNLOAD', 'http://www.kitodo.org/content/$(meta.CatalogIDDigital)/pdf/', 'application/pdf', 'pdf', 1, '', 0);
+(1, 'MAX', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/', 'image/jpeg', 'jpg', 1, '', 0),
+(2, 'DEFAULT', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/', 'image/jpeg', 'jpg', 1, '', 0),
+(3, 'THUMBS', 'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/', 'image/jpeg', 'jpg', 1, '', 0),
+(4, 'FULLTEXT', 'http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/', 'text/xml', 'xml', 1, '', 0),
+(5, 'DOWNLOAD', 'http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/', 'application/pdf', 'pdf', 1, '', 0);
 /*!40000 ALTER TABLE `projectfilegroups` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `prozesse` DISABLE KEYS */;
