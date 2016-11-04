@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -455,12 +454,8 @@ public class ProzesskopieForm {
 
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
-
-			System.out.println("[ProzessKopieForm/getAllOpacCatalogues]: Query = " + query);
 			
-			System.out.println("[ProzessKopieForm/OpacAuswerten]: calling 'find' method of plugin with query");
 			hitlist = importCatalogue.find(query, timeout);
-			System.out.println("[ProzessKopieForm/OpacAuswerten]: calling 'getNumberOfHits' method of plugin");
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 			
 			System.out.println(" >>> Number of hits: " + hits);
@@ -539,22 +534,14 @@ public class ProzesskopieForm {
 	 * @throws PreferencesException
 	 */
 	protected void importHit(Hit hit) throws PreferencesException {
-		System.out.println("[ProzesskopieForm/importHit]: calling hit.getFileFormat...");
 		myRdf = hit.getFileformat();
 		System.out.println("[ProzesskopieForm/importHit]: ...found fileFormat '" + myRdf + "'");
-		
-		System.out.println("[ProzesskopieForm/importHit]: calling hit.getDocType...");
 		docType = hit.getDocType();
 		System.out.println("[ProzesskopieForm/importHit]: ...found docType '" + docType + "'");
-		
-		System.out.println("[ProzesskopieForm/importHit]: calling fillFieldsFromMetadataFile...");
 		fillFieldsFromMetadataFile();
-		
-		System.out.println("[ProzesskopieForm/importHit]: calling applyCopyingRules...");
 		applyCopyingRules(new CopierData(myRdf, prozessVorlage));
-		
-		System.out.println("[ProzesskopieForm/importHit]: calling createAtstsl with title '" + hit.getTitle() +"' and authors '"+ hit.getAuthors() +"'");
 		atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
+		System.out.println("[ProzesskopieForm/importHit]: created Atstsl: '" + atstsl +"'");
 	}
 
 	/**
@@ -609,15 +596,15 @@ public class ProzesskopieForm {
 						myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
 					}
 					
-					System.out.println("    Docstruct: " + myTempStruct);
-					System.out.println("      id: " + myTempStruct.getIdentifier());
-					System.out.println("      all metadata: " + myTempStruct.getAllMetadata());
-					if(!Objects.equals(myTempStruct.getAllMetadata(), null)){
-						for(Metadata _md : myTempStruct.getAllMetadata()){
-							System.out.println("       - type: " + _md.getType().getName());
-							System.out.println("       - value: " + _md.getValue());	
-						}
-					}
+//					System.out.println("    Docstruct: " + myTempStruct);
+//					System.out.println("      id: " + myTempStruct.getIdentifier());
+//					System.out.println("      metadata:");
+//					System.out.println("      -----------");
+//					if(!Objects.equals(myTempStruct.getAllMetadata(), null)){
+//						for(Metadata _md : myTempStruct.getAllMetadata()){
+//							System.out.println("        - " + _md.getType().getName() + ": " + _md.getValue());
+//						}
+//					}
 					
 					/* welches Metadatum */
 					try {
@@ -639,21 +626,17 @@ public class ProzesskopieForm {
 							}
 							field.setWert(myautoren);
 						} else {
-							System.out.println("     processing metadata '" + field.getMetadata() + "'");
-															
 							/* bei normalen Feldern die Inhalte auswerten */
 							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
 									.getPreferences(), field.getMetadata());
-							System.out.println("      type: " + mdt.getName());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-							System.out.println("      md: " + md);
-							if (md != null) {
-								System.out.println("       Metadata for type '"+field.getMetadata()+"' found: '"+md.getValue()+"'!");
+							if (md != null && md.getValue() != null) {
+								System.out.println("       Metadata for type '"+field.getMetadata()+"' found: '"+md.getValue()+"' (class: " + md.getValue().getClass().getName() + ")!");
 								field.setWert(md.getValue());
 								md.setValue(field.getWert().replace("&amp;", "&"));
 							}
 							else{
-								System.err.println("!!! Metadata 'md' is null !!!");
+								System.err.println("       ! Metadata for type '"+field.getMetadata()+"' is NULL !");
 							}
 						}
 					} catch (UghHelperException e) {
@@ -664,22 +647,13 @@ public class ProzesskopieForm {
 						field.setWert(field.getWert().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
-				else{
-					System.err.println("    Skip field '"+field.getTitel()+"': ");
-					System.err.println("      - isUghbinding = " + field.isUghbinding());
-					System.err.println("      - getShowDependingOnDoctype = " + field.getShowDependingOnDoctype());
-				}
+//				else{
+//					System.err.println("    Skip field '"+field.getTitel()+"': ");
+//					System.err.println("      - isUghbinding = " + field.isUghbinding());
+//					System.err.println("      - getShowDependingOnDoctype = " + field.getShowDependingOnDoctype());
+//				}
 			}// end for
 		} // end if myrdf==null
-		else{
-			System.out.println("---------------------");
-			System.err.println("ERROR: myRDF is null!");
-			System.out.println("---------------------");
-		}
-	}
-
-	public void プリントエクスエムエル(Document xmlDom){
-		
 	}
 	
 	/**
@@ -1312,6 +1286,9 @@ public class ProzesskopieForm {
 	}
 
 	public void setDocType(String docType) {
+		System.out.println(" *********************************** ");
+		System.out.println(" Changing docType from '"+ this.docType + "' to '" + docType + "'");
+		System.out.println(" *********************************** ");
         if (this.docType.equals(docType)) {
             return;
         } else {
