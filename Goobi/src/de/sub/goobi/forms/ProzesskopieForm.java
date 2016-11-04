@@ -601,6 +601,7 @@ public class ProzesskopieForm {
 						try {
 							myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
 						} catch (RuntimeException e) {
+							System.err.println("RUNTIME EXCEPTION!!!");
 						}
 					}
 					if (field.getDocstruct().equals("boundbook")) {
@@ -639,29 +640,21 @@ public class ProzesskopieForm {
 							field.setWert(myautoren);
 						} else {
 							System.out.println("     processing metadata '" + field.getMetadata() + "'");
-							
-							if(field.getMetadata().equals("TitleDocMain")){
-								System.out.println("   TEST: set TitleDocMain to 'FOOBAR_TEST_TITLE'");
-								field.setWert("FOOBAR_TEST_TITLE");
+															
+							/* bei normalen Feldern die Inhalte auswerten */
+							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
+									.getPreferences(), field.getMetadata());
+							System.out.println("      type: " + mdt.getName());
+							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
+							System.out.println("      md: " + md);
+							if (md != null) {
+								System.out.println("       Metadata for type '"+field.getMetadata()+"' found: '"+md.getValue()+"'!");
+								field.setWert(md.getValue());
+								md.setValue(field.getWert().replace("&amp;", "&"));
 							}
 							else{
-								
-								/* bei normalen Feldern die Inhalte auswerten */
-								MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
-										.getPreferences(), field.getMetadata());
-								System.out.println("      type: " + mdt.getName());
-								Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-								System.out.println("      md: " + md);
-								if (md != null) {
-									System.out.println("       Metadata for type '"+field.getMetadata()+"' found: '"+md.getValue()+"'!");
-									field.setWert(md.getValue());
-									md.setValue(field.getWert().replace("&amp;", "&"));
-								}
-								else{
-									System.err.println("!!! Metadata 'md' is null !!!");
-								}
+								System.err.println("!!! Metadata 'md' is null !!!");
 							}
-							
 						}
 					} catch (UghHelperException e) {
 						myLogger.error(e);
