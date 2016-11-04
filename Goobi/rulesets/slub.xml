@@ -2163,10 +2163,12 @@
 		<metadata DefaultDisplay="true" num="1m">TitleDocMain</metadata>
 		<metadata num="1o">TitleDocMainShort</metadata>
 		<metadata DefaultDisplay="true" num="1m">CatalogIDDigital</metadata>
+		<metadata DefaultDisplay="true" num="1o">shelfmarksource</metadata>
 		<metadata num="1o">slub_ownerOrig</metadata>
 		<metadata num="1o">slub_ownerDigi</metadata>
 		<metadata num="1o">slub_licensor</metadata>
 		<metadata num="*">singleDigCollection</metadata>
+		<metadata num="1o">SizeSourcePrint</metadata>
 		<metadata num="1o">TSL_ATS</metadata>
 		<metadata num="*">slub_project</metadata>
 	</DocStrctType>
@@ -2583,6 +2585,7 @@
 		<metadata num="*">Translator</metadata>
 		<metadata num="*">IllustratorArtist</metadata>
 		<metadata num="*">Creator</metadata>
+		<metadata num="1o">PublicationDate</metadata>
 		<metadata num="1o">PublicationYear</metadata>
 		<metadata num="1o">PublicationYearSorting</metadata>
 		<metadata num="1o">slub_Provenience</metadata>
