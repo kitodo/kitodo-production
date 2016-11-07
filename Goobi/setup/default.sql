@@ -86,7 +86,8 @@ INSERT INTO `benutzergruppenmitgliedschaft` (`BenutzerID`,`BenutzerGruppenID`) V
 
 /*!40000 ALTER TABLE `metadatenkonfigurationen` DISABLE KEYS */;
 INSERT INTO `metadatenkonfigurationen` (`MetadatenKonfigurationID`, `Titel`, `Datei`, `orderMetadataByRuleset`) VALUES
-(1, 'SLUB', 'slub.xml', b'0');
+(1, 'SLUBDD', 'ruleset_slubdd.xml', b'0');
+(2, 'SUBHH', 'ruleset_subhh.xml', b'0');
 /*!40000 ALTER TABLE `metadatenkonfigurationen` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `dockets` DISABLE KEYS */;
