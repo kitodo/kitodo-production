@@ -286,4 +286,14 @@ public class HelperForm {
 		
 		return request.getHeader("User-Agent"); 
 	}
+
+	/**
+	 * Returning value of configuration parameter withUserStepDoneSearch.
+	 * Used for enabling/disabling search for done steps by user.
+	 *
+	 * @return boolean
+	 */
+	public boolean getUserStepDoneSearchEnabled() {
+		return ConfigMain.getBooleanParameter("withUserStepDoneSearch");
+	}
 }
