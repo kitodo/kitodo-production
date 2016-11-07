@@ -185,7 +185,7 @@ public class ModsPlugin implements Plugin {
 	/**
 	 * Path of the XSL transformation file.
 	 */
-	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH = "/usr/local/goobi/rulesets/mods2goobi.xsl";
+	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH = "../goobi/xslt/mods2goobi.xsl";
 
 	/**
 	 * Path of the output file for the XSL transformation.

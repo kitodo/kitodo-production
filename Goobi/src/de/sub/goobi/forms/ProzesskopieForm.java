@@ -610,11 +610,6 @@ public class ProzesskopieForm {
 						field.setWert(field.getWert().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
-				else{
-					System.err.println("    Skip field '"+field.getTitel()+"': ");
-					System.err.println("      - isUghbinding = " + field.isUghbinding());
-					System.err.println("      - getShowDependingOnDoctype = " + field.getShowDependingOnDoctype());
-				}
 			}// end for
 		} // end if myrdf==null
 	}
