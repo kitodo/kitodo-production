@@ -27,11 +27,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -254,8 +252,10 @@ public class ModsPlugin implements Plugin {
 				return null;
 			}
 		} catch (RuntimeException e) {
+			modsLogger.error("Error while querying library catalogue: " + e.getMessage());
 			throw e;
 		} catch (Exception e) {
+			modsLogger.error("Error while querying library catalogue: " + e.getMessage());
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
@@ -278,7 +278,7 @@ public class ModsPlugin implements Plugin {
 			placePath = XPath.newInstance("//goobi:metadata[@name='PlaceOfPublication']");
 			shelfmarksourcePath = XPath.newInstance("//goobi:metadata[@name='shelfmarksource']");
 		} catch (JDOMException e) {
-			e.printStackTrace();
+			modsLogger.error("Error while initializing XPath variables: " + e.getMessage());
 		}
 	}
 
@@ -352,11 +352,15 @@ public class ModsPlugin implements Plugin {
 		Fileformat ff;
 
 		if(resultXML == null ){
-			throw new IllegalStateException("Error: result empty!");
+			String message = "Error: result empty!";
+			modsLogger.error(message);
+			throw new IllegalStateException(message);
 		}
 
 		else if(!xpathsDefined()){
-			throw new IllegalStateException("Error: XPath variables not defined!");
+			String message = "Error: XPath variables not defined!";
+			modsLogger.error(message);
+			throw new IllegalStateException(message);
 		}
 
 		else{
@@ -448,7 +452,7 @@ public class ModsPlugin implements Plugin {
 				result.put("type", docTypes.getFirst());
 
 			} catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException | IOException e) {
-				e.printStackTrace();
+				modsLogger.error("Error while retrieving document: " + e.getMessage());
 			}
 		}
 		return result;
@@ -530,7 +534,7 @@ public class ModsPlugin implements Plugin {
 			return builder.build(outputFile);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			modsLogger.error("Error while transforming XML document: " + e.getMessage());
 		}
 		return null;
 	}
@@ -545,7 +549,7 @@ public class ModsPlugin implements Plugin {
 			outputter.output(root, System.out);
 			System.out.println("");
 		} catch (IOException e) {
-			e.printStackTrace();
+			modsLogger.error("Error while printing XML element: " + e.getMessage());
 		}
 	}
 
@@ -565,7 +569,7 @@ public class ModsPlugin implements Plugin {
 			return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
 		}
 		catch(NullPointerException e){
-			//reached top level element, no further parent elements can be retrieved
+			modsLogger.info("Top level element reached. No further parent elements can be retrieved.");
 			return null;
 		}
 	}
@@ -706,13 +710,8 @@ public class ModsPlugin implements Plugin {
 		FileSystem fs = FileSystems.getDefault();
 		try {
 		    Files.delete(fs.getPath(path));
-		} catch (NoSuchFileException x) {
-		    System.err.format("%s: no such" + " file or directory%n", path);
-		} catch (DirectoryNotEmptyException x) {
-		    System.err.format("%s not empty%n", path);
 		} catch (IOException x) {
-		    // File permission problems are caught here.
-		    System.err.println(x);
+		    modsLogger.error("Error while deleting file '" + path + "': " + x.getMessage());
 		}
 	}
 
