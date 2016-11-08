@@ -1,4 +1,4 @@
-package org.goobi.production.plugin.CataloguePlugin.ModsPlugin;
+package org.kitodo.production.plugin.CataloguePlugin.ModsPlugin;
 
 import java.io.IOException;
 import java.io.Reader;

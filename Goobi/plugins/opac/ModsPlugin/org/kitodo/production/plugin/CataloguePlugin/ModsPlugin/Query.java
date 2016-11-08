@@ -25,7 +25,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package org.goobi.production.plugin.CataloguePlugin.ModsPlugin;
+package org.kitodo.production.plugin.CataloguePlugin.ModsPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
