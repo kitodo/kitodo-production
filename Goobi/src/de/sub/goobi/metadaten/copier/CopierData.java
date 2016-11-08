@@ -2,10 +2,10 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e. V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -149,6 +149,21 @@ public class CopierData {
 	}
 
 	/**
+	 * Returns the process title.
+	 * 
+	 * @return the process title
+	 */
+	public String getProcessTitle() {
+		if (process instanceof Prozess) {
+			return ((Prozess) process).getTitel();
+		} else if (process instanceof ProcessObject) {
+			return ((ProcessObject) process).getTitle();
+		} else {
+			return String.valueOf(process);
+		}
+	}
+	
+	/**
 	 * Returns a string that textually represents this bean.
 	 * 
 	 * @return a string representation of this object
@@ -156,6 +171,6 @@ public class CopierData {
 	 */
 	@Override
 	public String toString() {
-		return "{fileformat: " + fileformat.toString() + ", process: " + process.toString() + '}';
+		return "{fileformat: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
 	}
 }

@@ -3,7 +3,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -50,7 +50,7 @@
     *
     * sample: 
     * <defaultFileNames>
-    *    <pdf value="GoobiContentServer_$datetime" sendAsAttachment="true"/>
+    *    <pdf value="KitodoContentServer_$datetime" sendAsAttachment="true"/>
     * </defaultFileNames>
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <defaultFileNames>
@@ -80,7 +80,7 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* default path to repository for all image processing requests
 	* if repository path is empty, in the servlet request has to be a complete url 
-	* sample: <defaultRepositoryPath value="file:/home/goobi/imageRepository/" /> 
+	* sample: <defaultRepositoryPath value="file:/home/kitodo/imageRepository/" />
 	*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<defaultRepositoryPathImages
 		value="" />
@@ -93,7 +93,7 @@
      
     <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     * configuration if watermark should be used and url for watermark content configuration file
-    * sample: <watermark use="true" configFile="file:/home/goobi/config/watermarkconfig.xml" />
+    * sample: <watermark use="true" configFile="file:/home/kitodo/config/watermarkconfig.xml" />
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<watermark use="false" configFile="file:/C:/Eclipse/workspace/ContentServer/watermarkconfig.xml" />
   
@@ -109,7 +109,7 @@
     <!--########################################################## 
     *#############################################################
     *
-    *                  GoobiContentServer parameters 
+    *                  ContentServer parameters
     *
     *#############################################################
     *###########################################################-->
@@ -117,7 +117,7 @@
 	 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 	* default path to repository for all mets processing requests
 	* if repository path is empty, in the servlet request has to be a complete url 
-	* sample: <defaultRepositoryPath value="file:/home/goobi/metsRepository/" /> 
+	* sample: <defaultRepositoryPath value="file:/home/kitodo/metsRepository/" />
 	*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<defaultRepositoryPathMets
 		value="" />
@@ -126,7 +126,7 @@
     * configuration if titlepage for pdf file should be generated and 
     * which config-file defines how the title page should look like 
     *
-    * sample: <defaultRepositoryPath value="file:/home/goobi/config/pdftitlepage.xml" /> 
+    * sample: <defaultRepositoryPath value="file:/home/kitodo/config/pdftitlepage.xml" />
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <pdfTitlePage use="false"
         configFile="file:/C:/Eclipse/workspace/GoobiContentServerServlet/WebContent/WEB-INF/classes/pdftitlepage.xml" />	
@@ -137,9 +137,9 @@
     *   -size: size in MB
     *   -useCache: central switch, if no cache at all should be used
     *
-    * sample: <contentCache useCache="false" path="/home/goobi/gcsCache" size="300"/>
+    * sample: <contentCache useCache="false" path="/home/kitodo/gcsCache" size="300"/>
     *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <contentCache useShortFileNames="true" useCache="false" path="/usr/local/goobi/cache" size="30"/>
+    <contentCache useShortFileNames="true" useCache="false" path="/usr/local/kitodo/cache" size="30"/>
 	<thumbnailCache useCache="false" />		
 	<pdfCache useCache="false" />
 	

@@ -2,10 +2,10 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e. V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 
 /**
  * A data copier is a class that can be parameterised to copy data in goobi
@@ -50,6 +51,8 @@ import org.apache.commons.configuration.ConfigurationException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DataCopier {
+	
+	private static final Logger LOG = Logger.getLogger(DataCopier.class);
 
 	/**
 	 * Holds the rules this data copier can apply to a set of working data.
@@ -82,7 +85,13 @@ public class DataCopier {
 	 */
 	public void process(CopierData data) {
 		for (DataCopyrule rule : rules) {
-			rule.apply(data);
+			try {
+				rule.apply(data);
+			} catch (RuntimeException notApplicable) {
+				if (LOG.isInfoEnabled()) {
+					LOG.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
+				}
+			}
 		}
 	}
 

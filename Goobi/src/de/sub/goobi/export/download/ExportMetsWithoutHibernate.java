@@ -4,7 +4,7 @@ package de.sub.goobi.export.download;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,7 +27,7 @@ package de.sub.goobi.export.download;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class ExportMetsWithoutHibernate {
 	 * DMS-Export an eine gewünschte Stelle
 	 *
 	 * @param process
-	 * @param zielVerzeichnis
+	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws PreferencesException
@@ -173,7 +173,6 @@ public class ExportMetsWithoutHibernate {
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	@SuppressWarnings("deprecation")
 	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
@@ -183,7 +182,7 @@ public class ExportMetsWithoutHibernate {
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = this.fi.getImagesDirectory();
-		File imageFolder = new File(imageFolderPath);
+		SafeFile imageFolder = new SafeFile(imageFolderPath);
 		/*
 		 * before creating mets file, change relative path to absolute -
 		 */
@@ -218,7 +217,6 @@ public class ExportMetsWithoutHibernate {
 				}
 			} else {
 				Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
-				dd = null;
 				return false;
 			}
 		}
@@ -230,8 +228,8 @@ public class ExportMetsWithoutHibernate {
 			if (!location.contains("://")) {
 				location = "file://" + location;
 			}
-			URL url = new URL(location);
-			File f = new File(imageFolder, url.getFile());
+			String url = new URL(location).getFile();
+			SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
 			cf.setLocation(f.toURI().toString());
 		}
 
@@ -250,8 +248,8 @@ public class ExportMetsWithoutHibernate {
 			for (ProjectFileGroup pfg : myFilegroups) {
 				// check if source files exists
 				if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-					File folder = new File(this.fi.getMethodFromName(pfg.getFolder()));
-					if (folder != null && folder.exists() && folder.list().length > 0) {
+					SafeFile folder = new SafeFile(this.fi.getMethodFromName(pfg.getFolder()));
+					if (folder.exists() && folder.list().length > 0) {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());
 						v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -304,10 +302,9 @@ public class ExportMetsWithoutHibernate {
 		String pointer = vp.replace(anchor);
 		mm.setMptrAnchorUrl(pointer);
 
-		List<String> images = new ArrayList<String>();
 		try {
 			// TODO andere Dateigruppen nicht mit image Namen ersetzen
-			images = this.fi.getDataFiles();
+			List<String> images = this.fi.getDataFiles();
 			if (images != null) {
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				int sizeOfImages = images.size();

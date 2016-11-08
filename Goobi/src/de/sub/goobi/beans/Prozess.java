@@ -2,23 +2,23 @@ package de.sub.goobi.beans;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -27,6 +27,8 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -191,10 +193,10 @@ public class Prozess implements Serializable {
 	 * have not been accessed yet. However, this function is also called by
 	 * Hibernate itself when its updating the database and in this case it is
 	 * absolutely fine to return a proxy object uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getHistoryInitialized()} instead.
-	 * 
+	 *
 	 * @return the history field of the process which may be not yet loaded
 	 */
 	public Set<HistoryEvent> getHistory() {
@@ -205,7 +207,7 @@ public class Prozess implements Serializable {
 	 * The function getHistoryInitialized() returns the history events for a
 	 * process and takes care that the object is initialized from Hibernate
 	 * already and will not be bothered if the Hibernate session ends.
-	 * 
+	 *
 	 * @return the history field of the process which is loaded
 	 */
 	public Set<HistoryEvent> getHistoryInitialized() {
@@ -248,10 +250,10 @@ public class Prozess implements Serializable {
 	 * not been accessed yet. However, this function is also called by Hibernate
 	 * itself when its updating the database and in this case it is absolutely
 	 * fine to return a proxy object uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getBatchesInitialized()} instead.
-	 * 
+	 *
 	 * @return the batches field of the process which may be not yet loaded
 	 */
 	public Set<Batch> getBatches() {
@@ -260,10 +262,10 @@ public class Prozess implements Serializable {
 
 	/**
 	 * Returns the batches of the desired type for a process.
-	 * 
+	 *
 	 * @param type
 	 *            type of batches to return
-	 * 
+	 *
 	 * @return all batches of the desired type
 	 */
 	public Set<Batch> getBatchesByType(Type type) {
@@ -285,7 +287,7 @@ public class Prozess implements Serializable {
 	 * The function getBatchesInitialized() returns the batches for a process
 	 * and takes care that the object is initialized from Hibernate already and
 	 * will not be bothered if the Hibernate session ends.
-	 * 
+	 *
 	 * @return the batches field of the process which is loaded
 	 */
 	public Set<Batch> getBatchesInitialized() {
@@ -299,7 +301,7 @@ public class Prozess implements Serializable {
 	 * The function setBatches() is intended to be called by Hibernate to inject
 	 * the batches into the process object. To associate a batch with a process,
 	 * use {@link Batch#add(Prozess)}.
-	 * 
+	 *
 	 * @param batches
 	 *            set to inject
 	 */
@@ -322,10 +324,10 @@ public class Prozess implements Serializable {
 	 * function is also called by Hibernate itself when its updating the
 	 * database and in this case it is absolutely fine to return a proxy object
 	 * uninitialized.
-	 * 
+	 *
 	 * If you want to get the history and be sure it has been loaded, use
 	 * {@link #getEigenschaftenInitialized()} instead.
-	 * 
+	 *
 	 * @return the properties field of the process which may be not yet loaded
 	 */
 	public Set<Prozesseigenschaft> getEigenschaften() {
@@ -337,7 +339,7 @@ public class Prozess implements Serializable {
 	 * (“properties”) for a process and takes care that the object is
 	 * initialized from Hibernate already and will not be bothered if the
 	 * Hibernate session ends.
-	 * 
+	 *
 	 * @return the properties field of the process which is loaded
 	 */
 	public Set<Prozesseigenschaft> getEigenschaftenInitialized() {
@@ -361,7 +363,7 @@ public class Prozess implements Serializable {
 		if (MetadatenSperrung.isLocked(this.id.intValue())) {
 			String benutzerID = this.msp.getLockBenutzer(this.id.intValue());
 			try {
-				rueckgabe = new BenutzerDAO().get(new Integer(benutzerID));
+				rueckgabe = new BenutzerDAO().get(Integer.valueOf(benutzerID));
 			} catch (Exception e) {
 				Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
 			}
@@ -382,7 +384,7 @@ public class Prozess implements Serializable {
 	 */
 
 	public String getImagesTifDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -414,11 +416,11 @@ public class Prozess implements Serializable {
 				}
 			}
 		}
-		
+
 		 if (!tifOrdner.equals("") && useFallBack) {
 	            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 	            if (!suffix.equals("")) {
-	                File tif = new File(tifOrdner);
+	                SafeFile tif = new SafeFile(tifOrdner);
 	                String[] files = tif.list();
 	                if (files == null || files.length == 0) {
 	                    String[] folderList = dir.list();
@@ -431,7 +433,7 @@ public class Prozess implements Serializable {
 	                }
 	            }
 	        }
-		
+
 		if (tifOrdner.equals("")) {
 			tifOrdner = this.titel + "_" + DIRECTORY_SUFFIX;
 		}
@@ -451,9 +453,9 @@ public class Prozess implements Serializable {
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
-		File testMe;
+		SafeFile testMe;
 		try {
-			testMe = new File(getImagesTifDirectory(true));
+			testMe = new SafeFile(getImagesTifDirectory(true));
 		} catch (IOException e) {
 			return false;
 		} catch (InterruptedException e) {
@@ -475,7 +477,7 @@ public class Prozess implements Serializable {
 
 	public String getImagesOrigDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException, DAOException {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
-			File dir = new File(getImagesDirectory());
+			SafeFile dir = new SafeFile(getImagesDirectory());
 			DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 			DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -504,11 +506,11 @@ public class Prozess implements Serializable {
 					}
 				}
 			}
-			
+
 			if (!origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					File tif = new File(origOrdner);
+					SafeFile tif = new SafeFile(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
 						String[] folderList = dir.list();
@@ -521,7 +523,7 @@ public class Prozess implements Serializable {
 					}
 				}
 			}
-			
+
 			if (origOrdner.equals("")) {
 				origOrdner = DIRECTORY_PREFIX + "_" + this.titel + "_" + DIRECTORY_SUFFIX;
 			}
@@ -542,22 +544,22 @@ public class Prozess implements Serializable {
 	}
 
 	public String getSourceDirectory() throws IOException, InterruptedException, SwapException, DAOException {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return (name.endsWith("_" + "source"));
 			}
 		};
-		File sourceFolder = null;
+		SafeFile sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
 		if (verzeichnisse == null || verzeichnisse.length == 0) {
-			sourceFolder = new File(dir, titel + "_source");
+			sourceFolder = new SafeFile(dir, titel + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
 				sourceFolder.mkdir();
 			}
 		} else {
-			sourceFolder = new File(dir, verzeichnisse[0]);
+			sourceFolder = new SafeFile(dir, verzeichnisse[0]);
 		}
 
 		return sourceFolder.getAbsolutePath();
@@ -573,7 +575,7 @@ public class Prozess implements Serializable {
 			pst.setShowMessages(true);
 			pst.run();
 			if (pst.getException() != null) {
-				if (!new File(pfad, "images").exists() && !new File(pfad, "meta.xml").exists()) {
+				if (!new SafeFile(pfad, "images").exists() && !new SafeFile(pfad, "meta.xml").exists()) {
 					throw new SwapException(pst.getException().getMessage());
 				} else {
 					setSwappedOutGui(false);
@@ -630,7 +632,7 @@ public class Prozess implements Serializable {
 	/**
 	 * The function getBatchID returns the batches the process is associated
 	 * with as readable text as read-only property "batchID".
-	 * 
+	 *
 	 * @return the batches the process is in
 	 */
 	public String getBatchID() {
@@ -983,7 +985,9 @@ public class Prozess implements Serializable {
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
-		myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
+		if (myLogger.isDebugEnabled()) {
+			myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
+		}
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
 			ff = new MetsModsImportExport(this.regelsatz.getPreferences());
@@ -1029,7 +1033,7 @@ public class Prozess implements Serializable {
 	private boolean checkForMetadataFile() throws IOException, InterruptedException, SwapException, DAOException,
 			PreferencesException {
 		boolean result = true;
-		File f = new File(getMetadataFilePath());
+		SafeFile f = new SafeFile(getMetadataFilePath());
 		if (!f.exists()) {
 			result = false;
 		}
@@ -1039,7 +1043,7 @@ public class Prozess implements Serializable {
 
 	private String getTemporaryMetadataFileName(String fileName) {
 
-		File temporaryFile = new File(fileName);
+		SafeFile temporaryFile = new SafeFile(fileName);
 		String directoryPath = temporaryFile.getParentFile().getPath();
 		String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
@@ -1047,9 +1051,9 @@ public class Prozess implements Serializable {
 	}
 
 	private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
-		File temporaryFile = new File(temporaryMetadataFilename);
-		File directoryPath = new File(temporaryFile.getParentFile().getPath());
-		for (File temporaryAnchorFile : directoryPath.listFiles()) {
+		SafeFile temporaryFile = new SafeFile(temporaryMetadataFilename);
+		SafeFile directoryPath = new SafeFile(temporaryFile.getParentFile().getPath());
+		for (SafeFile temporaryAnchorFile : directoryPath.listFiles()) {
 			String temporaryAnchorFileName = temporaryAnchorFile.toString();
 			if (temporaryAnchorFile.isFile()
 					&& FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
@@ -1066,7 +1070,7 @@ public class Prozess implements Serializable {
 			PreferencesException {
 		boolean backupCondition;
 		boolean writeResult;
-		File temporaryMetadataFile;
+		SafeFile temporaryMetadataFile;
 
 		Fileformat ff;
 		String metadataFileName;
@@ -1093,7 +1097,7 @@ public class Prozess implements Serializable {
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		// ff.write(getMetadataFilePath());
 		writeResult = ff.write(temporaryMetadataFileName);
-		temporaryMetadataFile = new File(temporaryMetadataFileName);
+		temporaryMetadataFile = new SafeFile(temporaryMetadataFileName);
 		backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
 		if (backupCondition) {
 			createBackupFile();
@@ -1101,7 +1105,7 @@ public class Prozess implements Serializable {
 			removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
 		}
 	}
-	
+
 
 	public void writeMetadataAsTemplateFile(Fileformat inFile) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
@@ -1111,10 +1115,12 @@ public class Prozess implements Serializable {
 	public Fileformat readMetadataAsTemplateFile() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
 			DAOException {
 		Hibernate.initialize(getRegelsatz());
-		if (new File(getTemplateFilePath()).exists()) {
+		if (new SafeFile(getTemplateFilePath()).exists()) {
 			Fileformat ff = null;
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
-			myLogger.debug("current template.xml file type: " + type);
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug("current template.xml file type: " + type);
+			}
 			if (type.equals("mets")) {
 				ff = new MetsMods(this.regelsatz.getPreferences());
 			} else if (type.equals("xstream")) {
@@ -1203,11 +1209,13 @@ public class Prozess implements Serializable {
 
 	public String downloadDocket() {
 
-		myLogger.debug("generate docket for process " + this.id);
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("generate docket for process " + this.id);
+		}
 		String rootpath = ConfigMain.getParameter("xsltFolder");
-		File xsltfile = new File(rootpath, "docket.xsl");
+		SafeFile xsltfile = new SafeFile(rootpath, "docket.xsl");
 		if (docket != null) {
-			xsltfile = new File(rootpath, docket.getFile());
+			xsltfile = new SafeFile(rootpath, docket.getFile());
 			if (!xsltfile.exists()) {
 				Helper.setFehlerMeldung("docketMissing");
 				return "";
@@ -1267,7 +1275,7 @@ public class Prozess implements Serializable {
 			String folder = this.getImagesTifDirectory(false);
 			folder = folder.substring(0, folder.lastIndexOf("_"));
 			folder = folder + "_" + methodName;
-			if (new File(folder).exists()) {
+			if (new SafeFile(folder).exists()) {
 				return folder;
 			}
 
@@ -1291,7 +1299,7 @@ public class Prozess implements Serializable {
 	public void setDocket(Docket docket) {
 		this.docket = docket;
 	}
-	
+
 	@XmlElement(name = "collection")
 	public List<String> getPossibleDigitalCollections() throws JDOMException, IOException {
 		return DigitalCollections.possibleDigitalCollectionsForProcess(this);
@@ -1302,9 +1310,7 @@ public class Prozess implements Serializable {
 	 * new wiki field using a StringBuilder. The message is encoded using HTML
 	 * entities to prevent certain characters from playing merry havoc when the
 	 * message box shall be rendered in a browser later.
-	 * 
-	 * @param form
-	 *            the AktuelleSchritteForm which is the owner of the wiki field
+	 *
 	 * @param message
 	 *            the message to append
 	 */
@@ -1325,7 +1331,7 @@ public class Prozess implements Serializable {
 	 * The method addToWikiField() adds a message with a given level to the wiki
 	 * field of the process. Four level strings will be recognized and result in
 	 * different colors:
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>debug</code></dt>
 	 * <dd>gray</dd>
@@ -1338,7 +1344,7 @@ public class Prozess implements Serializable {
 	 * <dt><i>any other value</i></dt>
 	 * <dd>blue</dd>
 	 * <dt>
-	 * 
+	 *
 	 * @param level
 	 *            message colour, one of: "debug", "error", "info", "user" or
 	 *            "warn"; any other value defaults to "info"
@@ -1352,7 +1358,7 @@ public class Prozess implements Serializable {
 	/**
 	 * The method addToWikiField() adds a message signed by the given user to
 	 * the wiki field of the process.
-	 * 
+	 *
 	 * @param user
 	 *            user to sign the message with
 	 * @param message
@@ -1365,26 +1371,26 @@ public class Prozess implements Serializable {
 
 	/**
 	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 * @throws DAOException 
-	 * @throws SwapException 
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws DAOException
+	 * @throws SwapException
 	 */
 	public void createProcessDirs() throws SwapException, DAOException, IOException, InterruptedException {
-		
+
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
-		
+
 		for(String processDir : processDirs) {
-			
+
 			FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(), processDir.replace("(processtitle)", this.getTitel())));
 		}
-			
+
 	}
 
 	/**
 	 * The function getDigitalDocument() returns the digital act of this
 	 * process.
-	 * 
+	 *
 	 * @return the digital act of this process
 	 * @throws PreferencesException
 	 *             if the no node corresponding to the file format is available
@@ -1448,7 +1454,7 @@ public class Prozess implements Serializable {
 		List<Prozesseigenschaft> filteredList;
 		List<Prozesseigenschaft> lpe = this.getEigenschaftenList();
 
-		if ((lpe == null) || (lpe.size() == 0)) {
+		if (lpe.isEmpty()) {
 			return new ArrayList<Prozesseigenschaft>();
 		}
 

@@ -86,4 +86,18 @@ public class BenutzerDAO extends BaseDAO {
 	public List<Benutzer> search(String query, String parameter) throws DAOException {
 		return retrieveObjs(query, parameter);
 	}
+
+	/**
+	 * Search for a list of users by a named parameter
+	 *
+	 * @param query Search query
+	 * @param namedParameter Name of named parameter
+	 * @param parameter Parameter value
+	 * @return List<Benutzer>
+	 * @throws DAOException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Benutzer> search(String query, String namedParameter, String parameter) throws DAOException {
+		return retrieveObjs(query, namedParameter, parameter);
+	}
 }

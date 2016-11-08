@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -190,14 +190,6 @@ class ConfigOpac {
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
 			if (title.equals(inTitle)) {
-				/* Sprachen erfassen */
-				HashMap<String, String> labels = new HashMap<String, String>();
-				int countLabels = getConfig().getMaxIndex("doctypes.type(" + i + ").label");
-				for (int j = 0; j <= countLabels; j++) {
-					String language = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")[@language]");
-					String value = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")");
-					labels.put(language, value);
-				}
 				boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
 				boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
 				boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");

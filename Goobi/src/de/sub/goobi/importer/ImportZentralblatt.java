@@ -4,7 +4,7 @@ package de.sub.goobi.importer;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -240,7 +240,7 @@ public class ImportZentralblatt {
 	 * 
 	 * @param dsPeriodicalVolume
 	 * @param myRight
-	 * @return
+	 * @return DocStruct of periodical
 	 * @throws TypeNotAllowedForParentException
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws TypeNotAllowedAsChildException
@@ -303,7 +303,7 @@ public class ImportZentralblatt {
 		if (myLeft.equals("J")) {
 			mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
 			List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
-			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
+			/* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
 			if (myList.size() == 0) {
 				md = new Metadata(mdt);
 				// md.setType(mdt);
@@ -327,7 +327,7 @@ public class ImportZentralblatt {
 			mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
 			List<? extends ugh.dl.Metadata> myList = inStruct.getAllMetadataByType(mdt);
 
-			/* wenn noch kein Zeitschrifenname vergeben wurde, dann jetzt */
+			/* wenn noch kein Zeitschriftenname vergeben wurde, dann jetzt */
 			if (myList.size() == 0) {
 				md = new Metadata(mdt);
 				// md.setType(mdt);
@@ -336,12 +336,10 @@ public class ImportZentralblatt {
 			} else {
 
 				/* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
-				md = myList.get(0);
-
 				/*
-				 * -------------------------------- da Frau Jansch ständig Importprobleme mit jahrübergreifenden Bänden hat, jetzt mal auskommentiert
-				 * --------------------------------
+				 * da Frau Jansch ständig Importprobleme mit jahrübergreifenden Bänden hat, jetzt mal auskommentiert
 				 */
+				// md = myList.get(0);
 				// if (!myRight.equals(md.getValue()))
 				// throw new WrongImportFileException("Parsingfehler: verschiedene Jahresangaben in der Datei ('"
 				// + md.getValue() + "' & '" + myRight + "')");

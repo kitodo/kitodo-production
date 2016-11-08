@@ -12,7 +12,7 @@
 	(c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
 	
 	Visit the websites for more information.
-	    		- http://www.goobi.org/en/
+	    		- http://www.kitodo.org/en/
 	    		- https://github.com/goobi
 	
 	This program is free software; you can redistribute it and/or modify it under
@@ -461,7 +461,7 @@
 										</htm:div>
 									</htm:div>
 
-									<%-- Calender sheet --%>
+									<%-- Calendar sheet --%>
 
 									<htm:table styleClass="calendarSheet">
 										<htm:caption>

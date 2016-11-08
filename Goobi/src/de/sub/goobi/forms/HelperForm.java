@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,6 +27,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -69,19 +71,9 @@ public class HelperForm {
 		return GoobiVersion.getBuildversion();
 	}
 
-	/**
-	 * @return returns dynamically resolved path for Version Logo
-	 */
-	public String getApplicationVersionLogo() {
-		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-		logo += ConfigMain.getParameter("ApplicationVersionLogo", "Goobi151Logo.jpg");
-		return logo;
-
-	}
-
 	public String getApplicationLogo() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-		logo += ConfigMain.getParameter("ApplicationLogo", "goobi_meta_klein.jpg");
+		logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
 
 		return logo;
 	}
@@ -218,7 +210,7 @@ public class HelperForm {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		String filename = session.getServletContext().getRealPath("/css") + File.separator;
-		File cssDir = new File(filename);
+		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -245,7 +237,7 @@ public class HelperForm {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
-		File cssDir = new File(filename);
+		SafeFile cssDir = new SafeFile(filename);
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -267,7 +259,7 @@ public class HelperForm {
 	}
 
 	public String getLogoUrl() {
-		return getServletPathWithHostAsUrl() + "/newpages/images/template/goobiVersionLogoBig.jpg";
+		return getServletPathWithHostAsUrl() + "/newpages/images/template/kitodo-homepage-logo.svg";
 	}
 
 	public boolean getMassImportAllowed() {
@@ -293,5 +285,15 @@ public class HelperForm {
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 		
 		return request.getHeader("User-Agent"); 
+	}
+
+	/**
+	 * Returning value of configuration parameter withUserStepDoneSearch.
+	 * Used for enabling/disabling search for done steps by user.
+	 *
+	 * @return boolean
+	 */
+	public boolean getUserStepDoneSearchEnabled() {
+		return ConfigMain.getBooleanParameter("withUserStepDoneSearch");
 	}
 }

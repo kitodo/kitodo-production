@@ -5,7 +5,7 @@
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -81,7 +81,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class Cell {
+	public static class Cell {
 		/**
 		 * The field date holds the date that this cell represents in the course
 		 * of time.
@@ -486,7 +486,7 @@ public class CalendarForm {
 	 * 
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
-	public class IssueOption {
+	public static class IssueOption {
 		/**
 		 * The field colour holds the colour representative for optically
 		 * distinguishing the given issue
@@ -1085,7 +1085,7 @@ public class CalendarForm {
 		int[] numbers = new int[3];
 		if (dateParser.matches()) {
 			for (int i = 0; i < 3; i++) {
-				numbers[i] = Integer.valueOf(dateParser.group(i + 1));
+				numbers[i] = Integer.parseInt(dateParser.group(i + 1));
 			}
 			if (numbers[2] < 100) {
 				new LocalDate();
@@ -1352,6 +1352,10 @@ public class CalendarForm {
 			neglectEmptyBlock();
 		} catch (NoSuchElementException e) {
 			Helper.setFehlerMeldung("calendar.upload.error", "calendar.upload.missingMandatoryElement");
+			logger.error(e.getMessage(), e);
+			neglectEmptyBlock();
+		} catch (NullPointerException e) {
+			Helper.setFehlerMeldung("calendar.upload.missingMandatoryValue", e.getMessage());
 			logger.error(e.getMessage(), e);
 			neglectEmptyBlock();
 		} finally {

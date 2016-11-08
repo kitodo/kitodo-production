@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -58,21 +58,17 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
-import org.jdom.Element;
 
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
-import de.sub.goobi.persistence.HibernateSessionLong;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
 public class Helper implements Serializable, Observer {
@@ -337,11 +333,6 @@ public class Helper implements Serializable, Observer {
 		return sess;
 	}
 
-	public static void createNewHibernateSession() {
-		HibernateSessionLong hsl = (HibernateSessionLong) getManagedBeanValue("#{HibernateSessionLong}");
-		hsl.getNewSession();
-	}
-
 	private static void loadMsgs() {
 		commonMessages = new HashMap<Locale, ResourceBundle>();
 		localMessages = new HashMap<Locale, ResourceBundle>();
@@ -458,115 +449,6 @@ public class Helper implements Serializable, Observer {
 	public static Benutzer getCurrentUser() {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		return login != null ? login.getMyBenutzer() : null;
-	}
-
-	/**
-	 * Copies src file to dst file. If the dst file does not exist, it is created
-	 */
-	public static void copyFile(File src, File dst) throws IOException {
-		myLogger.debug("copy " + src.getCanonicalPath() + " to " + dst.getCanonicalPath());
-		FileUtils.copyFile(src, dst, false);
-	}
-
-	/**
-	 * copy directory
-	 *
-	 * @param srcDir the source directory
-	 * @param dstDir the destination directory
-	 * @throws IOException
-	 */
-	public static void copyDir(File srcDir, File dstDir) throws IOException {
-
-		File[] files = srcDir.listFiles();
-		if(!dstDir.exists()) {
-			dstDir.mkdirs();
-		}
-		for (File file : files) {
-			if(file.isDirectory()) {
-				copyDir(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
-			}
-			else {
-				copyFile(file, new File(FilenameUtils.concat(dstDir.getAbsolutePath(), file.getName())));
-			}
-		}
-	}
-
-	/**
-	 * Deletes all files and subdirectories under dir. Returns true if all deletions were successful. If a deletion fails, the method stops attempting
-	 * to delete and returns false.
-	 */
-	public static boolean deleteDir(File dir) {
-		if (!dir.exists()) {
-			return true;
-		}
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		// The directory is now empty so delete it
-		return dir.delete();
-	}
-
-	/**
-	 * Deletes all files and subdirectories under dir. But not the dir itself
-	 */
-	public static boolean deleteInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				boolean success = deleteDir(new File(dir, children[i]));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files
-	 */
-	public static boolean deleteDataInDir(File dir) {
-		if (dir.exists() && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].endsWith(".xml")) {
-					boolean success = deleteDir(new File(dir, children[i]));
-					if (!success) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
-	 */
-
-	public static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int goobipathlength, Element inRoot) throws IOException {
-		if (srcDir.isDirectory()) {
-			if (!dstDir.exists()) {
-				dstDir.mkdir();
-				dstDir.setLastModified(srcDir.lastModified());
-			}
-			String[] children = srcDir.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]), goobipathlength, inRoot);
-			}
-		} else {
-			Long crc = CopyFile.start(srcDir, dstDir);
-			Element file = new Element("file");
-			file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
-			file.setAttribute("crc32", String.valueOf(crc));
-			inRoot.addContent(file);
-		}
 	}
 
 	public static final FilenameFilter imageNameFilter = new FilenameFilter() {

@@ -1,10 +1,10 @@
-Goobi Community Edition Installationshandbuch
+Kitodo Community Edition Installationshandbuch
 =============================================
 
 Einfuehrung
 -----------
 
-### Goobi Architektur
+### Kitodo Architektur
 
 ### Systemvoraussetzungen
 

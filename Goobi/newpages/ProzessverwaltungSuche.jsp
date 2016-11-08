@@ -8,7 +8,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -164,19 +164,18 @@
 														</h:panelGroup>
 													</h:panelGroup>
 													<%-- user --%>
-													<%-- 
-							<h:outputText value="#{msgs.user}: "/>
-							<h:panelGroup>
-								<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
-										<si:selectItems value="#{SearchForm.user}"
-										var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
-								</h:selectOneMenu>
-								<h:selectOneMenu value="#{SearchForm.stepdonetitle}">
-									<si:selectItems value="#{SearchForm.stepTitles}"
-										var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}" />
-								</h:selectOneMenu>
-							</h:panelGroup>
-							--%>
+													<h:outputText value="#{msgs.stepDoneByUser}: " rendered="#{HelperForm.userStepDoneSearchEnabled}"/>
+													<h:panelGroup rendered="#{HelperForm.userStepDoneSearchEnabled}">
+														<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
+															<si:selectItems value="#{SearchForm.user}"
+																var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
+														</h:selectOneMenu>
+														<h:selectOneMenu value="#{SearchForm.stepdonetitle}">
+														<si:selectItems value="#{SearchForm.stepTitles}"
+															var="stepTitles" itemLabel="#{stepTitles}" itemValue="#{stepTitles}" />
+														</h:selectOneMenu>
+													</h:panelGroup>
+
 													<%-- process id --%>
 													<h:outputText value="#{msgs.id}: " />
 													<h:inputText value="#{SearchForm.idin}" style="width:690px" />

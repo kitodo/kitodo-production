@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.config.ConfigMain;
@@ -130,7 +131,9 @@ public class FilesystemHelper {
 		newFile = new File(newFileName);
 
 		if (!oldFile.exists()) {
-			logger.debug("File " + oldFileName + " does not exist for renaming.");
+			if(logger.isDebugEnabled()){
+				logger.debug("File " + oldFileName + " does not exist for renaming.");
+			}
 			throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
 		}
 
@@ -142,13 +145,15 @@ public class FilesystemHelper {
 
 		do {
 			if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
-				logger.warn("Renaming " + oldFileName
-						+ " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn("Renaming " + oldFileName
+							+ " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+				}
 				System.gc();
 			}
 			success = oldFile.renameTo(newFile);
 			if (!success) {
-				if (millisWaited == 0) {
+				if (millisWaited == 0 && logger.isInfoEnabled()) {
 					logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
 				}
 				try {
@@ -164,7 +169,7 @@ public class FilesystemHelper {
 			throw new IOException("Renaming of " + oldFileName + " into " + newFileName + " failed.");
 		}
 
-		if (millisWaited > 0) {
+		if (millisWaited > 0 && logger.isInfoEnabled()) {
 			logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
 		}
 	}

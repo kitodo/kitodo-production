@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -284,10 +284,9 @@ class ConfigOpacCatalogue {
 	 * Print given DomNode to defined File ================================================================
 	 */
 	private void debugMyNode(Node inNode, String fileName) {
-		try {
+		try (FileOutputStream output = new FileOutputStream(fileName)) {
 			XMLOutputter outputter = new XMLOutputter();
 			Document tempDoc = new DOMBuilder().build(inNode.getOwnerDocument());
-			FileOutputStream output = new FileOutputStream(fileName);
 			outputter.output(tempDoc.getRootElement(), output);
 		} catch (FileNotFoundException e) {
 			myLogger.error("debugMyNode(Node, String)", e);

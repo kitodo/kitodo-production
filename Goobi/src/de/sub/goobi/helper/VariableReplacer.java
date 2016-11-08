@@ -3,7 +3,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -35,7 +35,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
@@ -299,7 +301,9 @@ public class VariableReplacer {
 			case FIRSTCHILD:
 				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
 				if (resultFirst == null) {
-					logger.info("Can not replace firstChild-variable for METS: " + metadata);
+					if(logger.isInfoEnabled()){
+						logger.info("Can not replace firstChild-variable for METS: " + metadata);
+					}
 					result = "";
 				} else {
 					result = resultFirst;
@@ -309,7 +313,9 @@ public class VariableReplacer {
 			case TOPSTRUCT:
 				if (resultTop == null) {
 					result = "";
-					logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+					if (logger.isEnabledFor(Level.WARN)) {
+						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+					}
 				} else {
 					result = resultTop;
 				}
@@ -322,7 +328,9 @@ public class VariableReplacer {
 					result = resultTop;
 				} else {
 					result = "";
-					logger.warn("Can not replace variable for METS: " + metadata);
+					if (logger.isEnabledFor(Level.WARN)) {
+						logger.warn("Can not replace variable for METS: " + metadata);
+					}
 				}
 				break;
 

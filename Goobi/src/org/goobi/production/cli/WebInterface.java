@@ -4,7 +4,7 @@ package org.goobi.production.cli;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -51,8 +52,6 @@ import de.sub.goobi.config.ConfigMain;
 public class WebInterface extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(WebInterface.class);
 	private static final long serialVersionUID = 6187229284187412768L;
-
-	private String command = null;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -91,30 +90,34 @@ public class WebInterface extends HttpServlet {
 				return;
 			}
 
-			this.command = parameter.get("command")[0];
-			if (this.command == null) {
+			String command = parameter.get("command")[0];
+			if (command == null) {
 				// error, no command found
 				generateAnswer(resp, 400,"Empty command", "No command given. Use help as command to get more information.");
 				return;
 			}
-			logger.debug("command: " + this.command);
+			if(logger.isDebugEnabled()){
+				logger.debug("command: " + command);
+			}
 
 			// check if command is allowed for used IP
-			List<String> allowedCommandos = WebInterfaceConfig.getCredencials(ip, password);
-			if (!allowedCommandos.contains(this.command)) {
+			List<String> allowedCommands = WebInterfaceConfig.getCredentials(ip, password);
+			if (!allowedCommands.contains(command)) {
 				// error, no command found
-				generateAnswer(resp, 401, "command not allowed", "command " + this.command + " not allowed for your IP (" + ip + ")");
+				generateAnswer(resp, 401, "command not allowed",
+					"command " + StringEscapeUtils.escapeHtml(command) +
+					" not allowed for your IP (" + StringEscapeUtils.escapeHtml(ip) + ")");
 				return;
 			}
 
-			if (this.command.equals("help")) {
+			if (command.equals("help")) {
 				generateHelp(resp);
 				return;
 			}
 			
 			
 			// get correct plugin from list
-			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, this.command);
+			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, command);
 			if (myCommandPlugin == null) {
 				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;

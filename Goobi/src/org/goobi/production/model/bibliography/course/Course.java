@@ -5,7 +5,7 @@
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -172,7 +172,7 @@ public class Course extends ArrayList<Block> {
 	 * Note: In the original design, the element was intended to model title
 	 * name changes. This was given up later, but for historical reasons, the
 	 * XML element’s name is still “title”. For the original design, see
-	 * https://github.com/goobi/goobi-production/issues/51#issuecomment-38035674
+	 * https://github.com/kitodo/kitodo-production/issues/51#issuecomment-38035674
 	 * </p>
 	 */
 	private static final String ELEMENT_BLOCK = "title";
@@ -202,6 +202,8 @@ public class Course extends ArrayList<Block> {
 	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
 	 * @throws IllegalArgumentException
 	 *             if the dates of two blocks do overlap
+	 * @throws NullPointerException
+	 *             if a mandatory element is absent
 	 */
 	public Course(Document xml) throws NoSuchElementException {
 		super();
@@ -227,10 +229,10 @@ public class Course extends ArrayList<Block> {
 						continue;
 					}
 					String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
-					if (issue == null) {
-						issue = "";
-					}
 					String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
+					if (date == null) {
+						throw new NullPointerException(ATTRIBUTE_DATE);
+					}
 					IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
 					process.add(individualIssue);
 				}
@@ -564,8 +566,6 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * The function toXML() transforms a course of appearance to XML.
 	 *
-	 * @param lang
-	 *            language to use for the “description”
 	 * @return XML as String
 	 */
 	public Document toXML() {

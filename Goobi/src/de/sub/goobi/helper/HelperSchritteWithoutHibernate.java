@@ -2,23 +2,23 @@ package de.sub.goobi.helper;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -29,7 +29,7 @@ package de.sub.goobi.helper;
  */
 
 
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,9 +69,9 @@ public class HelperSchritteWithoutHibernate {
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
-	 * The field task holds an optional task instance whose progress will be
-	 * updated and whom errors will be passed to to be visible in the task
-	 * manager screen if it’s available.
+	 * The field task holds an optional task instance. Its progress
+	 * and its errors will be passed to the task manager screen (if available)
+	 * for visualisation.
 	 */
 	private EmptyTask task;
 
@@ -82,13 +82,15 @@ public class HelperSchritteWithoutHibernate {
 	public void CloseStepObjectAutomatic(StepObject currentStep) {
 		closeStepObject(currentStep, currentStep.getProcessId(), false);
 	}
-	
+
 	public void CloseStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
 		closeStepObject(currentStep, currentStep.getProcessId(), requestFromGUI);
 	}
 
 	private void closeStepObject(StepObject currentStep, int processId, boolean requestFromGUI) {
-		logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
+		if(logger.isDebugEnabled()){
+			logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
+		}
 		currentStep.setBearbeitungsstatus(3);
 		Date myDate = new Date();
 		logger.debug("set new date for edit time");
@@ -117,7 +119,7 @@ public class HelperSchritteWithoutHibernate {
 
 		logger.debug("create history events for step");
 
-		StepManager.addHistory(myDate, new Integer(currentStep.getReihenfolge()).doubleValue(), currentStep.getTitle(),
+		StepManager.addHistory(myDate, currentStep.getReihenfolge(), currentStep.getTitle(),
 				HistoryEventType.stepDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
@@ -133,7 +135,9 @@ public class HelperSchritteWithoutHibernate {
 		}
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			logger.debug("found " + allehoeherenSchritte.size() + " tasks");
+			if(logger.isDebugEnabled()){
+				logger.debug("found " + allehoeherenSchritte.size() + " tasks");
+			}
 			int reihenfolge = 0;
 			boolean matched = false;
 			for (StepObject myStep : allehoeherenSchritte) {
@@ -145,15 +149,19 @@ public class HelperSchritteWithoutHibernate {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
-					logger.debug("open step " + myStep.getTitle());
+					if(logger.isDebugEnabled()){
+						logger.debug("open step " + myStep.getTitle());
+					}
 					myStep.setBearbeitungsstatus(1);
 					myStep.setBearbeitungszeitpunkt(myDate);
 					myStep.setEditType(4);
 					logger.debug("create history events for next step");
-					StepManager.addHistory(myDate, new Integer(myStep.getReihenfolge()).doubleValue(), myStep.getTitle(),
+					StepManager.addHistory(myDate, myStep.getReihenfolge(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
-					logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
+					if(logger.isDebugEnabled()){
+						logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
+					}
 					if (myStep.isTypAutomatisch()) {
 						logger.debug("add step to list of automatic tasks");
 						automatischeSchritte.add(myStep);
@@ -173,20 +181,26 @@ public class HelperSchritteWithoutHibernate {
 		}
 		ProcessObject po = ProcessManager.getProcessObjectForId(processId);
 		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
-			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))), processId);
+		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true)))) {
+			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))), processId);
 		}
 		logger.debug("update process status");
 		updateProcessStatus(processId);
-		logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
+		if(logger.isDebugEnabled()){
+			logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
+		}
 		for (StepObject automaticStep : automatischeSchritte) {
-			logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
-					+ automaticStep.getProcessId());
+			if(logger.isDebugEnabled()){
+				logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
+						+ automaticStep.getProcessId());
+			}
 			ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(automaticStep);
 			TaskManager.addTask(myThread);
 		}
 		for (StepObject finish : stepsToFinish) {
-			logger.debug("closing task " + finish.getTitle());
+			if(logger.isDebugEnabled()){
+				logger.debug("closing task " + finish.getTitle());
+			}
 			CloseStepObjectAutomatic(finish);
 		}
 		// TODO remove this later
@@ -246,7 +260,9 @@ public class HelperSchritteWithoutHibernate {
 		int size = scriptpaths.size();
 		int returnParameter = 0;
 		for (String script : scriptpaths) {
-			logger.debug("starting script " + script);
+			if(logger.isDebugEnabled()){
+				logger.debug("starting script " + script);
+			}
 			if (returnParameter != 0) {
 				abortStep(step);
 				break;
@@ -298,7 +314,9 @@ public class HelperSchritteWithoutHibernate {
 		script = replacer.replace(script);
 		int rueckgabe = -1;
 		try {
-			logger.info("Calling the shell: " + script);
+			if(logger.isInfoEnabled()){
+				logger.info("Calling the shell: " + script);
+			}
             rueckgabe = ShellScript.legacyCallShell2(script);
             if (automatic) {
 				if (rueckgabe == 0) {
@@ -311,12 +329,12 @@ public class HelperSchritteWithoutHibernate {
 							step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
 							StepManager.updateStep(step);
 						} else {
-							CloseStepObjectAutomatic(step);							
+							CloseStepObjectAutomatic(step);
 						}
 					} else {
 						CloseStepObjectAutomatic(step);
 					}
-					
+
 				} else {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
 					step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
@@ -418,8 +436,8 @@ public class HelperSchritteWithoutHibernate {
 	 * passed in, the progress in it will be updated during processing and
 	 * occurring errors will be passed to it to be visible in the task manager
 	 * screen.
-	 * 
-	 * @param task
+	 *
+	 * @param obj
 	 *            task object to submit progress updates and errors to
 	 */
 	public void setTask(EmptyTask obj) {

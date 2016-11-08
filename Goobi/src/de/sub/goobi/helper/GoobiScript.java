@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,7 +27,6 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,17 +38,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 import org.hibernate.Hibernate;
 
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -71,6 +62,15 @@ import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 
 //TODO: Delete me, this should be part of the Plugins...
 //TODO: Break this up into multiple classes with a common interface
@@ -153,7 +153,7 @@ public class GoobiScript {
         } else if (this.myParameters.get("action").equals("exportDms")) {
             exportDms(inProzesse, this.myParameters.get("exportImages"), true);
         } else if (this.myParameters.get("action").equals("export")) {
-            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.getBoolean(this.myParameters.get("exportOcr")));
+            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.valueOf(this.myParameters.get("exportOcr")));
         } else if (this.myParameters.get("action").equals("doit")) {
             exportDms(inProzesse, "false", false);
         } else if (this.myParameters.get("action").equals("doit2")) {
@@ -208,13 +208,13 @@ public class GoobiScript {
             String title = p.getTitel();
             if (contentOnly) {
                 try {
-                    File ocr = new File(p.getOcrDirectory());
+                    SafeFile ocr = new SafeFile(p.getOcrDirectory());
                     if (ocr.exists()) {
-                        Helper.deleteDir(ocr);
+                        ocr.deleteDir();
                     }
-                    File images = new File(p.getImagesDirectory());
+                    SafeFile images = new SafeFile(p.getImagesDirectory());
                     if (images.exists()) {
-                        Helper.deleteDir(images);
+                        images.deleteDir();
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (Exception e) {
@@ -235,10 +235,10 @@ public class GoobiScript {
 
     private void deleteMetadataDirectory(Prozess p) {
         try {
-            Helper.deleteDir(new File(p.getProcessDataDirectory()));
-            File ocr = new File(p.getOcrDirectory());
+            new SafeFile(p.getProcessDataDirectory()).deleteDir();
+            SafeFile ocr = new SafeFile(p.getOcrDirectory());
             if (ocr.exists()) {
-                Helper.deleteDir(ocr);
+                ocr.deleteDir();
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -301,25 +301,25 @@ public class GoobiScript {
             return;
         }
 
-        File sourceFolder = new File(this.myParameters.get("sourcefolder"));
-        if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
+        SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
+        if (!sourceFolder.isDirectory()) {
             Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
         try {
 
             for (Prozess p : inProzesse) {
-                File imagesFolder = new File(p.getImagesOrigDirectory(false));
+                SafeFile imagesFolder = new SafeFile(p.getImagesOrigDirectory(false));
                 if (imagesFolder.list().length > 0) {
                     Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitel() + " [" + p.getId().intValue()
                             + "] has already data in image folder");
                 } else {
-                    File sourceFolderProzess = new File(sourceFolder, p.getTitel());
-                    if (!sourceFolderProzess.exists() || !sourceFolder.isDirectory()) {
+                    SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitel());
+                    if (!sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
-                        CopyFile.copyDirectory(sourceFolderProzess, imagesFolder);
+                    	sourceFolderProzess.copyDir(imagesFolder);
                         Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is copied");
                     }
@@ -349,7 +349,7 @@ public class GoobiScript {
             ProzessDAO pdao = new ProzessDAO();
             List<Regelsatz> rulesets = rdao.search("from Regelsatz where titel='" + this.myParameters.get("ruleset") + "'");
             if (rulesets == null || rulesets.size() == 0) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Could not found ruleset: ", "ruleset");
+                Helper.setFehlerMeldung("goobiScriptfield", "Could not find ruleset: ", "ruleset");
                 return;
             }
             Regelsatz regelsatz = rulesets.get(0);
@@ -914,7 +914,7 @@ public class GoobiScript {
     public void deleteTiffHeaderFile(List<Prozess> inProzesse) {
         for (Prozess proz : inProzesse) {
             try {
-                File tiffheaderfile = new File(proz.getImagesDirectory() + "tiffwriter.conf");
+                SafeFile tiffheaderfile = new SafeFile(proz.getImagesDirectory() + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }

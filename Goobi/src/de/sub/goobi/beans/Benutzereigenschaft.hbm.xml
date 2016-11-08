@@ -3,7 +3,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -39,12 +39,14 @@
 
 		<property name="titel" column="Titel" type="string" />
 		<property name="wert" column="Wert" type="string" />
-		<property name="istObligatorisch" column="IstObligatorisch" />
+		<property name="istObligatorisch" type="java.lang.Boolean">
+			<column name="IstObligatorisch" sql-type="bit"/>
+		</property>
 		<property name="datentyp" column="DatentypenID" type="integer" />
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 				
-		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID"/>
+		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID" foreign-key="FK_BenutzerID"/>
 		
 	</class>
 

@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -149,7 +149,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			String state = newProcess.NeuenProzessAnlegen();
 			if (!state.equals("ProzessverwaltungKopie3"))
 				throw new RuntimeException();
-			logger.info("Created new process: " + id);
+			if(logger.isInfoEnabled()){
+				logger.info("Created new process: " + id);
+			}
 		} catch (Exception exited) {
 			logger.error("Failed to create new process: " + id, exited);
 			throw exited;
@@ -171,7 +173,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
 		Prozess selectedTemplate = getTemplateByTitle(templateTitle);
 		result.setProzessVorlage(selectedTemplate);
-		result.Prepare();
+		result.prepare();
 		return result;
 	}
 

@@ -3,7 +3,7 @@ package org.goobi.production.properties;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -225,7 +225,9 @@ public class PropertyParser {
 				for (int j = 0; j <= count; j++) {
 					pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
 				}
-				logger.debug("add property A " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+				if(logger.isDebugEnabled()){
+					logger.debug("add property A " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+				}
 				properties.add(pp);
 
 			}
@@ -251,7 +253,9 @@ public class PropertyParser {
 							pnew.setProzesseigenschaft(pe);
 							pnew.setValue(pe.getWert());
 							pnew.setContainer(pe.getContainer());
-							logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+							if(logger.isDebugEnabled()){
+								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+							}
 							properties.add(pnew);
 						}
 					}
@@ -275,12 +279,16 @@ public class PropertyParser {
 				pp.setValue(pe.getWert());
 				pp.setContainer(pe.getContainer());
 				pp.setType(Type.TEXT);
-				logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+				if(logger.isDebugEnabled()){
+					logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+				}
 				properties.add(pp);
 
 			}
 		}
-		logger.debug("all properties are " + properties.size());
+		if(logger.isDebugEnabled()){
+			logger.debug("all properties are " + properties.size());
+		}
 
 		return properties;
 	}

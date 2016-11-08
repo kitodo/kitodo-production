@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -81,7 +81,7 @@ public class LoginForm {
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
 			List<Benutzer> treffer;
 			try {
-				treffer = new BenutzerDAO().search("from Benutzer where login=?", this.login);
+				treffer = new BenutzerDAO().search("from Benutzer where login = :username", "username", this.login);
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("could not read database", e.getMessage());
 				return "";

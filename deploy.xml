@@ -3,7 +3,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -39,7 +39,7 @@
 
 	<!-- Default build properties (applied if not overridden by build.properties file) -->
 	<property name="build.dist.name" value="goobi-ce" />
-	<property name="build.dist.version" value="1.11.0" />
+	<property name="build.dist.version" value="1.11.2" />
 	<property name="build.dir" value="./build" />
 	<property name="build.dist.dir" value="${basedir}/dist" />
 	<property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war" />

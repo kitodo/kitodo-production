@@ -3,7 +3,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,14 +27,16 @@ package de.sub.goobi.forms;
  * exception statement from your version.
  */
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import de.sub.goobi.config.ConfigMain;
+import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -50,6 +52,11 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepStatus;
 
 public class SearchForm {
+
+	/**
+	 * Logger instance.
+	 */
+	private static final Logger logger = Logger.getLogger(SearchForm.class);
 
 	private List<String> projects = new ArrayList<String>(); // proj:
 	private String project = "";
@@ -85,68 +92,147 @@ public class SearchForm {
 	private String templatePropertyOperand = "";
 	private String stepOperand = "";
 
-	@SuppressWarnings("unchecked")
-	public SearchForm() {
-		for (StepStatus s : StepStatus.values()) {
-			this.stepstatus.add(s);
+	/**
+	 * Initialise drop down list of master piece property titles
+	 */
+	protected void initMasterpiecePropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Werkstueckeigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.masterpiecePropertyTitles.add(result);
+			}
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of master piece property titles could be empty!");
 		}
+	}
+
+	/**
+	 * Initialise drop down list of projects
+	 */
+	protected void initProjects() {
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
+        Criteria crit = session.createCriteria(Projekt.class);
 
-		// projects
-		Criteria crit = session.createCriteria(Projekt.class);
 		crit.addOrder(Order.asc("titel"));
 		if (restriction > 2) {
 			crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
 		}
 		this.projects.add(Helper.getTranslation("notSelected"));
-		
-		List<Projekt> projektList = crit.list();
-		for (Projekt p : projektList) {
-			this.projects.add(p.getTitel());
-		}
 
-		crit = session.createCriteria(Werkstueckeigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.masterpiecePropertyTitles.add((String) it.next());
+		try {
+			@SuppressWarnings("unchecked")
+			List<Projekt> projektList = crit.list();
+			for (Projekt p : projektList) {
+				this.projects.add(p.getTitel());
+			}
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of projects could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Vorlageeigenschaft.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
-		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.templatePropertyTitles.add((String) it.next());
-		}
-
-		crit = session.createCriteria(Prozesseigenschaft.class);
+	/**
+	 * Initialise drop down list of process property titles
+	 */
+	protected void initProcessPropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Prozesseigenschaft.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			String itstr = (String) it.next();
-			if (itstr!=null){
-				this.processPropertyTitles.add(itstr);
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String itstr : results) {
+				if (itstr != null) {
+					this.processPropertyTitles.add(itstr);
+				}
 			}
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of process property titles could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Schritt.class);
+	/**
+	 * Initialise drop down list of step status
+	 */
+	protected void initStepStatus() {
+		for (StepStatus s : StepStatus.values()) {
+			this.stepstatus.add(s);
+		}
+	}
+
+	/**
+	 * Initialise drop down list of step titles
+	 */
+	protected void initStepTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			this.stepTitles.add((String) it.next());
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.stepTitles.add(result);
+			}
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of step titles could be empty!");
 		}
+	}
 
-		crit = session.createCriteria(Benutzer.class);
+	/**
+	 * Initialise drop down list of template property titles
+	 */
+	protected void initTemplatePropertyTitles() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Vorlageeigenschaft.class);
+		crit.addOrder(Order.asc("titel"));
+		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+			for (String result : results) {
+				this.templatePropertyTitles.add(result);
+			}
+		} catch (HibernateException hbe) {
+			logger.warn("Catched HibernateException. List of template property titles could be empty!");
+		}
+	}
+
+	/**
+	 * Initialise drop down list of user list
+	 */
+	protected void initUserList() {
+		Session session = Helper.getHibernateSession();
+		Criteria crit = session.createCriteria(Benutzer.class);
 		crit.add(Restrictions.isNull("isVisible"));
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
 		crit.addOrder(Order.asc("vorname"));
-		this.user.addAll(crit.list());
+		try {
+			this.user.addAll(crit.list());
+		} catch (RuntimeException rte) {
+			logger.warn("Catched RuntimeException. List of users could be empty!");
+		}
+	}
+
+	public SearchForm() {
+		initStepStatus();
+		initProjects();
+		initMasterpiecePropertyTitles();
+		initTemplatePropertyTitles();
+		initProcessPropertyTitles();
+		initStepTitles();
+		initUserList();
 	}
 
 	public List<String> getProjects() {
@@ -346,7 +432,10 @@ public class SearchForm {
 		if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
 			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
 		}
-		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty() && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))) {
+		if (!this.stepdonetitle.isEmpty()
+				&& !this.stepdoneuser.isEmpty()
+				&& !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
+				&& ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
 			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
 		}
 		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()

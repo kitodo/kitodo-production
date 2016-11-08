@@ -4,7 +4,7 @@ package de.sub.goobi.persistence.apache;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,6 +27,8 @@ package de.sub.goobi.persistence.apache;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
@@ -58,7 +60,7 @@ public class FolderInformation {
 
 
 	public String getImagesTifDirectory(boolean useFallBack) {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 		DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 		/* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -93,7 +95,7 @@ public class FolderInformation {
 		if (!tifOrdner.equals("") && useFallBack) {
 			String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 			if (!suffix.equals("")) {
-				File tif = new File(tifOrdner);
+				SafeFile tif = new SafeFile(tifOrdner);
 				String[] files = tif.list();
 				if (files == null || files.length == 0) {
 					String[] folderList = dir.list();
@@ -124,9 +126,9 @@ public class FolderInformation {
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
-		File testMe;
+		SafeFile testMe;
 
-		testMe = new File(getImagesTifDirectory(true));
+		testMe = new SafeFile(getImagesTifDirectory(true));
 
 		if (testMe.list() == null) {
 			return false;
@@ -140,7 +142,7 @@ public class FolderInformation {
 
 	public String getImagesOrigDirectory(boolean useFallBack) {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
-			File dir = new File(getImagesDirectory());
+			SafeFile dir = new SafeFile(getImagesDirectory());
 			DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
 			DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
 			/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -172,7 +174,7 @@ public class FolderInformation {
 			if (!origOrdner.equals("") && useFallBack) {
 				String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
 				if (!suffix.equals("")) {
-					File tif = new File(origOrdner);
+					SafeFile tif = new SafeFile(origOrdner);
 					String[] files = tif.list();
 					if (files == null || files.length == 0) {
 						String[] folderList = dir.list();
@@ -239,22 +241,22 @@ public class FolderInformation {
 	}
 
 	public String getSourceDirectory() {
-		File dir = new File(getImagesDirectory());
+		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return (name.endsWith("_" + "source"));
 			}
 		};
-		File sourceFolder = null;
+		SafeFile sourceFolder = null;
 		String[] verzeichnisse = dir.list(filterVerz);
 		if (verzeichnisse == null || verzeichnisse.length == 0) {
-			sourceFolder = new File(dir, title + "_source");
+			sourceFolder = new SafeFile(dir, title + "_source");
 			if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
 				sourceFolder.mkdir();
 			}
 		} else {
-			sourceFolder = new File(dir, verzeichnisse[0]);
+			sourceFolder = new SafeFile(dir, verzeichnisse[0]);
 		}
 
 		return sourceFolder.getAbsolutePath();
@@ -336,16 +338,16 @@ public class FolderInformation {
 		String folder = this.getImagesTifDirectory(false);
 		folder = folder.substring(0, folder.lastIndexOf("_"));
 		folder = folder + "_" + methodName;
-		if (new File(folder).exists()) {
+		if (new SafeFile(folder).exists()) {
 			return folder;
 		}
 		return null;
 	}
 
 	public List<String> getDataFiles() throws InvalidImagesException {
-		File dir;
+		SafeFile dir;
 		try {
-			dir = new File(getImagesTifDirectory(true));
+			dir = new SafeFile(getImagesTifDirectory(true));
 		} catch (Exception e) {
 			throw new InvalidImagesException(e);
 		}
@@ -358,7 +360,7 @@ public class FolderInformation {
 				dataList.add(s);
 			}
 			/* alle Dateien durchlaufen */
-			if (dataList != null && dataList.size() != 0) {
+			if (dataList.size() != 0) {
 				Collections.sort(dataList, new GoobiImageFileComparator());
 			}
 			return dataList;

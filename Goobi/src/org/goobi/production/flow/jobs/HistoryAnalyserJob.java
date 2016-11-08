@@ -4,7 +4,7 @@ package org.goobi.production.flow.jobs;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -91,7 +91,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @param inProcess
 	 *            the {@link Prozess} to use
 	 * 
-	 * @return true, if any history event is updated, so the process has to to saved to database
+	 * @return true, if any history event is updated, so the process has to be saved to database
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws InterruptedException
@@ -405,14 +405,18 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			while (it.hasNext()) {
 				i++;
 				Prozess proc = it.next();
-				logger.debug("updating history entries for " + proc.getTitel());
+				if(logger.isDebugEnabled()){
+					logger.debug("updating history entries for " + proc.getTitel());
+				}
 				try {
 					if (!proc.isSwappedOutGui()) {
 						boolean processHistoryChanged = (true == updateHistory(proc));
 						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
 						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
-							logger.debug("history updated for process " + proc.getId());
+							if(logger.isDebugEnabled()){
+								logger.debug("history updated for process " + proc.getId());
+							}
 						}
 					}
 
@@ -479,7 +483,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				Calendar cal = Calendar.getInstance();
 				cal.set(2007, 0, 1, 0, 0, 0);
 				eventTimestamp = cal.getTime();
-				logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString() + "' for a history event as a fallback");
+				if(logger.isInfoEnabled()){
+					logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString() + "' for a history event as a fallback");
+				}
 			}
 
 		}
@@ -490,7 +496,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * method iterates through the event list and checks if there are duplicate entries, if so it will remove the entry and return a true
 	 * 
 	 * @param inProcess
-	 * @return
+	 * @return true if there are duplicate entries, false otherwise
 	 */
 	private static Boolean getHistoryEventDuplicated(Prozess inProcess) {
 		Boolean duplicateEventRemoved = false;

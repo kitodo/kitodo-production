@@ -4,7 +4,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -101,7 +101,7 @@ class Converter {
 	protected Double getDouble() {
 		if (this.myObject instanceof Integer) {
 
-			return new Double(((Integer) this.myObject).intValue());
+			return Double.valueOf(((Integer) this.myObject).intValue());
 		} else if (this.myObject instanceof Double) {
 
 			return (Double) this.myObject;

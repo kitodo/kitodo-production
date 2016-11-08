@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -40,7 +41,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
 
 import ugh.dl.DocStruct;
@@ -198,8 +198,7 @@ class UGHUtils {
 	// TODO: Create a own class for iso 639 (?) Mappings or move this to UGH
 	static String convertLanguage(String inLanguage) {
 		/* Datei zeilenweise durchlaufen und die Sprache vergleichen */
-		try {
-			BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE);
+		try (BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE)) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
@@ -207,7 +206,6 @@ class UGHUtils {
 					return str.split(" ")[0];
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 		}
 		return inLanguage;
@@ -259,7 +257,7 @@ class UGHUtils {
 			path = FilenameUtils.concat(session.getServletContext().getRealPath("/WEB-INF"), "classes");
 		}
 		String file = FilenameUtils.concat(path, fileName);
-		return new BufferedReader(new InputStreamReader(new FileInputStream(file), CharEncoding.UTF_8));
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 	}
 
 }

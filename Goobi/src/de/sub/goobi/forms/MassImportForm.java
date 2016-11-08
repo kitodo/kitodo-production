@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -111,7 +111,7 @@ public class MassImportForm {
 				.getImportPluginsForType(ImportType.FOLDER);
 	}
 
-	public String Prepare() {
+	public String prepare() {
 		if (this.template.getContainsUnreachableSteps()) {
 			if (this.template.getSchritteList().size() == 0) {
 				Helper.setFehlerMeldung("noStepsInWorkflow");
@@ -532,8 +532,8 @@ public class MassImportForm {
 	}
 
 	/**
-	 * @param process
-	 *            the process to set
+	 * @param processes
+	 *            the process list to set
 	 */
 	public void setProcess(List<Prozess> processes) {
 		this.processes = processes;
@@ -577,8 +577,8 @@ public class MassImportForm {
 	}
 
 	/**
-	 * @param opacCatalogues
-	 *            the opacCatalogues to set
+	 * @param opacCatalogue
+	 *            the opacCatalogue to set
 	 */
 
 	public void setOpacCatalogue(String opacCatalogue) {

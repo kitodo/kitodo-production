@@ -4,7 +4,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -199,8 +199,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 				// fall back, if conversion triggers an exception
 			} catch (Exception e) {
-				dataRowChart.addValue(e.getMessage(), new Double(0));
-				dataRow.addValue(e.getMessage(), new Double(0));
+				dataRowChart.addValue(e.getMessage(), 0.0);
+				dataRow.addValue(e.getMessage(), 0.0);
 			}
 
 			// finally adding dataRow to DataTable and fetching next row

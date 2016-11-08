@@ -5,7 +5,7 @@
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -39,7 +39,6 @@
 package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.sharkysoft.util.NotImplementedException;

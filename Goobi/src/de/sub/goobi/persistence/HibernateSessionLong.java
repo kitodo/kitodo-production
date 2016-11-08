@@ -99,12 +99,4 @@ public class HibernateSessionLong {
 			}
 		}
 	}
-
-	public Session getNewSession() throws HibernateException {
-		this.sess.clear();
-		this.sess.close();
-		this.sess = null;
-		return getSession();
-	}
-
 }

@@ -4,7 +4,7 @@ package org.goobi.production.cli;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -37,7 +37,7 @@ import de.sub.goobi.helper.Helper;
 
 public class WebInterfaceConfig {
 
-	public static List<String> getCredencials(String requestIp, String requestPassword) {
+	public static List<String> getCredentials(String requestIp, String requestPassword) {
 		ArrayList<String> allowed = new ArrayList<String>();
 		try {
 			XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() +"goobi_webapi.xml");

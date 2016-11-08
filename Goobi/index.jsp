@@ -1,10 +1,10 @@
 <html>
 <!-- 
- * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * This file is part of the Kitodo Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
- *     		- https://github.com/goobi/goobi-production
+ *     		- http://www.kitodo.org
+ *     		- https://github.com/kitodo/kitodo-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
  * 			- http://digiverso.com 
@@ -38,7 +38,7 @@
 
 <head>
 <meta http-equiv="Refresh" content="0; URL=newpages/Main.jsf"/>
-<title>Goobi</title>
+<title>Kitodo</title>
 </head>
 <body>
 <table width="100%" height="100%" border="0">
@@ -49,7 +49,7 @@
 		<td valign="middle">
 		<div align="center"><img src="newpages/images/ajax-loader.gif"><br>
 		<br>
-		<font face="Arial, Helvetica, sans-serif" style="color:#219ABD">goobi is loading</font></div>
+		<font face="Arial, Helvetica, sans-serif" style="color:#219ABD">Kitodo is loading</font></div>
 		</td>
 	</tr>
 	<tr>

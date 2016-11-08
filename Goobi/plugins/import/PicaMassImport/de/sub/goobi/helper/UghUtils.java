@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -33,11 +33,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 
@@ -51,15 +51,13 @@ public class UghUtils {
 	 */
 	// TODO: Try to replace this with an external library
 	public static String convertUmlaut(String line) {
-		try {
-			BufferedReader in = open("goobi_opacUmlaut.txt");
+		try (BufferedReader in = open("goobi_opacUmlaut.txt")) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0) {
 					line = line.replaceAll(str.split(" ")[0], str.split(" ")[1]);
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 			myLogger.error("IOException bei Umlautkonvertierung", e);
 		}
@@ -93,7 +91,7 @@ public class UghUtils {
 			path = FilenameUtils.concat(session.getServletContext().getRealPath("/WEB-INF"), "classes");
 		}
 		String file = FilenameUtils.concat(path, fileName);
-		return new BufferedReader(new InputStreamReader(new FileInputStream(file), CharEncoding.UTF_8));
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 	}
 
 }

@@ -4,7 +4,7 @@ package de.sub.goobi.beans;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -122,7 +122,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	/**
 	 * getter for datentyp set to private for hibernate
 	 * 
-	 * for use in programm use getType instead
+	 * for use in program use getType instead
 	 * 
 	 * @return datentyp as integer
 	 */

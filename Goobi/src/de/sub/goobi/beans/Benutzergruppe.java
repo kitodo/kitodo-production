@@ -4,7 +4,7 @@ package de.sub.goobi.beans;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -176,7 +176,7 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 			return false;
 		}
 		Benutzergruppe other = (Benutzergruppe) obj;
-		return this.getTitel() == null ? other.getTitel() == null : this.getTitel().equals(other.getTitel());
+		return this.getTitel().equals(other.getTitel());
 	}
 
 	@Override

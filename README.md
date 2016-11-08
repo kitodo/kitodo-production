@@ -1,15 +1,14 @@
-Goobi.Production
-================
+Kitodo.Production
+=================
 
-Goobi.Production is a workflow tool suite for the support of mass digitization. Goobi.Production is part of the Goobi Digital library Suite.
+Kitodo.Production is a workflow tool suite for the support of mass digitization. Kitodo.Production is part of the Kitodo Digital library Suite.
 
-Goobi is an open source software suite intended to support mass digitization projects for cultural heritage institutions. Goobi is widely-used and cooperatively maintained by major German libraries and digitization service providers. The software implements international standards such as METS, MODS and other formats maintained by the Library of Congress. Goobi consists of several independent modules serving different purposes such as controlling the digitization workflow, enriching descriptive and structural metadata, and presenting the results to the public in a modern and convenient way.
+Kitodo is an open source software suite intended to support mass digitization projects for cultural heritage institutions. Kitodo is widely-used and cooperatively maintained by major German libraries and digitization service providers. The software implements international standards such as METS, MODS and other formats maintained by the Library of Congress. Kitodo consists of several independent modules serving different purposes such as controlling the digitization workflow, enriching descriptive and structural metadata, and presenting the results to the public in a modern and convenient way.
 
 To get more information, visit the following web sites:
-http://www.goobi.org
-http://wiki.goobi.org
+http://www.kitodo.org
 
-You can also follow Goobi News on Twitter at @Goobi\_org
+You can also follow Kitodo News on Twitter at @Kitodo\_org
 
 
 Building
@@ -34,7 +33,7 @@ In order to build the application with (the rather useless) default configuratio
 1. Use the example `build.properties.templates` file to create an actual `build.properties` file.
 	cp build.properties.template build.properties
 2. Edit the file and provide the path to your Tomcat distributions `lib/` directory in the `tomcat.dir.lib` parameter.
-3. Execute ant to generate Goobi.Production distributable WAR and JAR files. All build artifacts (class files, javadoc, test results) will end up in the `build/` directory. All distributables end up in the `dist/` directory.
+3. Execute ant to generate Kitodo.Production distributable WAR and JAR files. All build artifacts (class files, javadoc, test results) will end up in the `build/` directory. All distributables end up in the `dist/` directory.
 
 ### Configuring your distribution
 
@@ -46,4 +45,4 @@ Most probably, you will have to adjust these four files:
 * hibernate.cfg.xml
 * log4j.properties
 
-Setting up a Goobi instance can be quite tricky. For more help on how to configure Goobi, please check the web sites above or ask questions on the mailing lists.
+Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the web sites above, the GitHub Wiki or ask questions on the mailing lists.

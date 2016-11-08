@@ -4,7 +4,7 @@ package de.sub.goobi.beans;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -148,7 +148,7 @@ public class Schritt implements Serializable {
 	/**
 	 * getter for editType set to private for hibernate
 	 * 
-	 * for use in programm use getEditTypeEnum instead
+	 * for use in program use getEditTypeEnum instead
 	 * 
 	 * @return editType as integer
 	 */
@@ -188,9 +188,9 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * getter for Bearbeitunsstatus set to private for hibernate
+	 * getter for bearbeitungsstatus (set to private for hibernate)
 	 * 
-	 * for use in programm use getBearbeitungsstatusEnum instead
+	 * for use in program use getBearbeitungsstatusEnum instead
 	 * 
 	 * @return bearbeitungsstatus as integer
 	 */

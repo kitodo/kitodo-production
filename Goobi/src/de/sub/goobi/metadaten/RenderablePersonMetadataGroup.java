@@ -2,10 +2,10 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e. V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -294,7 +294,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 			throw new NullPointerException(e.getMessage());
 		}
 		String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
-		if (normdataRecord != null & normdataRecord.length() > 0
+		if (normdataRecord != null && normdataRecord.length() > 0
 				&& !normdataRecord.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
 			String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
 			person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);

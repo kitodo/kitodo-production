@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -564,8 +564,10 @@ public class AktuelleSchritteForm extends BasisForm {
 			Helper.setFehlerMeldung("userNotFound");
 			return "";
 		}
-		myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
-		myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
+			myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+		}
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		Date myDate = new Date();
 		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.LOCKED);
@@ -585,7 +587,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
 			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
 			pe.setType(PropertyType.messageError);
-			pe.setCreationDate(myDate);
 			pe.setProzess(this.mySchritt.getProzess());
 			this.mySchritt.getProzess().getEigenschaften().add(pe);
 
@@ -677,9 +678,7 @@ public class AktuelleSchritteForm extends BasisForm {
 					step.setBearbeitungszeitpunkt(now);
 				}
 				mySchritt.setBearbeitungszeitpunkt(new Date());
-				if (ben != null) {
-					mySchritt.setBearbeitungsbenutzer(ben);
-				}
+				mySchritt.setBearbeitungsbenutzer(ben);
 				dao.save(step);
 			}
 
@@ -696,7 +695,6 @@ public class AktuelleSchritteForm extends BasisForm {
 			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
 					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
 			pe.setType(PropertyType.messageImportant);
-			pe.setCreationDate(new Date());
 			pe.setProzess(this.mySchritt.getProzess());
 			this.mySchritt.getProzess().getEigenschaften().add(pe);
 

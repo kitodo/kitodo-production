@@ -1,7 +1,7 @@
 -- This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
 -- 
 -- Visit the websites for more information. 
---     		- http://www.goobi.org
+--     		- http://www.kitodo.org
 --    		- https://github.com/goobi/goobi-production
 -- 		    - http://gdz.sub.uni-goettingen.de
 --			- http://www.intranda.com
@@ -44,7 +44,7 @@ CREATE TABLE `benutzer` (
   `sessiontimeout` int(11) DEFAULT NULL,
   `ldapgruppenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`BenutzerID`),
-  KEY `FK6564F1FDAB2826EF` (`ldapgruppenID`)
+  KEY `FK_LdapgruppenID` (`ldapgruppenID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -59,7 +59,7 @@ CREATE TABLE `benutzereigenschaften` (
   `creationDate` datetime DEFAULT NULL,
   `BenutzerID` int(11) DEFAULT NULL,
   PRIMARY KEY (`benutzereigenschaftenID`),
-  KEY `FK963DAE0FC44F7B5B` (`BenutzerID`)
+  KEY `FK_BenutzerID` (`BenutzerID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -77,8 +77,8 @@ CREATE TABLE `benutzergruppenmitgliedschaft` (
   `BenutzerGruppenID` int(11) NOT NULL,
   `BenutzerID` int(11) NOT NULL,
   PRIMARY KEY (`BenutzerID`,`BenutzerGruppenID`),
-  KEY `FK45CBE578C7DF00F` (`BenutzerGruppenID`),
-  KEY `FK45CBE578C44F7B5B` (`BenutzerID`)
+  KEY `FK_BenutzerGruppenID` (`BenutzerGruppenID`),
+  KEY `FK_BenutzerID` (`BenutzerID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -100,7 +100,7 @@ CREATE TABLE `history` (
   `date` datetime DEFAULT NULL,
   `processID` int(11) DEFAULT NULL,
   PRIMARY KEY (`historyid`),
-  KEY `FK373FE49436A1007C` (`processID`)
+  KEY `FK_ProzesseID` (`processID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -151,7 +151,7 @@ CREATE TABLE `projectfilegroups` (
  `previewImage` tinyint(1) DEFAULT NULL,
   `ProjekteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProjectFileGroupID`),
-  KEY `FK51AAC2292DFE45A` (`ProjekteID`)
+  KEY `FK_ProjekteID` (`ProjekteID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -160,8 +160,8 @@ CREATE TABLE `projektbenutzer` (
   `BenutzerID` int(11) NOT NULL,
   `ProjekteID` int(11) NOT NULL,
   PRIMARY KEY (`BenutzerID`,`ProjekteID`),
-  KEY `FKEC749D0E2DFE45A` (`ProjekteID`),
-  KEY `FKEC749D0EC44F7B5B` (`BenutzerID`)
+  KEY `FK_ProjekteID` (`ProjekteID`),
+  KEY `FK_BenutzerID` (`BenutzerID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -218,9 +218,9 @@ CREATE TABLE `prozesse` (
   `MetadatenKonfigurationID` int(11) DEFAULT NULL,
   `docketID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ProzesseID`),
-  KEY `FKC55ACC6D2DFE45A` (`ProjekteID`),
-  KEY `FKC55ACC6DE81D30E7` (`MetadatenKonfigurationID`),
-  KEY `FKC55ACC6DC729A7E5` (`docketID`)
+  KEY `FK_ProjekteID` (`ProjekteID`),
+  KEY `FK_MetadatenKonfigurationID` (`MetadatenKonfigurationID`),
+  KEY `FK_DocketID` (`docketID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -236,7 +236,7 @@ CREATE TABLE `prozesseeigenschaften` (
   `container` int(11) DEFAULT NULL,
   `prozesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`prozesseeigenschaftenID`),
-  KEY `FK3B22499F51BB26FA` (`prozesseID`)
+  KEY `FK_ProzesseID` (`prozesseID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -281,8 +281,8 @@ CREATE TABLE `schritte` (
   `BearbeitungsBenutzerID` int(11) DEFAULT NULL,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`SchritteID`),
-  KEY `FKD720073651BB26FA` (`ProzesseID`),
-  KEY `FKD720073697089D42` (`BearbeitungsBenutzerID`)
+  KEY `FK_ProzesseID` (`ProzesseID`),
+  KEY `FK_BearbeitungsBenutzerID` (`BearbeitungsBenutzerID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -291,8 +291,8 @@ CREATE TABLE `schritteberechtigtebenutzer` (
   `BenutzerID` int(11) NOT NULL,
   `schritteID` int(11) NOT NULL,
   PRIMARY KEY (`schritteID`,`BenutzerID`),
-  KEY `FK4BB889CF8BD09B9A` (`schritteID`),
-  KEY `FK4BB889CFC44F7B5B` (`BenutzerID`)
+  KEY `FK_SchritteID` (`schritteID`),
+  KEY `FK_BenutzerID` (`BenutzerID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -301,8 +301,8 @@ CREATE TABLE `schritteberechtigtegruppen` (
   `BenutzerGruppenID` int(11) NOT NULL,
   `schritteID` int(11) NOT NULL,
   PRIMARY KEY (`schritteID`,`BenutzerGruppenID`),
-  KEY `FKA5A0CC818BD09B9A` (`schritteID`),
-  KEY `FKA5A0CC81C7DF00F` (`BenutzerGruppenID`)
+  KEY `FK_SchritteID` (`schritteID`),
+  KEY `FK_BenutzerGruppenID` (`BenutzerGruppenID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -318,7 +318,7 @@ CREATE TABLE `schritteeigenschaften` (
   `container` int(11) DEFAULT NULL,
   `schritteID` int(11) DEFAULT NULL,
   PRIMARY KEY (`schritteeigenschaftenID`),
-  KEY `FK884E9D768BD09B9A` (`schritteID`)
+  KEY `FK_SchritteID` (`schritteID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -328,7 +328,7 @@ CREATE TABLE `vorlagen` (
   `Herkunft` varchar(255) DEFAULT NULL,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`VorlagenID`),
-  KEY `FK9A46688251BB26FA` (`ProzesseID`)
+  KEY `FK_ProzesseID` (`ProzesseID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -344,7 +344,7 @@ CREATE TABLE `vorlageneigenschaften` (
   `container` int(11) DEFAULT NULL,
   `vorlagenID` int(11) DEFAULT NULL,
   PRIMARY KEY (`vorlageneigenschaftenID`),
-  KEY `FKAA25B7AAD29AC443` (`vorlagenID`)
+  KEY `FK_VorlagenID` (`vorlagenID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -353,7 +353,7 @@ CREATE TABLE `werkstuecke` (
   `WerkstueckeID` int(11) NOT NULL AUTO_INCREMENT,
   `ProzesseID` int(11) DEFAULT NULL,
   PRIMARY KEY (`WerkstueckeID`),
-  KEY `FK98DED74551BB26FA` (`ProzesseID`)
+  KEY `FK_ProzesseID` (`ProzesseID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -369,7 +369,7 @@ CREATE TABLE `werkstueckeeigenschaften` (
   `container` int(11) DEFAULT NULL,
   `werkstueckeID` int(11) DEFAULT NULL,
   PRIMARY KEY (`werkstueckeeigenschaftenID`),
-  KEY `FK7B209DC7FBCBC046` (`werkstueckeID`)
+  KEY `FK_WerkstueckeID` (`werkstueckeID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -378,8 +378,8 @@ CREATE TABLE `batchesprozesse` (
   `ProzesseID` int(11) NOT NULL,
   `BatchID` int(11) NOT NULL,
   PRIMARY KEY (`ProzesseID`,`BatchID`),
-  KEY `FK4614E1D551BB26FA` (`ProzesseID`),
-  KEY `FK4614E1D58DC81D49` (`BatchID`)
+  KEY `FK_ProzesseID` (`ProzesseID`),
+  KEY `FK_BatchID` (`BatchID`)
 ) DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

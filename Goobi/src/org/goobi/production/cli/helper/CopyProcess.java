@@ -4,7 +4,7 @@ package org.goobi.production.cli.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -51,19 +51,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 import de.sub.goobi.beans.Prozess;
@@ -113,15 +109,15 @@ public class CopyProcess extends ProzesskopieForm {
 	private String naviFirstPage;
 	private Integer auswahl;
 	private String docType;
-	private final String atstsl = "";
+	// TODO: check use of atstsl. Why is it never modified?
+	private static final String atstsl = "";
 	private List<String> possibleDigitalCollection;
-	private final boolean updateData = false;
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	/* =============================================================== */
 
-	public String Prepare(ImportObject io) {
+	public String prepare(ImportObject io) {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			return "";
 		}
@@ -159,7 +155,7 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	@Override
-	public String Prepare() {
+	public String prepare() {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			for (Schritt s : this.prozessVorlage.getSchritteList()) {
 				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
@@ -602,7 +598,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 		this.prozessKopie.setId(null);
 		
-		EigenschaftenHinzufuegen(null);
+		addProperties(null);
 
 	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
@@ -648,144 +644,7 @@ public class CopyProcess extends ProzesskopieForm {
 			createNewFileformat();
 		}
 
-		// /*--------------------------------
-		// * wenn eine RDF-Konfiguration
-		// * vorhanden ist (z.B. aus dem Opac-Import, oder frisch angelegt),
-		// dann
-		// * diese ergänzen
-		// * --------------------------------*/
-		if (this.updateData) {
-			if (this.myRdf != null) {
-				for (AdditionalField field : this.additionalFields) {
-					if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-						/* welches Docstruct */
-						DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-						DocStruct myTempChild = null;
-						if (field.getDocstruct().equals("firstchild")) {
-							try {
-								myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-							} catch (RuntimeException e) {
-								/*
-								 * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
-								 */
-							}
-						}
-						/*
-						 * falls topstruct und firstchild das Metadatum bekommen sollen
-						 */
-						if (!field.getDocstruct().equals("firstchild") && field.getDocstruct().contains("firstchild")) {
-							try {
-								myTempChild = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-							} catch (RuntimeException e) {
-							}
-						}
-						if (field.getDocstruct().equals("boundbook")) {
-							myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
-						}
-						/* welches Metadatum */
-						try {
-							/*
-							 * bis auf die Autoren alle additionals in die Metadaten übernehmen
-							 */
-							if (!field.getMetadata().equals("ListOfCreators")) {
-								MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
-										.getPreferences(),
-										field.getMetadata());
-								Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-								/*
-								 * wenn das Metadatum null ist, dann jetzt initialisieren
-								 */
-								if (md == null) {
-									md = new Metadata(mdt);
-									md.setDocStruct(myTempStruct);
-									myTempStruct.addMetadata(md);
-								}
-								md.setValue(field.getWert());
-								/*
-								 * wenn dem Topstruct und dem Firstchild der Wert gegeben werden soll
-								 */
-								if (myTempChild != null) {
-									md = UghHelper.getMetadata(myTempChild, mdt);
-
-									md.setValue(field.getWert());
-								}
-							}
-						} catch (NullPointerException e) {
-						} catch (UghHelperException e) {
-
-						} catch (MetadataTypeNotAllowedException e) {
-
-						}
-					} // end if ughbinding
-				}// end for
-
-				/*
-				 * -------------------------------- Collectionen hinzufügen --------------------------------
-				 */
-				DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-				try {
-					addCollections(colStruct);
-					/*
-					 * falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
-					 */
-					colStruct = colStruct.getAllChildren().get(0);
-					addCollections(colStruct);
-				} catch (RuntimeException e) {
-					/*
-					 * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
-					 */
-				}
-
-				/*
-				 * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
-				 */
-				try {
-					DigitalDocument dd = this.myRdf.getDigitalDocument();
-					DocStructType dst = this.prozessVorlage.getRegelsatz().getPreferences().getDocStrctTypeByName("BoundBook");
-					DocStruct dsBoundBook = dd.createDocStruct(dst);
-					dd.setPhysicalDocStruct(dsBoundBook);
-
-					MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-
-					if (this.myRdf != null && this.myRdf.getDigitalDocument() != null
-							&& this.myRdf.getDigitalDocument().getPhysicalDocStruct() != null) {
-						List<? extends Metadata> alleImagepfade = this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
-						if (alleImagepfade != null && alleImagepfade.size() > 0) {
-							for (Metadata md : alleImagepfade) {
-								this.myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
-							}
-						}
-						Metadata newmd = new Metadata(mdt);
-						newmd.setValue("./" + this.prozessKopie.getTitel() + DIRECTORY_SUFFIX);
-						this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-					}
-					/* Rdf-File schreiben */
-					this.prozessKopie.writeMetadataFile(this.myRdf);
-
-					/*
-					 * -------------------------------- soll der Prozess als Vorlage verwendet werden? --------------------------------
-					 */
-					if (this.useTemplates && this.prozessKopie.isInAuswahllisteAnzeigen()) {
-						this.prozessKopie.writeMetadataAsTemplateFile(this.myRdf);
-					}
-
-				} catch (ugh.exceptions.DocStructHasNoTypeException e) {
-					Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
-					myLogger.error("creation of new process throws an error: ", e);
-				} catch (UghHelperException e) {
-					Helper.setFehlerMeldung("UghHelperException", e.getMessage());
-					myLogger.error("creation of new process throws an error: ", e);
-				} catch (MetadataTypeNotAllowedException e) {
-					Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
-					myLogger.error("creation of new process throws an error: ", e);
-				} catch (TypeNotAllowedForParentException e) {
-					myLogger.error(e);
-				}
-			}
-		} else {
-			this.prozessKopie.writeMetadataFile(this.myRdf);
-
-		}
+		this.prozessKopie.writeMetadataFile(this.myRdf);
 
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
@@ -813,7 +672,7 @@ public class CopyProcess extends ProzesskopieForm {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
-		EigenschaftenHinzufuegen(io);
+		addProperties(io);
 
 	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
@@ -894,29 +753,6 @@ public class CopyProcess extends ProzesskopieForm {
 
 	}
 
-	/* =============================================================== */
-
-	private void addCollections(DocStruct colStruct) {
-		for (String s : this.digitalCollections) {
-			try {
-				Metadata md = new Metadata(UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
-						"singleDigCollection"));
-				md.setValue(s);
-				md.setDocStruct(colStruct);
-				colStruct.addMetadata(md);
-			} catch (UghHelperException e) {
-				Helper.setFehlerMeldung(e.getMessage(), "");
-				e.printStackTrace();
-			} catch (DocStructHasNoTypeException e) {
-				Helper.setFehlerMeldung(e.getMessage(), "");
-				e.printStackTrace();
-			} catch (MetadataTypeNotAllowedException e) {
-				Helper.setFehlerMeldung(e.getMessage(), "");
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/**
 	 * alle Kollektionen eines übergebenen DocStructs entfernen ================================================================
 	 */
@@ -925,7 +761,7 @@ public class CopyProcess extends ProzesskopieForm {
 			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
 					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
-			if (myCollections != null && myCollections.size() > 0) {
+			if (myCollections.size() > 0) {
 				for (Metadata md : myCollections) {
 					colStruct.removeMetadata(md);
 				}
@@ -958,7 +794,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 	}
 
-	private void EigenschaftenHinzufuegen(ImportObject io) {
+	private void addProperties(ImportObject io) {
 		/*
 		 * -------------------------------- Vorlageneigenschaften initialisieren --------------------------------
 		 */
@@ -1355,7 +1191,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 					/* den Inhalt zum Titel hinzufügen */
 					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						newTitle += CalcProzesstitelCheck(myField.getTitel(), myField.getWert());
+						newTitle += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
 					}
 				}
 			}
@@ -1370,7 +1206,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
-	private String CalcProzesstitelCheck(String inFeldName, String inFeldWert) {
+	private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
 		String rueckgabe = inFeldWert;
 
 		/*
@@ -1448,7 +1284,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 					/* den Inhalt zum Titel hinzufügen */
 					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						this.tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitel(), myField.getWert());
+						this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
 					}
 				}
 			}
@@ -1473,10 +1309,9 @@ public class CopyProcess extends ProzesskopieForm {
 		eig.setType(property.getType());
 		eig.setVorlage(inVorlage);
 		Set<Vorlageeigenschaft> eigenschaften = inVorlage.getEigenschaften();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Vorlageeigenschaft>();
+		if (eigenschaften != null) {
+			eigenschaften.add(eig);
 		}
-		eigenschaften.add(eig);
 	}
 
 	private void addProperty(Prozess inProcess, Prozesseigenschaft property) {
@@ -1496,10 +1331,9 @@ public class CopyProcess extends ProzesskopieForm {
 		eig.setType(property.getType());
 		eig.setProzess(inProcess);
 		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaftenInitialized();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Prozesseigenschaft>();
+		if (eigenschaften != null) {
+			eigenschaften.add(eig);
 		}
-		eigenschaften.add(eig);
 	}
 
 	private void addProperty(Werkstueck inWerk, Werkstueckeigenschaft property) {
@@ -1519,9 +1353,8 @@ public class CopyProcess extends ProzesskopieForm {
 		eig.setType(property.getType());
 		eig.setWerkstueck(inWerk);
 		Set<Werkstueckeigenschaft> eigenschaften = inWerk.getEigenschaften();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Werkstueckeigenschaft>();
+		if (eigenschaften != null) {
+			eigenschaften.add(eig);
 		}
-		eigenschaften.add(eig);
 	}
 }

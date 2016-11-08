@@ -2,23 +2,23 @@ package de.sub.goobi.forms;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -127,7 +129,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
 //				crit.createCriteria("projekte", "proj");
 //				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
-				
+
 //				crit.createCriteria("benutzergruppen", "group");
 //				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
 				crit.add(ex);
@@ -184,10 +186,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
 				+ "goobi_loginBlacklist.txt";
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
-		try {
+		try (
 			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+			InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			BufferedReader in = new BufferedReader(isr);
+		) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
@@ -195,7 +198,6 @@ public class BenutzerverwaltungForm extends BasisForm {
 					Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
 				}
 			}
-			in.close();
 		} catch (IOException e) {
 		}
 		return valide;
@@ -203,9 +205,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	/**
 	 * The function Loeschen() deletes a user account.
-	 * 
+	 *
 	 * Please note that deleting a user in goobi.production will not delete the user from a connected LDAP service.
-	 * 
+	 *
 	 * @return a string indicating the screen showing up after the command has been performed.
 	 */
 	public String Loeschen() {
@@ -332,15 +334,15 @@ public class BenutzerverwaltungForm extends BasisForm {
 
 	/**
 	 * Ldap-Konfiguration für den Benutzer schreiben
-	 * 
-	 * @return
 	 */
 	public String LdapKonfigurationSchreiben() {
 		Ldap myLdap = new Ldap();
 		try {
 			myLdap.createNewUser(this.myClass, this.myClass.getPasswortCrypt());
 		} catch (Exception e) {
-			logger.warn("Could not generate ldap entry: " + e.getMessage());
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn("Could not generate ldap entry: " + e.getMessage());
+			}
 			Helper.setFehlerMeldung(e.getMessage());
 		}
 		return "";

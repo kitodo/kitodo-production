@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -75,7 +75,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CreateNewspaperProcessesTask extends EmptyTask implements INameableTask {
+public class CreateNewspaperProcessesTask extends EmptyTask {
 
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
@@ -219,7 +219,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask implements INameable
 					newProcess.setDocType(pattern.getDocType());
 					newProcess.setAdditionalFields(pattern.getAdditionalFields());
 					currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
-					if (currentTitle == "") {
+					if (currentTitle.equals("")) {
 						setException(new RuntimeException("Couldn’t create process title for issue "
 								+ issues.get(0).toString()));
 						return;

@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -37,12 +37,11 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
 import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.INameableTask;
 import de.sub.goobi.persistence.apache.MySQLHelper;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
-public class ScriptThreadWithoutHibernate extends EmptyTask implements INameableTask {
+public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
@@ -107,9 +106,13 @@ public class ScriptThreadWithoutHibernate extends EmptyTask implements INameable
 	public void run() {
 
 		boolean automatic = this.step.isTypAutomatisch();
-		logger.debug("step is automatic: " + automatic);
+		if(logger.isDebugEnabled()){
+			logger.debug("step is automatic: " + automatic);
+		}
 		List<String> scriptPaths = StepManager.loadScripts(this.step.getId());
-		logger.debug("found " + scriptPaths.size() + " scripts");
+		if(logger.isDebugEnabled()){
+			logger.debug("found " + scriptPaths.size() + " scripts");
+		}
 		if (scriptPaths.size() > 0) {
 			this.hs.executeAllScriptsForStep(this.step, automatic);
 		} else if (this.step.isTypExport()) {

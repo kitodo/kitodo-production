@@ -3,7 +3,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -28,9 +28,9 @@
  -->
 
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format"
-	xmlns:goobi="http://www.goobi.org/logfile" exclude-result-prefixes="fo">
+	xmlns:kitodo="http://www.kitodo.org/logfile" exclude-result-prefixes="fo">
 	<xsl:output method="xml" indent="yes" />
-	<xsl:template match="goobi:process">
+	<xsl:template match="kitodo:process">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="A5-landscape" page-width="14.8cm" page-height="21.0cm" margin-left="1cm" margin-top="1cm"
@@ -41,7 +41,7 @@
 			<fo:page-sequence master-reference="A5-landscape">
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block font-family="sans-serif" font-weight="bold" font-size="16pt" margin-top="20pt">
-						<xsl:value-of select="goobi:title" />
+						<xsl:value-of select="kitodo:title" />
 					</fo:block>
 					<fo:block border-top-width="1pt" border-top-style="solid" border-top-color="black" margin-top="20pt" />
 					<fo:block margin-top="20pt" font-size="10pt">
@@ -55,7 +55,7 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block>
-											<xsl:value-of select="goobi:project" />
+											<xsl:value-of select="kitodo:project" />
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
@@ -65,7 +65,7 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block>
-											<xsl:value-of select="goobi:title" />
+											<xsl:value-of select="kitodo:title" />
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
@@ -85,7 +85,7 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block>
-											<xsl:value-of select="goobi:time" />
+											<xsl:value-of select="kitodo:time" />
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
@@ -95,12 +95,12 @@
 									</fo:table-cell>
 									<fo:table-cell>
 										<fo:block>
-											<xsl:value-of select="goobi:ruleset" />
+											<xsl:value-of select="kitodo:ruleset" />
 										</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
-								<xsl:for-each select="goobi:originals/goobi:original">
-									<xsl:for-each select="goobi:properties/goobi:property">
+								<xsl:for-each select="kitodo:originals/kitodo:original">
+									<xsl:for-each select="kitodo:properties/kitodo:property">
 										<xsl:if test="@propertyIdentifier ='Signatur'">
 											<xsl:variable name="barcodemessage2" select="@value" />
 											<fo:table-row>
@@ -120,7 +120,7 @@
 						</fo:table>
 					</fo:block>
 					<fo:block border-top-width="1pt" border-top-style="solid" border-top-color="black" margin-top="20pt" margin-bottom="20pt" />
-					<xsl:variable name="barcodemessage1" select="goobi:title" />
+					<xsl:variable name="barcodemessage1" select="kitodo:title" />
 					<fo:block text-align="center">
 						<fo:instream-foreign-object>
 							<barcode:barcode xmlns:barcode="http://barcode4j.krysalis.org/ns" message="{$barcodemessage1}">
@@ -133,8 +133,8 @@
 					</fo:block>
 					<fo:block border-top-width="1pt" border-top-style="solid" border-top-color="black" margin-top="10pt" margin-bottom="20pt" />
 					<xsl:variable name="barcodemessage2">
-						<xsl:for-each select="goobi:originals/goobi:original">
-							<xsl:for-each select="goobi:properties/goobi:property">
+						<xsl:for-each select="kitodo:originals/kitodo:original">
+							<xsl:for-each select="kitodo:properties/kitodo:property">
 								<xsl:if test="@propertyIdentifier ='Signatur'">
 									<xsl:value-of select="@value" />
 								</xsl:if>
@@ -169,8 +169,8 @@
 							<fo:table-column column-width="2cm" />
 							<fo:table-body>
 
-								<xsl:for-each select="goobi:digitalDocuments/goobi:digitalDocument">
-									<xsl:for-each select="goobi:properties/goobi:property">
+								<xsl:for-each select="kitodo:digitalDocuments/kitodo:digitalDocument">
+									<xsl:for-each select="kitodo:properties/kitodo:property">
 
 										<xsl:if test="@propertyIdentifier ='Öffnungswinkel'">
 											<fo:table-row>
@@ -248,8 +248,8 @@
 										<fo:block></fo:block>
 									</fo:table-cell>
 								</fo:table-row>
-								<xsl:for-each select="goobi:digitalDocuments/goobi:digitalDocument">
-									<xsl:for-each select="goobi:properties/goobi:property">
+								<xsl:for-each select="kitodo:digitalDocuments/kitodo:digitalDocument">
+									<xsl:for-each select="kitodo:properties/kitodo:property">
 										<xsl:if test="@propertyIdentifier ='Farbtiefe'">
 											<fo:table-row>
 												<fo:table-cell>
@@ -343,7 +343,7 @@
 							<fo:table-body>
 								<fo:table-row height="2cm" border-width="1pt" border-style="solid">
 									<fo:table-cell>
-										<fo:block><xsl:value-of select="goobi:comment" /></fo:block>
+										<fo:block><xsl:value-of select="kitodo:comment" /></fo:block>
 									</fo:table-cell>			
 								</fo:table-row>
 							</fo:table-body>

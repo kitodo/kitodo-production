@@ -1,26 +1,26 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -50,14 +50,14 @@ import de.sub.goobi.helper.Helper;
  * independently to do the work in the background. The name empty task points
  * out that the task doesn’t do anything sensible yet. It is here to be
  * extendet.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The enum Actions lists the available instructions to the housekeeper what
 	 * to do with a terminated thread. These are:
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
 	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
@@ -70,7 +70,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * <dd>If the thread was interrupted by a user, replace it by a new one,
 	 * passing in the state of the old one to be able to continue work.</dd>
 	 * </dl>
-	 * 
+	 *
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	public enum Behaviour {
@@ -86,7 +86,7 @@ public class EmptyTask extends Thread implements INameableTask {
 		/**
 		 * The function uncaughtException() will catch any uncaught exception
 		 * that might occur in the task and will store it in the
-		 * 
+		 *
 		 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,
 		 *      java.lang.Throwable)
 		 */
@@ -142,7 +142,7 @@ public class EmptyTask extends Thread implements INameableTask {
 
 	/**
 	 * Default constructor. Creates an empty thread.
-	 * 
+	 *
 	 * @param nameDetail
 	 *            a detail that is helpful when being shown, may be null
 	 */
@@ -154,7 +154,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * Copy constructor. Required for cloning tasks. Cloning is required to be
 	 * able to restart a task.
-	 * 
+	 *
 	 * @param master
 	 *            instance to make a copy from
 	 */
@@ -173,7 +173,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * of that thread object. Every subclass must provide its own copy
 	 * constructor—which must call super(objectToCopy)—and overload this method
 	 * to call its own copy constructor.
-	 * 
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 */
 	public EmptyTask replace() {
@@ -187,7 +187,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
 	 * still new and wasn’t even started. The following instructions are
 	 * available:
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
 	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
@@ -200,7 +200,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * <dd>If the thread was interrupted by a user, replace it by a new one,
 	 * passing in the state of the old one to be able to continue work.</dd>
 	 * </dl>
-	 * 
+	 *
 	 * @return how the TaskSitter shall behave towards this task
 	 */
 	Behaviour getBehaviour() {
@@ -209,7 +209,7 @@ public class EmptyTask extends Thread implements INameableTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -220,7 +220,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function getDurationDead() returns the duration the task is dead. If
 	 * a time of death has not yet been recorded, null is returned.
-	 * 
+	 *
 	 * @return the duration since the task died
 	 */
 	Duration getDurationDead() {
@@ -235,7 +235,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * The function getException() provides access to the exception that
 	 * occurred if the thread died abnormally. If no exception has occurred yet
 	 * or it wasn’t properly recorded, null is returned.
-	 * 
+	 *
 	 * @return the exception occurred, or null if no exception occurred yet
 	 */
 	public Exception getException() {
@@ -245,7 +245,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function getProgress() returns the progress of the task in percent,
 	 * i.e. in a range from 0 to 100.
-	 * 
+	 *
 	 * @return the progress of the task
 	 */
 	public int getProgress() {
@@ -255,8 +255,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function getStateDescription() returns a text string representing the
 	 * state of the current task as read-only property "stateDescription".
-	 * 
-	 * 
+	 *
+	 *
 	 * @return a string representing the state of the task
 	 */
 	public String getStateDescription() {
@@ -285,7 +285,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function getTaskState() returns the task state, which can be one of
 	 * the followings:
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>CRASHED</code></dt>
 	 * <dd>The thread has terminated abnormally. The field “exception” is
@@ -305,7 +305,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * <dt><code>WORKING</code></dt>
 	 * <dd>The thread is in operation.</dd>
 	 * </dl>
-	 * 
+	 *
 	 * @return the task state
 	 */
 	TaskState getTaskState() {
@@ -336,7 +336,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function getLongMessage() returns the read-only field "longMessage"
 	 * which will be shown in a pop-up window.
-	 * 
+	 *
 	 * @return the stack trace of the exception, if any
 	 */
 	public String getLongMessage() {
@@ -349,7 +349,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The function interrupt() interrupts this thread and allows to set a
 	 * behaviour after interruption.
-	 * 
+	 *
 	 * @param mode
 	 *            how to behave after interruption
 	 */
@@ -362,7 +362,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * The function isStartable() returns wether the start button shall be shown
 	 * as read-only property "startable". A thread can be started as long as it
 	 * has not yet been started.
-	 * 
+	 *
 	 * @return whether the start button shall show
 	 */
 	public boolean isStartable() {
@@ -373,7 +373,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * The function isStopable() returns wether the stop button shall be shown
 	 * as read-only property "stopable". A thread can be stopped if it is
 	 * working.
-	 * 
+	 *
 	 * @return whether the stop button shall show
 	 */
 	public boolean isStopable() {
@@ -385,7 +385,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * shown as read-only property "deleteable". In our interpretation, a thread
 	 * is deleteable if it is either new or has terminated and is still lounging
 	 * around.
-	 * 
+	 *
 	 * @return whether the delete button shall show
 	 */
 	public boolean isDeleteable() {
@@ -402,7 +402,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * This is a sample implementation of run() which simulates a “long running
 	 * task” but does nothing and just fills up the percentage gauge. It isn’t
 	 * useful for anything but testing or demonstration purposes.
-	 * 
+	 *
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -436,7 +436,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * (which is likely to be the source of all the misery) and it will not
 	 * record an InterruptedException if the thread has already been
 	 * interrupted.
-	 * 
+	 *
 	 * @param exception
 	 *            exception to save
 	 */
@@ -456,10 +456,10 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * shown in the front end (such as the name of the entity the task is based
 	 * on). The name detail should be set once (in the constructor). You may
 	 * pass in null to reset the name and remove the detail.
-	 * 
+	 *
 	 * I.e., if your task is about creation of OCR for a process, the detail
 	 * here could be the process title.
-	 * 
+	 *
 	 * @param detail
 	 *            a name detail, may be null
 	 */
@@ -476,27 +476,24 @@ public class EmptyTask extends Thread implements INameableTask {
 	/**
 	 * The procedure setProgress() may be used to set the task’s progress in
 	 * percent (i.e., from 0 to 100).
-	 * 
+	 *
 	 * @param progress
 	 *            the tasks progress
 	 */
 	public void setProgress(int progress) {
-		if (progress >= 0 || progress <= 100) {
-			this.progress = progress;
-		} else {
-			throw new IndexOutOfBoundsException("Progress out of range: " + progress);
-		}
+		assert progress < 0 || progress > 100 : "Progress out of range: " + progress;
+		this.progress = progress;
 	}
 
 	/**
 	 * The procedure setProgress() may be used to set the task’s progress in
 	 * percent (i.e., from 0 to 100).
-	 * 
-	 * @param progress
+	 *
+	 * @param statusProgress
 	 *            the tasks progress
 	 */
 	protected void setProgress(double statusProgress) {
-		setProgress(new Double(Math.ceil(statusProgress)).intValue());
+		setProgress((int)Math.ceil(statusProgress));
 	}
 
 	/**
@@ -512,10 +509,10 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * front end (such as the name of the entity that is currently being
 	 * processed by the task). The name detail should be set every time the
 	 * progress is determined. You may pass in null to remove the detail.
-	 * 
+	 *
 	 * I.e., if your task is about creation of OCR for a process, the detail
 	 * here could be the image file being processed right now.
-	 * 
+	 *
 	 * @param detail
 	 *            a work detail, may be null
 	 */
@@ -531,7 +528,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * which executes its run method. In addition, this method override ensures
 	 * that the thread is properly registered in the task manager and that its
 	 * uncaught exception handler has been properly set.
-	 * 
+	 *
 	 * @see java.lang.Thread#start()
 	 */
 	@Override

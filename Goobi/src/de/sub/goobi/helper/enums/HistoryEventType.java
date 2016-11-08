@@ -3,7 +3,7 @@ package de.sub.goobi.helper.enums;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -36,7 +36,7 @@ import de.sub.goobi.helper.Helper;
  */
 public enum HistoryEventType {
 	/**
-	 * default type is unknown for all properties, which still dont have a specific
+	 * default type is unknown for all properties, which still don't have a specific
 	 * type
 	 */
 	unknown(0, "unknown",false, false, null),

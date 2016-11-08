@@ -4,7 +4,7 @@ package de.sub.goobi.helper.ldap;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -29,6 +29,7 @@ package de.sub.goobi.helper.ldap;
  */
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -152,8 +153,8 @@ public class LdapUser implements DirContext {
 			 */
 
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
-			md.update(inPassword.getBytes());
-			String digestBase64 = new String(Base64.encodeBase64(md.digest()));
+			md.update(inPassword.getBytes(StandardCharsets.UTF_8));
+			String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
 			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 		}
 	}
@@ -176,8 +177,10 @@ public class LdapUser implements DirContext {
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-		myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
-		myLogger.debug("Replace outstring: " + rueckgabe);
+		if(myLogger.isDebugEnabled()){
+			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
+			myLogger.debug("Replace outstring: " + rueckgabe);
+		}
 		return rueckgabe;
 	}
 

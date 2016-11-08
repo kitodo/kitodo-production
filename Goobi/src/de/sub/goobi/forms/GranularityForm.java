@@ -5,7 +5,7 @@
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -199,12 +199,16 @@ public class GranularityForm {
 			switch (granularity) {
 			case ISSUES:
 				result.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
+				// fall through
 			case DAYS:
 				result.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
+				// fall through
 			case WEEKS:
 				result.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
+				// fall through
 			case MONTHS:
 				result.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
+				// fall through
 			case QUARTERS:
 				result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
 				break;

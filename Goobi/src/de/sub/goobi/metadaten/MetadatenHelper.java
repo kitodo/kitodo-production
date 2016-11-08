@@ -2,23 +2,23 @@ package de.sub.goobi.metadaten;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -28,8 +28,10 @@ package de.sub.goobi.metadaten;
  * exception statement from your version.
  */
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -229,15 +231,17 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 
-		/* anschliessend die Childs entfernen */
-		for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-			parent.removeChild(iter.next());
-		}
+		if (alleDS != null) {
+			/* anschliessend die Childs entfernen */
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.removeChild(iter.next());
+			}
 
-		/* anschliessend die Childliste korrigieren */
-		// parent.addChild(myStrukturelement);
-		for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-			parent.addChild(iter.next());
+			/* anschliessend die Childliste korrigieren */
+			// parent.addChild(myStrukturelement);
+			for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
+				parent.addChild(iter.next());
+			}
 		}
 	}
 
@@ -506,23 +510,22 @@ public class MetadatenHelper implements Comparator<Object> {
 		types.put("rdf", "<RDF:RDF ".toLowerCase());
 		types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-		FileReader input = new FileReader(file);
-		BufferedReader bufRead = new BufferedReader(input);
-		char[] buffer = new char[200];
-		while ((bufRead.read(buffer)) >= 0) {
-
-			String temp = new String(buffer).toLowerCase();
-			Iterator<Entry<String, String>> i = types.entrySet().iterator();
-			while (i.hasNext()) {
-				Entry<String, String> entry = i.next();
-				if (temp.contains(entry.getValue())) {
-					bufRead.close();
-					input.close();
-					return entry.getKey();
+		try (
+			InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+			BufferedReader bufRead = new BufferedReader(input);
+		) {
+			char[] buffer = new char[200];
+			while ((bufRead.read(buffer)) >= 0) {
+				String temp = new String(buffer).toLowerCase();
+				Iterator<Entry<String, String>> i = types.entrySet().iterator();
+				while (i.hasNext()) {
+					Entry<String, String> entry = i.next();
+					if (temp.contains(entry.getValue())) {
+						return entry.getKey();
+					}
 				}
 			}
 		}
-		bufRead.close();
 
 		return "-";
 	}
@@ -571,7 +574,9 @@ public class MetadatenHelper implements Comparator<Object> {
 				name1 = mdt1.getNameByLanguage(this.language);
 				name2 = mdt2.getNameByLanguage(this.language);
 			} catch (java.lang.NullPointerException e) {
-                myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType() + " is missing in ruleset");
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType() + " is missing in ruleset");
+				}
 				return 0;
 			}
 			if (name1 == null || name1.length() == 0) {
@@ -593,11 +598,10 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/**
 	 * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt sind
-	 * 
-	 * @param Strukturtyp
-	 * @param Rollenname
-	 *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird ================================================
-	 *            ================
+	 *
+	 * @param myDocStruct
+	 * @param inRoleName
+	 *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird
 	 */
 	public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();

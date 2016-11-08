@@ -4,7 +4,7 @@ package de.sub.goobi.converter;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -50,7 +50,7 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new ProzessDAO().get(new Integer(value));
+				return new ProzessDAO().get(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";

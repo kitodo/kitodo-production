@@ -3,7 +3,7 @@ package org.goobi.production.flow.statistics;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -30,7 +30,7 @@ public class StepInformation {
 
 	// step identifier in workflow
 	private String title = "";
-	private Double averageStepOrder = new Double(0);
+	private Double averageStepOrder = 0.0;
 	
 	// information about all steps of these type
 	private int numberOfTotalSteps = 0;

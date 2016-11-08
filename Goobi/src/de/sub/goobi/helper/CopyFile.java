@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,56 +27,52 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
 
-
+// Only usage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
 
    // program options initialized to default values
-   private static int bufferSize = 4 * 1024;
+   private static final int BUFFER_SIZE = 4 * 1024;
 
-   public static Long copyFile(File srcFile, File destFile) throws IOException {
-      InputStream in = new FileInputStream(srcFile);
-      OutputStream out = new FileOutputStream(destFile);
-
+   private static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
       //TODO use a better checksumming algorithm like SHA-1
       CRC32 checksum = new CRC32();
       checksum.reset();
 
-      byte[] buffer = new byte[bufferSize];
-      int bytesRead;
-      while ((bytesRead = in.read(buffer)) >= 0) {
-
-         checksum.update(buffer, 0, bytesRead);
-
-         out.write(buffer, 0, bytesRead);
+      try (
+         InputStream in = srcFile.createFileInputStream();
+         OutputStream out = destFile.createFileOutputStream();
+      ) {
+         byte[] buffer = new byte[BUFFER_SIZE];
+         int bytesRead;
+         while ((bytesRead = in.read(buffer)) >= 0) {
+            checksum.update(buffer, 0, bytesRead);
+            out.write(buffer, 0, bytesRead);
+         }
       }
-      out.close();
-      in.close();
       return Long.valueOf(checksum.getValue());
 
    }
 
-   public static Long createChecksum(File file) throws IOException {
-      InputStream in = new FileInputStream(file);
+   private static Long createChecksum(SafeFile file) throws IOException {
       CRC32 checksum = new CRC32();
       checksum.reset();
-      byte[] buffer = new byte[bufferSize];
-      int bytesRead;
-      while ((bytesRead = in.read(buffer)) >= 0) {
-         checksum.update(buffer, 0, bytesRead);
+      try (InputStream in = file.createFileInputStream()) {
+         byte[] buffer = new byte[BUFFER_SIZE];
+         int bytesRead;
+         while ((bytesRead = in.read(buffer)) >= 0) {
+            checksum.update(buffer, 0, bytesRead);
+         }
       }
-      in.close();
       return Long.valueOf(checksum.getValue());
    }
 
-   public static Long start(File srcFile, File destFile) throws IOException {
+   public static Long start(SafeFile srcFile, SafeFile destFile) throws IOException {
       // make sure the source file is indeed a readable file
       if (!srcFile.isFile() || !srcFile.canRead()) {
          System.err.println("Not a readable file: " + srcFile.getName());
@@ -97,26 +93,5 @@ public class CopyFile {
       } else {
          return Long.valueOf(0);
       }
-
    }
-   
-	
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
-	 * will be created.
-	 */
-	public static void copyDirectory(File srcDir, File dstDir) throws IOException {
-		if (srcDir.isDirectory()) {
-			if (!dstDir.exists()) {
-				dstDir.mkdir();
-			}
-
-			String[] children = srcDir.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectory(new File(srcDir, children[i]), new File(dstDir, children[i]));
-			}
-		} else {
-			copyFile(srcDir, dstDir);
-		}
-	}
 }

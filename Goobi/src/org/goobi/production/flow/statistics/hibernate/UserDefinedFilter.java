@@ -4,7 +4,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -313,21 +313,11 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
 	}
 
-	protected class Parameters {
-		private Boolean flagCriticalQuery = false;
+	protected static class Parameters {
 		private Integer exactStepDone = null;
-
-		protected void setCriticalQuery() {
-			flagCriticalQuery = true;
-		}
 
 		protected void setStepDone(Integer exactStepDone) {
 			this.exactStepDone = exactStepDone;
-		}
-
-		@SuppressWarnings("unused")
-		private Boolean getCriticalQuery() {
-			return flagCriticalQuery;
 		}
 
 		private Integer getExactStepDone() {

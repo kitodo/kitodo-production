@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -77,7 +77,9 @@ public class BackupFileRotation {
 		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
 		if (metaFiles.length < 1) {
-			myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			if(myLogger.isInfoEnabled()){
+				myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			}
 			return;
 		}
 
@@ -137,7 +139,9 @@ public class BackupFileRotation {
 			try {
 				FilesystemHelper.renameFile(oldName, newName);
 			} catch (FileNotFoundException oldNameNotYetPresent) {
-				myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				}
 				continue;
 			}
 		}

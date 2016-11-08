@@ -12,7 +12,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -223,7 +223,6 @@
 																	monthYearRowClass="monthYearRowClass"
 																	imageLocation="/newpages/images/calendarImages"
 																	popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif" />
-																<%--popupButtonImageUrl="images/calender.gif"--%>
 
 																<h:outputText id="vwid36a"
 																	value="#{msgs.projectIsArchived}: " />

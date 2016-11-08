@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,7 +27,7 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,6 +44,9 @@ import org.goobi.production.flow.jobs.JobManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+
+import org.kitodo.encryption.DesEncrypter;
+
 import org.quartz.SchedulerException;
 
 import ugh.dl.DocStruct;
@@ -74,7 +77,6 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
-import dubious.sub.goobi.helper.encryption.DesEncrypter;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
@@ -163,7 +165,7 @@ public class AdministrationForm implements Serializable {
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
 				auf.setSortHelperMetadata(zaehlen.getNumberOfUghElements(auf, CountType.METADATA));
-				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new File(auf.getImagesOrigDirectory(true))));
+				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(auf.getImagesOrigDirectory(true))));
 				dao.save(auf);
 			} catch (RuntimeException e) {
 				myLogger.error("Fehler bei Band: " + auf.getTitel(), e);
@@ -258,7 +260,9 @@ public class AdministrationForm implements Serializable {
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				myLogger.debug("Prozess: " + p.getTitel());
+				if(myLogger.isDebugEnabled()){
+					myLogger.debug("Prozess: " + p.getTitel());
+				}
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				Fileformat gdzfile;
 				try {
@@ -371,7 +375,7 @@ public class AdministrationForm implements Serializable {
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 							
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -385,7 +389,7 @@ public class AdministrationForm implements Serializable {
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype) != null) {
 						myKollektionenTitel = new ArrayList<String>();
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
 //								Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -530,7 +534,7 @@ public class AdministrationForm implements Serializable {
 					ArrayList<Metadata> myCollections;
 					if (dsTop.getAllMetadataByType(coltype) != null) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {
@@ -544,7 +548,7 @@ public class AdministrationForm implements Serializable {
 					if (dsFirst != null && dsFirst.getAllMetadataByType(coltype).size() > 0) {
 						myKollektionenTitel = new ArrayList<String>();
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
-						if (myCollections != null && myCollections.size() > 0) {
+						if (myCollections.size() > 0) {
 							for (Iterator<Metadata> it = myCollections.iterator(); it.hasNext();) {
 								Metadata md = it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {

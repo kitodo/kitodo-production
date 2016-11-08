@@ -3,7 +3,7 @@ package de.sub.goobi.importer;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -29,6 +29,7 @@ package de.sub.goobi.importer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -91,7 +92,7 @@ public class Import {
 
 			/* russischer Import */
 			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == true) {
-				String gesamteDatei = new String(this.upDatei.getBytes(), "UTF-16LE");
+				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
 				reader = new BufferedReader(new StringReader(gesamteDatei));
 				ImportRussland myImport = new ImportRussland();
 				myImport.Parsen(reader, this.mySchritt.getProzess());
@@ -100,7 +101,7 @@ public class Import {
 
 			/* Zentralblatt-Import */
 			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == false) {
-				String gesamteDatei = new String(this.upDatei.getBytes(), "ISO8859_1"); // ISO8859_1 UTF-8
+				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
 				reader = new BufferedReader(new StringReader(gesamteDatei));
 				ImportZentralblatt myImport = new ImportZentralblatt();
 				myImport.Parsen(reader, this.mySchritt.getProzess());

@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -23,7 +23,6 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -264,7 +263,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
 				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
-				if (multiVolumePpn != "") {
+				if (!multiVolumePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
 					myQuery = new Query(multiVolumePpn, "12");
@@ -303,7 +302,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
 				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
-				if (serialPublicationPpn != "") {
+				if (!serialPublicationPpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
 					myQuery = new Query(serialPublicationPpn, "12");
@@ -343,7 +342,7 @@ public class PicaPlugin implements Plugin {
 			if (cod.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
 				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
-				if (ueberGeordnetePpn != "") {
+				if (!ueberGeordnetePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 					myQuery = new Query(ueberGeordnetePpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
@@ -1000,15 +999,12 @@ public class PicaPlugin implements Plugin {
 	 * 
 	 * @param catalogueID
 	 *            a String indentifying the catalogue
-	 * @throws IOException
-	 *             If the retrieval of the list failed in
-	 *             {@link Catalogue#retrieveIktList()}
 	 * @throws ParserConfigurationException
 	 *             if a DocumentBuilder cannot be created which satisfies the
 	 *             configuration requested
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
-	public void useCatalogue(String catalogueID) throws IOException, ParserConfigurationException {
+	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		this.configuration = ConfigOpac.getCatalogueByName(catalogueID);
 		this.catalogue = new Catalogue(configuration);
 		GetOpac catalogueClient = new GetOpac(catalogue);

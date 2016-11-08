@@ -4,7 +4,7 @@ package de.sub.goobi.persistence.apache;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -349,7 +349,7 @@ public class MySQLUtils {
 		public List<Integer> handle(ResultSet rs) throws SQLException {
 			List<Integer> answer = new ArrayList<Integer>();
 			while (rs.next()) {
-				answer.add(new Integer(rs.getInt(1)));
+				answer.add(Integer.valueOf(rs.getInt(1)));
 			}
 			return answer;
 		}
@@ -360,7 +360,7 @@ public class MySQLUtils {
 		public Integer handle(ResultSet rs) throws SQLException {
 			Integer answer = null;
 			if (rs.next()) {
-				answer = new Integer(rs.getInt(1));
+				answer = Integer.valueOf(rs.getInt(1));
 			}
 			return answer;
 		}

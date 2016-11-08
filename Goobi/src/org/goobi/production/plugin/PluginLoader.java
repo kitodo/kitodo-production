@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -50,7 +50,9 @@ import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -199,11 +201,15 @@ public class PluginLoader {
 				plugin.configure(getPluginConfiguration());
 				result.add(plugin);
 			} catch (NoSuchMethodException e) {
-				logger.warn("Bad implementation of " + type.getName() + " plugin "
-						+ implementation.getClass().getName(), e);
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn("Bad implementation of " + type.getName() + " plugin "
+							+ implementation.getClass().getName(), e);
+				}
 			} catch (SecurityException e) {
-				logger.warn("Bad implementation of " + type.getName() + " plugin "
-						+ implementation.getClass().getName(), e);
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn("Bad implementation of " + type.getName() + " plugin "
+							+ implementation.getClass().getName(), e);
+				}
 			}
 		}
 		return result;

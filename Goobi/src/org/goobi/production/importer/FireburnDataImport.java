@@ -4,7 +4,7 @@ package org.goobi.production.importer;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -120,7 +121,9 @@ public class FireburnDataImport {
 		FireburnDataImport fdi = new FireburnDataImport();
 		// get all properties from xml file
 		fdi.pList.addAll(fdi.loadDataFromXml(filename));
-		logger.debug("Data is loaded from XML,  " + fdi.pList.size() + " Properties.");
+		if(logger.isDebugEnabled()){
+			logger.debug("Data is loaded from XML,  " + fdi.pList.size() + " Properties.");
+		}
 
 		// debug
 		boolean search1 = true;
@@ -150,8 +153,10 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			logger.debug("Found: " + fdi.pFoundList.size());
-			logger.debug("Not found: " + fdi.pNotFoundList.size());
+			if(logger.isDebugEnabled()){
+				logger.debug("Found: " + fdi.pFoundList.size());
+				logger.debug("Not found: " + fdi.pNotFoundList.size());
+			}
 		}
 		boolean search2 = true;
 		if (search2) {
@@ -182,8 +187,10 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			logger.debug("Found: " + fdi.pFoundList.size());
-			logger.debug("Not found: " + fdi.pNotFoundList.size());
+			if(logger.isDebugEnabled()){
+				logger.debug("Found: " + fdi.pFoundList.size());
+				logger.debug("Not found: " + fdi.pNotFoundList.size());
+			}
 		}
 		// -----------------------------------------------------------------------
 		// search in Werkstueckeeigenschaften
@@ -212,8 +219,10 @@ public class FireburnDataImport {
 		} catch (SQLException e) {
 			logger.error(e);
 		}
-		logger.debug("Found: " + fdi.pFoundList.size());
-		logger.debug("Not found: " + fdi.pNotFoundList.size());
+		if(logger.isDebugEnabled()){
+			logger.debug("Found: " + fdi.pFoundList.size());
+			logger.debug("Not found: " + fdi.pNotFoundList.size());
+		}
 		// -----------------------------------------------------------------------
 		// write all properties without process in separate xml file
 		// -----------------------------------------------------------------------
@@ -221,7 +230,7 @@ public class FireburnDataImport {
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.processAnnotations(FireburnDataImport.class);
 		xstream.processAnnotations(FireburnProperty.class);
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), "UTF8");
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), StandardCharsets.UTF_8);
 		xstream.toXML(fdi.pNotFoundList, fw);
 		// DEBUG
 		long time2 = System.currentTimeMillis();
@@ -270,9 +279,10 @@ public class FireburnDataImport {
 	private String getProcessId(String title) throws ClassNotFoundException, SQLException {
 		String retString = null;
 		String sqlstring = "SELECT ProzesseID FROM prozesse WHERE Titel='" + title + "'";
-		ResultSet rs = this.stmt.executeQuery(sqlstring);
-		while (rs.next()) {
-			retString = rs.getString("ProzesseID");
+		try (ResultSet rs = this.stmt.executeQuery(sqlstring)) {
+			while (rs.next()) {
+				retString = rs.getString("ProzesseID");
+			}
 		}
 
 		return retString;
@@ -289,19 +299,17 @@ public class FireburnDataImport {
 	 **************************************************************************************/
 	private String getStoreIdentifierFromWerkstueckeeigenschaften(FireburnProperty p) throws ClassNotFoundException, SQLException {
 		String weId = getWerkstueckeeigenschaftenId(p);
+		String processId = null;
 		if (weId != null) {
 			// search prozessID
 			String sql = "SELECT ProzesseID FROM werkstuecke WHERE WerkstueckeID='" + weId + "';";
-			ResultSet rs = this.stmt.executeQuery(sql);
-			String processId = null;
-			if (rs.next()) {
-				processId = rs.getString("prozesseID");
-			}
-			if (processId != null) {
-				return processId;
+			try (ResultSet rs = this.stmt.executeQuery(sql)) {
+				if (rs.next()) {
+					processId = rs.getString("prozesseID");
+				}
 			}
 		}
-		return null;
+		return processId;
 	}
 
 	/*************************************************************************************
@@ -315,18 +323,16 @@ public class FireburnDataImport {
 	 **************************************************************************************/
 	private String getStoreIdentifierFromVorlageneigenschaften(FireburnProperty p) throws ClassNotFoundException, SQLException {
 		String vorlagenId = getVorlagenId(p);
+		String processId = null;
 		if (vorlagenId != null) {
 			String sql = "SELECT ProzesseID FROM vorlagen WHERE VorlagenID='" + vorlagenId + "';";
-			ResultSet rs = this.stmt.executeQuery(sql);
-			String processId = null;
-			if (rs.next()) {
-				processId = rs.getString("prozesseID");
-			}
-			if (processId != null) {
-				return processId;
+			try (ResultSet rs = this.stmt.executeQuery(sql)) {
+				if (rs.next()) {
+					processId = rs.getString("prozesseID");
+				}
 			}
 		}
-		return null;
+		return processId;
 	}
 
 	/****************************************************************************************
@@ -352,27 +358,32 @@ public class FireburnDataImport {
 		String fullppn = p.titel.substring(substringIndex).toUpperCase();
 		String ppn = p.titel.substring(substringIndex).substring(3);
 
-		// Search with short ppn
+		// Search with short PPN
 		// -----------------------------------------------------------------------
 		String sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + ppn + "';";
-		ResultSet rs = this.stmt.executeQuery(sql);
-
-		if (rs.next()) {
-			String weId = rs.getString("werkstueckeID");
-			logger.debug("weId, gefunden mit shortPPN: " + weId + "  Title: " + p.titel);
-			return weId;
-		}
-		// Search with full PPN
-		// -----------------------------------------------------------------------
-		else {
-			sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + fullppn + "';";
-			rs = this.stmt.executeQuery(sql);
+		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String weId = rs.getString("werkstueckeID");
-				logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
+				if(logger.isDebugEnabled()){
+					logger.debug("weId, gefunden mit shortPPN: " + weId + "  Title: " + p.titel);
+				}
 				return weId;
 			}
 		}
+
+		// Search with full PPN
+		// -----------------------------------------------------------------------
+		sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + fullppn + "';";
+		try (ResultSet rs = this.stmt.executeQuery(sql)) {
+			if (rs.next()) {
+				String weId = rs.getString("werkstueckeID");
+				if(logger.isDebugEnabled()){
+					logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
+				}
+				return weId;
+			}
+		}
+
 		return null;
 	}
 
@@ -399,27 +410,33 @@ public class FireburnDataImport {
 		String fullppn = p.titel.substring(substringIndex).toUpperCase();
 		String ppn = p.titel.substring(substringIndex).substring(3);
 
-		// Search with short ppn
+		// Search with short PPN
 		// -----------------------------------------------------------------------
 		String sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + ppn + "';";
-		ResultSet rs = this.stmt.executeQuery(sql);
-		if (rs.next()) {
-			String vorlagenId = rs.getString("vorlagenID");
-			logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
-			return vorlagenId;
-		}
-		// Search with full PPN
-		// -----------------------------------------------------------------------
-		else {
-			sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + fullppn + "';";
-			rs = this.stmt.executeQuery(sql);
+		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String vorlagenId = rs.getString("vorlagenID");
-				logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
-				logger.debug(vorlagenId);
+				if(logger.isDebugEnabled()){
+					logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
+				}
 				return vorlagenId;
 			}
 		}
+
+		// Search with full PPN
+		// -----------------------------------------------------------------------
+		sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + fullppn + "';";
+		try (ResultSet rs = this.stmt.executeQuery(sql)) {
+			if (rs.next()) {
+				String vorlagenId = rs.getString("vorlagenID");
+				if(logger.isDebugEnabled()){
+					logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
+					logger.debug(vorlagenId);
+				}
+				return vorlagenId;
+			}
+		}
+
 		return null;
 	}
 
@@ -446,7 +463,9 @@ public class FireburnDataImport {
 		// Execute the insert statement
 		this.stmt.executeUpdate(sql);
 		// logger.debug(sql);
-		logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
+		if(logger.isDebugEnabled()){
+			logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
+		}
 
 	}
 
@@ -469,7 +488,9 @@ public class FireburnDataImport {
 		for (Object oProp : ePropList) {
 			Element eProp = (Element) oProp;
 			returnList.add(new FireburnProperty(eProp.getAttributeValue("cdName"), eProp.getAttributeValue("titel"), eProp.getAttributeValue("date"),
-					new Integer(eProp.getAttributeValue("cdnumber")), eProp.getAttributeValue("type"), new Long(eProp.getAttributeValue("size"))
+					Integer.parseInt(eProp.getAttributeValue("cdnumber")),
+					eProp.getAttributeValue("type"),
+					Long.parseLong(eProp.getAttributeValue("size"))
 
 			));
 		}

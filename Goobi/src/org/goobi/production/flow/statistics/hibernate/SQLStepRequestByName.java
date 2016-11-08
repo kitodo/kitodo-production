@@ -2,23 +2,23 @@ package org.goobi.production.flow.statistics.hibernate;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -38,9 +38,9 @@ import de.sub.goobi.helper.enums.HistoryEventType;
 
 /**
  * Class provides SQL for Step Requests statistics on the history table
- * it offers a little more functionallity compared to the other SQL Source 
+ * it offers a little more functionallity compared to the other SQL Source
  * classes. There are a little more parameters which can be set
- * 
+ *
  * @author Wulf Riebensahm
  *
  */
@@ -54,16 +54,16 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/** This is an extended SQL generator for an SQL extracting data from the historyEvent log.
-	 *  depending on the parameters the query returns up to four fields 
-	 * 
+	 *  depending on the parameters the query returns up to four fields
+	 *
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
-	 * 
+	 *
 	 * @param typeSelection - operates as additional filter
 	 * @param stepName - operates as additional filter
-	 * @param stepOrderGrouping - 'stepName' fields in select and in group by clause 
-	 * @param includeCorrections - adding additional stepOpen from Correction and other loops 
-	 * 
+	 * @param stepOrderGrouping - 'stepName' fields in select and in group by clause
+	 * @param includeLoops - adding additional stepOpen from Correction and other loops
+	 *
 	 * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
 	 */
 	public String getSQL(HistoryEventType typeSelection, String stepName,
@@ -71,14 +71,14 @@ public class SQLStepRequestByName extends SQLGenerator {
 
 		String timeLimiter = "h.date" ;
 		String groupInnerSelect = "";
-		
+
 		//evaluate if groupingFunction comes along with HistoryEventType
 		// and if so implement this function in sql
 		if (typeSelection.getGroupingFunction()!=null && !includeLoops){
 				timeLimiter = typeSelection.getGroupingFunction() + "(h.date)";
 				groupInnerSelect = " GROUP BY processid, numericvalue, stringvalue ";
 		}
-		
+
 		String subQuery = "";
 		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
 				myTimeFrom, myTimeTo, "timeLimiter");
@@ -112,10 +112,10 @@ public class SQLStepRequestByName extends SQLGenerator {
 				+ " "
 				+ "AS 'intervall', history.date AS 'timeLimiter', history.stringvalue AS 'stepName' "
 				+ "FROM "
-				
-				+ "(SELECT DISTINCT h.numericvalue, h.stringvalue, " + timeLimiter + " as date, h.processid, h.type " 
+
+				+ "(SELECT DISTINCT h.numericvalue, h.stringvalue, " + timeLimiter + " as date, h.processid, h.type "
 				+ "FROM history h "
-				+ "WHERE "  + innerWhereClause + groupInnerSelect + ") AS history " 
+				+ "WHERE "  + innerWhereClause + groupInnerSelect + ") AS history "
 				+ ") AS table_1";
 
 		mySql = "SELECT count(table_1.stepName) AS 'stepCount', table_1.intervall AS 'intervall' "
@@ -132,9 +132,9 @@ public class SQLStepRequestByName extends SQLGenerator {
 		return mySql;
 	}
 
-	/** Method is purposfully not implemented. Method getSQL is overloaded   
+	/** Method is purposfully not implemented. Method getSQL is overloaded
 	 *  with parametered method.
-	 *   
+	 *
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
 	 */
 	@Override
@@ -145,8 +145,8 @@ public class SQLStepRequestByName extends SQLGenerator {
 						+ " does not support the parameterless getSQL() method. Instead you need to use getSQL() with parameters.");
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @param include
 	 * @return SQL snippet for Order by clause
 	 */
@@ -159,8 +159,8 @@ public class SQLStepRequestByName extends SQLGenerator {
 		}
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @param include
 	 * @return SQL snippet for Select clause
 	 */
@@ -172,8 +172,8 @@ public class SQLStepRequestByName extends SQLGenerator {
 		}
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @param include
 	 * @return SQL snippet for Group by clause
 	 */
@@ -186,7 +186,7 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param eventSelection
 	 * @return SQL String to retrieve the highest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
@@ -215,9 +215,9 @@ public class SQLStepRequestByName extends SQLGenerator {
 		return "SELECT max(history.numericvalue) AS maxStep FROM history WHERE "
 				+ innerWhereClause;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param eventSelection
 	 * @return SQL String to retrieve the lowest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
@@ -247,5 +247,5 @@ public class SQLStepRequestByName extends SQLGenerator {
 				+ innerWhereClause;
 	}
 
-	
+
 }

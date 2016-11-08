@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -45,7 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
@@ -74,8 +74,9 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.BatchDAO;
 
-public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask {
+public class ExportNewspaperBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
@@ -107,7 +108,7 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	/**
 	 * The field batch holds the batch whose processes are to export.
 	 */
-	private final Batch batch;
+	private Batch batch;
 
 	/**
 	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
@@ -145,6 +146,12 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	private final double divisor;
 
 	private final HashMap<Integer, String> collectedYears;
+	
+	/**
+	 * The field batchId holds the ID number of the batch whose processes are to
+	 * export.
+	 */
+	private Integer batchId;
 
 	/**
 	 * Constructor to create an ExportNewspaperBatchTask.
@@ -175,11 +182,10 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
 		super(batch.getLabel());
-		this.batch = batch;
+		batchId = batch.getId();
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
 		collectedYears = new HashMap<Integer, String>();
-		processesIterator = batch.getProcesses().iterator();
 		dividend = 0;
 		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
 		DocStruct dsNewspaper = batch.getProcesses().iterator().next().getDigitalDocument().getLogicalDocStruct();
@@ -227,6 +233,10 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 	public void run() {
 		Prozess process = null;
 		try {
+			if(processesIterator == null){
+				batch = BatchDAO.read(batchId);
+				processesIterator = batch.getProcesses().iterator();
+			}
 			if (action == 1) {
 				while (processesIterator.hasNext()) {
 					if (isInterrupted()) {
@@ -614,14 +624,80 @@ public class ExportNewspaperBatchTask extends EmptyTask implements INameableTask
 		try {
 			return parent.getChild(type, identifierField, identifier);
 		} catch (NoSuchElementException nose) {
-			DocStruct child = parent.createChild(type, act, ruleset);
+			DocStruct child = act.createDocStruct(ruleset.getDocStrctTypeByName(type));
 			child.addMetadata(identifierField, identifier);
 			try {
 				child.addMetadata(optionalField, identifier);
 			} catch (MetadataTypeNotAllowedException e) {
+				if(logger.isInfoEnabled()){
+					logger.info(e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
+				}
 			}
+			
+			Integer rank = null;
+			try {
+				rank = Integer.valueOf(identifier);
+			} catch (NumberFormatException e) {
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn("Cannot place " + type + " \"" + identifier
+							+ "\" correctly because its sorting criterion is not numeric.");
+				}
+			}
+			parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
+			
 			return child;
 		}
+	}
+
+	/**
+	 * Returns the index of the child to insert between its siblings depending
+	 * on its rank. A return value of {@code null} will indicate that no
+	 * position could be determined which will cause
+	 * {@link DocStruct#addChild(Integer, DocStruct)} to simply append the new
+	 * child at the end.
+	 * 
+	 * @param siblings
+	 *            brothers and sisters of the child to add
+	 * @param metadataType
+	 *            field indicating the rank value
+	 * @param rank
+	 *            rank of the child to insert
+	 * @return the index position to insert the child
+	 */
+	private static Integer positionByRank(List<DocStruct> siblings, String metadataType, Integer rank) {
+		int result = 0;
+
+		if (siblings == null || rank == null) {
+			return null;
+		}
+
+		SIBLINGS: for (DocStruct aforeborn : siblings) {
+			List<Metadata> allMetadata = aforeborn.getAllMetadata();
+			if (allMetadata != null) {
+				for (Metadata metadataElement : allMetadata) {
+					if (metadataElement.getType().getName().equals(metadataType)) {
+						try {
+							if (Integer.parseInt(metadataElement.getValue()) < rank) {
+								result++;
+								continue SIBLINGS;
+							} else {
+								return result;
+							}
+						} catch (NumberFormatException e) {
+							if (logger.isEnabledFor(Level.WARN)) {
+								String typeName = aforeborn.getType() != null && aforeborn.getType().getName() != null
+										? aforeborn.getType().getName() : "cross-reference";
+								logger.warn("Cannot determine position to place " + typeName
+										+ " correctly because the sorting criterion of one of its siblings is \""
+										+ metadataElement.getValue() + "\", but must be numeric.");
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+		return result;
 	}
 
 	/**

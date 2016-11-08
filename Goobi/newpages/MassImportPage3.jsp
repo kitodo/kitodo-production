@@ -12,7 +12,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -99,7 +99,7 @@
 														<h:outputText value="#{msgs.laufzettelDrucken}" />
 													</h:commandLink>
 
-													<h:commandLink id="utid20" action="#{MassImportForm.Prepare}">
+													<h:commandLink id="utid20" action="#{MassImportForm.prepare}">
 														<h:graphicImage id="utid25" alt="/newpages/images/buttons/star_blue.gif" 
 														value="/newpages/images/buttons/star_blue.gif"
 															style="vertical-align:middle" />

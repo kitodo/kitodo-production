@@ -4,7 +4,7 @@ package de.sub.goobi.beans;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -39,11 +39,12 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
+import org.kitodo.encryption.DesEncrypter;
+
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
-import dubious.sub.goobi.helper.encryption.DesEncrypter;
 
 public class Benutzer implements Serializable {
 	private static final long serialVersionUID = -7482853955996650586L;

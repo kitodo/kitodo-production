@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.encryption;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 /*
@@ -45,7 +46,7 @@ public class MD5
 
     /**
      * <u>Zur&uuml;ckgabe des MD5-Hashes, bei Initialisierter Membervariable 'text'</u>
-     * @return
+     * @return MD5 hash string for member variable 'text'
      */
     public String getMD5() {
         if (text == null) {
@@ -58,7 +59,7 @@ public class MD5
     /**
      * <u>Zur&uuml;ckgabe des MD5-Hashes</u>
      * @param text
-     * @return
+     * @return MD5 hash string
      */
     public String getMD5(String text) {
         this.text = text;
@@ -67,7 +68,7 @@ public class MD5
 
     /**
      * <u>MD5-Hash erzeugen</u>
-     * @return
+     * @return MD5 hash string
      */
     private String makeMD5() {
         MessageDigest md = null;
@@ -75,7 +76,7 @@ public class MD5
 
         try {
             md = MessageDigest.getInstance("MD5");   // getting a 'MD5-Instance'
-            encryptMsg = md.digest(text.getBytes()); // solving the MD5-Hash
+            encryptMsg = md.digest(text.getBytes(StandardCharsets.UTF_8)); // solving the MD5-Hash
         } catch (NoSuchAlgorithmException e) {
         	throw new RuntimeException(e.getMessage(), e);
         }

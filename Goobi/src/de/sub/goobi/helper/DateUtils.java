@@ -1,26 +1,26 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2013 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -48,7 +48,7 @@ import org.joda.time.format.DateTimeFormatter;
  * The class DateUtils contains an omnium-gatherum of functions that work on
  * calendar dates. All functionality is realized using the org.joda.time.*
  * library.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DateUtils {
@@ -61,14 +61,14 @@ public class DateUtils {
 	/**
 	 * The function lastMonthForYear() returns from an ordered set of dates for
 	 * a given year the last month which a date can be found for in that year.
-	 * 
+	 *
 	 * <p>
 	 * Example: Let the ordered data set contain: …, 5th May 1954, 20th May
 	 * 1954, 13th October 1954, 5th February 1955, 23th March 1955, 15th October
 	 * 1956, …. Then the function will return 10 (DateTimeConstants.OCTOBER) for
 	 * 1954 and 3 (DateTimeConstants.MARCH) for 1955.
 	 * </p>
-	 * 
+	 *
 	 * @param data
 	 *            an ordered set of dates
 	 * @param year
@@ -84,7 +84,7 @@ public class DateUtils {
 	 * question whether their two dates reside in the same month of the calendar
 	 * system presumed. Two dates are considered to be in the same month exactly
 	 * if both their year and month of year fields are equal.
-	 * 
+	 *
 	 * @param compared
 	 *            date to compare against
 	 * @param comparee
@@ -102,10 +102,10 @@ public class DateUtils {
 	 * question whether their two dates reside in the same year of the calendar
 	 * system presumed. Two dates are considered to be in the same year exactly
 	 * if none of them is null and their year fields are equal.
-	 * 
-	 * @param compared
+	 *
+	 * @param current
 	 *            date to compare against
-	 * @param comparee
+	 * @param next
 	 *            date to compare, may be null
 	 * @return whether the two dates are in the same year
 	 */

@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -66,7 +66,7 @@ import de.unigoettingen.goobi.module.api.util.UniqueID;
 
 public class ModuleServerForm {
 	private Boolean running = false;
-	private static GoobiModuleManager modulmanager = null;
+	private static volatile GoobiModuleManager modulmanager = null;
 	private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();
 	private ModuleDesc myModule;
 	Helper help = new Helper();
@@ -99,34 +99,37 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * Read module configurations von xml-file ================================================================
+	 * Start module server.
 	 */
 	public void readAllModulesFromConfiguration() {
 		if (modulmanager == null) {
-			int port = ConfigMain.getIntParameter("goobiModuleServerPort");
-			modulmanager = new GoobiModuleManager(port, new ExtendedProzessImpl(), new ExtendedDataImpl());
+			synchronized (ModuleServerForm.class) {
+				if (modulmanager == null) {
+					int port = ConfigMain.getIntParameter("goobiModuleServerPort");
+					final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
+							new ExtendedDataImpl());
 
-			/*
-			 * -------------------------------- Nachrichtensystem initialisieren --------------------------------
-			 */
-			int delay = 5000;
-			int period = 1000;
-			messageTimer = new Timer();
-			messageTimer.scheduleAtFixedRate(new TimerTask() {
-				@Override
-				public void run() {
-					ModuleServerForm.check_new_messages(modulmanager);
+					// Alle Modulbeschreibungen aus der Konfigurationsdatei modules.xml einlesen
+					for (ModuleDesc md : getModulesFromConfigurationFile()) {
+						manager.add(md);
+					}
+					modulmanager = manager;
 				}
-			}, delay, period);
 
-			/*
-			 * -------------------------------- Alle Modulbeschreibungen aus der Konfigurationsdatei modules.xml einlesen
-			 * --------------------------------
-			 */
-			for (ModuleDesc md : getModulesFromConfigurationFile())
-				modulmanager.add(md);
+				// Nachrichtensystem initialisieren
+				int delay = 5000;
+				int period = 1000;
+				messageTimer = new Timer();
+				messageTimer.scheduleAtFixedRate(new TimerTask() {
+					@Override
+					public void run() {
+						ModuleServerForm.check_new_messages(modulmanager);
+					}
+				}, delay, period);
+
+				running = true;
+			}
 		}
-		running = true;
 	}
 
 	/**
@@ -334,21 +337,17 @@ public class ModuleServerForm {
 						 * beschrieben
 						 */
 						if (message.body.type.equals("trigger")) {
-							// behandlung aller trigger messages
+							// Behandlung aller trigger messages
 							/*
 							 * Behandlung von "trigger - END"
 							 */
-							if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
-								try {
-									modules.get(i - 1).getModuleClient().stop(gmp);
-								} catch (GoobiModuleException e) {
-									logger.error(e);
-								} catch (XmlRpcException e) {
-									logger.error(e);
-								}
+							try {
+								modules.get(i - 1).getModuleClient().stop(gmp);
+							} catch (GoobiModuleException e) {
+								logger.error(e);
+							} catch (XmlRpcException e) {
+								logger.error(e);
 							}
-						} else if (message.body.type.equals("log")) {
-							// behandlung aller log messages
 						}
 					}
 				}

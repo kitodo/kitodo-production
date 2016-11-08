@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -504,7 +504,6 @@ public class BatchStepHelper {
 				pe.setTitel(Helper.getTranslation("Korrektur notwendig"));
 				pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] " + this.problemMessage);
 				pe.setType(PropertyType.messageError);
-				pe.setCreationDate(myDate);
 				pe.setProzess(this.currentStep.getProzess());
 				this.currentStep.getProzess().getEigenschaften().add(pe);
 
@@ -650,7 +649,6 @@ public class BatchStepHelper {
 						+ this.solutionMessage);
 				pe.setProzess(this.currentStep.getProzess());
 				pe.setType(PropertyType.messageImportant);
-				pe.setCreationDate(new Date());
 				this.currentStep.getProzess().getEigenschaften().add(pe);
 
 				String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": "

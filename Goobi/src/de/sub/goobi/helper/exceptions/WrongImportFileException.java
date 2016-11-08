@@ -1,12 +1,10 @@
 package de.sub.goobi.helper.exceptions;
 
-import dubious.sub.goobi.helper.encryption.exceptions.AbstractGoobiException;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -29,7 +27,7 @@ import dubious.sub.goobi.helper.encryption.exceptions.AbstractGoobiException;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-public class WrongImportFileException extends AbstractGoobiException {
+public class WrongImportFileException extends Exception {
    private static final long serialVersionUID = 3257853198839724340L;
 
    public WrongImportFileException() {

@@ -4,7 +4,7 @@ package org.goobi.production.export;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.sub.goobi.helper.enums.StepStatus;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -90,11 +91,15 @@ public class ExportXmlLog implements IProcessDataExport {
 	 */
 
 	public void startExport(Prozess p, String destination) throws FileNotFoundException, IOException {
-		startExport(p, new FileOutputStream(destination), null);
+		try (FileOutputStream ostream = new FileOutputStream(destination)) {
+			startExport(p, ostream, null);
+		}
 	}
 
 	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
-		startExport(p, new FileOutputStream(dest), null);
+		try (FileOutputStream ostream = new FileOutputStream(dest)) {
+			startExport(p, ostream, null);
+		}
 	}
 
 	/**
@@ -138,14 +143,14 @@ public class ExportXmlLog implements IProcessDataExport {
 
 		processElm.setAttribute("processID", String.valueOf(process.getId()));
 
-		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
 		processElm.setNamespace(xmlns);
 		// namespace declaration
 		if (addNamespace) {
 
 			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			processElm.addNamespaceDeclaration(xsi);
-			Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
 			processElm.setAttribute(attSchema);
 		}
 		// process information
@@ -237,7 +242,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			end.setText(String.valueOf(s.getBearbeitungsendeAsFormattedString()));
 			stepElement.addContent(end);
 
-			if (s.getBearbeitungsbenutzer() != null && s.getBearbeitungsbenutzer().getNachVorname() != null) {
+			if (isNonOpenStateAndHasRegularUser(s)) {
 				Element user = new Element("user", xmlns);
 				user.setText(s.getBearbeitungsbenutzer().getNachVorname());
 				stepElement.addContent(user);
@@ -248,10 +253,8 @@ public class ExportXmlLog implements IProcessDataExport {
 
 			stepElements.add(stepElement);
 		}
-		if (stepElements != null) {
-			steps.addContent(stepElements);
-			processElements.add(steps);
-		}
+		steps.addContent(stepElements);
+		processElements.add(steps);
 
 		// template information
 		Element templates = new Element("originals", xmlns);
@@ -295,10 +298,8 @@ public class ExportXmlLog implements IProcessDataExport {
 			}
 			templateElements.add(template);
 		}
-		if (templateElements != null) {
-			templates.addContent(templateElements);
-			processElements.add(templates);
-		}
+		templates.addContent(templateElements);
+		processElements.add(templates);
 
 		// digital document information
 		Element digdoc = new Element("digitalDocuments", xmlns);
@@ -330,10 +331,8 @@ public class ExportXmlLog implements IProcessDataExport {
 			}
 			docElements.add(dd);
 		}
-		if (docElements != null) {
-			digdoc.addContent(docElements);
-			processElements.add(digdoc);
-		}
+		digdoc.addContent(docElements);
+		processElements.add(digdoc);
 
 		// METS information
 		Element metsElement = new Element("metsInformation", xmlns);
@@ -379,10 +378,8 @@ public class ExportXmlLog implements IProcessDataExport {
 				}
 			}
 
-			if (metadataElements != null) {
-				metsElement.addContent(metadataElements);
-				processElements.add(metsElement);
-			}
+			metsElement.addContent(metadataElements);
+			processElements.add(metsElement);
 
 		} catch (SwapException e) {
 			logger.error(e);
@@ -416,7 +413,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method transforms the xml log using a xslt file and opens a new window with the output file
-	 * 
+	 *
 	 * @param out
 	 *            ServletOutputStream
 	 * @param doc
@@ -428,7 +425,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 */
 
 	public void XmlTransformation(OutputStream out, Document doc, String filename) throws XSLTransformException, IOException {
-		Document docTrans = new Document();
+		Document docTrans;
 		if (filename != null && filename.equals("")) {
 			XSLTransformer transformer;
 			transformer = new XSLTransformer(filename);
@@ -437,7 +434,7 @@ public class ExportXmlLog implements IProcessDataExport {
 			docTrans = doc;
 		}
 		Format format = Format.getPrettyFormat();
-		format.setEncoding("utf-8");
+		format.setEncoding("UTF-8");
 		XMLOutputter xmlOut = new XMLOutputter(format);
 
 		xmlOut.output(docTrans, out);
@@ -464,7 +461,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method exports the production metadata for al list of processes as a single file to a given stream.
-	 * 
+	 *
 	 * @param processList
 	 * @param outputStream
 	 * @param xslt
@@ -474,12 +471,12 @@ public class ExportXmlLog implements IProcessDataExport {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);
-		Namespace xmlns = Namespace.getNamespace("http://www.goobi.org/logfile");
+		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
 
 		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.addNamespaceDeclaration(xsi);
 		root.setNamespace(xmlns);
-		Attribute attSchema = new Attribute("schemaLocation", "http://www.goobi.org/logfile" + " XML-logfile.xsd", xsi);
+		Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
 		root.setAttribute(attSchema);
 		for (Prozess p : processList) {
 			Document doc = createDocument(p, false);
@@ -492,7 +489,7 @@ public class ExportXmlLog implements IProcessDataExport {
 		outp.setFormat(Format.getPrettyFormat());
 
 		try {
-		
+
 			outp.output(answer, outputStream);
 		} catch (IOException e) {
 
@@ -556,6 +553,19 @@ public class ExportXmlLog implements IProcessDataExport {
 		}
 		return nss;
 
+	}
+
+	/**
+	 * Check step for non-open step state and step has a reqular user assigned
+	 *
+	 * @param s step to check
+	 * @return boolean
+	 */
+	private boolean isNonOpenStateAndHasRegularUser(Schritt s) {
+		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
+				&& (s.getBearbeitungsbenutzer() != null)
+				&& (s.getBearbeitungsbenutzer().getId() != 0)
+				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
 	}
 
 }

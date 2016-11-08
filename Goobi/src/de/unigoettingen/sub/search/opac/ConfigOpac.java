@@ -2,23 +2,23 @@ package de.unigoettingen.sub.search.opac;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -79,7 +79,7 @@ public class ConfigOpac {
 
 	/**
 	 * Returns all configured catalogue titles from the config file.
-	 * 
+	 *
 	 * @return all catalogue titles
 	 */
 	public static ArrayList<String> getAllCatalogueTitles() {
@@ -118,7 +118,7 @@ public class ConfigOpac {
 
 	/**
 	 * Returns all configured media types from the config file.
-	 * 
+	 *
 	 * @return all media types
 	 */
 	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
@@ -179,14 +179,14 @@ public class ConfigOpac {
 	 * <kbd>&lt;restriction&gt;</kbd> elements from the
 	 * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
 	 * <kbd>goobi_opac.xml</kbd>.
-	 * 
+	 *
 	 * The function will return an empty list if there are no such entries for
 	 * the given catalogue.
-	 * 
+	 *
 	 * @param title
 	 *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
 	 *            examine
-	 * @return
+	 * @return List
 	 * @throws FileNotFoundException
 	 */
 	public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
@@ -207,7 +207,7 @@ public class ConfigOpac {
 	/**
 	 * Returns all configured catalogue titles from the config file. The Jersey
 	 * API cannot invoke static methods, so we need this wrapper method.
-	 * 
+	 *
 	 * @return all catalogue titles
 	 */
 	@XmlElement(name = "interface")
@@ -218,7 +218,7 @@ public class ConfigOpac {
 	/**
 	 * Returns all configured media types from the config file. The Jersey API
 	 * cannot invoke static methods, so we need this wrapper method.
-	 * 
+	 *
 	 * @return all media types
 	 */
 	@XmlElement(name = "mediaType")

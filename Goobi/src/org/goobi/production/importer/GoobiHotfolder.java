@@ -4,7 +4,7 @@ package org.goobi.production.importer;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,6 +27,8 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -37,7 +39,6 @@ import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
@@ -49,12 +50,12 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
 
 	private String name;
-	private File folder;
+	private SafeFile folder;
 	private Integer template;
 	private String updateStrategy;
 	private String collection;
 
-	public GoobiHotfolder(String name, File folder, Integer template, String updateStrategy, String collection) {
+	public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
 		this.setName(name);
 		this.folder = folder;
 		this.setTemplate(template);
@@ -68,13 +69,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	 */
 
 	@Override
-	public List<File> getCurrentFiles() {
-		List<File> files = new ArrayList<File>();
-		File[] data = this.folder.listFiles();
-		if (data != null) {
-			files = Arrays.asList(data);
-		}
-		return files;
+	public List<java.io.File> getCurrentFiles() {
+		return this.folder.getCurrentFiles();
 	}
 
 	/**
@@ -114,7 +110,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 	@Override
 	public List<File> getFilesByFilter(FilenameFilter filter) {
-		return Arrays.asList(this.folder.listFiles(filter));
+		return this.folder.getFilesByFilter(filter);
 	}
 
 	@Override
@@ -124,7 +120,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
 	@Override
 	public File getFolderAsFile() {
-		return this.folder;
+		return new File(this.folder.getPath());
 	}
 
 	@Override
@@ -171,7 +167,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 				logger.trace("config 7");
 				String name = config.getString("hotfolder(" + i + ")[@name]");
 				logger.trace("config 8");
-				File folder = new File(config.getString("hotfolder(" + i + ")[@folder]"));
+				SafeFile folder = new SafeFile(config.getString("hotfolder(" + i + ")[@folder]"));
 				logger.trace("config 9");
 				Integer template = config.getInt("hotfolder(" + i + ")[@template]");
 				logger.trace("config 10");
@@ -199,7 +195,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 			logger.trace("config 18");
 
 		} catch (Exception e) {
-			logger.trace("config 19" + e.getMessage());
+			if(logger.isTraceEnabled()){
+				logger.trace("config 19" + e.getMessage());
+			}
 			return new ArrayList<GoobiHotfolder>();
 		}
 		logger.trace("config 20");
@@ -266,8 +264,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		return this.collection;
 	}
 
-	public File getLockFile() {
-		return new File(this.folder, ".lock");
+	public SafeFile getLockFile() {
+		return new SafeFile(this.folder, ".lock");
 
 	}
 
@@ -276,16 +274,16 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	public void lock() throws IOException {
-		File f = getLockFile();
+		SafeFile f = getLockFile();
 		if (!f.exists()) {
 			f.createNewFile();
 		}
 	}
 
 	public void unlock() throws IOException {
-		File f = getLockFile();
+		SafeFile f = getLockFile();
 		if (f.exists()) {
-			FileUtils.forceDelete(f);
+			f.forceDelete();
 		}
 	}
 }

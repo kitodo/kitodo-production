@@ -12,7 +12,7 @@ The web resources belong to the org.goobi.webapi package and use standard Java
 JAX-RS API annotations to denote resource routing. Coming from different people,
 data access is implemented in different ways. The Processes resources uses a DAO
 to query Hibernate and deliver POJO Bean instances, whereas Projects and
-CatalogConfiguration resources directly access to internal Goobi API.
+CatalogConfiguration resources directly access to internal Kitodo API.
 
 ### Jersey Servlet Configuration
 
@@ -21,7 +21,7 @@ calls and for serializing the returned Java objects. It is configured in the
 applications web.xml file by default:
 
  	<servlet>
-        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <servlet-name>Kitodo REST Service based on Jersey</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
@@ -32,7 +32,7 @@ applications web.xml file by default:
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Goobi REST Service based on Jersey</servlet-name>
+        <servlet-name>Kitodo REST Service based on Jersey</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
@@ -47,7 +47,7 @@ Processes and Steps
 To get JSON/XML formatted list of all current processes in the system a GET
 request to /rest/processes:
 
-$ curl http://localhost:8080/goobi/rest/processes
+$ curl http://localhost:8080/kitodo/rest/processes
 
     {
         "goobiProcess":
@@ -63,7 +63,7 @@ $ curl http://localhost:8080/goobi/rest/processes
         ]
     }
 
-$ curl -H 'Accept: application/xml' http://localhost:8080/goobi/rest/processes
+$ curl -H 'Accept: application/xml' http://localhost:8080/kitodo/rest/processes
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
     <goobiProcesses>

@@ -4,7 +4,7 @@
  *
  * Visit the websites for more information.
  *    - http://gdz.sub.uni-goettingen.de
- *    - http://www.goobi.org
+ *    - http://www.kitodo.org
  *    - https://github.com/goobi/goobi-production
  *
  * Copyright 2011, Center for Retrospective Digitization, Göttingen (GDZ),
@@ -52,7 +52,7 @@ public class IntegerSequence extends ArrayList<Integer> {
 		this.ensureCapacity(end - start);
 
 		for (int i = start; i <= end; i = (i + increment)) {
-			this.add(new Integer(i));
+			this.add(Integer.valueOf(i));
 		}
 	}
 

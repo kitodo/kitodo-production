@@ -3,7 +3,7 @@ package de.sub.goobi.helper.tasks;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -26,6 +26,8 @@ package de.sub.goobi.helper.tasks;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import org.goobi.io.SafeFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -101,7 +103,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 			setStatusProgress(-1);
 			return;
 		}
-		File swapFile = new File(swapPath);
+		SafeFile swapFile = new SafeFile(swapPath);
 		if (!swapFile.exists()) {
 			setStatusMessage("Swap folder does not exist or is not mounted");
 			setStatusProgress(-1);
@@ -117,8 +119,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 			return;
 		}
 
-		File fileIn = new File(processDirectory);
-		File fileOut = new File(swapPath + getProzess().getId() + File.separator);
+		SafeFile fileIn = new SafeFile(processDirectory);
+		SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
 
 		if (!fileOut.exists()) {
 			setStatusMessage(getProzess().getTitel() + ": swappingOutTarget does not exist");
@@ -157,7 +159,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 			Element el = it.next();
 			crcMap.put(el.getAttribute("path").getValue(), el.getAttribute("crc32").getValue());
 		}
-		Helper.deleteDataInDir(fileIn);
+		ProcessSwapOutTask.deleteDataInDir(fileIn);
 
 		/*
 		 * --------------------- Dateien kopieren und Checksummen ermitteln -------------------
@@ -172,7 +174,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(50);
 		try {
 			setStatusMessage("copying process files");
-			Helper.copyDirectoryWithCrc32Check(fileOut, fileIn, swapPath.length(), root);
+			ProcessSwapOutTask.copyDirectoryWithCrc32Check(fileOut, fileIn, swapPath.length(), root);
 		} catch (IOException e) {
 			logger.warn("IOException:", e);
 			setStatusMessage("IOException in copyDirectory: " + e.getMessage());
@@ -212,7 +214,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(90);
 
 		/* in Prozess speichern */
-		Helper.deleteDir(fileOut);
+		fileOut.deleteDir();
 		try {
 			setStatusMessage("saving process");
 			Prozess myProzess = dao.get(getProzess().getId());

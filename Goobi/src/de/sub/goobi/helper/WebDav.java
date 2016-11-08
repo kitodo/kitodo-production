@@ -4,7 +4,7 @@ package de.sub.goobi.helper;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
  * Visit the websites for more information.
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,12 +27,15 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import org.goobi.io.SafeFile;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -78,7 +81,7 @@ public class WebDav implements Serializable {
 			return rueckgabe;
 		}
 
-		File benutzerHome = new File(VerzeichnisAlle);
+		SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
@@ -146,7 +149,7 @@ public class WebDav implements Serializable {
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
-			File projectDirectory = new File (nach = nach.replaceAll(" ", "__"));
+			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
 				param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -159,7 +162,7 @@ public class WebDav implements Serializable {
 
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
-		File benutzerHome = new File(nach);
+		SafeFile benutzerHome = new SafeFile(nach);
 
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
@@ -180,10 +183,10 @@ public class WebDav implements Serializable {
 			 * existieren
 			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
-				File projekt = new File(userHome + myProzess.getProjekt().getTitel());
+				SafeFile projekt = new SafeFile(userHome + myProzess.getProjekt().getTitel());
                 FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
-				projekt = new File(userHome + DONEDIRECTORYNAME);
+				projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
                 FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
@@ -208,11 +211,13 @@ public class WebDav implements Serializable {
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
 
-		myLogger.info("von: " + von);
-		myLogger.info("nach: " + nach);
+		if(myLogger.isInfoEnabled()){
+			myLogger.info("von: " + von);
+			myLogger.info("nach: " + nach);
+		}
 
-		File imagePfad = new File(von);
-		File benutzerHome = new File(nach);
+		SafeFile imagePfad = new SafeFile(von);
+		SafeFile benutzerHome = new SafeFile(nach);
 
 		// wenn der Ziellink schon existiert, dann abbrechen
 		if (benutzerHome.exists()) {
@@ -241,14 +246,17 @@ public class WebDav implements Serializable {
 	private void saveTiffHeader(Prozess inProzess) {
 		try {
 			/* prüfen, ob Tiff-Header schon existiert */
-			if (new File(inProzess.getImagesDirectory() + "tiffwriter.conf").exists()) {
+			if (new SafeFile(inProzess.getImagesDirectory() + "tiffwriter.conf").exists()) {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
-			BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-					+ "tiffwriter.conf"), "utf-8"));
-			outfile.write(tif.getTiffAlles());
-			outfile.close();
+			try (
+				BufferedWriter outfile =
+					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
+						+ "tiffwriter.conf"), StandardCharsets.UTF_8));
+			) {
+				outfile.write(tif.getTiffAlles());
+			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Download aborted", e);
 			myLogger.error(e);
@@ -259,7 +267,7 @@ public class WebDav implements Serializable {
 		try {
 			Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 			String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
-			File benutzerHome = new File(VerzeichnisAlle);
+			SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 			FilenameFilter filter = new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {

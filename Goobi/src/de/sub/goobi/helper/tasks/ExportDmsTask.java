@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -49,7 +49,7 @@ import de.sub.goobi.helper.Helper;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class ExportDmsTask extends EmptyTask implements INameableTask {
+public class ExportDmsTask extends EmptyTask {
 
 	private final ExportDms exportDms;
 	private final Prozess process;

@@ -20,11 +20,13 @@ package com.googlecode.fascinator.redbox.sru;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -218,8 +220,12 @@ public class SRUClient {
      */
     public void testResponseResource(String fileName) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        IOUtils.copy(getClass().getResourceAsStream("/" + fileName), out);
-        testingResponseString = out.toString("UTF-8");
+        InputStream in = getClass().getResourceAsStream("/" + fileName);
+        if (in != null) {
+            IOUtils.copy(in, out);
+            testingResponseString = out.toString("UTF-8");
+            in.close();
+        }
     }
 
     /**
@@ -230,12 +236,9 @@ public class SRUClient {
      */
     public Document parseXml(String xmlData) {
         try {
-            byte[] bytes = xmlData.getBytes("utf-8");
+            byte[] bytes = xmlData.getBytes(StandardCharsets.UTF_8);
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             return saxReader.read(in);
-        } catch (UnsupportedEncodingException ex) {
-            log.error("Input is not UTF-8", ex);
-            return null;
         } catch (DocumentException ex) {
             log.error("Failed to parse XML", ex);
             return null;
@@ -481,7 +484,7 @@ public class SRUClient {
         String response = null;
         try {
             byte[] bla = get.getResponseBody();
-			response = new String(bla, "utf-8");
+			response = new String(bla, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             log.error("Error accessing response body: ", ex);
             return null;

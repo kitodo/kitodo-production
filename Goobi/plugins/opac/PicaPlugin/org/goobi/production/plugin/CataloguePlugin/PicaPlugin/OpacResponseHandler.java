@@ -2,7 +2,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -73,7 +73,11 @@ class OpacResponseHandler extends DefaultHandler {
 		}
 
 		if (localName.equals("SET")) {
-			numberOfHits = Integer.valueOf(atts.getValue("hits")).intValue();
+			String hits = atts.getValue("hits");
+			if (hits == null) {
+				throw new NumberFormatException("null");
+			}
+			numberOfHits = Integer.parseInt(hits);
 		}
 
 		if (localName.equals("SHORTTITLE")) {

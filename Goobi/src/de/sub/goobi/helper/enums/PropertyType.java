@@ -4,7 +4,7 @@ package de.sub.goobi.helper.enums;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -86,11 +86,6 @@ public enum PropertyType {
 
 	public String getName() {
 		return this.name.toLowerCase();
-	}
-
-	@SuppressWarnings("unused")
-	//here for jsf compatibility
-	private void setName(String name) {
 	}
 
 	@Override

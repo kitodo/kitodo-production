@@ -1,10 +1,8 @@
-package de.sub.goobi.export.download;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,7 +25,8 @@ package de.sub.goobi.export.download;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
+package de.sub.goobi.export.download;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,20 +35,8 @@ import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
 
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Projekt;
@@ -70,6 +57,19 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
+import ugh.dl.ContentFile;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
+import ugh.dl.VirtualFileGroup;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
 	protected Helper help = new Helper();
@@ -199,7 +199,7 @@ public class ExportMets {
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = myProzess.getImagesDirectory();
-		File imageFolder = new File(imageFolderPath);
+		SafeFile imageFolder = new SafeFile(imageFolderPath);
 		/*
 		 * before creating mets file, change relative path to absolute -
 		 */
@@ -242,7 +242,6 @@ public class ExportMets {
 					Helper.setFehlerMeldung(myProzess.getTitel()
 							+ ": could not find any referenced images, export aborted");
 				}
-				dd = null;
 				return false;
 			}
 		}
@@ -254,8 +253,8 @@ public class ExportMets {
 			if (!location.contains("://")) {
 				location = "file://" + location;
 			}
-			URL url = new URL(location);
-			File f = new File(imageFolder, url.getFile());
+			String url = new URL(location).getFile();
+			SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
 			cf.setLocation(f.toURI().toString());
 		}
 
@@ -274,8 +273,8 @@ public class ExportMets {
 			for (ProjectFileGroup pfg : myFilegroups) {
 				// check if source files exists
 				if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-					File folder = new File(myProzess.getMethodFromName(pfg.getFolder()));
-					if (folder != null && folder.exists() && folder.list().length > 0) {
+					SafeFile folder = new SafeFile(myProzess.getMethodFromName(pfg.getFolder()));
+					if (folder.exists() && folder.list().length > 0) {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());
 						v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -330,11 +329,10 @@ public class ExportMets {
 		String metsPointer = vp.replace(metsPointerToReplace);
 		mm.setMptrAnchorUrl(metsPointer);
 
-		List<String> images = new ArrayList<String>();
 		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen
-				images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+				List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				if (images != null) {
 					int sizeOfImages = images.size();

@@ -4,7 +4,7 @@ package de.sub.goobi.export.download;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -80,7 +80,9 @@ public class Multipage {
 		/* alle Bilder in ein Array übernehmen */
 		RenderedImage image[] = new PlanarImage[dateien.length];
 		for (int i = 0; i < dateien.length; i++) {
-			myLogger.debug(pfad + dateien[i]);
+			if(myLogger.isDebugEnabled()){
+				myLogger.debug(pfad + dateien[i]);
+			}
 			image[i] = JAI.create("fileload", pfad + dateien[i]);
 		}
 		myLogger.debug("Bilder durchlaufen");

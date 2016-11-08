@@ -4,7 +4,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -379,11 +379,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		DataTable dtbl = new DataTable("");
 
-		// if headerRow is set then add it to the DataTable to set columns
-		// needs to be removed later
-		if (headerRow != null) {
-			dtbl.addDataRow(headerRow);
-		}
+		// Set columns to be removed later.
+		dtbl.addDataRow(headerRow);
 
 		DataRow dataRow = null;
 
@@ -419,11 +416,15 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 						// date/time extraction based on the group
 						dataRow = new DataRow(intervall);
 					}
-					Double count = new Converter(objArr[0]).getDouble();
-					dataRow.addValue(stepName, count);
+					if (dataRow != null) {
+						Double count = new Converter(objArr[0]).getDouble();
+						dataRow.addValue(stepName, count);
+					}
 
 				} catch (Exception e) {
-					dataRow.addValue(e.getMessage(), new Double(0));
+					if (dataRow != null) {
+						dataRow.addValue(e.getMessage(), 0.0);
+					}
 				}
 			}
 		}
@@ -433,9 +434,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		}
 
 		// now removing headerRow
-		if (headerRow != null) {
-			dtbl.removeDataRow(headerRow);
-		}
+		dtbl.removeDataRow(headerRow);
 
 		return dtbl;
 	}

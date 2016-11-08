@@ -5,7 +5,7 @@
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -101,6 +101,12 @@ public class Parameters {
 	public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
 
 	/**
+	 * Comma-separated list of Strings which may be enclosed in double quotes.
+	 * Separators available for double page pagination modes.
+	 */
+	public static final String PAGE_SEPARATORS = "pageSeparators";
+
+	/**
 	 * Points to a folder on the file system that contains Production plug-in
 	 * jars. In the folder, there must be subfolders named as defined in enum
 	 * PluginType (currently: “import”, “step”, “validation”, “command” and
@@ -132,4 +138,11 @@ public class Parameters {
 	 * given they have the same meta data type addable. Defaults to false.
 	 */
 	public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
+
+	/**
+	 * Boolean. Set to false to disable automatic pagination changes in the
+	 * metadata editor. If false, pagination must be updated manually by
+	 * clicking the link “Read in pagination from images”.
+	 */
+	public static final String WITH_AUTOMATIC_PAGINATION = "MetsEditorWithAutomaticPagination";
 }

@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -27,7 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -49,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -56,6 +56,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -246,12 +247,12 @@ public class ProzessverwaltungForm extends BasisForm {
 						{
 							// renaming image directories
 							String imageDirectory = myProzess.getImagesDirectory();
-							File dir = new File(imageDirectory);
-							if (dir.exists() && dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
-								for (File imagedir : subdirs) {
+							SafeFile dir = new SafeFile(imageDirectory);
+							if (dir.isDirectory()) {
+								SafeFile[] subdirs = dir.listFiles();
+								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -259,12 +260,12 @@ public class ProzessverwaltungForm extends BasisForm {
 						{
 							// renaming ocr directories
 							String ocrDirectory = myProzess.getOcrDirectory();
-							File dir = new File(ocrDirectory);
-							if (dir.exists() && dir.isDirectory()) {
-								File[] subdirs = dir.listFiles();
-								for (File imagedir : subdirs) {
+							SafeFile dir = new SafeFile(ocrDirectory);
+							if (dir.isDirectory()) {
+								SafeFile[] subdirs = dir.listFiles();
+								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new File(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -276,10 +277,10 @@ public class ProzessverwaltungForm extends BasisForm {
 								
 								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
 								
-								File dir = new File(processDirAbsolut);
+								SafeFile dir = new SafeFile(processDirAbsolut);
 								if(dir.isDirectory())
 								{
-									dir.renameTo(new File(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+									dir.renameTo(new SafeFile(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
 								}
 							}
 						}
@@ -322,7 +323,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			Helper.setFehlerMeldung("could not delete ", e);
 			return "";
 		}
-		if (this.modusAnzeige == "vorlagen") {
+		if (this.modusAnzeige.equals("vorlagen")) {
 			return FilterVorlagen();
 		} else {
 			return FilterAlleStart();
@@ -332,13 +333,13 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String ContentLoeschen() {
 		// deleteMetadataDirectory();
 		try {
-			File ocr = new File(this.myProzess.getOcrDirectory());
+			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
-			File images = new File(this.myProzess.getImagesDirectory());
+			SafeFile images = new SafeFile(this.myProzess.getImagesDirectory());
 			if (images.exists()) {
-				Helper.deleteDir(images);
+			    images.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -354,10 +355,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			deleteSymlinksFromUserHomes();
 		}
 		try {
-			Helper.deleteDir(new File(this.myProzess.getProcessDataDirectory()));
-			File ocr = new File(this.myProzess.getOcrDirectory());
+		    new SafeFile(this.myProzess.getProcessDataDirectory()).deleteDir();
+			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-				Helper.deleteDir(ocr);
+			    ocr.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -418,7 +419,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			Prozess einziger = (Prozess) this.page.getListReload().get(0);
 			ProzesskopieForm pkf = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
 			pkf.setProzessVorlage(einziger);
-			return pkf.Prepare();
+			return pkf.prepare();
 		} else {
 			return "ProzessverwaltungAlle";
 		}
@@ -946,6 +947,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void debug(String message, List<Schritt> bla) {
+		if (!logger.isEnabledFor(Level.WARN)) return;
 		for (Schritt s : bla) {
 			logger.warn(message + " " + s.getTitel() + "   " + s.getReihenfolge());
 		}
@@ -1158,14 +1160,18 @@ public class ProzessverwaltungForm extends BasisForm {
 			try {
 				Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
-				logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
+				if(logger.isDebugEnabled()){
+					logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
+				}
 			}
 		}
 		if (this.myProzess != null && this.myProzess.getId() != null) {
 			try {
 				Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
-				logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
+				if(logger.isDebugEnabled()){
+					logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
+				}
 			}
 		}
 		return "";
@@ -1611,24 +1617,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	public String getMyProcessId() {
-		return String.valueOf(this.myProzess.getId());
-	}
-
-	public void setMyProcessId(String id) {
-		try {
-			int myid = new Integer(id);
-			this.myProzess = this.dao.get(myid);
-		} catch (DAOException e) {
-			logger.error(e);
-		} catch (NumberFormatException e) {
-			logger.warn(e);
-		}
-	}
-
 	public List<String> getXsltList() {
 		List<String> answer = new ArrayList<String>();
-		File folder = new File("xsltFolder");
+		SafeFile folder = new SafeFile("xsltFolder");
 		if (folder.isDirectory() && folder.exists()) {
 			String[] files = folder.list();
 
@@ -1848,7 +1839,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			this.myProzess = this.dao.get(this.myProzess.getId());
 		} catch (Exception e) {
-			logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
+			if (logger.isEnabledFor(Level.WARN)) {
+				logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
+			}
 		}
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);

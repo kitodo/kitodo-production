@@ -2,10 +2,10 @@
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
- * (c) 2014 Goobi. Digitalisieren im Verein e.V. &lt;contact@goobi.org&gt;
+ * (c) 2014 Goobi. Digitalisieren im Verein e. V. <contact@goobi.org>
  * 
  * Visit the websites for more information.
- *     		- http://www.goobi.org/en/
+ *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
  * 
  * This program is free software; you can redistribute it and/or modify it under
@@ -165,7 +165,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 						found.setLastname(value);
 						break;
 					case NORMDATA_RECORD:
-						if (value != null & value.length() > 0
+						if (value != null && value.length() > 0
 								&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
 							String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
 							found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);

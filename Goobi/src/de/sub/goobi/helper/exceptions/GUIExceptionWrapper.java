@@ -1,23 +1,23 @@
 package de.sub.goobi.helper.exceptions;
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -37,30 +37,30 @@ import de.sub.goobi.helper.Helper;
  * message for Errors which are unexpected An example for the area in
  * GoobiProperties.config is given after the class declaration in the source
  * code.
- * 
+ *
  * Besides building up the information in the constructor the other important
  * method is getLocalizedMessage(), which provides the build up message in html
- * 
+ *
  * @author Wulf
  * @version 12/10/2009
- * 
+ *
  * Variables in Messages Bundle:
  * err_emailBody -> message in the email before the stack trace
- * err_emailMessage -> message displayed if email is enabled in GoobiConfig: err_userHandling=true 
+ * err_emailMessage -> message displayed if email is enabled in GoobiConfig: err_userHandling=true
  * err_fallBackMessage -> messgae displayed if feature is turned off in GoobiConfig
  * err_linkText -> message in which the link from GoobiConfig: err_linkToPage=
- * err_noMailService -> message if email is disabled in GoobiConfig: err_emailEnabled=false 
+ * err_noMailService -> message if email is disabled in GoobiConfig: err_emailEnabled=false
  * err_subjectLine -> message in Subject Line of email
- * 
+ *
  */
 public class GUIExceptionWrapper extends Exception {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	
+
 
 	private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
 
@@ -93,11 +93,11 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 * Exception Class catching unhandled exceptions to wrap it for GUI
-	 * 
-	 * @param message,  additional info, like which class called this constructor
-	 * @param cause, last Exception cought with this wrapper
+	 *
+	 * @param message additional info, like which class called this constructor
+	 * @param cause   last Exception cought with this wrapper
 	 */
-	public GUIExceptionWrapper(String message, Throwable cause) {	
+	public GUIExceptionWrapper(String message, Throwable cause) {
 		this(cause);
 		this.additionalMessage = message + "<br/>";
 		init();
@@ -175,12 +175,12 @@ public class GUIExceptionWrapper extends Exception {
 
 		// only elaborate email part if
 		if (this.emailAddresses.size() > 0) {
-			emailPart = this.err_emailMessage.replace("{0}", 
+			emailPart = this.err_emailMessage.replace("{0}",
 					mailtoLinkHrefMailTo + getAddresses() +
-					mailtoLinkSubject + this.err_subjectLine + 
+					mailtoLinkSubject + this.err_subjectLine +
 					mailtoLinkBody +  this.err_emailBody +
-					htmlLineFeed + htmlLineFeed + 	
-					htmlLineFeed + getContextInfo() + 
+					htmlLineFeed + htmlLineFeed +
+					htmlLineFeed + getContextInfo() +
 					htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
 		} else {
@@ -195,7 +195,7 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return collected addresses as a string to be used after <a href="mailto:"
 	 */
 	private String getAddresses() {
@@ -207,7 +207,7 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aThrowable
 	 * @return stack trace as String
 	 */
@@ -228,7 +228,7 @@ public class GUIExceptionWrapper extends Exception {
 				}
 				tempTraceReturn = "<br/>" + itStackTrace.toString();
 			}
-			
+
 			if (stackTraceReturn.length()>1000) {
 				return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- truncated rest of stack trace to avoid overflow ---- ";
 			}
@@ -237,12 +237,12 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the Class of the initial Exception if possible
 	 */
 	private String getContextInfo(){
 		String getContextInfo = "";
-		getContextInfo = getContextInfo + "ThrowingClass=" + this.additionalMessage;		
+		getContextInfo = getContextInfo + "ThrowingClass=" + this.additionalMessage;
 		getContextInfo = getContextInfo + "Time=" + new Date().toString() + "<br/>";
 		getContextInfo = getContextInfo + "Cause=" + super.getCause() + "<br/>";
 		return getContextInfo;

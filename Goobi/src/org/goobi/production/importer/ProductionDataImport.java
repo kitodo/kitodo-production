@@ -5,7 +5,7 @@ package org.goobi.production.importer;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -35,7 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -109,23 +109,24 @@ public class ProductionDataImport {
 	 * @throws ConfigurationException
 	 * @throws DAOException
 	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 */
 
 	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException, DAOException,
-			UnsupportedEncodingException, FileNotFoundException {
+			FileNotFoundException {
 		new ProductionDataImport().importData();
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void importData() throws DAOException, HibernateException, ConfigurationException, SQLException, UnsupportedEncodingException,
+	private void importData() throws DAOException, HibernateException, ConfigurationException, SQLException,
 			FileNotFoundException {
 		filename = ConfigMain.getParameter("tempfolder") + "produktionsDb.xml";
 		// load data from xml
 		logger.debug("Load Production Data from xml.");
 		ArrayList<ProductionData> dataList = load(filename);
-		logger.debug("Got " + dataList.size() + " items");
+		if(logger.isDebugEnabled()){
+			logger.debug("Got " + dataList.size() + " items");
+		}
 
 
 		Prozess template = new Prozess();
@@ -177,7 +178,9 @@ public class ProductionDataImport {
 						if (w != null) {
 							Prozess p = w.getProzess();
 							if (p != null) {
-								logger.debug("Add new Properties for Process : " + p.getTitel());
+								if(logger.isDebugEnabled()){
+									logger.debug("Add new Properties for Process : " + p.getTitel());
+								}
 								addNewPropertiesForExistingProcesses(session, p.getId(), pd);
 								added = true;
 								oldProj++;
@@ -203,11 +206,13 @@ public class ProductionDataImport {
 			XStream xstream = new XStream();
 			xstream.setMode(XStream.NO_REFERENCES);
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(ConfigMain.getParameter("tempfolder") + conflictFilename)),
-					"UTF8");
+					StandardCharsets.UTF_8);
 			xstream.toXML(conflicts, fw);
 		}
-		logger.debug("Neue Prozesse: " + newProj);
-		logger.debug("Zu " + oldProj + " existierenden Prozessen wurden Properties hinzugefügt");
+		if(logger.isDebugEnabled()){
+			logger.debug("Neue Prozesse: " + newProj);
+			logger.debug("Zu " + oldProj + " existierenden Prozessen wurden Properties hinzugefügt");
+		}
 	}
 
 	private void generateNewPropertiesForNewProzess(Session session, Regelsatz ruleset, Projekt project, ProductionData pd)
@@ -282,7 +287,6 @@ public class ProductionDataImport {
 	private void generateWerkProperty(Session session, Werkstueck w, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Werkstueckeigenschaft property = new Werkstueckeigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setWerkstueck(w);
@@ -297,7 +301,6 @@ public class ProductionDataImport {
 	private void generateVorlageProperty(Session session, Vorlage s, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Vorlageeigenschaft property = new Vorlageeigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setVorlage(s);
@@ -312,7 +315,6 @@ public class ProductionDataImport {
 	private void generateProzessProperty(Session session, Prozess s, String name, String value, PropertyType type, Integer position, boolean required) {
 		if (value != null) {
 			Prozesseigenschaft property = new Prozesseigenschaft();
-			property.setCreationDate(new Date());
 			property.setIstObligatorisch(required);
 			property.setTitel(name);
 			property.setProzess(s);
@@ -550,14 +552,13 @@ public class ProductionDataImport {
 		List<Prozesseigenschaft> eig = p.getEigenschaftenList();
 		if (p.getProjekt().getTitel().equals("DigiWunschBuch")) {
 			boolean sponsor = false;
-			if (eig != null) {
 
-				for (Prozesseigenschaft pe : eig) {
-					if (pe.getTitel().contains("Besteller") && (pe.getWert() != null)) {
-						sponsor = true;
-					}
+			for (Prozesseigenschaft pe : eig) {
+				if (pe.getTitel().contains("Besteller") && (pe.getWert() != null)) {
+					sponsor = true;
 				}
 			}
+
 			if (!sponsor) {
 				// SponsorNaming
 				generateProzessProperty(session, p, "Patennennung", String.valueOf(pd.getPatennennung()), PropertyType.Integer, 0, false);
@@ -782,13 +783,13 @@ public class ProductionDataImport {
 				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
 				try {
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.bitonal, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.grayScale, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), new Integer(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
 									HistoryEventType.color, p));
 
 				} catch (NumberFormatException e) {
@@ -888,7 +889,7 @@ public class ProductionDataImport {
 		XStream xstream = new XStream();
 		try {
 			xstream.alias("ProductionData", ProductionData.class);
-			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(new FileInputStream(filename))));
+			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8)));
 		} catch (FileNotFoundException e) {
 			logger.debug(e);
 		}

@@ -4,7 +4,7 @@
  *
  * Visit the websites for more information.
  *	   - http://gdz.sub.uni-goettingen.de
- *	   - http://www.goobi.org
+ *	   - http://www.kitodo.org
  *	   - https://github.com/goobi/goobi-production
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -188,7 +188,8 @@ public class PaginatorTest {
 				.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION)
 				.setPagesToPaginate(new Metadatum[]{
 						new MockMetadatum()
-				});
+				})
+				.setPaginationSeparator(" ");
 		paginator.run();
 		assertPagenumberSequence(paginator, new String[]{"1v 2r"});
 	}
@@ -314,7 +315,8 @@ public class PaginatorTest {
 						new MockMetadatum(),
 						new MockMetadatum(),
 						new MockMetadatum()
-				});
+				})
+				.setPaginationSeparator(" ");
 		paginator.run();
 		assertPagenumberSequence(paginator, new String[]{"1v 2r", "2v 3r", "3v 4r"});
 	}
@@ -332,7 +334,8 @@ public class PaginatorTest {
 						new MockMetadatum(),
 						new MockMetadatum(),
 						new MockMetadatum()
-				});
+				})
+				.setPaginationSeparator(" ");
 		paginator.run();
 		assertPagenumberSequence(paginator, new String[]{"[1]v [2]r", "[2]v [3]r", "[3]v [4]r"});
 	}
@@ -350,7 +353,8 @@ public class PaginatorTest {
 						new MockMetadatum(),
 						new MockMetadatum(),
 						new MockMetadatum()
-				});
+				})
+				.setPaginationSeparator(" ");
 		paginator.run();
 		assertPagenumberSequence(paginator, new String[]{"[XX]v [XXI]r", "[XXI]v [XXII]r", "[XXII]v [XXIII]r"});
 	}

@@ -3,7 +3,7 @@ package org.goobi.production.flow.jobs;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -50,14 +50,18 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		if (getIsRunning() == false) {
-			logger.trace("Start scheduled Job: " + getJobName());
+			if(logger.isTraceEnabled()){
+				logger.trace("Start scheduled Job: " + getJobName());
+			}
 			if (isRunning == false) {
 				logger.trace("start history updating for all processes");
 				setIsRunning(true);
 				execute();
 				setIsRunning(false);
 			}
-			logger.trace("End scheduled Job: " + getJobName());
+			if(logger.isTraceEnabled()){
+				logger.trace("End scheduled Job: " + getJobName());
+			}
 		}
 	}
 

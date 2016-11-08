@@ -4,7 +4,7 @@ package org.goobi.production.properties;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -40,7 +40,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
 
 public class ProcessProperty implements IProperty, Serializable {
 
@@ -59,9 +58,12 @@ public class ProcessProperty implements IProperty, Serializable {
 	private boolean currentStepDuplicationAllowed = false;
 	
 	public ProcessProperty() {
+		this.container = 0;
+		this.value = "";
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
+		this.prozesseigenschaft = new Prozesseigenschaft();
 	}
 
 	/*
@@ -287,18 +289,6 @@ public class ProcessProperty implements IProperty, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.properties.IProperty#save(de.sub.goobi.Beans.Schritt)
-	 */
-
-	public void save(Schritt step) {
-		if (this.prozesseigenschaft != null) {
-
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
 	 */
 
@@ -389,7 +379,7 @@ public class ProcessProperty implements IProperty, Serializable {
 		@Override
 		public int compare(ProcessProperty o1, ProcessProperty o2) {
 
-			return new Integer(o1.getContainer()).compareTo(new Integer(o2.getContainer()));
+			return Integer.compare(o1.getContainer(), o2.getContainer());
 		}
 
 	}

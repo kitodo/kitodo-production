@@ -2,23 +2,23 @@ package org.goobi.production.chart;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *
+ * Visit the websites for more information.
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -34,18 +34,18 @@ import java.util.List;
 
 /*************************************************************************************
  * A ProjectStatusDataTable object holds all the information needed
- * for rendering a project status chart 
- * 
+ * for rendering a project status chart
+ *
  * A ProjectStatusDataTable consists of
  * - a name
  * - dates of project begin and project end
  * - a list of project tasks
- * 
+ *
  * @author Karsten Köhler
  * @author Hendrik Söhnholz
  * @author Steffen Hankiewicz
  * @version 30.10.2009
- * 
+ *
  * @see ProjectTask
  *************************************************************************************/
 public class ProjectStatusDataTable implements Serializable {
@@ -54,15 +54,14 @@ public class ProjectStatusDataTable implements Serializable {
 
 	private Date projectBegin;
 	private Date projectEnd;
-	
+
 	private List<ProjectTask> projectTasks;
 	private List<String> taskTitles;
 
 	/************************************************************************************
 	 * public constructor, the name is set here
-	 * 
-	 * @param title
-	 *            the title to set
+	 *
+	 * @param inName the name to set
 	 ************************************************************************************/
 	public ProjectStatusDataTable(String inName, Date begin, Date end) {
 		super();
@@ -73,9 +72,9 @@ public class ProjectStatusDataTable implements Serializable {
 		taskTitles = new ArrayList<String>();
 	}
 
-	/** 
-	 * Remove a task from the list. 
-	 * 
+	/**
+	 * Remove a task from the list.
+	 *
 	 * @param title
 	 */
 	public void removeTask(String title) {
@@ -89,14 +88,9 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * Add a task to the list
-	 * 
-	 * @param title
-	 * 		The title of the task to add
-	 * @param stepsCompleted
-	 * 		Number of steps completed
-	 * @param
-	 * 		Total number of steps
-	 *            
+	 *
+	 * @param inTask The task to add
+	 *
 	 ************************************************************************************/
 	public void addTask(IProjectTask inTask) {
 		if (!(taskTitles.contains(inTask.getTitle()))) {
@@ -115,7 +109,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for name
-	 * 
+	 *
 	 * @return name as string
 	 ************************************************************************************/
 	public String getName() {
@@ -124,7 +118,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * setter for name
-	 * 
+	 *
 	 * @param name
 	 *            as string
 	 ************************************************************************************/
@@ -134,7 +128,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for all tasks
-	 * 
+	 *
 	 * @return list of {@link ProjectTask}
 	 ************************************************************************************/
 	public List<ProjectTask> getTasks() {
@@ -143,7 +137,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for size of task list
-	 * 
+	 *
 	 * @return number of tasks
 	 ************************************************************************************/
 	public int getNumberOfTasks() {
@@ -156,7 +150,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for index of task in list
-	 * 
+	 *
 	 * @return index of task
 	 ************************************************************************************/
 	public int getTaskIndex(String title) {
@@ -169,7 +163,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for projectBegin
-	 * 
+	 *
 	 * @return projectBegin as Date
 	 ************************************************************************************/
 	public Date getProjectBegin() {
@@ -178,7 +172,7 @@ public class ProjectStatusDataTable implements Serializable {
 
 	/************************************************************************************
 	 * getter for projectEnd
-	 * 
+	 *
 	 * @return projectEnd as Date
 	 ************************************************************************************/
 	public Date getProjectEnd() {

@@ -7,7 +7,7 @@
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -79,8 +79,7 @@
 									infoClass="text_blue" showDetail="true" showSummary="true"
 									tooltip="true" />
 
-								<htm:img src="#{HelperForm.logoUrl}"
-									style="display: block; margin-top: 20px; margin-left: auto; margin-right: auto" />
+								<htm:img src="#{HelperForm.logoUrl}" />
 
 								<htm:h3 style="margin-top:15px">
 									<h:outputText id="id7" value="#{msgs.startseite}" />

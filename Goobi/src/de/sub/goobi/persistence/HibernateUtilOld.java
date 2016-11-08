@@ -34,7 +34,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.auction.exceptions.InfrastructureException;
+import org.kitodo.persistence.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 
@@ -58,6 +58,7 @@ public class HibernateUtilOld {
 	private static final ThreadLocal<Session> threadSession = new ThreadLocal<Session>();
 	private static final ThreadLocal<Transaction> threadTransaction = new ThreadLocal<Transaction>();
 	private static final ThreadLocal<Interceptor> threadInterceptor = new ThreadLocal<Interceptor>();
+	private static final Object sessionFactoryRebuildLock = new Object();
 
 	// Create the initial SessionFactory from the default configuration files
 	static {
@@ -98,7 +99,7 @@ public class HibernateUtilOld {
 	 * 
 	 */
 	public static void rebuildSessionFactory() throws InfrastructureException {
-		synchronized (sessionFactory) {
+		synchronized (sessionFactoryRebuildLock) {
 			try {
 				sessionFactory = getConfiguration().buildSessionFactory();
 			} catch (Exception ex) {
@@ -113,7 +114,7 @@ public class HibernateUtilOld {
 	 * @param cfg
 	 */
 	public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
-		synchronized (sessionFactory) {
+		synchronized (sessionFactoryRebuildLock) {
 			try {
 				sessionFactory = cfg.buildSessionFactory();
 				configuration = cfg;
@@ -135,7 +136,9 @@ public class HibernateUtilOld {
 		try {
 			if (s == null) {
 				if (getInterceptor() != null) {
-					log.debug("Using interceptor: " + getInterceptor().getClass());
+					if(log.isDebugEnabled()){
+						log.debug("Using interceptor: " + getInterceptor().getClass());
+					}
 					s = getSessionFactory().openSession();
 				} else {
 					s = getSessionFactory().openSession();

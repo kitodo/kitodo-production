@@ -4,7 +4,7 @@ package de.sub.goobi.forms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -103,26 +103,20 @@ public class SessionForm {
 				mybrowser = "-";
 			}
 			map.put("browser", mybrowser);
-			if (mybrowser.indexOf("Gecko") > 0) {
-				map.put("browserIcon", "mozilla.png");
-			}
-			if (mybrowser.indexOf("Firefox") > 0) {
-				map.put("browserIcon", "firefox.png");
-			}
-			if (mybrowser.indexOf("MSIE") > 0) {
-				map.put("browserIcon", "ie.png");
-			}
-			if (mybrowser.indexOf("Opera") > 0) {
-				map.put("browserIcon", "opera.gif");
-			}
-			if (mybrowser.indexOf("Safari") > 0) {
-				map.put("browserIcon", "safari.gif");
-			}
-			if (mybrowser.indexOf("Konqueror") > 0) {
-				map.put("browserIcon", "konqueror.gif");
-			}
-			if (mybrowser.indexOf("Netscape") > 0) {
+			if (mybrowser.contains("Netscape")) {
 				map.put("browserIcon", "netscape.gif");
+			} else if (mybrowser.contains("Konqueror")) {
+				map.put("browserIcon", "konqueror.gif");
+			} else if (mybrowser.contains("Opera") || mybrowser.contains("OPR")) {
+				map.put("browserIcon", "opera.gif");
+			} else if (mybrowser.contains("Safari")) {
+				map.put("browserIcon", "safari.gif");
+			} else if (mybrowser.contains("MSIE") || mybrowser.contains("Trident")) {
+				map.put("browserIcon", "ie.png");
+			} else if (mybrowser.contains("Firefox")) {
+				map.put("browserIcon", "firefox.png");
+			} else if (mybrowser.contains("Gecko")) {
+				map.put("browserIcon", "mozilla.png");
 			}
 		}
 		this.alleSessions.add(map);

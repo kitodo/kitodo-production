@@ -4,7 +4,7 @@ package de.sub.goobi.export.dms;
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
- *     		- http://www.goobi.org
+ *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
@@ -29,20 +29,20 @@ package de.sub.goobi.export.dms;
  */
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+
+import org.goobi.io.SafeFile;
 
 import org.apache.log4j.Logger;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 public class DmsImportThread extends Thread {
 	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
-	private File fileError;
-	private File fileXml;
-	private File fileSuccess;
-	private File folderImages;
+	private SafeFile fileError;
+	private SafeFile fileXml;
+	private SafeFile fileSuccess;
+	private SafeFile folderImages;
 	private long timeFileSuccess;
 	private long timeFileError;
 
@@ -54,18 +54,18 @@ public class DmsImportThread extends Thread {
 		setDaemon(true);
 		/* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber in neuem FehlerOrdner */
 		if (inProzess.getProjekt().getDmsImportErrorPath() == null || inProzess.getProjekt().getDmsImportErrorPath().length() == 0) {
-			this.fileError = new File(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
+			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
 		} else {
-			this.fileError = new File(inProzess.getProjekt().getDmsImportErrorPath(), inAts + ".log");
+			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportErrorPath(), inAts + ".log");
 		}
 
-		this.fileXml = new File(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
-		this.fileSuccess = new File(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
+		this.fileXml = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
+		this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
 		if (inProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-			this.fileSuccess = new File(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
+			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
 		}
 
-		this.folderImages = new File(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
+		this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
 
 		if (this.fileError.exists()) {
 			this.timeFileError = this.fileError.getAbsoluteFile().lastModified();
@@ -86,14 +86,14 @@ public class DmsImportThread extends Thread {
 						/* die Logdatei mit der Fehlerbeschreibung einlesen */
 						StringBuffer myBuf = new StringBuffer();
 						myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-						BufferedReader r = new BufferedReader(new FileReader(this.fileError));
-						String aLine = r.readLine();
-						while (aLine != null) {
-							myBuf.append(aLine);
-							myBuf.append(" ");
-							aLine = r.readLine();
+						try (BufferedReader r = new BufferedReader(this.fileError.createFileReader())) {
+							String aLine = r.readLine();
+							while (aLine != null) {
+								myBuf.append(aLine);
+								myBuf.append(" ");
+								aLine = r.readLine();
+							}
 						}
-						r.close();
 						this.rueckgabe = myBuf.toString();
 
 					}
@@ -107,7 +107,7 @@ public class DmsImportThread extends Thread {
 		}
 		if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 			/* Images wieder löschen */
-			Helper.deleteDir(this.folderImages);
+		    this.folderImages.deleteDir();
 		}
 	}
 
