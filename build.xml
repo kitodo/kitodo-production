@@ -346,6 +346,7 @@
 
             <zipfileset dir="${build.dir}/scripts" prefix="scripts"/>
             <zipfileset dir="${build.dir}/database-setup" prefix="database-setup"/>
+            <zipfileset dir="${build.dir}/rulesets" prefix="rulesets"/>
 
             <manifest>
                 <attribute name="Implementation-Title" value="${ant.project.name}"/>
@@ -359,7 +360,7 @@
 
     </target>
 
-    <target name="copy-files" depends="copy-config, copy-scripts, copy-sql-files">
+    <target name="copy-files" depends="copy-config, copy-scripts, copy-sql-files, copy-rulesets">
     </target>
 
     <!-- Copy configuration files to build directory -->
@@ -394,6 +395,13 @@
         <copy todir="${build.dir}/database-setup">
             <file file="${src.dir}/setup/schema.sql"/>
             <file file="${src.dir}/setup/default.sql"/>
+        </copy>
+    </target>
+
+    <!-- Copy ruleset files to build directory -->
+    <target name="copy-rulesets">
+        <copy todir="${build.dir}/rulesets">
+            <fileset dir="${src.dir}/rulesets" includes="ruleset*.xml"/>
         </copy>
     </target>
 
