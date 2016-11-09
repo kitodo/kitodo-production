@@ -1,297 +1,317 @@
 <?xml version="1.0"?>
-<!-- ~ This file is part of the Goobi Application - a Workflow tool for the 
-	support of ~ mass digitization. ~ ~ Visit the websites for more information. 
-	~ - http://gdz.sub.uni-goettingen.de ~ - http://www.kitodo.org ~ - https://github.com/goobi/goobi-production 
-	~ ~ This program is free software; you can redistribute it and/or modify 
-	it under ~ the terms of the GNU General Public License as published by the 
-	Free Software ~ Foundation; either version 2 of the License, or (at your 
-	option) any later ~ version. ~ ~ This program is distributed in the hope 
-	that it will be useful, but WITHOUT ANY ~ WARRANTY; without even the implied 
-	warranty of MERCHANTABILITY or FITNESS FOR A ~ PARTICULAR PURPOSE. See the 
-	GNU General Public License for more details. ~ ~ You should have received 
-	a copy of the GNU General Public License ~ along with this program. If not, 
-	see <http://www.gnu.org/licenses/>. -->
+<!--
+  ~ This file is part of the Goobi Application - a Workflow tool for the support of
+  ~ mass digitization.
+  ~
+  ~ Visit the websites for more information.
+  ~     - http://gdz.sub.uni-goettingen.de
+  ~     - http://www.kitodo.org
+  ~     - https://github.com/goobi/goobi-production
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it under
+  ~ the terms of the GNU General Public License as published by the Free Software
+  ~ Foundation; either version 2 of the License, or (at your option) any later
+  ~ version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY
+  ~ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  ~ PARTICULAR PURPOSE. See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 
 <project name="Kitodo" default="dist">
 
-	<!--================================================== Property declarations 
-		================================================== -->
+    <!--==================================================
+        Property declarations
+        ==================================================-->
 
-	<!-- Include build and deployment options -->
-	<property file="build.properties" prefix="build" />
+    <!-- Include build and deployment options -->
+    <property file="build.properties" prefix="build"/>
 
-	<!-- Default build properties (applied if not overridden by build.properties 
-		file) -->
-	<property name="build.dir" value="./build" />
-	<property name="build.classes" value="${build.dir}/WEB-INF/classes" />
-	<property name="build.classes.test" value="${build.dir}/test-classes" />
-	<property name="build.jsp.src" value="${build.dir}/WEB-INF/src" />
-	<property name="build.javac.target" value="1.7" />
-	<property name="build.javac.source" value="1.7" />
-	<property name="build.javac.args" value="-Xpkginfo:nonempty" />
-	<property name="doc.javadocs.dir" value="${build.dir}/javadoc" />
-	<property name="test.report.dir" value="${build.dir}/test-reports/" />
+    <!-- Default build properties (applied if not overridden by build.properties file) -->
+    <property name="build.dir" value="./build"/>
+    <property name="build.classes" value="${build.dir}/WEB-INF/classes"/>
+    <property name="build.classes.test" value="${build.dir}/test-classes"/>
+    <property name="build.jsp.src" value="${build.dir}/WEB-INF/src"/>
+    <property name="build.javac.target" value="1.7"/>
+    <property name="build.javac.source" value="1.7"/>
+    <property name="build.javac.args" value="-Xpkginfo:nonempty"/>
+    <property name="doc.javadocs.dir" value="${build.dir}/javadoc"/>
+    <property name="test.report.dir" value="${build.dir}/test-reports/"/>
+    
+    <property name="build.dist.dir" value="${basedir}/dist"/>
+    <property name="build.dist.name" value="goobi-ce"/>
+    <property name="build.dist.version" value="1.11.2" />
+    <property name="build.dist.vendor" value="goobi.org"/>
+    <property name="build.dist.url" value="https://github.com/goobi/goobi-production"/>
+    <property name="build.dist.war" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war"/>
+    <property name="build.dist.jar" value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar"/>
 
-	<property name="build.dist.dir" value="${basedir}/dist" />
-	<property name="build.dist.name" value="goobi-ce" />
-	<property name="build.dist.version" value="1.11.2" />
-	<property name="build.dist.vendor" value="goobi.org" />
-	<property name="build.dist.url" value="https://github.com/goobi/goobi-production" />
-	<property name="build.dist.war"
-		value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.war" />
-	<property name="build.dist.jar"
-		value="${build.dist.dir}/${build.dist.name}-${build.dist.version}.jar" />
+    <property name="build.tomcat.compile.jsp" value="false"/>
 
-	<property name="build.tomcat.compile.jsp" value="false" />
+    <property name="src.dir" value="${basedir}/Goobi"/>
+    <property name="lib.dir" value="${src.dir}/WEB-INF/lib"/>
 
-	<property name="src.dir" value="${basedir}/Goobi" />
-	<property name="lib.dir" value="${src.dir}/WEB-INF/lib" />
+    <!-- build.tomcat.dir.lib is normally overridden in build.properties -->
+    <property name="build.tomcat.dir.lib" value="${lib.dir}"/>
 
-	<!-- build.tomcat.dir.lib is normally overridden in build.properties -->
-	<property name="build.tomcat.dir.lib" value="${lib.dir}" />
+    <property name="config.dir" value="${src.dir}/config"/>
+    <property name="config.local.dir" value="${basedir}/config-local"/>
+    <property name="tests.src.dir" value="${src.dir}/test/src"/>
 
-	<property name="config.dir" value="${src.dir}/config" />
-	<property name="config.local.dir" value="${basedir}/config-local" />
-	<property name="tests.src.dir" value="${src.dir}/test/src" />
-
-	<property name="java.src.dir" value="${src.dir}/src" />
-	<property name="java.src.dubious.dir" value="${src.dir}/src-dubious" />
-
+    <property name="java.src.dir" value="${src.dir}/src"/>
+    <property name="java.src.dubious.dir" value="${src.dir}/src-dubious"/>
+	
 	<!-- Plugins -->
-	<property name="build.dir.plugins.import" value="${build.dir}/plugins/import" />
-	<property name="build.dist.dir.plugins.import" value="${build.dist.dir}/plugins/import" />
-	<property name="src.dir.plugins.import" value="${src.dir}/plugins/import" />
+	<property name="build.dir.plugins.import" value="${build.dir}/plugins/import"/>
+	<property name="build.dist.dir.plugins.import" value="${build.dist.dir}/plugins/import"/>
+	<property name="src.dir.plugins.import" value="${src.dir}/plugins/import"/>
+	
+	<property name="build.dir.plugins.opac" value="${build.dir}/plugins/opac"/>
+	<property name="build.dist.dir.plugins.opac" value="${build.dist.dir}/plugins/opac"/>
+	<property name="src.dir.plugins.opac" value="${src.dir}/plugins/opac"/>
+	
+    <!--==================================================
+        Datatype declarations
+        ==================================================-->
 
-	<property name="build.dir.plugins.opac" value="${build.dir}/plugins/opac" />
-	<property name="build.dist.dir.plugins.opac" value="${build.dist.dir}/plugins/opac" />
-	<property name="src.dir.plugins.opac" value="${src.dir}/plugins/opac" />
+    <!-- Compilation classpath -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}"/>
+        <fileset dir="${build.tomcat.dir.lib}"/>
+        <pathelement location="${build.servlet.jar}"/>
+        <pathelement path="${java.class.path}"/>
+    </path>
 
-	<!--================================================== Datatype declarations 
-		================================================== -->
+    <!-- Testing classpath -->
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${build.classes}"/>
+        <pathelement location="${build.classes.test}"/>
+    </path>
 
-	<!-- Compilation classpath -->
-	<path id="compile.classpath">
-		<fileset dir="${lib.dir}" />
-		<fileset dir="${build.tomcat.dir.lib}" />
-		<pathelement location="${build.servlet.jar}" />
-		<pathelement path="${java.class.path}" />
-	</path>
+    <!--==================================================
+        Public build Targets
+        ==================================================-->
 
-	<!-- Testing classpath -->
-	<path id="test.classpath">
-		<path refid="compile.classpath" />
-		<pathelement location="${build.classes}" />
-		<pathelement location="${build.classes.test}" />
-	</path>
+    <target name="all" depends="test, dist, docs" description="Build and test everything; create a distribution."/>
 
-	<!--================================================== Public build Targets 
-		================================================== -->
+    <target name="clean" description="Delete all generated files and directories.">
+        <delete dir="${build.dir}"/>
+        <delete dir="${build.dist.dir}"/>
+        <delete dir="${doc.javadocs.dir}"/>
+        <delete file="goobi.log"/>
+        <delete file="goobi_xml.log"/>
+        <!-- TODO Determine log configuration and configure build-path for logging -->
+        <delete file="goobicontentserver.log"/>
+    </target>
 
-	<target name="all" depends="test, dist, docs"
-		description="Build and test everything; create a distribution." />
+    <target name="debug" description="Print diagnosis information">
+        <echoproperties/>
+    </target>
 
-	<target name="clean" description="Delete all generated files and directories.">
-		<delete dir="${build.dir}" />
-		<delete dir="${build.dist.dir}" />
-		<delete dir="${doc.javadocs.dir}" />
-		<delete file="goobi.log" />
-		<delete file="goobi_xml.log" />
-		<!-- TODO Determine log configuration and configure build-path for logging -->
-		<delete file="goobicontentserver.log" />
-	</target>
+    <target name="dist" depends="war" description="Produce the distributables."/>
 
-	<target name="debug" description="Print diagnosis information">
-		<echoproperties />
-	</target>
+    <target name="distclean" description="Clean up the distribution files only.">
+        <delete dir="${build.dist.dir}"/>
+    </target>
 
-	<target name="dist" depends="war" description="Produce the distributables." />
+    <target name="docs" depends="javadoc" description="Generate all documentation."/>
 
-	<target name="distclean" description="Clean up the distribution files only.">
-		<delete dir="${build.dist.dir}" />
-	</target>
+    <target name="init" depends="check-preconditions, createDirs"
+            description="Initialize the build: check preconditions and create directories.">
+        <tstamp>
+            <format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en,UK"/>
+        </tstamp>
+    </target>
 
-	<target name="docs" depends="javadoc" description="Generate all documentation." />
-
-	<target name="init" depends="check-preconditions, createDirs"
-		description="Initialize the build: check preconditions and create directories.">
-		<tstamp>
-			<format property="TODAY_UK" pattern="d-MMMM-yyyy" locale="en,UK" />
-		</tstamp>
-	</target>
-
-	<target name="test" depends="junit" description="Run the unit tests." />
+    <target name="test" depends="junit" description="Run the unit tests."/>
 
 
-	<!--================================================== Build Precondition 
-		Checks ================================================== -->
+    <!--==================================================
+        Build Precondition Checks
+        ==================================================-->
 
-	<!-- Check all build preconditions -->
-	<target name="check-preconditions"
-		depends="check-java-version, check-servlet-api, check-jsp-compilation" />
+    <!-- Check all build preconditions -->
+    <target name="check-preconditions" depends="check-java-version, check-servlet-api, check-jsp-compilation"/>
 
-	<!-- Check if needed libraries are on the classpath and set appropriate 
-		properties -->
-	<target name="check-classpath">
-		<condition property="servletapi.present">
-			<available classname="javax.servlet.http.HttpServlet"
-				classpathref="compile.classpath" />
-		</condition>
+    <!-- Check if needed libraries are on the classpath and set appropriate properties -->
+    <target name="check-classpath">
+        <condition property="servletapi.present">
+            <available classname="javax.servlet.http.HttpServlet" classpathref="compile.classpath"/>
+        </condition>
 		<condition property="jsp.compilation.requested">
-			<equals arg1="${build.tomcat.compile.jsp}" arg2="true" />
+			<equals arg1="${build.tomcat.compile.jsp}" arg2="true"/>
 		</condition>
 		<condition property="jspapi.present">
 			<and>
-				<available classname="org.apache.jasper.JspC"
-					classpathref="compile.classpath" />
-				<available classname="org.apache.el.ExpressionFactoryImpl"
-					classpathref="compile.classpath" />
-				<available classname="javax.servlet.jsp.JspFactory"
-					classpathref="compile.classpath" />
-				<available classname="javax.el.ExpressionFactory"
-					classpathref="compile.classpath" />
+				<available classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+				<available classname="org.apache.el.ExpressionFactoryImpl" classpathref="compile.classpath"/>
+				<available classname="javax.servlet.jsp.JspFactory" classpathref="compile.classpath"/>
+				<available classname="javax.el.ExpressionFactory" classpathref="compile.classpath"/>
 			</and>
 		</condition>
-	</target>
+    </target>
 
-	<!-- Fail if Servlet API isn't found and print out a useful help text -->
-	<target name="check-servlet-api" depends="check-classpath"
-		unless="servletapi.present">
-		<echo>Servlet API not found on classpath!</echo>
-		<echo>run this build file via "ant -lib /path/to/servlet-api.jar or
-			set build.tomcat.dir.lib property"</echo>
-		<fail message="Servlet API is missing." />
-	</target>
+    <!-- Fail if Servlet API isn't found and print out a useful help text -->
+    <target name="check-servlet-api" depends="check-classpath" unless="servletapi.present">
+        <echo>Servlet API not found on classpath!</echo>
+        <echo>run this build file via "ant -lib /path/to/servlet-api.jar or set build.tomcat.dir.lib property"</echo>
+        <fail message="Servlet API is missing."/>
+    </target>
 
-	<!-- Check for Java version 1.7 -->
-	<target name="check-java-version">
-		<fail message="Build required at least version 1.7 of the Java compiler ">
-			<condition>
-				<and>
-					<contains string="${java.version}" substring="1.0" />
-					<contains string="${java.version}" substring="1.1" />
-					<contains string="${java.version}" substring="1.2" />
-					<contains string="${java.version}" substring="1.3" />
-					<contains string="${java.version}" substring="1.4" />
-					<contains string="${java.version}" substring="1.5" />
-					<contains string="${java.version}" substring="1.6" />
-				</and>
-			</condition>
-		</fail>
-	</target>
+    <!-- Check for Java version 1.7 -->
+    <target name="check-java-version">
+        <fail message="Build required at least version 1.7 of the Java compiler ">
+            <condition>
+                <and>
+                    <contains string="${java.version}" substring="1.0"/>
+                    <contains string="${java.version}" substring="1.1"/>
+                    <contains string="${java.version}" substring="1.2"/>
+                    <contains string="${java.version}" substring="1.3"/>
+                    <contains string="${java.version}" substring="1.4"/>
+                    <contains string="${java.version}" substring="1.5"/>
+                    <contains string="${java.version}" substring="1.6"/>
+                </and>
+            </condition>
+        </fail>
+    </target>
 
-	<!-- Fail if JSP compiler is requested but not configured on the classpath -->
+	<!-- Fail if JSP compiler is requested but not configured on the classpath-->
 	<target name="check-jsp-compilation" if="jsp.compilation.requested">
-		<fail
-			message="JSP compile libraries missing. Add tomcat libraries to the classpath or set the build.tomcat.dir.lib property."
-			unless="jspapi.present" />
+		<fail message="JSP compile libraries missing. Add tomcat libraries to the classpath or set the build.tomcat.dir.lib property." unless="jspapi.present"/>
 	</target>
 
-	<!--================================================== Initialization ================================================== -->
+    <!--==================================================
+        Initialization
+        ==================================================-->
 
-	<!-- Create needed directories -->
-	<target name="createDirs">
-		<mkdir dir="${build.dir}" />
-		<mkdir dir="${build.dist.dir}" />
-		<mkdir dir="${build.classes}" />
-		<mkdir dir="${build.classes.test}" />
-		<mkdir dir="${build.jsp.src}" />
-		<delete dir="${doc.javadocs.dir}" />
-		<mkdir dir="${doc.javadocs.dir}" />
-		<delete dir="${test.report.dir}" />
-		<mkdir dir="${test.report.dir}" />
-		<mkdir dir="${build.dir.plugins.import}/PicaMassImport" />
-		<mkdir dir="${build.dir.plugins.opac}/PicaPlugin" />
-		<mkdir dir="${build.dir.plugins.opac}/ModsPlugin" />
-	</target>
+    <!-- Create needed directories -->
+    <target name="createDirs">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dist.dir}"/>
+        <mkdir dir="${build.classes}"/>
+        <mkdir dir="${build.classes.test}"/>
+        <mkdir dir="${build.jsp.src}"/>
+        <delete dir="${doc.javadocs.dir}"/>
+        <mkdir dir="${doc.javadocs.dir}"/>
+        <delete dir="${test.report.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
+    	<mkdir dir="${build.dir.plugins.import}/PicaMassImport"/>
+        <mkdir dir="${build.dir.plugins.opac}/PicaPlugin"/>
+	<mkdir dir="${build.dir.plugins.opac}/ModsPlugin" />
+    </target>
 
-	<!--================================================== Documentation ================================================== -->
+    <!--==================================================
+        Documentation
+        ==================================================-->
 
-	<!-- building javadoc for sources -->
-	<target name="javadoc" depends="init">
-		<javadoc destdir="${doc.javadocs.dir}" sourcepath="${java.src.dir}:${java.src.dubious.dir}"
-			Author="true" version="true" Use="true" noindex="true"
-			Windowtitle="Goobi JavaDoc References" Doctitle="Goobi JavaDoc References"
-			bottom="Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ)."
-			encoding="UTF8">
-			<classpath>
-				<path refid="compile.classpath" />
-				<pathelement location="${build.classes}" />
-			</classpath>
-		</javadoc>
-	</target>
+    <!-- building javadoc for sources -->
+    <target name="javadoc" depends="init">
+        <javadoc destdir="${doc.javadocs.dir}"
+                 sourcepath="${java.src.dir}:${java.src.dubious.dir}" Author="true"
+                 version="true"
+                 Use="true" noindex="true" Windowtitle="Goobi JavaDoc References" Doctitle="Goobi JavaDoc References"
+                 bottom="Copyright 2009, Center for Retrospective Digitization, Göttingen (GDZ)." encoding="UTF8">
+            <classpath>
+                <path refid="compile.classpath"/>
+                <pathelement location="${build.classes}"/>
+            </classpath>
+        </javadoc>
+    </target>
 
-	<!--================================================== Build ================================================== -->
+    <!--==================================================
+        Build
+        ==================================================-->
 
-	<!-- Copy hibernate configuration files -->
-	<target name="copy-hibernate-resources" depends="init">
-		<copy todir="${build.classes}">
-			<fileset dir="${java.src.dir}">
-				<include name="**/*hbm.xml" />
-				<include name="**/messages_de.properties" />
-				<include name="**/messages_en.properties" />
-			</fileset>
-		</copy>
-	</target>
+    <!-- Copy hibernate configuration files -->
+    <target name="copy-hibernate-resources" depends="init">
+        <copy todir="${build.classes}">
+            <fileset dir="${java.src.dir}">
+                <include name="**/*hbm.xml"/>
+            	<include name="**/messages_de.properties"/>
+            	<include name="**/messages_en.properties"/>
+            </fileset>
+        </copy>
+    </target>
 
-	<!-- Compile application -->
-	<target name="compile" depends="init, copy-hibernate-resources, compile-jsp">
-		<javac includeAntRuntime="false"
-			srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
-			destdir="${build.classes}" source="${build.javac.source}" target="${build.javac.target}"
-			encoding="UTF8" debug="true" debuglevel="lines,vars,source"
+    <!-- Compile application -->
+    <target name="compile" depends="init, copy-hibernate-resources, compile-jsp">
+        <javac includeAntRuntime="false" srcdir="${java.src.dir}:${java.src.dubious.dir}:${build.jsp.src}"
+			destdir="${build.classes}"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="true"
+			debuglevel="lines,vars,source"
 			classpathref="compile.classpath">
-			<compilerarg value="${build.javac.args}" />
-		</javac>
-	</target>
+            <compilerarg value="${build.javac.args}" />
+        </javac>
+    </target>
 
-	<!-- Compile unit tests -->
-	<target name="compile-tests" depends="compile">
-		<javac includeAntRuntime="false" srcdir="${tests.src.dir}"
-			destdir="${build.classes.test}" source="${build.javac.source}"
-			target="${build.javac.target}" encoding="UTF8" debug="true"
-			debuglevel="lines,vars,source" classpathref="test.classpath">
-			<compilerarg value="${build.javac.args}" />
-		</javac>
-	</target>
+    <!-- Compile unit tests -->
+    <target name="compile-tests" depends="compile">
+        <javac includeAntRuntime="false" srcdir="${tests.src.dir}" destdir="${build.classes.test}"
+               source="${build.javac.source}"
+               target="${build.javac.target}"
+               encoding="UTF8"
+               debug="true"
+               debuglevel="lines,vars,source"
+               classpathref="test.classpath">
+            <compilerarg value="${build.javac.args}"/>
+        </javac>
+    </target>
 
 	<target name="compile-jsp" if="jsp.compilation.requested">
-		<taskdef name="jasper" classname="org.apache.jasper.JspC"
-			classpathref="compile.classpath" />
-		<jasper validateXml="false" uriroot="${basedir}"
-			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" outputDir="${build.jsp.src}" />
+		<taskdef name="jasper" classname="org.apache.jasper.JspC" classpathref="compile.classpath"/>
+		<jasper
+			validateXml="false" 
+			uriroot="${basedir}" 
+			webXmlFragment="${build.dir}/WEB-INF/generated_web.xml" 
+			outputDir="${build.jsp.src}" />
 	</target>
 
 	<!-- Compile plugins -->
 	<target name="compile-PicaMassImport" depends="compile">
-		<javac includeAntRuntime="false"
-			srcdir="${src.dir.plugins.import}/PicaMassImport" destdir="${build.dir.plugins.import}/PicaMassImport"
-			source="${build.javac.source}" target="${build.javac.target}"
-			encoding="UTF8" debug="true" debuglevel="lines,vars,source">
-			<classpath>
-				<pathelement location="${build.classes}" />
-				<path refid="compile.classpath" />
-			</classpath>
-			<compilerarg value="${build.javac.args}" />
-		</javac>
-	</target>
-
-	<target name="compile-PicaPlugin" depends="compile">
-		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
-			destdir="${build.dir.plugins.opac}/PicaPlugin" source="${build.javac.source}"
-			target="${build.javac.target}" encoding="UTF8" debug="true"
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.import}/PicaMassImport"
+			destdir="${build.dir.plugins.import}/PicaMassImport"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="true"
 			debuglevel="lines,vars,source">
 			<classpath>
-				<pathelement location="${build.classes}" />
-				<path refid="compile.classpath" />
+				<pathelement location="${build.classes}"/>
+				<path refid="compile.classpath"/>
 			</classpath>
-			<compilerarg value="${build.javac.args}" />
+			<compilerarg value="${build.javac.args}"/>
+		</javac>
+	</target>
+	
+	<target name="compile-PicaPlugin" depends="compile">
+		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/PicaPlugin"
+			destdir="${build.dir.plugins.opac}/PicaPlugin"
+			source="${build.javac.source}"
+			target="${build.javac.target}"
+			encoding="UTF8"
+			debug="true"
+			debuglevel="lines,vars,source">
+			<classpath>
+				<pathelement location="${build.classes}"/>
+				<path refid="compile.classpath"/>
+			</classpath>
+			<compilerarg value="${build.javac.args}"/>
 		</javac>
 	</target>
 
 	<target name="compile-ModsPlugin" depends="compile">
 		<javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/ModsPlugin"
-			destdir="${build.dir.plugins.opac}/ModsPlugin" source="${build.javac.source}"
-			target="${build.javac.target}" encoding="UTF8" debug="true"
+			destdir="${build.dir.plugins.opac}/ModsPlugin"
+			source="${build.javac.source}"
+			target="${build.javac.target}" encoding="UTF8"
+			debug="true"
 			debuglevel="lines,vars,source">
 			<classpath>
 				<pathelement location="${build.classes}" />
@@ -301,125 +321,119 @@
 		</javac>
 	</target>
 
+	
+    <!--==================================================
+        Distribution
+        ==================================================-->
 
+    <!-- Build of war file. -->
+    <target name="war" depends="compile, copy-config, create-plugin-jar-files">
 
-	<!--================================================== Distribution ================================================== -->
+        <war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
 
-	<!-- Build of war file. -->
-	<target name="war" depends="compile, copy-config, create-plugin-jar-files">
+            <classes dir="${build.classes}"/>
 
-		<war destfile="${build.dist.war}" webxml="${src.dir}/WEB-INF/web.xml">
+            <lib dir="${lib.dir}"/>
+        	
+        	<fileset dir="${src.dir}"
+                includes="WEB-INF/*.*, index.jsp, LICENSE"
+                excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*"/>
+     	
+            <zipfileset dir="${src.dir}/pages" prefix="pages">
+                <patternset>
+                    <include name="**/*.jsp"/>
+                </patternset>
+            </zipfileset>
 
-			<classes dir="${build.classes}" />
+            <zipfileset dir="${src.dir}/newpages" prefix="newpages">
+                <patternset>
+                    <include name="**/*.jsp"/>
+                    <include name="**/*.gif"/>
+                    <include name="**/*.png"/>
+                    <include name="**/*.jpg"/>
+                    <include name="**/*.ico"/>
+                    <include name="**/*.svg"/>
+                </patternset>
+            </zipfileset>
+            <zipfileset dir="${src.dir}/css" prefix="css"/>
+            <zipfileset dir="${src.dir}/js" prefix="js" />
 
-			<lib dir="${lib.dir}" />
+        	<zipfileset dir="${build.dist.dir}/plugins" prefix="plugins"/>
+        	
+            <manifest>
+                <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                <attribute name="Implementation-Version" value="${build.dist.version}"/>
+                <attribute name="Implementation-Vendor" value="${build.dist.vendor}"/>
+                <attribute name="Implementation-URL" value="${build.dist.url}"/>
+                <attribute name="Implementation-Build-Date" value="${TODAY_UK}"/>
+            </manifest>
 
-			<fileset dir="${src.dir}" includes="WEB-INF/*.*, index.jsp, LICENSE"
-				excludes="**/WEB-INF/web.xml, WEB-INF/lib/*.*" />
+        </war>
 
-			<zipfileset dir="${src.dir}/pages" prefix="pages">
-				<patternset>
-					<include name="**/*.jsp" />
-				</patternset>
-			</zipfileset>
+    </target>
 
-			<zipfileset dir="${src.dir}/newpages" prefix="newpages">
-				<patternset>
-					<include name="**/*.jsp" />
-					<include name="**/*.gif" />
-					<include name="**/*.png" />
-					<include name="**/*.jpg" />
-					<include name="**/*.ico" />
-					<include name="**/*.svg" />
-				</patternset>
-			</zipfileset>
-			<zipfileset dir="${src.dir}/css" prefix="css" />
-			<zipfileset dir="${src.dir}/js" prefix="js" />
+    <!-- Copy configuration files to build directory -->
+    <target name="copy-config">
+        <copy todir="${build.classes}">
+            <fileset dir="${config.dir}" includes="*.*"/>
+        </copy>
+        
+        <condition property="config.local.available">
+            <available file="${config.local.dir}" property="config.local.available"/>
+        </condition>
 
-			<zipfileset dir="${build.dist.dir}/plugins" prefix="plugins" />
+        <antcall target="copy-local-config" />
+    </target>
 
-			<manifest>
-				<attribute name="Implementation-Title" value="${ant.project.name}" />
-				<attribute name="Implementation-Version" value="${build.dist.version}" />
-				<attribute name="Implementation-Vendor" value="${build.dist.vendor}" />
-				<attribute name="Implementation-URL" value="${build.dist.url}" />
-				<attribute name="Implementation-Build-Date" value="${TODAY_UK}" />
-			</manifest>
-
-		</war>
-
-	</target>
-
-	<!-- Copy configuration files to build directory -->
-	<target name="copy-config">
-		<copy todir="${build.classes}">
-			<fileset dir="${config.dir}" includes="*.*" />
-		</copy>
-
-		<condition property="config.local.available">
-			<available file="${config.local.dir}" property="config.local.available" />
-		</condition>
-
-		<antcall target="copy-local-config" />
-	</target>
-
-	<!-- Copy local configuration files to build directory, overwriting existing 
-		files -->
-	<target name="copy-local-config" if="config.local.available">
-		<copy overwrite="true" todir="${build.classes}">
-			<fileset dir="${config.local.dir}" includes="*.*" />
-		</copy>
-	</target>
-
+    <!-- Copy local configuration files to build directory, overwriting existing files -->
+    <target name="copy-local-config" if="config.local.available">
+        <copy overwrite="true" todir="${build.classes}">
+            <fileset dir="${config.local.dir}" includes="*.*"/>
+        </copy>
+    </target>
+	
 	<!-- Build of plugin jars -->
 
-	<target name="create-plugin-jar-files"
-		depends="create-PicaMassImport-jar, create-PicaPlugin-jar, create-ModsPlugin-jar">
-		<!-- <target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, 
-			create-PicaPlugin-jar" -->
+	<target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar, create-ModsPlugin-jar">
 	</target>
-
+	
 	<target name="create-PicaMassImport-jar" depends="compile-PicaMassImport">
-		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport.jar"
-			basedir="${build.dir.plugins.import}/PicaMassImport" />
+		<jar level="9" jarfile="${build.dist.dir.plugins.import}/PicaMassImport.jar" basedir="${build.dir.plugins.import}/PicaMassImport" />
 	</target>
 
 	<target name="create-PicaPlugin-jar" depends="compile-PicaPlugin">
-		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin.jar"
-			basedir="${build.dir.plugins.opac}/PicaPlugin" />
+		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin.jar" basedir="${build.dir.plugins.opac}/PicaPlugin" />
 	</target>
 
 	<target name="create-ModsPlugin-jar" depends="compile-ModsPlugin">
-		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/ModsPlugin.jar"
-			basedir="${build.dir.plugins.opac}/ModsPlugin" />
+		<jar level="9" jarfile="${build.dist.dir.plugins.opac}/ModsPlugin.jar" basedir="${build.dir.plugins.opac}/ModsPlugin" />
 	</target>
 
 
-	<!--================================================== Testing ================================================== -->
+    <!--==================================================
+        Testing
+        ==================================================-->
 
-	<!-- JUnit tests -->
-	<target name="junit" depends="compile-tests" description="Run JUnit tests">
-		<junit printsummary="on" fork="yes" forkmode="once" haltonerror="true"
-			haltonfailure="true">
-			<classpath refid="test.classpath" />
-			<formatter type="xml" usefile="true" />
-			<batchtest todir="${test.report.dir}">
-				<fileset dir="${build.classes.test}" includes="**/*Test.class" />
-			</batchtest>
-		</junit>
-	</target>
+    <!-- JUnit tests -->
+    <target name="junit" depends="compile-tests" description="Run JUnit tests">
+        <junit printsummary="on" fork="yes" forkmode="once" haltonerror="true" haltonfailure="true">
+            <classpath refid="test.classpath"/>
+            <formatter type="xml" usefile="true"/>
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="${build.classes.test}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+    </target>
 
-	<target name="run-test" depends="compile-tests" description="Run specific JUnit test">
-		<fail unless="junit.test.name" message="Property not set: junit.test.name" />
-		<junit fork="yes">
-			<classpath refid="test.classpath" />
-			<formatter type="plain" usefile="false" />
-			<test name="${junit.test.name}" haltonfailure="yes"
-				unless="junit.test.methods" />
-			<test name="${junit.test.name}" haltonfailure="yes"
-				methods="${junit.test.methods}" if="junit.test.methods" />
-			<sysproperty key="log4j.configuration" value="" />
-		</junit>
-	</target>
+    <target name="run-test" depends="compile-tests" description="Run specific JUnit test">
+		<fail unless="junit.test.name" message="Property not set: junit.test.name"/>
+        <junit fork="yes">
+            <classpath refid="test.classpath"/>
+            <formatter type="plain" usefile="false"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" unless="junit.test.methods"/>
+            <test name="${junit.test.name}"	haltonfailure="yes" methods="${junit.test.methods}" if="junit.test.methods"/>
+	    <sysproperty key="log4j.configuration" value=""/>
+        </junit>
+    </target>
 
 </project>
