@@ -263,7 +263,7 @@ public class ModsPlugin implements Plugin {
 	/**
 	 * Initializes static XPath variables used for parsing a MetsModsGoobi document.
 	 */
-	private void initializeXPath(){
+	private void initializeXPath() {
 		try {
 			modsPath = XPath.newInstance("//mods:mods");
 
@@ -287,7 +287,7 @@ public class ModsPlugin implements Plugin {
 	 *
 	 * @return whether all static XPath variables have been initialized or not
 	 */
-	private boolean xpathsDefined(){
+	private boolean xpathsDefined() {
 		return (
 				!Objects.equals(modsPath, null) &&
 				!Objects.equals(authorPath, null) &&
@@ -351,13 +351,13 @@ public class ModsPlugin implements Plugin {
 
 		Fileformat ff;
 
-		if(resultXML == null ){
+		if (resultXML == null ) {
 			String message = "Error: result empty!";
 			modsLogger.error(message);
 			throw new IllegalStateException(message);
 		}
 
-		else if(!xpathsDefined()){
+		else if (!xpathsDefined()) {
 			String message = "Error: XPath variables not defined!";
 			modsLogger.error(message);
 			throw new IllegalStateException(message);
@@ -384,19 +384,31 @@ public class ModsPlugin implements Plugin {
 				Element placeElement = (Element)placePath.selectSingleNode(doc);
 				Element shelfmarkSourceElement = (Element)shelfmarksourcePath.selectSingleNode(doc);
 
-				if(nameElement != null)				result.put("creator", nameElement.getText());
-				if(titleElement != null)			result.put("title", titleElement.getText());
-				if(shelfmarkSourceElement != null)	result.put("shelfmarksource", shelfmarkSourceElement.getText());
-				if(placeElement != null)			result.put("place", placeElement.getText());
-				if(urlElement != null)				result.put("url", urlElement.getText());
-				if(dateElement != null)				result.put("date", dateElement.getText());
+				if (nameElement != null) {
+					result.put("creator", nameElement.getText());
+				}
+				if (titleElement != null) {
+					result.put("title", titleElement.getText());
+				}
+				if (shelfmarkSourceElement != null) {
+					result.put("shelfmarksource", shelfmarkSourceElement.getText());
+				}
+				if (placeElement != null) {
+					result.put("place", placeElement.getText());
+				}
+				if (urlElement != null) {
+					result.put("url", urlElement.getText());
+				}
+				if (dateElement != null) {
+					result.put("date", dateElement.getText());
+				}
 
 				// XML MODS data of document itself
 				Element modsElement = (Element)modsPath.selectSingleNode(doc);
 
 				dmdSections.add(createMETSDescriptiveMetadata((Element)modsElement.clone()));
 
-				while(!Objects.equals(parentXML, null)){
+				while (!Objects.equals(parentXML, null)) {
 					resultXML = parentXML;
 					doc = sb.build(new StringReader(resultXML));
 					parentXML = retrieveParentRecord(doc, timeout);
@@ -406,8 +418,8 @@ public class ModsPlugin implements Plugin {
 					doc = transformXML(doc, new File(MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH), sb);
 					// 'doc' can become "null", when the last doc had a 'parentID', but trying to retrieve the element with this parentID yields an empty SRW container (e.g. not containing any MODS documents)
 					// => break loop!
-					if(Objects.equals(doc, null)){
-						System.out.println("Break: Transformed document is 'null'!");
+					if (Objects.equals(doc, null)) {
+						modsLogger.info("Break: Transformed document is 'null'!");
 						break;
 					}
 					// if 'doc' is null after the XSL transformation (e.g. just an empty XML header), 'selectSingleNode' can't be called on it anymore! Therefore the loop has to be terminated before reaching this point!
@@ -442,7 +454,7 @@ public class ModsPlugin implements Plugin {
 				DocStruct dsBoundBook = dd.createDocStruct(dst);
 				dd.setPhysicalDocStruct(dsBoundBook);
 
-				if(!Objects.equals(result.get("shelfmarksource"), null)){
+				if (!Objects.equals(result.get("shelfmarksource"), null)) {
 					UGHUtils.replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String)result.get("shelfmarksource"));
 				}
 
@@ -465,26 +477,32 @@ public class ModsPlugin implements Plugin {
 	 * @return
 	 * @throws JDOMException
 	 */
-	private String getDocType(Element modsElement) throws JDOMException{
+	private String getDocType(Element modsElement) throws JDOMException {
+
 		String docType = "";
 
 		Element catalogueIDElement = (Element)catalogueIDPath.selectSingleNode(modsElement);
 		Element parentIDElement = (Element)parentIDPath.selectSingleNode(modsElement);
 
-		if(Objects.equals(catalogueIDElement, null)){
+		if (Objects.equals(catalogueIDElement, null)) {
 			return docType;
 		}
 
 		String id = catalogueIDElement.getText();
 
-		if(id.contains("-BF-")){
-			if(Objects.equals(parentIDElement, null)){
-				docType = TYPE_INVENTORY;
-			} else {
-				docType = TYPE_SUBINVENTORY;
-			}
-		} else{
-			docType = TYPE_SORT;
+		if (Objects.equals(manuscriptValue, "yes") && !Objects.equals(parentIDElement, null)) {
+			docType = TYPE_MANUSCRIPT;
+		}
+		else if (!Objects.equals(parentIDElement, null)) {
+			docType = TYPE_SUBINVENTORY;
+		}
+		else if (Objects.equals(collectionValue, "yes") && Objects.equals(parentIDElement, null)) {
+			docType = TYPE_INVENTORY;
+		}
+		else{
+			String errorMessage = "ERROR: Document type of imported document with ID '" + id + "' could not be determined!";
+			modsLogger.error(errorMessage);
+			throw new IllegalStateException(errorMessage);
 		}
 		return docType;
 	}
@@ -497,7 +515,7 @@ public class ModsPlugin implements Plugin {
 	 * @param builder The SAXBuilder used to create the Document element from the transformed input document
 	 * @return the transformed JDOM document
 	 */
-	private Document transformXML(Document inputXML, File stylesheetfile, SAXBuilder builder){
+	private Document transformXML(Document inputXML, File stylesheetfile, SAXBuilder builder) {
 
 		String inputXMLFilename = dmdSecCounter + "_original_SRW_MODS.xml";
 		String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU.xml";
@@ -544,7 +562,7 @@ public class ModsPlugin implements Plugin {
 	 * @param root the Element that will be printed
 	 * @param outputter the XMLOutputter that is being used to print the given Element
 	 */
-	private static void printXML(Element root, XMLOutputter outputter){
+	private static void printXML(Element root, XMLOutputter outputter) {
 		try {
 			outputter.output(root, System.out);
 			System.out.println("");
@@ -562,13 +580,12 @@ public class ModsPlugin implements Plugin {
     * @throws JDOMException
     * @see org.jdom.Document
     */
-	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException{
+	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
 		Element parentIDElement = (Element)parentIDPath.selectSingleNode(doc);
-		try{
+		try {
 			Query parentQuery = new Query("12:" + parentIDElement.getText());
 			return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
-		}
-		catch(NullPointerException e){
+		} catch(NullPointerException e) {
 			modsLogger.info("Top level element reached. No further parent elements can be retrieved.");
 			return null;
 		}
@@ -584,19 +601,19 @@ public class ModsPlugin implements Plugin {
 	 * @param documentTypes
 	 * @return
 	 */
-	private static Document createMetsContainer(List<Element> dmdElements, List<String> documentTypes){
+	private static Document createMetsContainer(List<Element> dmdElements, List<String> documentTypes) {
 		assert(dmdElements.size() == documentTypes.size());
 
 		Document metsDocument = createMetsDocument();
 
-		for(Element dmdSection : dmdElements){
+		for (Element dmdSection : dmdElements) {
 			metsDocument = addSectionToMETSDocument(metsDocument, dmdSection);
 		}
 
 		Element structMap = createMETSStructureMap(METS_LOGICAL);
 
 		Element currentParent = structMap;
-		for(int i = dmdElements.size()-1; i >= 0; i--){
+		for (int i = dmdElements.size()-1; i >= 0; i--) {
 			currentParent = addDivToMETSStructureMap(currentParent, dmdElements.get(i), documentTypes.get(i));
 		}
 
@@ -611,7 +628,7 @@ public class ModsPlugin implements Plugin {
 	 * @see org.jdom.Document
 	 * @see org.jdom.Element
 	 */
-	private static Document createMetsDocument(){
+	private static Document createMetsDocument() {
 
 		Document metsDoc = new Document();
 		Element metsRoot = new Element("mets", METS_NAMESPACE);
@@ -633,7 +650,7 @@ public class ModsPlugin implements Plugin {
 	 * @see org.jdom.Element
 	 * @see org.jdom.Document
 	 */
-	private static Document addSectionToMETSDocument(Document metsDocument, Element section){
+	private static Document addSectionToMETSDocument(Document metsDocument, Element section) {
 
 		Element rootElement = metsDocument.getRootElement();
 		rootElement.addContent(section);
@@ -648,7 +665,7 @@ public class ModsPlugin implements Plugin {
 	 * @param descriptiveMetadataElement
 	 * @return
 	 */
-	private static Element createMETSDescriptiveMetadata(Element descriptiveMetadataElement){
+	private static Element createMETSDescriptiveMetadata(Element descriptiveMetadataElement) {
 
 		Element metsDmdSec = new Element("dmdSec", METS_NAMESPACE);
 		Element metsMdWrap = new Element("mdWrap", METS_NAMESPACE);
@@ -670,7 +687,7 @@ public class ModsPlugin implements Plugin {
 	 * @param type
 	 * @return
 	 */
-	private static Element createMETSStructureMap(String type){
+	private static Element createMETSStructureMap(String type) {
 
 		Element structureMap = new Element("structMap", METS_NAMESPACE);
 		structureMap.setAttribute(METS_TYPE, type);
@@ -686,7 +703,7 @@ public class ModsPlugin implements Plugin {
 	 * @param childType
 	 * @return
 	 */
-	private static Element addDivToMETSStructureMap(Element parentDiv, Element childElement, String childType){
+	private static Element addDivToMETSStructureMap(Element parentDiv, Element childElement, String childType) {
 
 		Element childDiv = new Element("div", METS_NAMESPACE);
 		childDiv.setAttribute(METS_DMD_ID, childElement.getAttributeValue(METS_ID));
@@ -706,7 +723,7 @@ public class ModsPlugin implements Plugin {
 	 *
 	 * @param path
 	 */
-	private void deleteFile(String path){
+	private void deleteFile(String path) {
 		FileSystem fs = FileSystems.getDefault();
 		try {
 		    Files.delete(fs.getPath(path));
@@ -794,7 +811,7 @@ public class ModsPlugin implements Plugin {
 	 * @return whether the plug-in is able to acceess that catalogue
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
 	 */
-	public static List<String> getAllConfigDocTypes(Object dummyObject){
+	public static List<String> getAllConfigDocTypes(Object dummyObject) {
 		List<String> result = new ArrayList<String>();
 		for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
 			result.add(cod.getTitle());

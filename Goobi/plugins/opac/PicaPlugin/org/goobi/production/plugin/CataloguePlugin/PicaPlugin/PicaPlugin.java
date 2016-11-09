@@ -413,7 +413,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals("002@")) {
 				return getSubelementValue(tempElement, "0");
 			}
@@ -446,7 +445,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals(inFeldName)) {
 				return getSubelementValue(tempElement, inSubElement);
 			}
@@ -459,7 +457,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			/*
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
 			 * Attribut zurückgeben

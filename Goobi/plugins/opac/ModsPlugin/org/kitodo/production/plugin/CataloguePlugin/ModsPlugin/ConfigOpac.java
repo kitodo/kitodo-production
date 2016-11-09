@@ -146,7 +146,6 @@ class ConfigOpac {
 		// falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt in den Doctypes suchen
 
 		for (String title : getAllDoctypeTitles()) {
-			System.out.println("Checking, if DocType '" + title + "' contains mapping for field '" + inMapping + "'");
 			ConfigOpacDoctype tempType = getDoctypeByName(title);
 			if (tempType.getMappings().contains(inMapping)) {
 				return tempType;

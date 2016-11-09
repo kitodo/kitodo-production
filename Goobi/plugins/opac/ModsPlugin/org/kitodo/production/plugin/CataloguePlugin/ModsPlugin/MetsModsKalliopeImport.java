@@ -71,7 +71,6 @@ public class MetsModsKalliopeImport extends MetsModsImportExport {
 	        String message =
 	                "There is NO implementation of DOM3 in your ClassPath! We are using Xerxes here, I have no idea why that's not available!";
 	        LOGGER.error(message);
-	        System.err.println(message);
 	        throw new UnsupportedOperationException(message);
 	    }
 	    LSSerializer writer = impl.createLSSerializer();

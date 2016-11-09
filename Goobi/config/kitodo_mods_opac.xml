@@ -11,9 +11,9 @@
 			<label language="en">Subinventory</label>
 			<mapping>text</mapping>
 		</type>
-		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Sort" tifHeaderType="sort" title="sort">
-			<label language="de">Gattung</label>
-			<label language="en">Sort</label>
+		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Manuscript" tifHeaderType="manuscript" title="manuscript">
+			<label language="de">Handschrift</label>
+			<label language="en">Manuscript</label>
 			<mapping>text</mapping>
 		</type>
 	</doctypes>
