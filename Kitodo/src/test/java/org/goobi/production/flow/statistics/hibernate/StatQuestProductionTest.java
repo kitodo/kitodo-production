@@ -52,7 +52,6 @@ import static org.junit.Assert.assertTrue;
 
 public class StatQuestProductionTest {
 
-//	Helper help = new Helper();
 	static StatQuestProduction test;
 	Locale locale = new Locale("GERMAN");
 	IDataSource testFilter = new UserDefinedFilter("stepdone:5");
