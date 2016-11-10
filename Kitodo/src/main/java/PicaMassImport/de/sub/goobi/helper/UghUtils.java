@@ -1,4 +1,4 @@
-package de.sub.goobi.helper;
+package PicaMassImport.de.sub.goobi.helper;
 
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.

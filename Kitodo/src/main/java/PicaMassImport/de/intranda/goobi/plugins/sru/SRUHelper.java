@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins.sru;
+package PicaMassImport.de.intranda.goobi.plugins.sru;
 
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
@@ -25,15 +25,7 @@ package de.intranda.goobi.plugins.sru;
  * exception statement from your version.
  */
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import PicaMassImport.com.googlecode.fascinator.redbox.sru.SRUClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -41,19 +33,20 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
+import ugh.dl.*;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
-import com.googlecode.fascinator.redbox.sru.SRUClient;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.util.List;
 
 public class SRUHelper {
 	private static final Namespace SRW = Namespace.getNamespace("srw",
