@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -108,6 +109,13 @@ public class ModsPlugin implements Plugin {
 	private static String tempDir;
 
 	/**
+	 * The field xsltDir holds a reference to the file system directory where
+	 * XSLT scripts used by plugins to perform transformations between Kitodo
+	 * documents and external XML documents are located.
+	 */
+	private static String xsltDir;
+
+	/**
 	 * The constant OPAC_CONFIGURATION_FILE holds the name of the MODS plug-in
 	 * main configuration file. Required. The file must be located in
 	 * {@link #configDir}.
@@ -181,9 +189,9 @@ public class ModsPlugin implements Plugin {
 	private static final String TYPE_SORT = "Sort";
 
 	/**
-	 * Path of the XSL transformation file.
+	 * Filename of the XSL transformation file.
 	 */
-	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH = "../goobi/xslt/mods2goobi.xsl";
+	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "mods2goobi.xsl";
 
 	/**
 	 * Path of the output file for the XSL transformation.
@@ -225,6 +233,7 @@ public class ModsPlugin implements Plugin {
 	public void configure(Map<String, String> configuration) {
 		configDir = configuration.get("configDir");
 		tempDir = configuration.get("tempDir");
+		xsltDir = configuration.get("xsltDir");
 	}
 
 	/**
@@ -330,13 +339,16 @@ public class ModsPlugin implements Plugin {
 	 *            a timeout in milliseconds after which the operation shall
 	 *            return
 	 * @return a Map with the hit
+	 * @throws IOException
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object,
 	 *      long, long)
 	 */
-	public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
+	public Map<String, Object> getHit(Object searchResult, long index, long timeout) throws IOException {
 
 		dmdIdCounter = 1;
 		divIdCounter = 1;
+
+		String xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
@@ -351,6 +363,8 @@ public class ModsPlugin implements Plugin {
 
 		Fileformat ff;
 
+		Path xsltDirPath = FileSystems.getDefault().getPath(xsltDir);
+
 		if (resultXML == null ) {
 			String message = "Error: result empty!";
 			modsLogger.error(message);
@@ -361,6 +375,12 @@ public class ModsPlugin implements Plugin {
 			String message = "Error: XPath variables not defined!";
 			modsLogger.error(message);
 			throw new IllegalStateException(message);
+		}
+
+		else if (!Files.isDirectory(xsltDirPath)) {
+			String message = "Error: XSLT directory not found!";
+			modsLogger.error(message);
+			throw new IOException(message);
 		}
 
 		else{
@@ -375,7 +395,9 @@ public class ModsPlugin implements Plugin {
 
 				docTypes.add(getDocType((Element)modsPath.selectSingleNode(doc)));
 
-				doc = transformXML(doc, new File(MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH), sb);
+				File transformationScript = new File(xsltFilepath);
+
+				doc = transformXML(doc, transformationScript, sb);
 
 				Element nameElement = (Element)authorPath.selectSingleNode(doc);
 				Element titleElement = (Element)titlePath.selectSingleNode(doc);
@@ -415,7 +437,7 @@ public class ModsPlugin implements Plugin {
 					// docType is determined using relatedItem ID; this field is not available after transformation anymore, therefore doctype has to be determined before 'transformXML' is called!
 					docTypes.add(getDocType((Element)modsPath.selectSingleNode(doc)));
 
-					doc = transformXML(doc, new File(MODS2GOOBI_TRANSFORMATION_RULES_FILEPATH), sb);
+					doc = transformXML(doc, transformationScript, sb);
 					// 'doc' can become "null", when the last doc had a 'parentID', but trying to retrieve the element with this parentID yields an empty SRW container (e.g. not containing any MODS documents)
 					// => break loop!
 					if (Objects.equals(doc, null)) {

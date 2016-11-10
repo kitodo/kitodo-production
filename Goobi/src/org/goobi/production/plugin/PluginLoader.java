@@ -173,6 +173,7 @@ public class PluginLoader {
 		HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
 		conf.put("configDir", ConfigMain.getParameter(Parameters.CONFIG_DIR));
 		conf.put("tempDir", ConfigMain.getParameter(Parameters.PLUGIN_TEMP_DIR));
+		conf.put("xsltDir", ConfigMain.getParameter(Parameters.XSLT_DIR));
 		return conf;
 	}
 
