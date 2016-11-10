@@ -1,4 +1,4 @@
-package de.intranda.goobi.plugins;
+package PicaMassImport.de.intranda.goobi.plugins;
 
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
@@ -88,11 +88,11 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
-import de.intranda.goobi.plugins.sru.SRUHelper;
+import PicaMassImport.de.intranda.goobi.plugins.sru.SRUHelper;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.UghUtils;
+import PicaMassImport.de.sub.goobi.helper.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 
 @PluginImplementation
