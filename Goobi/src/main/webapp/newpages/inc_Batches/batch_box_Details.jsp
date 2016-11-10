@@ -170,7 +170,7 @@
 	</htm:tr>
 </htm:table>
 
-<script src="../js/tiny_mce/tiny_mce.js" type="text/javascript"></script>
+<script src="../../js/tiny_mce/tiny_mce.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 	tinyMCE
