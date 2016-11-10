@@ -438,8 +438,8 @@
 
 			<%-- Mets-Export-Schaltknopf greyed --%>
 			<h:graphicImage
-				rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) && !item.tifDirectoryExists}"
-				value="/newpages/images/buttons/metsGreyed.png" style="margin-right:2px" title="#{msgs.exportMets}" />
+                    rendered="#{(ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1)) && !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/metsGreyed.png" style="margin-right:2px" title="#{msgs.exportMets}" />
 
 			<%-- PDF-Export-Schaltknopf --%>
 			<h:commandLink action="#{ProzessverwaltungForm.ExportPdf}" id="action20" title="#{msgs.exportPdf}"
@@ -450,8 +450,8 @@
 
 			<%-- PDF-Export-Schaltknopf greyed --%>
 			<h:graphicImage
-				rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) && !item.tifDirectoryExists}"
-				value="/newpages/images/buttons/pdfGreyed.png" style="margin-right:2px" title="#{msgs.exportPdf}" />
+                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) && !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/pdfGreyed.png" style="margin-right:2px" title="#{msgs.exportPdf}" />
 
 			<%-- DMS-Export-Schaltknopf --%>
 			<h:commandLink action="#{ProzessverwaltungForm.ExportDMS}" id="action21" title="#{msgs.importDms}"
@@ -462,8 +462,8 @@
 
 			<%-- PDF-Export-Schaltknopf greyed --%>
 			<h:graphicImage
-				rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) && !item.tifDirectoryExists}"
-				value="/newpages/images/buttons/dmsGreyed.png" style="margin-right:2px" title="#{msgs.importDms}" />
+                    rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' && (LoginForm.maximaleBerechtigung == 2 || LoginForm.maximaleBerechtigung == 1) && !item.tifDirectoryExists}"
+                    value="/newpages/images/buttons/dmsGreyed.png" style="margin-right:2px" title="#{msgs.importDms}" />
 
 			<%-- ProzessKopie-Schaltknopf --%>
 			<h:commandLink action="#{ProzesskopieForm.prepare}" id="action22"

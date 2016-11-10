@@ -20,7 +20,7 @@
 
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value> /WEB-INF/metadata-editor-config.xml </param-value>
+		<param-value>/WEB-INF/metadata-editor-config.xml</param-value>
 	</context-param>
 
 	<context-param>

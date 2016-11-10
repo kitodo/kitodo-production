@@ -205,7 +205,7 @@
 													</h:commandLink>
 										
 													<h:commandLink action="#{BatchForm.editProperties}">
-														<h:graphicImage  alt="edit" value="/newpages/images/buttons/edit.gif" style="vertical-align:middle"  />
+														<h:graphicImage alt="edit" value="/newpages/images/buttons/edit.gif" style="vertical-align:middle"  />
 														<h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
 													</h:commandLink>
 
