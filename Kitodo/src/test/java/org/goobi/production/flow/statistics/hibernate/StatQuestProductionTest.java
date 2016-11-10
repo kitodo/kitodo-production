@@ -27,14 +27,11 @@
  */
 package org.goobi.production.flow.statistics.hibernate;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+import de.sub.goobi.helper.exceptions.DAOException;
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -45,16 +42,17 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class StatQuestProductionTest {
 
-	Helper help = new Helper();
+//	Helper help = new Helper();
 	static StatQuestProduction test;
 	Locale locale = new Locale("GERMAN");
 	IDataSource testFilter = new UserDefinedFilter("stepdone:5");
