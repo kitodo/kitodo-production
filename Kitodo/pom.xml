@@ -33,10 +33,10 @@
         <!-- UGH - Libraray -->
         <dependency>
             <groupId>org.kitodo</groupId>
-            <artifactId>ugh</artifactId>
-            <version>1.11.1</version>
+            <artifactId>kitodo-ugh</artifactId>
+            <version>2.0.0</version>
             <scope>system</scope>
-            <systemPath>${local.lib.dir}/ugh-1.11.1.jar</systemPath>
+            <systemPath>${local.lib.dir}/kitodo-ugh-2.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
@@ -179,10 +179,10 @@
         <!-- ContentServer (intranda) ics-1.1.5.jar -->
         <dependency>
             <groupId>de.unigoettingen</groupId>
-            <artifactId>ics</artifactId>
-            <version>1.1.5</version>
+            <artifactId>kitodo-contentserver</artifactId>
+            <version>2.0.0</version>
             <scope>system</scope>
-            <systemPath>${local.lib.dir}/ics-1.1.5.jar</systemPath>
+            <systemPath>${local.lib.dir}/kitodo-contentserver-2.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
