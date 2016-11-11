@@ -43,6 +43,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.configuration.SubnodeConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -182,11 +186,12 @@ public class ModsPlugin implements Plugin {
 	private static final String METS_DMD_ID_VALUE = "DMDLOG";
 
 	/**
-	 * Contants containing the docType names used in Kalliope documents
+	 * Hashmaps with docTypes (String) as keys and lists of XPath instances values. The lists of XPaths instances describe
+	 * the elements a document must or must not contain in order to be classified as a specific docType
+	 * (e.g. the corresponding key in the Hashmap)
 	 */
-	private static final String TYPE_INVENTORY = "Inventory";
-	private static final String TYPE_SUBINVENTORY = "Subinventory";
-	private static final String TYPE_SORT = "Sort";
+	private static HashMap<String, List<XPath>> docTypeMandatoryElements = new HashMap<String, List<XPath>>();
+	private static HashMap<String, List<XPath>> docTypeForbiddenElements  = new HashMap<String, List<XPath>>();
 
 	/**
 	 * Filename of the XSL transformation file.
@@ -210,6 +215,7 @@ public class ModsPlugin implements Plugin {
 	private static XPath placePath = null;
 	private static XPath shelfmarksourcePath = null;
 	private static XPath parentIDPath = null;
+	private static XPath typeOfResourcePath = null;
 
 	/**
 	 * Static counter variables for constructing METS DmdSections for multiple imported MODS documents.
@@ -493,6 +499,57 @@ public class ModsPlugin implements Plugin {
 	}
 
 	/**
+	 * This function loads the mandatory and forbidden elements of individual docTypes from the
+	 * plugin configuration file, used for docType classifiction in the getDocType function.
+	 *
+	 * @throws JDOMException
+	 */
+	private void initializeDocTypeConditions() throws JDOMException {
+
+		if (docTypeMandatoryElements.keySet().size() < 1 && docTypeForbiddenElements.keySet().size() < 1) {
+
+			XMLConfiguration pluginConfiguration = ConfigOpac.getConfig();
+
+			for (Object docTypeObject : pluginConfiguration.configurationsAt("doctypes.type")) {
+				SubnodeConfiguration docType = (SubnodeConfiguration)docTypeObject;
+
+				String docTypeName = "";
+
+				for(Object docTypeLabel : docType.configurationsAt("label")) {
+					SubnodeConfiguration labelConfiguration = (SubnodeConfiguration)docTypeLabel;
+					ConfigurationNode labelNode = labelConfiguration.getRootNode();
+					for(Object languageAttr : labelNode.getAttributes("language")) {
+						ConfigurationNode attributeNode = (ConfigurationNode)languageAttr;
+						if(Objects.equals(attributeNode.getValue(), "en")){
+							docTypeName = (String)labelNode.getValue();
+							break;
+						}
+					}
+					if(!Objects.equals(docTypeName, "")) {
+						break;
+					}
+				}
+
+				if (!docTypeMandatoryElements.containsKey(docTypeName)) {
+					docTypeMandatoryElements.put(docTypeName, new LinkedList<XPath>());
+				}
+				for(Object mandatoryElement : docType.getList("mandatoryElement")) {
+					String mustHave = (String)mandatoryElement;
+					docTypeMandatoryElements.get(docTypeName).add(XPath.newInstance(mustHave));
+				}
+
+				if (!docTypeForbiddenElements.containsKey(docTypeName)) {
+					docTypeForbiddenElements.put(docTypeName, new LinkedList<XPath>());
+				}
+				for(Object forbiddenElement : docType.getList("forbiddenElement")) {
+					String maynot = (String)forbiddenElement;
+					docTypeForbiddenElements.get(docTypeName).add(XPath.newInstance(maynot));
+				}
+			}
+		}
+	}
+
+	/**
 	 * Determines and returns docType of given modsElement.
 	 *
 	 * @param modsElement
@@ -501,30 +558,32 @@ public class ModsPlugin implements Plugin {
 	 */
 	private String getDocType(Element modsElement) throws JDOMException {
 
+		initializeDocTypeConditions();
 		String docType = "";
 
-		Element catalogueIDElement = (Element)catalogueIDPath.selectSingleNode(modsElement);
-		Element parentIDElement = (Element)parentIDPath.selectSingleNode(modsElement);
-
-		if (Objects.equals(catalogueIDElement, null)) {
-			return docType;
-		}
-
-		String id = catalogueIDElement.getText();
-
-		if (Objects.equals(manuscriptValue, "yes") && !Objects.equals(parentIDElement, null)) {
-			docType = TYPE_MANUSCRIPT;
-		}
-		else if (!Objects.equals(parentIDElement, null)) {
-			docType = TYPE_SUBINVENTORY;
-		}
-		else if (Objects.equals(collectionValue, "yes") && Objects.equals(parentIDElement, null)) {
-			docType = TYPE_INVENTORY;
-		}
-		else{
-			String errorMessage = "ERROR: Document type of imported document with ID '" + id + "' could not be determined!";
-			modsLogger.error(errorMessage);
-			throw new IllegalStateException(errorMessage);
+		boolean docTypeFound = false;
+		for (String dt : docTypeMandatoryElements.keySet()){
+			docTypeFound = true;
+			for (XPath mandatoryXPath : docTypeMandatoryElements.get(dt)){
+				Element mandatoryElement = (Element)mandatoryXPath.selectSingleNode(modsElement);
+				if (Objects.equals(mandatoryElement, null)) {
+					docTypeFound = false;
+					break;
+				}
+			}
+			if(docTypeForbiddenElements.containsKey(dt)) {
+				for (XPath forbiddenXPath : docTypeForbiddenElements.get(dt)) {
+					Element forbiddenElement = (Element)forbiddenXPath.selectSingleNode(modsElement);
+					if (!Objects.equals(forbiddenElement, null)) {
+						docTypeFound = false;
+						break;
+					}
+				}
+			}
+			if (docTypeFound) {
+				docType = dt;
+				break;
+			}
 		}
 		return docType;
 	}
