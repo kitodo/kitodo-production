@@ -4,3 +4,5 @@
 /config-local
 /deploy.properties
 /dist
+# Maven.
+/Kitodo/target
