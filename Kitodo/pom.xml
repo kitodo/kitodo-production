@@ -250,6 +250,9 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Implementation-Build-Date>$\{buildDate}</Implementation-Build-Date>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
