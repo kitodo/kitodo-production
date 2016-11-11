@@ -15,6 +15,7 @@
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <local.lib.dir>${basedir}/src/main/webapp/WEB-INF/lib</local.lib.dir>
     </properties>
 
@@ -229,12 +230,14 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.3</version>
+            <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/de.schlichtherle.io/truezip -->
         <dependency>
             <groupId>de.schlichtherle.io</groupId>
             <artifactId>truezip</artifactId>
             <version>6.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -266,7 +269,7 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Build-Date>$\{buildDate}</Implementation-Build-Date>
+                            <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
                         </manifestEntries>
                     </archive>
                 </configuration>
