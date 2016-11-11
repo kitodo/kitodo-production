@@ -246,9 +246,9 @@
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <!-- The resources will be placed in reversed order in the war
-              that means first entry will be added as last resource and my override other resources -->
+              that means first entry will be added as last resource and may override other resources -->
             <resource>
-                <!-- ATTENTION! we need the config-local declration at first cause it shall be placed as last resource in the classpath -->
+                <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
                 <directory>config-local</directory>
             </resource>
             <resource>
