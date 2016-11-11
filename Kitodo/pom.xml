@@ -5,8 +5,12 @@
     <packaging>war</packaging>
     <version>3.0-SNAPSHOT</version>
 
+    <organization>
+        <name>kitodo.org</name>
+        <url>http://kitodo.org</url>
+    </organization>
     <name>Kitodo Production</name>
-    <url>http://kitodo.org</url>
+    <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
