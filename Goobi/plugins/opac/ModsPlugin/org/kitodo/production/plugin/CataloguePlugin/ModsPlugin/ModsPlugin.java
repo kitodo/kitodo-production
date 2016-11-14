@@ -671,8 +671,6 @@ public class ModsPlugin implements Plugin {
 		}
 	}
 
-	/********* METS helper functions ***********/
-
 	/**
 	 * Creates and returns a METS document containing METS descriptive metadata sections and a METS structural map
 	 * constructed from the given List<Element> 'dmdElements' and List<String> 'documentTypes'.
@@ -795,8 +793,6 @@ public class ModsPlugin implements Plugin {
 
 		return childDiv;
 	}
-
-	/********* METS helper functions until here ***********/
 
 	/**
 	 * Removes the files with the provided String 'path' as filepath from the file system and performs exception handling.
