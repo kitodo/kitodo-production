@@ -215,7 +215,6 @@ public class ModsPlugin implements Plugin {
 	private static XPath placePath = null;
 	private static XPath shelfmarksourcePath = null;
 	private static XPath parentIDPath = null;
-	private static XPath typeOfResourcePath = null;
 
 	/**
 	 * Static counter variables for constructing METS DmdSections for multiple imported MODS documents.
