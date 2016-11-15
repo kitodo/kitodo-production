@@ -21,12 +21,12 @@ and packaging of the application is [Maven](https://maven.apache.org/).
 
 ### Dependencies
 
-Available dependencies are fetched from Maven Central. Further dependencies(not available in Maven Central) are located in Kitodo\src\main\webapp\WEB-INF\lib
+Available dependencies are fetched from Maven Central. Further dependencies (not available in Maven Central) are located in Kitodo/src/main/webapp/WEB-INF/lib.
 The only thing that is not shipped is a Tomcat specific servlet API. This should come along with the Tomcat distribution you are building against.
 
 ### Vanilla build using Maven
 
-execute "mvn clean package" and put generated war file in Tomcat.
+Execute "mvn clean package" and put generated war file in Tomcat.
 
 ### Configuring your distribution
 

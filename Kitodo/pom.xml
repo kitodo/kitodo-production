@@ -29,7 +29,7 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
-        <!-- UGH - Libary -->
+        <!-- UGH - Library -->
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-ugh</artifactId>
