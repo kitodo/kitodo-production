@@ -2,9 +2,8 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kitodo.production</groupId>
-    <artifactId>kitodo-produktion</artifactId>
+    <artifactId>kitodo-production</artifactId>
     <packaging>war</packaging>
-    <version>${project.parent.version}</version>
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo</artifactId>
@@ -30,7 +29,7 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
-        <!-- UGH - Libraray -->
+        <!-- UGH - Libary -->
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-ugh</artifactId>
@@ -148,9 +147,9 @@
             <version>2.1.5</version>
         </dependency>
         <dependency>
-            <groupId>jfreechart</groupId>
+            <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.19</version>
         </dependency>
         <dependency>
             <groupId>javax.media</groupId>
