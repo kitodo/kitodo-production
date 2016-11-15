@@ -24,6 +24,7 @@
 package org.kitodo.production.plugin.CataloguePlugin.ModsPlugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -40,7 +41,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -52,17 +60,12 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.DOMOutputter;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
+import org.xml.sax.InputSource;
 
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XsltCompiler;
-import net.sf.saxon.s9api.XsltExecutable;
-import net.sf.saxon.s9api.XsltTransformer;
+import net.sf.saxon.TransformerFactoryImpl;
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
@@ -196,7 +199,7 @@ public class ModsPlugin implements Plugin {
 	/**
 	 * Filename of the XSL transformation file.
 	 */
-	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "mods2goobi.xsl";
+	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "mods2kitodo.xsl";
 
 	/**
 	 * Path of the output file for the XSL transformation.
@@ -597,42 +600,41 @@ public class ModsPlugin implements Plugin {
 	 */
 	private Document transformXML(Document inputXML, File stylesheetfile, SAXBuilder builder) {
 
+		XMLOutputter xmlOutputter = new XMLOutputter();
+
+		String xmlString = xmlOutputter.outputString(inputXML);
+
 		String inputXMLFilename = dmdSecCounter + "_original_SRW_MODS.xml";
 		String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU.xml";
 		dmdSecCounter ++;
 		File outputFile = new File(outputXMLFilename);
 
-		Processor p = new Processor(false);
+		StreamSource transformSource = new StreamSource(stylesheetfile);
 
-		XsltCompiler x = p.newXsltCompiler();
+		TransformerFactoryImpl impl = new TransformerFactoryImpl();
 
 		try {
-			XsltExecutable exec = x.compile(new StreamSource(stylesheetfile));
-
-			DOMOutputter outputter = new DOMOutputter();
-			org.w3c.dom.Document domDoc = outputter.output(inputXML);
-
-			XMLOutputter xmlOutputter = new XMLOutputter();
 			xmlOutputter.output(inputXML, new FileWriter(inputXMLFilename));
 
- 			XdmNode source = p.newDocumentBuilder().build(new DOMSource(domDoc));
+			FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-			Serializer out = p.newSerializer();
+			Transformer xslfoTransformer = impl.newTransformer(transformSource);
 
- 			out.setOutputProperty(Serializer.Property.METHOD, "xml");
- 			out.setOutputProperty(Serializer.Property.INDENT, "yes");
- 			out.setOutputFile(outputFile);
+			TransformerHandler transformHandler = ((SAXTransformerFactory)SAXTransformerFactory.newInstance()).newTransformerHandler();
 
- 			XsltTransformer trans = exec.load();
+			transformHandler.setResult(new StreamResult(outputStream));
 
- 			trans.setInitialContextNode(source);
- 			trans.setDestination(out);
-			trans.transform();
+			Result saxResult = new SAXResult(transformHandler);
+
+			SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
+
+			xslfoTransformer.transform(saxSource, saxResult);
 
 			return builder.build(outputFile);
 
-		} catch (Exception e) {
+		} catch (TransformerException | IOException | JDOMException e) {
 			modsLogger.error("Error while transforming XML document: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}
