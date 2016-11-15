@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opacCatalogues>
 	<doctypes>
-		<type isContainedWork="false" isMultiVolume="true" isPeriodical="false" isNewspaper="false" rulesetType="Inventory" tifHeaderType="inventory" title="inventory">
+		<type rulesetType="Inventory" title="inventory">
 			<label language="de">Bestand</label>
 			<label language="en">Inventory</label>
 			<mapping>text</mapping>
+		</type>
+	</doctypes>
+	<structuretypes>
+		<type rulesetType="Inventory">
 			<mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
 			<forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
 		</type>
-		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Subinventory" tifHeaderType="subinventory" title="subinventory">
-			<label language="de">Unterbestand</label>
-			<label language="en">Subinventory</label>
-			<mapping>text</mapping>
+		<type rulesetType="Subinventory">
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
 		</type>
-		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Manuscript" tifHeaderType="manuscript" title="manuscript">
-			<label language="de">Handschrift</label>
-			<label language="en">Manuscript</label>
-			<mapping>text</mapping>
+		<type rulesetType="Manuscript">
 			<mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
 		</type>
-	</doctypes>
+	</structuretypes>
 	<catalogue title="Kalliope">
 		<config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
 	</catalogue>

@@ -60,6 +60,5 @@ public class FileNames {
 	 * Configuration file that lists the available library catalogues along with
 	 * their respective DocType mappings.
 	 */
-//	public static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
-	public static final String OPAC_CONFIGURATION_FILE = "kitodo_mods_opac.xml";
+	public static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
 }

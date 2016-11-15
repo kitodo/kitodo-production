@@ -189,12 +189,12 @@ public class ModsPlugin implements Plugin {
 	private static final String METS_DMD_ID_VALUE = "DMDLOG";
 
 	/**
-	 * Hashmaps with docTypes (String) as keys and lists of XPath instances values. The lists of XPaths instances describe
-	 * the elements a document must or must not contain in order to be classified as a specific docType
+	 * Hashmaps with structureTypes (String) as keys and lists of XPath instances values. The lists of XPaths instances describe
+	 * the elements a MODS document must or must not contain in order to be classified as a specific structureType
 	 * (e.g. the corresponding key in the Hashmap)
 	 */
-	private static HashMap<String, List<XPath>> docTypeMandatoryElements = new HashMap<String, List<XPath>>();
-	private static HashMap<String, List<XPath>> docTypeForbiddenElements  = new HashMap<String, List<XPath>>();
+	private static HashMap<String, List<XPath>> structureTypeMandatoryElements = new HashMap<String, List<XPath>>();
+	private static HashMap<String, List<XPath>> structureTypeForbiddenElements  = new HashMap<String, List<XPath>>();
 
 	/**
 	 * Filename of the XSL transformation file.
@@ -401,7 +401,7 @@ public class ModsPlugin implements Plugin {
 
 				String parentXML = retrieveParentRecord(doc, timeout);
 
-				docTypes.add(getDocType((Element)modsPath.selectSingleNode(doc)));
+				docTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 				File transformationScript = new File(xsltFilepath);
 
@@ -443,7 +443,7 @@ public class ModsPlugin implements Plugin {
 					doc = sb.build(new StringReader(resultXML));
 					parentXML = retrieveParentRecord(doc, timeout);
 					// docType is determined using relatedItem ID; this field is not available after transformation anymore, therefore doctype has to be determined before 'transformXML' is called!
-					docTypes.add(getDocType((Element)modsPath.selectSingleNode(doc)));
+					docTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 					doc = transformXML(doc, transformationScript, sb);
 					// 'doc' can become "null", when the last doc had a 'parentID', but trying to retrieve the element with this parentID yields an empty SRW container (e.g. not containing any MODS documents)
@@ -501,93 +501,85 @@ public class ModsPlugin implements Plugin {
 	}
 
 	/**
-	 * This function loads the mandatory and forbidden elements of individual docTypes from the
-	 * plugin configuration file, used for docType classifiction in the getDocType function.
+	 * This function loads the mandatory and forbidden elements of individual structureElement types
+	 * from the plugin configuration file, used for structureType classification in the getStructureType function.
 	 *
 	 * @throws JDOMException
 	 */
-	private void initializeDocTypeConditions() throws JDOMException {
+	private void initializeStructureElementTypeConditions() throws JDOMException {
 
-		if (docTypeMandatoryElements.keySet().size() < 1 && docTypeForbiddenElements.keySet().size() < 1) {
+		if (structureTypeMandatoryElements.keySet().size() < 1 && structureTypeForbiddenElements.keySet().size() < 1) {
 
 			XMLConfiguration pluginConfiguration = ConfigOpac.getConfig();
 
-			for (Object docTypeObject : pluginConfiguration.configurationsAt("doctypes.type")) {
-				SubnodeConfiguration docType = (SubnodeConfiguration)docTypeObject;
+			for (Object structureTypeObject : pluginConfiguration.configurationsAt("structuretypes.type")) {
+				SubnodeConfiguration structureType = (SubnodeConfiguration)structureTypeObject;
 
-				String docTypeName = "";
+				String structureTypeName = "";
 
-				for(Object docTypeLabel : docType.configurationsAt("label")) {
-					SubnodeConfiguration labelConfiguration = (SubnodeConfiguration)docTypeLabel;
-					ConfigurationNode labelNode = labelConfiguration.getRootNode();
-					for(Object languageAttr : labelNode.getAttributes("language")) {
-						ConfigurationNode attributeNode = (ConfigurationNode)languageAttr;
-						if(Objects.equals(attributeNode.getValue(), "en")){
-							docTypeName = (String)labelNode.getValue();
-							break;
-						}
-					}
-					if(!Objects.equals(docTypeName, "")) {
-						break;
-					}
+				ConfigurationNode structureNode = structureType.getRootNode();
+				for(Object rulesetObject : structureNode.getAttributes("rulesetType") ) {
+					ConfigurationNode rulesetNode = (ConfigurationNode)rulesetObject;
+					structureTypeName = (String)rulesetNode.getValue();
+					break;
 				}
 
-				if (!docTypeMandatoryElements.containsKey(docTypeName)) {
-					docTypeMandatoryElements.put(docTypeName, new LinkedList<XPath>());
+				if (!structureTypeMandatoryElements.containsKey(structureTypeName)) {
+					structureTypeMandatoryElements.put(structureTypeName, new LinkedList<XPath>());
 				}
-				for(Object mandatoryElement : docType.getList("mandatoryElement")) {
+				for(Object mandatoryElement : structureType.getList("mandatoryElement")) {
 					String mustHave = (String)mandatoryElement;
-					docTypeMandatoryElements.get(docTypeName).add(XPath.newInstance(mustHave));
+					structureTypeMandatoryElements.get(structureTypeName).add(XPath.newInstance(mustHave));
 				}
 
-				if (!docTypeForbiddenElements.containsKey(docTypeName)) {
-					docTypeForbiddenElements.put(docTypeName, new LinkedList<XPath>());
+				if (!structureTypeForbiddenElements.containsKey(structureTypeName)) {
+					structureTypeForbiddenElements.put(structureTypeName, new LinkedList<XPath>());
 				}
-				for(Object forbiddenElement : docType.getList("forbiddenElement")) {
+				for(Object forbiddenElement : structureType.getList("forbiddenElement")) {
 					String maynot = (String)forbiddenElement;
-					docTypeForbiddenElements.get(docTypeName).add(XPath.newInstance(maynot));
+					structureTypeForbiddenElements.get(structureTypeName).add(XPath.newInstance(maynot));
 				}
 			}
 		}
 	}
 
 	/**
-	 * Determines and returns docType of given modsElement.
+	 * Determines and returns structureType of a given modsElement.
 	 *
 	 * @param modsElement
 	 * @return
 	 * @throws JDOMException
 	 */
-	private String getDocType(Element modsElement) throws JDOMException {
+	private String getStructureType(Element modsElement) throws JDOMException {
 
-		initializeDocTypeConditions();
-		String docType = "";
+		initializeStructureElementTypeConditions();
+		String structureType = "";
 
-		boolean docTypeFound = false;
-		for (String dt : docTypeMandatoryElements.keySet()){
-			docTypeFound = true;
-			for (XPath mandatoryXPath : docTypeMandatoryElements.get(dt)){
+		boolean structureTypeFound = false;
+		for (String st : structureTypeMandatoryElements.keySet()){
+			structureTypeFound = true;
+			for (XPath mandatoryXPath : structureTypeMandatoryElements.get(st)){
 				Element mandatoryElement = (Element)mandatoryXPath.selectSingleNode(modsElement);
 				if (Objects.equals(mandatoryElement, null)) {
-					docTypeFound = false;
+					structureTypeFound = false;
 					break;
 				}
 			}
-			if(docTypeForbiddenElements.containsKey(dt)) {
-				for (XPath forbiddenXPath : docTypeForbiddenElements.get(dt)) {
+			if(structureTypeForbiddenElements.containsKey(st)) {
+				for (XPath forbiddenXPath : structureTypeForbiddenElements.get(st)) {
 					Element forbiddenElement = (Element)forbiddenXPath.selectSingleNode(modsElement);
 					if (!Objects.equals(forbiddenElement, null)) {
-						docTypeFound = false;
+						structureTypeFound = false;
 						break;
 					}
 				}
 			}
-			if (docTypeFound) {
-				docType = dt;
+			if (structureTypeFound) {
+				structureType = st;
 				break;
 			}
 		}
-		return docType;
+		return structureType;
 	}
 
 	/**
