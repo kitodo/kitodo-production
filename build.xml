@@ -319,6 +319,7 @@
 			</classpath>
 			<compilerarg value="${build.javac.args}" />
 		</javac>
+        <copy file="${src.dir.plugins.opac}/ModsPlugin/org/kitodo/production/plugin/CataloguePlugin/ModsPlugin/mods2kitodo.xsl" todir="${build.classes}" />
 	</target>
 
 	
