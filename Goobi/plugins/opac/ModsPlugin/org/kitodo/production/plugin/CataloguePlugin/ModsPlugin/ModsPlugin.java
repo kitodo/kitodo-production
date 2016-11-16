@@ -458,22 +458,14 @@ public class ModsPlugin implements Plugin {
 				}
 
 				doc = createMetsContainer(dmdSections, docTypes);
-
-				System.out.println("=================");
-				System.out.println("Resulting METS document: ");
-				printXML(doc.getRootElement(), xmlOutputter);
-				System.out.println("=================");
+				// reviewing the constructed XML mets document can be done via "xmlOutputter.output(doc.getRootElement(), System.out)"
 
 				/* MetsModsKalliopeImport is subclass of MetsModsImportExport UGH class */
 				MetsModsKalliopeImport mm = new MetsModsKalliopeImport(preferences);
 				xmlOutputter.output(doc, new FileWriter(TEMP_FILENAME));
 
 				mm.read(TEMP_FILENAME);
-
-				System.out.println("=================");
-				System.out.println("MetsModsImportExport.getDigitalDocument():");
-				System.out.println(mm.getDigitalDocument());
-				System.out.println("=================");
+				// reviewing the constructed DigitalDocument can be done via "System.out.println(mm.getDigitalDocument());"
 
 				deleteFile(TEMP_FILENAME);
 				DigitalDocument dd = mm.getDigitalDocument();
@@ -629,20 +621,6 @@ public class ModsPlugin implements Plugin {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	/**
-	 * Helper function to print out given Element 'root' using the given XMLOutputter 'outputter'.
-	 * @param root the Element that will be printed
-	 * @param outputter the XMLOutputter that is being used to print the given Element
-	 */
-	private static void printXML(Element root, XMLOutputter outputter) {
-		try {
-			outputter.output(root, System.out);
-			System.out.println("");
-		} catch (IOException e) {
-			modsLogger.error("Error while printing XML element: " + e.getMessage());
-		}
 	}
 
    /**

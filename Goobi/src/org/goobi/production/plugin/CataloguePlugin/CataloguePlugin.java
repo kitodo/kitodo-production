@@ -358,9 +358,6 @@ public class CataloguePlugin extends UnspecificPlugin {
 	
 	public List<ConfigOpacDoctype> getAllConfigDocTypes(Object dummyObject){
 		List<ConfigOpacDoctype> result = new ArrayList<ConfigOpacDoctype>();
-		for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
-			System.out.println(" doctype: " + cod.getTitle());
-		}
 		for(Object obj : invokeQuietly(plugin, getAllConfigDocTypes, Object.class, List.class)){
 			try {
 				result.add(ConfigOpac.getDoctypeByName((String)obj));

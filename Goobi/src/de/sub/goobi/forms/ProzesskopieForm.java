@@ -1244,9 +1244,6 @@ public class ProzesskopieForm {
 	}
 
 	public void setDocType(String docType) {
-		System.out.println(" *********************************** ");
-		System.out.println(" Changing docType from '"+ this.docType + "' to '" + docType + "'");
-		System.out.println(" *********************************** ");
         if (this.docType.equals(docType)) {
             return;
         } else {
