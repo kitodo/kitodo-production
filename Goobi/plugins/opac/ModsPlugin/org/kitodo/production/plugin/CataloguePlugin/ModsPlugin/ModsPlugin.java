@@ -209,6 +209,7 @@ public class ModsPlugin implements Plugin {
 	/**
 	 * Static XPath variables used to parse MetsModsGoobi documents.
 	 */
+	private static XPath srwRecordXPath = null;
 	private static XPath modsPath = null;
 	private static XPath authorPath = null;
 	private static XPath titlePath = null;
@@ -282,13 +283,15 @@ public class ModsPlugin implements Plugin {
 	 */
 	private void initializeXPath() {
 		try {
+			srwRecordXPath = XPath.newInstance("//srw:searchRetrieveResponse/srw:records/srw:record");
 			modsPath = XPath.newInstance("//mods:mods");
 
-			// the catalog ID, parent ID and URL are extracted from the original, untransformed document; therefore we need the original MODS XPath here
+			// the catalog ID, parent ID and URL are extracted from the original, untransformed document; therefore we need the original MODS XPaths here
 			catalogueIDPath = XPath.newInstance("//mods:mods/mods:recordInfo/mods:recordIdentifier");
 			parentIDPath = XPath.newInstance("//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']");
 			urlPath = XPath.newInstance("//mods:mods/mods:location/mods:url");
 
+			// all other fields are extracted from the transformed document; therefore we can use the "goobi" XPaths here
 			authorPath = XPath.newInstance("//goobi:displayName");
 			titlePath = XPath.newInstance("//goobi:metadata[@name='TitleDocMain']");
 			datePath = XPath.newInstance("//goobi:metadata[@name='PublicationDate']");
@@ -306,6 +309,7 @@ public class ModsPlugin implements Plugin {
 	 */
 	private boolean xpathsDefined() {
 		return (
+				!Objects.equals(srwRecordXPath, null) &&
 				!Objects.equals(modsPath, null) &&
 				!Objects.equals(authorPath, null) &&
 				!Objects.equals(titlePath, null) &&
@@ -396,6 +400,16 @@ public class ModsPlugin implements Plugin {
 			try {
 				Document doc = sb.build(new StringReader(resultXML));
 
+				@SuppressWarnings("unchecked")
+				ArrayList<Element> recordNodes = (ArrayList<Element>)srwRecordXPath.selectNodes(doc);
+
+				for (int i = 0; i < recordNodes.size(); i++) {
+					Element currentRecord = recordNodes.get(i);
+					if (i != (int)index) {
+						currentRecord.detach();
+					}
+				}
+
 				LinkedList<Element> dmdSections = new LinkedList<Element>();
 				LinkedList<String> docTypes = new LinkedList<String>();
 
@@ -458,7 +472,7 @@ public class ModsPlugin implements Plugin {
 				}
 
 				doc = createMetsContainer(dmdSections, docTypes);
-				// reviewing the constructed XML mets document can be done via "xmlOutputter.output(doc.getRootElement(), System.out)"
+				// reviewing the constructed XML mets document can be done via "xmlOutputter.output(doc.getRootElement(), System.out);"
 
 				/* MetsModsKalliopeImport is subclass of MetsModsImportExport UGH class */
 				MetsModsKalliopeImport mm = new MetsModsKalliopeImport(preferences);

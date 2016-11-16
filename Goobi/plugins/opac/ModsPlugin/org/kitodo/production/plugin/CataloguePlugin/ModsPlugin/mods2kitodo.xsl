@@ -31,7 +31,7 @@
 
     <!-- ### TitleDocMain ### -->
     <xsl:template match="mods:mods/mods:titleInfo/mods:title">
-        <goobi:metadata name="TitleDocMain"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <goobi:metadata name="TitleDocMain"><xsl:value-of select="replace(normalize-space(), '\(Titel\)', '')" /></goobi:metadata>
     </xsl:template>
     
     <!-- ### Author ### -->

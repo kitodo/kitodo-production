@@ -174,7 +174,11 @@ public class ProzesskopieForm {
 		 * @return a summary of this hit in bibliographic citation style as HTML
 		 */
 		public String getBibliographicCitation() {
-			return hit.getBibliographicCitation();
+			try {
+				return hit.getBibliographicCitation();
+			} catch (IllegalArgumentException e) {
+				return "";
+			}
 		}
 
 		/**
