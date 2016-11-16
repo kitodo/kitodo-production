@@ -4,3 +4,15 @@
 /config-local
 /deploy.properties
 /dist
+
+# Eclipse development.
+/.settings/
+/.classpath
+/.project
+/Goobi/META-INF/
+/Goobi/src/*.icc
+/Goobi/src/*.jpg
+/Goobi/src/*.properties
+/Goobi/src/*.txt
+/Goobi/src/*.xml
+/Goobi/src/*.xsl
