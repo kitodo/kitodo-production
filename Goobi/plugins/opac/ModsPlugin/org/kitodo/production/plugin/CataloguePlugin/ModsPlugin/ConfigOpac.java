@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -174,9 +175,28 @@ class ConfigOpac {
 					String value = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")");
 					labels.put(language, value);
 				}
-				boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
-				boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
-				boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+				boolean periodical;
+				boolean multiVolume;
+				boolean containedWork;
+
+				try {
+					periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					periodical = false;
+				}
+
+				try {
+					multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					multiVolume = false;
+				}
+
+				try {
+					containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					containedWork = false;
+				}
+
 				ArrayList<String> mappings = (ArrayList<String>) getConfig()
 						.getList("doctypes.type(" + i + ").mapping");
 
