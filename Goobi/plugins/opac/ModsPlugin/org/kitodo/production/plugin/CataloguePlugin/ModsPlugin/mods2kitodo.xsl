@@ -56,9 +56,9 @@
         <goobi:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
     
-    <!-- ### PublicationDate ### -->
-    <xsl:template match="mods:mods/mods:originInfo/mods:dateCreated">
-        <goobi:metadata name="PublicationDate"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+    <!-- ### PublicationYear ### -->
+    <xsl:template match="mods:mods/mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
+        <goobi:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
     
     <!-- ### ShelfMarkSource ### -->
@@ -76,6 +76,12 @@
         <goobi:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
     
+    <!-- ### slub_link, slub_linktext ### -->
+    <xsl:template match="mods:mods/mods:location/mods:url">
+        <goobi:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <goobi:metadata name="slub_linktext"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+    </xsl:template>
+
     <!-- pass-through rule -->
     <xsl:template match="@*|node()">
         <xsl:apply-templates select="@*|node()"/>
