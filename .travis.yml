@@ -2,13 +2,8 @@
 
 language: java
 
-addons:
-  apt:
-    packages:
-      - tomcat7-common
-
 cache:
 
 env:
 
-script: ant -lib /usr/share/tomcat7/lib all
+script: mvn clean package
