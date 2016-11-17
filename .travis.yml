@@ -6,4 +6,4 @@ cache:
 
 env:
 
-script: mvn clean package
+script: mvn clean install -Pall-tests
