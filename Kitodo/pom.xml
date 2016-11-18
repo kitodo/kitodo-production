@@ -117,11 +117,6 @@
             <systemPath>${local.lib.dir}/intrandaChart_1.4.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.6</version>
-        </dependency>
-        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
             <version>1.12</version>
@@ -202,6 +197,12 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
             <version>5.5.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -227,7 +228,11 @@
             <scope>system</scope>
             <systemPath>${local.lib.dir}/saxon9.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
+        </dependency>
         <!-- ########## Here comes the Dependencies needed for tests ########## -->
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
