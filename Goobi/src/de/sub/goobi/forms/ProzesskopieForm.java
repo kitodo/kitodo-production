@@ -47,6 +47,7 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -1505,17 +1506,21 @@ public class ProzesskopieForm {
 
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-//			ArrayList<ConfigOpacDoctype> allDocTypes = new ArrayList<ConfigOpacDoctype>();
-//			for(CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
-//				for(ConfigOpacDoctype cod : plugin.getAllConfigDocTypes(null)){
-//					if(!allDocTypes.contains(cod)){
-//						allDocTypes.add(cod);
-//					}
-//				}
-//			}
-//			
-//			return allDocTypes;
-			return ConfigOpac.getAllDoctypes();
+			XMLConfiguration originalConfiguration = ConfigOpac.getConfiguration();
+			ArrayList<ConfigOpacDoctype> allDocTypes = new ArrayList<ConfigOpacDoctype>();
+			for(CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
+				// set XMLConfiguration of current plugin as configuration of global ConfigOpac
+				ConfigOpac.setConfiguration(plugin.getXMLConfiguration());
+				for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
+					if (!allDocTypes.contains(cod)) {
+						allDocTypes.add(cod);
+					}
+				}
+			}
+			// reset XMLConfiguration of global ConfigOpac to 'originalConfiguration'
+			ConfigOpac.setConfiguration(originalConfiguration);
+			return allDocTypes;
+//			return ConfigOpac.getAllDoctypes();
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());

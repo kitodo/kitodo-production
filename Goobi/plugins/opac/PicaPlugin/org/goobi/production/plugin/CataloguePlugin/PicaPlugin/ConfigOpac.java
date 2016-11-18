@@ -41,7 +41,7 @@ import org.apache.commons.io.FilenameUtils;
 class ConfigOpac {
 	private static XMLConfiguration config;
 
-	private static XMLConfiguration getConfig() {
+	protected static XMLConfiguration getConfig() {
 		if (config != null) {
 			return config;
 		}

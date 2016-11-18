@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.configuration.XMLConfiguration;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -178,6 +179,8 @@ public class CataloguePlugin extends UnspecificPlugin {
 	
 	private final Method getAllConfigDocTypes;
 
+	private final Method getXMLConfiguration;
+
 	/**
 	 * The field useCatalogue holds a Method reference to the method
 	 * useCatalogue() of the plug-in implementation class.
@@ -214,6 +217,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 		getSupportedCatalogues = getDeclaredMethod("getSupportedCatalogues", Object.class, List.class);
 		getAllConfigDocTypes = getDeclaredMethod("getAllConfigDocTypes", Object.class, List.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
+		getXMLConfiguration = getDeclaredMethod("getXMLConfiguration", XMLConfiguration.class);
 	}
 
 	/**
@@ -283,6 +287,10 @@ public class CataloguePlugin extends UnspecificPlugin {
 		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
 				Map.class);
 		return new Hit(data);
+	}
+
+	public XMLConfiguration getXMLConfiguration() {
+		return invokeQuietly(plugin, getXMLConfiguration, new Object[] {}, XMLConfiguration.class);
 	}
 
 	/**

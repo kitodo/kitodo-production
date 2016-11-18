@@ -77,6 +77,14 @@ public class ConfigOpac {
 		return config;
 	}
 
+	public static void setConfiguration (XMLConfiguration conf) {
+		config = conf;
+	}
+
+	public static XMLConfiguration getConfiguration () {
+		return config;
+	}
+
 	/**
 	 * Returns all configured catalogue titles from the config file.
 	 *

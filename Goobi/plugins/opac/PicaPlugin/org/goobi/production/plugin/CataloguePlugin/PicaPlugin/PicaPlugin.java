@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.configuration.XMLConfiguration;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -122,6 +123,10 @@ public class PicaPlugin implements Plugin {
 	 * The field configuration holds the catalogue configuration.
 	 */
 	private ConfigOpacCatalogue configuration;
+
+	public XMLConfiguration getXMLConfiguration() {
+		return ConfigOpac.getConfig();
+	}
 
 	/**
 	 * The field catalogue holds the catalogue.

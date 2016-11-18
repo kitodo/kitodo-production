@@ -158,8 +158,8 @@ public class ModsPlugin implements Plugin {
 		return configuration;
 	}
 
-	public void setConfiguration(ConfigOpacCatalogue configuration) {
-		this.configuration = configuration;
+	public XMLConfiguration getXMLConfiguration() {
+		return ConfigOpac.getConfig();
 	}
 
 	/**
