@@ -65,8 +65,6 @@ import ugh.fileformats.mets.PersonalNamespaceContext;
 
 public class MetsModsKalliopeImport extends MetsModsImportExport {
 
-	protected static final String METS_PREFS_NODE_NAME_STRING = "KALLIOPE_MODS";
-
 	public MetsModsKalliopeImport(Prefs inPrefs) throws PreferencesException {
 		super(inPrefs);
 	}

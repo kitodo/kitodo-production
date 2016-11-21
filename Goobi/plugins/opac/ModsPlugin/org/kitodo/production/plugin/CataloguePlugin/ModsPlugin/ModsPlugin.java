@@ -411,11 +411,11 @@ public class ModsPlugin implements Plugin {
 				}
 
 				LinkedList<Element> dmdSections = new LinkedList<Element>();
-				LinkedList<String> docTypes = new LinkedList<String>();
+				LinkedList<String> structureTypes = new LinkedList<String>();
 
 				String parentXML = retrieveParentRecord(doc, timeout);
 
-				docTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
+				structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 				File transformationScript = new File(xsltFilepath);
 
@@ -457,7 +457,7 @@ public class ModsPlugin implements Plugin {
 					doc = sb.build(new StringReader(resultXML));
 					parentXML = retrieveParentRecord(doc, timeout);
 					// docType is determined using relatedItem ID; this field is not available after transformation anymore, therefore doctype has to be determined before 'transformXML' is called!
-					docTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
+					structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 					doc = transformXML(doc, transformationScript, sb);
 					// 'doc' can become "null", when the last doc had a 'parentID', but trying to retrieve the element with this parentID yields an empty SRW container (e.g. not containing any MODS documents)
@@ -471,7 +471,7 @@ public class ModsPlugin implements Plugin {
 					dmdSections.add(createMETSDescriptiveMetadata((Element)modsElement.clone()));
 				}
 
-				doc = createMetsContainer(dmdSections, docTypes);
+				doc = createMetsContainer(dmdSections, structureTypes);
 				// reviewing the constructed XML mets document can be done via "xmlOutputter.output(doc.getRootElement(), System.out);"
 
 				/* MetsModsKalliopeImport is subclass of MetsModsImportExport UGH class */
@@ -497,7 +497,7 @@ public class ModsPlugin implements Plugin {
 				// TODO: add all children - using query with parameter 'relatedItemID', once it becomes available - of retrieved document to docStruct!
 
 				result.put("fileformat", ff);
-				result.put("type", docTypes.getFirst());
+				result.put("type", structureTypes.getLast());
 
 			} catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException | IOException e) {
 				modsLogger.error("Error while retrieving document: " + e.getMessage());
@@ -524,7 +524,7 @@ public class ModsPlugin implements Plugin {
 				String structureTypeName = "";
 
 				ConfigurationNode structureNode = structureType.getRootNode();
-				for(Object rulesetObject : structureNode.getAttributes("rulesetType") ) {
+				for(Object rulesetObject : structureNode.getAttributes("title") ) {
 					ConfigurationNode rulesetNode = (ConfigurationNode)rulesetObject;
 					structureTypeName = (String)rulesetNode.getValue();
 					break;

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opacCatalogues>
 	<doctypes>
-		<type rulesetType="Inventory" title="inventory">
+		<type rulesetType="inventory" title="inventory">
 			<label language="de">Bestand</label>
 			<label language="en">Inventory</label>
 			<mapping>text</mapping>
 		</type>
 	</doctypes>
 	<structuretypes>
-		<type rulesetType="Inventory">
+		<type rulesetType="inventory" title="inventory">
 			<mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
 			<forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
 		</type>
-		<type rulesetType="Subinventory">
+		<type rulesetType="subinventory" title="subinventory">
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
 		</type>
-		<type rulesetType="Manuscript">
+		<type rulesetType="Manuscript" title="Manuscript">
 			<mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
 		</type>
