@@ -195,6 +195,7 @@ public class ModsPlugin implements Plugin {
 	 */
 	private static HashMap<String, List<XPath>> structureTypeMandatoryElements = new HashMap<String, List<XPath>>();
 	private static HashMap<String, List<XPath>> structureTypeForbiddenElements  = new HashMap<String, List<XPath>>();
+	private static HashMap<String, String> structureTypeToDocTypeMapping = new HashMap<String, String>();
 
 	/**
 	 * Filename of the XSL transformation file.
@@ -400,6 +401,8 @@ public class ModsPlugin implements Plugin {
 			try {
 				Document doc = sb.build(new StringReader(resultXML));
 
+				initializeStructureToDocTypeMapping();
+
 				@SuppressWarnings("unchecked")
 				ArrayList<Element> recordNodes = (ArrayList<Element>)srwRecordXPath.selectNodes(doc);
 
@@ -497,7 +500,7 @@ public class ModsPlugin implements Plugin {
 				// TODO: add all children - using query with parameter 'relatedItemID', once it becomes available - of retrieved document to docStruct!
 
 				result.put("fileformat", ff);
-				result.put("type", structureTypes.getLast());
+				result.put("type", structureTypeToDocTypeMapping.get(structureTypes.getLast()));
 
 			} catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException | IOException e) {
 				modsLogger.error("Error while retrieving document: " + e.getMessage());
@@ -524,7 +527,7 @@ public class ModsPlugin implements Plugin {
 				String structureTypeName = "";
 
 				ConfigurationNode structureNode = structureType.getRootNode();
-				for(Object rulesetObject : structureNode.getAttributes("title") ) {
+				for(Object rulesetObject : structureNode.getAttributes("rulesetType") ) {
 					ConfigurationNode rulesetNode = (ConfigurationNode)rulesetObject;
 					structureTypeName = (String)rulesetNode.getValue();
 					break;
@@ -545,6 +548,50 @@ public class ModsPlugin implements Plugin {
 					String maynot = (String)forbiddenElement;
 					structureTypeForbiddenElements.get(structureTypeName).add(XPath.newInstance(maynot));
 				}
+			}
+		}
+	}
+
+	/**
+	 * This function loads the rulesetType and title attributes of individual docType elements
+	 * and creates a mapping from docStructTypes to docTypes.
+	 *
+	 * @throws JDOMException
+	 */
+	private void initializeStructureToDocTypeMapping() throws JDOMException {
+
+		XMLConfiguration pluginConfiguration = ConfigOpac.getConfig();
+
+		for (Object docTypeObject : pluginConfiguration.configurationsAt("doctypes.type")) {
+
+			SubnodeConfiguration docType = (SubnodeConfiguration)docTypeObject;
+
+			String rulesetTypeString = "";
+			String titleString = "";
+
+			ConfigurationNode docTypeNode = docType.getRootNode();
+
+			for (Object rulesetTypeObject : docTypeNode.getAttributes("rulesetType")) {
+				ConfigurationNode rulesetTypeNode = (ConfigurationNode)rulesetTypeObject;
+				rulesetTypeString = (String)rulesetTypeNode.getValue();
+				if (rulesetTypeString != "") {
+					break;
+				}
+			}
+
+			for (Object titleObject : docTypeNode.getAttributes("title")) {
+				ConfigurationNode titleNode = (ConfigurationNode)titleObject;
+				titleString = (String)titleNode.getValue();
+				if (titleString != "") {
+					break;
+				}
+			}
+
+			if (!Objects.equals(titleString, "") &&
+					!Objects.equals(titleString, null) &&
+					!Objects.equals(rulesetTypeString, "") &&
+					!Objects.equals(rulesetTypeString, null)) {
+				structureTypeToDocTypeMapping.put(rulesetTypeString, titleString);
 			}
 		}
 	}
