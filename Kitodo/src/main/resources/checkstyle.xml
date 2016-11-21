@@ -171,7 +171,7 @@
         </module>
 
         <!--Check if there are whitespaces at the end of the line -->
-        <module name="RegexpSingleline">
+        <module name="RegexpSinglelineJava">
             <property name="format" value="\s+$"/>
             <property name="minimum" value="0"/>
             <property name="maximum" value="2"/>
@@ -250,9 +250,8 @@
         </module>
 
         <module name="CommentsIndentation"/>
-
-        <module name="NewlineAtEndOfFile">
-            <property name="lineSeparator" value="lf"/>
-        </module>
+    </module>
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf"/>
     </module>
 </module>
