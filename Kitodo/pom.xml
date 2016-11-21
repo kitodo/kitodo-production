@@ -744,30 +744,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!-- ATTENTION! plugin can be also placed in the <reporting> element and in this case, it will do not have
-                any effect on executions in the <build> element -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <executions>
-                    <execution>
-                        <id>checkstyle-check</id>
-                        <phase>compile</phase>
-                        <configuration>
-	                        <configLocation>${basedir}/src/main/resources/checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failOnViolation>false</failOnViolation>
-                            <failsOnError>false</failsOnError>
-                            <maxAllowedViolations>7000</maxAllowedViolations>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -784,6 +760,35 @@
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>checkstyle</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>2.17</version>
+                        <executions>
+                            <execution>
+                                <id>checkstyle-check</id>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <configLocation>${basedir}/src/main/resources/checkstyle.xml</configLocation>
+                                    <encoding>UTF-8</encoding>
+                                    <consoleOutput>true</consoleOutput>
+                                    <failOnViolation>false</failOnViolation>
+                                    <failsOnError>false</failsOnError>
+                                    <maxAllowedViolations>7000</maxAllowedViolations>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
