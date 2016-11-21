@@ -26,29 +26,38 @@
  * exception statement from your version.
  */
 
-package integration;
+package unit;
+
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.converter.ProcessConverter;
+import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.ProzessDAO;
-import org.junit.Assert;
+import junit.framework.Assert;
 import org.junit.Test;
+import org.mockito.Matchers;
 
-public class DBConnectionTestIT {
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+
+public class MockitoTest {
 
     @Test
-    public void test() throws Exception {
+    public void testMock() throws DAOException{
+        ProzessDAO prozessDao = mock(ProzessDAO.class);
+        Prozess newProzess = new Prozess();
 
-        Prozess test = new Prozess();
-        test.setTitel("TestTitle");
-        ProzessDAO dao = new ProzessDAO();
-        dao.save(test);
+        ProcessConverter converter = spy(new ProcessConverter());
+        when(converter.getProzessDao()).thenReturn(prozessDao);
+        when(prozessDao.get(any(Integer.class))).thenReturn(newProzess);
 
-        long counted = dao.count("from Prozess");
-        Assert.assertNotNull("No Prozess found",counted);
-        Assert.assertEquals(1, counted);
-
-        String title = dao.get(1).getTitel();
-        Assert.assertEquals("TestTitle", title);
+        Object nullObject = converter.getAsObject(null,null, null);
+        Assert.assertNull(nullObject);
+        Object object = converter.getAsObject(null, null, "1");
+        Assert.assertEquals(newProzess, object);
 
     }
+
 }

@@ -50,7 +50,7 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new ProzessDAO().get(Integer.valueOf(value));
+              return getProzessDao().get(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";
@@ -61,7 +61,15 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
       }
    }
 
-   @Override
+    /**
+     *
+     * @return a new ProzessDAO
+     */
+    public ProzessDAO getProzessDao() {
+        return new ProzessDAO();
+    }
+
+    @Override
 public String getAsString(FacesContext context, UIComponent component, Object value)
          throws ConverterException {
       if (value == null) {
