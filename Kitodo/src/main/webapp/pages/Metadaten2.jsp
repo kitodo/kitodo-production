@@ -63,11 +63,11 @@
 	</script>
 
 	<frameset rows="59px,*" bordercolor="#003399" onload="setTimeout('checkFrameLoad()',100);">
-		<frame name="oben" src="/Metadaten2oben.jsf" scrolling="no" />
+		<frame name="oben" src="../pages/Metadaten2oben.jsf" scrolling="no" />
 		<frameset cols="210px,*" bordercolor="#003399">
-			<frame name="links" src="/Metadaten3links.jsf"
+			<frame name="links" src="../pages/Metadaten3links.jsf"
 				scrolling="auto" />
-			<frame name="rechts" src="/Metadaten2rechts.jsf" />
+			<frame name="rechts" src="../pages/Metadaten2rechts.jsf" />
 		</frameset>
 	</frameset>
 </f:view>
