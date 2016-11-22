@@ -155,10 +155,10 @@ public class ModsPlugin implements Plugin {
 	 */
 	private ConfigOpacCatalogue configuration;
 
-	public ConfigOpacCatalogue getConfiguration() {
-		return configuration;
-	}
-
+	/**
+	 * @return XMLConfiguration of this plugin, containing - among others -
+	 * docType names and rules for structType classification
+	 */
 	public XMLConfiguration getXMLConfiguration() {
 		return ConfigOpac.getConfig();
 	}
