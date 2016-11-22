@@ -14,6 +14,7 @@
 		</type>
 		<type rulesetType="Subinventory">
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+			<forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
 		</type>
 		<type rulesetType="Manuscript">
 			<mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>

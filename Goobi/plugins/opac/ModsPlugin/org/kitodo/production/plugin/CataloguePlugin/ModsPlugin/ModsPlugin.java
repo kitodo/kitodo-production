@@ -600,7 +600,7 @@ public class ModsPlugin implements Plugin {
 	 * Determines and returns structureType of a given modsElement.
 	 *
 	 * @param modsElement
-	 * @return
+	 * @return the name of the determined structureType
 	 * @throws JDOMException
 	 */
 	private String getStructureType(Element modsElement) throws JDOMException {
@@ -609,16 +609,16 @@ public class ModsPlugin implements Plugin {
 		String structureType = "";
 
 		boolean structureTypeFound = false;
-		for (String st : structureTypeMandatoryElements.keySet()){
+		for (String st : structureTypeMandatoryElements.keySet()) {
 			structureTypeFound = true;
-			for (XPath mandatoryXPath : structureTypeMandatoryElements.get(st)){
+			for (XPath mandatoryXPath : structureTypeMandatoryElements.get(st)) {
 				Element mandatoryElement = (Element)mandatoryXPath.selectSingleNode(modsElement);
 				if (Objects.equals(mandatoryElement, null)) {
 					structureTypeFound = false;
 					break;
 				}
 			}
-			if(structureTypeForbiddenElements.containsKey(st)) {
+			if (structureTypeFound && structureTypeForbiddenElements.containsKey(st)) {
 				for (XPath forbiddenXPath : structureTypeForbiddenElements.get(st)) {
 					Element forbiddenElement = (Element)forbiddenXPath.selectSingleNode(modsElement);
 					if (!Objects.equals(forbiddenElement, null)) {

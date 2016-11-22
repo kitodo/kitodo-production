@@ -79,7 +79,7 @@
     <!-- ### slub_link, slub_linktext ### -->
     <xsl:template match="mods:mods/mods:location/mods:url">
         <goobi:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></goobi:metadata>
-        <goobi:metadata name="slub_linktext"><xsl:value-of select="normalize-space()" /></goobi:metadata>
+        <goobi:metadata name="slub_linktext">Katalognachweis</goobi:metadata>
     </xsl:template>
 
     <!-- pass-through rule -->
