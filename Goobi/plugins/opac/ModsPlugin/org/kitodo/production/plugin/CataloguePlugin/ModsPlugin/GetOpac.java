@@ -28,13 +28,16 @@
 package org.kitodo.production.plugin.CataloguePlugin.ModsPlugin;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.util.EncodingUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -167,6 +170,40 @@ class GetOpac {
 			return null;
 		}
 	}
+	
+	/**
+	 * Retrieve body as stream and return the response as string
+	 * @param request
+	 * @return The retrieved MODS record in string form
+	 * @throws IOException
+	 */
+	private String getResponse(HttpMethodBase request) throws IOException
+	{
+		InputStream s = request.getResponseBodyAsStream();
+		int bytesRead = -1;
+		int totalBytes = 0;
+		int bytesToRead = 1000;
+		byte[] buf = new byte[1000];
+		while (true) {
+			bytesRead = s.read(buf, totalBytes, bytesToRead);
+			if (bytesRead < 0) {
+				break;
+			}
+			totalBytes += bytesRead;
+			bytesToRead -= bytesRead;
+			if (bytesToRead == 0) {
+				byte[] temp = buf;
+				buf = new byte[temp.length * 2];
+				System.arraycopy(temp, 0, buf, 0, temp.length);
+				bytesToRead = temp.length;
+			}
+		}
+		if (totalBytes > 0) {
+			return EncodingUtil.getString(buf, 0, totalBytes, request.getResponseCharSet());
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * Retrieves the content of the specified url from the serverAddress.
@@ -199,7 +236,8 @@ class GetOpac {
 		try {
 			opacRequest = new GetMethod(request);
 			opacClient.executeMethod(opacRequest);
-			return opacRequest.getResponseBodyAsString();
+
+			return this.getResponse(opacRequest);
 		} finally {
 			if (opacRequest != null) {
 				opacRequest.releaseConnection();
