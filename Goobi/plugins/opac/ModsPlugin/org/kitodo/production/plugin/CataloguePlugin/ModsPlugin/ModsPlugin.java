@@ -76,6 +76,7 @@ import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.XStream;
 
 /**
@@ -477,8 +478,7 @@ public class ModsPlugin implements Plugin {
 				doc = createMetsContainer(dmdSections, structureTypes);
 				// reviewing the constructed XML mets document can be done via "xmlOutputter.output(doc.getRootElement(), System.out);"
 
-				/* MetsModsKalliopeImport is subclass of MetsModsImportExport UGH class */
-				MetsModsKalliopeImport mm = new MetsModsKalliopeImport(preferences);
+				MetsMods mm = new MetsMods(preferences);
 				xmlOutputter.output(doc, new FileWriter(TEMP_FILENAME));
 
 				mm.read(TEMP_FILENAME);
@@ -675,11 +675,15 @@ public class ModsPlugin implements Plugin {
 
 			xslfoTransformer.transform(saxSource, saxResult);
 
-			return builder.build(outputFile);
+			Document resultDoc = builder.build(outputFile);
+
+			deleteFile(inputXMLFilename);
+			deleteFile(outputXMLFilename);
+
+			return resultDoc;
 
 		} catch (TransformerException | IOException | JDOMException e) {
 			modsLogger.error("Error while transforming XML document: " + e.getMessage());
-			e.printStackTrace();
 		}
 		return null;
 	}
