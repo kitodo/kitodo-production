@@ -170,6 +170,10 @@
                     <artifactId>servlet-api</artifactId>
                     <groupId>javax.servlet</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>xerces</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
