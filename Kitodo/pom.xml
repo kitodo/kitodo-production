@@ -472,13 +472,6 @@
             <systemPath>${local.lib.dir}/richfaces-ui-3.1.6.GA.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>de.unigoettingen.sub</groupId>
-            <artifactId>simplemets-0.0.1-SNAPSHOT</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/simplemets-0.0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.apache.taglibs</groupId>
             <artifactId>taglibs-standard</artifactId>
             <version>1.1.2</version>
@@ -617,13 +610,6 @@
             <version>1.1.5-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/tomahawk-sandbox-1.1.5-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>de.unigoettingen.sub.commons.util</groupId>
-            <artifactId>util</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/util-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
