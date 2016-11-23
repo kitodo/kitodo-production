@@ -201,7 +201,7 @@ class GetOpac {
 		if (totalBytes > 0) {
 			return EncodingUtil.getString(buf, 0, totalBytes, request.getResponseCharSet());
 		} else {
-			return null;
+			return "";
 		}
 	}
 
