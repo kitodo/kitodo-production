@@ -1503,7 +1503,6 @@ public class ProzesskopieForm {
 				}
 			}			
 			return allCatalogueTitles;
-			//return ConfigOpac.getAllCatalogueTitles();
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -1534,7 +1533,6 @@ public class ProzesskopieForm {
 			// reset XMLConfiguration of global ConfigOpac to 'originalConfiguration'
 			ConfigOpac.setConfiguration(originalConfiguration);
 			return allDocTypes;
-//			return ConfigOpac.getAllDoctypes();
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
