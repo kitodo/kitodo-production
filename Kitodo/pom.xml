@@ -500,13 +500,6 @@
             <systemPath>${local.lib.dir}/saxon9-dom.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.k_int</groupId>
-            <artifactId>a2jruntime</artifactId>
-            <version>1.1.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/a2jruntime.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>antlr</groupId>
             <artifactId>antlr</artifactId>
             <version>2.7.7</version>
@@ -596,27 +589,6 @@
             <version>1.1.2</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/jstl.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.k_int.hss</groupId>
-            <artifactId>ki-jzkit-hss</artifactId>
-            <version>1.2.2</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/ki-jzkit-hss-1_2_3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.k_int</groupId>
-            <artifactId>ki-jzkit-z3950</artifactId>
-            <version>1.2.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/ki-util.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.k_int.util</groupId>
-            <artifactId>ki-util</artifactId>
-            <version>1.2.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/ki-jzkit-iface-X.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.marc4j</groupId>
