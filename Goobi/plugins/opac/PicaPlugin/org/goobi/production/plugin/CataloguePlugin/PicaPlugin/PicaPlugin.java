@@ -124,6 +124,13 @@ public class PicaPlugin implements Plugin {
 	 */
 	private ConfigOpacCatalogue configuration;
 
+	/**
+	 * Returns the XMLConfiguration of the plugin containing docType
+	 * names and conditions for structureType classification.
+	 *
+	 * @return config
+	 *            the XMLConfiguration of the plugin
+	 */
 	public XMLConfiguration getXMLConfiguration() {
 		return ConfigOpac.getConfig();
 	}
@@ -999,13 +1006,27 @@ public class PicaPlugin implements Plugin {
 		return ConfigOpac.getCatalogueByName(catalogue) != null;
 	}
 
-	public static List<String> getSupportedCatalogues(Object dummyObject){
+	/**
+	 * The function getSupportedCatalogues() returns the names of all catalogues supported
+	 * by this plugin. (This depends on the plugin configuration.)
+	 *
+	 * @return list of catalogue names
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
+	 */
+	public static List<String> getSupportedCatalogues() {
 		return ConfigOpac.getAllCatalogues();
 	}
 	
-	public static List<String> getAllConfigDocTypes(Object dummyObject){
+	/**
+	 * The function getAllConfigDocTypes() returns the names of all docTypes configured
+	 * for this plugin. (This depends on the plugin configuration.)
+	 *
+	 * @return list of ConfigOapcDocTypes
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
+	 */
+	public static List<String> getAllConfigDocTypes() {
 		List<String> result = new ArrayList<String>();
-		for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
+		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
 			result.add(cod.getTitle());
 		}
 		return result;

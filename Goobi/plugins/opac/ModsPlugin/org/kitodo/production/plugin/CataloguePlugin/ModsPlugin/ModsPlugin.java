@@ -230,8 +230,8 @@ public class ModsPlugin implements Plugin {
 	private static int divIdCounter = 1;
 
 	/**
-	 * The method configure() accepts a Map with configuration parameters. Two
-	 * entries, "configDir" and "tempDir", are expected.
+	 * The method configure() accepts a Map with configuration parameters. Three
+	 * entries, "configDir", "tempDir" and "xsltDir" are expected.
 	 *
 	 * configDir must point to a directory on the local file system where the
 	 * plug-in can read individual configuration files from. The configuration
@@ -688,15 +688,15 @@ public class ModsPlugin implements Plugin {
 		return null;
 	}
 
-   /**
-    * Retrieves and returns the given documents parent document from the Kalliope SRU interface.
-    *
-    * @param doc the Document whose parent Document is retrieved
-    * @param timeout
-    * @return the parent document of the given document or null, if the current document does not contain an element containing the ID of the parent document
-    * @throws JDOMException
-    * @see org.jdom.Document
-    */
+	/**
+	 * Retrieves and returns the given documents parent document from the Kalliope SRU interface.
+	 *
+	 * @param doc the Document whose parent Document is retrieved
+	 * @param timeout
+	 * @return the parent document of the given document or null, if the current document does not contain an element containing the ID of the parent document
+	 * @throws JDOMException
+	 * @see org.jdom.Document
+	 */
 	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
 		Element parentIDElement = (Element)parentIDPath.selectSingleNode(doc);
 		try {
@@ -903,30 +903,26 @@ public class ModsPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getSupportedCatalogues(Object) returns the names of all catalogues supported
+	 * The function getSupportedCatalogues() returns the names of all catalogues supported
 	 * by this plugin. (This depends on the plugin configuration.)
 	 *
-	 * @param catalogue
-	 *            a String indentifying the catalogue
-	 * @return whether the plug-in is able to acceess that catalogue
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
+	 * @return list of catalogue names
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
 	 */
-	public static List<String> getSupportedCatalogues(Object dummyObject){
+	public static List<String> getSupportedCatalogues() {
 		return ConfigOpac.getAllCatalogues();
 	}
 
 	/**
-	 * The function getAllConfigDocTypes(Object) returns the names of all docTypes configured
+	 * The function getAllConfigDocTypes() returns the names of all docTypes configured
 	 * for this plugin. (This depends on the plugin configuration.)
 	 *
-	 * @param catalogue
-	 *            a String indentifying the catalogue
-	 * @return whether the plug-in is able to acceess that catalogue
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
+	 * @return list of ConfigOapcDocTypes
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
 	 */
-	public static List<String> getAllConfigDocTypes(Object dummyObject) {
+	public static List<String> getAllConfigDocTypes() {
 		List<String> result = new ArrayList<String>();
-		for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
+		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
 			result.add(cod.getTitle());
 		}
 		return result;

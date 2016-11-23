@@ -1484,13 +1484,20 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * The function getAllOpacCatalogues() returns a list of the names of all catalogues
+	 * supported in all plugins by compiling the results of the getSupportedCatalogues()
+	 * methods in all configured plugins.
+	 *
+	 * @return list of names of all supported catalogues of all configured plugins
+	 */
 	public List<String> getAllOpacCatalogues() {
 		try {
 			ArrayList<String> allCatalogueTitles = new ArrayList<String>();
 			
-			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
-				for(String catalogue : plugin.getSupportedCatalogues(null)){
-					if(!allCatalogueTitles.contains(catalogue)){
+			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+				for (String catalogue : plugin.getSupportedCatalogues()) {
+					if (!allCatalogueTitles.contains(catalogue)) {
 						allCatalogueTitles.add(catalogue);
 					}
 				}
@@ -1504,14 +1511,21 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * The function getAllConfigDocTypes() returns a list of all docTypes configured
+	 * in all plugins by compiling the results of the getAllConfigDocTypes() method in
+	 * all configured plugins.
+	 *
+	 * @return list of all docTypes of all configured plugins
+	 */
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
 			XMLConfiguration originalConfiguration = ConfigOpac.getConfiguration();
 			ArrayList<ConfigOpacDoctype> allDocTypes = new ArrayList<ConfigOpacDoctype>();
-			for(CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
+			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
 				// set XMLConfiguration of current plugin as configuration of global ConfigOpac
 				ConfigOpac.setConfiguration(plugin.getXMLConfiguration());
-				for(ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()){
+				for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
 					if (!allDocTypes.contains(cod)) {
 						allDocTypes.add(cod);
 					}

@@ -50,10 +50,6 @@ import org.xml.sax.SAXException;
  * Connects to OPAC system.
  *
  * @author Arved Solth, Christopher Timm
- * @version 0.1
- * @since 0.1.1
- *
- *        CHANGELOG: 19.09.2016 Solth: first Version
  */
 
 class GetOpac {
@@ -170,7 +166,7 @@ class GetOpac {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Retrieve body as stream and return the response as string
 	 * @param request

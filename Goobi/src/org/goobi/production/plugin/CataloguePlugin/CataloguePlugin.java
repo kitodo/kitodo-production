@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -137,6 +138,11 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 public class CataloguePlugin extends UnspecificPlugin {
 
 	/**
+	 * Local log4j logger.
+	 */
+	private static final Logger logger = Logger.getLogger(ConfigOpac.class);
+
+	/**
 	 * The constant field THIRTY_MINUTES holds the milliseconds value
 	 * representing 30 minutes. This is the default for catalogue operations
 	 * timeout. Note that on large, database-backed catalogues, searches for
@@ -214,8 +220,8 @@ public class CataloguePlugin extends UnspecificPlugin {
 		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
 		setPreferences = getDeclaredMethod("setPreferences", Prefs.class, Void.TYPE);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", String.class, boolean.class);
-		getSupportedCatalogues = getDeclaredMethod("getSupportedCatalogues", Object.class, List.class);
-		getAllConfigDocTypes = getDeclaredMethod("getAllConfigDocTypes", Object.class, List.class);
+		getSupportedCatalogues = getDeclaredMethod("getSupportedCatalogues", List.class);
+		getAllConfigDocTypes = getDeclaredMethod("getAllConfigDocTypes", List.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
 		getXMLConfiguration = getDeclaredMethod("getXMLConfiguration", XMLConfiguration.class);
 	}
@@ -289,6 +295,13 @@ public class CataloguePlugin extends UnspecificPlugin {
 		return new Hit(data);
 	}
 
+	/**
+	 * The function getXMLConfiguration() returns the XMLConfiguration of the plugin
+	 * containing docType names and conditions for structureType classification.
+	 *
+	 * @return config
+	 *            the XMLConfiguration of the plugin
+	 */
 	public XMLConfiguration getXMLConfiguration() {
 		return invokeQuietly(plugin, getXMLConfiguration, new Object[] {}, XMLConfiguration.class);
 	}
@@ -297,9 +310,11 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * The function getNumberOfHits() shall return the hits scored by the search
 	 * represented by the given object. If the object isn’t the result of a call
 	 * to the find() function, the behaviour may be undefined.
-	 * 
+	 *
 	 * @param searchResult
 	 *            search result object whose number of hits is to retrieve
+	 * @param timeout
+	 *            the timeout used in catalogue access
 	 * @return the number of hits in this search
 	 */
 	public long getNumberOfHits(Object searchResult, long timeout) {
@@ -312,11 +327,11 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * The function getTimeout() returns the timeout to be used in catalogue
 	 * access. This defaults to thirty minutes if no catalogue timeout is set in
 	 * the configuration
-	 * 
+	 *
 	 * Note that on large, database-backed catalogues, searches for common title
 	 * terms may take more than 15 minutes, so 30 minutes may be a fair avarage
 	 * between that and the moment the sun will swallow up the earth.
-	 * 
+	 *
 	 * @return the timeout for catalogue access
 	 */
 	public static long getTimeout() {
@@ -359,19 +374,30 @@ public class CataloguePlugin extends UnspecificPlugin {
 		return invokeQuietly(plugin, supportsCatalogue, catalogue, boolean.class);
 	}
 
+	/**
+	 * The function getSupportedCatalogues() returns the list of catalogue names
+	 * that are supported by this plugin.
+	 *
+	 * @return list of catalogue names
+	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getSupportedCatalogues(Object dummyObject){
-		return invokeQuietly(plugin, getSupportedCatalogues, Object.class, List.class);
+	public List<String> getSupportedCatalogues() {
+		return invokeQuietly(plugin, getSupportedCatalogues, List.class);
 	}
-	
-	public List<ConfigOpacDoctype> getAllConfigDocTypes(Object dummyObject){
+
+	/**
+	 * The function getAllConfigDocTypes() returns the list of document types defined
+	 * in the configuration of this plugin.
+	 *
+	 * @return list of ConfigOapcDocTypes
+	 */
+	public List<ConfigOpacDoctype> getAllConfigDocTypes() {
 		List<ConfigOpacDoctype> result = new ArrayList<ConfigOpacDoctype>();
-		for(Object obj : invokeQuietly(plugin, getAllConfigDocTypes, Object.class, List.class)){
+		for (Object obj : invokeQuietly(plugin, getAllConfigDocTypes, List.class)) {
 			try {
 				result.add(ConfigOpac.getDoctypeByName((String)obj));
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error in retrieving docTypes from plugins: file not found!");
 			}
 		}
 		return result;

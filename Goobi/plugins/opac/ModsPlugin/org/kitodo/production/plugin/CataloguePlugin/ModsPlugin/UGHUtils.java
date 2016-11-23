@@ -1,22 +1,22 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -52,9 +52,8 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
  * The class UGHUtils provides utility methods used in the plug-in.
- * 
- * @author unascribed
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ *
+ * @author Arved Solth, Christopher Timm
  */
 class UGHUtils {
 	private static final Logger myLogger = Logger.getLogger(UGHUtils.class);
@@ -63,7 +62,7 @@ class UGHUtils {
 	 * The function addMetadatum() adds the meta data element given in terms of
 	 * type identifier String and value String to the given document structure
 	 * element, using the given rule set.
-	 * 
+	 *
 	 * @param inStruct
 	 *            structure element to add the meta data element to
 	 * @param inPrefs
@@ -98,7 +97,7 @@ class UGHUtils {
 	 * The function addMetadatum() adds meta data elements of the type whose
 	 * identifier String is given for all value Strings to the given document
 	 * structure element, using the given rule set.
-	 * 
+	 *
 	 * @param inStruct
 	 *            structure element to add the meta data elements to
 	 * @param inPrefs
@@ -120,7 +119,7 @@ class UGHUtils {
 	 * structure element and adds a new meta data element with the given meta
 	 * data element given in terms of type identifier String and value String to
 	 * the given document structure element, using the given rule set.
-	 * 
+	 *
 	 * @param inStruct
 	 *            structure element to replace the meta data elements in
 	 * @param inPrefs
@@ -153,7 +152,7 @@ class UGHUtils {
 	 * structure element and adds new meta data elements of the type whose
 	 * identifier String is given for all value Strings to the given document
 	 * structure element, using the given rule set.
-	 * 
+	 *
 	 * @param inStruct
 	 *            structure element to replace the meta data elements in
 	 * @param inPrefs
@@ -190,7 +189,7 @@ class UGHUtils {
 	 * characters, or if an error occurs (i.e. the mapping file cannot be read),
 	 * the value passed-in is returned. Which mapping is used depends on the
 	 * availability of a user context, @see {@link #open(String)}.
-	 * 
+	 *
 	 * @param inLanguages
 	 *            values to replace
 	 * @return replacements
@@ -219,7 +218,7 @@ class UGHUtils {
 	 * configurable replacement. If no replacement is found, if the value to
 	 * replace contains white space characters, or if an error occurs (i.e. the
 	 * mapping file cannot be read), the value passed-in is returned.
-	 * 
+	 *
 	 * @param inLanguages
 	 *            values to replace
 	 * @return replacements
@@ -237,10 +236,10 @@ class UGHUtils {
 	 * taken from the web application’s deployment directory
 	 * (…/WEB-INF/classes), if not, it is taken from the CONFIG_DIR specified in
 	 * the CONFIG_FILE.
-	 * 
+	 *
 	 * TODO: Community needs to decide: Is this behaviour really what we want?
 	 * Shouldn’t it <em>always</em> be the configured directory?
-	 * 
+	 *
 	 * @param fileName
 	 *            File to open
 	 * @return a BufferedReader for reading the file

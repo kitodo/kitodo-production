@@ -42,6 +42,13 @@ import org.apache.commons.io.FilenameUtils;
 class ConfigOpac {
 	private static XMLConfiguration config;
 
+	/**
+	 * Returns the XMLConfiguration of the plugin containing docType
+	 * names and conditions for structureType classification.
+	 *
+	 * @return config
+	 *            the XMLConfiguration of the plugin
+	 */
 	protected static XMLConfiguration getConfig() {
 		if (config != null) {
 			return config;
@@ -63,7 +70,7 @@ class ConfigOpac {
 		return config;
 	}
 
-	static List<String> getAllCatalogues(){
+	static List<String> getAllCatalogues() {
 		List<String> catalogueTitles = new ArrayList<String>();
 		XMLConfiguration conf = getConfig();
 		for(int i = 0; i <= conf.getMaxIndex("catalogue"); i++){

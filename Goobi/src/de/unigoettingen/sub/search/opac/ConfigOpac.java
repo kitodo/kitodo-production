@@ -77,10 +77,20 @@ public class ConfigOpac {
 		return config;
 	}
 
+	/**
+	 * Sets the XMLConfiguration of the ConfigOpac
+	 *
+	 * @param conf the XMLConfiguration to set
+	 */
 	public static void setConfiguration (XMLConfiguration conf) {
 		config = conf;
 	}
 
+	/**
+	 * Returns the XMLConfiguration of the ConfigOpac
+	 *
+	 * @return config the XMLConfiguration of the ConfigOpac
+	 */
 	public static XMLConfiguration getConfiguration () {
 		return config;
 	}

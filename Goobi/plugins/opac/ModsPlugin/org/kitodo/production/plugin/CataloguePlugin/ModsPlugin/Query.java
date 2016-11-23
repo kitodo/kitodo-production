@@ -1,22 +1,22 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *     		- http://www.kitodo.org
  *     		- https://github.com/goobi/goobi-production
  * 		    - http://gdz.sub.uni-goettingen.de
  * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ * 			- http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -42,7 +42,7 @@ class Query {
 	private static final String INCOMPLETE = "Query is syntactically incomplete";
 
 	private String queryUrl = "&query=";
-	
+
 	private static final String AND = "*";
 	private static final String OR = "%2B"; //URL-encoded +
 	private static final String NOT = "-";
@@ -57,7 +57,7 @@ class Query {
 
 	// Example: Kalliope-URL returning the mods data for a given ead.id
 	// http://kalliope-verbund.info/sru?version=1.2&operation=searchRetrieve&query=ead.id=DE-611-HS-2256337&recordSchema=mods
-	
+
 	Query(String query, String fieldNumber) {
 		addQuery(null, query, fieldNumber);
 	}
@@ -66,7 +66,7 @@ class Query {
 	 * Query constructor. Constructs a query from a String. For the query
 	 * semantics, see
 	 * {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}.
-	 * 
+	 *
 	 * @param queryString
 	 *            Query string to parse
 	 * @throws IllegalArgumentException
@@ -166,12 +166,13 @@ class Query {
 		if (state == 3) {
 			addQuery(operator, term.toString(), field.toString());
 		}
-		if (state != 3 && state != 5)
+		if (state != 3 && state != 5) {
 			throw new IllegalArgumentException(INCOMPLETE);
+		}
 		// resulting "queryURL" should look something like this when correctly created: "ead.id=DE-611-HS-2256337"
 	}
 
-	//operation must be Query.AND, .OR, .NOT 
+	//operation must be Query.AND, .OR, .NOT
 	private void addQuery(String operation, String query, String fieldNumber) {
 		 try{
 			 if(fieldMappings.containsKey(fieldNumber)){
@@ -184,9 +185,9 @@ class Query {
 			 e.printStackTrace();
 		 }
 	 }
-	 
+
 	String getQueryUrl() {
 		 return this.queryUrl;
 	 }
-	 
+
 }
