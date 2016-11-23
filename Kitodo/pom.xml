@@ -368,7 +368,6 @@
             <artifactId>xml-apis-ext</artifactId>
             <version>1.3.04</version>
         </dependency>
-        <!-- resolver?-->
         <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
@@ -578,13 +577,6 @@
             <systemPath>${local.lib.dir}/j2ep-1.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.apache.oro</groupId>
-            <artifactId>jakarta-oro</artifactId>
-            <version>2.0.7</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jakarta-oro.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.jenia.faces</groupId>
             <artifactId>jenia4faces</artifactId>
             <version>1.2.1</version>
@@ -646,13 +638,6 @@
             <version>3.3</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/mods-3.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>XmlResolver</artifactId>
-            <version>1.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/resolver.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
