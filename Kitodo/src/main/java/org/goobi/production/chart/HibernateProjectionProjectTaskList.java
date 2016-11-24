@@ -28,7 +28,6 @@ package org.goobi.production.chart;
  * exception statement from your version.
  */
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,10 +53,9 @@ import de.sub.goobi.helper.enums.StepStatus;
  *
  */
 
-
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {
 	private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
-	
+
 	@Override
 	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
@@ -66,13 +64,14 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 	}
 
 	@SuppressWarnings("rawtypes")
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages,
+			Integer inMax) {
 
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Schritt.class);
 
 		crit.createCriteria("prozess", "proc");
-		
+
 		crit.addOrder(Order.asc("reihenfolge"));
 
 		crit.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
@@ -84,8 +83,8 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 		proList.add(Projections.property("bearbeitungsstatus"));
 		proList.add(Projections.sum("proc.sortHelperImages"));
 		proList.add(Projections.count("id"));
-//		proList.add(Projections.groupProperty(("reihenfolge")));
-		
+		// proList.add(Projections.groupProperty(("reihenfolge")));
+
 		proList.add(Projections.groupProperty(("titel")));
 		proList.add(Projections.groupProperty(("bearbeitungsstatus")));
 
@@ -93,64 +92,60 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 
 		List list = crit.list();
 
-	    Iterator it = list.iterator();
-	      if(!it.hasNext()){
-	          logger.debug("No any data!");
-	        }
-	        else{
-	        	Integer rowCount = 0;
-	          while(it.hasNext()){
-	            Object[] row = (Object[])it.next();
-	            rowCount ++;
-	            String message = "";
-	            int i;
+		Iterator it = list.iterator();
+		if (!it.hasNext()) {
+			logger.debug("No any data!");
+		} else {
+			Integer rowCount = 0;
+			while (it.hasNext()) {
+				Object[] row = (Object[]) it.next();
+				rowCount++;
+				String message = "";
+				int i;
 
-	            	String shorttitle;
-	            	if (((String) row[FieldList.stepName.getFieldLocation()]).length() > 60){
-	            		shorttitle = ((String) row[FieldList.stepName.getFieldLocation()]).substring(0, 60) + "..."; 
-	            	}else{
-	            		shorttitle = (String) row[FieldList.stepName.getFieldLocation()];
-	            	}
-	            	
-	            	IProjectTask pt = null;
-					for (IProjectTask task : myTaskList) {
-						if (task.getTitle().equals(shorttitle)) {
-							pt = task;
-							break;
-						}
+				String shorttitle;
+				if (((String) row[FieldList.stepName.getFieldLocation()]).length() > 60) {
+					shorttitle = ((String) row[FieldList.stepName.getFieldLocation()]).substring(0, 60) + "...";
+				} else {
+					shorttitle = (String) row[FieldList.stepName.getFieldLocation()];
+				}
+
+				IProjectTask pt = null;
+				for (IProjectTask task : myTaskList) {
+					if (task.getTitle().equals(shorttitle)) {
+						pt = task;
+						break;
 					}
+				}
 
-					if (pt == null) {
-						pt = new ProjectTask(shorttitle, 0, 0);
-						myTaskList.add(pt);
-					}
+				if (pt == null) {
+					pt = new ProjectTask(shorttitle, 0, 0);
+					myTaskList.add(pt);
+				}
 
-					if (StepStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
-						if (countImages) {
-							pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
-						} else {
-							pt.setStepsCompleted((Integer) row[FieldList.processCount.getFieldLocation()]);
-						}
-					}
-
+				if (StepStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
 					if (countImages) {
-						pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.pageCount.getFieldLocation()]);
+						pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
 					} else {
-						pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.processCount.getFieldLocation()]);
+						pt.setStepsCompleted((Integer) row[FieldList.processCount.getFieldLocation()]);
 					}
-	            	
-					//TODO remove following lines all the way to system.out
-		            for(i = 0; i < row.length;i++){
-		            	message = message + "|" + row[i];
-	            	}
-					logger.debug(Integer.toString(rowCount) + message);
-	            
-	          }
-	        }
-	
+				}
 
+				if (countImages) {
+					pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.pageCount.getFieldLocation()]);
+				} else {
+					pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.processCount.getFieldLocation()]);
+				}
 
-	      
+				// TODO remove following lines all the way to system.out
+				for (i = 0; i < row.length; i++) {
+					message = message + "|" + row[i];
+				}
+				logger.debug(Integer.toString(rowCount) + message);
+
+			}
+		}
+
 	}
 
 	private enum FieldList {

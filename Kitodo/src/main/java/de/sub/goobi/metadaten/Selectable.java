@@ -44,7 +44,7 @@ package de.sub.goobi.metadaten;
  * @author Matthias Ronge
  */
 public interface Selectable {
-	
+
 	/**
 	 * Return an ID for the HTML {@code <OPTION>} element. Two different
 	 * elements in the list must have different IDs.

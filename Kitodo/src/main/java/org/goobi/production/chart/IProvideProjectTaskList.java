@@ -31,8 +31,6 @@ import java.util.List;
 
 import de.sub.goobi.beans.Projekt;
 
-
-
 /**
  * This interface is used to provide a data source for the extended
  * Project Statistics

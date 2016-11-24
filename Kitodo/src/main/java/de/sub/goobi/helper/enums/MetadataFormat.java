@@ -1,4 +1,5 @@
 package de.sub.goobi.helper.enums;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -32,14 +33,12 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.XStream;
 
 public enum MetadataFormat {
-/*
- *
- */
-	
-	RDF("Rdf", true, RDFFile.class),
-	METS("Mets", true, MetsMods.class),
-	XSTREAM("XStream", true, XStream.class),
-	METS_AND_RDF("Mets & Rdf", false, null);
+	/*
+	 *
+	 */
+
+	RDF("Rdf", true, RDFFile.class), METS("Mets", true, MetsMods.class), XSTREAM("XStream", true, XStream.class), METS_AND_RDF(
+			"Mets & Rdf", false, null);
 
 	private final String name;
 	private final boolean usableForInternal;
@@ -54,12 +53,12 @@ public enum MetadataFormat {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public boolean isUsableForInternal() {
 		return this.usableForInternal;
 	}
 
-	public static MetadataFormat findFileFormatsHelperByName(String inName){
+	public static MetadataFormat findFileFormatsHelperByName(String inName) {
 		for (MetadataFormat s : MetadataFormat.values()) {
 			if (s.getName().equals(inName)) {
 				return s;
@@ -71,9 +70,9 @@ public enum MetadataFormat {
 	public static MetadataFormat getDefaultFileFormat() {
 		return XSTREAM;
 	}
-	
-	public Class<? extends Fileformat> getImplClass () {
+
+	public Class<? extends Fileformat> getImplClass() {
 		return this.clazz;
 	}
-	
+
 }

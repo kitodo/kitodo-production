@@ -1,4 +1,5 @@
 package org.goobi.production.plugin.interfaces;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -59,13 +60,11 @@ public abstract class AbstractStepPlugin implements IStepPlugin {
 		return this.name + " v" + this.version;
 	}
 
-
-	
 	@Override
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	@Override
 	public PluginType getType() {
 		return PluginType.Step;

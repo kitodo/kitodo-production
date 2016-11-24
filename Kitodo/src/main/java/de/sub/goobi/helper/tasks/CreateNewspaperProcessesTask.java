@@ -250,10 +250,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 			setProgress(((100 * nextProcessToCreate) + 1) / (numberOfProcesses + 2));
 			saveFullBatch(currentTitle);
 			setProgress(100);
-		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
+		} catch (Exception e) { // ReadException, PreferencesException, SwapException, DAOException, WriteException,
+								// IOException, InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
 			String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null) ? Helper
 					.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
-							Arrays.asList(new String[] { currentTitle })) : e.getClass().getSimpleName()
+							Arrays.asList(new String[] {currentTitle })) : e.getClass().getSimpleName()
 					+ (currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask");
 			setException(new RuntimeException(message + ": " + e.getMessage(), e));
 			return;

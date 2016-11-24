@@ -1,4 +1,5 @@
 package de.sub.goobi.helper.enums;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -39,7 +40,7 @@ public enum HistoryEventType {
 	 * default type is unknown for all properties, which still don't have a specific
 	 * type
 	 */
-	unknown(0, "unknown",false, false, null),
+	unknown(0, "unknown", false, false, null),
 
 	/** storageDifference */
 	storageDifference(1, "storageDifference", true, false, null),
@@ -52,39 +53,35 @@ public enum HistoryEventType {
 
 	/** metadataDiff */
 	metadataDiff(4, "metadataDiff", true, false, null),
-	
+
 	/** docstructDiff, */
 	docstructDiff(5, "docstructDiff", true, false, null),
-	
+
 	/** stepDone, order number and title */
 	stepDone(6, "stepDone", true, true, "min"),
-	
+
 	/** stepOpen, order number and title */
 	stepOpen(7, "stepOpen", true, true, "min"),
-	
+
 	/** stepInWork, order number and title */
-	stepInWork(8, "stepInWork", true, true, null ),
-	
+	stepInWork(8, "stepInWork", true, true, null),
+
 	/** stepError, step order number, step title */
 	stepError(9, "stepError", true, true, null),
-	
+
 	/** stepError, step order number, step title */
 	stepLocked(10, "stepLocked", true, true, "max"),
-	
+
 	/** bitonal Difference - without function yet */
 	bitonal(11, "imagesBitonalDiff", true, false, null),
-	
+
 	/** grayscale Difference - without function yet */
 	grayScale(12, "imagesGrayScaleDiff", true, false, null),
-	
+
 	/** color Difference - without function yet */
 	color(13, "imagesColorDiff", true, false, null)
-	
-	
-	
+
 	;
-	
-	
 
 	private int value;
 	private String title;
@@ -96,7 +93,8 @@ public enum HistoryEventType {
 	 * private constructor, initializes integer value, title and sets boolean, 
 	 * if EventType contains string and/or numeric content
 	 */
-	private HistoryEventType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
+	private HistoryEventType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
+			String groupingExpression) {
 		this.value = inValue;
 		this.title = inTitle;
 		this.isNumeric = inIsNumeric;
@@ -122,13 +120,12 @@ public enum HistoryEventType {
 		return Helper.getTranslation(this.title);
 	}
 
-	
 	/**
 	 * return if type contains numeric content
 	 * 
 	 * @return isNumeric as {@link Boolean}
 	 */
-	
+
 	public Boolean isNumeric() {
 		return this.isNumeric;
 	}
@@ -141,13 +138,13 @@ public enum HistoryEventType {
 	public Boolean isString() {
 		return this.isString;
 	}
-	
+
 	/**
 	 * return grouping function if needed
 	 * 
 	 * @return groupingExpression as{@link String}
 	 */
-	public String getGroupingFunction(){
+	public String getGroupingFunction() {
 		return this.groupingExpression;
 	}
 

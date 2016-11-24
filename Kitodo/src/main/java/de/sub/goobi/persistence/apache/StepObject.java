@@ -50,9 +50,10 @@ public class StepObject {
 	private String stepPlugin;
 	private String validationPlugin;
 
-	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt, Date bearbeitungsbeginn,
-			Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType, boolean typExport, boolean typAutomatisch, int processId,
-			boolean readAccess, boolean writeAccess, boolean metadataAccess, boolean typeFinishImmediately, String stepPlugin, String validationPlugin) {
+	public StepObject(int id, String title, int reihenfolge, int bearbeitungsstatus, Date bearbeitungszeitpunkt,
+			Date bearbeitungsbeginn, Date bearbeitungsende, int bearbeitungsbenutzer, Integer editType,
+			boolean typExport, boolean typAutomatisch, int processId, boolean readAccess, boolean writeAccess,
+			boolean metadataAccess, boolean typeFinishImmediately, String stepPlugin, String validationPlugin) {
 		super();
 		this.id = id;
 		this.title = title;

@@ -77,7 +77,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
  */
 public class ExportXmlLog implements IProcessDataExport {
 	private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
-	
+
 	/**
 	 * This method exports the production metadata as xml to a given directory
 	 * 
@@ -150,7 +150,8 @@ public class ExportXmlLog implements IProcessDataExport {
 
 			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			processElm.addNamespaceDeclaration(xsi);
-			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
+			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+					xsi);
 			processElm.setAttribute(attSchema);
 		}
 		// process information
@@ -193,7 +194,6 @@ public class ExportXmlLog implements IProcessDataExport {
 			batch.setText(batches.toString());
 			processElements.add(batch);
 		}
-	
 
 		ArrayList<Element> processProperties = new ArrayList<Element>();
 		for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
@@ -204,9 +204,9 @@ public class ExportXmlLog implements IProcessDataExport {
 			} else {
 				property.setAttribute("value", "");
 			}
-		
+
 			Element label = new Element("label", xmlns);
-			
+
 			label.setText(prop.getTitel());
 			property.addContent(label);
 			processProperties.add(property);
@@ -272,9 +272,9 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-				
+
 				Element label = new Element("label", xmlns);
-		
+
 				label.setText(prop.getTitel());
 				property.addContent(label);
 
@@ -317,9 +317,9 @@ public class ExportXmlLog implements IProcessDataExport {
 				} else {
 					property.setAttribute("value", "");
 				}
-	
+
 				Element label = new Element("label", xmlns);
-		
+
 				label.setText(prop.getTitel());
 				property.addContent(label);
 				docProperties.add(property);
@@ -401,14 +401,15 @@ public class ExportXmlLog implements IProcessDataExport {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces) throws JaxenException {
-			JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
-			// Add all namespaces
-			for (String key : namespaces.keySet()) {
-				Namespace value = namespaces.get(key);
-				xpath.addNamespace(key, value.getURI());
-			}
-			return xpath.selectNodes(element);
+	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces)
+			throws JaxenException {
+		JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
+		// Add all namespaces
+		for (String key : namespaces.keySet()) {
+			Namespace value = namespaces.get(key);
+			xpath.addNamespace(key, value.getURI());
+		}
+		return xpath.selectNodes(element);
 	}
 
 	/**
@@ -424,7 +425,8 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @throws IOException
 	 */
 
-	public void XmlTransformation(OutputStream out, Document doc, String filename) throws XSLTransformException, IOException {
+	public void XmlTransformation(OutputStream out, Document doc, String filename) throws XSLTransformException,
+			IOException {
 		Document docTrans;
 		if (filename != null && filename.equals("")) {
 			XSLTransformer transformer;
@@ -441,11 +443,13 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	}
 
-	public void startTransformation(OutputStream out, Prozess p, String filename) throws ConfigurationException, XSLTransformException, IOException {
+	public void startTransformation(OutputStream out, Prozess p, String filename) throws ConfigurationException,
+			XSLTransformException, IOException {
 		startTransformation(p, out, filename);
 	}
 
-	public void startTransformation(Prozess p, OutputStream out, String filename) throws ConfigurationException, XSLTransformException, IOException {
+	public void startTransformation(Prozess p, OutputStream out, String filename) throws ConfigurationException,
+			XSLTransformException, IOException {
 		Document doc = createDocument(p, true);
 		XmlTransformation(out, doc, filename);
 	}
@@ -562,10 +566,8 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @return boolean
 	 */
 	private boolean isNonOpenStateAndHasRegularUser(Schritt s) {
-		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
-				&& (s.getBearbeitungsbenutzer() != null)
-				&& (s.getBearbeitungsbenutzer().getId() != 0)
-				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
+		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum())) && (s.getBearbeitungsbenutzer() != null)
+				&& (s.getBearbeitungsbenutzer().getId() != 0) && (s.getBearbeitungsbenutzer().getNachVorname() != null);
 	}
 
 }

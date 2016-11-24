@@ -91,8 +91,9 @@ public class ExportMetsWithoutHibernate {
 	 * @throws DocStructHasNoTypeException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(ProcessObject process) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+	public boolean startExport(ProcessObject process) throws IOException, InterruptedException,
+			DocStructHasNoTypeException, PreferencesException, WriteException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
@@ -120,9 +121,10 @@ public class ExportMetsWithoutHibernate {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException,
+			InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+			DAOException, TypeNotAllowedForParentException {
 
 		/*
 		 * -------------------------------- Read Document --------------------------------
@@ -151,8 +153,8 @@ public class ExportMetsWithoutHibernate {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
-            	FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
-            } catch (Exception e) {
+			FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
 		return target;
@@ -173,9 +175,9 @@ public class ExportMetsWithoutHibernate {
 	 * @throws IOException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
-			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
-			TypeNotAllowedForParentException {
+	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile,
+			boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException,
+			InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 		this.project = ProjectManager.getProjectById(process.getProjekteID());
@@ -198,8 +200,9 @@ public class ExportMetsWithoutHibernate {
 		DocStruct topElement = dd.getLogicalDocStruct();
 		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
-				throw new PreferencesException(process.getTitle()
-						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
+				throw new PreferencesException(
+						process.getTitle()
+								+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
 			} else {
 				topElement = topElement.getAllChildren().get(0);
 			}
@@ -208,7 +211,8 @@ public class ExportMetsWithoutHibernate {
 		/*
 		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
 		 */
-		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
+		if (topElement.getAllToReferences("logical_physical") == null
+				|| topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
 				Helper.setMeldung(process.getTitle()
 						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
@@ -241,7 +245,8 @@ public class ExportMetsWithoutHibernate {
 		 */
 		// Replace all paths with the given VariableReplacer, also the file
 		// group paths!
-		VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(), this.myPrefs, process, null);
+		VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(),
+				this.myPrefs, process, null);
 		List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId());
 
 		if (myFilegroups != null && myFilegroups.size() > 0) {

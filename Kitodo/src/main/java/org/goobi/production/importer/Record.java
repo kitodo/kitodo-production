@@ -32,7 +32,6 @@ import java.util.List;
 
 public class Record {
 
-
 	private List<String> collections = new ArrayList<String>();
 	private String data = "";
 	private String id = "";
@@ -73,5 +72,5 @@ public class Record {
 
 	public List<String> getCollections() {
 		return this.collections;
-	}	
+	}
 }

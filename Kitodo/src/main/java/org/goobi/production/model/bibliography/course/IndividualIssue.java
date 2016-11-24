@@ -127,20 +127,20 @@ public class IndividualIssue {
 	public int getBreakMark(Granularity mode) {
 		final int prime = 31;
 		switch (mode) {
-		case ISSUES:
-			return this.hashCode();
-		case DAYS:
-			return date.hashCode();
-		case WEEKS:
-			return prime * date.getYear() + date.getWeekOfWeekyear();
-		case MONTHS:
-			return prime * date.getYear() + date.getMonthOfYear();
-		case QUARTERS:
-			return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
-		case YEARS:
-			return date.getYear();
-		default:
-			throw new UnreachableCodeException("default case in complete switch statement");
+			case ISSUES:
+				return this.hashCode();
+			case DAYS:
+				return date.hashCode();
+			case WEEKS:
+				return prime * date.getYear() + date.getWeekOfWeekyear();
+			case MONTHS:
+				return prime * date.getYear() + date.getMonthOfYear();
+			case QUARTERS:
+				return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
+			case YEARS:
+				return date.getYear();
+			default:
+				throw new UnreachableCodeException("default case in complete switch statement");
 		}
 	}
 

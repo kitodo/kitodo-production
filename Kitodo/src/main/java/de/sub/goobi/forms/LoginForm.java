@@ -98,7 +98,8 @@ public class LoginForm {
 				if (b.istPasswortKorrekt(this.passwort)) {
 					/* jetzt prüfen, ob dieser Benutzer schon in einer anderen Session eingeloggt ist */
 					SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
+							.getSession(false);
 					if (!temp.BenutzerInAndererSessionAktiv(mySession, b)) {
 						/* in der Session den Login speichern */
 						temp.sessionBenutzerAktualisieren(mySession, b);
@@ -156,7 +157,8 @@ public class LoginForm {
 			this.myBenutzer = new BenutzerDAO().get(LoginID);
 			/* in der Session den Login speichern */
 			SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-			temp.sessionBenutzerAktualisieren((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false), this.myBenutzer);
+			temp.sessionBenutzerAktualisieren((HttpSession) FacesContext.getCurrentInstance().getExternalContext()
+					.getSession(false), this.myBenutzer);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not read database", e.getMessage());
 			return "";
@@ -180,26 +182,26 @@ public class LoginForm {
 	 */
 	public String PasswortAendernSpeichern() {
 		/* ist das aktuelle Passwort korrekt angegeben ? */
-			/* ist das neue Passwort beide Male gleich angegeben? */
-			if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-				Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
-			} else {
-				try {
-					/* wenn alles korrekt, dann jetzt speichern */
-					Ldap myLdap = new Ldap();
-					myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
-					Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
-					temp.setPasswortCrypt(this.passwortAendernNeu1);
-					new BenutzerDAO().save(temp);
-					this.myBenutzer = temp;
+		/* ist das neue Passwort beide Male gleich angegeben? */
+		if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
+			Helper.setFehlerMeldung(Helper.getTranslation("neuesPasswortNichtGleich"));
+		} else {
+			try {
+				/* wenn alles korrekt, dann jetzt speichern */
+				Ldap myLdap = new Ldap();
+				myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
+				Benutzer temp = new BenutzerDAO().get(this.myBenutzer.getId());
+				temp.setPasswortCrypt(this.passwortAendernNeu1);
+				new BenutzerDAO().save(temp);
+				this.myBenutzer = temp;
 
-					Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
-				} catch (DAOException e) {
-					Helper.setFehlerMeldung("could not save", e.getMessage());
-				} catch (NoSuchAlgorithmException e) {
-					Helper.setFehlerMeldung("ldap errror", e.getMessage());
-				}
+				Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("could not save", e.getMessage());
+			} catch (NoSuchAlgorithmException e) {
+				Helper.setFehlerMeldung("ldap errror", e.getMessage());
 			}
+		}
 		return "";
 	}
 

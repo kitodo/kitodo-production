@@ -94,7 +94,7 @@ public class BatchProcessHelper {
 	public int getPropertyListSize() {
 		return this.processPropertyList.size();
 	}
-	
+
 	public List<ProcessProperty> getProcessProperties() {
 		return this.processPropertyList;
 	}
@@ -134,7 +134,7 @@ public class BatchProcessHelper {
 				List<String> param = new ArrayList<String>();
 				param.add(processProperty.getName());
 				String value = Helper.getTranslation("propertyNotValid", param);
-				Helper.setFehlerMeldung(value);	
+				Helper.setFehlerMeldung(value);
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
@@ -152,8 +152,10 @@ public class BatchProcessHelper {
 					p.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized()
+					.contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized()
+						.add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.pdao.save(this.currentProcess);
@@ -174,7 +176,7 @@ public class BatchProcessHelper {
 				List<String> param = new ArrayList<String>();
 				param.add(processProperty.getName());
 				String value = Helper.getTranslation("propertyNotValid", param);
-				Helper.setFehlerMeldung(value);	
+				Helper.setFehlerMeldung(value);
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
@@ -182,7 +184,7 @@ public class BatchProcessHelper {
 				pe.setProzess(this.currentProcess);
 				this.processProperty.setProzesseigenschaft(pe);
 				this.currentProcess.getEigenschaftenInitialized().add(pe);
-			}			
+			}
 			this.processProperty.transfer();
 
 			Prozesseigenschaft pe = new Prozesseigenschaft();
@@ -251,15 +253,15 @@ public class BatchProcessHelper {
 		this.pdao.refresh(this.currentProcess);
 		this.containers = new TreeMap<Integer, PropertyListObject>();
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
-		
+
 		for (ProcessProperty pt : this.processPropertyList) {
-		    if (pt.getProzesseigenschaft() == null) {
-                Prozesseigenschaft pe = new Prozesseigenschaft();
-                pe.setProzess(process);
-                pt.setProzesseigenschaft(pe);
-                process.getEigenschaftenInitialized().add(pe);
-                pt.transfer();
-            }
+			if (pt.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(process);
+				pt.setProzesseigenschaft(pe);
+				process.getEigenschaftenInitialized().add(pe);
+				pt.transfer();
+			}
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
 				plo.addToList(pt);
@@ -277,7 +279,7 @@ public class BatchProcessHelper {
 				}
 			}
 		}
-		
+
 	}
 
 	public Map<Integer, PropertyListObject> getContainers() {
@@ -310,7 +312,7 @@ public class BatchProcessHelper {
 	public Integer getContainer() {
 		return this.container;
 	}
-	
+
 	public List<Integer> getContainerList() {
 		return new ArrayList<Integer>(this.containers.keySet());
 	}

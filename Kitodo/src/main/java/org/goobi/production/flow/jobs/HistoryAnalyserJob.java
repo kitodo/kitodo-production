@@ -97,7 +97,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 *****************************************************************************/
-	public static Boolean updateHistory(Prozess inProcess) throws IOException, InterruptedException, SwapException, DAOException {
+	public static Boolean updateHistory(Prozess inProcess) throws IOException, InterruptedException, SwapException,
+			DAOException {
 		boolean updated = false;
 		/* storage */
 		if (updateHistoryEvent(inProcess, HistoryEventType.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -121,7 +122,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		}
 
 		/* docstruct */
-		if (updateHistoryEvent(inProcess, HistoryEventType.docstructDiff, inProcess.getSortHelperDocstructs().longValue())) {
+		if (updateHistoryEvent(inProcess, HistoryEventType.docstructDiff, inProcess.getSortHelperDocstructs()
+				.longValue())) {
 			updated = true;
 		}
 
@@ -158,123 +160,129 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 			switch (step.getBearbeitungsstatusEnum()) {
 
-			case DONE:
-				// fix missing start date
-				if (step.getBearbeitungsbeginn() == null) {
-					isDirty = true;
-					if (step.getBearbeitungszeitpunkt() == null) {
-						step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
-					} else {
-						step.setBearbeitungsbeginn(step.getBearbeitungszeitpunkt());
+				case DONE:
+					// fix missing start date
+					if (step.getBearbeitungsbeginn() == null) {
+						isDirty = true;
+						if (step.getBearbeitungszeitpunkt() == null) {
+							step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
+						} else {
+							step.setBearbeitungsbeginn(step.getBearbeitungszeitpunkt());
+						}
 					}
-				}
 
-				// fix missing editing date
-				if (step.getBearbeitungszeitpunkt() == null) {
-					isDirty = true;
+					// fix missing editing date
+					if (step.getBearbeitungszeitpunkt() == null) {
+						isDirty = true;
+						if (step.getBearbeitungsende() == null) {
+							step.setBearbeitungszeitpunkt(step.getBearbeitungsbeginn());
+						} else {
+							step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
+						}
+					}
+
+					// fix missing end date
 					if (step.getBearbeitungsende() == null) {
-						step.setBearbeitungszeitpunkt(step.getBearbeitungsbeginn());
-					} else {
-						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
+						isDirty = true;
+						step.setBearbeitungsende(step.getBearbeitungszeitpunkt());
 					}
-				}
 
-				// fix missing end date
-				if (step.getBearbeitungsende() == null) {
-					isDirty = true;
-					step.setBearbeitungsende(step.getBearbeitungszeitpunkt());
-				}
+					// attempts to add a history event,
+					// exists method returns null if event already exists
+					he = addHistoryEvent(step.getBearbeitungsende(), step.getReihenfolge(), step.getTitel(),
+							HistoryEventType.stepDone, inProcess);
 
-				// attempts to add a history event,
-				// exists method returns null if event already exists
-				he = addHistoryEvent(step.getBearbeitungsende(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepDone, inProcess);
+					if (he != null) {
+						isDirty = true;
+					}
 
-				if (he != null) {
-					isDirty = true;
-				}
+					// for each step done we need to create a step open event on that step based on the latest timestamp
+					// for the previous step
+					he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(),
+							step.getTitel(), HistoryEventType.stepOpen, inProcess);
 
-				// for each step done we need to create a step open event on that step based on the latest timestamp for the previous step
-				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(),
-						HistoryEventType.stepOpen, inProcess);
+					if (he != null) {
+						isDirty = true;
+					}
 
-				if (he != null) {
-					isDirty = true;
-				}
+					break;
 
-				break;
+				case INWORK:
 
-			case INWORK:
+					// fix missing start date
+					if (step.getBearbeitungsbeginn() == null) {
+						isDirty = true;
+						if (step.getBearbeitungszeitpunkt() == null) {
+							step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
+						} else {
+							step.setBearbeitungsbeginn(step.getBearbeitungszeitpunkt());
+						}
+					}
 
-				// fix missing start date
-				if (step.getBearbeitungsbeginn() == null) {
-					isDirty = true;
+					// fix missing editing date
 					if (step.getBearbeitungszeitpunkt() == null) {
-						step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
-					} else {
-						step.setBearbeitungsbeginn(step.getBearbeitungszeitpunkt());
+						isDirty = true;
+						step.setBearbeitungszeitpunkt(step.getBearbeitungsbeginn());
 					}
-				}
 
-				// fix missing editing date
-				if (step.getBearbeitungszeitpunkt() == null) {
-					isDirty = true;
-					step.setBearbeitungszeitpunkt(step.getBearbeitungsbeginn());
-				}
-
-				// enc date must be null
-				if (step.getBearbeitungsende() != null) {
-					step.setBearbeitungsende(null);
-					isDirty = true;
-				}
-
-				he = addHistoryEvent(step.getBearbeitungsbeginn(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepInWork, inProcess);
-
-				if (he != null) {
-					isDirty = true;
-				}
-
-				//
-				// for each step inwork we need to create a step open event on that step based on the latest timestamp from the previous step
-				he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(), step.getTitel(),
-						HistoryEventType.stepOpen, inProcess);
-
-				if (he != null) {
-					isDirty = true;
-				}
-
-				break;
-
-			case OPEN:
-
-				// fix set start date - decision is that reopened (and therfore with timestamp for begin) shouldn't be reset
-				/*
-				 * if (step.getBearbeitungsbeginn() != null) { step.setBearbeitungsbeginn(null); isDirty = true; }
-				 */
-
-				// fix missing editing date
-				if (step.getBearbeitungszeitpunkt() == null) {
-					isDirty = true;
+					// enc date must be null
 					if (step.getBearbeitungsende() != null) {
-						step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
-					} else {
-						// step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
-						step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
+						step.setBearbeitungsende(null);
+						isDirty = true;
 					}
-				}
 
-				// fix set end date
-				if (step.getBearbeitungsende() != null) {
-					step.setBearbeitungsende(null);
-					isDirty = true;
-				}
+					he = addHistoryEvent(step.getBearbeitungsbeginn(), step.getReihenfolge(), step.getTitel(),
+							HistoryEventType.stepInWork, inProcess);
 
-				he = addHistoryEvent(step.getBearbeitungszeitpunkt(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepOpen, inProcess);
+					if (he != null) {
+						isDirty = true;
+					}
 
-				if (he != null) {
-					isDirty = true;
-				}
+					//
+					// for each step inwork we need to create a step open event on that step based on the latest
+					// timestamp from the previous step
+					he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getReihenfolge(),
+							step.getTitel(), HistoryEventType.stepOpen, inProcess);
 
-				break;
+					if (he != null) {
+						isDirty = true;
+					}
+
+					break;
+
+				case OPEN:
+
+					// fix set start date - decision is that reopened (and therfore with timestamp for begin) shouldn't
+					// be reset
+					/*
+					 * if (step.getBearbeitungsbeginn() != null) { step.setBearbeitungsbeginn(null); isDirty = true; }
+					 */
+
+					// fix missing editing date
+					if (step.getBearbeitungszeitpunkt() == null) {
+						isDirty = true;
+						if (step.getBearbeitungsende() != null) {
+							step.setBearbeitungszeitpunkt(step.getBearbeitungsende());
+						} else {
+							// step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
+							step.setBearbeitungszeitpunkt(getTimestampFromPreviousStep(inProcess, step));
+						}
+					}
+
+					// fix set end date
+					if (step.getBearbeitungsende() != null) {
+						step.setBearbeitungsende(null);
+						isDirty = true;
+					}
+
+					he = addHistoryEvent(step.getBearbeitungszeitpunkt(), step.getReihenfolge(), step.getTitel(),
+							HistoryEventType.stepOpen, inProcess);
+
+					if (he != null) {
+						isDirty = true;
+					}
+
+					break;
 			}
 
 			// check corrections timestamp this clearly only works on past
@@ -282,7 +290,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			// directly adds to the history
 
 			// adds for each step a step locked on the basis of the process creation timestamp (new in 1.6)
-			he = addHistoryEvent(inProcess.getErstellungsdatum(), step.getReihenfolge(), step.getTitel(), HistoryEventType.stepLocked, inProcess);
+			he = addHistoryEvent(inProcess.getErstellungsdatum(), step.getReihenfolge(), step.getTitel(),
+					HistoryEventType.stepLocked, inProcess);
 
 			if (he != null) {
 				isDirty = true;
@@ -308,7 +317,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @param inProcess
 	 * @return History event if event needs to be added, null if event(same kind, same time, same process ) already exists
 	 */
-	private static HistoryEvent addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryEventType type, Prozess inProcess) {
+	private static HistoryEvent addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName,
+			HistoryEventType type, Prozess inProcess) {
 		HistoryEvent he = new HistoryEvent(timeStamp, stepOrder, stepName, type, inProcess);
 
 		if (!getHistoryContainsEventAlready(he, inProcess)) {
@@ -382,7 +392,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 ***************************************************************************/
-	private static long getCurrentStorageSize(Prozess inProcess) throws IOException, InterruptedException, SwapException, DAOException {
+	private static long getCurrentStorageSize(Prozess inProcess) throws IOException, InterruptedException,
+			SwapException, DAOException {
 		String dirAsString = inProcess.getProcessDataDirectory();
 		File directory = new File(dirAsString);
 		if (!directory.isDirectory()) {
@@ -405,7 +416,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 			while (it.hasNext()) {
 				i++;
 				Prozess proc = it.next();
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("updating history entries for " + proc.getTitel());
 				}
 				try {
@@ -414,7 +425,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 						Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
 						if (processHistoryChanged || stepsHistoryChanged) {
 							session.saveOrUpdate(proc);
-							if(logger.isDebugEnabled()){
+							if (logger.isDebugEnabled()) {
 								logger.debug("history updated for process " + proc.getId());
 							}
 						}
@@ -483,8 +494,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 				Calendar cal = Calendar.getInstance();
 				cal.set(2007, 0, 1, 0, 0, 0);
 				eventTimestamp = cal.getTime();
-				if(logger.isInfoEnabled()){
-					logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString() + "' for a history event as a fallback");
+				if (logger.isInfoEnabled()) {
+					logger.info("We had to use 2007-1-1 date '" + eventTimestamp.toString()
+							+ "' for a history event as a fallback");
 				}
 			}
 

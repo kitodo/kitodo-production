@@ -62,7 +62,7 @@ public class FileUtils {
 			String[] children = inDir.list();
 			for (int i = 0; i < children.length; i++) {
 				anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
-				}
+			}
 		}
 		return anzahl;
 	}
@@ -71,24 +71,21 @@ public class FileUtils {
 		return getNumberOfFiles(new SafeFile(inDir));
 	}
 
-
-
-
-
-
 	public static class FileListFilter implements FilenameFilter {
-		  private String name;
-		  public FileListFilter(String name) {
-		    this.name = name;
-		  }
-		  @Override
-		public boolean accept(File directory, String filename) {
-		    boolean fileOK = true;
-		    if (this.name != null) {
-		      fileOK &= filename.matches(this.name);
-		    }
-		    return fileOK;
-		  }
+		private String name;
+
+		public FileListFilter(String name) {
+			this.name = name;
 		}
+
+		@Override
+		public boolean accept(File directory, String filename) {
+			boolean fileOK = true;
+			if (this.name != null) {
+				fileOK &= filename.matches(this.name);
+			}
+			return fileOK;
+		}
+	}
 
 }

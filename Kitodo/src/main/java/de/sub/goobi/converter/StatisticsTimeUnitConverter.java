@@ -1,4 +1,5 @@
 package de.sub.goobi.converter;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -47,13 +48,13 @@ public class StatisticsTimeUnitConverter implements Converter {
 	 **************************************************************************************/
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-		if (value==null){
+		if (value == null) {
 			return TimeUnit.days;
-		}else {
+		} else {
 			return TimeUnit.getById(value);
 		}
 	}
-	
+
 	/**
 	 * convert TimeUnit to String
 	 **************************************************************************************/
@@ -61,7 +62,7 @@ public class StatisticsTimeUnitConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
 		if (value == null || !(value instanceof TimeUnit)) {
 			return TimeUnit.days.getId();
-		} else{
+		} else {
 			return ((TimeUnit) value).getId();
 		}
 	}

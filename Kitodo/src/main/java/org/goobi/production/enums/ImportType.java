@@ -1,4 +1,5 @@
 package org.goobi.production.enums;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,14 +28,12 @@ package org.goobi.production.enums;
  * exception statement from your version.
  */
 public enum ImportType {
-	
-	
-	
-	Record("1","record"), ID("2", "id"), FILE("3","file"), FOLDER("4", "folder");
-	
+
+	Record("1", "record"), ID("2", "id"), FILE("3", "file"), FOLDER("4", "folder");
+
 	private String id;
 	private String title;
-	
+
 	private ImportType(String id, String title) {
 		this.id = id;
 		this.title = title;
@@ -67,15 +66,14 @@ public enum ImportType {
 	public String getTitle() {
 		return this.title;
 	}
-	
+
 	public static ImportType getByTitle(String title) {
 		for (ImportType t : ImportType.values()) {
 			if (t.getTitle().equals(title)) {
 				return t;
 			}
-		}		
+		}
 		return null;
 	}
-	
 
 }

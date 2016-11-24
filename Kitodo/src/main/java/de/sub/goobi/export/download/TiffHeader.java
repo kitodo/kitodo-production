@@ -40,7 +40,6 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 
-
 /**
  * Die Klasse TiffHeader dient zur Generierung einer Tiffheaderdatei *.conf
  * 
@@ -81,8 +80,7 @@ public class TiffHeader {
 						this.tifHeader_imagedescription = eig.getWert();
 					}
 
-					if (eig.getTitel().equals("Artist"))
-					 {
+					if (eig.getTitel().equals("Artist")) {
 						this.Artist = eig.getWert();
 					}
 				}

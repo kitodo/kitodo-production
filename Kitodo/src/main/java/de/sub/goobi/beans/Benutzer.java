@@ -414,7 +414,7 @@ public class Benutzer implements Serializable {
 			rueckgabe += File.separator;
 		}
 		/* wenn das Verzeichnis nicht "" ist, aber noch nicht existiert, dann jetzt anlegen */
-        FilesystemHelper.createDirectoryForUser(rueckgabe, login);
+		FilesystemHelper.createDirectoryForUser(rueckgabe, login);
 		return rueckgabe;
 	}
 

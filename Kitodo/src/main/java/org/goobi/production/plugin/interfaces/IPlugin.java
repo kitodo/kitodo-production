@@ -1,4 +1,5 @@
 package org.goobi.production.plugin.interfaces;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -31,9 +32,11 @@ import net.xeoh.plugins.base.Plugin;
 import org.goobi.production.enums.PluginType;
 
 public interface IPlugin extends Plugin {
-	
+
 	public PluginType getType();
+
 	public String getTitle();
+
 	public String getDescription();
-	
+
 }

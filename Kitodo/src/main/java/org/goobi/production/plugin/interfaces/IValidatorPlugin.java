@@ -1,4 +1,5 @@
 package org.goobi.production.plugin.interfaces;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -31,17 +32,17 @@ import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.persistence.apache.StepObject;
 
 public interface IValidatorPlugin extends IPlugin {
-	
+
 	public void initialize(Prozess inProcess);
 
 	public boolean validate();
-	
+
 	public Schritt getStep();
-	
+
 	public void setStep(Schritt step);
-	
+
 	public StepObject getStepObject();
-	
+
 	public void setStepObject(StepObject so);
-	
+
 }

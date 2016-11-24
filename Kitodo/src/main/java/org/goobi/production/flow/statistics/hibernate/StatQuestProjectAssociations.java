@@ -77,8 +77,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 		Criteria crit;
 
 		if (originalFilter instanceof UserDefinedFilter) {
-			crit = new UserDefinedFilter(originalFilter.getIDList())
-					.getCriteria();
+			crit = new UserDefinedFilter(originalFilter.getIDList()).getCriteria();
 			crit.createCriteria("projekt", "proj");
 		} else {
 			crit = originalFilter.clone().getCriteria();
@@ -87,8 +86,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 		// use a clone on the filter and apply the projection on the clone
 		crit.setProjection(proj);
 
-		StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(
-				this.getClass()).getTitle());
+		StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
 
 		DataTable dtbl = new DataTable(title.toString());
 		dtbl.setShowableInPieChart(true);
@@ -96,8 +94,8 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
 		for (Object obj : crit.list()) {
 			Object[] objArr = (Object[]) obj;
-			dRow.addValue(new Converter(objArr[1]).getString(), new Converter(
-					new Converter(objArr[0]).getInteger()).getDouble());
+			dRow.addValue(new Converter(objArr[1]).getString(),
+					new Converter(new Converter(objArr[0]).getInteger()).getDouble());
 		}
 		dtbl.addDataRow(dRow);
 

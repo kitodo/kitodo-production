@@ -1,4 +1,5 @@
 package org.goobi.production.flow.jobs;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -50,7 +51,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		if (getIsRunning() == false) {
-			if(logger.isTraceEnabled()){
+			if (logger.isTraceEnabled()) {
 				logger.trace("Start scheduled Job: " + getJobName());
 			}
 			if (isRunning == false) {
@@ -59,7 +60,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 				execute();
 				setIsRunning(false);
 			}
-			if(logger.isTraceEnabled()){
+			if (logger.isTraceEnabled()) {
 				logger.trace("End scheduled Job: " + getJobName());
 			}
 		}

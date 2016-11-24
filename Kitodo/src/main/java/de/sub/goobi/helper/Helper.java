@@ -214,11 +214,12 @@ public class Helper implements Serializable, Observer {
 
 		compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + beschr;
 		if (activeMQReporting != null) {
-			new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"), nurInfo ? ReportLevel.INFO : ReportLevel.ERROR,
-					compoundMessage).send();
+			new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
+					nurInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
 		}
 		if (context != null) {
-			context.addMessage(control, new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
+			context.addMessage(control, new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO
+					: FacesMessage.SEVERITY_ERROR, msg, beschr));
 		} else {
 			// wenn kein Kontext da ist, dann die Meldungen in Log
 			myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
@@ -272,7 +273,8 @@ public class Helper implements Serializable, Observer {
 		if (inDate == null) {
 			return "-";
 		} else {
-			return DateFormat.getDateInstance().format(inDate) + " " + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
+			return DateFormat.getDateInstance().format(inDate) + " "
+					+ DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
 		}
 	}
 
@@ -287,7 +289,7 @@ public class Helper implements Serializable, Observer {
 				ValueBinding vb = application.createValueBinding(expr);
 				if (vb != null) {
 					try {
-					value = vb.getValue(context);
+						value = vb.getValue(context);
 					} catch (PropertyNotFoundException e) {
 						myLogger.error(e);
 					} catch (EvaluationException e) {
@@ -349,12 +351,13 @@ public class Helper implements Serializable, Observer {
 
 					try {
 						final URL resourceURL = file.toURI().toURL();
-						URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-							@Override
-							public URLClassLoader run() {
-								return new URLClassLoader(new URL[] { resourceURL });
-							}
-						});
+						URLClassLoader urlLoader = AccessController
+								.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+									@Override
+									public URLClassLoader run() {
+										return new URLClassLoader(new URL[] {resourceURL });
+									}
+								});
 						ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
 						if (localBundle != null) {
 							localMessages.put(language, localBundle);
@@ -431,7 +434,8 @@ public class Helper implements Serializable, Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (!(arg instanceof String)) {
-			Helper.setFehlerMeldung("Usernotification failed by object: '" + arg.toString()
+			Helper.setFehlerMeldung("Usernotification failed by object: '"
+					+ arg.toString()
 					+ "' which isn't an expected String Object. This error is caused by an implementation of the Observer Interface in Helper");
 		} else {
 			Helper.setFehlerMeldung((String) arg);

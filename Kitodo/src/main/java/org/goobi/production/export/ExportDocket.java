@@ -103,8 +103,6 @@ public class ExportDocket implements IProcessDataExport {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		exl.startExport(processList, out, null);
 
-		
-		
 		// generate pdf file
 		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
 		StreamSource transformSource = new StreamSource(xsltfile);
@@ -136,6 +134,5 @@ public class ExportDocket implements IProcessDataExport {
 		}
 		return null;
 	}
-
 
 }

@@ -71,8 +71,6 @@ public class ProjectHelper {
 
 		Session session = Helper.getHibernateSession();
 
-
-
 		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
 		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
 		critTotals.add(Restrictions.eq("proc.projekt", project));
@@ -97,8 +95,6 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
-
-
 		Criteria critSteps = session.createCriteria(Schritt.class);
 
 		critSteps.createCriteria("prozess", "proc");
@@ -112,7 +108,6 @@ public class ProjectHelper {
 		proList.add(Projections.groupProperty(("titel")));
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
-
 
 		critSteps.setProjection(proList);
 

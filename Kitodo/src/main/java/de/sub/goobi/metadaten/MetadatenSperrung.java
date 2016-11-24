@@ -1,4 +1,5 @@
 package de.sub.goobi.metadaten;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -79,8 +80,7 @@ public class MetadatenSperrung implements Serializable {
 			return false;
 		} else {
 			/* wenn er in der Hashmap ist, muss die Zeit geprüft werden */
-			long lebenszeichen = Long.parseLong(temp
-					.get("Lebenszeichen"));
+			long lebenszeichen = Long.parseLong(temp.get("Lebenszeichen"));
 			if (lebenszeichen < System.currentTimeMillis() - sperrzeit) {
 				/*
 				 * wenn die Zeit Größer ist als erlaubt, ist Metadatum nicht
@@ -99,8 +99,7 @@ public class MetadatenSperrung implements Serializable {
 
 	public void alleBenutzerSperrungenAufheben(Integer inBenutzerID) {
 		String inBenutzerString = String.valueOf(inBenutzerID.intValue());
-		HashMap<Integer, HashMap<String, String>> temp = new HashMap<Integer, HashMap<String, String>>(
-				sperrungen);
+		HashMap<Integer, HashMap<String, String>> temp = new HashMap<Integer, HashMap<String, String>>(sperrungen);
 		for (Iterator<Integer> iter = temp.keySet().iterator(); iter.hasNext();) {
 			Integer myKey = iter.next();
 			HashMap<String, String> intern = sperrungen.get(myKey);
@@ -120,7 +119,7 @@ public class MetadatenSperrung implements Serializable {
 		HashMap<String, String> temp = sperrungen.get(ProzessID);
 		/* wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer */
 		if (temp != null) {
-			rueckgabe =  temp.get("Benutzer");
+			rueckgabe = temp.get("Benutzer");
 		}
 		return rueckgabe;
 	}
@@ -152,8 +151,7 @@ public class MetadatenSperrung implements Serializable {
 		if (temp == null) {
 			return 0;
 		} else {
-			return (System.currentTimeMillis() - Long.parseLong( temp
-					.get("Lebenszeichen"))) / 1000;
+			return (System.currentTimeMillis() - Long.parseLong(temp.get("Lebenszeichen"))) / 1000;
 		}
 	}
 }

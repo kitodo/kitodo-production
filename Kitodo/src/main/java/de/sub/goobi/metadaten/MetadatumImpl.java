@@ -69,7 +69,8 @@ public class MetadatumImpl implements Metadatum {
 		this.myPrefs = inPrefs;
 		this.myProcess = inProcess;
 		for (BindState state : BindState.values()) {
-			this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));
+			this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType()
+					.getName()));
 		}
 	}
 
@@ -95,7 +96,8 @@ public class MetadatumImpl implements Metadatum {
 
 	@Override
 	public String getTyp() {
-		String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = this.md.getType().getLanguage(
+				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 		if (label == null) {
 			label = this.md.getType().getName();
 		}
@@ -202,7 +204,7 @@ public class MetadatumImpl implements Metadatum {
 		} else {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getIsSelected()) {
-					values = values+ ";" + i.getValue();
+					values = values + ";" + i.getValue();
 					this.selectedItems.add(i.getLabel());
 				}
 			}
@@ -229,7 +231,7 @@ public class MetadatumImpl implements Metadatum {
 	@Override
 	public String getSelectedItem() {
 		String value = this.md.getValue();
-		if (value!=null && value.length() != 0) {
+		if (value != null && value.length() != 0) {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getValue().equals(value)) {
 					return i.getLabel();

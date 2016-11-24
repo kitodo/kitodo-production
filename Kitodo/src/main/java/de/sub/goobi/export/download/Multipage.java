@@ -68,7 +68,7 @@ public class Multipage {
 		/* alle tifs durchlaufen */
 		String pfad = inProzess.getImagesDirectory();
 		File dir = new File(pfad);
-	
+
 		String[] dateien = dir.list(Helper.imageNameFilter);
 
 		/* keine Tifs vorhanden, also raus */
@@ -80,7 +80,7 @@ public class Multipage {
 		/* alle Bilder in ein Array übernehmen */
 		RenderedImage image[] = new PlanarImage[dateien.length];
 		for (int i = 0; i < dateien.length; i++) {
-			if(myLogger.isDebugEnabled()){
+			if (myLogger.isDebugEnabled()) {
 				myLogger.debug(pfad + dateien[i]);
 			}
 			image[i] = JAI.create("fileload", pfad + dateien[i]);
@@ -90,7 +90,8 @@ public class Multipage {
 		/*
 		 * -------------------------------- alle Bilder als Multipage erzeugen --------------------------------
 		 */
-		OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + inProzess.getId().intValue() + File.separator + "multipage.tiff");
+		OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + inProzess.getId().intValue()
+				+ File.separator + "multipage.tiff");
 		TIFFEncodeParam param = new TIFFEncodeParam();
 		param.setCompression(4);
 		ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
@@ -120,7 +121,8 @@ public class Multipage {
 			/*
 			 * -------------------------------- die txt-Datei direkt in den Stream schreiben lassen --------------------------------
 			 */
-			String filename = this.help.getGoobiDataDirectory() + inProzess.getId().intValue() + File.separator + "multipage.tiff";
+			String filename = this.help.getGoobiDataDirectory() + inProzess.getId().intValue() + File.separator
+					+ "multipage.tiff";
 			if (!(new File(filename)).exists()) {
 				create(inProzess);
 			}

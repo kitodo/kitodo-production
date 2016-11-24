@@ -1,4 +1,5 @@
 package de.sub.goobi.config;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -75,10 +76,8 @@ public class ConfigProjects {
 		} catch (NoSuchElementException e) {
 			this.projektTitel = "project(0).";
 		}
-		
-	}
 
-	
+	}
 
 	/**
 	 * Ermitteln eines bestimmten Parameters der Konfiguration als String
@@ -95,8 +94,6 @@ public class ConfigProjects {
 		}
 	}
 
-	
-
 	private String cleanXmlFormatedString(String inString) {
 		if (inString != null) {
 			inString = inString.replaceAll("\t", " ");
@@ -107,8 +104,6 @@ public class ConfigProjects {
 		}
 		return inString;
 	}
-
-	
 
 	/**
 	 * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines Default-Wertes
@@ -125,8 +120,6 @@ public class ConfigProjects {
 		}
 	}
 
-	
-
 	/**
 	 * Ermitteln eines boolean-Parameters der Konfiguration
 	 * @return Parameter als String
@@ -138,8 +131,6 @@ public class ConfigProjects {
 			return false;
 		}
 	}
-
-	
 
 	/**
 	 * Ermitteln eines long-Parameters der Konfiguration
@@ -153,8 +144,6 @@ public class ConfigProjects {
 			return 0;
 		}
 	}
-
-	
 
 	/**
 	 * Ermitteln einer Liste von Parametern der Konfiguration

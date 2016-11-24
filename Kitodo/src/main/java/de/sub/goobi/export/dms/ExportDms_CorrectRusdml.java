@@ -64,7 +64,8 @@ public class ExportDms_CorrectRusdml {
 
 	/* =============================================================== */
 
-	public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException {
+	public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException {
 		String atsPpnBand;
 		DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
 		docStructsOhneSeiten = new ArrayList<DocStruct>();
@@ -106,7 +107,8 @@ public class ExportDms_CorrectRusdml {
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws DocStructHasNoTypeException
 	 */
-	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException {
 		RusdmlDropMetadata(inStruct);
 		RusdmlDropPersons(inStruct);
 		RusdmlUmlauteDemaskieren(inStruct);
@@ -138,7 +140,8 @@ public class ExportDms_CorrectRusdml {
 	 * @throws DocStructHasNoTypeException
 	 */
 
-	private void RusdmlDropMetadata(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+	private void RusdmlDropMetadata(DocStruct inStruct) throws DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException {
 		String titelRu = "";
 		String titelOther = "";
 		String language = "";
@@ -301,7 +304,8 @@ public class ExportDms_CorrectRusdml {
 	 * @throws DocStructHasNoTypeException
 	 * @throws MetadataTypeNotAllowedException
 	 */
-	private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Prozess myProzess) throws ExportFileException, UghHelperException {
+	private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Prozess myProzess) throws ExportFileException,
+			UghHelperException {
 		/*
 		 * -------------------------------- bei fehlender digitaler PPN:
 		 * Fehlermeldung und raus --------------------------------

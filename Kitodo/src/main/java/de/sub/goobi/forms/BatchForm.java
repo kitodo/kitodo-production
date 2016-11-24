@@ -82,7 +82,7 @@ public class BatchForm extends BasisForm {
 	private String batchfilter;
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
-	
+
 	private final ProzessDAO dao = new ProzessDAO();
 	private String modusBearbeiten = "";
 
@@ -301,7 +301,7 @@ public class BatchForm extends BasisForm {
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Prozess p : this.selectedProcesses) {
 						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+								Helper.getTranslation("addToBatch", Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(this.selectedProcesses);
 				}
@@ -332,7 +332,7 @@ public class BatchForm extends BasisForm {
 						p.addToWikiField(
 								"debug",
 								Helper.getTranslation("removeFromBatch",
-										Arrays.asList(new String[] { batch.getLabel() })));
+										Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(this.selectedProcesses);
 				}
@@ -373,9 +373,9 @@ public class BatchForm extends BasisForm {
 	public void createNewBatch() {
 		if (selectedProcesses.size() > 0) {
 			Batch batch = null;
-			if(batchTitle != null && batchTitle.trim().length() > 0){
+			if (batchTitle != null && batchTitle.trim().length() > 0) {
 				batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
-			}else{
+			} else {
 				batch = new Batch(Type.LOGISTIC, selectedProcesses);
 			}
 			try {
@@ -383,7 +383,7 @@ public class BatchForm extends BasisForm {
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Prozess p : selectedProcesses) {
 						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+								Helper.getTranslation("addToBatch", Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(selectedProcesses);
 				}
@@ -409,7 +409,8 @@ public class BatchForm extends BasisForm {
 			Helper.setFehlerMeldung("tooManyBatchesSelected");
 			return "";
 		} else {
-			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
+			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
+					&& !this.selectedBatches.get(0).equals("null")) {
 				Batch batch;
 				try {
 					batch = BatchDAO.read(Integer.valueOf(selectedBatches.get(0)));
@@ -461,24 +462,24 @@ public class BatchForm extends BasisForm {
 			try {
 				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
 				switch (batch.getType()) {
-				case LOGISTIC:
-					for (Prozess prozess : batch.getProcesses()) {
-						Hibernate.initialize(prozess.getProjekt());
-						Hibernate.initialize(prozess.getProjekt().getFilegroups());
-						Hibernate.initialize(prozess.getRegelsatz());
-						ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
-								true));
-						dms.startExport(prozess);
-					}
-					return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
-				case NEWSPAPER:
-					TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-					return "taskmanager";
-				case SERIAL:
-					TaskManager.addTask(new ExportSerialBatchTask(batch));
-					return "taskmanager";
-				default:
-					throw new UnreachableCodeException("Complete switch statement");
+					case LOGISTIC:
+						for (Prozess prozess : batch.getProcesses()) {
+							Hibernate.initialize(prozess.getProjekt());
+							Hibernate.initialize(prozess.getProjekt().getFilegroups());
+							Hibernate.initialize(prozess.getRegelsatz());
+							ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
+									true));
+							dms.startExport(prozess);
+						}
+						return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+					case NEWSPAPER:
+						TaskManager.addTask(new ExportNewspaperBatchTask(batch));
+						return "taskmanager";
+					case SERIAL:
+						TaskManager.addTask(new ExportSerialBatchTask(batch));
+						return "taskmanager";
+					default:
+						throw new UnreachableCodeException("Complete switch statement");
 				}
 			} catch (Exception e) {
 				logger.error(e);

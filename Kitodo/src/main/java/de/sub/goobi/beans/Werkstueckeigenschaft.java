@@ -1,4 +1,5 @@
 package de.sub.goobi.beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -183,8 +184,6 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		this.werkstueck = werkstueck;
 	}
 
-	
-	
 	@Override
 	public Integer getContainer() {
 		if (this.container == null) {
@@ -200,8 +199,7 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		}
 		this.container = order;
 	}
-	
-	
+
 	@Override
 	public String getNormalizedTitle() {
 		return this.titel.replace(" ", "_").trim();

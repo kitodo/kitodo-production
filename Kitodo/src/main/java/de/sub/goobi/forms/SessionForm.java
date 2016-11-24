@@ -74,7 +74,7 @@ public class SessionForm {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked" })
 	private void sessionAdd(HttpSession insession) {
 		HashMap map = new HashMap();
 		map.put("id", insession.getId());
@@ -122,7 +122,7 @@ public class SessionForm {
 		this.alleSessions.add(map);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked" })
 	private void sessionsAufraeumen(int time) {
 		List temp = new ArrayList(this.alleSessions);
 		for (Iterator iter = temp.iterator(); iter.hasNext();) {
@@ -134,7 +134,7 @@ public class SessionForm {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void sessionAktualisieren(HttpSession insession) {
 		boolean gefunden = false;
 		this.aktuelleZeit = this.formatter.format(new Date());
@@ -153,7 +153,7 @@ public class SessionForm {
 		sessionsAufraeumen(insession.getMaxInactiveInterval());
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
 		// logger.debug("sessionBenutzerAktualisieren-start");
 		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
@@ -189,7 +189,7 @@ public class SessionForm {
 		return rueckgabe;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
 		List alleSessionKopie = new ArrayList(this.alleSessions);
 		for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {

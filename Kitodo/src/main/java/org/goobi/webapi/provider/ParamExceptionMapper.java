@@ -37,11 +37,9 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
-    @Override
-    public Response toResponse(ParamException e) {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(e.getCause().getMessage())
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-    }
+	@Override
+	public Response toResponse(ParamException e) {
+		return Response.status(Response.Status.BAD_REQUEST).entity(e.getCause().getMessage())
+				.type(MediaType.TEXT_PLAIN).build();
+	}
 }

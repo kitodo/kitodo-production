@@ -42,7 +42,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 public class CatalogueConfiguration {
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ConfigOpac getCatalogueConfiguration() throws IOException {
 		return new ConfigOpac();
 	}

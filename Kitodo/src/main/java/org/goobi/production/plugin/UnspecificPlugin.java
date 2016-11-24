@@ -173,22 +173,22 @@ public abstract class UnspecificPlugin {
 	static UnspecificPlugin create(PluginType type, Object implementation) throws SecurityException,
 			NoSuchMethodException {
 		switch (type) {
-		case Command:
-			// return new CommandPlugin(implementation);
-			throw new NotImplementedException();
-		case Import:
-			// return new ImportPlugin(implementation);
-			throw new NotImplementedException();
-		case Opac:
-			return new CataloguePlugin(implementation);
-		case Step:
-			// return new StepPlugin(implementation);
-			throw new NotImplementedException();
-		case Validation:
-			// return new ValidationPlugin(implementation);
-			throw new NotImplementedException();
-		default:
-			throw new UnreachableCodeException();
+			case Command:
+				// return new CommandPlugin(implementation);
+				throw new NotImplementedException();
+			case Import:
+				// return new ImportPlugin(implementation);
+				throw new NotImplementedException();
+			case Opac:
+				return new CataloguePlugin(implementation);
+			case Step:
+				// return new StepPlugin(implementation);
+				throw new NotImplementedException();
+			case Validation:
+				// return new ValidationPlugin(implementation);
+				throw new NotImplementedException();
+			default:
+				throw new UnreachableCodeException();
 		}
 	}
 
@@ -261,7 +261,7 @@ public abstract class UnspecificPlugin {
 	 */
 	protected final Method getDeclaredMethod(String name, Class<?> parameter0Type, Class<?> resultType)
 			throws SecurityException, NoSuchMethodException {
-		return getDeclaredMethod(name, new Class[] { parameter0Type }, resultType);
+		return getDeclaredMethod(name, new Class[] {parameter0Type }, resultType);
 	}
 
 	/**
@@ -371,7 +371,7 @@ public abstract class UnspecificPlugin {
 	 */
 	protected final Method getOptionalMethod(String name, Class<?> parameter0Type, Class<?> resultType)
 			throws SecurityException {
-		return getOptionalMethod(name, new Class[] { parameter0Type }, resultType);
+		return getOptionalMethod(name, new Class[] {parameter0Type }, resultType);
 	}
 
 	/**
@@ -468,7 +468,7 @@ public abstract class UnspecificPlugin {
 	 * @return an object of the specified type
 	 */
 	protected <T> T invokeQuietly(Object object, Method method, Object arg0, Class<T> resultType) {
-		return invokeQuietly(object, method, new Object[] { arg0 }, resultType);
+		return invokeQuietly(object, method, new Object[] {arg0 }, resultType);
 	}
 
 	/**
@@ -521,13 +521,13 @@ public abstract class UnspecificPlugin {
 	 */
 	public static PluginType typeOf(Class<? extends UnspecificPlugin> clazz) {
 		// if (ImportPlugin.class.isAssignableFrom(clazz))
-		//     return PluginType.Import;
+		// return PluginType.Import;
 		// if (StepPlugin.class.isAssignableFrom(clazz))
-		//     return PluginType.Step;
+		// return PluginType.Step;
 		// if (ValidationPlugin.class.isAssignableFrom(clazz))
-		//     return PluginType.Validation;
+		// return PluginType.Validation;
 		// if (CommandPlugin.class.isAssignableFrom(clazz))
-		//     return PluginType.Command;
+		// return PluginType.Command;
 		if (CataloguePlugin.class.isAssignableFrom(clazz))
 			return PluginType.Opac;
 		return null;

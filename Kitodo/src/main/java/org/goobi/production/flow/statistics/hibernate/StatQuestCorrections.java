@@ -55,8 +55,7 @@ import de.sub.goobi.helper.enums.HistoryEventType;
  * 
  * @author Wulf Riebensahm
  ****************************************************************************/
-public class StatQuestCorrections implements
-		IStatisticalQuestionLimitedTimeframe {
+public class StatQuestCorrections implements IStatisticalQuestionLimitedTimeframe {
 
 	private Date timeFilterFrom;
 	private TimeUnit timeGrouping;
@@ -73,8 +72,7 @@ public class StatQuestCorrections implements
 
 	private TimeUnit getTimeUnit() {
 		if (this.timeGrouping == null) {
-			throw new NullPointerException(
-					"The called method in StatQuestCorrection requires that TimeUnit was set");
+			throw new NullPointerException("The called method in StatQuestCorrection requires that TimeUnit was set");
 		}
 		return this.timeGrouping;
 	}
@@ -97,7 +95,7 @@ public class StatQuestCorrections implements
 					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
-		//gathering IDs from the filter passed by dataSource
+		// gathering IDs from the filter passed by dataSource
 		List<Integer> IDlist = null;
 		try {
 			IDlist = originalFilter.getIDList();
@@ -106,32 +104,30 @@ public class StatQuestCorrections implements
 		if (IDlist == null || IDlist.size() == 0) {
 			return null;
 		}
-		
+
 		// adding time restrictions
-		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
-				getTimeUnit(), IDlist).getSQL(HistoryEventType.stepError, null,
-				false, false);
+		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), IDlist).getSQL(
+				HistoryEventType.stepError, null, false, false);
 
 		Session session = Helper.getHibernateSession();
 
 		SQLQuery query = session.createSQLQuery(natSQL);
 
-		//needs to be there otherwise an exception is thrown
+		// needs to be there otherwise an exception is thrown
 		query.addScalar("stepCount", StandardBasicTypes.DOUBLE);
 		query.addScalar("intervall", StandardBasicTypes.STRING);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
-		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
-				this.getClass()).getTitle()
+		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(this.getClass()).getTitle()
 				+ Helper.getTranslation("_(number)"));
 
 		DataRow dataRow;
 
 		// each data row comes out as an Array of Objects
 		// the only way to extract the data is by knowing
-		// in which order they come out 
+		// in which order they come out
 		for (Object obj : list) {
 			dataRow = new DataRow(null);
 			Object[] objArr = (Object[]) obj;
@@ -139,25 +135,23 @@ public class StatQuestCorrections implements
 
 				// getting localized time group unit
 
-				//setting row name with date/time extraction based on the group
+				// setting row name with date/time extraction based on the group
 
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
 
-				dataRow.addValue(Helper.getTranslation("Corrections/Errors"),
-						(new Converter(objArr[0]).getDouble()));
+				dataRow.addValue(Helper.getTranslation("Corrections/Errors"), (new Converter(objArr[0]).getDouble()));
 
 			} catch (Exception e) {
 				dataRow.addValue(e.getMessage(), 0.0);
 			}
 
-			//finally adding dataRow to DataTable and fetching next row
+			// finally adding dataRow to DataTable and fetching next row
 			dtbl.addDataRow(dataRow);
 		}
 
-		// a list of DataTables is expected as return Object, even if there is only one 
+		// a list of DataTables is expected as return Object, even if there is only one
 		// Data Table as it is here in this implementation
-		dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit()
-				.getSingularTitle()));
+		dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit().getSingularTitle()));
 		allTables.add(dtbl);
 		return allTables;
 	}

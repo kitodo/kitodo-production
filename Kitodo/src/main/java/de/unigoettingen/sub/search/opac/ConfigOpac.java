@@ -85,11 +85,11 @@ public class ConfigOpac {
 	public static ArrayList<String> getAllCatalogueTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		try {
-		int countCatalogues = getConfig().getMaxIndex("catalogue");
-		for (int i = 0; i <= countCatalogues; i++) {
-			String title = getConfig().getString("catalogue(" + i + ")[@title]");
-			myList.add(title);
-		}
+			int countCatalogues = getConfig().getMaxIndex("catalogue");
+			for (int i = 0; i <= countCatalogues; i++) {
+				String title = getConfig().getString("catalogue(" + i + ")[@title]");
+				myList.add(title);
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -104,11 +104,11 @@ public class ConfigOpac {
 	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		try {
-		int countTypes = getConfig().getMaxIndex("doctypes.type");
-		for (int i = 0; i <= countTypes; i++) {
-			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
-			myList.add(title);
-		}
+			int countTypes = getConfig().getMaxIndex("doctypes.type");
+			for (int i = 0; i <= countTypes; i++) {
+				String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
+				myList.add(title);
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -124,9 +124,9 @@ public class ConfigOpac {
 	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
 		try {
-		for (String title : getAllDoctypeTitles()) {
-			myList.add(getDoctypeByName(title));
-		}
+			for (String title : getAllDoctypeTitles()) {
+				myList.add(getDoctypeByName(title));
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());

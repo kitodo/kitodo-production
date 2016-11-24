@@ -202,7 +202,6 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 		createIDListFromCriteria(crit);
 		crit = null;
 		crit = createCriteriaFromIDList();
-	
 
 		return crit;
 	}
@@ -215,7 +214,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it
+				.hasNext();) {
 			Prozess p = (Prozess) it.next();
 			myIds.add(p.getId());
 			myCriteria = null;
@@ -310,7 +310,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setSQL() ");
 	}
 
 	protected static class Parameters {

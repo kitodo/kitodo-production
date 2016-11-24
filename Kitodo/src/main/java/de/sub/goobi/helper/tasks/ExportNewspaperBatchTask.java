@@ -146,7 +146,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	private final double divisor;
 
 	private final HashMap<Integer, String> collectedYears;
-	
+
 	/**
 	 * The field batchId holds the ID number of the batch whose processes are to
 	 * export.
@@ -179,8 +179,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
-			DAOException, IOException, InterruptedException {
+	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException,
+			SwapException, DAOException, IOException, InterruptedException {
 		super(batch.getLabel());
 		batchId = batch.getId();
 		action = 1;
@@ -233,7 +233,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	public void run() {
 		Prozess process = null;
 		try {
-			if(processesIterator == null){
+			if (processesIterator == null) {
 				batch = BatchDAO.read(batchId);
 				processesIterator = batch.getProcesses().iterator();
 			}
@@ -260,8 +260,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 					if (isInterrupted()) {
 						return;
 					}
-					MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(),
-							collectedYears, aggregation);
+					MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(), collectedYears,
+							aggregation);
 					setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
 					new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
@@ -269,7 +269,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 					setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 				}
 			}
-		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
+		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException,
+								// InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
 					+ (process != null ? process.getTitel() : "") + ": " + e.getMessage();
 			setException(new RuntimeException(message, e));
@@ -573,9 +574,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
-			Prefs ruleSet) throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException,
-			TypeNotAllowedAsChildException {
+	private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act, Prefs ruleSet)
+			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		for (Integer year : years.keySet()) {
 			if (year.intValue() != ownYear) {
 				DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
@@ -629,11 +629,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 			try {
 				child.addMetadata(optionalField, identifier);
 			} catch (MetadataTypeNotAllowedException e) {
-				if(logger.isInfoEnabled()){
-					logger.info(e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
+				if (logger.isInfoEnabled()) {
+					logger.info(e.getMessage()
+							.replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
 				}
 			}
-			
+
 			Integer rank = null;
 			try {
 				rank = Integer.valueOf(identifier);
@@ -644,7 +645,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 				}
 			}
 			parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
-			
+
 			return child;
 		}
 	}
@@ -685,8 +686,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 							}
 						} catch (NumberFormatException e) {
 							if (logger.isEnabledFor(Level.WARN)) {
-								String typeName = aforeborn.getType() != null && aforeborn.getType().getName() != null
-										? aforeborn.getType().getName() : "cross-reference";
+								String typeName = aforeborn.getType() != null && aforeborn.getType().getName() != null ? aforeborn
+										.getType().getName() : "cross-reference";
 								logger.warn("Cannot determine position to place " + typeName
 										+ " correctly because the sorting criterion of one of its siblings is \""
 										+ metadataElement.getValue() + "\", but must be numeric.");
@@ -727,9 +728,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             allow the MetadataType or if the maximum number of Metadata
 	 *             (of this type) is already available
 	 */
-	private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
-			int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
-			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+	private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
+			String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet) throws TypeNotAllowedForParentException,
+			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 		for (int i = 0; i < issues.size(); i++) {
 			if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
 				insertIssueReference(act, ruleSet, issues.getKey(i), issues.getValue(i));
@@ -765,12 +766,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 		DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
 				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
 				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
-		DocStruct month = getOrCreateChild(year, monthLevelName,
-				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-		DocStruct day = getOrCreateChild(month, dayLevelName,
-				MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
-				MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
+		DocStruct month = getOrCreateChild(year, monthLevelName, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+				Integer.toString(date.getMonthOfYear()), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
+		DocStruct day = getOrCreateChild(month, dayLevelName, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+				Integer.toString(date.getDayOfMonth()), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
 		DocStruct issue = day.createChild(issueLevelName, act, ruleset);
 		issue.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
 	}

@@ -49,8 +49,7 @@ public class MapMessageObjectReader {
 	 */
 	public MapMessageObjectReader(MapMessage message) {
 		if (message == null)
-			throw new IllegalArgumentException(
-					"MapMessageObjectReader: null argument in constructor.");
+			throw new IllegalArgumentException("MapMessageObjectReader: null argument in constructor.");
 		this.ticket = message;
 	}
 
@@ -71,29 +70,25 @@ public class MapMessageObjectReader {
 	 * @throws JMSException
 	 *             can be thrown by MapMessage.getObject(String)
 	 */
-	public Set<String> getMandatorySetOfString(String key)
-			throws IllegalArgumentException, JMSException {
+	public Set<String> getMandatorySetOfString(String key) throws IllegalArgumentException, JMSException {
 		Set<String> result = new HashSet<String>();
 		Boolean emptiness = Boolean.TRUE;
 
 		Object collectionObject = ticket.getObject(key);
 		if (collectionObject == null)
-			throw new IllegalArgumentException("Missing mandatory argument: \""
-					+ key + "\"");
+			throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
 		if (!(collectionObject instanceof Collection<?>))
 			throw new IllegalArgumentException("Incompatible types: \"" + key
 					+ "\" was not found to be of type Collection<?>.");
 		for (Object contentObject : (Collection<?>) collectionObject) {
 			if (contentObject == null || !(contentObject instanceof String))
-				throw new IllegalArgumentException(
-						"Incompatible types: An element of \"" + key
-								+ "\" was not found to be of type String.");
+				throw new IllegalArgumentException("Incompatible types: An element of \"" + key
+						+ "\" was not found to be of type String.");
 			result.add((String) contentObject);
 			emptiness = false;
 		}
 		if (emptiness)
-			throw new IllegalArgumentException("Missing mandatory argument: \""
-					+ key + "\" must not be empty.");
+			throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\" must not be empty.");
 		return result;
 	}
 
@@ -111,12 +106,10 @@ public class MapMessageObjectReader {
 	 * @throws JMSException
 	 *             can be thrown by MapMessage.getString(String)
 	 */
-	public String getMandatoryString(String key) throws IllegalArgumentException,
-			JMSException {
+	public String getMandatoryString(String key) throws IllegalArgumentException, JMSException {
 		String result = ticket.getString(key);
 		if (result == null || result.length() == 0)
-			throw new IllegalArgumentException("Missing mandatory argument: \""
-					+ key + "\"");
+			throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
 		return result;
 	}
 
@@ -148,12 +141,10 @@ public class MapMessageObjectReader {
 	 * @throws JMSException
 	 *             can be thrown by MapMessage.getString(String)
 	 */
-	public Integer getMandatoryInteger(String key) throws IllegalArgumentException,
-			JMSException {
+	public Integer getMandatoryInteger(String key) throws IllegalArgumentException, JMSException {
 		Integer result = ticket.getInt(key);
 		if (result == null)
-			throw new IllegalArgumentException("Missing mandatory argument: \""
-					+ key + "\"");
+			throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
 		return result;
 	}
 
@@ -190,16 +181,14 @@ public class MapMessageObjectReader {
 		for (Object keyObject : ((Map<?, ?>) mapObject).keySet()) {
 			Object valueObject = ((Map<?, ?>) mapObject).get(keyObject);
 			if (keyObject == null || !(keyObject instanceof String))
-				throw new IllegalArgumentException(
-						"Incompatible types: A key element of \"" + key
-								+ "\" was not found to be of type String.");
+				throw new IllegalArgumentException("Incompatible types: A key element of \"" + key
+						+ "\" was not found to be of type String.");
 			if (valueObject == null || !(valueObject instanceof String))
-				throw new IllegalArgumentException(
-						"Incompatible types: A value element of \"" + key
-								+ "\" was not found to be of type String.");	
+				throw new IllegalArgumentException("Incompatible types: A value element of \"" + key
+						+ "\" was not found to be of type String.");
 			result.put((String) keyObject, (String) valueObject);
 		}
-		
+
 		return result;
 	}
 
@@ -215,34 +204,8 @@ public class MapMessageObjectReader {
 	 * @throws JMSException
 	 *             can be thrown by MapMessage
 	 */
-	public boolean hasField(String string) throws IllegalArgumentException,
-			JMSException {
+	public boolean hasField(String string) throws IllegalArgumentException, JMSException {
 		String result = ticket.getString(string);
 		return (result != null && result.length() > 0);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

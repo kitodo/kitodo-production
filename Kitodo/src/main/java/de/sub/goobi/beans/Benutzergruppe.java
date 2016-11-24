@@ -169,7 +169,6 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		return this.getTitel().compareTo(o.getTitel());
 	}
 
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Benutzergruppe)) {

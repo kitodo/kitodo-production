@@ -172,7 +172,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * generate referenceCurve
 	 */
 	private DataRow referenceCurve(DataRow referenceRow) {
-		DataRow orientationRow = requiredOutput(); 
+		DataRow orientationRow = requiredOutput();
 		DataRow dataRow = new DataRow(Helper.getTranslation("ReferenceCurve"));
 		dataRow.setShowPoint(false);
 		// may have to be calculated differently
@@ -181,8 +181,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 		Double remainingOutput = this.requiredDailyOutput * this.timeGrouping.getDayFactor() * count;
 		Double remainingAverageOutput = remainingOutput / count;
-
-	
 
 		// the way this is calculated is by subtracting each value from the
 		// total remaining output
@@ -195,7 +193,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 				remainingOutput = remainingOutput - doneValue;
 			}
 			count--;
-			Date breakOffDate = new DateTime(this.timeFilterFrom).plusDays((int) (i * this.timeGrouping.getDayFactor())).toDate();
+			Date breakOffDate = new DateTime(this.timeFilterFrom)
+					.plusDays((int) (i * this.timeGrouping.getDayFactor())).toDate();
 			if (breakOffDate.before(new Date())) {
 				remainingAverageOutput = remainingOutput / count;
 			}
@@ -335,8 +334,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true,
-				this.flagIncludeLoops);
+		String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping,
+				this.myIDlist).getSQL(requestedType, null, true, this.flagIncludeLoops);
 
 		return buildDataTableFromSQL(natSQL);
 	}

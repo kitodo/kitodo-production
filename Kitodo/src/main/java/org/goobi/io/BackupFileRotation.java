@@ -77,8 +77,9 @@ public class BackupFileRotation {
 		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
 		if (metaFiles.length < 1) {
-			if(myLogger.isInfoEnabled()){
-				myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			if (myLogger.isInfoEnabled()) {
+				myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory
+						+ " found.");
 			}
 			return;
 		}
@@ -139,7 +140,7 @@ public class BackupFileRotation {
 			try {
 				FilesystemHelper.renameFile(oldName, newName);
 			} catch (FileNotFoundException oldNameNotYetPresent) {
-				if(myLogger.isDebugEnabled()){
+				if (myLogger.isDebugEnabled()) {
 					myLogger.debug(oldName + " does not yet exist >>> nothing to do");
 				}
 				continue;

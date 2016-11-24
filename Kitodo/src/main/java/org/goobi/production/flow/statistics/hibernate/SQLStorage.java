@@ -44,8 +44,7 @@ import de.sub.goobi.helper.enums.HistoryEventType;
  */
 public class SQLStorage extends SQLGenerator {
 
-	public SQLStorage(Date timeFrom, Date timeTo, TimeUnit timeUnit,
-			List<Integer> ids) {
+	public SQLStorage(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
 		// "history.processid overrides the defautl value of prozesseID
 		super(timeFrom, timeTo, timeUnit, ids, "history.processID");
 	}
@@ -58,40 +57,30 @@ public class SQLStorage extends SQLGenerator {
 	public String getSQL() {
 
 		String subQuery = "";
-		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
 		String outerWhereClause = "";
 
 		if (outerWhereClauseTimeFrame.length() > 0) {
 			outerWhereClause = "WHERE " + outerWhereClauseTimeFrame;
 		}
 
-		//inner table -> alias "table_1"
+		// inner table -> alias "table_1"
 		String innerWhereClause;
 
 		if (myIdsCondition != null) {
 			// adding ids to the where clause
-			innerWhereClause = "(history.type="
-					+ HistoryEventType.storageDifference.getValue().toString()
-					+ ")  AND (" + myIdsCondition + ")";
+			innerWhereClause = "(history.type=" + HistoryEventType.storageDifference.getValue().toString() + ")  AND ("
+					+ myIdsCondition + ")";
 		} else {
-			innerWhereClause = "(history.type="
-					+ HistoryEventType.storageDifference.getValue().toString()
-					+ ") ";
+			innerWhereClause = "(history.type=" + HistoryEventType.storageDifference.getValue().toString() + ") ";
 		}
 
-		subQuery = "(SELECT numericvalue AS 'storage', "
-				+ getIntervallExpression(myTimeUnit, "history.date")
-				+ " "
-				+ "AS 'intervall', history.date AS 'timeLimiter' FROM history WHERE "
-				+ innerWhereClause + ") AS table_1";
+		subQuery = "(SELECT numericvalue AS 'storage', " + getIntervallExpression(myTimeUnit, "history.date") + " "
+				+ "AS 'intervall', history.date AS 'timeLimiter' FROM history WHERE " + innerWhereClause
+				+ ") AS table_1";
 
-		mySql = "SELECT sum(table_1.storage) AS 'storage', table_1.intervall AS 'intervall' FROM "
-				+ subQuery
-				+ " "
-				+ outerWhereClause
-				+ " GROUP BY table_1.intervall "
-				+ "ORDER BY table_1.timeLimiter";
+		mySql = "SELECT sum(table_1.storage) AS 'storage', table_1.intervall AS 'intervall' FROM " + subQuery + " "
+				+ outerWhereClause + " GROUP BY table_1.intervall " + "ORDER BY table_1.timeLimiter";
 
 		return mySql;
 	}

@@ -56,7 +56,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	private Prozesseigenschaft prozesseigenschaft;
 	private AccessCondition currentStepAccessCondition;
 	private boolean currentStepDuplicationAllowed = false;
-	
+
 	public ProcessProperty() {
 		this.container = 0;
 		this.value = "";
@@ -186,14 +186,12 @@ public class ProcessProperty implements IProperty, Serializable {
 		this.possibleValues = possibleValues;
 	}
 
-	
 	@Override
 	public void setDateValue(Date inDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		value= format.format(inDate);
+		value = format.format(inDate);
 	}
 
-	
 	@Override
 	public Date getDateValue() {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -208,8 +206,7 @@ public class ProcessProperty implements IProperty, Serializable {
 			return new Date();
 		}
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -334,9 +331,9 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 	@Override
 	public void transfer() {
-			this.prozesseigenschaft.setWert(this.value);
-			this.prozesseigenschaft.setTitel(this.name);
-			this.prozesseigenschaft.setContainer(this.container);
+		this.prozesseigenschaft.setWert(this.value);
+		this.prozesseigenschaft.setTitel(this.name);
+		this.prozesseigenschaft.setContainer(this.container);
 		// }
 	}
 
@@ -402,7 +399,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	public void setDuplicationAllowed(boolean duplicate) {
 		currentStepDuplicationAllowed = duplicate;
 	}
-	
+
 	public boolean getDuplicationAllowed() {
 		return currentStepDuplicationAllowed;
 	}

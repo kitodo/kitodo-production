@@ -94,8 +94,9 @@ public class ExportMets {
 	 * @throws DocStructHasNoTypeException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException,
+			DocStructHasNoTypeException, PreferencesException, WriteException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
@@ -123,9 +124,10 @@ public class ExportMets {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException,
+			PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+			TypeNotAllowedForParentException {
 
 		/*
 		 * -------------------------------- Read Document --------------------------------
@@ -192,9 +194,9 @@ public class ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 
-	protected boolean writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
-			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
-			TypeNotAllowedForParentException {
+	protected boolean writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile,
+			boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException,
+			InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
@@ -205,7 +207,8 @@ public class ExportMets {
 		 */
 		DigitalDocument dd = gdzfile.getDigitalDocument();
 		if (dd.getFileSet() == null) {
-			Helper.setMeldung(myProzess.getTitel() + ": digital document does not contain images; temporarily adding them for mets file creation");
+			Helper.setMeldung(myProzess.getTitel()
+					+ ": digital document does not contain images; temporarily adding them for mets file creation");
 
 			MetadatenImagesHelper mih = new MetadatenImagesHelper(this.myPrefs, dd);
 			mih.createPagination(myProzess, null);
@@ -217,8 +220,9 @@ public class ExportMets {
 		DocStruct topElement = dd.getLogicalDocStruct();
 		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
-				throw new PreferencesException(myProzess.getTitel()
-						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
+				throw new PreferencesException(
+						myProzess.getTitel()
+								+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
 			} else {
 				topElement = topElement.getAllChildren().get(0);
 			}
@@ -227,7 +231,8 @@ public class ExportMets {
 		/*
 		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
 		 */
-		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
+		if (topElement.getAllToReferences("logical_physical") == null
+				|| topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
 				Helper.setMeldung(myProzess.getTitel()
 						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
@@ -309,7 +314,7 @@ public class ExportMets {
 		mm.setPurlUrl(vp.replace(myProzess.getProjekt().getMetsPurl()));
 		mm.setContentIDs(vp.replace(myProzess.getProjekt().getMetsContentIDs()));
 
-		// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl  is the
+		// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
 		// pointer used to point to the superordinate (anchor) file, that is
 		// representing a “virtual” group such as a series. Several anchors
 		// pointer paths can be defined/ since it is possible to define several
@@ -324,7 +329,7 @@ public class ExportMets {
 
 		// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
 		// from the (lowest) superordinate (anchor) file to the lowest level
-		// file (the non-anchor file). 
+		// file (the non-anchor file).
 		String metsPointerToReplace = myProzess.getProjekt().getMetsPointerPathAnchor();
 		String metsPointer = vp.replace(metsPointerToReplace);
 		mm.setMptrAnchorUrl(metsPointer);

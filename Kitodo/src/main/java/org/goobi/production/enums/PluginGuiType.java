@@ -1,4 +1,5 @@
 package org.goobi.production.enums;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,7 +28,7 @@ package org.goobi.production.enums;
  * exception statement from your version.
  */
 public enum PluginGuiType {
-	
+
 	NONE, PART, FULL;
 
 }

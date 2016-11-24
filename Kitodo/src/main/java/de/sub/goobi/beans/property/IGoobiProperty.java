@@ -1,4 +1,5 @@
 package de.sub.goobi.beans.property;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,7 +28,6 @@ package de.sub.goobi.beans.property;
  * exception statement from your version.
  */
 import java.util.Date;
-
 
 import de.sub.goobi.helper.enums.PropertyType;
 
@@ -72,13 +72,12 @@ public interface IGoobiProperty {
 	 */
 	public PropertyType getType();
 
-
 	public void setContainer(Integer order);
-	
+
 	public Integer getContainer();
-	
+
 	public String getNormalizedTitle();
-	
+
 	public String getNormalizedValue();
-	
+
 }

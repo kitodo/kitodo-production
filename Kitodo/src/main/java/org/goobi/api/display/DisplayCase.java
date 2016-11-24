@@ -35,7 +35,6 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 
 import de.sub.goobi.beans.Prozess;
 
-
 public class DisplayCase {
 	private DisplayType displayType = null;
 	private ArrayList<Item> itemList = new ArrayList<Item>();
@@ -43,23 +42,25 @@ public class DisplayCase {
 	private Prozess myProcess;
 	private String metaName;
 	private BindState myBindState;
-	
+
 	/**
 	 * gets items with current bind state
 	 * 
 	 * @param inProcess
 	 * @param metaType
 	 */
-	
-	public DisplayCase(Prozess inProcess, String metaType ){
+
+	public DisplayCase(Prozess inProcess, String metaType) {
 		metaName = metaType;
 		myProcess = inProcess;
 		myBindState = Modes.getBindState();
 		try {
 			configDisplay = ConfigDispayRules.getInstance();
 			if (configDisplay != null) {
-			displayType = configDisplay.getElementTypeByName(myProcess.getProjekt().getTitel(), myBindState.getTitle(), metaName);
-			itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(), myBindState.getTitle(), metaName, displayType);
+				displayType = configDisplay.getElementTypeByName(myProcess.getProjekt().getTitel(),
+						myBindState.getTitle(), metaName);
+				itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(),
+						myBindState.getTitle(), metaName, displayType);
 			} else {
 				// no ruleset file
 				displayType = DisplayType.getByTitle("textarea");
@@ -70,7 +71,7 @@ public class DisplayCase {
 			displayType = DisplayType.getByTitle("textarea");
 			itemList.add(new Item(metaName, "", false));
 		}
-			
+
 	}
 
 	/**
@@ -80,8 +81,8 @@ public class DisplayCase {
 	 * @param bind
 	 * @param metaType
 	 */
-	
-	public DisplayCase(Prozess inProcess, String bind, String metaType ){
+
+	public DisplayCase(Prozess inProcess, String bind, String metaType) {
 		metaName = metaType;
 		myProcess = inProcess;
 		myBindState = Modes.getBindState();
@@ -89,7 +90,8 @@ public class DisplayCase {
 			configDisplay = ConfigDispayRules.getInstance();
 			if (configDisplay != null) {
 				displayType = configDisplay.getElementTypeByName(myProcess.getProjekt().getTitel(), bind, metaName);
-				itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(), bind, metaName, displayType);
+				itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(), bind, metaName,
+						displayType);
 			} else {
 				// no ruleset file
 				displayType = DisplayType.getByTitle("textarea");
@@ -100,14 +102,14 @@ public class DisplayCase {
 			displayType = DisplayType.getByTitle("textarea");
 			itemList.add(new Item(metaName, "", false));
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return current DisplayType
 	 */
-	
+
 	public DisplayType getDisplayType() {
 		return displayType;
 	}
@@ -116,7 +118,7 @@ public class DisplayCase {
 	 * 
 	 * @param itemList ArrayList with items for metadatum
 	 */
-	
+
 	public void setItemList(ArrayList<Item> itemList) {
 		this.itemList = itemList;
 	}
@@ -128,5 +130,5 @@ public class DisplayCase {
 
 	public ArrayList<Item> getItemList() {
 		return itemList;
-	}	
+	}
 }

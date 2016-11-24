@@ -81,7 +81,7 @@ public class HibernateUtilOld {
 	 * @return SessionFactory
 	 */
 	public static SessionFactory getSessionFactory() {
-	
+
 		return sessionFactory;
 	}
 
@@ -136,7 +136,7 @@ public class HibernateUtilOld {
 		try {
 			if (s == null) {
 				if (getInterceptor() != null) {
-					if(log.isDebugEnabled()){
+					if (log.isDebugEnabled()) {
 						log.debug("Using interceptor: " + getInterceptor().getClass());
 					}
 					s = getSessionFactory().openSession();
@@ -216,7 +216,6 @@ public class HibernateUtilOld {
 			closeSession();
 		}
 	}
-
 
 	/**
 	 * Disconnect and return Session from current Thread.

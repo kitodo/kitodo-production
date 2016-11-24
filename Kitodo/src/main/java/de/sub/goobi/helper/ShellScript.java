@@ -163,8 +163,7 @@ public class ShellScript {
 		}
 		Process process = null;
 		try {
-			String[] callSequence = commandLine.toArray(new String[commandLine
-					.size()]);
+			String[] callSequence = commandLine.toArray(new String[commandLine.size()]);
 			process = new ProcessBuilder(callSequence).start();
 			outputChannel = inputStreamToLinkedList(process.getInputStream());
 			errorChannel = inputStreamToLinkedList(process.getErrorStream());
@@ -188,7 +187,7 @@ public class ShellScript {
 				interrupt = true;
 			}
 		} while (interrupted);
-		if (interrupt){
+		if (interrupt) {
 			Thread.currentThread().interrupt();
 		}
 		return errorLevel;
@@ -202,8 +201,7 @@ public class ShellScript {
 	 *            Stream to convert
 	 * @return A linked list holding the single lines.
 	 */
-	public static LinkedList<String> inputStreamToLinkedList(
-			InputStream myInputStream) {
+	public static LinkedList<String> inputStreamToLinkedList(InputStream myInputStream) {
 		LinkedList<String> result = new LinkedList<String>();
 		Scanner inputLines = null;
 		try {
@@ -252,8 +250,7 @@ public class ShellScript {
 	 * @throws IOException
 	 *             If an I/O error happens
 	 */
-	public static int legacyCallShell2(String nonSpacesafeScriptingCommand)
-			throws IOException, InterruptedException {
+	public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException, InterruptedException {
 		String[] tokenisedCommand = nonSpacesafeScriptingCommand.split("\\s");
 		ShellScript s;
 		int err = ShellScript.ERRORLEVEL_ERROR;
@@ -275,9 +272,7 @@ public class ShellScript {
 			}
 		} catch (FileNotFoundException e) {
 			logger.error("FileNotFoundException in callShell2()", e);
-			Helper.setFehlerMeldung(
-					"Couldn't find script file in callShell2(), error",
-					e.getMessage());
+			Helper.setFehlerMeldung("Couldn't find script file in callShell2(), error", e.getMessage());
 		}
 		return err;
 	}

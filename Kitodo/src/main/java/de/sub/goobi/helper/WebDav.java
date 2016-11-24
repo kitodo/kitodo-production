@@ -58,10 +58,10 @@ public class WebDav implements Serializable {
 	 */
 
 	private static String DONEDIRECTORYNAME = "fertig/";
-	public WebDav(){
-		DONEDIRECTORYNAME =ConfigMain.getParameter("doneDirectoryName", "fertig/");
-	}
 
+	public WebDav() {
+		DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+	}
 
 	/**
 	 * Retrieve all folders from one directory
@@ -124,15 +124,15 @@ public class WebDav implements Serializable {
 
 		for (Iterator<String> it = inList.iterator(); it.hasNext();) {
 			String myname = it.next();
-            FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
+			FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
 		}
 	}
 
 	public void UploadFromHome(Prozess myProzess) {
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
-        if (aktuellerBenutzer != null) {
-        	UploadFromHome(aktuellerBenutzer, myProzess);
-        }
+		if (aktuellerBenutzer != null) {
+			UploadFromHome(aktuellerBenutzer, myProzess);
+		}
 	}
 
 	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
@@ -149,7 +149,7 @@ public class WebDav implements Serializable {
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
-			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
+			SafeFile projectDirectory = new SafeFile(nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
 				param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -164,7 +164,7 @@ public class WebDav implements Serializable {
 		nach = nach.replaceAll(" ", "__");
 		SafeFile benutzerHome = new SafeFile(nach);
 
-        FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
+		FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
@@ -184,10 +184,10 @@ public class WebDav implements Serializable {
 			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
 				SafeFile projekt = new SafeFile(userHome + myProzess.getProjekt().getTitel());
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
 				projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
 		} catch (Exception ioe) {
@@ -211,7 +211,7 @@ public class WebDav implements Serializable {
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
 
-		if(myLogger.isInfoEnabled()){
+		if (myLogger.isInfoEnabled()) {
 			myLogger.info("von: " + von);
 			myLogger.info("nach: " + nach);
 		}
@@ -232,8 +232,8 @@ public class WebDav implements Serializable {
 			command += aktuellerBenutzer.getLogin();
 		}
 		try {
-            	ShellScript.legacyCallShell2(command);
-            } catch (java.io.IOException ioe) {
+			ShellScript.legacyCallShell2(command);
+		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
 		} catch (InterruptedException e) {
@@ -250,11 +250,8 @@ public class WebDav implements Serializable {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
-			try (
-				BufferedWriter outfile =
-					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-						+ "tiffwriter.conf"), StandardCharsets.UTF_8));
-			) {
+			try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+					inProzess.getImagesDirectory() + "tiffwriter.conf"), StandardCharsets.UTF_8));) {
 				outfile.write(tif.getTiffAlles());
 			}
 		} catch (Exception e) {

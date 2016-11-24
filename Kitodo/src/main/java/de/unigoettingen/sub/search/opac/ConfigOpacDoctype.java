@@ -53,7 +53,7 @@ public class ConfigOpacDoctype {
 	public ConfigOpacDoctype() {
 		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
 	}
-	
+
 	ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
 			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
 			ArrayList<String> inMappings) {
@@ -67,7 +67,7 @@ public class ConfigOpacDoctype {
 		this.mappings = inMappings;
 	}
 
-	@XmlAttribute(name="key")
+	@XmlAttribute(name = "key")
 	public String getTitle() {
 		return this.title;
 	}
@@ -76,7 +76,7 @@ public class ConfigOpacDoctype {
 		return this.rulesetType;
 	}
 
-	@XmlElement(name="tiffHeaderTag")
+	@XmlElement(name = "tiffHeaderTag")
 	public String getTifHeaderType() {
 		return this.tifHeaderType;
 	}

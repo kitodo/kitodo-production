@@ -1,4 +1,5 @@
 package de.sub.goobi.persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -76,12 +77,12 @@ public class SchrittDAO extends BaseDAO {
 		Object o = t;
 		refresh(o);
 	}
-	
+
 	public void update(Schritt t) {
 		Object o = t;
 		updateObj(o);
 	}
-	
+
 	public Schritt load(int id) throws DAOException {
 		return (Schritt) loadObj(Schritt.class, id);
 	}

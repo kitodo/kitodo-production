@@ -54,7 +54,7 @@ public class Separator implements Selectable {
 	/**
 	 * Characters not allowed here.
 	 */
-	private static final int[] ILLEGAL_CHARACTERS = { 0, 34 };
+	private static final int[] ILLEGAL_CHARACTERS = {0, 34 };
 
 	/**
 	 * Regular expression to remove quotes from the input string.
@@ -72,12 +72,12 @@ public class Separator implements Selectable {
 		List<Separator> result = new LinkedList<Separator>();
 		Matcher m = UNQUOTE.matcher(data);
 		while (m.find()) {
-		    if (m.group(1) != null) {
-		        result.add(new Separator(m.group(1)));
-		    } else {
-		        result.add(new Separator(m.group()));
-		    }
-		} 
+			if (m.group(1) != null) {
+				result.add(new Separator(m.group(1)));
+			} else {
+				result.add(new Separator(m.group()));
+			}
+		}
 		return result;
 	}
 
@@ -97,8 +97,8 @@ public class Separator implements Selectable {
 			int codePoint = separator.codePointAt(i);
 			for (int illegal : ILLEGAL_CHARACTERS) {
 				if (codePoint == illegal) {
-					throw new IllegalArgumentException(
-							String.format("Illegal character %c (U+%04X) at index %d.", illegal, illegal, i));
+					throw new IllegalArgumentException(String.format("Illegal character %c (U+%04X) at index %d.",
+							illegal, illegal, i));
 				}
 			}
 		}

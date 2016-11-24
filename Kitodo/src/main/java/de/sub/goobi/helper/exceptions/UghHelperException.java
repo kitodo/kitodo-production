@@ -28,13 +28,13 @@ package de.sub.goobi.helper.exceptions;
  * exception statement from your version.
  */
 public class UghHelperException extends Exception {
-   private static final long serialVersionUID = -7355142413216742677L;
+	private static final long serialVersionUID = -7355142413216742677L;
 
-   public UghHelperException() {
-      super();
-   }
+	public UghHelperException() {
+		super();
+	}
 
-   public UghHelperException(String s) {
-      super(s);
-   }
+	public UghHelperException(String s) {
+		super(s);
+	}
 }

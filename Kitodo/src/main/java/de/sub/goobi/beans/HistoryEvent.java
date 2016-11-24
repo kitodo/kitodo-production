@@ -74,7 +74,8 @@ public class HistoryEvent implements Serializable {
 	 *            process of HistoryEvent
 	 */
 
-	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process) {
+	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType,
+			Prozess process) {
 		super();
 		this.date = date;
 		numericValue = inNumericValue.doubleValue();
@@ -254,7 +255,7 @@ public class HistoryEvent implements Serializable {
 
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

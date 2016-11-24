@@ -64,18 +64,18 @@ public class StepManager {
 	}
 
 	public static void updateStep(StepObject step) {
-		
+
 		try {
 			MySQLHelper.getInstance().updateStep(step);
 		} catch (SQLException e) {
 			logger.error("Cannot not save step with id " + step.getId(), e);
 		}
-		
+
 	}
 
 	public static void addHistory(Date myDate, double order, String value, int type, int processId) {
 		try {
-			MySQLHelper.getInstance().addHistory( myDate,  order,  value,  type,  processId);
+			MySQLHelper.getInstance().addHistory(myDate, order, value, type, processId);
 		} catch (SQLException e) {
 			logger.error("Cannot not save history event", e);
 		}
@@ -89,7 +89,8 @@ public class StepManager {
 		}
 		return new ArrayList<String>();
 	}
-	public static Map<String,String> loadScriptMap(int id) {
+
+	public static Map<String, String> loadScriptMap(int id) {
 		try {
 			return MySQLHelper.getScriptMapForStep(id);
 		} catch (SQLException e) {
@@ -97,7 +98,7 @@ public class StepManager {
 		}
 		return new HashMap<String, String>();
 	}
-	
+
 	public static List<Integer> getStepIds(String query) {
 		try {
 			return MySQLHelper.getStepIds(query);
@@ -106,5 +107,5 @@ public class StepManager {
 		}
 		return new ArrayList<Integer>();
 	}
-	
+
 }

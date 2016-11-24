@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DataCopier {
-	
+
 	private static final Logger LOG = Logger.getLogger(DataCopier.class);
 
 	/**

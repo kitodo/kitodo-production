@@ -32,27 +32,27 @@ public class CommandResponse {
 	private int status = 200;
 	private String title;
 	private String message;
-	
-	public CommandResponse(int status, String inTitle, String inMessage){
+
+	public CommandResponse(int status, String inTitle, String inMessage) {
 		this.status = status;
 		title = inTitle;
 		message = inMessage;
 	}
-	
-	public CommandResponse(String inTitle, String inMessage){
+
+	public CommandResponse(String inTitle, String inMessage) {
 		status = 200;
 		title = inTitle;
 		message = inMessage;
 	}
-	
+
 	public int getStatus() {
 		return status;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getMessage() {
 		return message;
 	}

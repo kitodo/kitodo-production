@@ -100,7 +100,8 @@ public class HelperForm {
 	}
 
 	public String getApplicationTitleStyle() {
-		String rueck = ConfigMain.getParameter("ApplicationTitleStyle", "font-size:17; font-family:verdana; color: black;");
+		String rueck = ConfigMain.getParameter("ApplicationTitleStyle",
+				"font-size:17; font-family:verdana; color: black;");
 		return rueck;
 	}
 
@@ -146,7 +147,7 @@ public class HelperForm {
 		}
 		return myPrefs;
 	}
-	
+
 	public List<SelectItem> getDockets() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		try {
@@ -155,12 +156,11 @@ public class HelperForm {
 				answer.add(new SelectItem(d, d.getName(), null));
 			}
 		} catch (DAOException e) {
-			
+
 		}
-		
+
 		return answer;
 	}
-	
 
 	public List<String> getFileFormats() {
 		ArrayList<String> ffs = new ArrayList<String>();
@@ -279,12 +279,12 @@ public class HelperForm {
 			return false;
 		}
 	}
-	
+
 	public String getUserAgent() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		
-		return request.getHeader("User-Agent"); 
+
+		return request.getHeader("User-Agent");
 	}
 
 	/**

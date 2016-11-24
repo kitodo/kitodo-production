@@ -252,7 +252,8 @@ public class ProzessverwaltungForm extends BasisForm {
 								SafeFile[] subdirs = dir.listFiles();
 								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(
+												myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -265,7 +266,8 @@ public class ProzessverwaltungForm extends BasisForm {
 								SafeFile[] subdirs = dir.listFiles();
 								for (SafeFile imagedir : subdirs) {
 									if (imagedir.isDirectory()) {
-										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+										imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath().replace(
+												myProzess.getTitel(), myNewProcessTitle)));
 									}
 								}
 							}
@@ -273,18 +275,19 @@ public class ProzessverwaltungForm extends BasisForm {
 						{
 							// renaming defined direcories
 							String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
-							for(String processDir : processDirs) {
-								
-								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel()));
-								
+							for (String processDir : processDirs) {
+
+								String processDirAbsolut = FilenameUtils.concat(myProzess.getProcessDataDirectory(),
+										processDir.replace("(processtitle)", myProzess.getTitel()));
+
 								SafeFile dir = new SafeFile(processDirAbsolut);
-								if(dir.isDirectory())
-								{
-									dir.renameTo(new SafeFile(dir.getAbsolutePath().replace(myProzess.getTitel(), myNewProcessTitle)));
+								if (dir.isDirectory()) {
+									dir.renameTo(new SafeFile(dir.getAbsolutePath().replace(myProzess.getTitel(),
+											myNewProcessTitle)));
 								}
 							}
 						}
-						
+
 					} catch (Exception e) {
 						logger.warn("could not rename folder", e);
 					}
@@ -335,11 +338,11 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-			    ocr.deleteDir();
+				ocr.deleteDir();
 			}
 			SafeFile images = new SafeFile(this.myProzess.getImagesDirectory());
 			if (images.exists()) {
-			    images.deleteDir();
+				images.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -355,10 +358,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			deleteSymlinksFromUserHomes();
 		}
 		try {
-		    new SafeFile(this.myProzess.getProcessDataDirectory()).deleteDir();
+			new SafeFile(this.myProzess.getProcessDataDirectory()).deleteDir();
 			SafeFile ocr = new SafeFile(this.myProzess.getOcrDirectory());
 			if (ocr.exists()) {
-			    ocr.deleteDir();
+				ocr.deleteDir();
 			}
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -376,7 +379,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 
 			this.myFilteredDataSource = new UserProcessesFilter(true);
-						Criteria crit = this.myFilteredDataSource.getCriteria();
+			Criteria crit = this.myFilteredDataSource.getCriteria();
 			if (!this.showClosedProcesses) {
 				crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
 			}
@@ -443,15 +446,15 @@ public class ProzessverwaltungForm extends BasisForm {
 			// for statistics, we will have to hold a reference to the instance
 			// of
 			// UserDefinedFilter
-		
+
 			this.myFilteredDataSource = new UserDefinedFilter(this.filter);
-		
+
 			// set observable to replace helper.setMessage
 			this.myFilteredDataSource.getObservable().addObserver(new Helper().createObserver());
 
 			// // calling the criteria as the result of the filter
 			Criteria crit = this.myFilteredDataSource.getCriteria();
-			
+
 			// first manipulation of the created criteria
 
 			/* nur die Vorlagen oder alles */
@@ -735,7 +738,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occurred while trying to export METS file for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung(
+					"An error occurred while trying to export METS file for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportMETS error", e);
 		}
 	}
@@ -745,7 +749,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occurred while trying to export PDF file for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung(
+					"An error occurred while trying to export PDF file for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportPDF error", e);
 		}
 	}
@@ -755,7 +760,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			export.startExport(this.myProzess);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.myProzess.getTitel(), e);
+			Helper.setFehlerMeldung(
+					"An error occurred while trying to export to DMS for: " + this.myProzess.getTitel(), e);
 			logger.error("ExportDMS error", e);
 		}
 	}
@@ -844,8 +850,8 @@ public class ProzessverwaltungForm extends BasisForm {
 			WebDav myDav = new WebDav();
 			myDav.DownloadToHome(this.myProzess, 0, false);
 		} else {
-			Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + this.myProzess.getTitel() + " " + Helper.getTranslation("isInUse"),
-					this.myProzess.getImageFolderInUseUser().getNachVorname());
+			Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + this.myProzess.getTitel() + " "
+					+ Helper.getTranslation("isInUse"), this.myProzess.getImageFolderInUseUser().getNachVorname());
 			WebDav myDav = new WebDav();
 			myDav.DownloadToHome(this.myProzess, 0, true);
 		}
@@ -862,8 +868,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			if (!proz.isImageFolderInUse()) {
 				myDav.DownloadToHome(proz, 0, false);
 			} else {
-				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
-						.getImageFolderInUseUser().getNachVorname());
+				Helper.setMeldung(
+						null,
+						Helper.getTranslation("directory ") + " " + proz.getTitel() + " "
+								+ Helper.getTranslation("isInUse"), proz.getImageFolderInUseUser().getNachVorname());
 				myDav.DownloadToHome(proz, 0, true);
 			}
 		}
@@ -878,8 +886,10 @@ public class ProzessverwaltungForm extends BasisForm {
 				if (!proz.isImageFolderInUse()) {
 					myDav.DownloadToHome(proz, 0, false);
 				} else {
-					Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"),
-							proz.getImageFolderInUseUser().getNachVorname());
+					Helper.setMeldung(
+							null,
+							Helper.getTranslation("directory ") + " " + proz.getTitel() + " "
+									+ Helper.getTranslation("isInUse"), proz.getImageFolderInUseUser().getNachVorname());
 					myDav.DownloadToHome(proz, 0, true);
 				}
 			}
@@ -894,8 +904,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			if (!proz.isImageFolderInUse()) {
 				myDav.DownloadToHome(proz, 0, false);
 			} else {
-				Helper.setMeldung(null, Helper.getTranslation("directory ") + " " + proz.getTitel() + " " + Helper.getTranslation("isInUse"), proz
-						.getImageFolderInUseUser().getNachVorname());
+				Helper.setMeldung(
+						null,
+						Helper.getTranslation("directory ") + " " + proz.getTitel() + " "
+								+ Helper.getTranslation("isInUse"), proz.getImageFolderInUseUser().getNachVorname());
 				myDav.DownloadToHome(proz, 0, true);
 			}
 		}
@@ -947,7 +959,8 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void debug(String message, List<Schritt> bla) {
-		if (!logger.isEnabledFor(Level.WARN)) return;
+		if (!logger.isEnabledFor(Level.WARN))
+			return;
 		for (Schritt s : bla) {
 			logger.warn(message + " " + s.getTitel() + "   " + s.getReihenfolge());
 		}
@@ -1160,7 +1173,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			try {
 				Helper.getHibernateSession().refresh(this.mySchritt);
 			} catch (Exception e) {
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("could not refresh step with id " + this.mySchritt.getId(), e);
 				}
 			}
@@ -1169,7 +1182,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			try {
 				Helper.getHibernateSession().refresh(this.myProzess);
 			} catch (Exception e) {
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("could not refresh process with id " + this.myProzess.getId(), e);
 				}
 			}
@@ -1250,7 +1263,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		CalcMetadataAndImages(this.page.getCompleteList());
 	}
 
-	private void CalcMetadataAndImages(List<Prozess> inListe) throws IOException, InterruptedException, SwapException, DAOException {
+	private void CalcMetadataAndImages(List<Prozess> inListe) throws IOException, InterruptedException, SwapException,
+			DAOException {
 
 		this.myAnzahlList = new ArrayList<ProcessCounterObject>();
 		int allMetadata = 0;
@@ -1288,10 +1302,10 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 			if (tempImg > 0) {
 				countOfProcessesWithImages++;
-			} 
+			}
 			if (tempMetadata > 0) {
 				countOfProcessesWithMetadata++;
-			} 
+			}
 			if (tempDocstructs > 0) {
 				countOfProcessesWithDocstructs++;
 			}
@@ -1377,45 +1391,45 @@ public class ProzessverwaltungForm extends BasisForm {
 	 */
 
 	public void StatisticsStatusVolumes() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		this.statisticsManager.calculate();
 	}
 
 	public void StatisticsUsergroups() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		this.statisticsManager.calculate();
 	}
 
 	public void StatisticsRuntimeSteps() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.myFilteredDataSource, FacesContext
-				.getCurrentInstance().getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 	}
 
 	public void StatisticsProduction() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 	}
 
 	public void StatisticsStorage() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.myFilteredDataSource, FacesContext
+				.getCurrentInstance().getViewRoot().getLocale());
 	}
 
 	public void StatisticsCorrection() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 	}
 
 	public void StatisticsTroughput() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.THROUGHPUT, this.myFilteredDataSource,
+				FacesContext.getCurrentInstance().getViewRoot().getLocale());
 	}
 
 	public void StatisticsProject() {
-		this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.myFilteredDataSource, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+		this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.myFilteredDataSource, FacesContext
+				.getCurrentInstance().getViewRoot().getLocale());
 		this.statisticsManager.calculate();
 	}
 
@@ -1692,7 +1706,8 @@ public class ProzessverwaltungForm extends BasisForm {
 				response.setHeader("Content-Disposition", "attachment;filename=\"search.pdf\"");
 				ServletOutputStream out = response.getOutputStream();
 
-				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses, this.showArchivedProjects);
+				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
+						this.showArchivedProjects);
 				HSSFWorkbook wb = sr.getResult();
 				List<List<HSSFCell>> rowList = new ArrayList<List<HSSFCell>>();
 				HSSFSheet mySheet = wb.getSheetAt(0);
@@ -1756,7 +1771,8 @@ public class ProzessverwaltungForm extends BasisForm {
 				response.setContentType(contentType);
 				response.setHeader("Content-Disposition", "attachment;filename=\"search.xls\"");
 				ServletOutputStream out = response.getOutputStream();
-				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses, this.showArchivedProjects);
+				SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
+						this.showArchivedProjects);
 				HSSFWorkbook wb = sr.getResult();
 				wb.write(out);
 				out.flush();
@@ -1813,7 +1829,8 @@ public class ProzessverwaltungForm extends BasisForm {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + user.getNachVorname() + ")";
-			this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikifield(), "user", message));
+			this.myProzess.setWikifield(WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikifield(),
+					"user", message));
 			this.addToWikiField = "";
 			try {
 				this.dao.save(myProzess);
@@ -1847,13 +1864,13 @@ public class ProzessverwaltungForm extends BasisForm {
 		this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
 
 		for (ProcessProperty pt : this.processPropertyList) {
-	          if (pt.getProzesseigenschaft() == null) {
-	                Prozesseigenschaft pe = new Prozesseigenschaft();
-	                pe.setProzess(myProzess);
-	                pt.setProzesseigenschaft(pe);
-	                myProzess.getEigenschaftenInitialized().add(pe);
-	                pt.transfer();
-	            }
+			if (pt.getProzesseigenschaft() == null) {
+				Prozesseigenschaft pe = new Prozesseigenschaft();
+				pe.setProzess(myProzess);
+				pt.setProzesseigenschaft(pe);
+				myProzess.getEigenschaftenInitialized().add(pe);
+				pt.transfer();
+			}
 			if (!this.containers.keySet().contains(pt.getContainer())) {
 				PropertyListObject plo = new PropertyListObject(pt.getContainer());
 				plo.addToList(pt);
@@ -1935,8 +1952,10 @@ public class ProzessverwaltungForm extends BasisForm {
 					this.myProzess.getEigenschaftenInitialized().remove(pe);
 				}
 			}
-			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
-				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
+			if (!this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized()
+					.contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProzess().getEigenschaftenInitialized()
+						.add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				this.dao.save(this.myProzess);

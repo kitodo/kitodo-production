@@ -63,7 +63,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
 	 *            requires to have a field “id”.
 	 */
 	protected abstract void process(MapMessageObjectReader ticket) throws Exception;
-	
+
 	/**
 	 * Instantiating the class ActiveMQProcessor always requires to pass the
 	 * name of the queue it should be attached to. That means, your constructor
@@ -111,25 +111,23 @@ public abstract class ActiveMQProcessor implements MessageListener {
 			ticketID = ticket.getMandatoryString("id");
 
 			// turn on logging
-			Map<String,String> loggingConfig = new HashMap<String,String>();
+			Map<String, String> loggingConfig = new HashMap<String, String>();
 			loggingConfig.put("queueName", queueName);
 			loggingConfig.put("id", ticketID);
 			Helper.activeMQReporting = loggingConfig;
-			
+
 			// process ticket
 			process(ticket);
-			
+
 			// turn off logging again
 			Helper.activeMQReporting = null;
 
 			// if everything ‘s fine, report success
-			new WebServiceResult(queueName, ticketID, ReportLevel.SUCCESS)
-					.send();
+			new WebServiceResult(queueName, ticketID, ReportLevel.SUCCESS).send();
 
 		} catch (Exception exce) {
 			// report any errors
-			new WebServiceResult(queueName, ticketID, ReportLevel.FATAL,
-					exce.getMessage()).send();
+			new WebServiceResult(queueName, ticketID, ReportLevel.FATAL, exce.getMessage()).send();
 		}
 	}
 

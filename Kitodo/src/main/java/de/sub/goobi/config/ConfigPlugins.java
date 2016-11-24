@@ -1,4 +1,5 @@
 package de.sub.goobi.config;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -35,7 +36,7 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import de.sub.goobi.helper.Helper;
 
 public class ConfigPlugins {
-	
+
 	private static final Logger logger = Logger.getLogger(ConfigPlugins.class);
 
 	public static XMLConfiguration getPluginConfig(IPlugin inPlugin) {

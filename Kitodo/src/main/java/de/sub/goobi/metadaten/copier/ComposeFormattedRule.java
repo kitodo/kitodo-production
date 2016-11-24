@@ -87,44 +87,44 @@ public class ComposeFormattedRule extends DataCopyrule {
 			try {
 				int i = Integer.parseInt(expressions.group(1)) - 1;
 				switch (expressions.group(2).codePointAt(0)) {
-				case 'A':
-					result[i] = Double.parseDouble(elements.get(i));
-					continue;
-				case 'C':
-					result[i] = Integer.parseInt(elements.get(i));
-					continue;
-				case 'E':
-				case 'G':
-					result[i] = Double.parseDouble(elements.get(i));
-					continue;
-				case 'T':
-					result[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
-					continue;
-				case 'X':
-					result[i] = Long.parseLong(elements.get(i));
-					continue;
-				case 'a':
-					result[i] = Double.parseDouble(elements.get(i));
-					continue;
-				case 'c':
-					result[i] = Integer.parseInt(elements.get(i));
-					continue;
-				case 'd':
-					result[i] = Long.parseLong(elements.get(i));
-					continue;
-				case 'e':
-				case 'f':
-				case 'g':
-					result[i] = Double.parseDouble(elements.get(i));
-					continue;
-				case 'o':
-					result[i] = Long.parseLong(elements.get(i));
-					continue;
-				case 't':
-					result[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
-					continue;
-				case 'x':
-					result[i] = Long.parseLong(elements.get(i));
+					case 'A':
+						result[i] = Double.parseDouble(elements.get(i));
+						continue;
+					case 'C':
+						result[i] = Integer.parseInt(elements.get(i));
+						continue;
+					case 'E':
+					case 'G':
+						result[i] = Double.parseDouble(elements.get(i));
+						continue;
+					case 'T':
+						result[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
+						continue;
+					case 'X':
+						result[i] = Long.parseLong(elements.get(i));
+						continue;
+					case 'a':
+						result[i] = Double.parseDouble(elements.get(i));
+						continue;
+					case 'c':
+						result[i] = Integer.parseInt(elements.get(i));
+						continue;
+					case 'd':
+						result[i] = Long.parseLong(elements.get(i));
+						continue;
+					case 'e':
+					case 'f':
+					case 'g':
+						result[i] = Double.parseDouble(elements.get(i));
+						continue;
+					case 'o':
+						result[i] = Long.parseLong(elements.get(i));
+						continue;
+					case 't':
+						result[i] = ISODateTimeFormat.dateElementParser().parseMillis(elements.get(i));
+						continue;
+					case 'x':
+						result[i] = Long.parseLong(elements.get(i));
 				}
 			} catch (RuntimeException e) {// ArrayIndexOutOfBoundsException, ClassCastException, NumberFormatException
 				continue;

@@ -119,7 +119,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		if (dataSource instanceof IEvaluableFilter) {
 			originalFilter = (IEvaluableFilter) dataSource;
 		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+			throw new UnsupportedOperationException(
+					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
 		// gathering IDs from the filter passed by dataSource
@@ -141,7 +142,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		// Data Table as it is here in this implementation
 		DataTable tableStepOpenAndDone = getAllSteps(HistoryEventType.stepOpen);
 		tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
-		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " (" + Helper.getTranslation("openSteps") + ")");
+		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " ("
+				+ Helper.getTranslation("openSteps") + ")");
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone.setShowableInChart(false);
@@ -149,7 +151,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 		tableStepOpenAndDone = getAllSteps(HistoryEventType.stepDone);
 		tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
-		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " (" + Helper.getTranslation("doneSteps") + ")");
+		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " ("
+				+ Helper.getTranslation("doneSteps") + ")");
 		tableStepOpenAndDone.setShowableInChart(false);
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
@@ -188,12 +191,12 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 			DataTable tableStepOpen;
 			tableStepOpen = getSpecificSteps(i, HistoryEventType.stepOpen);
-			
+
 			tableStepOpen.setShowableInTable(true);
 
 			DataTable tableStepDone;
 			tableStepDone = getSpecificSteps(i, HistoryEventType.stepDone);
-			
+
 			tableStepDone.setShowableInTable(true);
 
 			// to merge we just take each table and dump the entire content in a
@@ -211,7 +214,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 				title = tableStepDone.getName();
 			}
 
-			tableStepOpenAndDone = new DataTable(Helper.getTranslation("throughput") + " " + Helper.getTranslation("steps") + " " + title);
+			tableStepOpenAndDone = new DataTable(Helper.getTranslation("throughput") + " "
+					+ Helper.getTranslation("steps") + " " + title);
 			tableStepOpenAndDone.addDataRow(rowOpenSteps);
 
 			// row for the done step
@@ -307,13 +311,13 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null,
-				true, this.flagIncludeLoops);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true, this.flagIncludeLoops);
 
 		// this one is supposed to make sure, that all possible headers will be
 		// thrown out in the first row to build header columns
-		String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, null, this.myIDlist).getSQL(requestedType, null,
-				true, true);
+		String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, null,
+				this.myIDlist).getSQL(requestedType, null, true, true);
 
 		this.myLogger.trace(natSQL);
 		this.myLogger.trace(headerFromSQL);
@@ -332,7 +336,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	private DataTable getSpecificSteps(Integer step, HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, step, true, this.flagIncludeLoops);
+		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
+				.getSQL(requestedType, step, true, this.flagIncludeLoops);
 
 		this.myLogger.trace(natSQL);
 
@@ -373,8 +378,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 				Object[] objArr = (Object[]) obj;
 				try {
 					headerRow.setName(new Converter(objArr[3]).getString() + "");
-					headerRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " (" + new Converter(objArr[1]).getString()
-							+ ")", (new Converter(objArr[0]).getDouble()));
+					headerRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
+							+ new Converter(objArr[1]).getString() + ")", (new Converter(objArr[0]).getDouble()));
 
 				} catch (Exception e) {
 					headerRow.addValue(e.getMessage(), 0.0);
@@ -434,9 +439,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 					// date/time extraction based on the group
 					dataRow.setName(new Converter(objArr[3]).getString() + "");
 				}
-				dataRow.addValue(
-						new Converter(new Converter(objArr[2]).getInteger()).getString() + " (" + new Converter(objArr[1]).getString() + ")",
-						(new Converter(objArr[0]).getDouble()));
+				dataRow.addValue(new Converter(new Converter(objArr[2]).getInteger()).getString() + " ("
+						+ new Converter(objArr[1]).getString() + ")", (new Converter(objArr[0]).getDouble()));
 
 			} catch (Exception e) {
 				dataRow.addValue(e.getMessage(), 0.0);
@@ -450,7 +454,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		// now removing headerRow
 		if (headerRow != null) {
 			dtbl.removeDataRow(headerRow);
-		
+
 		}
 
 		return dtbl;
@@ -464,8 +468,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	private Integer getMaxStepCount(HistoryEventType requestedType) {
 
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
-				.SQLMaxStepOrder(requestedType);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).SQLMaxStepOrder(requestedType);
 
 		Session session = Helper.getHibernateSession();
 		SQLQuery query = session.createSQLQuery(natSQL);
@@ -491,8 +495,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 */
 	private Integer getMinStepCount(HistoryEventType requestedType) {
 		// adding time restrictions
-		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
-				.SQLMinStepOrder(requestedType);
+		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
+				this.timeGrouping, this.myIDlist).SQLMinStepOrder(requestedType);
 
 		Session session = Helper.getHibernateSession();
 		SQLQuery query = session.createSQLQuery(natSQL);

@@ -1,4 +1,5 @@
 package de.sub.goobi.helper.tasks;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -114,7 +115,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
+					+ e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
@@ -141,7 +143,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName()
+					+ " - " + e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}

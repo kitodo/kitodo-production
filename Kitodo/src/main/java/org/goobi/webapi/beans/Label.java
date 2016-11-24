@@ -79,14 +79,14 @@ public class Label {
 		for (String key : data.keySet()) {
 			Label entry = new Label();
 			switch (keyAttribute) {
-			case LABEL:
-				entry.label = key;
-				break;
-			case LANGUAGE:
-				entry.language = key;
-				break;
-			default:
-				throw new UnreachableCodeException();
+				case LABEL:
+					entry.label = key;
+					break;
+				case LANGUAGE:
+					entry.language = key;
+					break;
+				default:
+					throw new UnreachableCodeException();
 			}
 			entry.value = data.get(key);
 			result.add(entry);

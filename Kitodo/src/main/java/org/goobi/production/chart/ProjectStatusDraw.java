@@ -159,50 +159,54 @@ public class ProjectStatusDraw {
 			// Choose color of the bar depending on current date
 			ChartColor chartcolor = ChartColor.red;
 			int nonNullMaxSteps = t.getStepsMax();
-			if (nonNullMaxSteps==0){
-				nonNullMaxSteps=1;
+			if (nonNullMaxSteps == 0) {
+				nonNullMaxSteps = 1;
 			}
 			if (Math.abs((1.0 * t.getStepsCompleted() / nonNullMaxSteps) - (1.0 * datePosition / duration)) < 0.01) {
 				// Deviation of max 1.0 percent leads to a yellow bar
-				chartcolor=ChartColor.yellow;
-			} else if (t.getStepsCompleted() * duration /nonNullMaxSteps < datePosition) {
-				chartcolor=ChartColor.red;
+				chartcolor = ChartColor.yellow;
+			} else if (t.getStepsCompleted() * duration / nonNullMaxSteps < datePosition) {
+				chartcolor = ChartColor.red;
 			} else if (t.getStepsCompleted() * duration / nonNullMaxSteps > datePosition) {
-				chartcolor=ChartColor.green;
+				chartcolor = ChartColor.green;
 			}
 
 			// Draw the bar
 			// fixed width: 15 pixels
-			drawHorizontalBar(borderLeft, y, t.getStepsCompleted() * chartWidth / nonNullMaxSteps, BARWIDTH, chartcolor.getColor());
+			drawHorizontalBar(borderLeft, y, t.getStepsCompleted() * chartWidth / nonNullMaxSteps, BARWIDTH,
+					chartcolor.getColor());
 
 			// Print number of steps completed
 			String stepsCompletedString = t.getStepsCompleted().toString() + "/" + t.getStepsMax().toString();
-			if ((borderLeft + t.getStepsCompleted() * chartWidth /nonNullMaxSteps + fm.getHeight() + fm.stringWidth(stepsCompletedString)) >= borderLeft
-					+ chartWidth) {
+			if ((borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight() + fm
+					.stringWidth(stepsCompletedString)) >= borderLeft + chartWidth) {
 				g2d.setColor(Color.white);
-				drawRightAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
+				drawRightAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth
+						/ nonNullMaxSteps - fm.getHeight(), y);
 			} else {
 				g2d.setColor(Color.black);
-				drawLeftAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth /nonNullMaxSteps + fm.getHeight(), y);
+				drawLeftAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth
+						/ nonNullMaxSteps + fm.getHeight(), y);
 			}
 		}
 
 		// Draw a line showing the current date
-		if (duration==0) {
-			duration=1;
+		if (duration == 0) {
+			duration = 1;
 		}
-		if(myLogger.isDebugEnabled()){
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug(datePosition + " / " + duration);
 		}
-		float dash1[] = { 2.0f };
+		float dash1[] = {2.0f };
 		BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);
 		g2d.setStroke(dashed);
 		g2d.setColor(Color.black);
-		g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration, BORDERTOP + dataTable.getNumberOfTasks() * BARSPACING
-				- BARWIDTH, borderLeft + datePosition * chartWidth / duration, BORDERTOP - 1 * fm.getHeight()));
-		drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration, BORDERTOP - 2.5 * fm.getHeight());
+		g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration, BORDERTOP
+				+ dataTable.getNumberOfTasks() * BARSPACING - BARWIDTH, borderLeft + datePosition * chartWidth
+				/ duration, BORDERTOP - 1 * fm.getHeight()));
+		drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration, BORDERTOP
+				- 2.5 * fm.getHeight());
 	}
-
 
 	/************************************************************************************
 	 * Draw horizontal bar with given color
@@ -260,7 +264,6 @@ public class ProjectStatusDraw {
 	private void drawRightAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
-
 
 	/************************************************************************************
 	 * Get size of Image for rendering

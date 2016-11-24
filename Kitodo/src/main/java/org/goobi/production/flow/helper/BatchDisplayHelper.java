@@ -1,4 +1,5 @@
 package org.goobi.production.flow.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -34,11 +35,10 @@ public class BatchDisplayHelper {
 
 	private List<BatchDisplayItem> stepList = null;
 	private boolean panelOpen = false;
-	
+
 	public BatchDisplayHelper() {
 	}
-	
-	
+
 	public boolean isPanelOpen() {
 		return this.panelOpen;
 	}
@@ -46,17 +46,15 @@ public class BatchDisplayHelper {
 	public void setPanelOpen(boolean panelOpen) {
 		this.panelOpen = panelOpen;
 	}
-	
-	
+
 	public List<BatchDisplayItem> getStepList() {
 		return this.stepList;
 	}
-	
+
 	public void setStepList(List<BatchDisplayItem> stepList) {
 		this.stepList = stepList;
 	}
-	
-	
+
 	/*
 	 * Auswertung des Fortschritts
 	 */

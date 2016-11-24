@@ -100,8 +100,7 @@ public class Regelsatz implements Serializable {
 		return this.orderMetadataByRuleset;
 	}
 
-	public void setOrderMetadataByRulesetHibernate(
-			Boolean orderMetadataByRuleset) {
+	public void setOrderMetadataByRulesetHibernate(Boolean orderMetadataByRuleset) {
 		this.orderMetadataByRuleset = orderMetadataByRuleset;
 	}
 }

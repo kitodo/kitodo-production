@@ -204,7 +204,8 @@ public class ProcessObject {
 		this.wikifield = wikifield;
 	}
 
-	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
+	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException,
+			ReadException {
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(metadataFile);
 		Fileformat ff = null;
@@ -222,24 +223,24 @@ public class ProcessObject {
 		return ff;
 	}
 
-	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileformat) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
-			PreferencesException {
+	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileformat)
+			throws IOException, InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
 		Fileformat ff;
-		
+
 		switch (MetadataFormat.findFileFormatsHelperByName(fileformat)) {
-		case METS:
-			ff = new MetsMods(prefs);
-			break;
+			case METS:
+				ff = new MetsMods(prefs);
+				break;
 
-		case RDF:
-			ff = new RDFFile(prefs);
-			break;
+			case RDF:
+				ff = new RDFFile(prefs);
+				break;
 
-		default:
-			ff = new XStream(prefs);
-			break;
+			default:
+				ff = new XStream(prefs);
+				break;
 		}
-		
+
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		ff.write(metadataFile);
 	}

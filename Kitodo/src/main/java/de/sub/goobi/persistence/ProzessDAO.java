@@ -1,4 +1,5 @@
 package de.sub.goobi.persistence;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -34,7 +35,6 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class ProzessDAO extends BaseDAO {
 
-
 	private static final long serialVersionUID = 3538712266212954394L;
 
 	public Prozess save(Prozess t) throws DAOException {
@@ -48,7 +48,7 @@ public class ProzessDAO extends BaseDAO {
 		l.addAll(list);
 		storeList(l);
 	}
-	
+
 	public Prozess get(Integer id) throws DAOException {
 		Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
 		if (rueckgabe == null) {
@@ -75,18 +75,19 @@ public class ProzessDAO extends BaseDAO {
 	public Long count(String query) throws DAOException {
 		return retrieveAnzahl(query);
 	}
-	
+
 	public void refresh(Prozess t) {
 		Object o = t;
 		refresh(o);
 	}
+
 	public void update(Prozess t) {
 		Object o = t;
 		updateObj(o);
 	}
-	
+
 	public Prozess load(int id) throws DAOException {
 		return (Prozess) loadObj(Prozess.class, id);
 	}
-	
+
 }

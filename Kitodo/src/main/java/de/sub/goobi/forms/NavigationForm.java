@@ -1,4 +1,5 @@
 package de.sub.goobi.forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -37,17 +38,17 @@ public class NavigationForm {
 
 	public void setAktuell(String aktuell) {
 		this.aktuell = aktuell;
-	}	
-	
-	public String Reload(){
+	}
+
+	public String Reload() {
 		return "";
 	}
-	
-	public String JeniaPopupCloseAction(){       
+
+	public String JeniaPopupCloseAction() {
 		return "jeniaClosePopupFrameWithAction";
 	}
 
-	public String BenutzerBearbeiten(){
+	public String BenutzerBearbeiten() {
 		return "BenutzerBearbeiten";
 	}
 
@@ -55,11 +56,11 @@ public class NavigationForm {
 	* 
 	* @return true if show_taskmanager in file goobi_config.properties is =true
 	*/
-	public Boolean getShowTaskManager(){
+	public Boolean getShowTaskManager() {
 		return ConfigMain.getBooleanParameter("taskManager.showInSidebar", true);
 	}
 
-	public Boolean getShowModuleManager(){
-		return ConfigMain.getBooleanParameter("show_modulemanager", false);	
+	public Boolean getShowModuleManager() {
+		return ConfigMain.getBooleanParameter("show_modulemanager", false);
 	}
 }

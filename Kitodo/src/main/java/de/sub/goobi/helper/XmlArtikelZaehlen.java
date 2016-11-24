@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -40,11 +41,10 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class XmlArtikelZaehlen {
 	private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);
+
 	public enum CountType {
 		METADATA, DOCSTRUCT;
 	}
-
-
 
 	/**
 	 * Anzahl der Strukturelemente ermitteln
@@ -89,8 +89,6 @@ public class XmlArtikelZaehlen {
 		}
 		return rueckgabe;
 	}
-
-
 
 	/**
 	 * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen

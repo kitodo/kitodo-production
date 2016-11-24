@@ -86,7 +86,8 @@ public class SpracheForm {
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		Locale currentDisplayLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		@SuppressWarnings("unchecked")
-		// It seems we have an old Faces API, Faces 2.1’s getSupportedLocales() returns Iterator<Locale> → TODO: Update JSF API
+		// It seems we have an old Faces API, Faces 2.1’s getSupportedLocales() returns Iterator<Locale> → TODO: Update
+		// JSF API
 		Iterator<Locale> localesIterator = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
 		while (localesIterator.hasNext()) {
 			Locale supportedLocale = localesIterator.next();
@@ -94,7 +95,8 @@ public class SpracheForm {
 				Map<String, Object> translation = new HashMap<String, Object>();
 				translation.put("id", supportedLocale.toString());
 				translation.put("displayLanguageSelf", supportedLocale.getDisplayLanguage(supportedLocale));
-				translation.put("displayLanguageTranslated", supportedLocale.getDisplayLanguage(currentDisplayLanguage));
+				translation
+						.put("displayLanguageTranslated", supportedLocale.getDisplayLanguage(currentDisplayLanguage));
 				translation.put("selected", Boolean.valueOf(supportedLocale.equals(currentDisplayLanguage)));
 				result.add(translation);
 			}

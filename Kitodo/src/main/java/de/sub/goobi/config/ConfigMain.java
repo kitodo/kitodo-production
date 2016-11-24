@@ -180,7 +180,7 @@ public class ConfigMain {
 	public static int getIntParameter(String inParameter) {
 		return getIntParameter(inParameter, 0);
 	}
-	
+
 	/**
 	 * Request int-parameter from Configuration with default-value
 	 * 
@@ -193,14 +193,14 @@ public class ConfigMain {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Request String[]-parameter from Configuration
 	 * 
 	 * @return Parameter as String[] 
 	 */
 	public static String[] getStringArrayParameter(String inParameter) {
-		
+
 		return getConfig().getStringArray(inParameter);
 	}
 }

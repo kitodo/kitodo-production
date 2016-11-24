@@ -53,7 +53,8 @@ public class HibernateSessionFilter2 implements Filter {
 	/*===============================================================*/
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
 		HttpServletRequest myRequest = (HttpServletRequest) request;
 		HibernateSessionLong hsl = null;
 		Session session = null;
@@ -63,7 +64,7 @@ public class HibernateSessionFilter2 implements Filter {
 		 * --------------------------------*/
 		// das Managed Bean aus der Session holen
 		hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
-		// wenn das Managed Bean bereits in der Http-Session war, 
+		// wenn das Managed Bean bereits in der Http-Session war,
 		// dann daraus die Hibernate-Session ermitteln
 		if (hsl != null) {
 			session = hsl.getSession();
@@ -82,11 +83,11 @@ public class HibernateSessionFilter2 implements Filter {
 			 * --------------------------------*/
 			// das Managed Bean aus der Session holen
 			hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
-			// wenn das Managed Bean bereits in der Http-Session war, 
+			// wenn das Managed Bean bereits in der Http-Session war,
 			// dann daraus die Hibernate-Session ermitteln
 			if (hsl != null) {
 				session = hsl.getSession();
-				// gibt es eine Hibernate-Session und ist diese mit der DB verbunden, 
+				// gibt es eine Hibernate-Session und ist diese mit der DB verbunden,
 				// dann wird diese jetzt getrennt
 				if (session != null && session.isConnected()) {
 					session.disconnect();
@@ -98,7 +99,7 @@ public class HibernateSessionFilter2 implements Filter {
 	/*===============================================================*/
 
 	/**
-    */
+	*/
 	@Override
 	public void destroy() {
 		// Nothing necessary

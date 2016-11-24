@@ -121,7 +121,7 @@ public class FireburnDataImport {
 		FireburnDataImport fdi = new FireburnDataImport();
 		// get all properties from xml file
 		fdi.pList.addAll(fdi.loadDataFromXml(filename));
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("Data is loaded from XML,  " + fdi.pList.size() + " Properties.");
 		}
 
@@ -141,7 +141,7 @@ public class FireburnDataImport {
 						fdi.pFoundList.add(p);
 						// write to Goobi
 						fdi.writeToGoobiDB(p, processId);
-					
+
 					}
 					// processId is not found.
 					else {
@@ -153,7 +153,7 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Found: " + fdi.pFoundList.size());
 				logger.debug("Not found: " + fdi.pNotFoundList.size());
 			}
@@ -187,7 +187,7 @@ public class FireburnDataImport {
 			} catch (SQLException e) {
 				logger.error(e);
 			}
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Found: " + fdi.pFoundList.size());
 				logger.debug("Not found: " + fdi.pNotFoundList.size());
 			}
@@ -219,7 +219,7 @@ public class FireburnDataImport {
 		} catch (SQLException e) {
 			logger.error(e);
 		}
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("Found: " + fdi.pFoundList.size());
 			logger.debug("Not found: " + fdi.pNotFoundList.size());
 		}
@@ -230,7 +230,8 @@ public class FireburnDataImport {
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.processAnnotations(FireburnDataImport.class);
 		xstream.processAnnotations(FireburnProperty.class);
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)), StandardCharsets.UTF_8);
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(notfoundFilename)),
+				StandardCharsets.UTF_8);
 		xstream.toXML(fdi.pNotFoundList, fw);
 		// DEBUG
 		long time2 = System.currentTimeMillis();
@@ -297,7 +298,8 @@ public class FireburnDataImport {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 **************************************************************************************/
-	private String getStoreIdentifierFromWerkstueckeeigenschaften(FireburnProperty p) throws ClassNotFoundException, SQLException {
+	private String getStoreIdentifierFromWerkstueckeeigenschaften(FireburnProperty p) throws ClassNotFoundException,
+			SQLException {
 		String weId = getWerkstueckeeigenschaftenId(p);
 		String processId = null;
 		if (weId != null) {
@@ -321,7 +323,8 @@ public class FireburnDataImport {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 **************************************************************************************/
-	private String getStoreIdentifierFromVorlageneigenschaften(FireburnProperty p) throws ClassNotFoundException, SQLException {
+	private String getStoreIdentifierFromVorlageneigenschaften(FireburnProperty p) throws ClassNotFoundException,
+			SQLException {
 		String vorlagenId = getVorlagenId(p);
 		String processId = null;
 		if (vorlagenId != null) {
@@ -364,7 +367,7 @@ public class FireburnDataImport {
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String weId = rs.getString("werkstueckeID");
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("weId, gefunden mit shortPPN: " + weId + "  Title: " + p.titel);
 				}
 				return weId;
@@ -377,7 +380,7 @@ public class FireburnDataImport {
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String weId = rs.getString("werkstueckeID");
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("weId, gefunden mit fullPPN: " + weId + "  Title: " + p.titel);
 				}
 				return weId;
@@ -416,7 +419,7 @@ public class FireburnDataImport {
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String vorlagenId = rs.getString("vorlagenID");
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("VorlagenId, gefunden mit shortPPN: " + vorlagenId + "  Title: " + p.titel);
 				}
 				return vorlagenId;
@@ -429,7 +432,7 @@ public class FireburnDataImport {
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
 				String vorlagenId = rs.getString("vorlagenID");
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("VorlagenId, gefunden mit fullPPN: " + vorlagenId + "  Title: " + p.titel);
 					logger.debug(vorlagenId);
 				}
@@ -453,17 +456,18 @@ public class FireburnDataImport {
 	private void writeToGoobiDB(FireburnProperty p, String processId) throws ClassNotFoundException, SQLException {
 		String sql = "INSERT INTO prozesseeigenschaften(prozesseID, Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate)"
 
-		+ " VALUES ('" + processId + "','" + cdName + "','" + p.cdName + "',false,'5',false,'" + p.date + "')" + ","
+				+ " VALUES ('"
+				+ processId + "','" + cdName + "','" + p.cdName + "',false,'5',false,'" + p.date + "')" + ","
 
-		+ "('" + processId + "','" + archivType + "','" + p.type + "',false,'5',false,'" + p.date + "')" + ","
+				+ "('" + processId + "','" + archivType + "','" + p.type + "',false,'5',false,'" + p.date + "')" + ","
 
-		+ "('" + processId + "','" + cdAnzahl + "','" + p.cdnumber + "',false,'5',false,'" + p.date + "'),"
+				+ "('" + processId + "','" + cdAnzahl + "','" + p.cdnumber + "',false,'5',false,'" + p.date + "'),"
 
-		+ "('" + processId + "','" + size + "','" + p.size + "',false,'5',false,'" + p.date + "')" + ";";
+				+ "('" + processId + "','" + size + "','" + p.size + "',false,'5',false,'" + p.date + "')" + ";";
 		// Execute the insert statement
 		this.stmt.executeUpdate(sql);
 		// logger.debug(sql);
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("Write to Goobi: " + p.cdName + "  " + processId + "     " + p.date);
 		}
 
@@ -480,17 +484,17 @@ public class FireburnDataImport {
 	 * @throws ParseException
 	 *****************************************************************************************/
 	@SuppressWarnings("rawtypes")
-	private ArrayList<FireburnProperty> loadDataFromXml(String filename) throws JDOMException, IOException, ParseException {
+	private ArrayList<FireburnProperty> loadDataFromXml(String filename) throws JDOMException, IOException,
+			ParseException {
 		ArrayList<FireburnProperty> returnList = new ArrayList<FireburnProperty>();
 		Document doc = new SAXBuilder().build(new File(filename));
 		Element rootElement = doc.getRootElement();
 		List ePropList = rootElement.getChildren("property");
 		for (Object oProp : ePropList) {
 			Element eProp = (Element) oProp;
-			returnList.add(new FireburnProperty(eProp.getAttributeValue("cdName"), eProp.getAttributeValue("titel"), eProp.getAttributeValue("date"),
-					Integer.parseInt(eProp.getAttributeValue("cdnumber")),
-					eProp.getAttributeValue("type"),
-					Long.parseLong(eProp.getAttributeValue("size"))
+			returnList.add(new FireburnProperty(eProp.getAttributeValue("cdName"), eProp.getAttributeValue("titel"),
+					eProp.getAttributeValue("date"), Integer.parseInt(eProp.getAttributeValue("cdnumber")), eProp
+							.getAttributeValue("type"), Long.parseLong(eProp.getAttributeValue("size"))
 
 			));
 		}

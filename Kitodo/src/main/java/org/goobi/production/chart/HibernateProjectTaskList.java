@@ -52,7 +52,8 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 		return myTaskList;
 	}
 
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages,
+			Integer inMax) {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("reihenfolge"));
@@ -64,7 +65,8 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 		while (list.next()) {
 			Schritt step = (Schritt) list.get(0);
-			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
+					.getTitel());
 
 			IProjectTask pt = null;
 			for (IProjectTask task : myTaskList) {

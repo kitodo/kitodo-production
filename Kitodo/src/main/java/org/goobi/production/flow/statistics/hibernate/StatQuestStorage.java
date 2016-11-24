@@ -87,7 +87,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
-		//gathering IDs from the filter passed by dataSource
+		// gathering IDs from the filter passed by dataSource
 		List<Integer> IDlist = null;
 		try {
 			IDlist = originalFilter.getIDList();
@@ -98,56 +98,52 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 		}
 
 		// adding time restrictions
-		String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo,
-				this.timeGrouping, IDlist).getSQL();
+		String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL();
 
 		Session session = Helper.getHibernateSession();
 
 		SQLQuery query = session.createSQLQuery(natSQL);
 
-		//needs to be there otherwise an exception is thrown
+		// needs to be there otherwise an exception is thrown
 		query.addScalar("storage", StandardBasicTypes.DOUBLE);
 		query.addScalar("intervall", StandardBasicTypes.STRING);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();
 
-		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
-				this.getClass()).getTitle() + " "
+		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(this.getClass()).getTitle() + " "
 				+ Helper.getTranslation("_inGB"));
 
 		DataRow dataRow;
 
 		// each data row comes out as an Array of Objects
 		// the only way to extract the data is by knowing
-		// in which order they come out 
+		// in which order they come out
 		for (Object obj : list) {
 			dataRow = new DataRow(null);
-			//TODO: Don't use arrays
+			// TODO: Don't use arrays
 			Object[] objArr = (Object[]) obj;
 			try {
 
 				// getting localized time group unit
 
-				//setting row name with date/time extraction based on the group
+				// setting row name with date/time extraction based on the group
 
 				dataRow.setName(new Converter(objArr[1]).getString() + "");
 
-				dataRow.addValue(Helper.getTranslation("storageDifference"),
-						(new Converter(objArr[0]).getGB()));
+				dataRow.addValue(Helper.getTranslation("storageDifference"), (new Converter(objArr[0]).getGB()));
 
 			} catch (Exception e) {
 				dataRow.addValue(e.getMessage(), 0.0);
 			}
 
-			//finally adding dataRow to DataTable and fetching next row
+			// finally adding dataRow to DataTable and fetching next row
 			dtbl.addDataRow(dataRow);
 		}
 
-		// a list of DataTables is expected as return Object, even if there is only one 
+		// a list of DataTables is expected as return Object, even if there is only one
 		// Data Table as it is here in this implementation
-		dtbl.setUnitLabel(Helper
-				.getTranslation(this.timeGrouping.getSingularTitle()));
+		dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		allTables.add(dtbl);
 		return allTables;
 	}
@@ -176,7 +172,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 	 */
 	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
-		//		return false;
+		// return false;
 		return inRenderer instanceof ChartRenderer;
 	}
 

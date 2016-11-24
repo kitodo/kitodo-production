@@ -1,4 +1,5 @@
 package de.sub.goobi.converter;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -47,13 +48,13 @@ public class StatisticsResultOutputConverter implements Converter {
 	 **************************************************************************************/
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-		if (value==null){
+		if (value == null) {
 			return ResultOutput.table;
-		}else {
+		} else {
 			return ResultOutput.getById(value);
 		}
 	}
-	
+
 	/**
 	 * convert ResultOutput to String
 	 **************************************************************************************/
@@ -61,7 +62,7 @@ public class StatisticsResultOutputConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
 		if (value == null || !(value instanceof ResultOutput)) {
 			return ResultOutput.table.getId();
-		} else{
+		} else {
 			return ((ResultOutput) value).getId();
 		}
 	}

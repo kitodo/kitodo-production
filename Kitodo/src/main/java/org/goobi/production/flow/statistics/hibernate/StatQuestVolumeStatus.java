@@ -65,11 +65,13 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 		if (dataSource instanceof IEvaluableFilter) {
 			originalFilter = (IEvaluableFilter) dataSource;
 		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+			throw new UnsupportedOperationException(
+					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
 		Criteria crit = Helper.getHibernateSession().createCriteria(Schritt.class);
-		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 
 		if (originalFilter instanceof UserDefinedFilter) {
 			crit.createCriteria("prozess", "proz");
@@ -83,7 +85,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 		for (Object obj : crit.list()) {
 			Schritt step = (Schritt) obj;
-			String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+			String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
+					.getTitel());
 			dRow.addValue(kurztitel, dRow.getValue(kurztitel) + 1);
 		}
 

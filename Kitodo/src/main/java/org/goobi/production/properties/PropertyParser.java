@@ -1,4 +1,5 @@
 package org.goobi.production.properties;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -46,10 +47,8 @@ public class PropertyParser {
 	public static void main(String[] args) {
 		PropertyParser parser = new PropertyParser();
 		parser.readConfigAsSample();
-//		System.out.println("finish");
+		// System.out.println("finish");
 	}
-
-	
 
 	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
 		Hibernate.initialize(mySchritt.getProzess());
@@ -105,7 +104,7 @@ public class PropertyParser {
 						pp.setDuplicationAllowed(duplicate);
 						pp.setCurrentStepAccessCondition(AccessCondition.getAccessConditionByName(access));
 					}
-					
+
 					pp.getShowStepConditions().add(ssc);
 				}
 
@@ -118,7 +117,7 @@ public class PropertyParser {
 					} else {
 						pp.setShowProcessGroupAccessCondition(AccessCondition.WRITE);
 					}
-					
+
 					// validation expression
 					pp.setValidation(config.getString("property(" + i + ").validation"));
 					// type
@@ -136,7 +135,8 @@ public class PropertyParser {
 			}
 		}
 
-		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
+		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
+		// them with already existing
 		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList();
@@ -225,13 +225,14 @@ public class PropertyParser {
 				for (int j = 0; j <= count; j++) {
 					pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
 				}
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("add property A " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				}
 				properties.add(pp);
 
 			}
-		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
+		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
+			// them with already existing
 			// 'eigenschaften'
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
@@ -253,8 +254,9 @@ public class PropertyParser {
 							pnew.setProzesseigenschaft(pe);
 							pnew.setValue(pe.getWert());
 							pnew.setContainer(pe.getContainer());
-							if(logger.isDebugEnabled()){
-								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+							if (logger.isDebugEnabled()) {
+								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - "
+										+ pp.getContainer());
 							}
 							properties.add(pnew);
 						}
@@ -279,29 +281,20 @@ public class PropertyParser {
 				pp.setValue(pe.getWert());
 				pp.setContainer(pe.getContainer());
 				pp.setType(Type.TEXT);
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				}
 				properties.add(pp);
 
 			}
 		}
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("all properties are " + properties.size());
 		}
 
 		return properties;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	private void readConfigAsSample() {
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 

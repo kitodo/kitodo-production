@@ -520,126 +520,126 @@ public class Citation {
 	public String toHTML() {
 		StringBuilder result = new StringBuilder();
 		switch (style) {
-		case MONOGRAPH:
-			if (creators.size() > 0) {
+			case MONOGRAPH:
+				if (creators.size() > 0) {
+					appendNames(creators, result);
+					appendYear(result);
+					appendTitle(result);
+					appendVolumeInformation(result);
+					appendEdition(result, true);
+					appendPlaceAndPublisher(result);
+					appendOverallTitleAndNumber(result);
+				} else {
+					appendTitle(result, null);
+					appendVolumeInformation(result);
+					appendEdition(result, true);
+					appendPlaceAndPublisher(result);
+					appendYearSimple(result);
+					appendOverallTitleAndNumber(result);
+				}
+				break;
+			case ANTHOLOGY:
 				appendNames(creators, result);
 				appendYear(result);
+				appendArticle(result);
+				appendContainedIn(result);
+				appendNames(contributors, result);
 				appendTitle(result);
 				appendVolumeInformation(result);
 				appendEdition(result, true);
 				appendPlaceAndPublisher(result);
 				appendOverallTitleAndNumber(result);
-			} else {
-				appendTitle(result, null);
-				appendVolumeInformation(result);
-				appendEdition(result, true);
-				appendPlaceAndPublisher(result);
-				appendYearSimple(result);
-				appendOverallTitleAndNumber(result);
-			}
-			break;
-		case ANTHOLOGY:
-			appendNames(creators, result);
-			appendYear(result);
-			appendArticle(result);
-			appendContainedIn(result);
-			appendNames(contributors, result);
-			appendTitle(result);
-			appendVolumeInformation(result);
-			appendEdition(result, true);
-			appendPlaceAndPublisher(result);
-			appendOverallTitleAndNumber(result);
-			appendPagerange(result);
-			break;
-		case PERIODICAL:
-			appendNames(creators, result);
-			appendYear(result);
-			appendArticle(result);
-			if (part != null) {
-				result.append(' ');
-				result.append(part);
-			}
-			appendContainedIn(result);
-			appendTitle(result);
-			if (subseries != null) {
-				result.append(' ');
-				result.append(subseries);
-			}
-			if (volume != null) {
-				result.append(' ');
-				result.append(volume);
-			}
-			if (published != null) {
-				result.append(" (");
-				result.append(published.toString(PUBLICATION_DATE_FORMAT));
-				result.append(')');
-			}
-			if (number != null) {
-				result.append(' ');
-				result.append(number);
-			}
-			appendPagerange(result);
-			if (accessed != null) {
-				result.append(" (");
-				appendAccessed(result);
-				result.append(')');
-			}
-			appendURL(result);
-			break;
-		case THESIS:
-			appendNames(creators, result);
-			appendYear(result);
-			appendTitle(result);
-			if (employer != null) {
-				result.append(' ');
-				result.append(employer);
-			}
-			if (place != null) {
-				result.append(' ');
-				result.append(place);
-			}
-			if (department != null && (employer != null || place != null))
-				result.append(',');
-			if (department != null) {
-				result.append(' ');
-				result.append(department);
-			}
-			if (type != null && (employer != null || place != null || department != null))
-				result.append(',');
-			if (type != null) {
-				result.append(' ');
-				result.append(type);
-			}
-			break;
-		case STANDARD:
-			if (number != null)
-				result.append(number);
-			appendEdition(result, false);
-			appendTitle(result);
-			break;
-		case INTERNET:
-			if (creators.size() > 0) {
+				appendPagerange(result);
+				break;
+			case PERIODICAL:
 				appendNames(creators, result);
 				appendYear(result);
+				appendArticle(result);
+				if (part != null) {
+					result.append(' ');
+					result.append(part);
+				}
+				appendContainedIn(result);
 				appendTitle(result);
-			} else {
-				appendTitle(result, null);
-				appendYearSimple(result);
-			}
-			if (published != null || accessed != null) {
-				result.append(" (");
-				if (published != null)
-					appendPublished(result);
-				if (published != null && accessed != null)
-					result.append(", ");
-				if (accessed != null)
+				if (subseries != null) {
+					result.append(' ');
+					result.append(subseries);
+				}
+				if (volume != null) {
+					result.append(' ');
+					result.append(volume);
+				}
+				if (published != null) {
+					result.append(" (");
+					result.append(published.toString(PUBLICATION_DATE_FORMAT));
+					result.append(')');
+				}
+				if (number != null) {
+					result.append(' ');
+					result.append(number);
+				}
+				appendPagerange(result);
+				if (accessed != null) {
+					result.append(" (");
 					appendAccessed(result);
-				result.append(')');
-			}
-			appendURL(result);
-			break;
-		default:
-			throw new UnreachableCodeException();
+					result.append(')');
+				}
+				appendURL(result);
+				break;
+			case THESIS:
+				appendNames(creators, result);
+				appendYear(result);
+				appendTitle(result);
+				if (employer != null) {
+					result.append(' ');
+					result.append(employer);
+				}
+				if (place != null) {
+					result.append(' ');
+					result.append(place);
+				}
+				if (department != null && (employer != null || place != null))
+					result.append(',');
+				if (department != null) {
+					result.append(' ');
+					result.append(department);
+				}
+				if (type != null && (employer != null || place != null || department != null))
+					result.append(',');
+				if (type != null) {
+					result.append(' ');
+					result.append(type);
+				}
+				break;
+			case STANDARD:
+				if (number != null)
+					result.append(number);
+				appendEdition(result, false);
+				appendTitle(result);
+				break;
+			case INTERNET:
+				if (creators.size() > 0) {
+					appendNames(creators, result);
+					appendYear(result);
+					appendTitle(result);
+				} else {
+					appendTitle(result, null);
+					appendYearSimple(result);
+				}
+				if (published != null || accessed != null) {
+					result.append(" (");
+					if (published != null)
+						appendPublished(result);
+					if (published != null && accessed != null)
+						result.append(", ");
+					if (accessed != null)
+						appendAccessed(result);
+					result.append(')');
+				}
+				appendURL(result);
+				break;
+			default:
+				throw new UnreachableCodeException();
 		}
 		return result.toString();
 	}

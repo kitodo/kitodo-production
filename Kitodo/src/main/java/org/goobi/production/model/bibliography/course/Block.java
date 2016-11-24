@@ -435,7 +435,8 @@ public class Block {
 			if (!block.equals(this)
 					&& (block.getFirstAppearance().isBefore(until) && !block.getLastAppearance().isBefore(from) || (block
 							.getLastAppearance().isAfter(from) && !block.getFirstAppearance().isAfter(until)))) {
-				throw new IllegalArgumentException('(' + block.variant + ") " + block.firstAppearance + " - " + block.lastAppearance);
+				throw new IllegalArgumentException('(' + block.variant + ") " + block.firstAppearance + " - "
+						+ block.lastAppearance);
 			}
 		}
 	}

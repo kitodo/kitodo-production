@@ -1,4 +1,5 @@
 package org.goobi.production.search.api;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,7 +28,6 @@ package org.goobi.production.search.api;
  * exception statement from your version.
  */
 import de.sub.goobi.beans.Prozess;
-
 
 /**
  * This interface can be used to implement a search index engine for goobi.

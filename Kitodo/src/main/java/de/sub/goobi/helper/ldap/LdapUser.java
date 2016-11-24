@@ -90,8 +90,8 @@ public class LdapUser implements DirContext {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void configure(Benutzer inUser, String inPassword, String inUidNumber) throws NamingException, NoSuchAlgorithmException, IOException,
-			InterruptedException {
+	public void configure(Benutzer inUser, String inPassword, String inUidNumber) throws NamingException,
+			NoSuchAlgorithmException, IOException, InterruptedException {
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 
 			this.type = inUser.getLogin();
@@ -119,11 +119,13 @@ public class LdapUser implements DirContext {
 
 			this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
 			this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
-			this.myAttrs.put("sambaPrimaryGroupSID", ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPrimaryGroupSID",
+					ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
 			this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
 			this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
-			this.myAttrs.put("sambaPasswordHistory", ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPasswordHistory",
+					ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
 			this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
 			this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
 			this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000l));
@@ -155,12 +157,10 @@ public class LdapUser implements DirContext {
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
 			md.update(inPassword.getBytes(StandardCharsets.UTF_8));
 			String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}"
+					+ digestBase64);
 		}
 	}
-	
-	
-	
 
 	/**
 	 * Replace Variables with current user details
@@ -175,9 +175,11 @@ public class LdapUser implements DirContext {
 		}
 		String rueckgabe = inString.replaceAll("\\{login\\}", inUser.getLogin());
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-		if(myLogger.isDebugEnabled()){
+		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}",
+				String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}",
+				String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
 			myLogger.debug("Replace outstring: " + rueckgabe);
 		}
@@ -517,12 +519,14 @@ public class LdapUser implements DirContext {
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
+	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes, String[] attributesToReturn)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes,
+			String[] attributesToReturn) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
@@ -542,17 +546,20 @@ public class LdapUser implements DirContext {
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs, SearchControls cons)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs,
+			SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 

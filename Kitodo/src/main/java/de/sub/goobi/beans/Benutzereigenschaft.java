@@ -1,4 +1,5 @@
 package de.sub.goobi.beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -188,12 +189,10 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	 * sets the user(owner) of property
 	 * @param benutzer
 	 */
-	
+
 	public void setBenutzer(Benutzer benutzer) {
 		this.benutzer = benutzer;
 	}
-
-	
 
 	@Override
 	public Integer getContainer() {
@@ -202,7 +201,7 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 
 	@Override
 	public void setContainer(Integer order) {
-		
+
 	}
 
 	@Override
@@ -214,9 +213,5 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	public String getNormalizedValue() {
 		return this.wert.replace(" ", "_").trim();
 	}
-	
-
-		
-	
 
 }

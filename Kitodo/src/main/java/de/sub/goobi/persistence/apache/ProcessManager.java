@@ -121,7 +121,7 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 	public static int getNumberOfProcessesWithDocket(int docketId) {
 		Integer answer = null;
 		try {
@@ -131,9 +131,9 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 	public static int getNumberOfProcessesWithTitle(String title) {
-		int answer = 0;	
+		int answer = 0;
 		try {
 			answer = MySQLHelper.getCountOfProcessesWithTitle(title);
 		} catch (SQLException e) {
@@ -141,5 +141,5 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 }

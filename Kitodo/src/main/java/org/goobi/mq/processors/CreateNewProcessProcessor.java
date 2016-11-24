@@ -149,7 +149,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 			String state = newProcess.NeuenProzessAnlegen();
 			if (!state.equals("ProzessverwaltungKopie3"))
 				throw new RuntimeException();
-			if(logger.isInfoEnabled()){
+			if (logger.isInfoEnabled()) {
 				logger.info("Created new process: " + id);
 			}
 		} catch (Exception exited) {
@@ -223,8 +223,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
 		HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
 		if (!possibleCollections.containsAll(collections))
-			throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not available for template \""
-					+ process.getProzessVorlage().getTitel() + "\".");
+			throw new IllegalArgumentException(
+					"Bad argument: One or more elements of \"collections\" is not available for template \""
+							+ process.getProzessVorlage().getTitel() + "\".");
 		return new ArrayList<String>(collections);
 	}
 
@@ -245,7 +246,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	private static boolean docTypeIsPossible(ProzesskopieForm dialog, String docType) throws IllegalArgumentException {
 		Boolean fieldIsUsed = dialog.getStandardFields().get("doctype");
 		if (fieldIsUsed == null || fieldIsUsed.equals(Boolean.FALSE))
-			throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide the standard field “doctype”.");
+			throw new IllegalArgumentException(
+					"Bad argument “docType”: Selected template doesn’t provide the standard field “doctype”.");
 
 		boolean valueIsValid = false;
 		Iterator<ConfigOpacDoctype> configOpacDoctypeIterator = dialog.getAllDoctypes().iterator();
@@ -255,8 +257,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		} while (!valueIsValid && configOpacDoctypeIterator.hasNext());
 		if (valueIsValid)
 			return true;
-		throw new IllegalArgumentException("Bad argument “docType”: Selected template doesn’t provide a docType “{0}”.".replace("{0}",
-				docType));
+		throw new IllegalArgumentException(
+				"Bad argument “docType”: Selected template doesn’t provide a docType “{0}”.".replace("{0}", docType));
 	}
 
 	/**

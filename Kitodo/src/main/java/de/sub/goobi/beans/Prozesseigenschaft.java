@@ -200,7 +200,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 		}
 		this.container = order;
 	}
-	
+
 	@Override
 	public String getNormalizedTitle() {
 		return this.titel.replace(" ", "_").trim();

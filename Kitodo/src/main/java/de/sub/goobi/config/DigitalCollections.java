@@ -42,16 +42,15 @@ import de.sub.goobi.beans.Prozess;
 public class DigitalCollections {
 
 	@SuppressWarnings("unchecked")
-	public static List<String> possibleDigitalCollectionsForProcess(
-			Prozess process) throws JDOMException, IOException {
-		
+	public static List<String> possibleDigitalCollectionsForProcess(Prozess process) throws JDOMException, IOException {
+
 		List<String> result = new ArrayList<String>();
 		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
 				FileNames.DIGITAL_COLLECTIONS_FILE);
 		if (!(new File(filename).exists())) {
 			throw new FileNotFoundException("File not found: " + filename);
 		}
-		
+
 		/* Datei einlesen und Root ermitteln */
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(new File(filename));

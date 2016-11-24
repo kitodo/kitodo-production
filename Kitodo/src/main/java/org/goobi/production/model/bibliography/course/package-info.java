@@ -42,3 +42,4 @@
  * @author Matthias Ronge
  */
 package org.goobi.production.model.bibliography.course;
+

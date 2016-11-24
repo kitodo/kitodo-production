@@ -54,7 +54,7 @@ import de.sub.goobi.helper.Helper;
 public class Projects {
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
 		Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
 

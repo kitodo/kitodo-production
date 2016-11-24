@@ -48,13 +48,13 @@ public class StatisticsCalculationUnitConverter implements Converter {
 	 **************************************************************************************/
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-		if (value==null){
+		if (value == null) {
 			return CalculationUnit.volumes;
-		}else {
+		} else {
 			return CalculationUnit.getById(value);
 		}
 	}
-	
+
 	/**
 	 * convert ResultOutput to String
 	 **************************************************************************************/
@@ -62,7 +62,7 @@ public class StatisticsCalculationUnitConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
 		if (value == null || !(value instanceof CalculationUnit)) {
 			return CalculationUnit.volumes.getId();
-		} else{
+		} else {
 			return ((CalculationUnit) value).getId();
 		}
 	}

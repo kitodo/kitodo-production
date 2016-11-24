@@ -139,8 +139,8 @@ public class SearchResultGeneration {
 
 			HSSFCell cell6 = row.createCell(6);
 
-			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6) + " / "
-					+ p.getSortHelperStatus().substring(6));
+			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / "
+					+ p.getSortHelperStatus().substring(3, 6) + " / " + p.getSortHelperStatus().substring(6));
 			HSSFCell cell7 = row.createCell(7);
 			cell7.setCellValue("");
 			HSSFCell cell8 = row.createCell(8);

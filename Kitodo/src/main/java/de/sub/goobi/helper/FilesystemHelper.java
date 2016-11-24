@@ -63,7 +63,7 @@ public class FilesystemHelper {
 	public static void createDirectory(String dirName) throws IOException, InterruptedException {
 		if (!new File(dirName).exists()) {
 			ShellScript createDirScript = new ShellScript(new File(ConfigMain.getParameter("script_createDirMeta")));
-			createDirScript.run(Arrays.asList(new String[] { dirName }));
+			createDirScript.run(Arrays.asList(new String[] {dirName }));
 		}
 	}
 
@@ -83,7 +83,7 @@ public class FilesystemHelper {
 	public static void createDirectoryForUser(String dirName, String userName) throws IOException, InterruptedException {
 		if (!new File(dirName).exists()) {
 			ShellScript createDirScript = new ShellScript(new File(ConfigMain.getParameter("script_createDirUserHome")));
-			createDirScript.run(Arrays.asList(new String[] { userName, dirName }));
+			createDirScript.run(Arrays.asList(new String[] {userName, dirName }));
 		}
 	}
 
@@ -92,7 +92,7 @@ public class FilesystemHelper {
 		ShellScript deleteSymLinkScript;
 		try {
 			deleteSymLinkScript = new ShellScript(new File(command));
-			deleteSymLinkScript.run(Arrays.asList(new String[] { symLink }));
+			deleteSymLinkScript.run(Arrays.asList(new String[] {symLink }));
 		} catch (FileNotFoundException e) {
 			logger.error("FileNotFoundException in deleteSymLink()", e);
 			Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
@@ -131,7 +131,7 @@ public class FilesystemHelper {
 		newFile = new File(newFileName);
 
 		if (!oldFile.exists()) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("File " + oldFileName + " does not exist for renaming.");
 			}
 			throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
@@ -146,7 +146,8 @@ public class FilesystemHelper {
 		do {
 			if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
 				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn("Renaming " + oldFileName
+					logger.warn("Renaming "
+							+ oldFileName
 							+ " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
 				}
 				System.gc();

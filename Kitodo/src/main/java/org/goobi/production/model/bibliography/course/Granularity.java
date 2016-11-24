@@ -89,18 +89,18 @@ public enum Granularity {
 	@SuppressWarnings("incomplete-switch")
 	public String format(LocalDate date) {
 		switch (this) {
-		case DAYS:
-			return ISODateTimeFormat.date().print(date);
-		case MONTHS:
-			return ISODateTimeFormat.yearMonth().print(date);
-		case QUARTERS:
-			return ISODateTimeFormat.year().print(date) + "/Q"
-					+ Integer.toString(((date.getMonthOfYear() - 1) / 3) + 1);
-		case WEEKS:
-			return ISODateTimeFormat.weekyearWeek().print(date);
+			case DAYS:
+				return ISODateTimeFormat.date().print(date);
+			case MONTHS:
+				return ISODateTimeFormat.yearMonth().print(date);
+			case QUARTERS:
+				return ISODateTimeFormat.year().print(date) + "/Q"
+						+ Integer.toString(((date.getMonthOfYear() - 1) / 3) + 1);
+			case WEEKS:
+				return ISODateTimeFormat.weekyearWeek().print(date);
 
-		case YEARS:
-			return ISODateTimeFormat.year().print(date);
+			case YEARS:
+				return ISODateTimeFormat.year().print(date);
 
 		}
 		throw new NotImplementedException();

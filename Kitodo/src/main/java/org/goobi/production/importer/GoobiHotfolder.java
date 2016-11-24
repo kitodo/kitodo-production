@@ -149,7 +149,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		logger.trace("config 2");
 
 		try {
-			 XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
+			XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory()
+					+ "goobi_hotfolder.xml");
 
 			logger.trace("config 3");
 
@@ -195,7 +196,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 			logger.trace("config 18");
 
 		} catch (Exception e) {
-			if(logger.isTraceEnabled()){
+			if (logger.isTraceEnabled()) {
 				logger.trace("config 19" + e.getMessage());
 			}
 			return new ArrayList<GoobiHotfolder>();

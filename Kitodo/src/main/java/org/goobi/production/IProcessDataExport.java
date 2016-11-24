@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import de.sub.goobi.beans.Prozess;
 
 public interface IProcessDataExport {
-	
+
 	abstract void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException;
-	
+
 }

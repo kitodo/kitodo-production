@@ -202,7 +202,7 @@ public class MetadataPathSelector extends MetadataSelector {
 				// copy rules aren’t related to the rule set but depend on it,
 				// so copy rules that don’t work with the current rule set are
 				// ignored
-				if(LOG.isDebugEnabled()){
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("Cannot create structural element " + docStructType + " as child of "
 							+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 							+ " because it isn’t allowed by the rule set.");
@@ -213,9 +213,11 @@ public class MetadataPathSelector extends MetadataSelector {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
 			} catch (Exception e) {
 				// copy rule failed, skip it
-				if(LOG.isDebugEnabled()){
+				if (LOG.isDebugEnabled()) {
 					LOG.debug(
-							"Cannot create structural element " + docStructType + " as child of "
+							"Cannot create structural element "
+									+ docStructType
+									+ " as child of "
 									+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 									+ ": Accessing the rule set failed with exception: "
 									+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
@@ -343,20 +345,20 @@ public class MetadataPathSelector extends MetadataSelector {
 			children = Collections.emptyList();
 		}
 		switch (children.size()) {
-		case 0:
-			return null;
-		case 1:
-			if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
-				return children.get(0);
-			}
+			case 0:
+				return null;
+			case 1:
+				if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
+					return children.get(0);
+				}
 		}
 
 		if (index == null) {
 			throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
 					+ docStructType);
 		} else if (!(index instanceof Integer)) {
-			throw new RuntimeException("Could not resolve metadata path: In this regard, index \""
-					+ index + "\" is not allowed.");
+			throw new RuntimeException("Could not resolve metadata path: In this regard, index \"" + index
+					+ "\" is not allowed.");
 		} else if (index.equals(Integer.MAX_VALUE)) {
 			return children.get(children.size() - 1);
 		} else if (children.size() >= ((Integer) index).intValue()) {

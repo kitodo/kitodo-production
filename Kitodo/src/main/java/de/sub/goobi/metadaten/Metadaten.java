@@ -126,8 +126,8 @@ public class Metadaten {
 	private MetadatumImpl alleSeitenNeu[];
 	private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<MetadatumImpl>();
 	private MetadatumImpl selectedMetadatum;
-    private String currentRepresentativePage = "";
-	
+	private String currentRepresentativePage = "";
+
 	private String paginierungWert;
 	private int paginierungAbSeiteOderMarkierung;
 	private String paginierungArt;
@@ -135,7 +135,7 @@ public class Metadaten {
 	// Spalten auf einem Image,
 	// 3=nur jede zweite Seite hat
 	// Seitennummer
-    private boolean fictitious = false;
+	private boolean fictitious = false;
 
 	private SelectItem structSeiten[];
 	private MetadatumImpl structSeitenNeu[];
@@ -173,7 +173,7 @@ public class Metadaten {
 	private String pagesEnd = "";
 	private HashMap<String, Boolean> treeProperties;
 	private final ReentrantLock xmlReadingLock = new ReentrantLock();
-    private FileManipulation fileManipulation = null;
+	private FileManipulation fileManipulation = null;
 	private boolean addMetadataGroupMode = false;
 
 	private RenderableMetadataGroup newMetadataGroup;
@@ -239,10 +239,10 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		} else {
-            calculateMetadataAndImages();
-            cleanupMetadata();
-            // ignoring result of store operation
-            storeMetadata();
+			calculateMetadataAndImages();
+			cleanupMetadata();
+			// ignoring result of store operation
+			storeMetadata();
 			return "";
 		}
 	}
@@ -293,17 +293,24 @@ public class Metadaten {
 				MetadatenalsBeanSpeichern(rueckgabe);
 				MetadatenalsTree3Einlesen1();
 			} catch (DocStructHasNoTypeException e) {
-				Helper.setFehlerMeldung("Error while changing DocStructTypes (DocStructHasNoTypeException): ", e.getMessage());
+				Helper.setFehlerMeldung("Error while changing DocStructTypes (DocStructHasNoTypeException): ",
+						e.getMessage());
 				myLogger.error("Error while changing DocStructTypes (DocStructHasNoTypeException): " + e.getMessage());
 			} catch (MetadataTypeNotAllowedException e) {
-				Helper.setFehlerMeldung("Error while changing DocStructTypes (MetadataTypeNotAllowedException): ", e.getMessage());
-				myLogger.error("Error while changing DocStructTypes (MetadataTypeNotAllowedException): " + e.getMessage());
+				Helper.setFehlerMeldung("Error while changing DocStructTypes (MetadataTypeNotAllowedException): ",
+						e.getMessage());
+				myLogger.error("Error while changing DocStructTypes (MetadataTypeNotAllowedException): "
+						+ e.getMessage());
 			} catch (TypeNotAllowedAsChildException e) {
-				Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedAsChildException): ", e.getMessage());
-				myLogger.error("Error while changing DocStructTypes (TypeNotAllowedAsChildException): " + e.getMessage());
+				Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedAsChildException): ",
+						e.getMessage());
+				myLogger.error("Error while changing DocStructTypes (TypeNotAllowedAsChildException): "
+						+ e.getMessage());
 			} catch (TypeNotAllowedForParentException e) {
-				Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedForParentException): ", e.getMessage());
-				myLogger.error("Error while changing DocStructTypes (TypeNotAllowedForParentException): " + e.getMessage());
+				Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedForParentException): ",
+						e.getMessage());
+				myLogger.error("Error while changing DocStructTypes (TypeNotAllowedForParentException): "
+						+ e.getMessage());
 			}
 		}
 		return "Metadaten3links";
@@ -407,7 +414,7 @@ public class Metadaten {
 				}
 			}
 		}
-		return new String[] { authority, authorityURI, valueURI };
+		return new String[] {authority, authorityURI, valueURI };
 	}
 
 	public String Loeschen() {
@@ -589,8 +596,6 @@ public class Metadaten {
 
 	private String readXmlAndBuildTree() {
 
-	
-
 		/*
 		 * re-reading the config for display rules
 		 */
@@ -656,9 +661,9 @@ public class Metadaten {
 	 * @throws WriteException
 	 */
 
-	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-			WriteException {
-	    currentRepresentativePage = "";
+	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException,
+			SwapException, DAOException, WriteException {
+		currentRepresentativePage = "";
 		this.myPrefs = this.myProzess.getRegelsatz().getPreferences();
 		this.modusAnsicht = "Metadaten";
 		this.modusHinzufuegen = false;
@@ -695,28 +700,31 @@ public class Metadaten {
 
 		BildErmitteln(0);
 		retrieveAllImages();
-		if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (this.mydocument.getPhysicalDocStruct() == null || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
-				|| this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
+		if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+				&& (this.mydocument.getPhysicalDocStruct() == null
+						|| this.mydocument.getPhysicalDocStruct().getAllChildren() == null || this.mydocument
+						.getPhysicalDocStruct().getAllChildren().size() == 0)) {
 			try {
 				createPagination();
 			} catch (TypeNotAllowedForParentException e) {
 
 			}
 		}
-		
-        if (this.mydocument.getPhysicalDocStruct().getAllMetadata() != null && this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
-            for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
-                if (md.getType().getName().equals("_representative")) {
-                    try {
-                    Integer value = Integer.valueOf(md.getValue());
-                    currentRepresentativePage = String.valueOf(value-1);
-                    } catch (Exception e) {
-                        
-                    }
-                }
-            }
-        }
-		
+
+		if (this.mydocument.getPhysicalDocStruct().getAllMetadata() != null
+				&& this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
+			for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
+				if (md.getType().getName().equals("_representative")) {
+					try {
+						Integer value = Integer.valueOf(md.getValue());
+						currentRepresentativePage = String.valueOf(value - 1);
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		}
+
 		createDefaultValues(this.logicalTopstruct);
 		MetadatenalsBeanSpeichern(this.logicalTopstruct);
 		MetadatenalsTree3Einlesen1();
@@ -739,8 +747,6 @@ public class Metadaten {
 		}
 	}
 
-
-
 	private void calculateMetadataAndImages() {
 
 		/*
@@ -748,10 +754,12 @@ public class Metadaten {
 		 */
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 
-		this.myProzess.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
+		this.myProzess.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct,
+				CountType.DOCSTRUCT));
 		this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
 		try {
-			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(this.myProzess.getImagesOrigDirectory(true))));
+			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(this.myProzess
+					.getImagesOrigDirectory(true))));
 			new ProzessDAO().save(this.myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
@@ -761,40 +769,40 @@ public class Metadaten {
 			myLogger.error(e);
 		}
 	}
-	
-    private void cleanupMetadata() {
+
+	private void cleanupMetadata() {
 		/*
 		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
 		 */
 		this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
-		
-        if (currentRepresentativePage != null && currentRepresentativePage.length() > 0) {
-            boolean match = false;
-            if (this.mydocument.getPhysicalDocStruct() != null && this.mydocument.getPhysicalDocStruct().getAllMetadata() != null
-                    && this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
-                for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
-                    if (md.getType().getName().equals("_representative")) {
-                        Integer value = Integer.valueOf(currentRepresentativePage);
-                        md.setValue(String.valueOf(value +1));
-                        match = true;
-                    }
-                }
-            }
-            if (!match) {
-                MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
-                try {
-                    Metadata md = new Metadata(mdt);
-                    Integer value = Integer.valueOf(currentRepresentativePage);
-                    md.setValue(String.valueOf(value +1));
-                    this.mydocument.getPhysicalDocStruct().addMetadata(md);
-                } catch (MetadataTypeNotAllowedException e) {
 
-                }
+		if (currentRepresentativePage != null && currentRepresentativePage.length() > 0) {
+			boolean match = false;
+			if (this.mydocument.getPhysicalDocStruct() != null
+					&& this.mydocument.getPhysicalDocStruct().getAllMetadata() != null
+					&& this.mydocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
+				for (Metadata md : this.mydocument.getPhysicalDocStruct().getAllMetadata()) {
+					if (md.getType().getName().equals("_representative")) {
+						Integer value = Integer.valueOf(currentRepresentativePage);
+						md.setValue(String.valueOf(value + 1));
+						match = true;
+					}
+				}
+			}
+			if (!match) {
+				MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
+				try {
+					Metadata md = new Metadata(mdt);
+					Integer value = Integer.valueOf(currentRepresentativePage);
+					md.setValue(String.valueOf(value + 1));
+					this.mydocument.getPhysicalDocStruct().addMetadata(md);
+				} catch (MetadataTypeNotAllowedException e) {
 
-            }
-        }
-    }
-	
+				}
+
+			}
+		}
+	}
 
 	private boolean storeMetadata() {
 		boolean result = true;
@@ -808,8 +816,7 @@ public class Metadaten {
 		}
 		return result;
 	}
-		
-		
+
 	/**
 	 * Metadaten Schreiben
 	 * 
@@ -835,14 +842,14 @@ public class Metadaten {
 		return this.zurueck;
 	}
 
-    public boolean isCheckForRepresentative() {
-        MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
-        if (mdt != null) {
-            return true;
-        }
-        return false;
-    }
-	
+	public boolean isCheckForRepresentative() {
+		MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
+		if (mdt != null) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * vom aktuellen Strukturelement alle Metadaten einlesen
 	 * 
@@ -867,7 +874,6 @@ public class Metadaten {
 			}
 		}
 
-	
 		/*
 		 * -------------------------------- alle Personen und die DefaultDisplay-Werte ermitteln --------------------------------
 		 */
@@ -963,11 +969,13 @@ public class Metadaten {
 		OberKnoten.setLastImage(this.metahelper.getImageNumber(inStrukturelement, MetadatenHelper.PAGENUMBER_LAST));
 		// wenn es ein Heft ist, die Issue-Number mit anzeigen
 		if (inStrukturelement.getType().getName().equals("PeriodicalIssue")) {
-			OberKnoten.setDescription(OberKnoten.getDescription() + " " + MetadatenErmitteln(inStrukturelement, "CurrentNo"));
+			OberKnoten.setDescription(OberKnoten.getDescription() + " "
+					+ MetadatenErmitteln(inStrukturelement, "CurrentNo"));
 		}
 
 		// wenn es ein Periodical oder PeriodicalVolume ist, dann ausklappen
-		if (inStrukturelement.getType().getName().equals("Periodical") || inStrukturelement.getType().getName().equals("PeriodicalVolume")) {
+		if (inStrukturelement.getType().getName().equals("Periodical")
+				|| inStrukturelement.getType().getName().equals("PeriodicalVolume")) {
 			OberKnoten.setExpanded(true);
 		}
 
@@ -978,7 +986,8 @@ public class Metadaten {
 		if (meineListe != null) {
 			/* es gibt Kinder-Strukturelemente */
 			for (DocStruct kind : meineListe) {
-				String label = kind.getType().getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+				String label = kind.getType().getNameByLanguage(
+						(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 				if (label == null) {
 					label = kind.getType().getName();
 				}
@@ -1006,8 +1015,6 @@ public class Metadaten {
 		}
 		return rueckgabe.trim();
 	}
-
-
 
 	@SuppressWarnings("rawtypes")
 	public void setMyStrukturelement(DocStruct inStruct) {
@@ -1041,7 +1048,7 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenUp(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			if(myLogger.isDebugEnabled()){
+			if (myLogger.isDebugEnabled()) {
 				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
 			}
 		}
@@ -1055,7 +1062,7 @@ public class Metadaten {
 		try {
 			this.metahelper.KnotenDown(this.myDocStruct);
 		} catch (TypeNotAllowedAsChildException e) {
-			if(myLogger.isDebugEnabled()){
+			if (myLogger.isDebugEnabled()) {
 				myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
 			}
 		}
@@ -1101,7 +1108,7 @@ public class Metadaten {
 	 * @throws TypeNotAllowedAsChildException ============================================================ == ==
 	 */
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-		
+
 		/*
 		 * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
 		 * gewählt wird und abschliessend richtig einfügen --------------------------------
@@ -1254,7 +1261,8 @@ public class Metadaten {
 	 * @throws DAOException
 	 * @throws SwapException
 	 */
-	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException,
+			SwapException, DAOException {
 		this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
 		retrieveAllImages();
 
@@ -1293,7 +1301,7 @@ public class Metadaten {
 	/**
 	 * alle Seiten ermitteln ================================================================
 	 */
-    public void retrieveAllImages() {
+	public void retrieveAllImages() {
 		DigitalDocument mydocument = null;
 		try {
 			mydocument = this.gdzfile.getDigitalDocument();
@@ -1316,8 +1324,9 @@ public class Metadaten {
 			List<? extends Metadata> mySeitenDocStructMetadaten = mySeitenDocStruct.getAllMetadataByType(mdt);
 			for (Metadata meineSeite : mySeitenDocStructMetadaten) {
 				this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
-				this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
-					MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": " + meineSeite.getValue());
+				this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler), MetadatenErmitteln(
+						meineSeite.getDocStruct(), "physPageNumber").trim()
+						+ ": " + meineSeite.getValue());
 			}
 			zaehler++;
 		}
@@ -1395,8 +1404,9 @@ public class Metadaten {
 		}
 		for (Metadata meineSeite : listMetadaten) {
 			this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.myProzess);
-			this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler), MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
-					.trim() + ": " + meineSeite.getValue());
+			this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler), MetadatenErmitteln(
+					meineSeite.getDocStruct(), "physPageNumber").trim()
+					+ ": " + meineSeite.getValue());
 		}
 	}
 
@@ -1429,55 +1439,56 @@ public class Metadaten {
 
 		Paginator.Mode mode;
 		switch (paginierungSeitenProImage) {
-		case 2:
-			mode = Paginator.Mode.COLUMNS;
-			break;
-		case 3:
-			mode = Paginator.Mode.FOLIATION;
-			break;
-		case 4:
-			mode = Paginator.Mode.RECTOVERSO;
-			break;
-		case 5:
-			mode = Paginator.Mode.RECTOVERSO_FOLIATION;
-			break;
-		case 6:
-			mode = Paginator.Mode.DOUBLE_PAGES;
-			break;
-		default:
-			mode = Paginator.Mode.PAGES;
+			case 2:
+				mode = Paginator.Mode.COLUMNS;
+				break;
+			case 3:
+				mode = Paginator.Mode.FOLIATION;
+				break;
+			case 4:
+				mode = Paginator.Mode.RECTOVERSO;
+				break;
+			case 5:
+				mode = Paginator.Mode.RECTOVERSO_FOLIATION;
+				break;
+			case 6:
+				mode = Paginator.Mode.DOUBLE_PAGES;
+				break;
+			default:
+				mode = Paginator.Mode.PAGES;
 		}
 
 		Paginator.Type type;
 		switch (Integer.parseInt(paginierungArt)) {
-		case 1:
-			type = Paginator.Type.ARABIC;
-			break;
-		case 2:
-			type = Paginator.Type.ROMAN;
-			break;
-		case 6:
-			type = Paginator.Type.FREETEXT;
-			break;
-		default:
-			type = Paginator.Type.UNCOUNTED;
-			break;
+			case 1:
+				type = Paginator.Type.ARABIC;
+				break;
+			case 2:
+				type = Paginator.Type.ROMAN;
+				break;
+			case 6:
+				type = Paginator.Type.FREETEXT;
+				break;
+			default:
+				type = Paginator.Type.UNCOUNTED;
+				break;
 		}
 
 		Paginator.Scope scope;
 		switch (paginierungAbSeiteOderMarkierung) {
-		case 1:
-			scope = Paginator.Scope.FROMFIRST;
-			break;
-		default:
-			scope = Paginator.Scope.SELECTED;
-			break;
+			case 1:
+				scope = Paginator.Scope.FROMFIRST;
+				break;
+			default:
+				scope = Paginator.Scope.SELECTED;
+				break;
 
 		}
 
 		try {
 			Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(alleSeitenNeu)
-					.setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious)
+					.setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode)
+					.setFictitious(fictitious)
 					.setPaginationSeparator(paginierungSeparators.getObject().getSeparatorString())
 					.setPaginationStartValue(paginierungWert);
 			p.run();
@@ -1496,7 +1507,7 @@ public class Metadaten {
 
 		return null;
 	}
-	
+
 	/**
 	 * alle Knoten des Baums expanden oder collapsen ================================================================
 	 */
@@ -1577,7 +1588,7 @@ public class Metadaten {
 		return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
 	}
 
-    public List<String> getAllTifFolders() {
+	public List<String> getAllTifFolders() {
 		return this.allTifFolders;
 	}
 
@@ -1615,150 +1626,155 @@ public class Metadaten {
 		}
 	}
 
-	 public void BildErmitteln(int welches) {
-	        /*
-	         * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
-	         */
-	        myLogger.trace("start BildErmitteln 1");
-	        if (!this.bildAnzeigen) {
-	            myLogger.trace("end BildErmitteln 1");
-	            return;
-	        }
-	        myLogger.trace("ocr BildErmitteln");
-	        this.ocrResult = "";
+	public void BildErmitteln(int welches) {
+		/*
+		 * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
+		 */
+		myLogger.trace("start BildErmitteln 1");
+		if (!this.bildAnzeigen) {
+			myLogger.trace("end BildErmitteln 1");
+			return;
+		}
+		myLogger.trace("ocr BildErmitteln");
+		this.ocrResult = "";
 
-	        myLogger.trace("dataList");
-	        List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
-	        myLogger.trace("dataList 2");
-	        if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (dataList == null || dataList.isEmpty())) {
-	            try {
-	                createPagination();
-	                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
-	            } catch (TypeNotAllowedForParentException e) {
-	                myLogger.error(e);
-	            } catch (SwapException e) {
-	                myLogger.error(e);
-	            } catch (DAOException e) {
-	                myLogger.error(e);
-	            } catch (IOException e) {
-	                myLogger.error(e);
-	            } catch (InterruptedException e) {
-	                myLogger.error(e);
-	            }
-	        }
-	        if (dataList != null && dataList.size() > 0) {
-	            myLogger.trace("dataList not null");
-	            this.myBildLetztes = dataList.size();
-	            myLogger.trace("myBildLetztes");
-	            for (int i = 0; i < dataList.size(); i++) {
-	            	if(myLogger.isTraceEnabled()){
-	            		myLogger.trace("file: " + i);
-	            	}
-	                if (this.myBild == null) {
-	                    this.myBild = dataList.get(0);
-	                }
-	                if(myLogger.isTraceEnabled()){
-	                	myLogger.trace("myBild: " + this.myBild);
-	                }
-	                String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
-	                if(myLogger.isTraceEnabled()){
-	                	myLogger.trace("index: " + index);
-	                }
-	                String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
-	                if(myLogger.isTraceEnabled()){
-	                	myLogger.trace("myPicture: " + myPicture);
-	                }
-	                /* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
-	                if (index.equals(myPicture)) {
-	                    myLogger.trace("index == myPicture");
-	                    int pos = i + welches;
-	                    if(myLogger.isTraceEnabled()){
-	                    	myLogger.trace("pos: " + pos);
-	                    }
-	                    /* aber keine Indexes ausserhalb des Array erlauben */
-	                    if (pos < 0) {
-	                        pos = 0;
-	                    }
-	                    if (pos > dataList.size() - 1) {
-	                        pos = dataList.size() - 1;
-	                    }
-	                    if (this.currentTifFolder != null) {
-	                    	if(myLogger.isTraceEnabled()){
-	                    		myLogger.trace("currentTifFolder: " + this.currentTifFolder);
-	                    	}
-	                        try {
-	                            dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
-	                            if (dataList == null) {
-	                                return;
-	                            }
-	                        } catch (InvalidImagesException e1) {
-	                            myLogger.trace("dataList error");
-	                            myLogger.error("Images could not be read", e1);
-	                            Helper.setFehlerMeldung("images could not be read", e1);
-	                        }
-	                    }
-	                    /* das aktuelle tif erfassen */
-	                    if (dataList.size() > pos) {
-	                        this.myBild = dataList.get(pos);
-	                    } else {
-	                        this.myBild = dataList.get(dataList.size() - 1);
-	                    }
-	                    myLogger.trace("found myBild");
-	                    /* die korrekte Seitenzahl anzeigen */
-	                    this.myBildNummer = pos + 1;
-	                    if(myLogger.isTraceEnabled()){
-	                    	myLogger.trace("myBildNummer: " + this.myBildNummer);
-	                    }
-	                    /* Pages-Verzeichnis ermitteln */
-	                    String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
-	                    if(myLogger.isTraceEnabled()){
-	                    	myLogger.trace("myPfad: " + myPfad);
-	                    }
-	                    /*
-	                     * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
-	                     */
-	                    this.myBildCounter++;
-	                    if(myLogger.isTraceEnabled()){
-	                    	myLogger.trace("myBildCounter: " + this.myBildCounter);
-	                    }
+		myLogger.trace("dataList");
+		List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+		myLogger.trace("dataList 2");
+		if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+				&& (dataList == null || dataList.isEmpty())) {
+			try {
+				createPagination();
+				dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+			} catch (TypeNotAllowedForParentException e) {
+				myLogger.error(e);
+			} catch (SwapException e) {
+				myLogger.error(e);
+			} catch (DAOException e) {
+				myLogger.error(e);
+			} catch (IOException e) {
+				myLogger.error(e);
+			} catch (InterruptedException e) {
+				myLogger.error(e);
+			}
+		}
+		if (dataList != null && dataList.size() > 0) {
+			myLogger.trace("dataList not null");
+			this.myBildLetztes = dataList.size();
+			myLogger.trace("myBildLetztes");
+			for (int i = 0; i < dataList.size(); i++) {
+				if (myLogger.isTraceEnabled()) {
+					myLogger.trace("file: " + i);
+				}
+				if (this.myBild == null) {
+					this.myBild = dataList.get(0);
+				}
+				if (myLogger.isTraceEnabled()) {
+					myLogger.trace("myBild: " + this.myBild);
+				}
+				String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
+				if (myLogger.isTraceEnabled()) {
+					myLogger.trace("index: " + index);
+				}
+				String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
+				if (myLogger.isTraceEnabled()) {
+					myLogger.trace("myPicture: " + myPicture);
+				}
+				/* wenn das aktuelle Bild gefunden ist, das neue ermitteln */
+				if (index.equals(myPicture)) {
+					myLogger.trace("index == myPicture");
+					int pos = i + welches;
+					if (myLogger.isTraceEnabled()) {
+						myLogger.trace("pos: " + pos);
+					}
+					/* aber keine Indexes ausserhalb des Array erlauben */
+					if (pos < 0) {
+						pos = 0;
+					}
+					if (pos > dataList.size() - 1) {
+						pos = dataList.size() - 1;
+					}
+					if (this.currentTifFolder != null) {
+						if (myLogger.isTraceEnabled()) {
+							myLogger.trace("currentTifFolder: " + this.currentTifFolder);
+						}
+						try {
+							dataList = this.imagehelper.getImageFiles(this.myProzess, this.currentTifFolder);
+							if (dataList == null) {
+								return;
+							}
+						} catch (InvalidImagesException e1) {
+							myLogger.trace("dataList error");
+							myLogger.error("Images could not be read", e1);
+							Helper.setFehlerMeldung("images could not be read", e1);
+						}
+					}
+					/* das aktuelle tif erfassen */
+					if (dataList.size() > pos) {
+						this.myBild = dataList.get(pos);
+					} else {
+						this.myBild = dataList.get(dataList.size() - 1);
+					}
+					myLogger.trace("found myBild");
+					/* die korrekte Seitenzahl anzeigen */
+					this.myBildNummer = pos + 1;
+					if (myLogger.isTraceEnabled()) {
+						myLogger.trace("myBildNummer: " + this.myBildNummer);
+					}
+					/* Pages-Verzeichnis ermitteln */
+					String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
+					if (myLogger.isTraceEnabled()) {
+						myLogger.trace("myPfad: " + myPfad);
+					}
+					/*
+					 * den Counter für die Bild-ID auf einen neuen Wert setzen, damit nichts gecacht wird
+					 */
+					this.myBildCounter++;
+					if (myLogger.isTraceEnabled()) {
+						myLogger.trace("myBildCounter: " + this.myBildCounter);
+					}
 
-	                    /* Session ermitteln */
-	                    FacesContext context = FacesContext.getCurrentInstance();
-	                    HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-	                    String mySession = session.getId() + "_" + this.myBildCounter + ".png";
-	                    myLogger.trace("facescontext");
+					/* Session ermitteln */
+					FacesContext context = FacesContext.getCurrentInstance();
+					HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+					String mySession = session.getId() + "_" + this.myBildCounter + ".png";
+					myLogger.trace("facescontext");
 
-	                    /* das neue Bild zuweisen */
-	                    try {
-	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
-	                        if(myLogger.isTraceEnabled()){
-	                        	myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
-	                        }
-	                        if (!new SafeFile(tiffconverterpfad).exists()) {
-	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
-	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
-	                                    + this.currentTifFolder + ", using image from " + new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName());
-	                        }
-	                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
-	                        myLogger.trace("scaleFile");
-	                    } catch (Exception e) {
-	                        Helper.setFehlerMeldung("could not find image folder", e);
-	                        myLogger.error(e);
-	                    }
-	                    break;
-	                }
-	            }
-	        }
-	        BildPruefen();
-	    }
+					/* das neue Bild zuweisen */
+					try {
+						String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder
+								+ File.separator + this.myBild;
+						if (myLogger.isTraceEnabled()) {
+							myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
+						}
+						if (!new SafeFile(tiffconverterpfad).exists()) {
+							tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
+							Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild
+									+ " does not exist in folder " + this.currentTifFolder + ", using image from "
+									+ new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName());
+						}
+						this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse,
+								this.myImageRotation);
+						myLogger.trace("scaleFile");
+					} catch (Exception e) {
+						Helper.setFehlerMeldung("could not find image folder", e);
+						myLogger.error(e);
+					}
+					break;
+				}
+			}
+		}
+		BildPruefen();
+	}
 
 	private void BildPruefen() {
 		/* wenn bisher noch kein Bild da ist, das erste nehmen */
 		boolean exists = false;
 		try {
 			if (this.currentTifFolder != null && this.myBild != null) {
-				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
-			} 
+				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator
+						+ this.myBild)).exists();
+			}
 		} catch (Exception e) {
 			this.myBildNummer = -1;
 			myLogger.error(e);
@@ -1839,7 +1855,8 @@ public class Metadaten {
 				this.myDocStruct.addMetadata(mdDin);
 				this.myDocStruct.addMetadata(mdIso);
 			} catch (MetadataTypeNotAllowedException e) {
-				myLogger.error("Fehler beim Hinzufügen der Transliterationen (MetadataTypeNotAllowedException): " + e.getMessage());
+				myLogger.error("Fehler beim Hinzufügen der Transliterationen (MetadataTypeNotAllowedException): "
+						+ e.getMessage());
 			}
 		}
 		MetadatenalsBeanSpeichern(this.myDocStruct);
@@ -1875,7 +1892,8 @@ public class Metadaten {
 				this.myDocStruct.addPerson(mdDin);
 				this.myDocStruct.addPerson(mdIso);
 			} catch (MetadataTypeNotAllowedException e) {
-				myLogger.error("Fehler beim Hinzufügen der Transliterationen (MetadataTypeNotAllowedException): " + e.getMessage());
+				myLogger.error("Fehler beim Hinzufügen der Transliterationen (MetadataTypeNotAllowedException): "
+						+ e.getMessage());
 			}
 		}
 		MetadatenalsBeanSpeichern(this.myDocStruct);
@@ -1931,7 +1949,8 @@ public class Metadaten {
 
 					/* die Liste aller erlaubten Metadatenelemente erstellen */
 					List<String> erlaubte = new ArrayList<String>();
-					for (Iterator<MetadataType> it = this.myDocStruct.getAddableMetadataTypes().iterator(); it.hasNext();) {
+					for (Iterator<MetadataType> it = this.myDocStruct.getAddableMetadataTypes().iterator(); it
+							.hasNext();) {
 						MetadataType mt = it.next();
 						erlaubte.add(mt.getName());
 					}
@@ -1939,19 +1958,21 @@ public class Metadaten {
 					/*
 					 * wenn der Metadatentyp in der Liste der erlaubten Typen, dann hinzufügen
 					 */
-					for (Iterator<Metadata> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata().iterator(); it.hasNext();) {
+					for (Iterator<Metadata> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata()
+							.iterator(); it.hasNext();) {
 						Metadata m = it.next();
 						if (erlaubte.contains(m.getType().getName())) {
 							this.myDocStruct.addMetadata(m);
 						}
 					}
-					
-                    for (Iterator<Person> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons().iterator(); it.hasNext();) {
-                        Person m = it.next();
-                        if (erlaubte.contains(m.getType().getName())) {
-                            this.myDocStruct.addPerson(m);
-                        }
-                    }
+
+					for (Iterator<Person> it = addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()
+							.iterator(); it.hasNext();) {
+						Person m = it.next();
+						if (erlaubte.contains(m.getType().getName())) {
+							this.myDocStruct.addPerson(m);
+						}
+					}
 
 					MetadatenalsTree3Einlesen1();
 				} else {
@@ -2033,10 +2054,10 @@ public class Metadaten {
 	}
 
 	private int pageNumber = 0;
-	
-	private SelectOne<Separator> paginierungSeparators = new SelectOne<Separator>(Separator.factory(
-			ConfigMain.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
-	
+
+	private SelectOne<Separator> paginierungSeparators = new SelectOne<Separator>(Separator.factory(ConfigMain
+			.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
+
 	public int getPageNumber() {
 		return this.pageNumber;
 	}
@@ -2097,14 +2118,15 @@ public class Metadaten {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
 		}
-		int anzahlAuswahl = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite) - Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + 1;
+		int anzahlAuswahl = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite)
+				- Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + 1;
 		if (anzahlAuswahl > 0) {
 			/* alle bisher zugewiesenen Seiten entfernen */
 			this.myDocStruct.getAllToReferences().clear();
 			int zaehler = 0;
 			while (zaehler < anzahlAuswahl) {
-				this.myDocStruct.addReferenceTo(this.alleSeitenNeu[Integer.parseInt(this.alleSeitenAuswahl_ersteSeite) + zaehler].getMd()
-						.getDocStruct(), "logical_physical");
+				this.myDocStruct.addReferenceTo(this.alleSeitenNeu[Integer.parseInt(this.alleSeitenAuswahl_ersteSeite)
+						+ zaehler].getMd().getDocStruct(), "logical_physical");
 				zaehler++;
 			}
 		}
@@ -2150,8 +2172,8 @@ public class Metadaten {
 	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
 	 */
 	public String BildErsteSeiteAnzeigen() {
-        myBild = null;
-        BildErmitteln(0);
+		myBild = null;
+		BildErmitteln(0);
 		return "";
 	}
 
@@ -2192,7 +2214,8 @@ public class Metadaten {
 			 * wenn schon References vorhanden, prüfen, ob schon enthalten, erst dann zuweisen
 			 */
 			if (this.myDocStruct.getAllToReferences("logical_physical") != null) {
-				for (Iterator<Reference> iter = this.myDocStruct.getAllToReferences("logical_physical").iterator(); iter.hasNext();) {
+				for (Iterator<Reference> iter = this.myDocStruct.getAllToReferences("logical_physical").iterator(); iter
+						.hasNext();) {
 					Reference obj = iter.next();
 					if (obj.getTarget() == this.alleSeitenNeu[aktuelleID].getMd().getDocStruct()) {
 						schonEnthalten = true;
@@ -2202,7 +2225,8 @@ public class Metadaten {
 			}
 
 			if (!schonEnthalten) {
-				this.myDocStruct.addReferenceTo(this.alleSeitenNeu[aktuelleID].getMd().getDocStruct(), "logical_physical");
+				this.myDocStruct.addReferenceTo(this.alleSeitenNeu[aktuelleID].getMd().getDocStruct(),
+						"logical_physical");
 			}
 		}
 		StructSeitenErmitteln(this.myDocStruct);
@@ -2739,7 +2763,7 @@ public class Metadaten {
 		}
 		return true;
 	}
-	
+
 	public boolean getFictitious() {
 		return fictitious;
 	}
@@ -2748,335 +2772,336 @@ public class Metadaten {
 		this.fictitious = fictitious;
 	}
 
-    public String getCurrentRepresentativePage() {
-        return currentRepresentativePage;
-    }
+	public String getCurrentRepresentativePage() {
+		return currentRepresentativePage;
+	}
 
-    public void setCurrentRepresentativePage(String currentRepresentativePage) {
-        this.currentRepresentativePage = currentRepresentativePage;
-    }
+	public void setCurrentRepresentativePage(String currentRepresentativePage) {
+		this.currentRepresentativePage = currentRepresentativePage;
+	}
 
-    private void switchFileNames(DocStruct firstpage, DocStruct secondpage) {
-        String firstFile = firstpage.getImageName();
-        String otherFile = secondpage.getImageName();
+	private void switchFileNames(DocStruct firstpage, DocStruct secondpage) {
+		String firstFile = firstpage.getImageName();
+		String otherFile = secondpage.getImageName();
 
-        firstpage.setImageName(otherFile);
-        secondpage.setImageName(firstFile);
-    }
+		firstpage.setImageName(otherFile);
+		secondpage.setImageName(firstFile);
+	}
 
-    public void moveSeltectedPagesUp() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pageNoList = Arrays.asList(alleSeitenAuswahl);
-        for (String order : pageNoList) {
-            int currentPhysicalPageNo = Integer.parseInt(order);
-            if (currentPhysicalPageNo == 0) {
-                break;
-            }
-            selectedPages.add(currentPhysicalPageNo);
-        }
+	public void moveSeltectedPagesUp() {
+		List<Integer> selectedPages = new ArrayList<Integer>();
+		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+		List<String> pageNoList = Arrays.asList(alleSeitenAuswahl);
+		for (String order : pageNoList) {
+			int currentPhysicalPageNo = Integer.parseInt(order);
+			if (currentPhysicalPageNo == 0) {
+				break;
+			}
+			selectedPages.add(currentPhysicalPageNo);
+		}
 
-        if (selectedPages.isEmpty()) {
-            return;
-        }
-        List<String> newSelectionList = new ArrayList<String>();
-        for (Integer pageIndex : selectedPages) {
-            DocStruct firstpage = allPages.get(pageIndex - 1);
-            DocStruct secondpage = allPages.get(pageIndex);
-            switchFileNames(firstpage, secondpage);
-            newSelectionList.add(String.valueOf(pageIndex - 1));
-        }
+		if (selectedPages.isEmpty()) {
+			return;
+		}
+		List<String> newSelectionList = new ArrayList<String>();
+		for (Integer pageIndex : selectedPages) {
+			DocStruct firstpage = allPages.get(pageIndex - 1);
+			DocStruct secondpage = allPages.get(pageIndex);
+			switchFileNames(firstpage, secondpage);
+			newSelectionList.add(String.valueOf(pageIndex - 1));
+		}
 
-        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+		alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
 
-        retrieveAllImages();
-        BildErmitteln(0);
-    }
+		retrieveAllImages();
+		BildErmitteln(0);
+	}
 
-    public void moveSeltectedPagesDown() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
-        Collections.reverse(pagesList);
-        for (String order : pagesList) {
-            int currentPhysicalPageNo = Integer.parseInt(order);
-            if (currentPhysicalPageNo + 1 == alleSeiten.length) {
-                break;
-            }
-            selectedPages.add(currentPhysicalPageNo);
-        }
+	public void moveSeltectedPagesDown() {
+		List<Integer> selectedPages = new ArrayList<Integer>();
+		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+		List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+		Collections.reverse(pagesList);
+		for (String order : pagesList) {
+			int currentPhysicalPageNo = Integer.parseInt(order);
+			if (currentPhysicalPageNo + 1 == alleSeiten.length) {
+				break;
+			}
+			selectedPages.add(currentPhysicalPageNo);
+		}
 
-        if (selectedPages.isEmpty()) {
-            return;
-        }
-        List<String> newSelectionList = new ArrayList<String>();
-        for (Integer pageIndex : selectedPages) {
-            DocStruct firstpage = allPages.get(pageIndex + 1);
-            DocStruct secondpage = allPages.get(pageIndex);
-            switchFileNames(firstpage, secondpage);
-            newSelectionList.add(String.valueOf(pageIndex + 1));
-        }
+		if (selectedPages.isEmpty()) {
+			return;
+		}
+		List<String> newSelectionList = new ArrayList<String>();
+		for (Integer pageIndex : selectedPages) {
+			DocStruct firstpage = allPages.get(pageIndex + 1);
+			DocStruct secondpage = allPages.get(pageIndex);
+			switchFileNames(firstpage, secondpage);
+			newSelectionList.add(String.valueOf(pageIndex + 1));
+		}
 
-        alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
-        retrieveAllImages();
-        BildErmitteln(0);
-    }
+		alleSeitenAuswahl = newSelectionList.toArray(new String[newSelectionList.size()]);
+		retrieveAllImages();
+		BildErmitteln(0);
+	}
 
-    public void deleteSeltectedPages() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
-        List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
-        List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
-        Collections.reverse(pagesList);
-        for (String order : pagesList) {
-            int currentPhysicalPageNo = Integer.parseInt(order);
-            selectedPages.add(currentPhysicalPageNo);
-        }
+	public void deleteSeltectedPages() {
+		List<Integer> selectedPages = new ArrayList<Integer>();
+		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+		List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
+		Collections.reverse(pagesList);
+		for (String order : pagesList) {
+			int currentPhysicalPageNo = Integer.parseInt(order);
+			selectedPages.add(currentPhysicalPageNo);
+		}
 
-        if (selectedPages.isEmpty()) {
-            return;
-        }
+		if (selectedPages.isEmpty()) {
+			return;
+		}
 
-        for (Integer pageIndex : selectedPages) {
+		for (Integer pageIndex : selectedPages) {
 
-            DocStruct pageToRemove = allPages.get(pageIndex);
-            String imagename = pageToRemove.getImageName();
+			DocStruct pageToRemove = allPages.get(pageIndex);
+			String imagename = pageToRemove.getImageName();
 
-            removeImage(imagename);
-            mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
+			removeImage(imagename);
+			mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
 
-            mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
-            List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
-            for (ugh.dl.Reference ref : refs) {
-                ref.getSource().removeReferenceTo(pageToRemove);
-            }
+			mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
+			List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
+			for (ugh.dl.Reference ref : refs) {
+				ref.getSource().removeReferenceTo(pageToRemove);
+			}
 
-        }
+		}
 
-        alleSeitenAuswahl = null;
-        if (mydocument.getPhysicalDocStruct().getAllChildren() != null) {
-            myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
-        } else {
-            myBildLetztes = 0;
-        }
+		alleSeitenAuswahl = null;
+		if (mydocument.getPhysicalDocStruct().getAllChildren() != null) {
+			myBildLetztes = mydocument.getPhysicalDocStruct().getAllChildren().size();
+		} else {
+			myBildLetztes = 0;
+		}
 
-        allPages = mydocument.getPhysicalDocStruct().getAllChildren();
+		allPages = mydocument.getPhysicalDocStruct().getAllChildren();
 
-        int currentPhysicalOrder = 1;
-        if (allPages != null) {
-            MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
-            for (DocStruct page : allPages) {
-                List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
-                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
-                    currentPhysicalOrder++;
-                    break;
-                }
-                for (Metadata pageNo : pageNoMetadata) {
-                    pageNo.setValue(String.valueOf(currentPhysicalOrder));
-                }
-                currentPhysicalOrder++;
-            }
-        }
-        retrieveAllImages();
+		int currentPhysicalOrder = 1;
+		if (allPages != null) {
+			MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
+			for (DocStruct page : allPages) {
+				List<? extends Metadata> pageNoMetadata = page.getAllMetadataByType(mdt);
+				if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+					currentPhysicalOrder++;
+					break;
+				}
+				for (Metadata pageNo : pageNoMetadata) {
+					pageNo.setValue(String.valueOf(currentPhysicalOrder));
+				}
+				currentPhysicalOrder++;
+			}
+		}
+		retrieveAllImages();
 
-        // current image was deleted, load first image
-        if (selectedPages.contains(myBildNummer - 1)) {
+		// current image was deleted, load first image
+		if (selectedPages.contains(myBildNummer - 1)) {
 
-            BildErsteSeiteAnzeigen();
-        } else {
-            BildErmitteln(0);
-        }
-    }
+			BildErsteSeiteAnzeigen();
+		} else {
+			BildErmitteln(0);
+		}
+	}
 
-    public void reOrderPagination() {
-        String imageDirectory = "";
-        try {
-            imageDirectory = myProzess.getImagesDirectory();
-        } catch (SwapException e) {
-            myLogger.error(e);
-        } catch (DAOException e) {
-            myLogger.error(e);
-        } catch (IOException e) {
-            myLogger.error(e);
-        } catch (InterruptedException e) {
-            myLogger.error(e);
+	public void reOrderPagination() {
+		String imageDirectory = "";
+		try {
+			imageDirectory = myProzess.getImagesDirectory();
+		} catch (SwapException e) {
+			myLogger.error(e);
+		} catch (DAOException e) {
+			myLogger.error(e);
+		} catch (IOException e) {
+			myLogger.error(e);
+		} catch (InterruptedException e) {
+			myLogger.error(e);
 
-        }
-        if (imageDirectory.equals("")) {
-            Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
-            return;
-        }
+		}
+		if (imageDirectory.equals("")) {
+			Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
+			return;
+		}
 
-        List<String> oldfilenames = new ArrayList<String>();
-        for (DocStruct page : mydocument.getPhysicalDocStruct().getAllChildren()) {
-            oldfilenames.add(page.getImageName());
-        }
+		List<String> oldfilenames = new ArrayList<String>();
+		for (DocStruct page : mydocument.getPhysicalDocStruct().getAllChildren()) {
+			oldfilenames.add(page.getImageName());
+		}
 
-        for (String imagename : oldfilenames) {
-            for (String folder : allTifFolders) {
-                SafeFile filename = new SafeFile(imageDirectory + folder, imagename);
-                SafeFile newFileName = new SafeFile(imageDirectory + folder, imagename + "_bak");
-                filename.renameTo(newFileName);
-            }
+		for (String imagename : oldfilenames) {
+			for (String folder : allTifFolders) {
+				SafeFile filename = new SafeFile(imageDirectory + folder, imagename);
+				SafeFile newFileName = new SafeFile(imageDirectory + folder, imagename + "_bak");
+				filename.renameTo(newFileName);
+			}
 
-            try {
-                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
-                if (ocr.exists()) {
-                    SafeFile[] allOcrFolder = ocr.listFiles();
-                    for (SafeFile folder : allOcrFolder) {
-                        SafeFile filename = new SafeFile(folder, imagename);
-                        SafeFile newFileName = new SafeFile(folder, imagename + "_bak");
-                        filename.renameTo(newFileName);
-                    }
-                }
-            } catch (SwapException e) {
-                myLogger.error(e);
-            } catch (DAOException e) {
-                myLogger.error(e);
-            } catch (IOException e) {
-                myLogger.error(e);
-            } catch (InterruptedException e) {
-                myLogger.error(e);
-            }
+			try {
+				SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+				if (ocr.exists()) {
+					SafeFile[] allOcrFolder = ocr.listFiles();
+					for (SafeFile folder : allOcrFolder) {
+						SafeFile filename = new SafeFile(folder, imagename);
+						SafeFile newFileName = new SafeFile(folder, imagename + "_bak");
+						filename.renameTo(newFileName);
+					}
+				}
+			} catch (SwapException e) {
+				myLogger.error(e);
+			} catch (DAOException e) {
+				myLogger.error(e);
+			} catch (IOException e) {
+				myLogger.error(e);
+			} catch (InterruptedException e) {
+				myLogger.error(e);
+			}
 
-        }
-        int counter = 1;
-        for (String imagename : oldfilenames) {
-            String newfilenamePrefix = generateFileName(counter);
-            for (String folder : allTifFolders) {
-                SafeFile fileToSort = new SafeFile(imageDirectory + folder, imagename);
-                String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                SafeFile tempFileName = new SafeFile(imageDirectory + folder, fileToSort.getName() + "_bak");
-                SafeFile sortedName = new SafeFile(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
-                tempFileName.renameTo(sortedName);
-                mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.toURI().toString());
-            }
-            try {
-                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
-                if (ocr.exists()) {
-                    SafeFile[] allOcrFolder = ocr.listFiles();
-                    for (SafeFile folder : allOcrFolder) {
-                        SafeFile fileToSort = new SafeFile(folder, imagename);
-                        String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                        SafeFile tempFileName = new SafeFile(folder, fileToSort.getName() + "_bak");
-                        SafeFile sortedName = new SafeFile(folder, newfilenamePrefix + fileExtension.toLowerCase());
-                        tempFileName.renameTo(sortedName);
-                    }
-                }
-            } catch (SwapException e) {
-                myLogger.error(e);
-            } catch (DAOException e) {
-                myLogger.error(e);
-            } catch (IOException e) {
-                myLogger.error(e);
-            } catch (InterruptedException e) {
-                myLogger.error(e);
-            }
-            counter++;
-        }
-        retrieveAllImages();
+		}
+		int counter = 1;
+		for (String imagename : oldfilenames) {
+			String newfilenamePrefix = generateFileName(counter);
+			for (String folder : allTifFolders) {
+				SafeFile fileToSort = new SafeFile(imageDirectory + folder, imagename);
+				String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
+				SafeFile tempFileName = new SafeFile(imageDirectory + folder, fileToSort.getName() + "_bak");
+				SafeFile sortedName = new SafeFile(imageDirectory + folder, newfilenamePrefix
+						+ fileExtension.toLowerCase());
+				tempFileName.renameTo(sortedName);
+				mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1)
+						.setImageName(sortedName.toURI().toString());
+			}
+			try {
+				SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+				if (ocr.exists()) {
+					SafeFile[] allOcrFolder = ocr.listFiles();
+					for (SafeFile folder : allOcrFolder) {
+						SafeFile fileToSort = new SafeFile(folder, imagename);
+						String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
+						SafeFile tempFileName = new SafeFile(folder, fileToSort.getName() + "_bak");
+						SafeFile sortedName = new SafeFile(folder, newfilenamePrefix + fileExtension.toLowerCase());
+						tempFileName.renameTo(sortedName);
+					}
+				}
+			} catch (SwapException e) {
+				myLogger.error(e);
+			} catch (DAOException e) {
+				myLogger.error(e);
+			} catch (IOException e) {
+				myLogger.error(e);
+			} catch (InterruptedException e) {
+				myLogger.error(e);
+			}
+			counter++;
+		}
+		retrieveAllImages();
 
-        BildErmitteln(0);
-    }
+		BildErmitteln(0);
+	}
 
-    private void removeImage(String fileToDelete) {
-        try {
-            // TODO check what happens with .tar.gz
-            String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
-            for (String folder : allTifFolders) {
-                SafeFile[] filesInFolder = new SafeFile(myProzess.getImagesDirectory() + folder).listFiles();
-                for (SafeFile currentFile : filesInFolder) {
-                    String filename = currentFile.getName();
-                    String filenamePrefix = filename.replace(getFileExtension(filename), "");
-                    if (filenamePrefix.equals(fileToDeletePrefix)) {
-                        currentFile.delete();
-                    }
-                }
-            }
+	private void removeImage(String fileToDelete) {
+		try {
+			// TODO check what happens with .tar.gz
+			String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
+			for (String folder : allTifFolders) {
+				SafeFile[] filesInFolder = new SafeFile(myProzess.getImagesDirectory() + folder).listFiles();
+				for (SafeFile currentFile : filesInFolder) {
+					String filename = currentFile.getName();
+					String filenamePrefix = filename.replace(getFileExtension(filename), "");
+					if (filenamePrefix.equals(fileToDeletePrefix)) {
+						currentFile.delete();
+					}
+				}
+			}
 
-            SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
-            if (ocr.exists()) {
-                SafeFile[] folder = ocr.listFiles();
-                for (SafeFile dir : folder) {
-                    if (dir.isDirectory() && dir.list().length > 0) {
-                        SafeFile[] filesInFolder = dir.listFiles();
-                        for (SafeFile currentFile : filesInFolder) {
-                            String filename = currentFile.getName();
-                            String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
-                            if (filenamePrefix.equals(fileToDeletePrefix)) {
-                                currentFile.delete();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (SwapException e) {
-            myLogger.error(e);
-        } catch (DAOException e) {
-            myLogger.error(e);
-        } catch (IOException e) {
-            myLogger.error(e);
-        } catch (InterruptedException e) {
-            myLogger.error(e);
-        }
+			SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+			if (ocr.exists()) {
+				SafeFile[] folder = ocr.listFiles();
+				for (SafeFile dir : folder) {
+					if (dir.isDirectory() && dir.list().length > 0) {
+						SafeFile[] filesInFolder = dir.listFiles();
+						for (SafeFile currentFile : filesInFolder) {
+							String filename = currentFile.getName();
+							String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
+							if (filenamePrefix.equals(fileToDeletePrefix)) {
+								currentFile.delete();
+							}
+						}
+					}
+				}
+			}
+		} catch (SwapException e) {
+			myLogger.error(e);
+		} catch (DAOException e) {
+			myLogger.error(e);
+		} catch (IOException e) {
+			myLogger.error(e);
+		} catch (InterruptedException e) {
+			myLogger.error(e);
+		}
 
-    }
+	}
 
-    private static String generateFileName(int counter) {
-        String filename = "";
-        if (counter >= 10000000) {
-            filename = "" + counter;
-        } else if (counter >= 1000000) {
-            filename = "0" + counter;
-        } else if (counter >= 100000) {
-            filename = "00" + counter;
-        } else if (counter >= 10000) {
-            filename = "000" + counter;
-        } else if (counter >= 1000) {
-            filename = "0000" + counter;
-        } else if (counter >= 100) {
-            filename = "00000" + counter;
-        } else if (counter >= 10) {
-            filename = "000000" + counter;
-        } else {
-            filename = "0000000" + counter;
-        }
-        return filename;
-    }
+	private static String generateFileName(int counter) {
+		String filename = "";
+		if (counter >= 10000000) {
+			filename = "" + counter;
+		} else if (counter >= 1000000) {
+			filename = "0" + counter;
+		} else if (counter >= 100000) {
+			filename = "00" + counter;
+		} else if (counter >= 10000) {
+			filename = "000" + counter;
+		} else if (counter >= 1000) {
+			filename = "0000" + counter;
+		} else if (counter >= 100) {
+			filename = "00000" + counter;
+		} else if (counter >= 10) {
+			filename = "000000" + counter;
+		} else {
+			filename = "0000000" + counter;
+		}
+		return filename;
+	}
 
-    public FileManipulation getFileManipulation() {
-        if (fileManipulation == null) {
-            fileManipulation = new FileManipulation(this);
-        }
-        return fileManipulation;
-    }
+	public FileManipulation getFileManipulation() {
+		if (fileManipulation == null) {
+			fileManipulation = new FileManipulation(this);
+		}
+		return fileManipulation;
+	}
 
-    public void setFileManipulation(FileManipulation fileManipulation) {
-        this.fileManipulation = fileManipulation;
-    }
+	public void setFileManipulation(FileManipulation fileManipulation) {
+		this.fileManipulation = fileManipulation;
+	}
 
-    public DigitalDocument getDocument() {
-        return mydocument;
-    }
+	public DigitalDocument getDocument() {
+		return mydocument;
+	}
 
-    public void setDocument(DigitalDocument document) {
-        this.mydocument = document;
-    }
+	public void setDocument(DigitalDocument document) {
+		this.mydocument = document;
+	}
 
-    public static String getFileExtension(String filename) {
-        if (filename == null) {
-            return "";
-        }
-        String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
-        int afterLastBackslash = afterLastSlash.lastIndexOf('\\') + 1;
-        int dotIndex = afterLastSlash.indexOf('.', afterLastBackslash);
-        return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex);
-    }
+	public static String getFileExtension(String filename) {
+		if (filename == null) {
+			return "";
+		}
+		String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
+		int afterLastBackslash = afterLastSlash.lastIndexOf('\\') + 1;
+		int dotIndex = afterLastSlash.indexOf('.', afterLastBackslash);
+		return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex);
+	}
 
-    
-    public Boolean getDisplayFileManipulation() {
-        return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false); 
-    }
-    
+	public Boolean getDisplayFileManipulation() {
+		return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false);
+	}
+
 	/**
 	 * Saves the input from the subform to create a new metadata group in the
 	 * currently selected docStruct and then toggles the form to show the page

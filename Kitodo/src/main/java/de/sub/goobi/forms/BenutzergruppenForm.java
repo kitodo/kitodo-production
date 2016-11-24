@@ -104,7 +104,7 @@ public class BenutzergruppenForm extends BasisForm {
 	}
 
 	/*
- 	 * Getter und Setter 
+	 * Getter und Setter 
 	 */
 
 	public Benutzergruppe getMyBenutzergruppe() {

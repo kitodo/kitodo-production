@@ -53,7 +53,8 @@ public class DmsImportThread extends Thread {
 	public DmsImportThread(Prozess inProzess, String inAts) {
 		setDaemon(true);
 		/* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber in neuem FehlerOrdner */
-		if (inProzess.getProjekt().getDmsImportErrorPath() == null || inProzess.getProjekt().getDmsImportErrorPath().length() == 0) {
+		if (inProzess.getProjekt().getDmsImportErrorPath() == null
+				|| inProzess.getProjekt().getDmsImportErrorPath().length() == 0) {
 			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
 		} else {
 			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportErrorPath(), inAts + ".log");
@@ -62,7 +63,8 @@ public class DmsImportThread extends Thread {
 		this.fileXml = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".xml");
 		this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inAts + ".xml");
 		if (inProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel() + File.separator + inAts + ".xml");
+			this.fileSuccess = new SafeFile(inProzess.getProjekt().getDmsImportSuccessPath(), inProzess.getTitel()
+					+ File.separator + inAts + ".xml");
 		}
 
 		this.folderImages = new SafeFile(inProzess.getProjekt().getDmsImportImagesPath(), inAts + "_tif");
@@ -97,7 +99,8 @@ public class DmsImportThread extends Thread {
 						this.rueckgabe = myBuf.toString();
 
 					}
-					if (this.fileSuccess.exists() && this.fileSuccess.getAbsoluteFile().lastModified() > this.timeFileSuccess) {
+					if (this.fileSuccess.exists()
+							&& this.fileSuccess.getAbsoluteFile().lastModified() > this.timeFileSuccess) {
 						this.stop = true;
 					}
 				}
@@ -107,7 +110,7 @@ public class DmsImportThread extends Thread {
 		}
 		if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 			/* Images wieder löschen */
-		    this.folderImages.deleteDir();
+			this.folderImages.deleteDir();
 		}
 	}
 

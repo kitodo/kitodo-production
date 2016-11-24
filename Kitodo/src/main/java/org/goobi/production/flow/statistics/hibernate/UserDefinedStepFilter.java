@@ -1,4 +1,5 @@
 package org.goobi.production.flow.statistics.hibernate;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -62,12 +63,11 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	private Boolean stepOpenOnly = false;
 	private boolean userAssignedStepsOnly = false;
 	private boolean clearSession = false;
-	
+
 	public UserDefinedStepFilter(boolean clearSession) {
 		this.clearSession = clearSession;
 	}
-	
-	
+
 	/*
 	 * setting basic filter modes
 	 */
@@ -123,7 +123,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 		// following was moved to Filter Helper
 		// limitToUserAssignedSteps(crit);
 
-		String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly, userAssignedStepsOnly, clearSession);
+		String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly,
+				userAssignedStepsOnly, clearSession);
 
 		if (message.length() > 0) {
 			myObservable.setMessage(message);
@@ -141,7 +142,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public List<Integer> getIDList() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getIDList() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getIDList() ");
 	}
 
 	/*
@@ -152,7 +154,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getName() ");
 	}
 
 	/*
@@ -206,7 +209,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public void setName(String name) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setName() ");
 	}
 
 	/*
@@ -218,7 +222,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setSQL() ");
 	}
 
 	/*
@@ -230,7 +235,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement stepDone() ");
 	}
 
 	/*
@@ -240,20 +246,21 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	 */
 	@Override
 	public List<Object> getSourceData() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getSourceData() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getSourceData() ");
 	}
 
 	@Override
 	public UserDefinedStepFilter clone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement clone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement clone() ");
 
 	}
 
 	@Override
 	public String stepDoneName() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDoneName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement stepDoneName() ");
 	}
-
-	
 
 }

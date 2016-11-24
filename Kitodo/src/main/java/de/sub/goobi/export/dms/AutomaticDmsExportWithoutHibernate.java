@@ -81,7 +81,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	 * for visualisation.
 	 */
 	private EmptyTask task;
-	
+
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
 	public AutomaticDmsExportWithoutHibernate() {
@@ -111,14 +111,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	 * @throws SwapException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	
+
 	@Override
-	public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException, WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
+	public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException,
+			WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
-	
-		this.project =ProjectManager.getProjectById(process.getProjekteID());
-		
-		
+
+		this.project = ProjectManager.getProjectById(process.getProjekteID());
+
 		this.cp = new ConfigProjects(this.project.getTitel());
 		String atsPpnBand = process.getTitle();
 
@@ -129,18 +129,18 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		Fileformat gdzfile;
 		Fileformat newfile;
 		try {
-			 this.fi = new FolderInformation(process.getId(), process.getTitle());
+			this.fi = new FolderInformation(process.getId(), process.getTitle());
 			String metadataPath = this.fi.getMetadataFilePath();
 			gdzfile = process.readMetadataFile(metadataPath, this.myPrefs);
 			switch (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport())) {
-			case METS:
-				newfile = new MetsModsImportExport(this.myPrefs);
-				break;
+				case METS:
+					newfile = new MetsModsImportExport(this.myPrefs);
+					break;
 
-			case METS_AND_RDF:
-			default:
-				newfile = new RDFFile(this.myPrefs);
-				break;
+				case METS_AND_RDF:
+				default:
+					newfile = new RDFFile(this.myPrefs);
+					break;
 			}
 
 			newfile.setDigitalDocument(gdzfile.getDigitalDocument());
@@ -205,19 +205,24 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			zielVerzeichnis = benutzerHome.getAbsolutePath();
 			/* alte Import-Ordner löschen */
 			if (!benutzerHome.deleteDir()) {
-				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Import folder could not be cleared");
+				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+						"Import folder could not be cleared");
 				return false;
 			}
 			/* alte Success-Ordner löschen */
-			SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+			SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator
+					+ process.getTitle());
 			if (!successFile.deleteDir()) {
-				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Success folder could not be cleared");
+				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+						"Success folder could not be cleared");
 				return false;
 			}
 			/* alte Error-Ordner löschen */
-			SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
+			SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath() + File.separator
+					+ process.getTitle());
 			if (!errorfile.deleteDir()) {
-				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), "Error folder could not be cleared");
+				Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+						"Error folder could not be cleared");
 				return false;
 			}
 
@@ -240,9 +245,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			} else if (this.exportFulltext) {
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
-			
+
 			directoryDownload(process, zielVerzeichnis);
-			
+
 		} catch (Exception e) {
 			if (task != null) {
 				task.setException(e);
@@ -276,12 +281,12 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
 			Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
-		
 			if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
-				
+
 				/* Success-Ordner wieder löschen */
 				if (this.project.isDmsImportCreateProcessFolder()) {
-					SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+					SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator
+							+ process.getTitle());
 					successFile.deleteDir();
 				}
 			}
@@ -314,27 +319,25 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 	}
 
-	public void fulltextDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
-			InterruptedException, SwapException, DAOException {
+	public void fulltextDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand,
+			final String ordnerEndung) throws IOException, InterruptedException, SwapException, DAOException {
 
 		// download sources
 		SafeFile sources = new SafeFile(fi.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
-			SafeFile destination = new SafeFile(benutzerHome + File.separator
-					+ atsPpnBand + "_src");
+			SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
 			}
 			SafeFile[] dateien = sources.listFiles();
 			for (int i = 0; i < dateien.length; i++) {
-				if(dateien[i].isFile()) {
-					SafeFile meinZiel = new SafeFile(destination + File.separator
-							+ dateien[i].getName());
+				if (dateien[i].isFile()) {
+					SafeFile meinZiel = new SafeFile(destination + File.separator + dateien[i].getName());
 					dateien[i].copyFile(meinZiel, false);
 				}
 			}
 		}
-		
+
 		SafeFile ocr = new SafeFile(fi.getOcrDirectory());
 		if (ocr.exists()) {
 			SafeFile[] folder = ocr.listFiles();
@@ -347,7 +350,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 					}
 					SafeFile[] files = dir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						if(files[i].isFile()) {
+						if (files[i].isFile()) {
 							SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
 							files[i].copyFile(target, false);
 						}
@@ -357,8 +360,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 	}
 
-	public void imageDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
-			InterruptedException, SwapException, DAOException {
+	public void imageDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand,
+			final String ordnerEndung) throws IOException, InterruptedException, SwapException, DAOException {
 		/*
 		 * -------------------------------- den Ausgangspfad ermitteln
 		 * --------------------------------
@@ -401,7 +404,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				if (task != null) {
 					task.setWorkDetail(dateien[i].getName());
 				}
-				if(dateien[i].isFile()) {
+				if (dateien[i].isFile()) {
 					SafeFile meinZiel = new SafeFile(zielTif + File.separator + dateien[i].getName());
 					dateien[i].copyFile(meinZiel, false);
 				}
@@ -424,18 +427,20 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	 * @param myProzess the process object
 	 * @param zielVerzeichnis the destination directory
 	 * @throws IOException
-	 */		
-	private void directoryDownload(ProcessObject myProzess, String zielVerzeichnis) throws IOException{
-	
+	 */
+	private void directoryDownload(ProcessObject myProzess, String zielVerzeichnis) throws IOException {
+
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
-		
-		for(String processDir : processDirs) {
-		
-			SafeFile srcDir = new SafeFile(FilenameUtils.concat(fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitle())));
-			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
-		
-			if(srcDir.isDirectory()) {
-			    srcDir.copyDir(dstDir);
+
+		for (String processDir : processDirs) {
+
+			SafeFile srcDir = new SafeFile(FilenameUtils.concat(fi.getProcessDataDirectory(),
+					processDir.replace("(processtitle)", myProzess.getTitle())));
+			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis,
+					processDir.replace("(processtitle)", myProzess.getTitle())));
+
+			if (srcDir.isDirectory()) {
+				srcDir.copyDir(dstDir);
 			}
 		}
 	}

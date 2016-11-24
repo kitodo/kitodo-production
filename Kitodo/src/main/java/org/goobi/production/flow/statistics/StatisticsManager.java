@@ -110,13 +110,13 @@ public class StatisticsManager implements Serializable {
 		if (inMode.getIsSimple()) {
 			switch (inMode) {
 
-			case SIMPLE_RUNTIME_STEPS:
-				jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
-				break;
+				case SIMPLE_RUNTIME_STEPS:
+					jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
+					break;
 
-			default:
-				jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
-				break;
+				default:
+					jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
+					break;
 			}
 		}
 		if (myLocale == null) {
@@ -165,9 +165,10 @@ public class StatisticsManager implements Serializable {
 		 * -------------------------------- some debugging here
 		 * --------------------------------
 		 */
-		if(logger.isDebugEnabled()){
-			logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
-					+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
+		if (logger.isDebugEnabled()) {
+			logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - "
+					+ sourceTimeUnit + "\n" + targetTimeUnit + " - " + targetCalculationUnit + " - "
+					+ targetResultOutput + " - " + showAverage);
 		}
 
 		/*
@@ -256,39 +257,39 @@ public class StatisticsManager implements Serializable {
 				cl.setTime(new Date());
 
 				switch (sourceTimeUnit) {
-				case days:
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -1);
-					break;
+					case days:
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -1);
+						break;
 
-				case weeks:
-					cl.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -7);
-					break;
+					case weeks:
+						cl.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -7);
+						break;
 
-				case months:
-					cl.set(Calendar.DAY_OF_MONTH, 1);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -1);
-					break;
+					case months:
+						cl.set(Calendar.DAY_OF_MONTH, 1);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -1);
+						break;
 
-				case quarters:
-					cl.set(Calendar.DAY_OF_MONTH, 1);
-					setCalendarToMidnight(cl);
-					while ((cl.get(Calendar.MONTH) + 0) % 3 > 0) {
-						cl.add(Calendar.MONTH, -1);
-					}
-					cl.add(Calendar.MILLISECOND, -1);
-					calculatedEndDate = cl.getTime();
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -3);
-					break;
+					case quarters:
+						cl.set(Calendar.DAY_OF_MONTH, 1);
+						setCalendarToMidnight(cl);
+						while ((cl.get(Calendar.MONTH) + 0) % 3 > 0) {
+							cl.add(Calendar.MONTH, -1);
+						}
+						cl.add(Calendar.MILLISECOND, -1);
+						calculatedEndDate = cl.getTime();
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -3);
+						break;
 
-				case years:
-					cl.set(Calendar.DAY_OF_YEAR, 1);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
-					break;
+					case years:
+						cl.set(Calendar.DAY_OF_YEAR, 1);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
+						break;
 				}
 
 			} else {

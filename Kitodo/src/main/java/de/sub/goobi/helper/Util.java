@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -42,55 +43,52 @@ import java.util.ResourceBundle;
 
 public final class Util {
 
-    private Util() {
-    }
+	private Util() {
+	}
 
-    /**
-       Returns an HQL query from the resource bundle.
+	/**
+	   Returns an HQL query from the resource bundle.
 
-       @param key the resource key
-       @return String
-    */
-    public static String getQuery(String key) {
-        ResourceBundle bundle = getResourceBundle();
-        return bundle.getString(key);
-    }
+	   @param key the resource key
+	   @return String
+	*/
+	public static String getQuery(String key) {
+		ResourceBundle bundle = getResourceBundle();
+		return bundle.getString(key);
+	}
 
-    /**
-       Utility method to create a <code>Date</code> class
-       from <code>dateString</code>.
+	/**
+	   Utility method to create a <code>Date</code> class
+	   from <code>dateString</code>.
 
-       @param dateString
-       @return Date
-       @throws RuntimeException is dateString is invalid
-    */
-    public static Date parseDate(String dateString) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
-            return sdf.parse(dateString);
-        }
-        catch (ParseException pe) {
-            throw new RuntimeException("Not a valid date: "+dateString+
-                                       ". Must be of YYYY-MMM-DD format.");
-        }
-    }
+	   @param dateString
+	   @return Date
+	   @throws RuntimeException is dateString is invalid
+	*/
+	public static Date parseDate(String dateString) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+			return sdf.parse(dateString);
+		} catch (ParseException pe) {
+			throw new RuntimeException("Not a valid date: " + dateString + ". Must be of YYYY-MMM-DD format.");
+		}
+	}
 
-    /**
-       Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
+	/**
+	   Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
 
-       @return ResourceBundle
-    */
-    private static ResourceBundle getResourceBundle() {
-        if(bundle == null) {
-            bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH,
-                                              Thread.currentThread()
-                                              .getContextClassLoader());
-        }
-        return bundle;
-    }
+	   @return ResourceBundle
+	*/
+	private static ResourceBundle getResourceBundle() {
+		if (bundle == null) {
+			bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH, Thread.currentThread()
+					.getContextClassLoader());
+		}
+		return bundle;
+	}
 
-    private static ResourceBundle bundle;
-    public static final String RESOURCE_BUNDLE = "example_app";
+	private static ResourceBundle bundle;
+	public static final String RESOURCE_BUNDLE = "example_app";
 
 	/**
 	 * Calculates the optimal initial capacity for a HashMap or HashSet instance

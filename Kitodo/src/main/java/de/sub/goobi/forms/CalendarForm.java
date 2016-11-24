@@ -138,21 +138,21 @@ public class CalendarForm {
 			}
 			if (onBlock) {
 				switch (date.getDayOfWeek()) {
-				case DateTimeConstants.SATURDAY:
-					return "saturday";
-				case DateTimeConstants.SUNDAY:
-					return "sunday";
-				default:
-					return "weekday";
+					case DateTimeConstants.SATURDAY:
+						return "saturday";
+					case DateTimeConstants.SUNDAY:
+						return "sunday";
+					default:
+						return "weekday";
 				}
 			} else {
 				switch (date.getDayOfWeek()) {
-				case DateTimeConstants.SATURDAY:
-					return "saturdayNoBlock";
-				case DateTimeConstants.SUNDAY:
-					return "sundayNoBlock";
-				default:
-					return "weekdayNoBlock";
+					case DateTimeConstants.SATURDAY:
+						return "saturdayNoBlock";
+					case DateTimeConstants.SUNDAY:
+						return "sundayNoBlock";
+					default:
+						return "weekdayNoBlock";
 				}
 			}
 		}
@@ -1094,7 +1094,7 @@ public class CalendarForm {
 					numbers[2] -= 100;
 				}
 				Helper.setMeldung(Helper.getTranslation("calendar.block." + input + ".yearCompleted",
-						Arrays.asList(new String[] { dateParser.group(3), Integer.toString(numbers[2]) })));
+						Arrays.asList(new String[] {dateParser.group(3), Integer.toString(numbers[2]) })));
 			}
 			try {
 				return new LocalDate(numbers[2], numbers[1], numbers[0]);

@@ -86,7 +86,8 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 		AktuelleSchritteForm dialog = new AktuelleSchritteForm();
 		Integer stepID = ticket.getMandatoryInteger("id");
 		dialog.setMySchritt(new SchrittDAO().get(stepID));
-		if (ticket.hasField("properties")) updateProperties(dialog, ticket.getMapOfStringToString("properties"));
+		if (ticket.hasField("properties"))
+			updateProperties(dialog, ticket.getMapOfStringToString("properties"));
 		if (ticket.hasField("message"))
 			dialog.getMySchritt().getProzess().addToWikiField(ticket.getString("message"));
 		dialog.SchrittDurchBenutzerAbschliessen();

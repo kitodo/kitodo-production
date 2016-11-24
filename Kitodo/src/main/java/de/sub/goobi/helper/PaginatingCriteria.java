@@ -167,7 +167,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 */
 	@Override
 	public Criteria createAlias(String associationPath, String alias) throws HibernateException {
-		return new PaginatingCriteria(this.criteria.createAlias(associationPath, alias), this.clone.createAlias(associationPath, alias));
+		return new PaginatingCriteria(this.criteria.createAlias(associationPath, alias), this.clone.createAlias(
+				associationPath, alias));
 	}
 
 	/**
@@ -180,7 +181,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	@Deprecated
 	@Override
 	public Criteria createAlias(String arg0, String arg1, int arg2) throws HibernateException {
-		return new PaginatingCriteria(this.criteria.createAlias(arg0, arg1, arg2), this.clone.createAlias(arg0, arg1, arg2));
+		return new PaginatingCriteria(this.criteria.createAlias(arg0, arg1, arg2), this.clone.createAlias(arg0, arg1,
+				arg2));
 	}
 
 	/**
@@ -190,7 +192,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 */
 	@Override
 	public Criteria createCriteria(String associationPath) throws HibernateException {
-		return new PaginatingCriteria(this.criteria.createCriteria(associationPath), this.clone.createCriteria(associationPath));
+		return new PaginatingCriteria(this.criteria.createCriteria(associationPath),
+				this.clone.createCriteria(associationPath));
 	}
 
 	/**
@@ -213,7 +216,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 */
 	@Override
 	public Criteria createCriteria(String associationPath, String alias) throws HibernateException {
-		return new PaginatingCriteria(this.criteria.createCriteria(associationPath, alias), this.clone.createCriteria(associationPath, alias));
+		return new PaginatingCriteria(this.criteria.createCriteria(associationPath, alias), this.clone.createCriteria(
+				associationPath, alias));
 	}
 
 	/**
@@ -226,7 +230,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	@Deprecated
 	@Override
 	public Criteria createCriteria(String arg0, String arg1, int arg2) throws HibernateException {
-		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1, arg2), this.clone.createCriteria(arg0, arg1, arg2));
+		return new PaginatingCriteria(this.criteria.createCriteria(arg0, arg1, arg2), this.clone.createCriteria(arg0,
+				arg1, arg2));
 	}
 
 	/**
@@ -236,7 +241,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 */
 	@Override
 	public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-		return new PaginatingCriteria(this.criteria.setResultTransformer(resultTransformer), this.clone.setResultTransformer(resultTransformer));
+		return new PaginatingCriteria(this.criteria.setResultTransformer(resultTransformer),
+				this.clone.setResultTransformer(resultTransformer));
 	}
 
 	/**

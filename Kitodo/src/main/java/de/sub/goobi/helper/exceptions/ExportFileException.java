@@ -27,19 +27,14 @@ package de.sub.goobi.helper.exceptions;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-public class ExportFileException extends Exception  {
+public class ExportFileException extends Exception {
 	private static final long serialVersionUID = 8440137060804389036L;
 
-	public ExportFileException()
-	  {
+	public ExportFileException() {
 		super();
-	  }
+	}
 
-	  public ExportFileException( String s )
-	  {
-	    super( s );
-	  }
+	public ExportFileException(String s) {
+		super(s);
+	}
 }
-
-
-

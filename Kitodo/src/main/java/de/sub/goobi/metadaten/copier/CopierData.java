@@ -162,7 +162,7 @@ public class CopierData {
 			return String.valueOf(process);
 		}
 	}
-	
+
 	/**
 	 * Returns a string that textually represents this bean.
 	 * 

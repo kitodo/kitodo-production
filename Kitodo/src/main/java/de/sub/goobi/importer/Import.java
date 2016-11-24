@@ -1,4 +1,5 @@
 package de.sub.goobi.importer;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -79,8 +80,9 @@ public class Import {
 		return "";
 	}
 
-	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
-			MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
+	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
+			PreferencesException, SwapException, DAOException, WriteException {
 		myLogger.debug("Einlesen() - Start");
 		BufferedReader reader = null;
 		try {

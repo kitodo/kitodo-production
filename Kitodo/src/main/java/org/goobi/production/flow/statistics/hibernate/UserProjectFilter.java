@@ -98,7 +98,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it
+				.hasNext();) {
 			Prozess p = (Prozess) it.next();
 			myIds.add(p.getId());
 			myCriteria = null;
@@ -113,7 +114,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getName() ");
 	}
 
 	/*
@@ -140,7 +142,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	@Override
 	public void setName(String name) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setName() ");
 	}
 
 	@Override
@@ -151,7 +154,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	@Override
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement stepDone() ");
 	}
 
 	@Override
@@ -162,7 +166,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	@Override
 	public IEvaluableFilter clone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement clone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement clone() ");
 	}
 
 	@Override

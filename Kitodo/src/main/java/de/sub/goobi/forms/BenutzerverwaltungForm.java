@@ -127,11 +127,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 				Disjunction ex = Restrictions.disjunction();
 				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
 				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
-//				crit.createCriteria("projekte", "proj");
-//				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
+				// crit.createCriteria("projekte", "proj");
+				// ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
 
-//				crit.createCriteria("benutzergruppen", "group");
-//				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
+				// crit.createCriteria("benutzergruppen", "group");
+				// ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
 				crit.add(ex);
 			}
 			crit.addOrder(Order.asc("nachname"));
@@ -183,14 +183,12 @@ public class BenutzerverwaltungForm extends BasisForm {
 		/* Pfad zur Datei ermitteln */
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
-				+ "goobi_loginBlacklist.txt";
+		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes"
+				+ File.separator + "goobi_loginBlacklist.txt";
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
-		try (
-			FileInputStream fis = new FileInputStream(filename);
-			InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-		) {
+		try (FileInputStream fis = new FileInputStream(filename);
+				InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+				BufferedReader in = new BufferedReader(isr);) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {

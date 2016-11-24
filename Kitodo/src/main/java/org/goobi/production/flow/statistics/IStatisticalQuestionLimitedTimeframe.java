@@ -34,8 +34,7 @@ import java.util.Date;
  * Extension of {@link IStatisticalQuestion}. Statistical request limited by time frame.
  * 
  *****************************************************************************************/
-public interface IStatisticalQuestionLimitedTimeframe extends
-		IStatisticalQuestion {
+public interface IStatisticalQuestionLimitedTimeframe extends IStatisticalQuestion {
 
 	/************************************************************************
 	 * Define time frame.

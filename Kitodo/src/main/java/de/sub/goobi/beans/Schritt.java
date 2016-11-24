@@ -90,7 +90,7 @@ public class Schritt implements Serializable {
 	private boolean panelAusgeklappt = false;
 	private boolean selected = false;
 	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-	
+
 	private String stepPlugin;
 	private String validationPlugin;
 
@@ -529,7 +529,8 @@ public class Schritt implements Serializable {
 	 */
 	public String getTitelMitBenutzername() {
 		String rueckgabe = this.titel;
-		if (this.bearbeitungsbenutzer != null && this.bearbeitungsbenutzer.getId() != null && this.bearbeitungsbenutzer.getId().intValue() != 0) {
+		if (this.bearbeitungsbenutzer != null && this.bearbeitungsbenutzer.getId() != null
+				&& this.bearbeitungsbenutzer.getId().intValue() != 0) {
 			rueckgabe += " (" + this.bearbeitungsbenutzer.getNachVorname() + ")";
 		}
 		return rueckgabe;

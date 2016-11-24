@@ -61,7 +61,7 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
 			} catch (IOException e) {
 				context.log(e.getMessage());
 			}
-		} 		
+		}
 	}
 
 	@Override

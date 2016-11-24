@@ -197,9 +197,9 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 */
 	public CataloguePlugin(Object implementation) throws SecurityException, NoSuchMethodException {
 		super(implementation);
-		find = getDeclaredMethod("find", new Class[] { String.class, long.class }, Object.class);
-		getHit = getDeclaredMethod("getHit", new Class[] { Object.class, long.class, long.class }, Map.class);
-		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] { Object.class, long.class }, long.class);
+		find = getDeclaredMethod("find", new Class[] {String.class, long.class }, Object.class);
+		getHit = getDeclaredMethod("getHit", new Class[] {Object.class, long.class, long.class }, Map.class);
+		getNumberOfHits = getDeclaredMethod("getNumberOfHits", new Class[] {Object.class, long.class }, long.class);
 		setPreferences = getDeclaredMethod("setPreferences", Prefs.class, Void.TYPE);
 		supportsCatalogue = getDeclaredMethod("supportsCatalogue", String.class, boolean.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
@@ -221,7 +221,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * @return an object identifying the result set
 	 */
 	public Object find(String query, long timeout) {
-		return invokeQuietly(plugin, find, new Object[] { query, timeout }, Object.class);
+		return invokeQuietly(plugin, find, new Object[] {query, timeout }, Object.class);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 */
 	@SuppressWarnings("unchecked")
 	public Hit getHit(Object searchResult, long index, long timeout) {
-		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
+		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] {searchResult, index, timeout },
 				Map.class);
 		return new Hit(data);
 	}
@@ -286,7 +286,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	public long getNumberOfHits(Object searchResult, long timeout) {
 		if (searchResult == null)
 			return 0;
-		return invokeQuietly(plugin, getNumberOfHits, new Object[] { searchResult, timeout }, long.class);
+		return invokeQuietly(plugin, getNumberOfHits, new Object[] {searchResult, timeout }, long.class);
 	}
 
 	/**

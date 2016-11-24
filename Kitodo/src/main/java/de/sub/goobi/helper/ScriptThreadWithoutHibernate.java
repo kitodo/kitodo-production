@@ -106,11 +106,11 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	public void run() {
 
 		boolean automatic = this.step.isTypAutomatisch();
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("step is automatic: " + automatic);
 		}
 		List<String> scriptPaths = StepManager.loadScripts(this.step.getId());
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("found " + scriptPaths.size() + " scripts");
 		}
 		if (scriptPaths.size() > 0) {

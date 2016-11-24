@@ -1,4 +1,5 @@
 package de.sub.goobi.beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,7 +28,6 @@ package de.sub.goobi.beans;
  * exception statement from your version.
  */
 import java.io.Serializable;
-
 
 public class ProjectFileGroup implements Serializable {
 	private static final long serialVersionUID = -5506252462891480484L;

@@ -38,7 +38,7 @@ public enum ChartColor {
 	private ChartColor(int red, int green, int blue) {
 		color = new Color(red, green, blue);
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}

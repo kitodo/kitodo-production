@@ -197,7 +197,8 @@ public class ExportSerialBatchTask extends EmptyTask {
 					setProgress(100 * stepcounter / maxsize);
 				}
 			}
-		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
+		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException,
+								// InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while "
 					+ (stepcounter == 0 ? "examining " : "exporting ") + (process != null ? process.getTitel() : "")
 					+ ": " + e.getMessage();

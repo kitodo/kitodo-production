@@ -191,7 +191,8 @@ public class PluginLoader {
 
 		PluginType type = UnspecificPlugin.typeOf(clazz);
 		PluginManagerUtil pluginLoader = getPluginLoader(type);
-		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg getPlugins() TODO: update API
+		Collection<Plugin> plugins = pluginLoader.getPlugins(Plugin.class); // Never API version supports no-arg
+																			// getPlugins() TODO: update API
 		result = new ArrayList<T>(plugins.size() - INTERNAL_CLASSES_COUNT);
 		for (Plugin implementation : plugins) {
 			if (implementation.getClass().getName().startsWith(INTERNAL_CLASSES_PREFIX))

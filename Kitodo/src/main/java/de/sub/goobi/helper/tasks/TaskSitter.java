@@ -187,46 +187,46 @@ public class TaskSitter implements Runnable, ServletContextListener {
 			while (position.hasNext()) {
 				task = position.next();
 				switch (task.getTaskState()) {
-				case WORKING:
-				case STOPPING:
-					availableClearance = Math.max(availableClearance - 1, 0);
-					break;
-				case NEW:
-					if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviour())) {
-						position.remove();
-					} else {
-						launchableThreads.addLast(task);
-					}
-					break;
-				default: // cases STOPPED, FINISHED, CRASHED
-					switch (task.getBehaviour()) {
-					case DELETE_IMMEDIATELY:
-						position.remove();
+					case WORKING:
+					case STOPPING:
+						availableClearance = Math.max(availableClearance - 1, 0);
 						break;
-					default: // case KEEP_FOR_A_WHILE 
-						boolean taskFinishedSuccessfully = task.getException() == null;
-						Duration durationDead = task.getDurationDead();
-						if (durationDead == null) {
-							task.setTimeOfDeath();
-						} else if (durationDead
-								.isLongerThan(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge)) {
+					case NEW:
+						if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviour())) {
 							position.remove();
-							break;
-						}
-						if (taskFinishedSuccessfully) {
-							finishedThreads.add(task);
 						} else {
-							failedThreads.add(task);
+							launchableThreads.addLast(task);
 						}
 						break;
-					case PREPARE_FOR_RESTART:
-						EmptyTask replacement = task.replace();
-						if (replacement != null) {
-							position.set(replacement);
-							launchableThreads.addLast(replacement);
+					default: // cases STOPPED, FINISHED, CRASHED
+						switch (task.getBehaviour()) {
+							case DELETE_IMMEDIATELY:
+								position.remove();
+								break;
+							default: // case KEEP_FOR_A_WHILE
+								boolean taskFinishedSuccessfully = task.getException() == null;
+								Duration durationDead = task.getDurationDead();
+								if (durationDead == null) {
+									task.setTimeOfDeath();
+								} else if (durationDead.isLongerThan(taskFinishedSuccessfully ? successfulMaxAge
+										: failedMaxAge)) {
+									position.remove();
+									break;
+								}
+								if (taskFinishedSuccessfully) {
+									finishedThreads.add(task);
+								} else {
+									failedThreads.add(task);
+								}
+								break;
+							case PREPARE_FOR_RESTART:
+								EmptyTask replacement = task.replace();
+								if (replacement != null) {
+									position.set(replacement);
+									launchableThreads.addLast(replacement);
+								}
+								break;
 						}
-						break;
-					}
 				}
 			}
 		} catch (ConcurrentModificationException e) {

@@ -1,4 +1,5 @@
 package org.goobi.production.enums;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -28,12 +29,8 @@ package org.goobi.production.enums;
  */
 public enum ImportReturnValue {
 
-	ExportFinished(0, "Export finished"),
-	InvalidData(1, "Invalid data"),
-	NoData(2, "No data found"),
-	DataAllreadyExists(3, "Data already exists"),
-	WriteError(4, "Data could not be written")
-	;
+	ExportFinished(0, "Export finished"), InvalidData(1, "Invalid data"), NoData(2, "No data found"), DataAllreadyExists(
+			3, "Data already exists"), WriteError(4, "Data could not be written");
 
 	private int id;
 	private String value;

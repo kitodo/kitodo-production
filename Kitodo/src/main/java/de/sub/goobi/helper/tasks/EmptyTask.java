@@ -263,22 +263,22 @@ public class EmptyTask extends Thread implements INameableTask {
 		TaskState state = getTaskState();
 		String label = Helper.getTranslation(state.toString().toLowerCase());
 		switch (state) {
-		case WORKING:
-			if (detail != null) {
-				return label + " (" + detail + ")";
-			} else {
+			case WORKING:
+				if (detail != null) {
+					return label + " (" + detail + ")";
+				} else {
+					return label;
+				}
+			case CRASHED:
+				if (exception.getMessage() != null) {
+					return label + " (" + exception.getMessage() + ")";
+				} else if (detail != null) {
+					return label + " (" + detail + ")";
+				} else {
+					return label + " (" + exception.getClass().getSimpleName() + ")";
+				}
+			default:
 				return label;
-			}
-		case CRASHED:
-			if (exception.getMessage() != null) {
-				return label + " (" + exception.getMessage() + ")";
-			} else if (detail != null) {
-				return label + " (" + detail + ")";
-			} else {
-				return label + " (" + exception.getClass().getSimpleName() + ")";
-			}
-		default:
-			return label;
 		}
 	}
 
@@ -310,26 +310,26 @@ public class EmptyTask extends Thread implements INameableTask {
 	 */
 	TaskState getTaskState() {
 		switch (getState()) {
-		case NEW:
-			return TaskState.NEW;
-		case TERMINATED:
-			if (behaviour == null) {
-				behaviour = DEFAULT_BEHAVIOUR;
-			}
-			if (exception != null) {
-				return TaskState.CRASHED;
-			}
-			if (Behaviour.PREPARE_FOR_RESTART.equals(behaviour)) {
-				return TaskState.STOPPED;
-			} else {
-				return TaskState.FINISHED;
-			}
-		default:
-			if (isInterrupted()) {
-				return TaskState.STOPPING;
-			} else {
-				return TaskState.WORKING;
-			}
+			case NEW:
+				return TaskState.NEW;
+			case TERMINATED:
+				if (behaviour == null) {
+					behaviour = DEFAULT_BEHAVIOUR;
+				}
+				if (exception != null) {
+					return TaskState.CRASHED;
+				}
+				if (Behaviour.PREPARE_FOR_RESTART.equals(behaviour)) {
+					return TaskState.STOPPED;
+				} else {
+					return TaskState.FINISHED;
+				}
+			default:
+				if (isInterrupted()) {
+					return TaskState.STOPPING;
+				} else {
+					return TaskState.WORKING;
+				}
 		}
 	}
 
@@ -390,11 +390,11 @@ public class EmptyTask extends Thread implements INameableTask {
 	 */
 	public boolean isDeleteable() {
 		switch (getState()) {
-		case NEW:
-		case TERMINATED:
-			return !Behaviour.DELETE_IMMEDIATELY.equals(behaviour);
-		default:
-			return false;
+			case NEW:
+			case TERMINATED:
+				return !Behaviour.DELETE_IMMEDIATELY.equals(behaviour);
+			default:
+				return false;
 		}
 	}
 
@@ -493,7 +493,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 *            the tasks progress
 	 */
 	protected void setProgress(double statusProgress) {
-		setProgress((int)Math.ceil(statusProgress));
+		setProgress((int) Math.ceil(statusProgress));
 	}
 
 	/**

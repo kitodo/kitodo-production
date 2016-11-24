@@ -66,9 +66,10 @@ public class ExportPdf extends ExportMets {
 	private static final String PDF_EXTENSION = ".pdf";
 
 	@Override
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException,
+			PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+			TypeNotAllowedForParentException {
 
 		/*
 		 * -------------------------------- Read Document --------------------------------
@@ -85,7 +86,7 @@ public class ExportPdf extends ExportMets {
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
 
-		if(myLogger.isDebugEnabled()){
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug("METS file created: " + metsTempFile);
 		}
 
@@ -103,7 +104,7 @@ public class ExportPdf extends ExportMets {
 			pdf.setMetsURL(metsTempFile.toURI().toURL());
 			pdf.setTargetFolder(new SafeFile(zielVerzeichnis));
 			pdf.setInternalServletPath(myBasisUrl);
-			if(myLogger.isDebugEnabled()){
+			if (myLogger.isDebugEnabled()) {
 				myLogger.debug("Taget directory: " + zielVerzeichnis);
 				myLogger.debug("Using ContentServer2 base URL: " + myBasisUrl);
 			}
@@ -129,7 +130,8 @@ public class ExportPdf extends ExportMets {
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
 						contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
 					}
-					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL() + AND_TARGET_FILE_NAME_IS + myProzess.getTitel() + PDF_EXTENSION);
+					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL()
+							+ AND_TARGET_FILE_NAME_IS + myProzess.getTitel() + PDF_EXTENSION);
 					/*
 					 * -------------------------------- mets data does not exist or is invalid --------------------------------
 					 */
@@ -153,9 +155,9 @@ public class ExportPdf extends ExportMets {
 					url.append(contentServerUrl);
 					boolean subsequent = false;
 					for (String f : filenames) {
-						if(subsequent){
+						if (subsequent) {
 							url.append('$');
-						}else{
+						} else {
 							subsequent = true;
 						}
 						url.append(f);

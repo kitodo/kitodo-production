@@ -28,7 +28,6 @@ package org.goobi.production.flow.statistics;
  * exception statement from your version.
  */
 
-
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -36,7 +35,6 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataTable;
-
 
 /**
  * This interface defines the required methods for any implementations of statistical requests
@@ -63,7 +61,7 @@ public interface IStatisticalQuestion {
 	 * @param timeUnit
 	 ****************************************************************************/
 	public void setTimeUnit(TimeUnit timeUnit);
-	
+
 	/**
 	 * This method sets the calculation unit needed for specific requests.
 	 * Since not all implementations will support this feature future implementations
@@ -80,7 +78,7 @@ public interface IStatisticalQuestion {
 	 * @return true, if rendering should use invertet {@link DataTable}
 	 ****************************************************************************/
 	public Boolean isRendererInverted(IRenderer inRenderer);
-	
+
 	/**
 	 * get number format pattern
 	 * 

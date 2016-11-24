@@ -1,4 +1,5 @@
 package de.sub.goobi.beans;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -53,7 +54,7 @@ import de.sub.goobi.helper.enums.MetadataFormat;
 // elements. Further XML elements can be added as needed by annotating with
 // @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
-@XmlType(propOrder = { "template", "fieldConfig" })
+@XmlType(propOrder = {"template", "fieldConfig" })
 // This annotation declares the desired order of XML elements generated and
 // rather serves for better legibility of the generated XML. The list must be
 // exhaustive and the properties have to be named according to their respective
@@ -108,7 +109,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	private Boolean projectIsArchived = false;
 
 	@XmlElement(name = "template")
-	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child nodes of the respective project.
+	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when
+									// calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within
+									// a project as XML child nodes of the respective project.
 
 	public Projekt() {
 		this.prozesse = new HashSet<Prozess>();
@@ -154,7 +157,7 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.prozesse = prozesse;
 	}
 
-	@XmlAttribute(name="key")
+	@XmlAttribute(name = "key")
 	public String getTitel() {
 		return this.titel;
 	}
@@ -252,7 +255,8 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		try {
 			Hibernate.initialize(this.filegroups);
 		} catch (HibernateException e) {
-		}		if (this.filegroups == null) {
+		}
+		if (this.filegroups == null) {
 			this.filegroups = new HashSet<ProjectFileGroup>();
 		}
 		return new ArrayList<ProjectFileGroup>(this.filegroups);

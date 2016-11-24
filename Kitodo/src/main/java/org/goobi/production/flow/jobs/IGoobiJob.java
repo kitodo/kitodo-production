@@ -39,8 +39,7 @@ public interface IGoobiJob {
 	 * 
 	 * @throws JobExecutionException
 	 **************************************************************************/
-	public abstract void execute(JobExecutionContext context)
-			throws JobExecutionException;
+	public abstract void execute(JobExecutionContext context) throws JobExecutionException;
 
 	public abstract void setIsRunning(Boolean inisRunning);
 

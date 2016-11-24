@@ -89,7 +89,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		if (dataSource instanceof IEvaluableFilter) {
 			originalFilter = (IEvaluableFilter) dataSource;
 		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+			throw new UnsupportedOperationException(
+					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
 		// gathering some information from the filter passed by dataSource
@@ -116,9 +117,11 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		String natSQL = "";
 		// adding time restrictions
 		if (stepname == null) {
-			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(exactStepDone);
+			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+					.getSQL(exactStepDone);
 		} else {
-			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(stepname);
+			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+					.getSQL(stepname);
 		}
 		Session session = Helper.getHibernateSession();
 
@@ -133,19 +136,19 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 		List list = query.list();
 
 		StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
-		 title.append(" (");
-		 title.append(this.cu.getTitle());
-		 if (stepname == null || stepname.equals("")) {
-		 title.append(")");
-		 } else {
-			 title.append(", " + stepname + " )");
-		 }
+		title.append(" (");
+		title.append(this.cu.getTitle());
+		if (stepname == null || stepname.equals("")) {
+			title.append(")");
+		} else {
+			title.append(", " + stepname + " )");
+		}
 
 		// building table for the Table
 		DataTable dtbl = new DataTable(title.toString());
 		// building a second table for the chart
 		DataTable dtblChart = new DataTable(title.toString());
-		// 
+		//
 		DataRow dataRowChart;
 		DataRow dataRow;
 
@@ -170,30 +173,33 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 				// building up row depending on requested output having different fields
 				switch (this.cu) {
 
-				case volumesAndPages: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)", (new Converter(objArr[1]).getDouble()) / 100);
+					case volumesAndPages: {
+						dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
+								(new Converter(objArr[0]).getDouble()));
+						dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)",
+								(new Converter(objArr[1]).getDouble()) / 100);
 
-					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+						dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+						dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
 
-				}
-					break;
+					}
+						break;
 
-				case volumes: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+					case volumes: {
+						dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
+								(new Converter(objArr[0]).getDouble()));
+						dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
 
-				}
-					break;
+					}
+						break;
 
-				case pages: {
+					case pages: {
 
-					dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+						dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+						dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
 
-				}
-					break;
+					}
+						break;
 
 				}
 

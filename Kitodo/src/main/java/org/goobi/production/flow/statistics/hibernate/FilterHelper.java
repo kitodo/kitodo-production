@@ -140,7 +140,6 @@ public class FilterHelper {
 			idList.add((Integer) o);
 		}
 
-
 		/*
 		 * -------------------------------- Users only --------------------------------
 		 */
@@ -174,7 +173,6 @@ public class FilterHelper {
 		for (Object o : critUser.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list()) {
 			idList.add((Integer) o);
 		}
-
 
 		/*
 		 * -------------------------------- only taking the hits by restricting to the ids --------------------------------
@@ -254,17 +252,18 @@ public class FilterHelper {
 	 * @param prefix
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
-	protected static void filterStepRange(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
+	protected static void filterStepRange(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
+			String prefix) {
 		if (!negate) {
-			con.add(Restrictions.and(
-					Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-							Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
+			con.add(Restrictions.and(Restrictions.and(
+					Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
+					Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))), Restrictions.eq(
+					prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
-			con.add(Restrictions.not(Restrictions.and(
-					Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
-							Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))),
-					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
+			con.add(Restrictions.not(Restrictions.and(Restrictions.and(
+					Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
+					Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters))), Restrictions.eq(
+					prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
 
@@ -276,7 +275,8 @@ public class FilterHelper {
 	 * @param parameters
 	 *            part of filter string to use
 	 ****************************************************************************/
-	protected static void filterStepName(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
+	protected static void filterStepName(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
+			String prefix) {
 		if (con == null) {
 			con = Restrictions.conjunction();
 		}
@@ -320,7 +320,8 @@ public class FilterHelper {
 	 * @param inStatus
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
-	protected static void filterStepMin(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
+	protected static void filterStepMin(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
+			String prefix) {
 		if (con == null) {
 			con = Restrictions.conjunction();
 		}
@@ -328,7 +329,8 @@ public class FilterHelper {
 			con.add(Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
-			con.add(Restrictions.not(Restrictions.and(Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
+			con.add(Restrictions.not(Restrictions.and(
+					Restrictions.ge(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
@@ -341,7 +343,8 @@ public class FilterHelper {
 	 * @param inStatus
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
-	protected static void filterStepMax(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
+	protected static void filterStepMax(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
+			String prefix) {
 		if (con == null) {
 			con = Restrictions.conjunction();
 		}
@@ -349,7 +352,8 @@ public class FilterHelper {
 			con.add(Restrictions.and(Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
-			con.add(Restrictions.not(Restrictions.and(Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters)),
+			con.add(Restrictions.not(Restrictions.and(
+					Restrictions.le(prefix + "reihenfolge", FilterHelper.getStepEnd(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
@@ -362,12 +366,14 @@ public class FilterHelper {
 	 * @param inStatus
 	 *            {@link StepStatus} of searched step
 	 ****************************************************************************/
-	protected static void filterStepExact(Conjunction con, String parameters, StepStatus inStatus, boolean negate, String prefix) {
+	protected static void filterStepExact(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
+			String prefix) {
 		if (!negate) {
 			con.add(Restrictions.and(Restrictions.eq(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue())));
 		} else {
-			con.add(Restrictions.not(Restrictions.and(Restrictions.eq(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
+			con.add(Restrictions.not(Restrictions.and(
+					Restrictions.eq(prefix + "reihenfolge", FilterHelper.getStepStart(parameters)),
 					Restrictions.eq(prefix + "bearbeitungsstatus", inStatus.getValue()))));
 		}
 	}
@@ -412,7 +418,8 @@ public class FilterHelper {
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
 		if (!negate) {
 			if (ts.length > 1) {
-				con.add(Restrictions.and(Restrictions.like("vorleig.wert", "%" + ts[1] + "%"), Restrictions.like("vorleig.titel", "%" + ts[0] + "%")));
+				con.add(Restrictions.and(Restrictions.like("vorleig.wert", "%" + ts[1] + "%"),
+						Restrictions.like("vorleig.titel", "%" + ts[0] + "%")));
 			} else {
 				con.add(Restrictions.like("vorleig.wert", "%" + ts[0] + "%"));
 			}
@@ -483,7 +490,8 @@ public class FilterHelper {
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
 		if (!negate) {
 			if (ts.length > 1) {
-				con.add(Restrictions.and(Restrictions.like("werkeig.wert", "%" + ts[1] + "%"), Restrictions.like("werkeig.titel", "%" + ts[0] + "%")));
+				con.add(Restrictions.and(Restrictions.like("werkeig.wert", "%" + ts[1] + "%"),
+						Restrictions.like("werkeig.titel", "%" + ts[0] + "%")));
 			} else {
 
 				con.add(Restrictions.like("werkeig.wert", "%" + ts[0] + "%"));
@@ -600,7 +608,8 @@ public class FilterHelper {
 			String tok = tokenizer.nextToken().trim();
 			String tokLowerCase = tok.toLowerCase(Locale.GERMANY);
 
-			if (tokLowerCase.startsWith(FilterString.PROCESSPROPERTY) || tokLowerCase.startsWith(FilterString.PROZESSEIGENSCHAFT)) {
+			if (tokLowerCase.startsWith(FilterString.PROCESSPROPERTY)
+					|| tokLowerCase.startsWith(FilterString.PROZESSEIGENSCHAFT)) {
 				if (conjProcessProperties == null) {
 					conjProcessProperties = Restrictions.conjunction();
 				}
@@ -616,32 +625,40 @@ public class FilterHelper {
 				}
 				message = message + createHistoricFilter(conjSteps, tok, flagSteps);
 
-			} else if (tokLowerCase.startsWith(FilterString.STEPINWORK) || tokLowerCase.startsWith(FilterString.SCHRITTINARBEIT)) {
+			} else if (tokLowerCase.startsWith(FilterString.STEPINWORK)
+					|| tokLowerCase.startsWith(FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.INWORK, false, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.INWORK, false, filterPrefix));
 
 				// new keyword stepLocked implemented
-			} else if (tokLowerCase.startsWith(FilterString.STEPLOCKED) || tokLowerCase.startsWith(FilterString.SCHRITTINARBEIT)) {
+			} else if (tokLowerCase.startsWith(FilterString.STEPLOCKED)
+					|| tokLowerCase.startsWith(FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.LOCKED, false, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.LOCKED, false, filterPrefix));
 
 				// new keyword stepOpen implemented
-			} else if (tokLowerCase.startsWith(FilterString.STEPOPEN) || tokLowerCase.startsWith(FilterString.SCHRITTOFFEN)) {
+			} else if (tokLowerCase.startsWith(FilterString.STEPOPEN)
+					|| tokLowerCase.startsWith(FilterString.SCHRITTOFFEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.OPEN, false, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.OPEN, false, filterPrefix));
 
 				// new keyword stepDone implemented
-			} else if (tokLowerCase.startsWith(FilterString.STEPDONE) || tokLowerCase.startsWith(FilterString.SCHRITTABGESCHLOSSEN)) {
+			} else if (tokLowerCase.startsWith(FilterString.STEPDONE)
+					|| tokLowerCase.startsWith(FilterString.SCHRITTABGESCHLOSSEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.DONE, false, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.DONE, false, filterPrefix));
 
 				// new keyword stepDoneTitle implemented, replacing so far
 				// undocumented
@@ -653,14 +670,15 @@ public class FilterHelper {
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, false, filterPrefix);
 
-			} else if ((tokLowerCase.startsWith(FilterString.STEPDONEUSER)
-					|| tokLowerCase.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER))
+			} else if ((tokLowerCase.startsWith(FilterString.STEPDONEUSER) || tokLowerCase
+					.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER))
 					&& ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
 				if (conjUsers == null) {
 					conjUsers = Restrictions.conjunction();
 				}
 				FilterHelper.filterStepDoneUser(conjUsers, tok);
-			} else if (tokLowerCase.startsWith(FilterString.STEPAUTOMATIC) || tokLowerCase.startsWith(FilterString.SCHRITTAUTOMATISCH)) {
+			} else if (tokLowerCase.startsWith(FilterString.STEPAUTOMATIC)
+					|| tokLowerCase.startsWith(FilterString.SCHRITTAUTOMATISCH)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
@@ -687,14 +705,16 @@ public class FilterHelper {
 				if (conjProcesses == null) {
 					conjProcesses = Restrictions.conjunction();
 				}
-				conjProcesses.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
+				conjProcesses
+						.add(Restrictions.like("titel", "%" + "proc:" + tok.substring(tok.indexOf(":") + 1) + "%"));
 			} else if (tokLowerCase.startsWith(FilterString.BATCH) || tokLowerCase.startsWith(FilterString.GRUPPE)) {
 				if (conjBatches == null) {
 					conjBatches = Restrictions.conjunction();
 				}
 				int value = Integer.parseInt(tok.substring(tok.indexOf(":") + 1));
 				conjBatches.add(Restrictions.eq("bat.id", value));
-			} else if (tokLowerCase.startsWith(FilterString.WORKPIECE) || tokLowerCase.startsWith(FilterString.WERKSTUECK)) {
+			} else if (tokLowerCase.startsWith(FilterString.WORKPIECE)
+					|| tokLowerCase.startsWith(FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
@@ -708,11 +728,13 @@ public class FilterHelper {
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, true);
 			}
 
-			else if (tokLowerCase.startsWith("-" + FilterString.STEPINWORK) || tokLowerCase.startsWith("-" + FilterString.SCHRITTINARBEIT)) {
+			else if (tokLowerCase.startsWith("-" + FilterString.STEPINWORK)
+					|| tokLowerCase.startsWith("-" + FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.INWORK, true, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.INWORK, true, filterPrefix));
 
 				// new keyword stepLocked implemented
 			} else if (tokLowerCase.startsWith("-" + FilterString.STEPLOCKED)
@@ -720,14 +742,17 @@ public class FilterHelper {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.LOCKED, true, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.LOCKED, true, filterPrefix));
 
 				// new keyword stepOpen implemented
-			} else if (tokLowerCase.startsWith("-" + FilterString.STEPOPEN) || tokLowerCase.startsWith("-" + FilterString.SCHRITTOFFEN)) {
+			} else if (tokLowerCase.startsWith("-" + FilterString.STEPOPEN)
+					|| tokLowerCase.startsWith("-" + FilterString.SCHRITTOFFEN)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.OPEN, true, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.OPEN, true, filterPrefix));
 
 				// new keyword stepDone implemented
 			} else if (tokLowerCase.startsWith("-" + FilterString.STEPDONE)
@@ -735,7 +760,8 @@ public class FilterHelper {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
 				}
-				message = message + (createStepFilters(returnParameters, conjSteps, tok, StepStatus.DONE, true, filterPrefix));
+				message = message
+						+ (createStepFilters(returnParameters, conjSteps, tok, StepStatus.DONE, true, filterPrefix));
 
 				// new keyword stepDoneTitle implemented, replacing so far
 				// undocumented
@@ -747,19 +773,22 @@ public class FilterHelper {
 				String stepTitel = tok.substring(tok.indexOf(":") + 1);
 				FilterHelper.filterStepName(conjSteps, stepTitel, StepStatus.DONE, true, filterPrefix);
 
-			} else if (tokLowerCase.startsWith("-" + FilterString.PROJECT) || tokLowerCase.startsWith("-" + FilterString.PROJEKT)) {
+			} else if (tokLowerCase.startsWith("-" + FilterString.PROJECT)
+					|| tokLowerCase.startsWith("-" + FilterString.PROJEKT)) {
 				if (conjProjects == null) {
 					conjProjects = Restrictions.conjunction();
 				}
 				FilterHelper.filterProject(conjProjects, tok, true);
 
-			} else if (tokLowerCase.startsWith("-" + FilterString.TEMPLATE) || tokLowerCase.startsWith("-" + FilterString.VORLAGE)) {
+			} else if (tokLowerCase.startsWith("-" + FilterString.TEMPLATE)
+					|| tokLowerCase.startsWith("-" + FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
 				FilterHelper.filterScanTemplate(conjTemplates, tok, true);
 
-			} else if (tokLowerCase.startsWith("-" + FilterString.WORKPIECE) || tokLowerCase.startsWith("-" + FilterString.WERKSTUECK)) {
+			} else if (tokLowerCase.startsWith("-" + FilterString.WORKPIECE)
+					|| tokLowerCase.startsWith("-" + FilterString.WERKSTUECK)) {
 				if (conjWorkPiece == null) {
 					conjWorkPiece = Restrictions.conjunction();
 				}
@@ -901,7 +930,8 @@ public class FilterHelper {
 			stepTitle = filterPart.substring(filterPart.indexOf(":") + 1);
 			if (stepTitle.startsWith("-")) {
 				stepTitle = stepTitle.substring(1);
-				conjSteps.add(Restrictions.and(Restrictions.not(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%")),
+				conjSteps.add(Restrictions.and(
+						Restrictions.not(Restrictions.like(tableIdentifier + "titel", "%" + stepTitle + "%")),
 						Restrictions.ge(tableIdentifier + "bearbeitungsstatus", StepStatus.OPEN.getValue())));
 				return "";
 			} else {
@@ -921,8 +951,8 @@ public class FilterHelper {
 	 * @param parameters
 	 * @return String
 	 ************************************************************************************/
-	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart, StepStatus inStatus, boolean negate,
-			String filterPrefix) {
+	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart,
+			StepStatus inStatus, boolean negate, String filterPrefix) {
 		// extracting the substring into parameter (filter parameters e.g. 5,
 		// -5,
 		// 5-10, 5- or "Qualitätssicherung")
@@ -936,71 +966,77 @@ public class FilterHelper {
 
 		switch (FilterHelper.getStepFilter(parameters)) {
 
-		case exact:
-			try {
-				FilterHelper.filterStepExact(con, parameters, inStatus, negate, filterPrefix);
-				returnParameters.setStepDone(FilterHelper.getStepStart(parameters));
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				logger.error(e);
-				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
+			case exact:
+				try {
+					FilterHelper.filterStepExact(con, parameters, inStatus, negate, filterPrefix);
+					returnParameters.setStepDone(FilterHelper.getStepStart(parameters));
+				} catch (NullPointerException e) {
+					message = "stepdone is preset, don't use 'step' filters";
+				} catch (Exception e) {
+					logger.error(e);
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+							+ filterPart + "' caused an error\n";
+				}
+				break;
 
-		case max:
-			try {
-				FilterHelper.filterStepMax(con, parameters, inStatus, negate, filterPrefix);
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
+			case max:
+				try {
+					FilterHelper.filterStepMax(con, parameters, inStatus, negate, filterPrefix);
+				} catch (NullPointerException e) {
+					message = "stepdone is preset, don't use 'step' filters";
+				} catch (Exception e) {
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+							+ filterPart + "' caused an error\n";
+				}
+				break;
 
-		case min:
-			try {
-				FilterHelper.filterStepMin(con, parameters, inStatus, negate, filterPrefix);
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
+			case min:
+				try {
+					FilterHelper.filterStepMin(con, parameters, inStatus, negate, filterPrefix);
+				} catch (NullPointerException e) {
+					message = "stepdone is preset, don't use 'step' filters";
+				} catch (Exception e) {
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+							+ filterPart + "' caused an error\n";
+				}
+				break;
 
-		case name:
-			/* filter for a specific done step by it's name (Titel) */
-			// myObservable.setMessage("Filter 'stepDone:" + parameters
-			// + "' is not yet implemented and will be ignored!");
-			try {
-				FilterHelper.filterStepName(con, parameters, inStatus, negate, filterPrefix);
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
-
-		case range:
-			try {
-				FilterHelper.filterStepRange(con, parameters, inStatus, negate, filterPrefix);
-			} catch (NullPointerException e) {
-				message = "stepdone is preset, don't use 'step' filters";
-			} catch (NumberFormatException e) {
+			case name:
+				/* filter for a specific done step by it's name (Titel) */
+				// myObservable.setMessage("Filter 'stepDone:" + parameters
+				// + "' is not yet implemented and will be ignored!");
 				try {
 					FilterHelper.filterStepName(con, parameters, inStatus, negate, filterPrefix);
-				} catch (NullPointerException e1) {
+				} catch (NullPointerException e) {
 					message = "stepdone is preset, don't use 'step' filters";
-				} catch (Exception e1) {
-					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
+				} catch (Exception e) {
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+							+ filterPart + "' caused an error\n";
 				}
-			} catch (Exception e) {
-				message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '" + filterPart + "' caused an error\n";
-			}
-			break;
+				break;
 
-		case unknown:
-			message = message + ("Filter '" + filterPart + "' is not known!\n");
+			case range:
+				try {
+					FilterHelper.filterStepRange(con, parameters, inStatus, negate, filterPrefix);
+				} catch (NullPointerException e) {
+					message = "stepdone is preset, don't use 'step' filters";
+				} catch (NumberFormatException e) {
+					try {
+						FilterHelper.filterStepName(con, parameters, inStatus, negate, filterPrefix);
+					} catch (NullPointerException e1) {
+						message = "stepdone is preset, don't use 'step' filters";
+					} catch (Exception e1) {
+						message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+								+ filterPart + "' caused an error\n";
+					}
+				} catch (Exception e) {
+					message = "filterpart '" + filterPart.substring(filterPart.indexOf(":") + 1) + "' in '"
+							+ filterPart + "' caused an error\n";
+				}
+				break;
+
+			case unknown:
+				message = message + ("Filter '" + filterPart + "' is not known!\n");
 		}
 		return message;
 	}

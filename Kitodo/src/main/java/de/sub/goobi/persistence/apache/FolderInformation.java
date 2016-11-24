@@ -58,7 +58,6 @@ public class FolderInformation {
 		this.title = goobititle;
 	}
 
-
 	public String getImagesTifDirectory(boolean useFallBack) {
 		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -289,10 +288,12 @@ public class FolderInformation {
 			sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
 		}
 		if (ocrBasisPath.endsWith(File.separator)) {
-			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
+			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
+					.replace("\\", "/");
 		}
 		if (ocrPlaintextPath.endsWith(File.separator)) {
-			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
+			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
+					.replace("\\", "/");
 		}
 		if (SystemUtils.IS_OS_WINDOWS) {
 			answer.put("(tifurl)", "file:/" + tifpath);

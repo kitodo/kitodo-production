@@ -78,8 +78,9 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/* =============================================================== */
-	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType) throws DocStructHasNoTypeException,
-			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
+	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
+			throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
+			TypeNotAllowedForParentException {
 		// inOldDocstruct.getType().getName()
 		// + " soll werden zu " + inNewType);
 		DocStructType dst = this.myPrefs.getDocStrctTypeByName(inNewType);
@@ -91,7 +92,8 @@ public class MetadatenHelper implements Comparator<Object> {
 			for (Metadata old : inOldDocstruct.getAllMetadata()) {
 				boolean match = false;
 
-				if (newDocstruct.getPossibleMetadataTypes() != null && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+				if (newDocstruct.getPossibleMetadataTypes() != null
+						&& newDocstruct.getPossibleMetadataTypes().size() > 0) {
 					for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
 						if (mt.getName().equals(old.getType().getName())) {
 							match = true;
@@ -102,8 +104,8 @@ public class MetadatenHelper implements Comparator<Object> {
 						try {
 							newDocstruct.addMetadata(old);
 						} catch (Exception e) {
-							Helper.setFehlerMeldung("Metadata " + old.getType().getName() + " is not allowed in new element "
-									+ newDocstruct.getType().getName());
+							Helper.setFehlerMeldung("Metadata " + old.getType().getName()
+									+ " is not allowed in new element " + newDocstruct.getType().getName());
 							return inOldDocstruct;
 						}
 					} else {
@@ -122,7 +124,8 @@ public class MetadatenHelper implements Comparator<Object> {
 		if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
 			for (Person old : inOldDocstruct.getAllPersons()) {
 				boolean match = false;
-				if (newDocstruct.getPossibleMetadataTypes() != null && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+				if (newDocstruct.getPossibleMetadataTypes() != null
+						&& newDocstruct.getPossibleMetadataTypes().size() > 0) {
 					for (MetadataType mt : newDocstruct.getPossibleMetadataTypes()) {
 						if (mt.getName().equals(old.getType().getName())) {
 							match = true;
@@ -158,18 +161,19 @@ public class MetadatenHelper implements Comparator<Object> {
 		 */
 		if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
 			for (DocStruct old : inOldDocstruct.getAllChildren()) {
-				if (newDocstruct.getType().getAllAllowedDocStructTypes() != null && newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
+				if (newDocstruct.getType().getAllAllowedDocStructTypes() != null
+						&& newDocstruct.getType().getAllAllowedDocStructTypes().size() > 0) {
 
 					if (!newDocstruct.getType().getAllAllowedDocStructTypes().contains(old.getType().getName())) {
-						Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
-								+ newDocstruct.getType().getName());
+						Helper.setFehlerMeldung("Child element " + old.getType().getName()
+								+ " is not allowed in new element " + newDocstruct.getType().getName());
 						return inOldDocstruct;
 					} else {
 						newDocstruct.addChild(old);
 					}
 				} else {
-					Helper.setFehlerMeldung("Child element " + old.getType().getName() + " is not allowed in new element "
-							+ newDocstruct.getType().getName());
+					Helper.setFehlerMeldung("Child element " + old.getType().getName()
+							+ " is not allowed in new element " + newDocstruct.getType().getName());
 					return inOldDocstruct;
 				}
 			}
@@ -314,7 +318,8 @@ public class MetadatenHelper implements Comparator<Object> {
 				newTypes.add(dst);
 			} else {
 				Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-				myLogger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
+				myLogger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
+						+ " nicht definiert");
 			}
 		}
 
@@ -339,7 +344,8 @@ public class MetadatenHelper implements Comparator<Object> {
 		Iterator<DocStructType> it = newTypes.iterator();
 		while (it.hasNext()) {
 			DocStructType dst = it.next();
-			String label = dst.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+			String label = dst.getNameByLanguage((String) Helper
+					.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 			if (label == null) {
 				label = dst.getName();
 			}
@@ -429,7 +435,8 @@ public class MetadatenHelper implements Comparator<Object> {
 	 * ================================================================
 	 */
 	@SuppressWarnings("deprecation")
-	public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage, boolean inIsPerson, Prozess inProzess) {
+	public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage,
+			boolean inIsPerson, Prozess inProzess) {
 		List<MetadataType> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
 		/* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
 		if (displayMetadataTypes != null) {
@@ -510,10 +517,8 @@ public class MetadatenHelper implements Comparator<Object> {
 		types.put("rdf", "<RDF:RDF ".toLowerCase());
 		types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-		try (
-			InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-			BufferedReader bufRead = new BufferedReader(input);
-		) {
+		try (InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+				BufferedReader bufRead = new BufferedReader(input);) {
 			char[] buffer = new char[200];
 			while ((bufRead.read(buffer)) >= 0) {
 				String temp = new String(buffer).toLowerCase();
@@ -535,7 +540,8 @@ public class MetadatenHelper implements Comparator<Object> {
 	 * @return localized Title of metadata type ================================================================
 	 */
 	public String getMetadatatypeLanguage(MetadataType inMdt) {
-		String label = inMdt.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = inMdt.getLanguage((String) Helper
+				.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 		if (label == null) {
 			label = inMdt.getName();
 		}
@@ -574,8 +580,9 @@ public class MetadatenHelper implements Comparator<Object> {
 				name1 = mdt1.getNameByLanguage(this.language);
 				name2 = mdt2.getNameByLanguage(this.language);
 			} catch (java.lang.NullPointerException e) {
-				if(myLogger.isDebugEnabled()){
-					myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType() + " is missing in ruleset");
+				if (myLogger.isDebugEnabled()) {
+					myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType()
+							+ " is missing in ruleset");
 				}
 				return 0;
 			}
@@ -645,7 +652,6 @@ public class MetadatenHelper implements Comparator<Object> {
 		}
 		return myList;
 	}
-
 
 	@Override
 	public int compare(Object o1, Object o2) {

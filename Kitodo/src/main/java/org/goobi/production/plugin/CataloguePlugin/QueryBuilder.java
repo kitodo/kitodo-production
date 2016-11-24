@@ -135,33 +135,33 @@ public class QueryBuilder {
 		for (int index = 0; index < query.length(); index++) {
 			int codePoint = query.charAt(index);
 			switch (codePoint) {
-			case ' ':
-			case '(':
-			case ')':
-			case '|':
-				if (!stringLiteral)
-					appendField = true;
-				result.appendCodePoint(codePoint);
-				break;
-			case '"':
-				if (stringLiteral && appendField)
-					result.append(prefix);
-				stringLiteral = !stringLiteral;
-				appendField = stringLiteral;
-				result.appendCodePoint(codePoint);
-				break;
-			case '-':
-				result.appendCodePoint(codePoint);
-				if (appendField)
-					result.append(prefix);
-				appendField = false;
-				break;
-			default:
-				if (appendField)
-					result.append(prefix);
-				appendField = false;
-				result.appendCodePoint(codePoint);
-				break;
+				case ' ':
+				case '(':
+				case ')':
+				case '|':
+					if (!stringLiteral)
+						appendField = true;
+					result.appendCodePoint(codePoint);
+					break;
+				case '"':
+					if (stringLiteral && appendField)
+						result.append(prefix);
+					stringLiteral = !stringLiteral;
+					appendField = stringLiteral;
+					result.appendCodePoint(codePoint);
+					break;
+				case '-':
+					result.appendCodePoint(codePoint);
+					if (appendField)
+						result.append(prefix);
+					appendField = false;
+					break;
+				default:
+					if (appendField)
+						result.append(prefix);
+					appendField = false;
+					result.appendCodePoint(codePoint);
+					break;
 			}
 
 		}

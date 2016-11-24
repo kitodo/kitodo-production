@@ -166,18 +166,18 @@ public abstract class RenderableMetadatum {
 		}
 		switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, getBindState(binding),
 				metadataType.getName())) {
-		case input:
-			return new RenderableEdit(metadataType, binding, container);
-		case readonly:
-			return new RenderableEdit(metadataType, binding, container).setReadonly(true);
-		case select:
-			return new RenderableListBox(metadataType, binding, container, projectName);
-		case select1:
-			return new RenderableDropDownList(metadataType, binding, container, projectName);
-		case textarea:
-			return new RenderableLineEdit(metadataType, binding, container);
-		default:
-			throw new UnreachableCodeException("Complete switch statement");
+			case input:
+				return new RenderableEdit(metadataType, binding, container);
+			case readonly:
+				return new RenderableEdit(metadataType, binding, container).setReadonly(true);
+			case select:
+				return new RenderableListBox(metadataType, binding, container, projectName);
+			case select1:
+				return new RenderableDropDownList(metadataType, binding, container, projectName);
+			case textarea:
+				return new RenderableLineEdit(metadataType, binding, container);
+			default:
+				throw new UnreachableCodeException("Complete switch statement");
 		}
 	}
 

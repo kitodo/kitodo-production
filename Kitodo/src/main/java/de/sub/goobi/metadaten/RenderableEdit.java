@@ -158,21 +158,21 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 			} else {
 				for (Person found : binding.getPersonByType(personType)) {
 					switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
-					case FIRSTNAME:
-						found.setFirstname(value);
-						break;
-					case LASTNAME:
-						found.setLastname(value);
-						break;
-					case NORMDATA_RECORD:
-						if (value != null && value.length() > 0
-								&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
-							String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
-							found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-						}
-						break;
-					default:
-						throw new UnreachableCodeException("Complete switch");
+						case FIRSTNAME:
+							found.setFirstname(value);
+							break;
+						case LASTNAME:
+							found.setLastname(value);
+							break;
+						case NORMDATA_RECORD:
+							if (value != null && value.length() > 0
+									&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
+								String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
+								found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+							}
+							break;
+						default:
+							throw new UnreachableCodeException("Complete switch");
 					}
 				}
 			}

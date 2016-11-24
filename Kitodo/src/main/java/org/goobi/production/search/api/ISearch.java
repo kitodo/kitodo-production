@@ -1,4 +1,5 @@
 package org.goobi.production.search.api;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -28,7 +29,6 @@ package org.goobi.production.search.api;
  */
 import java.util.ArrayList;
 
-
 /**
  * This interface defines a search engine for goobi.
  * @author Robert Sehr
@@ -50,7 +50,5 @@ public interface ISearch {
 	 * @return count of the resulting objects
 	 */
 	public int getSearchCount(String query);
-
-
 
 }

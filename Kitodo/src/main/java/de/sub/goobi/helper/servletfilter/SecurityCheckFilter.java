@@ -1,4 +1,5 @@
 package de.sub.goobi.helper.servletfilter;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -40,40 +41,32 @@ import javax.servlet.http.HttpSession;
 
 public class SecurityCheckFilter implements Filter {
 
-   
+	public SecurityCheckFilter() { // called once. no method arguments allowed here!
+	}
 
-   public SecurityCheckFilter() { //called once. no method arguments allowed here!
-   }
+	@Override
+	public void init(FilterConfig conf) throws ServletException {
+	}
 
-   
+	@Override
+	public void destroy() {
+	}
 
-   @Override
-public void init(FilterConfig conf) throws ServletException {
-   }
+	/** Creates a new instance of SecurityCheckFilter */
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
 
-   
+		HttpServletRequest hreq = (HttpServletRequest) request;
+		HttpServletResponse hres = (HttpServletResponse) response;
+		HttpSession session = hreq.getSession();
 
-   @Override
-public void destroy() {
-   }
+		if (session.isNew() && !hreq.getRequestURI().contains("newpages/Main.jsf")) {
+			hres.sendRedirect(hreq.getContextPath());
+			return;
+		}
 
-   
-
-   /** Creates a new instance of SecurityCheckFilter */
-   @Override
-public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-         throws IOException, ServletException {
-
-      HttpServletRequest hreq = (HttpServletRequest) request;
-      HttpServletResponse hres = (HttpServletResponse) response;
-      HttpSession session = hreq.getSession();
-
-      if (session.isNew() && !hreq.getRequestURI().contains("newpages/Main.jsf")) {
-         hres.sendRedirect(hreq.getContextPath());
-         return;
-      }
-
-      //deliver request to next filter 
-      chain.doFilter(request, response);
-   }
+		// deliver request to next filter
+		chain.doFilter(request, response);
+	}
 }

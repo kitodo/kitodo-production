@@ -40,34 +40,32 @@ import de.sub.goobi.helper.enums.ReportLevel;
 
 public class WebServiceResult {
 	private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
-	
+
 	private String queueName;
 	private String id;
 	private ReportLevel level;
 	private String message = null;
-	
-	public WebServiceResult(String queueName, String id, ReportLevel level,
-			String message){
+
+	public WebServiceResult(String queueName, String id, ReportLevel level, String message) {
 		this.queueName = queueName;
 		this.id = id;
 		this.level = level;
 		this.message = message;
 	}
-	
-	public WebServiceResult(String queueName, String id, ReportLevel level){
+
+	public WebServiceResult(String queueName, String id, ReportLevel level) {
 		this.queueName = queueName;
 		this.id = id;
 		this.level = level;
 	}
-	
+
 	public void send() {
 		if (ActiveMQDirector.getResultsTopic() == null) {
 
 			// If reporting to ActiveMQ is disabled, write log message
-			logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-					"Processing message \"" + id + '@' + queueName
-							+ "\" reports " + level.toLowerCase() + "."
-							+ (message != null ? " (" + message + ")" : ""));
+			logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN, "Processing message \"" + id + '@'
+					+ queueName + "\" reports " + level.toLowerCase() + "."
+					+ (message != null ? " (" + message + ")" : ""));
 		} else {
 			try {
 				MapMessage report = ActiveMQDirector.getSession().createMapMessage();
@@ -84,10 +82,8 @@ public class WebServiceResult {
 				ActiveMQDirector.getResultsTopic().send(report);
 
 			} catch (Exception exce) {
-				logger.fatal("Error sending report  for \"" + id + '@'
-						+ queueName + "\" (" + level.toLowerCase()
-						+ (message != null ? ": " + message : "")
-						+ "): Giving up.", exce);
+				logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
+						+ (message != null ? ": " + message : "") + "): Giving up.", exce);
 			}
 		}
 	}

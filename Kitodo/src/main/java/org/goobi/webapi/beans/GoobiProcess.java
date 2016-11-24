@@ -32,32 +32,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GoobiProcess {
 
-    private String identifier;
+	private String identifier;
 
-    private String title;
+	private String title;
 
-    public GoobiProcess() {
-    }
+	public GoobiProcess() {
+	}
 
-    public GoobiProcess(String identifier, String title) {
-        this.identifier = identifier;
-        this.title = title;
-    }
+	public GoobiProcess(String identifier, String title) {
+		this.identifier = identifier;
+		this.title = title;
+	}
 
-    public String getIdentifier() {
-        return identifier;
-    }
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 }

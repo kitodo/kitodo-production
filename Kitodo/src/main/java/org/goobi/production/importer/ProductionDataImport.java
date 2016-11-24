@@ -1,6 +1,5 @@
 package org.goobi.production.importer;
 
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -81,7 +80,7 @@ import de.sub.goobi.persistence.RegelsatzDAO;
  */
 
 public class ProductionDataImport {
-	
+
 	// TODO Namen mit Rolfs Liste abgleichen
 
 	private static final Logger logger = Logger.getLogger(ProductionDataImport.class);
@@ -111,8 +110,8 @@ public class ProductionDataImport {
 	 * @throws FileNotFoundException
 	 */
 
-	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException, DAOException,
-			FileNotFoundException {
+	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException,
+			DAOException, FileNotFoundException {
 		new ProductionDataImport().importData();
 
 	}
@@ -124,10 +123,9 @@ public class ProductionDataImport {
 		// load data from xml
 		logger.debug("Load Production Data from xml.");
 		ArrayList<ProductionData> dataList = load(filename);
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("Got " + dataList.size() + " items");
 		}
-
 
 		Prozess template = new Prozess();
 		template.setProjekt(altdaten);
@@ -165,7 +163,8 @@ public class ProductionDataImport {
 					ArrayList<String> ppnlist = new ArrayList<String>();
 					ppnlist.add(ppn);
 					ppnlist.add("PPN" + ppn);
-					Criteria crit = session.createCriteria(Werkstueckeigenschaft.class).add(Restrictions.in("wert", ppnlist));
+					Criteria crit = session.createCriteria(Werkstueckeigenschaft.class).add(
+							Restrictions.in("wert", ppnlist));
 					ArrayList<Werkstueckeigenschaft> weList = new ArrayList<Werkstueckeigenschaft>();
 					weList.addAll(crit.list());
 					// -------------------------------------------------------------------------------
@@ -178,7 +177,7 @@ public class ProductionDataImport {
 						if (w != null) {
 							Prozess p = w.getProzess();
 							if (p != null) {
-								if(logger.isDebugEnabled()){
+								if (logger.isDebugEnabled()) {
 									logger.debug("Add new Properties for Process : " + p.getTitel());
 								}
 								addNewPropertiesForExistingProcesses(session, p.getId(), pd);
@@ -205,18 +204,18 @@ public class ProductionDataImport {
 		if (conflicts != null) {
 			XStream xstream = new XStream();
 			xstream.setMode(XStream.NO_REFERENCES);
-			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(ConfigMain.getParameter("tempfolder") + conflictFilename)),
-					StandardCharsets.UTF_8);
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(new File(
+					ConfigMain.getParameter("tempfolder") + conflictFilename)), StandardCharsets.UTF_8);
 			xstream.toXML(conflicts, fw);
 		}
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("Neue Prozesse: " + newProj);
 			logger.debug("Zu " + oldProj + " existierenden Prozessen wurden Properties hinzugefügt");
 		}
 	}
 
-	private void generateNewPropertiesForNewProzess(Session session, Regelsatz ruleset, Projekt project, ProductionData pd)
-			throws HibernateException, SQLException {
+	private void generateNewPropertiesForNewProzess(Session session, Regelsatz ruleset, Projekt project,
+			ProductionData pd) throws HibernateException, SQLException {
 
 		// generate new Process
 
@@ -284,7 +283,8 @@ public class ProductionDataImport {
 
 	}
 
-	private void generateWerkProperty(Session session, Werkstueck w, String name, String value, PropertyType type, Integer position, boolean required) {
+	private void generateWerkProperty(Session session, Werkstueck w, String name, String value, PropertyType type,
+			Integer position, boolean required) {
 		if (value != null) {
 			Werkstueckeigenschaft property = new Werkstueckeigenschaft();
 			property.setIstObligatorisch(required);
@@ -298,7 +298,8 @@ public class ProductionDataImport {
 		}
 	}
 
-	private void generateVorlageProperty(Session session, Vorlage s, String name, String value, PropertyType type, Integer position, boolean required) {
+	private void generateVorlageProperty(Session session, Vorlage s, String name, String value, PropertyType type,
+			Integer position, boolean required) {
 		if (value != null) {
 			Vorlageeigenschaft property = new Vorlageeigenschaft();
 			property.setIstObligatorisch(required);
@@ -312,7 +313,8 @@ public class ProductionDataImport {
 		}
 	}
 
-	private void generateProzessProperty(Session session, Prozess s, String name, String value, PropertyType type, Integer position, boolean required) {
+	private void generateProzessProperty(Session session, Prozess s, String name, String value, PropertyType type,
+			Integer position, boolean required) {
 		if (value != null) {
 			Prozesseigenschaft property = new Prozesseigenschaft();
 			property.setIstObligatorisch(required);
@@ -326,9 +328,8 @@ public class ProductionDataImport {
 		}
 	}
 
-	private void getNewPropertiesForNewProcesses(Session session, Prozess prozess, ProductionData pd) throws HibernateException, SQLException,
-			ConfigurationException {
-
+	private void getNewPropertiesForNewProcesses(Session session, Prozess prozess, ProductionData pd)
+			throws HibernateException, SQLException, ConfigurationException {
 
 		// Generate Properties
 		prozess.setErstellungsdatum(pd.getDATUMAUFNAHMEWERK());
@@ -336,47 +337,57 @@ public class ProductionDataImport {
 		// ATS
 		generateProzessProperty(session, prozess, "ATS", pd.getWERKATS(), PropertyType.String, 0, false);
 		// Auftragsnummer
-		generateProzessProperty(session, prozess, "Auftragsnummer", pd.getAUFTRAGSNUMMER(), PropertyType.String, 0, false);
+		generateProzessProperty(session, prozess, "Auftragsnummer", pd.getAUFTRAGSNUMMER(), PropertyType.String, 0,
+				false);
 		// BEMERKUNG
 		generateProzessProperty(session, prozess, "Kommentar", pd.getBEMERKUNG(), PropertyType.String, 0, false);
 		// KOMMENTAR
 		generateProzessProperty(session, prozess, "Bemerkung", pd.getKOMMENTAR(), PropertyType.String, 0, false);
 
 		// FEHLERKOMMENTAR
-		generateProzessProperty(session, prozess, "FehlerKommentar", pd.getFEHLERKOMMENTAR(), PropertyType.String, 0, false);
+		generateProzessProperty(session, prozess, "FehlerKommentar", pd.getFEHLERKOMMENTAR(), PropertyType.String, 0,
+				false);
 
 		// AUFTRAGGEBER
-		generateProzessProperty(session, prozess, "Auftraggeber", String.valueOf(pd.getAUFTRAGGEBER()), PropertyType.Integer, 0, false);
+		generateProzessProperty(session, prozess, "Auftraggeber", String.valueOf(pd.getAUFTRAGGEBER()),
+				PropertyType.Integer, 0, false);
 		if (prozess.getProjekt().getTitel().equals("DigiWunschBuch")) {
 
 			// BEMERKUNG2
 			// TODO besseren Namen finden
-			generateProzessProperty(session, prozess, "Bemerkung2", String.valueOf(pd.getBEMERKUNG2()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "Bemerkung2", String.valueOf(pd.getBEMERKUNG2()),
+					PropertyType.Integer, 0, false);
 
 			// XSLSHEET
 			// TODO besseren Namen finden
-			generateProzessProperty(session, prozess, "XslSheet", String.valueOf(pd.getXSLSHEET()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "XslSheet", String.valueOf(pd.getXSLSHEET()),
+					PropertyType.Integer, 0, false);
 
 			// SponsorNaming
-			generateProzessProperty(session, prozess, "Patennennung", String.valueOf(pd.getPatennennung()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "Patennennung", String.valueOf(pd.getPatennennung()),
+					PropertyType.Integer, 0, false);
 
 			// Patenname
 			generateProzessProperty(session, prozess, "Patenname", pd.getPatenname(), PropertyType.String, 0, false);
 
 			// StempelGesetzt
-			generateProzessProperty(session, prozess, "Stempel gesetzt", String.valueOf(pd.getStempelGesetzt()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "Stempel gesetzt", String.valueOf(pd.getStempelGesetzt()),
+					PropertyType.Integer, 0, false);
 
 			// xmlTag
-			generateProzessProperty(session, prozess, "xml-Tag", String.valueOf(pd.getXmlTag()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "xml-Tag", String.valueOf(pd.getXmlTag()), PropertyType.Integer,
+					0, false);
 
 			// otrsID
 			generateProzessProperty(session, prozess, "OTRS-ID", pd.getOtrsID(), PropertyType.String, 0, false);
 
 			// versandErfolgt
-			generateProzessProperty(session, prozess, "Versand", String.valueOf(pd.getVersandErfolgt()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "Versand", String.valueOf(pd.getVersandErfolgt()),
+					PropertyType.Integer, 0, false);
 
 			// pdfErstellt
-			generateProzessProperty(session, prozess, "PDF erstellt", String.valueOf(pd.getPdfErstellt()), PropertyType.Integer, 0, false);
+			generateProzessProperty(session, prozess, "PDF erstellt", String.valueOf(pd.getPdfErstellt()),
+					PropertyType.Integer, 0, false);
 		}
 
 		Werkstueck werkstueck = prozess.getWerkstueckeList().get(0);
@@ -412,17 +423,20 @@ public class ProductionDataImport {
 				s.setBearbeitungsende(pd.getWERKSCANDATUM());
 				s.setEditTypeEnum(StepEditType.ADMIN);
 				s.setBearbeitungsstatusEnum(StepStatus.DONE);
-				
+
 				// WERKSCANSEITEN
-				generateProzessProperty(session, prozess, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()),
+						PropertyType.Integer, 0, false);
 
 				prozess.setSortHelperImages(pd.getWERKSCANSEITEN());
 
 				// SCANNERTYP
-				generateProzessProperty(session, prozess, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0,
+						false);
 
 				// DRUCKQUALITAET
-				generateProzessProperty(session, prozess, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()),
+						PropertyType.Integer, 0, false);
 
 			}
 
@@ -441,42 +455,48 @@ public class ProductionDataImport {
 				s.setBearbeitungsstatusEnum(StepStatus.DONE);
 				s.setEditTypeEnum(StepEditType.ADMIN);
 
-			
 				// BITONALIMAGENACHBEARBEITUNG
-				generateProzessProperty(session, prozess, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "BitonalImageNachbearbeitung",
+						pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// GRAUIMAGENACHBEARBEITUNG
-				generateProzessProperty(session, prozess, "GrayscaleImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "GrayscaleImageNachbearbeitung",
+						pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBEIMAGENACHBEARBEITUNG
-				generateProzessProperty(session, prozess, "ColorImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "ColorImageNachbearbeitung",
+						pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
 
 				// FARBGRAUABB
 				// TODO Name
-				generateProzessProperty(session, prozess, "FarbGrauAbb", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, prozess, "FarbGrauAbb", String.valueOf(pd.getFARBGRAUABB()),
+						PropertyType.Integer, 0, false);
 
 				// ImageNachbearbBitonalDatum
-				generateProzessProperty(session, prozess, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()),
-						PropertyType.Date, 0, false);
+				generateProzessProperty(session, prozess, "DatumBitonalImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbBitonalPerson
-				// generateProzessProperty(session, prozess, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0,
+				// generateProzessProperty(session, prozess, "PersonBitonalImageCorrection",
+				// pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0,
 				// false);
 
 				// ImageNachbearbGrauDatum
-				generateProzessProperty(session, prozess, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
-						0, false);
+				generateProzessProperty(session, prozess, "DatumGrauImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbGrauPerson
-				// generateProzessProperty(session, prozess, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0,
+				// generateProzessProperty(session, prozess, "PersonGrayscaleImageCorrection",
+				// pd.getImageNachbearbGrauPerson(), PropertyType.String, 0,
 				// false);
 
 				// ImageNachbearbFarbeDatum
-				generateProzessProperty(session, prozess, "DatumFarbImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()),
-						PropertyType.Date, 0, false);
+				generateProzessProperty(session, prozess, "DatumFarbImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbFarbePerson
-				// generateProzessProperty(session, prozess, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
+				// generateProzessProperty(session, prozess, "PersonColorImageCorrection",
+				// pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *
@@ -487,10 +507,12 @@ public class ProductionDataImport {
 				s.setEditTypeEnum(StepEditType.ADMIN);
 
 				// CDSICHERUNG
-				generateProzessProperty(session, prozess, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String,
+						0, false);
 
 				// MAARCHIV
-				generateProzessProperty(session, prozess, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
+				generateProzessProperty(session, prozess, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0,
+						false);
 
 			} else if (s.getTitel().contains("Import von CD")) {
 				s.setBearbeitungsbeginn(pd.getImportDatum());
@@ -501,10 +523,9 @@ public class ProductionDataImport {
 		session.clear();
 	}
 
-	private void addNewPropertiesForExistingProcesses(Session session, int pId, ProductionData pd) throws HibernateException, SQLException,
-			ConfigurationException {
+	private void addNewPropertiesForExistingProcesses(Session session, int pId, ProductionData pd)
+			throws HibernateException, SQLException, ConfigurationException {
 
-		
 		// Prozess holen
 		Prozess p = null;
 		Criteria crit = session.createCriteria(Prozess.class).add(Restrictions.eq("id", pId));
@@ -536,15 +557,18 @@ public class ProductionDataImport {
 		generateProzessProperty(session, p, "Fehlerkommentar", pd.getFEHLERKOMMENTAR(), PropertyType.String, 0, false);
 
 		// AUFTRAGGEBER
-		generateProzessProperty(session, p, "Auftraggeber", String.valueOf(pd.getAUFTRAGGEBER()), PropertyType.Integer, 0, false);
+		generateProzessProperty(session, p, "Auftraggeber", String.valueOf(pd.getAUFTRAGGEBER()), PropertyType.Integer,
+				0, false);
 
 		// BEMERKUNG2
 		// TODO Name
-		generateProzessProperty(session, p, "Bemerkung2", String.valueOf(pd.getBEMERKUNG2()), PropertyType.Integer, 0, false);
+		generateProzessProperty(session, p, "Bemerkung2", String.valueOf(pd.getBEMERKUNG2()), PropertyType.Integer, 0,
+				false);
 
 		// XSLSHEET
 		// TODO Name
-		generateProzessProperty(session, p, "XslSheet", String.valueOf(pd.getXSLSHEET()), PropertyType.Integer, 0, false);
+		generateProzessProperty(session, p, "XslSheet", String.valueOf(pd.getXSLSHEET()), PropertyType.Integer, 0,
+				false);
 
 		/********************************************
 		 * DigiWunschbuch Sponsor *
@@ -561,25 +585,30 @@ public class ProductionDataImport {
 
 			if (!sponsor) {
 				// SponsorNaming
-				generateProzessProperty(session, p, "Patennennung", String.valueOf(pd.getPatennennung()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "Patennennung", String.valueOf(pd.getPatennennung()),
+						PropertyType.Integer, 0, false);
 
 				// Patenname
 				generateProzessProperty(session, p, "Patenname", pd.getPatenname(), PropertyType.String, 0, false);
 
 				// StempelGesetzt
-				generateProzessProperty(session, p, "Stempel gesetzt", String.valueOf(pd.getStempelGesetzt()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "Stempel gesetzt", String.valueOf(pd.getStempelGesetzt()),
+						PropertyType.Integer, 0, false);
 
 				// xmlTag
-				generateProzessProperty(session, p, "xml-Tag", String.valueOf(pd.getXmlTag()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "xml-Tag", String.valueOf(pd.getXmlTag()), PropertyType.Integer, 0,
+						false);
 
 				// otrsID
 				generateProzessProperty(session, p, "OTRS-ID", pd.getOtrsID(), PropertyType.String, 0, false);
 
 				// versandErfolgt
-				generateProzessProperty(session, p, "Versand", String.valueOf(pd.getVersandErfolgt()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "Versand", String.valueOf(pd.getVersandErfolgt()),
+						PropertyType.Integer, 0, false);
 
 				// pdfErstellt
-				generateProzessProperty(session, p, "PDF erstellt", String.valueOf(pd.getPdfErstellt()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "PDF erstellt", String.valueOf(pd.getPdfErstellt()),
+						PropertyType.Integer, 0, false);
 			}
 		}
 		List<Werkstueck> wl = p.getWerkstueckeList();
@@ -605,7 +634,8 @@ public class ProductionDataImport {
 				}
 			}
 			if (!ppndigital && ppnconflict) {
-				conflicts.add(new ImportConflicts(String.valueOf(w.getId()), "PPN digital f-Satz", "", pd.getWERKPPNDIGITAL()));
+				conflicts.add(new ImportConflicts(String.valueOf(w.getId()), "PPN digital f-Satz", "", pd
+						.getWERKPPNDIGITAL()));
 			}
 		}
 
@@ -616,7 +646,8 @@ public class ProductionDataImport {
 			// PPN digital f-Satz
 			newWerk.setProzess(p);
 
-			generateWerkProperty(session, newWerk, "PPN digital f-Satz", pd.getWERKPPNDIGITAL(), PropertyType.String, 0, false);
+			generateWerkProperty(session, newWerk, "PPN digital f-Satz", pd.getWERKPPNDIGITAL(), PropertyType.String,
+					0, false);
 		}
 		ppnconflict = false;
 		boolean signatur = false;
@@ -659,7 +690,8 @@ public class ProductionDataImport {
 
 				}
 				if (!ppnanalog && ppnconflict) {
-					conflicts.add(new ImportConflicts(String.valueOf(v.getId()), "PPN analog", "", ppn + " or " + "PPN" + ppn));
+					conflicts.add(new ImportConflicts(String.valueOf(v.getId()), "PPN analog", "", ppn + " or " + "PPN"
+							+ ppn));
 				}
 				if (!signatur && sigconflict) {
 					conflicts.add(new ImportConflicts(String.valueOf(v.getId()), "Signatur", "", pd.getWERKSIGNATUR()));
@@ -671,11 +703,13 @@ public class ProductionDataImport {
 			if (!signatur) {
 				// WERKSIGNATUR
 
-				generateVorlageProperty(session, newVorlage, "Signatur", pd.getWERKSIGNATUR(), PropertyType.String, 0, false);
+				generateVorlageProperty(session, newVorlage, "Signatur", pd.getWERKSIGNATUR(), PropertyType.String, 0,
+						false);
 			}
 			if (!ppnanalog) {
 
-				generateVorlageProperty(session, newVorlage, "PPN analog f-Satz", pd.getWERKPPNANALOG(), PropertyType.String, 0, false);
+				generateVorlageProperty(session, newVorlage, "PPN analog f-Satz", pd.getWERKPPNANALOG(),
+						PropertyType.String, 0, false);
 
 			}
 
@@ -695,7 +729,8 @@ public class ProductionDataImport {
 
 				if (!pages) {
 					// WERKSCANSEITEN
-					generateProzessProperty(session, p, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()), PropertyType.Integer, 0, false);
+					generateProzessProperty(session, p, "Seitenanzahl", String.valueOf(pd.getWERKSCANSEITEN()),
+							PropertyType.Integer, 0, false);
 
 				}
 				if (!scangeraet) {
@@ -703,7 +738,8 @@ public class ProductionDataImport {
 					generateProzessProperty(session, p, "Scangerät", pd.getSCANNERTYP(), PropertyType.String, 0, false);
 				}
 				// DRUCKQUALITAET
-				generateProzessProperty(session, p, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()),
+						PropertyType.Integer, 0, false);
 			}
 			/********************************************
 			 * step 'Qualitätskontrolle' *
@@ -719,43 +755,51 @@ public class ProductionDataImport {
 				 *******************************************/
 			} else if (s.getTitel().contains("Imagenachbearbeitung")) {
 
-				generateProzessProperty(session, p, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(),
+						PropertyType.String, 0, false);
 
 				// GRAUIMAGENACHBEARBEITUNG
-				generateProzessProperty(session, p, "GrauImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "GrauImageNachbearbeitung", pd.getGRAUIMAGENACHBEARBEITUNG(),
+						PropertyType.String, 0, false);
 
 				// FARBEIMAGENACHBEARBEITUNG
-				generateProzessProperty(session, p, "FarbeImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "FarbeImageNachbearbeitung", pd.getFARBEIMAGENACHBEARBEITUNG(),
+						PropertyType.String, 0, false);
 
 				// FARBGRAUABB
-				generateProzessProperty(session, p, "FarbgrauABB", String.valueOf(pd.getFARBGRAUABB()), PropertyType.Integer, 0, false);
+				generateProzessProperty(session, p, "FarbgrauABB", String.valueOf(pd.getFARBGRAUABB()),
+						PropertyType.Integer, 0, false);
 
 				// ImageNachbearbBitonalDatum
-				generateProzessProperty(session, p, "DatumBitonalImageNachbearbeitung", String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date,
-						0, false);
+				generateProzessProperty(session, p, "DatumBitonalImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbBitonalDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbBitonalPerson
-//				generateProzessProperty(session, p, "PersonBitonalImageCorrection", pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0, false);
+				// generateProzessProperty(session, p, "PersonBitonalImageCorrection",
+				// pd.getImageNachbearbBitonalPerson(), PropertyType.String, 0, false);
 
 				// ImageNachbearbGrauDatum
-				generateProzessProperty(session, p, "DatumGrauImageNachbearbeitung", String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date,
-						0, false);
+				generateProzessProperty(session, p, "DatumGrauImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbGrauDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbGrauPerson
-//				generateProzessProperty(session, p, "PersonGrayscaleImageCorrection", pd.getImageNachbearbGrauPerson(), PropertyType.String, 0, false);
+				// generateProzessProperty(session, p, "PersonGrayscaleImageCorrection",
+				// pd.getImageNachbearbGrauPerson(), PropertyType.String, 0, false);
 
 				// ImageNachbearbFarbeDatum
-				generateProzessProperty(session, p, "DatumFarbeImageNachbearbeitung", String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0,
-						false);
+				generateProzessProperty(session, p, "DatumFarbeImageNachbearbeitung",
+						String.valueOf(pd.getImageNachbearbFarbeDatum()), PropertyType.Date, 0, false);
 
 				// ImageNachbearbFarbePerson
-//				generateProzessProperty(session, p, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(), PropertyType.String, 0, false);
+				// generateProzessProperty(session, p, "PersonColorImageCorrection", pd.getImageNachbearbFarbePerson(),
+				// PropertyType.String, 0, false);
 
 				/********************************************
 				 * step 'Archiv' *
 				 *******************************************/
 			} else if (s.getTitel().contains("Archivierung")) {
-				generateProzessProperty(session, p, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0, false);
+				generateProzessProperty(session, p, "CD-Sicherung-BK", pd.getCDSICHERUNG(), PropertyType.String, 0,
+						false);
 
 				// MAARCHIV
 				generateProzessProperty(session, p, "MA-ArchivNr", pd.getMAARCHIV(), PropertyType.String, 0, false);
@@ -768,29 +812,46 @@ public class ProductionDataImport {
 
 		for (Schritt s : stepList) {
 			if (s.getTitel().equals("Bibliographische Aufnahme")) {
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepDone, p));
 			} else if (s.getTitel().equals("scannen")) {
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesMasterDiff, p));
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKSCANDATUM(), pd.getWERKSCANSEITEN(), null,
+								HistoryEventType.imagesMasterDiff, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getDATUMAUFNAHMEWERK(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepOpen, p));
 			} else if (s.getTitel().equals("Qualitaetskontrolle")) {
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), pd.getWERKSCANSEITEN(), null, HistoryEventType.imagesWorkDiff, p));
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKQKONTROLLDATUM(), pd.getWERKSCANSEITEN(), null,
+								HistoryEventType.imagesWorkDiff, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKSCANDATUM(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepOpen, p));
 			} else if (s.getTitel().equals("Imagenachbearbeitung")) {
 				p.getHistoryInitialized().add(
-						new HistoryEvent(pd.getImageNachbearbBitonalDatum(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepDone, p));
-				p.getHistoryInitialized().add(new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(), HistoryEventType.stepOpen, p));
+						new HistoryEvent(pd.getImageNachbearbBitonalDatum(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepDone, p));
+				p.getHistoryInitialized().add(
+						new HistoryEvent(pd.getWERKQKONTROLLDATUM(), s.getReihenfolge(), s.getTitel(),
+								HistoryEventType.stepOpen, p));
 				try {
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getBITONALIMAGENACHBEARBEITUNG()), null,
-									HistoryEventType.bitonal, p));
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd
+									.getBITONALIMAGENACHBEARBEITUNG()), null, HistoryEventType.bitonal, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getGRAUIMAGENACHBEARBEITUNG()), null,
-									HistoryEventType.grayScale, p));
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd
+									.getGRAUIMAGENACHBEARBEITUNG()), null, HistoryEventType.grayScale, p));
 					p.getHistoryInitialized().add(
-							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd.getFARBEIMAGENACHBEARBEITUNG()), null,
-									HistoryEventType.color, p));
+							new HistoryEvent(pd.getImageNachbearbBitonalDatum(), Integer.valueOf(pd
+									.getFARBEIMAGENACHBEARBEITUNG()), null, HistoryEventType.color, p));
 
 				} catch (NumberFormatException e) {
 
@@ -889,7 +950,8 @@ public class ProductionDataImport {
 		XStream xstream = new XStream();
 		try {
 			xstream.alias("ProductionData", ProductionData.class);
-			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8)));
+			productionList = (ArrayList<ProductionData>) xstream.fromXML(new BufferedReader(new InputStreamReader(
+					new FileInputStream(filename), StandardCharsets.UTF_8)));
 		} catch (FileNotFoundException e) {
 			logger.debug(e);
 		}

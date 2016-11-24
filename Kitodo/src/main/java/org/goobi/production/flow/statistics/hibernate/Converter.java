@@ -54,11 +54,9 @@ class Converter {
 	 */
 	private Converter() {
 		try {
-			this.sdf = new SimpleDateFormat("yyyy.MM.dd",
-					new DateFormatSymbols(StatisticsManager.getLocale()));
+			this.sdf = new SimpleDateFormat("yyyy.MM.dd", new DateFormatSymbols(StatisticsManager.getLocale()));
 		} catch (NullPointerException e) {
-			logger
-					.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
+			logger.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
 		}
 	}
 

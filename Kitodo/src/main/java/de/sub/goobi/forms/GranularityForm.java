@@ -140,7 +140,8 @@ public class GranularityForm {
 			return "";
 		}
 		Helper.removeManagedBean("ProzesskopieForm");
-		CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course, generateBatches);
+		CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course,
+				generateBatches);
 		TaskManager.addTask(createProcesses);
 		return "taskmanager";
 	}
@@ -197,21 +198,21 @@ public class GranularityForm {
 		} else {
 			result.add(new SelectItem("null", Helper.getTranslation("granularity.null")));
 			switch (granularity) {
-			case ISSUES:
-				result.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
-				// fall through
-			case DAYS:
-				result.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
-				// fall through
-			case WEEKS:
-				result.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
-				// fall through
-			case MONTHS:
-				result.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
-				// fall through
-			case QUARTERS:
-				result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
-				break;
+				case ISSUES:
+					result.add(new SelectItem("issues", Helper.getTranslation("granularity.issues")));
+					// fall through
+				case DAYS:
+					result.add(new SelectItem("weeks", Helper.getTranslation("granularity.weeks")));
+					// fall through
+				case WEEKS:
+					result.add(new SelectItem("months", Helper.getTranslation("granularity.months")));
+					// fall through
+				case MONTHS:
+					result.add(new SelectItem("quarters", Helper.getTranslation("granularity.quarters")));
+					// fall through
+				case QUARTERS:
+					result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
+					break;
 			}
 		}
 		return result;
@@ -263,7 +264,7 @@ public class GranularityForm {
 			return "";
 		}
 		double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
-		List<String> args = Arrays.asList(new String[] { Long.toString(perProcess),
+		List<String> args = Arrays.asList(new String[] {Long.toString(perProcess),
 				Long.toString((long) Math.ceil(perIssue)) });
 		return Helper.getTranslation("granularity.numberOfPages.tooSmall", args).replaceAll("\"", "″")
 				.replaceAll("'", "′");

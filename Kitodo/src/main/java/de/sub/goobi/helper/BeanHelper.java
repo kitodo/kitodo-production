@@ -96,7 +96,7 @@ public class BeanHelper {
 			stepneu.setScriptname3(step.getScriptname3());
 			stepneu.setScriptname4(step.getScriptname4());
 			stepneu.setScriptname5(step.getScriptname5());
-			
+
 			stepneu.setTypAutomatischScriptpfad(step.getTypAutomatischScriptpfad());
 			stepneu.setTypAutomatischScriptpfad2(step.getTypAutomatischScriptpfad2());
 			stepneu.setTypAutomatischScriptpfad3(step.getTypAutomatischScriptpfad3());
@@ -120,13 +120,13 @@ public class BeanHelper {
 			stepneu.setTitel(step.getTitel());
 			stepneu.setHomeverzeichnisNutzen(step.getHomeverzeichnisNutzen());
 			stepneu.setProzess(prozessKopie);
-			
+
 			stepneu.setStepPlugin(step.getStepPlugin());
 			stepneu.setValidationPlugin(step.getValidationPlugin());
-			
-			//Fixing a bug found by Holger Busse (Berlin)
+
+			// Fixing a bug found by Holger Busse (Berlin)
 			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
-			
+
 			/* --------------------------------
 			 * Benutzer übernehmen
 			 * --------------------------------*/
@@ -184,7 +184,8 @@ public class BeanHelper {
 
 	public static void EigenschaftenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		TreeSet<Prozesseigenschaft> myEigenschaften = new TreeSet<Prozesseigenschaft>();
-		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator.hasNext();) {
+		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator
+				.hasNext();) {
 			Prozesseigenschaft eig = iterator.next();
 			Prozesseigenschaft eigneu = new Prozesseigenschaft();
 			eigneu.setIstObligatorisch(eig.isIstObligatorisch());

@@ -35,9 +35,6 @@ import org.goobi.production.flow.statistics.StepInformation;
 
 import de.sub.goobi.beans.Projekt;
 
-
-
-
 /**
  * This implementation get the workflow from the project.
  * 
@@ -54,7 +51,8 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 		return myTaskList;
 	}
 
-	private static synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private static synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages,
+			Integer inMax) {
 
 		List<StepInformation> workFlow = inProject.getWorkFlow();
 		Integer usedMax = 0;
@@ -75,7 +73,7 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 			if (countImages) {
 				usedMax = step.getNumberOfTotalImages();
 				if (usedMax > inMax) {
-					//TODO notify calling object, that the inMax is not set right
+					// TODO notify calling object, that the inMax is not set right
 				} else {
 					usedMax = inMax;
 				}
@@ -84,7 +82,7 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 			} else {
 				usedMax = step.getNumberOfTotalSteps();
 				if (usedMax > inMax) {
-					//TODO notify calling object, that the inMax is not set right
+					// TODO notify calling object, that the inMax is not set right
 				} else {
 					usedMax = inMax;
 				}

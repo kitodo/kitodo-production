@@ -73,7 +73,8 @@ public class VariableReplacerWithoutHibernate {
 	private VariableReplacerWithoutHibernate() {
 	}
 
-	public VariableReplacerWithoutHibernate(DigitalDocument inDigitalDocument, Prefs inPrefs, ProcessObject p, StepObject s) {
+	public VariableReplacerWithoutHibernate(DigitalDocument inDigitalDocument, Prefs inPrefs, ProcessObject p,
+			StepObject s) {
 		this.dd = inDigitalDocument;
 		this.prefs = inPrefs;
 		this.process = p;
@@ -94,164 +95,163 @@ public class VariableReplacerWithoutHibernate {
 		 */
 		for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
 			if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
+				inString = inString.replace(r.group(),
+						getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
 			} else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
+				inString = inString.replace(r.group(),
+						getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
 			} else {
 				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
 			}
 		}
 
-		
-		
-			FolderInformation fi = new FolderInformation(this.process.getId(), this.process.getTitle());
-			
-			String processpath = fi.getProcessDataDirectory().replace("\\", "/");
-			String tifpath = fi.getImagesTifDirectory(false).replace("\\", "/");
-			String imagepath = fi.getImagesDirectory().replace("\\", "/");
-			String origpath = fi.getImagesOrigDirectory(false).replace("\\", "/");
-			String metaFile = fi.getMetadataFilePath().replace("\\", "/");
-			String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
-			String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");
-			String sourcePath = fi.getSourceDirectory().replace("\\", "/");
-			String importPath = fi.getImportDirectory().replace("\\", "/");	
-			Regelsatz ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
-			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getDatei();
+		FolderInformation fi = new FolderInformation(this.process.getId(), this.process.getTitle());
 
-			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
-			if (tifpath.endsWith(File.separator)) {
-				tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
+		String processpath = fi.getProcessDataDirectory().replace("\\", "/");
+		String tifpath = fi.getImagesTifDirectory(false).replace("\\", "/");
+		String imagepath = fi.getImagesDirectory().replace("\\", "/");
+		String origpath = fi.getImagesOrigDirectory(false).replace("\\", "/");
+		String metaFile = fi.getMetadataFilePath().replace("\\", "/");
+		String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
+		String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");
+		String sourcePath = fi.getSourceDirectory().replace("\\", "/");
+		String importPath = fi.getImportDirectory().replace("\\", "/");
+		Regelsatz ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
+		String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getDatei();
+
+		/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
+		if (tifpath.endsWith(File.separator)) {
+			tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (imagepath.endsWith(File.separator)) {
+			imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (origpath.endsWith(File.separator)) {
+			origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (processpath.endsWith(File.separator)) {
+			processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (importPath.endsWith(File.separator)) {
+			importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (sourcePath.endsWith(File.separator)) {
+			sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (ocrBasisPath.endsWith(File.separator)) {
+			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
+					.replace("\\", "/");
+		}
+		if (ocrPlaintextPath.endsWith(File.separator)) {
+			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
+					.replace("\\", "/");
+		}
+		if (inString.contains("(tifurl)")) {
+			if (SystemUtils.IS_OS_WINDOWS) {
+				inString = inString.replace("(tifurl)", "file:/" + tifpath);
+			} else {
+				inString = inString.replace("(tifurl)", "file://" + tifpath);
 			}
-			if (imagepath.endsWith(File.separator)) {
-				imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (inString.contains("(origurl)")) {
+			if (SystemUtils.IS_OS_WINDOWS) {
+				inString = inString.replace("(origurl)", "file:/" + origpath);
+			} else {
+				inString = inString.replace("(origurl)", "file://" + origpath);
 			}
-			if (origpath.endsWith(File.separator)) {
-				origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
+		}
+		if (inString.contains("(imageurl)")) {
+			if (SystemUtils.IS_OS_WINDOWS) {
+				inString = inString.replace("(imageurl)", "file:/" + imagepath);
+			} else {
+				inString = inString.replace("(imageurl)", "file://" + imagepath);
 			}
-			if (processpath.endsWith(File.separator)) {
-				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
-			}
-			if (importPath.endsWith(File.separator)) {
-				importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
-			}
-			if (sourcePath.endsWith(File.separator)) {
-				sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
-			}
-			if (ocrBasisPath.endsWith(File.separator)) {
-				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
-			}
-			if (ocrPlaintextPath.endsWith(File.separator)) {
-				ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
-			}
-			if (inString.contains("(tifurl)")) {
-				if (SystemUtils.IS_OS_WINDOWS) {
-					inString = inString.replace("(tifurl)", "file:/" + tifpath);
-				} else {
-					inString = inString.replace("(tifurl)", "file://" + tifpath);
+		}
+
+		if (inString.contains("(tifpath)")) {
+			inString = inString.replace("(tifpath)", tifpath);
+		}
+		if (inString.contains("(origpath)")) {
+			inString = inString.replace("(origpath)", origpath);
+		}
+		if (inString.contains("(imagepath)")) {
+			inString = inString.replace("(imagepath)", imagepath);
+		}
+		if (inString.contains("(processpath)")) {
+			inString = inString.replace("(processpath)", processpath);
+		}
+		if (inString.contains("(importpath)")) {
+			inString = inString.replace("(importpath)", importPath);
+		}
+		if (inString.contains("(sourcepath)")) {
+			inString = inString.replace("(sourcepath)", sourcePath);
+		}
+		if (inString.contains("(ocrbasispath)")) {
+			inString = inString.replace("(ocrbasispath)", ocrBasisPath);
+		}
+		if (inString.contains("(ocrplaintextpath)")) {
+			inString = inString.replace("(ocrplaintextpath)", ocrPlaintextPath);
+		}
+		if (inString.contains("(processtitle)")) {
+			inString = inString.replace("(processtitle)", this.process.getTitle());
+		}
+		if (inString.contains("(processid)")) {
+			inString = inString.replace("(processid)", String.valueOf(this.process.getId()));
+		}
+		if (inString.contains("(metaFile)")) {
+			inString = inString.replace("(metaFile)", metaFile);
+		}
+		if (inString.contains("(prefs)")) {
+			inString = inString.replace("(prefs)", myprefs);
+		}
+
+		if (this.step != null) {
+			String stepId = String.valueOf(this.step.getId());
+			String stepname = this.step.getTitle();
+
+			inString = inString.replace("(stepid)", stepId);
+			inString = inString.replace("(stepname)", stepname);
+		}
+
+		// replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
+
+		for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
+			String propertyTitle = r.group(1);
+			List<Property> ppList = ProcessManager.getProductProperties(this.process.getId());
+			for (Property pe : ppList) {
+				if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
+					inString = inString.replace(r.group(), pe.getValue());
+					break;
 				}
 			}
-			if (inString.contains("(origurl)")) {
-				if (SystemUtils.IS_OS_WINDOWS) {
-					inString = inString.replace("(origurl)", "file:/" + origpath);
-				} else {
-					inString = inString.replace("(origurl)", "file://" + origpath);
+		}
+
+		// replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
+
+		for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
+			String propertyTitle = r.group(1);
+			List<Property> ppList = ProcessManager.getTemplateProperties(this.process.getId());
+			for (Property pe : ppList) {
+				if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
+					inString = inString.replace(r.group(), pe.getValue());
+					break;
 				}
 			}
-			if (inString.contains("(imageurl)")) {
-				if (SystemUtils.IS_OS_WINDOWS) {
-					inString = inString.replace("(imageurl)", "file:/" + imagepath);
-				} else {
-					inString = inString.replace("(imageurl)", "file://" + imagepath);
+		}
+
+		// replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
+
+		for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
+			String propertyTitle = r.group(1);
+			List<Property> ppList = ProcessManager.getProcessProperties(this.process.getId());
+			for (Property pe : ppList) {
+				if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
+					inString = inString.replace(r.group(), pe.getValue());
+					break;
 				}
 			}
 
-			if (inString.contains("(tifpath)")) {
-				inString = inString.replace("(tifpath)", tifpath);
-			}
-			if (inString.contains("(origpath)")) {
-				inString = inString.replace("(origpath)", origpath);
-			}
-			if (inString.contains("(imagepath)")) {
-				inString = inString.replace("(imagepath)", imagepath);
-			}
-			if (inString.contains("(processpath)")) {
-				inString = inString.replace("(processpath)", processpath);
-			}
-			if (inString.contains("(importpath)")){
-				inString = inString.replace("(importpath)", importPath);
-			}
-			if (inString.contains("(sourcepath)")){
-				inString = inString.replace("(sourcepath)", sourcePath);
-			}
-			if (inString.contains("(ocrbasispath)")){
-				inString = inString.replace("(ocrbasispath)", ocrBasisPath);
-			}
-			if (inString.contains("(ocrplaintextpath)")){
-				inString = inString.replace("(ocrplaintextpath)", ocrPlaintextPath);
-			}
-			if (inString.contains("(processtitle)")) {
-				inString = inString.replace("(processtitle)", this.process.getTitle());
-			}
-			if (inString.contains("(processid)")) {
-				inString = inString.replace("(processid)", String.valueOf(this.process.getId()));
-			}
-			if (inString.contains("(metaFile)")) {
-				inString = inString.replace("(metaFile)", metaFile);
-			}
-			if (inString.contains("(prefs)")) {
-				inString = inString.replace("(prefs)", myprefs);
-			}
-
-			if (this.step != null) {
-				String stepId = String.valueOf(this.step.getId());
-				String stepname = this.step.getTitle();
-
-				inString = inString.replace("(stepid)", stepId);
-				inString = inString.replace("(stepname)", stepname);
-			}
-
-			// replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
-
-			for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
-				String propertyTitle = r.group(1);
-				List<Property> ppList = ProcessManager.getProductProperties(this.process.getId());
-				for (Property pe : ppList) {
-					if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
-						inString = inString.replace(r.group(), pe.getValue());
-							break;
-						}
-					}
-				}
-
-			// replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
-
-			for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
-				String propertyTitle = r.group(1);
-				List<Property> ppList = ProcessManager.getTemplateProperties(this.process.getId());
-				for (Property pe : ppList) {
-					if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
-						inString = inString.replace(r.group(), pe.getValue());
-							break;
-						}
-					}
-				}
-			
-
-			// replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
-
-			for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
-				String propertyTitle = r.group(1);
-				List<Property> ppList = ProcessManager.getProcessProperties(this.process.getId());
-				for (Property pe : ppList) {
-					if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
-						inString = inString.replace(r.group(), pe.getValue());
-						break;
-					}
-				}
-
-			}
-
-
+		}
 
 		return inString;
 	}
@@ -286,41 +286,41 @@ public class VariableReplacerWithoutHibernate {
 			}
 
 			switch (inLevel) {
-			case FIRSTCHILD:
-				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
-				if (resultFirst == null) {
-					if(logger.isInfoEnabled()){
-						logger.info("Can not replace firstChild-variable for METS: " + metadata);
+				case FIRSTCHILD:
+					/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
+					if (resultFirst == null) {
+						if (logger.isInfoEnabled()) {
+							logger.info("Can not replace firstChild-variable for METS: " + metadata);
+						}
+						result = "";
+					} else {
+						result = resultFirst;
 					}
-					result = "";
-				} else {
-					result = resultFirst;
-				}
-				break;
+					break;
 
-			case TOPSTRUCT:
-				if (resultTop == null) {
-					result = "";
-					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+				case TOPSTRUCT:
+					if (resultTop == null) {
+						result = "";
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+						}
+					} else {
+						result = resultTop;
 					}
-				} else {
-					result = resultTop;
-				}
-				break;
+					break;
 
-			case ALL:
-				if (resultFirst != null) {
-					result = resultFirst;
-				} else if (resultTop != null) {
-					result = resultTop;
-				} else {
-					result = "";
-					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace variable for METS: " + metadata);
+				case ALL:
+					if (resultFirst != null) {
+						result = resultFirst;
+					} else if (resultTop != null) {
+						result = resultTop;
+					} else {
+						result = "";
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn("Can not replace variable for METS: " + metadata);
+						}
 					}
-				}
-				break;
+					break;
 
 			}
 			return result;

@@ -88,11 +88,12 @@ public class ModuleServerForm {
 			try {
 				md.getModuleClient().initialize();
 			} catch (GoobiModuleException e) {
-				Helper.setFehlerMeldung("GoobiModuleException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage());
+				Helper.setFehlerMeldung("GoobiModuleException im Modul " + md.getName() + " mit der URL " + md.getUrl()
+						+ ": ", e.getMessage());
 				logger.error(e);
 			} catch (XmlRpcException e) {
-				Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage() + "\n"
-						+ Helper.getStacktraceAsString(e));
+				Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl()
+						+ ": ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
 			}
 		}
 		running = true;
@@ -192,14 +193,16 @@ public class ModuleServerForm {
 			/* alle Module durchlaufen */
 			for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
 				Element myModule = iter.next();
-				rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"), null, myModule
-						.getAttributeValue("description")));
+				rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"),
+						null, myModule.getAttributeValue("description")));
 			}
 		} catch (JDOMException e1) {
-			Helper.setFehlerMeldung("Error on reading, JDOMException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
+			Helper.setFehlerMeldung("Error on reading, JDOMException: ",
+					e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
 			logger.error(e1);
 		} catch (IOException e1) {
-			Helper.setFehlerMeldung("Error on reading, IOException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
+			Helper.setFehlerMeldung("Error on reading, IOException: ",
+					e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
 			logger.error(e1);
 		}
 		return rueckgabe;
@@ -260,11 +263,13 @@ public class ModuleServerForm {
 		String tempID = UniqueID.generate_session();
 		myRunningShortSessions.put(tempID, processId);
 
-		GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, typeParameters);
+		GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID,
+				myModule.getModuleClient().longsessionID, typeParameters);
 		HttpSession insession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
 		String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
-		gmp1.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/AktuelleSchritteBearbeiten.jsf?jsessionId=" + insession.getId());
+		gmp1.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH
+				+ "/AktuelleSchritteBearbeiten.jsf?jsessionId=" + insession.getId());
 		myModule.getGmps().add(gmp1); // add session in den Manager
 		return myModule.getModuleClient().start(gmp1);
 	}
@@ -282,7 +287,8 @@ public class ModuleServerForm {
 		String processId = "3346";
 		String tempID = UniqueID.generate_session();
 		myRunningShortSessions.put(tempID, processId);
-		GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, null);
+		GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID,
+				myModule.getModuleClient().longsessionID, null);
 
 		String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
 
@@ -395,10 +401,12 @@ public class ModuleServerForm {
 			return tempProz;
 		} catch (NumberFormatException e) {
 			new Helper();
-			throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+			throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n"
+					+ Helper.getStacktraceAsString(e));
 		} catch (DAOException e) {
 			new Helper();
-			throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+			throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
+					+ Helper.getStacktraceAsString(e));
 		}
 	}
 

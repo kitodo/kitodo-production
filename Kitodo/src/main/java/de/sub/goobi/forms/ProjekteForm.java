@@ -1,4 +1,5 @@
 package de.sub.goobi.forms;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -193,13 +194,13 @@ public class ProjekteForm extends BasisForm {
 			Helper.setFehlerMeldung("userAssignedError");
 			return "";
 		} else {
-		try {
-			this.dao.remove(this.myProjekt);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("could not delete", e.getMessage());
-			myLogger.error(e.getMessage());
-			return "";
-		}
+			try {
+				this.dao.remove(this.myProjekt);
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("could not delete", e.getMessage());
+				myLogger.error(e.getMessage());
+				return "";
+			}
 		}
 		return "ProjekteAlle";
 	}
@@ -274,7 +275,8 @@ public class ProjekteForm extends BasisForm {
 	 * @return modified ArrayList
 	 */
 	public ArrayList<ProjectFileGroup> getFileGroupList() {
-		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(this.myProjekt.getFilegroupsList());
+		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(
+				this.myProjekt.getFilegroupsList());
 
 		for (Integer id : this.deletedFileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
@@ -301,8 +303,8 @@ public class ProjekteForm extends BasisForm {
 
 	public StatisticsManager getStatisticsManager1() {
 		if (this.statisticsManager1 == null) {
-			this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager1;
 	}
@@ -312,8 +314,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager2() {
 		if (this.statisticsManager2 == null) {
-			this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager2;
 	}
@@ -323,8 +325,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager3() {
 		if (this.statisticsManager3 == null) {
-			this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager3;
 	}
@@ -334,8 +336,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager4() {
 		if (this.statisticsManager4 == null) {
-			this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager4;
 	}
@@ -346,7 +348,8 @@ public class ProjekteForm extends BasisForm {
 
 	@SuppressWarnings("rawtypes")
 	public void GenerateValuesForStatistics() {
-		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", this.myProjekt));
+		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class)
+				.add(Restrictions.eq("projekt", this.myProjekt));
 		ProjectionList pl = Projections.projectionList();
 		pl.add(Projections.sum("sortHelperImages"));
 		pl.add(Projections.count("sortHelperImages"));
@@ -530,13 +533,14 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 
-			synchronized (this.projectProgressData) {
+		synchronized (this.projectProgressData) {
 			try {
 
 				this.projectProgressData.setCommonWorkflow(this.myProjekt.getWorkFlow());
 				this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
 				this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
-				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt().getEndDate());
+				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt()
+						.getEndDate());
 				this.projectProgressData.setDataSource(new UserProjectFilter(this.myProjekt.getId()));
 
 				if (this.projectProgressImage == null) {
@@ -567,7 +571,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public String getProjectProgressImage() {
 
-		if (this.projectProgressImage == null || this.projectProgressData == null || this.projectProgressData.hasChanged()) {
+		if (this.projectProgressImage == null || this.projectProgressData == null
+				|| this.projectProgressData.hasChanged()) {
 			try {
 				calcProgressCharts();
 			} catch (Exception e) {
@@ -676,15 +681,12 @@ public class ProjekteForm extends BasisForm {
 			/*
 			 *  Vorbereiten der Header-Informationen
 			 */
-			HttpServletResponse response = (HttpServletResponse) facesContext
-					.getExternalContext().getResponse();
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
-				ServletContext servletContext = (ServletContext) facesContext
-						.getExternalContext().getContext();
+				ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
 				String contentType = servletContext.getMimeType("export.xls");
 				response.setContentType(contentType);
-				response.setHeader("Content-Disposition",
-						"attachment;filename=\"export.xls\"");
+				response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
 				ServletOutputStream out = response.getOutputStream();
 				HSSFWorkbook wb = (HSSFWorkbook) this.myCurrentTable.getExcelRenderer().getRendering();
 				wb.write(out);
@@ -696,7 +698,6 @@ public class ProjekteForm extends BasisForm {
 			}
 		}
 	}
-
 
 	/*************************************************************************************
 	 * Getter for showStatistics

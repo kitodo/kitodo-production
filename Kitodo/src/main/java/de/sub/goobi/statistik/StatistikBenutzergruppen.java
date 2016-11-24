@@ -49,8 +49,7 @@ public class StatistikBenutzergruppen {
 				for (Iterator<Benutzergruppe> iter2 = step.getBenutzergruppenList().iterator(); iter2.hasNext();) {
 					Benutzergruppe group = iter2.next();
 					if (dataset.getIndex(group.getTitel()) != -1) {
-						dataset
-								.setValue(group.getTitel(), dataset.getValue(group.getTitel()).intValue() + 1);
+						dataset.setValue(group.getTitel(), dataset.getValue(group.getTitel()).intValue() + 1);
 					} else {
 						dataset.setValue(group.getTitel(), 1);
 					}

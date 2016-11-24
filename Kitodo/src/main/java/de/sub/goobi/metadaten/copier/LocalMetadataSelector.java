@@ -213,14 +213,14 @@ public class LocalMetadataSelector extends MetadataSelector {
 		} catch (MetadataTypeNotAllowedException e) {
 			// copy rules aren’t related to the rule set but depend on it, so
 			// copy rules that don’t work with the current rule set are ignored
-			if(LOG.isDebugEnabled()){
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Cannot create metadata element " + selector.getName()
 						+ ": The type isn’t defined by the rule set used.");
 			}
 			return;
 		} catch (Exception e) {
 			// copy rule failed, skip it
-			if(LOG.isDebugEnabled()){
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Cannot create metadata element " + selector.getName()
 						+ ": Accessing the rule set failed with exception: "
 						+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
@@ -233,7 +233,7 @@ public class LocalMetadataSelector extends MetadataSelector {
 		} catch (MetadataTypeNotAllowedException e) {
 			// copy rules aren’t related to the rule set but depend on it, so
 			// copy rules that don’t work with the current rule set are ignored
-			if(LOG.isDebugEnabled()){
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
 						+ "\") to structural element "
 						+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "

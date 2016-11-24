@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -62,8 +63,8 @@ public class Page implements Serializable { // implements Iterator
 	public Page(Criteria criteria, int page) {
 		this.page = page;
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null || login.getMyBenutzer() == null) {
-        	this.pageSize = 10;
+		if (login == null || login.getMyBenutzer() == null) {
+			this.pageSize = 10;
 		} else {
 			this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();
 		}
@@ -80,7 +81,7 @@ public class Page implements Serializable { // implements Iterator
 
 		} catch (HibernateException e) {
 			// no hits found, error is thrown
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Failed to get paginated results: " + e);
 			}
 		}
@@ -127,8 +128,6 @@ public class Page implements Serializable { // implements Iterator
 		return getTotalResults() < fullPage ? getTotalResults() : fullPage;
 	}
 
-
-
 	// TODO: Use generics
 	@SuppressWarnings("rawtypes")
 	public List getListReload() {
@@ -139,7 +138,8 @@ public class Page implements Serializable { // implements Iterator
 
 		if (this.criteria != null) {
 			try {
-				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
+				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1)
+						.list();
 				if (this.results != null && this.results.size() > 0) {
 					List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
 

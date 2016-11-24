@@ -50,7 +50,6 @@ import de.sub.goobi.helper.Helper;
  */
 public class RequestControlFilter implements Filter {
 
-
 	/**
 	 * Initialize this filter by reading its configuration parameters
 	 * 
@@ -59,7 +58,7 @@ public class RequestControlFilter implements Filter {
 	 * @throws ServletException
 	 */
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void init(FilterConfig config) throws ServletException {
 
 		// parse all of the initialization parameters, collecting the exclude
@@ -113,7 +112,8 @@ public class RequestControlFilter implements Filter {
 	 * @throws ServletException
 	 */
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
 

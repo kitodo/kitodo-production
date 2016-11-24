@@ -82,13 +82,13 @@ public class SelectOne<T extends Selectable> {
 	public String getSelected() {
 		return selected.getId();
 	}
-	
+
 	/**
 	 * Returns the selected object.
 	 * 
 	 * @return the selected object
 	 */
-	public T getObject(){
+	public T getObject() {
 		return selected;
 	}
 

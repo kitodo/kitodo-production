@@ -1,4 +1,5 @@
 package org.goobi.production.flow.statistics.hibernate;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
+
 //TODO: Remove redundant code
 /************************************************************************
  * 
@@ -42,8 +44,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
  ***********************************************************************/
 class SQLProduction extends SQLGenerator {
 
-	public SQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit,
-			List<Integer> ids) {
+	public SQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
 		super(timeFrom, timeTo, timeUnit, ids, null);
 	}
 
@@ -56,17 +57,15 @@ class SQLProduction extends SQLGenerator {
 	public String getSQL() {
 
 		String subQuery = "";
-		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
 		String outerWhereClause = "";
 
-		//inner table -> alias "table_1"
+		// inner table -> alias "table_1"
 		String innerWhereClause;
 
 		if (myIdsCondition != null) {
 			// adding ids to the where clause
-			innerWhereClause = "(bearbeitungsende IS NOT NULL AND ("
-					+ myIdsCondition + ")) ";
+			innerWhereClause = "(bearbeitungsende IS NOT NULL AND (" + myIdsCondition + ")) ";
 		} else {
 			innerWhereClause = "(bearbeitungsende IS NOT NULL) ";
 		}
@@ -74,23 +73,18 @@ class SQLProduction extends SQLGenerator {
 			outerWhereClause = "WHERE (" + outerWhereClauseTimeFrame + ") ";
 		}
 
-		subQuery = "(SELECT prozesse.prozesseid AS singleProcess, "
-				+ "prozesse.sortHelperImages AS pages, "
-				+ getIntervallExpression(myTimeUnit, "BearbeitungsEnde")
-				+ " "
+		subQuery = "(SELECT prozesse.prozesseid AS singleProcess, " + "prozesse.sortHelperImages AS pages, "
+				+ getIntervallExpression(myTimeUnit, "BearbeitungsEnde") + " "
 				+ "AS intervall, BearbeitungsEnde AS timeLimiter "
-				+ "FROM  schritte inner join prozesse on schritte.prozesseid=prozesse.prozesseid "
-				+ "WHERE " + innerWhereClause
-				+ "GROUP BY prozesse.prozesseid) AS table_1";
+				+ "FROM  schritte inner join prozesse on schritte.prozesseid=prozesse.prozesseid " + "WHERE "
+				+ innerWhereClause + "GROUP BY prozesse.prozesseid) AS table_1";
 
-		mySql = "SELECT count(table_1.singleProcess) AS volumes, "
-				+ "sum(table_1.pages) AS pages, table_1.intervall " + "FROM "
-				+ subQuery + " " + outerWhereClause + " GROUP BY intervall "
-				+ "ORDER BY timeLimiter";
+		mySql = "SELECT count(table_1.singleProcess) AS volumes, " + "sum(table_1.pages) AS pages, table_1.intervall "
+				+ "FROM " + subQuery + " " + outerWhereClause + " GROUP BY intervall " + "ORDER BY timeLimiter";
 
 		return mySql;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL(java.lang.Integer)
 	 */
@@ -102,39 +96,33 @@ class SQLProduction extends SQLGenerator {
 
 		String subQuery = "";
 		String outerWhereClause = "";
-		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-				myTimeFrom, myTimeTo, "timeLimiter");
+		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
 
 		if (outerWhereClauseTimeFrame.length() > 0) {
 			outerWhereClause = "WHERE".concat(outerWhereClauseTimeFrame);
 		}
 
 		// inserting the required step to be done from the parameter
-		String innerWhereClause = "schritte.reihenfolge=" + stepDone.toString()
-				+ " AND " + "schritte.bearbeitungsstatus>2";
+		String innerWhereClause = "schritte.reihenfolge=" + stepDone.toString() + " AND "
+				+ "schritte.bearbeitungsstatus>2";
 
 		// adding ids to conditions if exist
 		if (myIdsCondition != null) {
-			innerWhereClause = "WHERE ".concat(innerWhereClause).concat(
-					" AND (" + myIdsCondition + ")");
+			innerWhereClause = "WHERE ".concat(innerWhereClause).concat(" AND (" + myIdsCondition + ")");
 		} else {
 			innerWhereClause = "WHERE ".concat(innerWhereClause);
 		}
 
 		// building the inner SQL
-		subQuery = "(SELECT prozesse.prozesseid AS singleProcess, "
-				+ "prozesse.sortHelperImages AS pages, "
-				+ getIntervallExpression(myTimeUnit, "BearbeitungsEnde")
-				+ " "
+		subQuery = "(SELECT prozesse.prozesseid AS singleProcess, " + "prozesse.sortHelperImages AS pages, "
+				+ getIntervallExpression(myTimeUnit, "BearbeitungsEnde") + " "
 				+ "AS intervall, bearbeitungsende AS timeLimiter "
-				+ "FROM  schritte inner join prozesse on schritte.prozesseid=prozesse.prozesseid "
-				+ innerWhereClause + "GROUP BY prozesse.prozesseid) AS table_1";
+				+ "FROM  schritte inner join prozesse on schritte.prozesseid=prozesse.prozesseid " + innerWhereClause
+				+ "GROUP BY prozesse.prozesseid) AS table_1";
 
 		// building complete query
-		mySql = "SELECT count(table_1.singleProcess) AS volumes, "
-				+ "sum(table_1.pages) AS pages, table_1.intervall " + "FROM "
-				+ subQuery + " " + outerWhereClause + " GROUP BY intervall "
-				+ "ORDER BY timeLimiter";
+		mySql = "SELECT count(table_1.singleProcess) AS volumes, " + "sum(table_1.pages) AS pages, table_1.intervall "
+				+ "FROM " + subQuery + " " + outerWhereClause + " GROUP BY intervall " + "ORDER BY timeLimiter";
 
 		return mySql;
 	}

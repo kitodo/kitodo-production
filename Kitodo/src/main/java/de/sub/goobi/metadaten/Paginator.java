@@ -135,15 +135,15 @@ public class Paginator {
 		}
 
 		if (paginationMode.equals(Mode.DOUBLE_PAGES)) {
-			if (paginationType.equals(Type.UNCOUNTED) || paginationType.equals(Type.FREETEXT)){
+			if (paginationType.equals(Type.UNCOUNTED) || paginationType.equals(Type.FREETEXT)) {
 				sequence = cloneEachInSequence(sequence);
 			}
 			return scrunchSequence(sequence);
 		}
-		
+
 		sequence = cloneEachInSequence(sequence);
 
-		if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT ) {
+		if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT) {
 			return sequence;
 		}
 
@@ -212,20 +212,20 @@ public class Paginator {
 		int increment = paginationMode.equals(Mode.COLUMNS) ? 2 : 1;
 
 		switch (paginationType) {
-		case UNCOUNTED:
-			sequence = new ArrayList(1);
-			sequence.add("uncounted");
-			break;
-		case FREETEXT:
-			sequence= new ArrayList(1);
-			sequence.add(paginationStartValue);
-			break;
-		case ROMAN:
-			sequence = new RomanNumberSequence(start, end, increment);
-			break;
-		case ARABIC:
-			sequence = new IntegerSequence(start, end, increment);
-			break;
+			case UNCOUNTED:
+				sequence = new ArrayList(1);
+				sequence.add("uncounted");
+				break;
+			case FREETEXT:
+				sequence = new ArrayList(1);
+				sequence.add(paginationStartValue);
+				break;
+			case ROMAN:
+				sequence = new RomanNumberSequence(start, end, increment);
+				break;
+			case ARABIC:
+				sequence = new IntegerSequence(start, end, increment);
+				break;
 		}
 		return sequence;
 	}

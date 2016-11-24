@@ -81,8 +81,9 @@ public class ImportZentralblatt {
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws WriteException
 	 */
-	protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
-			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
+	protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException, WrongImportFileException,
+			TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException,
+			WriteException {
 		myLogger.debug("ParsenZentralblatt() - Start");
 		this.myPrefs = inProzess.getRegelsatz().getPreferences();
 		String prozessID = String.valueOf(inProzess.getId().intValue());
@@ -119,7 +120,8 @@ public class ImportZentralblatt {
 				/* prüfen ob der String korrekte xml-Zeichen enthält */
 				String xmlTauglich = xmlTauglichkeitPruefen(line);
 				if (xmlTauglich.length() > 0) {
-					throw new WrongImportFileException("Parsingfehler (nicht druckbares Zeichen) der Importdatei in der Zeile <br/>" + xmlTauglich);
+					throw new WrongImportFileException(
+							"Parsingfehler (nicht druckbares Zeichen) der Importdatei in der Zeile <br/>" + xmlTauglich);
 				}
 
 				/* wenn es gerade ein neuer Absatz ist, diesen als neuen Artikel in die Liste übernehmen */
@@ -136,9 +138,11 @@ public class ImportZentralblatt {
 				int posTrennzeichen = line.indexOf(this.Trennzeichen);
 				/* wenn kein Trennzeichen vorhanden, Parsingfehler */
 				if (posTrennzeichen == -1) {
-					myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>" + HtmlTagsMaskieren(line));
-					throw new WrongImportFileException("Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
+					myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
 							+ HtmlTagsMaskieren(line));
+					throw new WrongImportFileException(
+							"Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
+									+ HtmlTagsMaskieren(line));
 				} else {
 					String myLeft = line.substring(0, posTrennzeichen).trim();
 					String myRight = line.substring(posTrennzeichen + 1, line.length()).trim();
@@ -221,12 +225,12 @@ public class ImportZentralblatt {
 
 	private static final boolean isValidXMLChar(char c) {
 		switch (c) {
-		case 0x9:
-		case 0xa: // line feed, '\n'
-		case 0xd: // carriage return, '\r'
-			return true;
-		default:
-			return ((0x20 <= c && c <= 0xd7ff) || (0xe000 <= c && c <= 0xfffd));
+			case 0x9:
+			case 0xa: // line feed, '\n'
+			case 0xd: // carriage return, '\r'
+				return true;
+			default:
+				return ((0x20 <= c && c <= 0xd7ff) || (0xe000 <= c && c <= 0xfffd));
 		}
 	}
 
@@ -245,8 +249,9 @@ public class ImportZentralblatt {
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws TypeNotAllowedAsChildException
 	 */
-	private DocStruct ParsenHeftzuordnung(DocStruct dsPeriodicalVolume, String myRight, DigitalDocument inDigitalDocument)
-			throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+	private DocStruct ParsenHeftzuordnung(DocStruct dsPeriodicalVolume, String myRight,
+			DigitalDocument inDigitalDocument) throws TypeNotAllowedForParentException,
+			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 		DocStructType dst;
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
 		DocStruct dsPeriodicalIssue = null;
@@ -313,8 +318,8 @@ public class ImportZentralblatt {
 				/* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
 				md = myList.get(0);
 				if (!myRight.equals(md.getValue())) {
-					throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('" + md.getValue() + "' & '"
-							+ myRight + "')");
+					throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('"
+							+ md.getValue() + "' & '" + myRight + "')");
 				}
 			}
 			return;
@@ -364,8 +369,8 @@ public class ImportZentralblatt {
 				/* wurde schon eine Bandnummer vergeben, prüfen, ob dieser genauso lautet */
 				md = myList.get(0);
 				if (!myRight.equals(md.getValue())) {
-					throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('" + md.getValue() + "' & '" + myRight
-							+ "')");
+					throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('"
+							+ md.getValue() + "' & '" + myRight + "')");
 				}
 			}
 			return;
@@ -379,8 +384,8 @@ public class ImportZentralblatt {
 	 * @throws WrongImportFileException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	private void ParsenArtikel(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel) throws MetadataTypeNotAllowedException,
-			WrongImportFileException {
+	private void ParsenArtikel(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
+			throws MetadataTypeNotAllowedException, WrongImportFileException {
 		// myLogger.debug(myLeft);
 		// myLogger.debug(myRight);
 		// myLogger.debug("---");
@@ -397,7 +402,7 @@ public class ImportZentralblatt {
 		// AB: Abstract-Review
 		// DE: Vorlaeufige AN-Nummer (eher fuer uns intern)
 		// SI: Quellenangabe für Rezension im Zentralblatt
-		//		
+		//
 
 		/*
 		 * -------------------------------- erledigt
@@ -556,7 +561,8 @@ public class ImportZentralblatt {
 				String myTok = tokenizer.nextToken();
 
 				if (myTok.indexOf(",") == -1) {
-					throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+					throw new WrongImportFileException(
+							"Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
 				}
 
 				p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
@@ -577,7 +583,8 @@ public class ImportZentralblatt {
 				String myTok = tokenizer.nextToken();
 
 				if (myTok.indexOf(",") == -1) {
-					throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
+					throw new WrongImportFileException(
+							"Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
 				}
 
 				p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());

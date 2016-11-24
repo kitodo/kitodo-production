@@ -96,27 +96,32 @@ public final class ConfigDispayRules {
 					HashMap<String, ArrayList<Item>> textarea = new HashMap<String, ArrayList<Item>>();
 					HashMap<String, ArrayList<Item>> readonly = new HashMap<String, ArrayList<Item>>();
 					for (int k = 0; k <= countSelect1; k++) {
-						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select1(" + k + ")[@tns:ref]");
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select1(" + k
+								+ ")[@tns:ref]");
 						ArrayList<Item> items = getSelect1ByElementName(projectName, bind, elementName);
 						select1.put(elementName, items);
 					}
 					for (int k = 0; k <= countSelect; k++) {
-						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select(" + k + ")[@tns:ref]");
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").select(" + k
+								+ ")[@tns:ref]");
 						ArrayList<Item> items = getSelectByElementName(projectName, bind, elementName);
 						select.put(elementName, items);
 					}
 					for (int k = 0; k <= countTextArea; k++) {
-						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").textarea(" + k + ")[@tns:ref]");
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").textarea(" + k
+								+ ")[@tns:ref]");
 						ArrayList<Item> items = getTextareaByElementName(projectName, bind, elementName);
 						textarea.put(elementName, items);
 					}
 					for (int k = 0; k <= countInput; k++) {
-						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").input(" + k + ")[@tns:ref]");
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").input(" + k
+								+ ")[@tns:ref]");
 						ArrayList<Item> items = getInputByElementName(projectName, bind, elementName);
 						input.put(elementName, items);
 					}
 					for (int k = 0; k <= countReadOnly; k++) {
-						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").readonly(" + k + ")[@tns:ref]");
+						String elementName = config.getString("ruleSet(" + i + ").context(" + j + ").readonly(" + k
+								+ ")[@tns:ref]");
 						ArrayList<Item> items = getReadOnlyByElementName(projectName, bind, elementName);
 						readonly.put(elementName, items);
 					}
@@ -163,28 +168,31 @@ public final class ConfigDispayRules {
 					if (myElementName.equals(elementName)) {
 						int item = config.getMaxIndex("ruleSet.context(" + i + ").select1(" + j + ").item");
 						for (int k = 0; k <= item; k++) {
-							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").label"), // the
-																																			// displayed
-																																			// value
-									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ").value"), // the
-																																// internal
-																																// value,
-																																// which
-																																// will
-																																// be
-																																// taken
-																																// if
-																																// label
-																																// is
-																																// selected
-									config.getBoolean("ruleSet.context(" + i + ").select1(" + j + ").item(" + k + ")[@tns:selected]")); // indicates
-																																		// whether
-																																		// given
-																																		// item
-																																		// is
-																																		// preselected
-																																		// or
-																																		// not
+							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select1(" + j
+									+ ").item(" + k + ").label"), // the
+																	// displayed
+																	// value
+									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k
+											+ ").value"), // the
+															// internal
+															// value,
+															// which
+															// will
+															// be
+															// taken
+															// if
+															// label
+															// is
+															// selected
+									config.getBoolean("ruleSet.context(" + i + ").select1(" + j + ").item(" + k
+											+ ")[@tns:selected]")); // indicates
+																	// whether
+																	// given
+																	// item
+																	// is
+																	// preselected
+																	// or
+																	// not
 							listOfItems.add(myItem);
 						}
 					}
@@ -219,28 +227,31 @@ public final class ConfigDispayRules {
 						int item = config.getMaxIndex("ruleSet.context(" + i + ").select(" + j + ").item");
 
 						for (int k = 0; k <= item; k++) {
-							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").label"), // the
-																																			// displayed
-																																			// value
-									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ").value"), // the
-																															// internal
-																															// value,
-																															// which
-																															// will
-																															// be
-																															// taken
-																															// if
-																															// label
-																															// is
-																															// selected
-									config.getBoolean("ruleSet.context(" + i + ").select(" + j + ").item(" + k + ")[@tns:selected]")); // indicates
-																																		// whether
-																																		// given
-																																		// item
-																																		// is
-																																		// preselected
-																																		// or
-																																		// not
+							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select(" + j
+									+ ").item(" + k + ").label"), // the
+																	// displayed
+																	// value
+									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k
+											+ ").value"), // the
+															// internal
+															// value,
+															// which
+															// will
+															// be
+															// taken
+															// if
+															// label
+															// is
+															// selected
+									config.getBoolean("ruleSet.context(" + i + ").select(" + j + ").item(" + k
+											+ ")[@tns:selected]")); // indicates
+																	// whether
+																	// given
+																	// item
+																	// is
+																	// preselected
+																	// or
+																	// not
 							listOfItems.add(myItem);
 						}
 					}
@@ -307,7 +318,10 @@ public final class ConfigDispayRules {
 				for (int j = 0; j <= type; j++) {
 					String myElementName = config.getString("ruleSet.context(" + i + ").textarea(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the displayed value
+						Item myItem = new Item(
+								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the
+																											// displayed
+																											// value
 								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -329,9 +343,10 @@ public final class ConfigDispayRules {
 				for (int j = 0; j <= type; j++) {
 					String myElementName = config.getString("ruleSet.context(" + i + ").readonly(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), // the
-																														// displayed
-																														// value
+						Item myItem = new Item(
+								config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), // the
+																											// displayed
+																											// value
 								config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -395,7 +410,8 @@ public final class ConfigDispayRules {
 	 * @return ArrayList with all values of given element
 	 */
 
-	public ArrayList<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName, DisplayType mydisplayType) {
+	public ArrayList<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName,
+			DisplayType mydisplayType) {
 		ArrayList<Item> values = new ArrayList<Item>();
 		synchronized (this.allValues) {
 			if (this.allValues.isEmpty() && config != null) {

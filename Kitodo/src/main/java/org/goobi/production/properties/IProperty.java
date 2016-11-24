@@ -1,4 +1,5 @@
 package org.goobi.production.properties;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -70,7 +71,7 @@ public interface IProperty {
 	public abstract boolean isValid();
 
 	public void setDateValue(Date inDate);
-	
+
 	public Date getDateValue();
 
 	public abstract IProperty getClone(int containerNumber);

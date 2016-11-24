@@ -36,7 +36,6 @@ public class ProjectTask implements IProjectTask, Serializable {
 	private Integer taskStepsCompleted;
 	private Integer taskStepsMax;
 
-	
 	public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
 		taskTitle = title;
 		taskStepsCompleted = stepsCompleted;

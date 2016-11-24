@@ -1,4 +1,5 @@
 package de.sub.goobi.helper;
+
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -98,9 +99,11 @@ public class VariableReplacer {
 		 */
 		for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
 			if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
+				inString = inString.replace(r.group(),
+						getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
 			} else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
+				inString = inString.replace(r.group(),
+						getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
 			} else {
 				inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
 			}
@@ -131,7 +134,8 @@ public class VariableReplacer {
 				origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
 			}
 			if (processpath.endsWith(File.separator)) {
-				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
+				processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\",
+						"/");
 			}
 			if (importPath.endsWith(File.separator)) {
 				importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
@@ -140,10 +144,12 @@ public class VariableReplacer {
 				sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
 			}
 			if (ocrBasisPath.endsWith(File.separator)) {
-				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
+				ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
+						"/");
 			}
 			if (ocrPlaintextPath.endsWith(File.separator)) {
-				ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
+				ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
+						.replace("\\", "/");
 			}
 			if (inString.contains("(tifurl)")) {
 				if (SystemUtils.IS_OS_WINDOWS) {
@@ -179,17 +185,17 @@ public class VariableReplacer {
 			if (inString.contains("(processpath)")) {
 				inString = inString.replace("(processpath)", processpath);
 			}
-			if (inString.contains("(importpath)")){
+			if (inString.contains("(importpath)")) {
 				inString = inString.replace("(importpath)", importPath);
 			}
-			if (inString.contains("(sourcepath)")){
+			if (inString.contains("(sourcepath)")) {
 				inString = inString.replace("(sourcepath)", sourcePath);
 			}
-			
-			if (inString.contains("(ocrbasispath)")){
+
+			if (inString.contains("(ocrbasispath)")) {
 				inString = inString.replace("(ocrbasispath)", ocrBasisPath);
 			}
-			if (inString.contains("(ocrplaintextpath)")){
+			if (inString.contains("(ocrplaintextpath)")) {
 				inString = inString.replace("(ocrplaintextpath)", ocrPlaintextPath);
 			}
 			if (inString.contains("(processtitle)")) {
@@ -298,41 +304,41 @@ public class VariableReplacer {
 			}
 
 			switch (inLevel) {
-			case FIRSTCHILD:
-				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
-				if (resultFirst == null) {
-					if(logger.isInfoEnabled()){
-						logger.info("Can not replace firstChild-variable for METS: " + metadata);
+				case FIRSTCHILD:
+					/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
+					if (resultFirst == null) {
+						if (logger.isInfoEnabled()) {
+							logger.info("Can not replace firstChild-variable for METS: " + metadata);
+						}
+						result = "";
+					} else {
+						result = resultFirst;
 					}
-					result = "";
-				} else {
-					result = resultFirst;
-				}
-				break;
+					break;
 
-			case TOPSTRUCT:
-				if (resultTop == null) {
-					result = "";
-					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+				case TOPSTRUCT:
+					if (resultTop == null) {
+						result = "";
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+						}
+					} else {
+						result = resultTop;
 					}
-				} else {
-					result = resultTop;
-				}
-				break;
+					break;
 
-			case ALL:
-				if (resultFirst != null) {
-					result = resultFirst;
-				} else if (resultTop != null) {
-					result = resultTop;
-				} else {
-					result = "";
-					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace variable for METS: " + metadata);
+				case ALL:
+					if (resultFirst != null) {
+						result = resultFirst;
+					} else if (resultTop != null) {
+						result = resultTop;
+					} else {
+						result = "";
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn("Can not replace variable for METS: " + metadata);
+						}
 					}
-				}
-				break;
+					break;
 
 			}
 			return result;

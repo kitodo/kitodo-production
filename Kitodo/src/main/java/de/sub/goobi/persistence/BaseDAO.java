@@ -98,7 +98,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @return Object may be null if object with ID doesn't exist
 	 * @throws DAOException
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({"rawtypes" })
 	protected static Object retrieveObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
