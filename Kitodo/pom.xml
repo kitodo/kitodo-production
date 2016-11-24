@@ -491,13 +491,6 @@
             <systemPath>${local.lib.dir}/saxon9-dom.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlr</artifactId>
-            <version>2.7.7</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/antlr-2.7.7.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.objectweb.asm</groupId>
             <artifactId>com.springsource.org.objectweb.asm</artifactId>
             <version>3.1</version>
