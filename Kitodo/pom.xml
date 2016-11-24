@@ -617,13 +617,6 @@
             <systemPath>${local.lib.dir}/quartz-all-1.6.5.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.6.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/xalan-2.6.0.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean_xpath</artifactId>
             <version>2.4.0</version>
