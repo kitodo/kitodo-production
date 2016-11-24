@@ -442,13 +442,6 @@
             <systemPath>${local.lib.dir}/kitodo-ugh-2.0.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.sharkysoft</groupId>
-            <artifactId>util</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/lava3-core.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.richfaces.framework</groupId>
             <artifactId>richfaces-api</artifactId>
             <version>3.1.6.GA</version>
