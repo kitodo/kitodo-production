@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <local.lib.dir>${basedir}/src/main/webapp/WEB-INF/lib</local.lib.dir>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <checkstyle.config.location>${basedir}/src/main/resources/checkstyle.xml</checkstyle.config.location>
     </properties>
 
     <repositories>
@@ -706,7 +707,6 @@
                                 <id>checkstyle-check</id>
                                 <phase>compile</phase>
                                 <configuration>
-                                    <configLocation>${basedir}/src/main/resources/checkstyle.xml</configLocation>
                                     <encoding>UTF-8</encoding>
                                     <consoleOutput>true</consoleOutput>
                                     <failOnViolation>false</failOnViolation>
