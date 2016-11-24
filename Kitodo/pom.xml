@@ -386,13 +386,6 @@
 
         <!-- Libraries from local resources-->
         <dependency>
-            <groupId>batik</groupId>
-            <artifactId>batik-all</artifactId>
-            <version>1.7</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/batik-all-1.7.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>de.unigoettingen.goobi</groupId>
             <artifactId>goobi-api</artifactId>
             <version>1.0</version>
