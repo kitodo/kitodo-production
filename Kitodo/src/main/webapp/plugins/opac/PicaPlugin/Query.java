@@ -31,7 +31,7 @@ import java.net.URLEncoder;
 
 import org.apache.commons.lang.CharEncoding;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions;
 
 class Query {
 	private static final String FIELDLESS = "Fieldless query isn’t supported";

@@ -50,7 +50,7 @@ import ugh.dl.DocStruct;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * A MetadataPathSelector provides methods to retrieve or modify document
