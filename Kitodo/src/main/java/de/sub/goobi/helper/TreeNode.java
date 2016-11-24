@@ -44,6 +44,11 @@ public class TreeNode {
 		this.children = new ArrayList<TreeNode>();
 	}
 
+	/**
+	 * @param expanded add description
+	 * @param label add description
+	 * @param id add description
+	 */
 	public TreeNode(boolean expanded, String label, String id) {
 		this.expanded = expanded;
 		this.label = label;
@@ -55,12 +60,18 @@ public class TreeNode {
 		this.children.add(inNode);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<HashMap<String, Object>> getChildrenAsList() {
 		List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
 		getChildrenAsListMitStrichen(myList, 0, this, true, true, new ArrayList<Boolean>());
 		return myList;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<HashMap<String, Object>> getChildrenAsListAlle() {
 		List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
 		getChildrenAsListAlle(myList, 0, this, true, true, new ArrayList<Boolean>());
@@ -68,8 +79,7 @@ public class TreeNode {
 	}
 
 	/**
-		 * alle Children des übergebenen Knotens expanden oder collapsen 
-	* ================================================================
+	* alle Children des übergebenen Knotens expanden oder collapsen
 	*/
 	public void expandNodes(Boolean inExpand) {
 		expandNode(this, inExpand.booleanValue());
@@ -155,8 +165,8 @@ public class TreeNode {
 		return inList;
 	}
 
-	/*                                       
-	 * Getter und Setter                         
+	/*
+	 * Getter und Setter
 	 */
 
 	public List<TreeNode> getChildren() {
@@ -199,6 +209,9 @@ public class TreeNode {
 		this.label = label;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getHasChildren() {
 		if (this.children == null || this.children.size() == 0) {
 			return false;

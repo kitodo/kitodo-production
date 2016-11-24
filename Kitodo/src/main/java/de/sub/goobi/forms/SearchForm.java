@@ -27,13 +27,22 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import de.sub.goobi.config.ConfigMain;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
@@ -42,15 +51,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
 
 public class SearchForm {
 
@@ -226,6 +226,9 @@ public class SearchForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public SearchForm() {
 		initStepStatus();
 		initProjects();
@@ -396,6 +399,9 @@ public class SearchForm {
 		this.user = user;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filter() {
 		String search = "";
 		if (!this.processTitle.isEmpty()) {
@@ -458,6 +464,9 @@ public class SearchForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<SelectItem> getOperands() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		SelectItem and = new SelectItem("", Helper.getTranslation("AND"));

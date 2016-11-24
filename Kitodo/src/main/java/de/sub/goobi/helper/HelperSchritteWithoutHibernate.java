@@ -27,24 +27,6 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
@@ -62,19 +44,37 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+
 public class HelperSchritteWithoutHibernate {
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
-	 * The field task holds an optional task instance. Its progress
-	 * and its errors will be passed to the task manager screen (if available)
-	 * for visualisation.
+	 * The field task holds an optional task instance. Its progress and its errors will be passed to the task manager
+	 * screen (if available) for visualisation.
 	 */
 	private EmptyTask task;
 
 	/**
-	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
+	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen
 	 */
 
 	public void CloseStepObjectAutomatic(StepObject currentStep) {
@@ -222,6 +222,9 @@ public class HelperSchritteWithoutHibernate {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 */
 	public void updateProcessStatus(int processId) {
 
 		int offen = 0;
@@ -255,6 +258,10 @@ public class HelperSchritteWithoutHibernate {
 		ProcessManager.updateProcessStatus(value, processId);
 	}
 
+	/**
+	 * @param step add description
+	 * @param automatic add description
+	 */
 	public void executeAllScriptsForStep(StepObject step, boolean automatic) {
 		List<String> scriptpaths = StepManager.loadScripts(step.getId());
 		int count = 1;
@@ -281,6 +288,12 @@ public class HelperSchritteWithoutHibernate {
 		}
 	}
 
+	/**
+	 * @param step add description
+	 * @param script add description
+	 * @param automatic add description
+	 * @return add description
+	 */
 	public int executeScriptForStepObject(StepObject step, String script, boolean automatic) {
 		if (script == null || script.length() == 0) {
 			return -1;
@@ -357,6 +370,10 @@ public class HelperSchritteWithoutHibernate {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param step add description
+	 * @param automatic add description
+	 */
 	public void executeDmsExport(StepObject step, boolean automatic) {
 		AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(ConfigMain.getBooleanParameter(
 				"automaticExportWithImages", true));

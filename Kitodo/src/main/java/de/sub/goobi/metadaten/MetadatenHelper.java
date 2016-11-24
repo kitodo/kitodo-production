@@ -27,6 +27,11 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.HelperComparator;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -57,10 +62,6 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
 
 public class MetadatenHelper implements Comparator<Object> {
 	private static final Logger myLogger = Logger.getLogger(MetadatenHelper.class);
@@ -78,6 +79,16 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/* =============================================================== */
+
+	/**
+	 * @param inOldDocstruct add description
+	 * @param inNewType add description
+	 * @return add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws TypeNotAllowedAsChildException add description
+	 * @throws TypeNotAllowedForParentException add description
+	 */
 	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
 			throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
 			TypeNotAllowedForParentException {
@@ -86,7 +97,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		DocStructType dst = this.myPrefs.getDocStrctTypeByName(inNewType);
 		DocStruct newDocstruct = this.mydocument.createDocStruct(dst);
 		/*
-		 * -------------------------------- alle Metadaten hinzufügen --------------------------------
+		 * alle Metadaten hinzufügen
 		 */
 		if (inOldDocstruct.getAllMetadata() != null && inOldDocstruct.getAllMetadata().size() > 0) {
 			for (Metadata old : inOldDocstruct.getAllMetadata()) {
@@ -179,8 +190,7 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 		/*
-		 * -------------------------------- neues Docstruct zum Parent hinzufügen und an die gleiche Stelle schieben, wie den Vorg?nger
-		 * --------------------------------
+		 * neues Docstruct zum Parent hinzufügen und an die gleiche Stelle schieben, wie den Vorg?nger
 		 */
 		inOldDocstruct.getParent().addChild(newDocstruct);
 		int i = 1;
@@ -195,7 +205,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		}
 
 		/*
-		 * -------------------------------- altes Docstruct vom Parent entfernen und neues als aktuelles nehmen --------------------------------
+		 * altes Docstruct vom Parent entfernen und neues als aktuelles nehmen
 		 */
 		inOldDocstruct.getParent().removeChild(inOldDocstruct);
 		return newDocstruct;
@@ -203,6 +213,11 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/* =============================================================== */
 
+	/**
+	 *
+	 * @param inStruct add description
+	 * @throws TypeNotAllowedAsChildException add description
+	 */
 	public void KnotenUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
 		DocStruct parent = inStruct.getParent();
 		if (parent == null) {
@@ -218,7 +233,8 @@ public class MetadatenHelper implements Comparator<Object> {
 		/* alle Elemente des Parents durchlaufen */
 		for (DocStruct tempDS : parent.getAllChildren()) {
 			/*
-			 * wenn das folgende Element das zu verschiebende ist dabei die Exception auffangen, falls es kein nächstes Kind gibt
+			 * wenn das folgende Element das zu verschiebende ist dabei die Exception auffangen, falls es kein nächstes
+			 * Kind gibt
 			 */
 			try {
 				if (parent.getNextChild(tempDS) == inStruct) {
@@ -228,7 +244,8 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 
 			/*
-			 * nachdem der Vorg?nger gefunden wurde, werden alle anderen Elemente aus der Child-Liste entfernt und separat gesammelt
+			 * nachdem der Vorg?nger gefunden wurde, werden alle anderen Elemente aus der Child-Liste entfernt und
+			 * separat gesammelt
 			 */
 			if (alleDS != null && tempDS != inStruct) {
 				alleDS.add(tempDS);
@@ -251,6 +268,10 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/* =============================================================== */
 
+	/**
+	 * @param inStruct add description
+	 * @throws TypeNotAllowedAsChildException add description
+	 */
 	public void KnotenDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
 		DocStruct parent = inStruct.getParent();
 		if (parent == null) {
@@ -292,7 +313,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	 */
 	public SelectItem[] getAddableDocStructTypen(DocStruct inStruct, boolean checkTypesFromParent) {
 		/*
-		 * -------------------------------- zuerst mal die addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal die addierbaren Metadatentypen ermitteln
 		 */
 		List<String> types;
 		SelectItem myTypes[] = new SelectItem[0];
@@ -332,13 +353,13 @@ public class MetadatenHelper implements Comparator<Object> {
 		Collections.sort(newTypes, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
+		 * nun ein Array mit der richtigen Größe anlegen
 		 */
 		int zaehler = newTypes.size();
 		myTypes = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
+		 * und anschliessend alle Elemente in das Array packen
 		 */
 		zaehler = 0;
 		Iterator<DocStructType> it = newTypes.iterator();
@@ -357,7 +378,6 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/**
 	 * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen
-	 * ================================================================
 	 */
 	public void deleteAllUnusedElements(DocStruct inStruct) {
 		inStruct.deleteUnusedPersonsAndMetadata();
@@ -505,11 +525,11 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * prüfen, ob es sich hier um eine rdf- oder um eine mets-Datei handelt ================================================================
+	 * prüfen, ob es sich hier um eine rdf- oder um eine mets-Datei handelt
 	 */
 	public static String getMetaFileType(String file) throws IOException {
 		/*
-		 * --------------------- Typen und Suchbegriffe festlegen -------------------
+		 * Typen und Suchbegriffe festlegen
 		 */
 		HashMap<String, String> types = new HashMap<String, String>();
 		types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
@@ -536,8 +556,8 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * @param inMdt
-	 * @return localized Title of metadata type ================================================================
+	 * @param inMdt add description
+	 * @return localized Title of metadata type
 	 */
 	public String getMetadatatypeLanguage(MetadataType inMdt) {
 		String label = inMdt.getLanguage((String) Helper
@@ -549,7 +569,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * Comparator für die Metadaten ================================================================
+	 * Comparator für die Metadaten
 	 */
 	// TODO: Uses generics, if possible
 	public static class MetadataComparator implements Comparator<Object> {
@@ -606,14 +626,13 @@ public class MetadatenHelper implements Comparator<Object> {
 	/**
 	 * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt sind
 	 *
-	 * @param myDocStruct
-	 * @param inRoleName
-	 *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird
+	 * @param myDocStruct add description
+	 * @param inRoleName der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird
 	 */
 	public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
 		/*
-		 * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal alle addierbaren Metadatentypen ermitteln
 		 */
 		List<MetadataType> types = myDocStruct.getPossibleMetadataTypes();
 		if (types == null) {
@@ -632,7 +651,7 @@ public class MetadatenHelper implements Comparator<Object> {
 			}
 		}
 		/*
-		 * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
+		 * alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
 		 */
 		for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
 			if (!mdt.getIsPerson()) {
@@ -641,7 +660,7 @@ public class MetadatenHelper implements Comparator<Object> {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren --------------------------------
+		 * die Metadatentypen sortieren
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");

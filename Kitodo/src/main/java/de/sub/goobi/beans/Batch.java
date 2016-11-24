@@ -35,7 +35,11 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.beans;
+
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.persistence.BatchDAO;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,9 +47,6 @@ import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.persistence.BatchDAO;
 
 /**
  * The class Batch represents a user-definable, unordered collection of

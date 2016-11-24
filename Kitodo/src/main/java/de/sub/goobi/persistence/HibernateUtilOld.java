@@ -34,18 +34,19 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.kitodo.persistence.exceptions.InfrastructureException;
 import org.hibernate.cfg.Configuration;
 
-//TODO: Fix for Hibernate-Session-Management, replaced with older version, 
-// the newer version follows on bottom  of this class
+import org.kitodo.persistence.exceptions.InfrastructureException;
+
+//TODO: Fix for Hibernate-Session-Management, replaced with older version, the newer version follows on bottom of
+// this class
 
 /**
  * Basic Hibernate helper class, handles SessionFactory, Session and Transaction.
- * <p>
- * Uses a static initializer for the initial SessionFactory creation and holds Session and Transactions in thread local variables. All exceptions are
- * wrapped in an unchecked InfrastructureException.
- * 
+ *
+ * <p>Uses a static initializer for the initial SessionFactory creation and holds Session and Transactions in thread
+ * local variables. All exceptions are wrapped in an unchecked InfrastructureException.
+ *
  * @author christian@hibernate.org
  */
 @SuppressWarnings("deprecation")
@@ -77,7 +78,7 @@ public class HibernateUtilOld {
 
 	/**
 	 * Returns the SessionFactory used for this static class.
-	 * 
+	 *
 	 * @return SessionFactory
 	 */
 	public static SessionFactory getSessionFactory() {
@@ -87,7 +88,7 @@ public class HibernateUtilOld {
 
 	/**
 	 * Returns the original Hibernate configuration.
-	 * 
+	 *
 	 * @return Configuration
 	 */
 	public static Configuration getConfiguration() {
@@ -96,7 +97,6 @@ public class HibernateUtilOld {
 
 	/**
 	 * Rebuild the SessionFactory with the static Configuration.
-	 * 
 	 */
 	public static void rebuildSessionFactory() throws InfrastructureException {
 		synchronized (sessionFactoryRebuildLock) {
@@ -110,8 +110,8 @@ public class HibernateUtilOld {
 
 	/**
 	 * Rebuild the SessionFactory with the given Hibernate Configuration.
-	 * 
-	 * @param cfg
+	 *
+	 * @param cfg add description
 	 */
 	public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
 		synchronized (sessionFactoryRebuildLock) {
@@ -126,9 +126,9 @@ public class HibernateUtilOld {
 
 	/**
 	 * Retrieves the current Session local to the thread.
-	 * <p/>
-	 * If no Session is open, opens a new Session for the running thread.
-	 * 
+	 *
+	 * <p/>If no Session is open, opens a new Session for the running thread.
+	 *
 	 * @return Session
 	 */
 	public static Session getSession() throws InfrastructureException {
@@ -219,7 +219,7 @@ public class HibernateUtilOld {
 
 	/**
 	 * Disconnect and return Session from current Thread.
-	 * 
+	 *
 	 * @return Session the disconnected Session
 	 */
 	public static Session disconnectSession() throws InfrastructureException {
@@ -238,9 +238,9 @@ public class HibernateUtilOld {
 
 	/**
 	 * Register a Hibernate interceptor with the current thread.
-	 * <p>
-	 * Every Session opened is opened with this interceptor after registration. Has no effect if the current Session of the thread is already open,
-	 * effective on next close()/getSession().
+	 *
+	 * <p>Every Session opened is opened with this interceptor after registration. Has no effect if the current Session
+	 * of the thread is already open, effective on next close()/getSession().
 	 */
 	public static void registerInterceptor(Interceptor interceptor) {
 		threadInterceptor.set(interceptor);
@@ -251,7 +251,11 @@ public class HibernateUtilOld {
 		return interceptor;
 	}
 
-	// nicht sicher ob so korrekt implementiert
+	/**
+	 * nicht sicher ob so korrekt implementiert
+	 *
+	 * @return add description
+	 */
 	public static boolean hasOpenSession() {
 		Session s = threadSession.get();
 		if (s == null) {

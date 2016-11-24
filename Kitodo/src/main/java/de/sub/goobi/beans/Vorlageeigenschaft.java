@@ -27,13 +27,13 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.property.IGoobiProperty;
+import de.sub.goobi.helper.enums.PropertyType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.helper.enums.PropertyType;
 
 public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -5981263038302791497L;
@@ -47,6 +47,9 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	private Date creationDate;
 	private Integer container;
 
+	/**
+	 *
+	 */
 	public Vorlageeigenschaft() {
 		this.istObligatorisch = false;
 		this.datentyp = PropertyType.String.getId();
@@ -119,10 +122,8 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
+	 * getter for datentyp set to private for hibernate for use in program use getType instead
+	 *
 	 * @return datentyp as integer
 	 */
 	@SuppressWarnings("unused")
@@ -131,10 +132,10 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
-	 * 
-	 * @param datentyp
-	 *            as Integer
+	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType
+	 * instead
+	 *
+	 * @param datentyp as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setDatentyp(Integer datentyp) {
@@ -143,9 +144,8 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	@Override
 	public void setType(PropertyType inType) {
@@ -154,7 +154,7 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	@Override
@@ -165,6 +165,9 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 		return PropertyType.getById(this.datentyp);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		if (this.valueList == null) {
 			this.valueList = new ArrayList<String>();

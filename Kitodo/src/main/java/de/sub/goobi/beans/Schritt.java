@@ -27,6 +27,11 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepEditType;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.persistence.HibernateUtilOld;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,11 +44,6 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.persistence.HibernateUtilOld;
 
 public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
@@ -94,6 +94,9 @@ public class Schritt implements Serializable {
 	private String stepPlugin;
 	private String validationPlugin;
 
+	/**
+	 *
+	 */
 	public Schritt() {
 		this.titel = "";
 		this.benutzer = new HashSet<Benutzer>();
@@ -119,6 +122,9 @@ public class Schritt implements Serializable {
 		this.bearbeitungsbeginn = bearbeitungsbeginn;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getStartDate() {
 		if (this.bearbeitungsbeginn != null) {
 			return this.formatter.format(this.bearbeitungsbeginn);
@@ -130,6 +136,9 @@ public class Schritt implements Serializable {
 		return this.bearbeitungsende;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getEndDate() {
 		if (this.bearbeitungsende != null) {
 			return this.formatter.format(this.bearbeitungsende);
@@ -146,10 +155,8 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * getter for editType set to private for hibernate
-	 * 
-	 * for use in program use getEditTypeEnum instead
-	 * 
+	 * getter for editType set to private for hibernate for use in program use getEditTypeEnum instead
+	 *
 	 * @return editType as integer
 	 */
 	@SuppressWarnings("unused")
@@ -158,10 +165,10 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * set editType to defined integer. only for internal use through hibernate, for changing editType use setEditTypeEnum instead
-	 * 
-	 * @param editType
-	 *            as Integer
+	 * set editType to defined integer. only for internal use through hibernate, for changing editType use
+	 * setEditTypeEnum instead
+	 *
+	 * @param editType as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setEditType(Integer editType) {
@@ -170,9 +177,8 @@ public class Schritt implements Serializable {
 
 	/**
 	 * set editType to specific value from {@link StepEditType}
-	 * 
-	 * @param inType
-	 *            as {@link StepEditType}
+	 *
+	 * @param inType as {@link StepEditType}
 	 */
 	public void setEditTypeEnum(StepEditType inType) {
 		this.editType = inType.getValue();
@@ -180,7 +186,7 @@ public class Schritt implements Serializable {
 
 	/**
 	 * get editType as {@link StepEditType}
-	 * 
+	 *
 	 * @return current bearbeitungsstatus
 	 */
 	public StepEditType getEditTypeEnum() {
@@ -188,10 +194,9 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * getter for bearbeitungsstatus (set to private for hibernate)
-	 * 
-	 * for use in program use getBearbeitungsstatusEnum instead
-	 * 
+	 * getter for bearbeitungsstatus (set to private for hibernate) for use in program use getBearbeitungsstatusEnum
+	 * instead
+	 *
 	 * @return bearbeitungsstatus as integer
 	 */
 	@SuppressWarnings("unused")
@@ -200,11 +205,10 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * set bearbeitungsstatus to defined integer. only for internal use through hibernate, for changing bearbeitungsstatus use
-	 * setBearbeitungsstatusEnum instead
-	 * 
-	 * @param bearbeitungsstatus
-	 *            as Integer
+	 * set bearbeitungsstatus to defined integer. only for internal use through hibernate, for changing
+	 * bearbeitungsstatus use setBearbeitungsstatusEnum instead
+	 *
+	 * @param bearbeitungsstatus as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setBearbeitungsstatus(Integer bearbeitungsstatus) {
@@ -213,9 +217,8 @@ public class Schritt implements Serializable {
 
 	/**
 	 * set bearbeitungsstatus to specific value from {@link StepStatus}
-	 * 
-	 * @param inStatus
-	 *            as {@link StepStatus}
+	 *
+	 * @param inStatus as {@link StepStatus}
 	 */
 	public void setBearbeitungsstatusEnum(StepStatus inStatus) {
 		this.bearbeitungsstatus = inStatus.getValue();
@@ -223,7 +226,7 @@ public class Schritt implements Serializable {
 
 	/**
 	 * get bearbeitungsstatus as {@link StepStatus}
-	 * 
+	 *
 	 * @return current bearbeitungsstatus
 	 */
 	public StepStatus getBearbeitungsstatusEnum() {
@@ -276,8 +279,8 @@ public class Schritt implements Serializable {
 	}
 
 	/*
-	 * if you change anything in the logic of priorities make sure that you catch dependencies on this system which are not directly related to
-	 * priorities
+	 * if you change anything in the logic of priorities make sure that you catch dependencies on this system which are
+	 * not directly related to priorities
 	 */
 	public Boolean isCorrectionStep() {
 		return (this.prioritaet == 10);
@@ -343,10 +346,9 @@ public class Schritt implements Serializable {
 		this.benutzergruppen = benutzergruppen;
 	}
 
-	/*
+	/**
 	 *  Helper
 	 */
-
 	public int getBenutzerSize() {
 		try {
 			Hibernate.initialize(this.benutzer);
@@ -359,6 +361,9 @@ public class Schritt implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Benutzer> getBenutzerList() {
 		try {
 			Hibernate.initialize(this.benutzer);
@@ -370,6 +375,9 @@ public class Schritt implements Serializable {
 		return new ArrayList<Benutzer>(this.benutzer);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getBenutzergruppenSize() {
 		try {
 			Hibernate.initialize(this.benutzergruppen);
@@ -382,6 +390,9 @@ public class Schritt implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Benutzergruppe> getBenutzergruppenList() {
 		try {
 			Hibernate.initialize(this.benutzergruppen);
@@ -393,12 +404,18 @@ public class Schritt implements Serializable {
 		return new ArrayList<Benutzergruppe>(this.benutzergruppen);
 	}
 
+	/**
+	 *
+	 */
 	public void setBearbeitungsstatusUp() {
 		if (getBearbeitungsstatusEnum() != StepStatus.DONE) {
 			this.bearbeitungsstatus = Integer.valueOf(this.bearbeitungsstatus.intValue() + 1);
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void setBearbeitungsstatusDown() {
 		if (getBearbeitungsstatusEnum() != StepStatus.LOCKED) {
 			this.bearbeitungsstatus = Integer.valueOf(this.bearbeitungsstatus.intValue() - 1);
@@ -433,6 +450,9 @@ public class Schritt implements Serializable {
 		return this.typImagesSchreiben;
 	}
 
+	/**
+	 * @param typImagesSchreiben add description
+	 */
 	public void setTypImagesSchreiben(boolean typImagesSchreiben) {
 		this.typImagesSchreiben = typImagesSchreiben;
 		if (typImagesSchreiben) {
@@ -548,6 +568,9 @@ public class Schritt implements Serializable {
 		this.typScriptStep = typScriptStep;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public Boolean getTypScriptStep() {
 		if (this.typScriptStep == null) {
 			this.typScriptStep = false;
@@ -635,6 +658,9 @@ public class Schritt implements Serializable {
 		return this.typAutomatischScriptpfad5;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public ArrayList<String> getAllScriptPaths() {
 		ArrayList<String> answer = new ArrayList<String>();
 		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
@@ -655,6 +681,9 @@ public class Schritt implements Serializable {
 		return answer;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public HashMap<String, String> getAllScripts() {
 		HashMap<String, String> answer = new HashMap<String, String>();
 		if (this.typAutomatischScriptpfad != null && !this.typAutomatischScriptpfad.equals("")) {
@@ -675,6 +704,9 @@ public class Schritt implements Serializable {
 		return answer;
 	}
 
+	/**
+	 * @param paths add description
+	 */
 	public void setAllScripts(HashMap<String, String> paths) {
 		Set<String> keys = paths.keySet();
 		ArrayList<String> keyList = new ArrayList<String>();
@@ -704,6 +736,9 @@ public class Schritt implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getListOfPaths() {
 		String answer = "";
 		if (this.scriptname1 != null) {
@@ -722,13 +757,11 @@ public class Schritt implements Serializable {
 			answer = answer + "; " + this.scriptname5;
 		}
 		return answer;
-
 	}
 
-	/*
-	 * batch step information
+	/**
+	 * @return batch step information
 	 */
-
 	public Boolean getBatchStep() {
 		if (this.batchStep == null) {
 			this.batchStep = Boolean.FALSE;
@@ -736,6 +769,9 @@ public class Schritt implements Serializable {
 		return this.batchStep;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public Boolean isBatchStep() {
 		if (this.batchStep == null) {
 			this.batchStep = Boolean.FALSE;
@@ -743,6 +779,9 @@ public class Schritt implements Serializable {
 		return this.batchStep;
 	}
 
+	/**
+	 * @param batchStep add description
+	 */
 	public void setBatchStep(Boolean batchStep) {
 		if (batchStep == null) {
 			batchStep = Boolean.FALSE;
@@ -752,7 +791,7 @@ public class Schritt implements Serializable {
 
 	/**
 	 * Get the current object for this row.
-	 * 
+	 *
 	 * @return Employee The current object representing a row.
 	 */
 	public Schritt getCurrent() {
@@ -788,9 +827,8 @@ public class Schritt implements Serializable {
 	}
 
 	/**
-	 * Returns whether this is a step of a process that is part of at least one
-	 * batch as read-only property "batchSize".
-	 * 
+	 * Returns whether this is a step of a process that is part of at least one batch as read-only property "batchSize".
+	 *
 	 * @return whether this step’s process is in a batch
 	 */
 	public boolean isBatchSize() {

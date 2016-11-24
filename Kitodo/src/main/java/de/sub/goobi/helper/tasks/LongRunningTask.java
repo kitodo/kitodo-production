@@ -27,10 +27,10 @@ package de.sub.goobi.helper.tasks;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.apache.log4j.Logger;
-
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author unascribed
@@ -40,9 +40,9 @@ import de.sub.goobi.helper.Helper;
 @Deprecated
 public abstract class LongRunningTask extends EmptyTask {
 	/**
-	 * No-argument constructor. Creates an empty long running task. Must be made
-	 * explicit because a constructor taking an argument is present.
-	 * 
+	 * No-argument constructor. Creates an empty long running task. Must be made explicit because a constructor taking
+	 * an argument is present.
+	 *
 	 * @deprecated New task implementations should directly implement EmptyTask.
 	 */
 	@Deprecated
@@ -51,12 +51,10 @@ public abstract class LongRunningTask extends EmptyTask {
 	}
 
 	/**
-	 * The clone constructor creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
-	 * 
-	 * @param master
-	 *            copy master to create a clone of
+	 * The clone constructor creates a new instance of this object. This is necessary for Threads that have terminated
+	 * in order to render to run them again possible.
+	 *
+	 * @param master copy master to create a clone of
 	 */
 	public LongRunningTask(LongRunningTask master) {
 		super(master);
@@ -73,13 +71,11 @@ public abstract class LongRunningTask extends EmptyTask {
 	}
 
 	/**
-	 * The method setShowMessages() can be used to set a flag whether this long
-	 * running task is executing asynchronously or not, in the latter case it
-	 * shall show messages to the user using
+	 * The method setShowMessages() can be used to set a flag whether this long running task is executing
+	 * asynchronously or not, in the latter case it shall show messages to the user using
 	 * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
-	 * 
-	 * @param show
-	 *            whether to show messages to the user
+	 *
+	 * @param show whether to show messages to the user
 	 */
 	public void setShowMessages(boolean show) {
 		isSingleThread = !show;
@@ -94,10 +90,9 @@ public abstract class LongRunningTask extends EmptyTask {
 	}
 
 	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 * 
+	 * Calls the clone constructor to create a not yet executed instance of this thread object. This is necessary for
+	 * threads that have terminated in order to render possible to restart them.
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
@@ -106,12 +101,10 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * The method stopped() had been used to record that the thread has stopped.
-	 * 
-	 * @deprecated The method stopped() has become redundant due to newer
-	 *             development. The thread state is now directly derived from
-	 *             {@link Thread#getState()} which is reliable in determining
-	 *             whether the thread has died, independent of whether it ever
-	 *             managed to call stopped() or died before.
+	 *
+	 * @deprecated The method stopped() has become redundant due to newer development. The thread state is now directly
+	 * 				derived from {@link Thread#getState()} which is reliable in determining whether the thread has died,
+	 * 				independent of whether it ever managed to call stopped() or died before.
 	 */
 	@Deprecated
 	protected void stopped() {
@@ -119,7 +112,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -127,7 +120,6 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Prozess-Getter
-	 * ================================================================
 	 */
 	public Prozess getProzess() {
 		return this.prozess;
@@ -135,8 +127,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Status des Tasks in Angabe von Prozent
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#getProgress()}.
 	 */
 	@Deprecated
@@ -149,8 +140,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Meldung über den aktuellen Task
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#getTaskState()}.
 	 */
 	@Deprecated
@@ -160,8 +150,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Titel des aktuellen Task
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link Thread#getName()}.
 	 */
 	@Deprecated
@@ -171,8 +160,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Setter für Fortschritt nur für vererbte Klassen
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#setProgress(int)}.
 	 */
 	@Deprecated
@@ -190,8 +178,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Setter für Statusmeldung nur für vererbte Klassen
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
 	 */
 	@Deprecated
@@ -205,8 +192,7 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Setter für Titel nur für vererbte Klassen
-	 * ================================================================
-	 * 
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
 	 */
 	@Deprecated
@@ -216,7 +202,6 @@ public abstract class LongRunningTask extends EmptyTask {
 
 	/**
 	 * Setter für Prozess nur für vererbte Klassen
-	 * ================================================================
 	 */
 	protected void setProzess(Prozess prozess) {
 		this.prozess = prozess;

@@ -27,10 +27,10 @@ package de.sub.goobi.persistence;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.List;
-
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class LdapGruppenDAO extends BaseDAO {
@@ -40,6 +40,11 @@ public class LdapGruppenDAO extends BaseDAO {
 		return (LdapGruppe) retrieveObj(LdapGruppe.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public LdapGruppe get(Integer id) throws DAOException {
 		LdapGruppe rueckgabe = (LdapGruppe) retrieveObj(LdapGruppe.class, id);
 		if (rueckgabe == null) {
@@ -48,6 +53,10 @@ public class LdapGruppenDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(LdapGruppe t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

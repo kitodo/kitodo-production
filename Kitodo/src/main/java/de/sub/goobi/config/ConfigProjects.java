@@ -27,6 +27,8 @@ package de.sub.goobi.config;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.Helper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,8 +40,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.helper.Helper;
-
 public class ConfigProjects {
 	XMLConfiguration config;
 	private String projektTitel;
@@ -49,6 +49,11 @@ public class ConfigProjects {
 		this(projectTitle, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
 	}
 
+	/**
+	 * @param projectTitle add description
+	 * @param configPfad add description
+	 * @throws IOException add description
+	 */
 	public ConfigProjects(String projectTitle, String configPfad) throws IOException {
 		if (!(new File(configPfad)).exists()) {
 			throw new IOException("File not found: " + configPfad);

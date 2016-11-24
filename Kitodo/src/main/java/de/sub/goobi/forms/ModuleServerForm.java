@@ -25,7 +25,26 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 package de.sub.goobi.forms;
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.modul.ExtendedDataImpl;
+import de.sub.goobi.modul.ExtendedProzessImpl;
+import de.sub.goobi.persistence.ProzessDAO;
+
+import de.unigoettingen.goobi.module.api.exception.GoobiException;
+import de.unigoettingen.goobi.module.api.exception.GoobiModuleException;
+import de.unigoettingen.goobi.module.api.message.Message;
+import de.unigoettingen.goobi.module.api.message.MessageContainer;
+import de.unigoettingen.goobi.module.api.module_manager.GoobiModuleManager;
+import de.unigoettingen.goobi.module.api.module_manager.ModuleDesc;
+import de.unigoettingen.goobi.module.api.types.GoobiModuleParameter;
+import de.unigoettingen.goobi.module.api.util.UniqueID;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,23 +66,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.modul.ExtendedDataImpl;
-import de.sub.goobi.modul.ExtendedProzessImpl;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.unigoettingen.goobi.module.api.exception.GoobiException;
-import de.unigoettingen.goobi.module.api.exception.GoobiModuleException;
-import de.unigoettingen.goobi.module.api.message.Message;
-import de.unigoettingen.goobi.module.api.message.MessageContainer;
-import de.unigoettingen.goobi.module.api.module_manager.GoobiModuleManager;
-import de.unigoettingen.goobi.module.api.module_manager.ModuleDesc;
-import de.unigoettingen.goobi.module.api.types.GoobiModuleParameter;
-import de.unigoettingen.goobi.module.api.util.UniqueID;
-
 public class ModuleServerForm {
 	private Boolean running = false;
 	private static volatile GoobiModuleManager modulmanager = null;
@@ -75,14 +77,14 @@ public class ModuleServerForm {
 	private static final Logger logger = Logger.getLogger(ModuleServerForm.class);
 
 	/**
-	 * initialize all modules ================================================================
+	 * initialize all modules
 	 */
 	public void startAllModules() {
-		if (modulmanager == null)
+		if (modulmanager == null) {
 			readAllModulesFromConfiguration();
-
+		}
 		/*
-		 * -------------------------------- alle Module initialisieren --------------------------------
+		 * alle Module initialisieren
 		 */
 		for (ModuleDesc md : modulmanager) {
 			try {
@@ -137,8 +139,9 @@ public class ModuleServerForm {
 	 * shutdown Modulmanager ================================================================
 	 */
 	public void stopAllModules() {
-		if (modulmanager != null)
+		if (modulmanager != null) {
 			modulmanager.shutdown();
+		}
 		modulmanager = null;
 		running = false;
 	}
@@ -147,8 +150,9 @@ public class ModuleServerForm {
 	 * initialize Module ================================================================
 	 */
 	public void startModule() {
-		if (myModule == null)
+		if (myModule == null) {
 			return;
+		}
 		try {
 			myModule.getModuleClient().initialize();
 		} catch (GoobiModuleException e) {
@@ -161,11 +165,12 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * shut Module down ================================================================
+	 * shut Module down
 	 */
 	public void stopModule() {
-		if (myModule == null)
+		if (myModule == null) {
 			return;
+		}
 		try {
 			myModule.getModuleClient().shutdown();
 		} catch (GoobiModuleException e) {
@@ -176,7 +181,7 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * Module-Konfigurationen aus externer xml-Datei modules.xml einlesen ================================================================
+	 * Module-Konfigurationen aus externer xml-Datei modules.xml einlesen
 	 */
 	@SuppressWarnings("unchecked")
 	private List<ModuleDesc> getModulesFromConfigurationFile() {
@@ -209,7 +214,7 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * Eine Shortsession für einen Schritt starten ================================================================
+	 * Eine Shortsession für einen Schritt starten
 	 */
 	public String startShortSession(Schritt inSchritt) throws GoobiException, XmlRpcException {
 		myModule = null;
@@ -219,7 +224,7 @@ public class ModuleServerForm {
 		}
 
 		/*
-		 * --------------------- zusätzliche Parameter neben dem Modulnamen -------------------
+		 * zusätzliche Parameter neben dem Modulnamen
 		 */
 		HashMap<String, Object> typeParameters = new HashMap<String, Object>();
 		String schrittModuleName = inSchritt.getTypModulName();
@@ -227,9 +232,9 @@ public class ModuleServerForm {
 		int counter = 0;
 		while (tokenizer.hasNext()) {
 			String tok = (String) tokenizer.next();
-			if (counter == 0)
+			if (counter == 0) {
 				schrittModuleName = tok;
-			else {
+			} else {
 				if (tok.contains(":")) {
 					String key = tok.split(":")[0];
 					String value = tok.split(":")[1];
@@ -240,24 +245,27 @@ public class ModuleServerForm {
 		}
 
 		/*
-		 * -------------------------------- Modulserver läuft noch nicht --------------------------------
+		 * Modulserver läuft noch nicht
 		 */
-		if (modulmanager == null)
+		if (modulmanager == null) {
 			throw new GoobiException(0, "Der Modulserver läuft nicht");
+		}
 
 		/*
-		 * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
+		 * ohne gewähltes Modul gleich wieder raus
 		 */
-		for (ModuleDesc md : modulmanager)
-			if (md.getName().equals(schrittModuleName))
+		for (ModuleDesc md : modulmanager) {
+			if (md.getName().equals(schrittModuleName)) {
 				myModule = md;
+			}
+		}
 		if (myModule == null) {
 			Helper.setFehlerMeldung("Module not found");
 			return "";
 		}
 
 		/*
-		 * -------------------------------- Verbindung zum Modul aufbauen und url zurückgeben --------------------------------
+		 * Verbindung zum Modul aufbauen und url zurückgeben
 		 */
 		String processId = String.valueOf(inSchritt.getProzess().getId().intValue());
 		String tempID = UniqueID.generate_session();
@@ -275,15 +283,15 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * Test for shortsession of selected module ================================================================
+	 * Test for shortsession of selected module
 	 */
 	public void startShortSessionTest() throws GoobiException, XmlRpcException {
 		/*
-		 * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
+		 * ohne gewähltes Modul gleich wieder raus
 		 */
-		if (myModule == null)
+		if (myModule == null) {
 			return;
-
+		}
 		String processId = "3346";
 		String tempID = UniqueID.generate_session();
 		myRunningShortSessions.put(tempID, processId);
@@ -302,12 +310,13 @@ public class ModuleServerForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Messaging system ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Messaging system ##
+	 * #########################################################################################################
 	 */
 
 	/**
-	 * Diese Methode überprüft, ob wir was neues in unserem Container haben. ================================================================
+	 * Diese Methode überprüft, ob wir was neues in unserem Container haben.
 	 */
 	private static void check_new_messages(GoobiModuleManager modules) {
 		Message message = null;
@@ -319,11 +328,9 @@ public class ModuleServerForm {
 
 	/**
 	 * Mit dieser Methode werden die messages abgearbeitet
-	 * 
-	 * @param message
-	 *            messages
-	 * @param modules
-	 *            GoobiModuleManager ================================================================
+	 *
+	 * @param message messages
+	 * @param modules GoobiModuleManager
 	 */
 	private static void handle_message(Message message, GoobiModuleManager modules) {
 		if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
@@ -339,8 +346,8 @@ public class ModuleServerForm {
 				for (GoobiModuleParameter gmp : gmps) {
 					if (gmp.sessionId.equals(in_session)) {
 						/*
-						 * Jetzt wird herausgefunden um was für eine Message es geht. dabei ist: Module : modules.get(i) Session wird durch gmp
-						 * beschrieben
+						 * Jetzt wird herausgefunden um was für eine Message es geht. dabei ist: Module : modules.get(i)
+						 * Session wird durch gmp beschrieben
 						 */
 						if (message.body.type.equals("trigger")) {
 							// Behandlung aller trigger messages
@@ -362,8 +369,9 @@ public class ModuleServerForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * #########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	public GoobiModuleManager getModulmanager() {
@@ -387,7 +395,7 @@ public class ModuleServerForm {
 	}
 
 	/**
-	 * get Prozess von shortSessionID ================================================================
+	 * get Prozess von shortSessionID
 	 */
 	public static Prozess getProcessFromShortSession(String sessionId) throws GoobiException {
 		String prozessidStr = getProcessIDFromShortSession(sessionId);
@@ -395,9 +403,9 @@ public class ModuleServerForm {
 			Prozess tempProz = pdao.get(Integer.parseInt(prozessidStr));
 			Helper.getHibernateSession().flush();
 			Helper.getHibernateSession().clear();
-			if (tempProz != null && tempProz.getId() != null)
+			if (tempProz != null && tempProz.getId() != null) {
 				Helper.getHibernateSession().refresh(tempProz);
-
+			}
 			return tempProz;
 		} catch (NumberFormatException e) {
 			new Helper();

@@ -27,11 +27,12 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
+
+import org.goobi.io.SafeFile;
 
 // Only usage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
@@ -69,6 +70,12 @@ public class CopyFile {
 		return Long.valueOf(checksum.getValue());
 	}
 
+	/**
+	 * @param srcFile add description
+	 * @param destFile add description
+	 * @return add description
+	 * @throws IOException add description
+	 */
 	public static Long start(SafeFile srcFile, SafeFile destFile) throws IOException {
 		// make sure the source file is indeed a readable file
 		if (!srcFile.isFile() || !srcFile.canRead()) {

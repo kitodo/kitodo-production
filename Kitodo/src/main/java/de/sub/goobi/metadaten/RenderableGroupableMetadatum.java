@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
 
 import java.util.List;
@@ -42,56 +43,50 @@ import java.util.List;
 import ugh.dl.Metadata;
 
 /**
- * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
- * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can
- * be a RenderablePersonMetadataGroup—which is a special case of a
- * RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
- * 
- * Java interfaces are always public and this interface holds the public methods
- * that are accessed by JSF during rendering. Other methods with a more
- * restricted visibility cannot be defined here. They will be defined in the
- * abstract class {@link RenderableGroupableMetadatum}.
- * 
+ * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to be—a member of a
+ * RenderableMetadataGroup. A RenderableGroupableMetadatum can be a RenderablePersonMetadataGroup—which is a special
+ * case of a RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
+ *
+ * <p>Java interfaces are always public and this interface holds the public methods that are accessed by JSF during
+ * rendering. Other methods with a more restricted visibility cannot be defined here. They will be defined in the
+ * abstract class {@link RenderableGroupableMetadatum}.</p>
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 interface RenderableGroupableMetadatum {
 
 	/**
-	 * Shall add the data passed from the metadata element as content to the
-	 * element.
-	 * 
-	 * @param data
-	 *            data to add
+	 * Shall add the data passed from the metadata element as content to the element.
+	 *
+	 * @param data data to add
 	 */
 	void addContent(Metadata data);
 
 	/**
 	 * Shall return the label for the metadatum in the language previously set.
-	 * 
+	 *
 	 * @return the label for the metadatum
 	 */
 	String getLabel();
 
 	/**
-	 * Shall return true if the element is contained in a group and is the first
-	 * element in its members list, false otherwise.
-	 * 
+	 * Shall return true if the element is contained in a group and is the first element in its members list, false
+	 * otherwise.
+	 *
 	 * @return if the element is the first in its list
 	 */
 	boolean isFirst();
 
 	/**
-	 * Shall return whether the user shall be depredated the permission to edit
-	 * the value(s) on the screen.
-	 * 
+	 * Shall return whether the user shall be depredated the permission to edit the value(s) on the screen.
+	 *
 	 * @return whether the component shall be read-only
 	 */
 	boolean isReadonly();
 
 	/**
-	 * Shall return the metadata elements contained in this display element
-	 * backing bean.
-	 * 
+	 * Shall return the metadata elements contained in this display element backing bean.
+	 *
 	 * @return the metadata elements contained in this bean
 	 */
 	List<? extends Metadata> toMetadata();

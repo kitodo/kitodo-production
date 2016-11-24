@@ -27,6 +27,13 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.SpracheForm;
+import de.sub.goobi.helper.enums.ReportLevel;
+import de.sub.goobi.persistence.HibernateUtilOld;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -60,21 +67,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
-import org.hibernate.Session;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.SpracheForm;
-import de.sub.goobi.helper.enums.ReportLevel;
-import de.sub.goobi.persistence.HibernateUtilOld;
+import org.hibernate.Session;
 
 public class Helper implements Serializable, Observer {
 
 	/**
-	 * Always treat de-serialization as a full-blown constructor, by validating the final state of the de-serialized object.
+	 * Always treat de-serialization as a full-blown constructor, by validating the final state of the de-serialized
+	 * object.
 	 */
 	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
@@ -115,6 +118,9 @@ public class Helper implements Serializable, Observer {
 		return myParameter;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getGoobiDataDirectory() {
 		if (this.myMetadatenVerzeichnis == null) {
 			this.myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
@@ -122,6 +128,9 @@ public class Helper implements Serializable, Observer {
 		return this.myMetadatenVerzeichnis;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getGoobiConfigDirectory() {
 		if (this.myConfigVerzeichnis == null) {
 			this.myConfigVerzeichnis = ConfigMain.getParameter(Parameters.CONFIG_DIR);
@@ -129,6 +138,10 @@ public class Helper implements Serializable, Observer {
 		return this.myConfigVerzeichnis;
 	}
 
+	/**
+	 * @param inException add description
+	 * @return add description
+	 */
 	public static String getStacktraceAsString(Exception inException) {
 		StringWriter sw = new StringWriter();
 		inException.printStackTrace(new PrintWriter(sw));
@@ -246,6 +259,11 @@ public class Helper implements Serializable, Observer {
 		return result;
 	}
 
+	/**
+	 * @param language add description
+	 * @param key add description
+	 * @return add description
+	 */
 	public static String getString(Locale language, String key) {
 		if (commonMessages == null || commonMessages.size() <= 1) {
 			loadMsgs();
@@ -269,6 +287,10 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * @param inDate add description
+	 * @return add description
+	 */
 	public static String getDateAsFormattedString(Date inDate) {
 		if (inDate == null) {
 			return "-";
@@ -278,6 +300,10 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * @param expr add description
+	 * @return add description
+	 */
 	public static Object getManagedBeanValue(String expr) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context == null) {
@@ -319,6 +345,9 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public static Session getHibernateSession() {
 		Session sess;
 		try {
@@ -373,6 +402,10 @@ public class Helper implements Serializable, Observer {
 		}
 	}
 
+	/**
+	 * @param dbTitel add description
+	 * @return add description
+	 */
 	public static String getTranslation(String dbTitel) {
 		// running instance of ResourceBundle doesn't respond on user language
 		// changes, workaround by instanciating it every time
@@ -394,6 +427,11 @@ public class Helper implements Serializable, Observer {
 		return result != null && !result.equals(inParameter) ? result : inDefaultIfNull;
 	}
 
+	/**
+	 * @param dbTitel add description
+	 * @param parameterList add description
+	 * @return add description
+	 */
 	public static String getTranslation(String dbTitel, List<String> parameterList) {
 		String value = "";
 		Locale desiredLanguage = null;
@@ -436,12 +474,16 @@ public class Helper implements Serializable, Observer {
 		if (!(arg instanceof String)) {
 			Helper.setFehlerMeldung("Usernotification failed by object: '"
 					+ arg.toString()
-					+ "' which isn't an expected String Object. This error is caused by an implementation of the Observer Interface in Helper");
+					+ "' which isn't an expected String Object. "
+					+ "This error is caused by an implementation of the Observer Interface in Helper");
 		} else {
 			Helper.setFehlerMeldung((String) arg);
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public static String getBaseUrl() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest req = (HttpServletRequest) context.getExternalContext().getRequest();

@@ -40,6 +40,10 @@ public class StepManager {
 
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
+	/**
+	 * @param stepId add description
+	 * @return add description
+	 */
 	public static StepObject getStepById(int stepId) {
 		StepObject so = null;
 		try {
@@ -51,6 +55,10 @@ public class StepManager {
 		return so;
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 */
 	public static List<StepObject> getStepsForProcess(int processId) {
 		List<StepObject> answer = new ArrayList<StepObject>();
 
@@ -63,6 +71,9 @@ public class StepManager {
 		return answer;
 	}
 
+	/**
+	 * @param step add description
+	 */
 	public static void updateStep(StepObject step) {
 
 		try {
@@ -73,6 +84,13 @@ public class StepManager {
 
 	}
 
+	/**
+	 * @param myDate add description
+	 * @param order add description
+	 * @param value add description
+	 * @param type add description
+	 * @param processId add description
+	 */
 	public static void addHistory(Date myDate, double order, String value, int type, int processId) {
 		try {
 			MySQLHelper.getInstance().addHistory(myDate, order, value, type, processId);
@@ -81,6 +99,10 @@ public class StepManager {
 		}
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 */
 	public static List<String> loadScripts(int id) {
 		try {
 			return MySQLHelper.getScriptsForStep(id);
@@ -90,6 +112,10 @@ public class StepManager {
 		return new ArrayList<String>();
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 */
 	public static Map<String, String> loadScriptMap(int id) {
 		try {
 			return MySQLHelper.getScriptMapForStep(id);
@@ -99,6 +125,10 @@ public class StepManager {
 		return new HashMap<String, String>();
 	}
 
+	/**
+	 * @param query add description
+	 * @return add description
+	 */
 	public static List<Integer> getStepIds(String query) {
 		try {
 			return MySQLHelper.getStepIds(query);

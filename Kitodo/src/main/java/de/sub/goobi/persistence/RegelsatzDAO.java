@@ -27,15 +27,15 @@ package de.sub.goobi.persistence;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.List;
-
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class RegelsatzDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1913256950316879121L;
 
@@ -44,6 +44,11 @@ public class RegelsatzDAO extends BaseDAO {
 		return (Regelsatz) retrieveObj(Regelsatz.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Regelsatz get(Integer id) throws DAOException {
 		Regelsatz rueckgabe = (Regelsatz) retrieveObj(Regelsatz.class, id);
 		if (rueckgabe == null) {
@@ -52,6 +57,10 @@ public class RegelsatzDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Regelsatz t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

@@ -27,6 +27,8 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.ArrayList;
 
 import javax.faces.model.SelectItem;
@@ -37,13 +39,11 @@ import ugh.dl.DocStruct;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
-import de.sub.goobi.config.ConfigMain;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
- * mit dessen Eigenschaften und erlaubt die Bearbeitung 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
  * der Schrittdetails
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
@@ -65,13 +65,11 @@ public class MetaPerson {
 		this.mdh = new MetadatenHelper(inPrefs, null);
 	}
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*##########################################################################################################
+	 ##
+	 ##	Getter und Setter
+	 ##
+	 #########################################################################################################*/
 
 	public int getIdentifier() {
 		return this.identifier;
@@ -89,6 +87,9 @@ public class MetaPerson {
 		this.p = p;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getVorname() {
 		if (this.p.getFirstname() == null) {
 			return "";
@@ -96,6 +97,9 @@ public class MetaPerson {
 		return this.p.getFirstname();
 	}
 
+	/**
+	 * @param inVorname add description
+	 */
 	public void setVorname(String inVorname) {
 		if (inVorname == null) {
 			inVorname = "";
@@ -104,6 +108,9 @@ public class MetaPerson {
 		this.p.setDisplayname(getNachname() + ", " + getVorname());
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getNachname() {
 		if (this.p.getLastname() == null) {
 			return "";
@@ -111,6 +118,9 @@ public class MetaPerson {
 		return this.p.getLastname();
 	}
 
+	/**
+	 * @param inNachname add description
+	 */
 	public void setNachname(String inNachname) {
 		if (inNachname == null) {
 			inNachname = "";
@@ -119,10 +129,14 @@ public class MetaPerson {
 		this.p.setDisplayname(getNachname() + ", " + getVorname());
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getRecord() {
 		String authorityValue = this.p.getAuthorityValue();
-		if (authorityValue == null || authorityValue.isEmpty())
+		if (authorityValue == null || authorityValue.isEmpty()) {
 			authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+		}
 		return authorityValue;
 	}
 
@@ -135,6 +149,9 @@ public class MetaPerson {
 		return this.p.getRole();
 	}
 
+	/**
+	 * @param inRolle add description
+	 */
 	public void setRolle(String inRolle) {
 		this.p.setRole(inRolle);
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());

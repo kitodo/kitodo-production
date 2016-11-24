@@ -27,13 +27,13 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.Serializable;
-
-import org.apache.log4j.Logger;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
+
+import java.io.Serializable;
+
+import org.apache.log4j.Logger;
 
 public class BasisForm implements Serializable {
 	private static final Logger logger = Logger.getLogger(BasisForm.class);
@@ -57,6 +57,9 @@ public class BasisForm implements Serializable {
 		this.zurueck = zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public Benutzer getUser() {
 		if (this.user == null) {
 			LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -81,6 +84,9 @@ public class BasisForm implements Serializable {
 		this.sortierung = sortierung;
 	}
 
+	/**
+	 *
+	 */
 	public void addFilterToUser() {
 		if (this.filter == null || this.filter.length() == 0) {
 			return;
@@ -93,6 +99,9 @@ public class BasisForm implements Serializable {
 		// }
 	}
 
+	/**
+	 *
+	 */
 	public void removeFilterFromUser() {
 		if (this.filter == null || this.filter.length() == 0) {
 			return;

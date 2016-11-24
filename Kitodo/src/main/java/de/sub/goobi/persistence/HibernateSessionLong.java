@@ -45,9 +45,10 @@ public class HibernateSessionLong {
 	/* =============================================================== */
 
 	/**
-	 * ONLY ever call this method from within the context of a servlet request (specifically, one that has been associated with this filter). If you
-	 * want a Hibernate session at some other time, call getSessionFactory() and open/close the session yourself.
-	 * 
+	 * ONLY ever call this method from within the context of a servlet request (specifically, one that has been
+	 * associated with this filter). If you want a Hibernate session at some other time, call getSessionFactory()
+	 * and open/close the session yourself.
+	 *
 	 * @return an appropriate Session object
 	 */
 	@SuppressWarnings("deprecation")

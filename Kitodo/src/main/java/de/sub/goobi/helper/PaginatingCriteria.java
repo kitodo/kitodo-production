@@ -40,8 +40,9 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 
 /**
- * The source for this code was found at the web address http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 and
- * changed by retaining the class name of the class which was used to instantiate the current instance of PaginatingCriteria
+ * The source for this code was found at the web address
+ * http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 andchanged by retaining the
+ * class name of the class which was used to instantiate the current instance of PaginatingCriteria
  *
  * Implementation of Criteria specifically for paginated searches.
  *
@@ -61,8 +62,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	/**
 	 * Constructor. Create 'real' Criteria and clone Criteria to do row count.
 	 *
-	 * @param clazz
-	 * @param session
+	 * @param clazz add description
+	 * @param session add description
 	 */
 	@SuppressWarnings("rawtypes")
 	public PaginatingCriteria(Class clazz, Session session) {
@@ -75,8 +76,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	/**
 	 * Used internally.
 	 *
-	 * @param criteria
-	 * @param clone
+	 * @param criteria add description
+	 * @param clone add description
 	 */
 	private PaginatingCriteria(Criteria criteria, Criteria clone) {
 		this.criteria = criteria;
@@ -94,7 +95,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * @see Criteria#setProjection(org.hibernate.criterion.Projection)
-	 * @param projection
+	 * @param projection add description
 	 * @return Criteria
 	 */
 	@Override
@@ -105,7 +106,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	/**
 	 * Adds Criterion to both the internal Criteria instances.
 	 *
-	 * @param criterion
+	 * @param criterion add description
 	 * @return Criteria
 	 * @see Criteria#add(org.hibernate.criterion.Criterion)
 	 */
@@ -116,7 +117,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param order
+	 * @param order add description
 	 * @return Criteria
 	 * @see Criteria#addOrder(org.hibernate.criterion.Order)
 	 */
@@ -126,8 +127,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param associationPath
-	 * @param mode
+	 * @param associationPath add description
+	 * @param mode add description
 	 * @return Criteria
 	 * @see Criteria#setFetchMode(java.lang.String, org.hibernate.FetchMode)
 	 */
@@ -138,7 +139,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param lockMode
+	 * @param lockMode add description
 	 * @return Criteria
 	 * @see Criteria#setLockMode(org.hibernate.LockMode)
 	 */
@@ -148,8 +149,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param alias
-	 * @param lockMode
+	 * @param alias add description
+	 * @param lockMode add description
 	 * @return Criteria
 	 * @see Criteria#setLockMode(java.lang.String, org.hibernate.LockMode)
 	 */
@@ -160,8 +161,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param associationPath
-	 * @param alias
+	 * @param associationPath add description
+	 * @param alias add description
 	 * @return Criteria
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String)
 	 */
@@ -172,9 +173,9 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
+	 * @param arg0 add description
+	 * @param arg1 add description
+	 * @param arg2 add description
 	 * @return Criteria
 	 * @see Criteria#createAlias(java.lang.String, java.lang.String, int)
 	 */
@@ -186,7 +187,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param associationPath
+	 * @param associationPath add description
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String)
 	 */
@@ -197,8 +198,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param arg0 add description
+	 * @param arg1 add description
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, int)
 	 */
@@ -209,8 +210,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param associationPath
-	 * @param alias
+	 * @param associationPath add description
+	 * @param alias add description
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, java.lang.String)
 	 */
@@ -221,9 +222,9 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
+	 * @param arg0 add description
+	 * @param arg1 add description
+	 * @param arg2 add description
 	 * @return Criteria
 	 * @see Criteria#createCriteria(java.lang.String, java.lang.String, int)
 	 */
@@ -235,7 +236,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param resultTransformer
+	 * @param resultTransformer add description
 	 * @return Criteria
 	 * @see Criteria#setResultTransformer(org.hibernate.transform.ResultTransformer)
 	 */
@@ -246,7 +247,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param maxResults
+	 * @param maxResults add description
 	 * @return Criteria
 	 * @see Criteria#setMaxResults(int)
 	 */
@@ -256,7 +257,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param firstResult
+	 * @param firstResult add description
 	 * @return Criteria
 	 * @see Criteria#setFirstResult(int)
 	 */
@@ -266,7 +267,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param fetchSize
+	 * @param fetchSize add description
 	 * @return Criteria
 	 * @see Criteria#setFetchSize(int)
 	 */
@@ -276,7 +277,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param timeout
+	 * @param timeout add description
 	 * @return Criteria
 	 * @see Criteria#setTimeout(int)
 	 */
@@ -287,7 +288,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param cacheable
+	 * @param cacheable add description
 	 * @return Criteria
 	 * @see Criteria#setCacheable(boolean)
 	 */
@@ -297,7 +298,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param cacheRegion
+	 * @param cacheRegion add description
 	 * @return Criteria
 	 * @see Criteria#setCacheRegion(java.lang.String)
 	 */
@@ -309,7 +310,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	/**
 	 * Sets a comment on both internal Criteria instances
 	 *
-	 * @param comment
+	 * @param comment add description
 	 * @return Criteria
 	 * @see Criteria#setComment(java.lang.String)
 	 */
@@ -320,7 +321,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param flushMode
+	 * @param flushMode add description
 	 * @return Criteria
 	 * @see Criteria#setFlushMode(org.hibernate.FlushMode)
 	 */
@@ -330,7 +331,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	}
 
 	/**
-	 * @param cacheMode
+	 * @param cacheMode add description
 	 * @return Criteria
 	 * @see Criteria#setCacheMode(org.hibernate.CacheMode)
 	 */
@@ -369,7 +370,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
 	/**
 	 * @return Object
-	 * @throws HibernateException
+	 * @throws HibernateException add description
 	 * @see Criteria#uniqueResult()
 	 */
 	@Override
@@ -381,7 +382,7 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 * Gets the row count applicable for this PaginatingCriteria.
 	 *
 	 * @return Integer row count
-	 * @throws HibernateException
+	 * @throws HibernateException add description
 	 * @see Criteria#uniqueResult()
 	 */
 	public Integer count() throws HibernateException {

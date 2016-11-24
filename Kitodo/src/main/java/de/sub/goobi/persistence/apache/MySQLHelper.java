@@ -27,6 +27,9 @@ package de.sub.goobi.persistence.apache;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Regelsatz;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -38,9 +41,6 @@ import java.util.Map;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Regelsatz;
 
 public class MySQLHelper {
 
@@ -57,6 +57,10 @@ public class MySQLHelper {
 		this.cm = new ConnectionManager(config);
 	}
 
+	/**
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public Connection getConnection() throws SQLException {
 
 		Connection connection = this.cm.getDataSource().getConnection();
@@ -104,6 +108,11 @@ public class MySQLHelper {
 		return helper;
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<StepObject> getStepsForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 
@@ -122,6 +131,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<Property> getProcessPropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -138,10 +152,16 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<Property> getTemplatePropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = (SELECT VorlagenID FROM vorlagen WHERE ProzesseID = ?)");
+		sql.append("SELECT * FROM vorlageneigenschaften WHERE vorlageneigenschaften.vorlagenID = "
+				+ "(SELECT VorlagenID FROM vorlagen WHERE ProzesseID = ?)");
 		try {
 			Object[] params = {processId };
 			logger.debug(sql.toString() + ", " + processId);
@@ -153,10 +173,16 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<Property> getProductPropertiesForProcess(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = (SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = ? )");
+		sql.append("SELECT * FROM werkstueckeeigenschaften WHERE werkstueckeeigenschaften.werkstueckeID = "
+				+ "(SELECT werkstueckeID FROM werkstuecke WHERE ProzesseID = ? )");
 		try {
 			Object[] params = {processId };
 			logger.debug(sql.toString() + ", " + processId);
@@ -168,6 +194,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static ProcessObject getProcessObjectForId(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -184,6 +215,11 @@ public class MySQLHelper {
 
 	}
 
+	/**
+	 * @param rulesetId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static Regelsatz getRulesetForId(int rulesetId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -199,6 +235,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param stepId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static StepObject getStepByStepId(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -217,6 +258,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param stepId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<String> getScriptsForStep(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -232,6 +278,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param stepId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static Map<String, String> getScriptMapForStep(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -247,6 +298,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param step add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public int updateStep(StepObject step) throws SQLException {
 		int ret = -1;
 		Connection connection = helper.getConnection();
@@ -293,6 +349,14 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param date add description
+	 * @param order add description
+	 * @param value add description
+	 * @param type add description
+	 * @param processId add description
+	 * @throws SQLException add description
+	 */
 	public void addHistory(Date date, double order, String value, int type, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		Timestamp datetime = new Timestamp(date.getTime());
@@ -312,6 +376,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param value add description
+	 * @param processId add description
+	 * @throws SQLException add description
+	 */
 	public void updateProcessStatus(String value, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
@@ -326,6 +395,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param numberOfFiles add description
+	 * @param processId add description
+	 * @throws SQLException add description
+	 */
 	public void updateImages(Integer numberOfFiles, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
@@ -340,6 +414,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param logValue add description
+	 * @param processId add description
+	 * @throws SQLException add description
+	 */
 	public void updateProcessLog(String logValue, int processId) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
@@ -354,6 +433,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param projectId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static ProjectObject getProjectObjectById(int projectId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -369,6 +453,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param projectId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<ProjectFileGroup> getFilegroupsForProjectId(int projectId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -386,6 +475,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param userId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<String> getFilterForUser(int userId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
@@ -401,6 +495,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param userId add description
+	 * @param filterstring add description
+	 * @throws SQLException add description
+	 */
 	public static void addFilterToUser(int userId, String filterstring) throws SQLException {
 		Connection connection = helper.getConnection();
 		Timestamp datetime = new Timestamp(new Date().getTime());
@@ -418,6 +517,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param userId add description
+	 * @param filterstring add description
+	 * @throws SQLException add description
+	 */
 	public static void removeFilterFromUser(int userId, String filterstring) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
@@ -433,6 +537,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param query add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static List<Integer> getStepIds(String query) throws SQLException {
 		Connection connection = helper.getConnection();
 		try {
@@ -442,6 +551,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param rulesetId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static int getCountOfProcessesWithRuleset(int rulesetId) throws SQLException {
 		Connection connection = helper.getConnection();
 
@@ -454,6 +568,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param docketId add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static int getCountOfProcessesWithDocket(int docketId) throws SQLException {
 		Connection connection = helper.getConnection();
 		String query = "select count(ProzesseID) from prozesse where  docketID= ?";
@@ -465,6 +584,11 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param title add description
+	 * @return add description
+	 * @throws SQLException add description
+	 */
 	public static int getCountOfProcessesWithTitle(String title) throws SQLException {
 		Connection connection = helper.getConnection();
 		String query = "select count(ProzesseID) from prozesse where  titel = ?";
@@ -476,6 +600,10 @@ public class MySQLHelper {
 		}
 	}
 
+	/**
+	 * @param args add description
+	 * @throws SQLException add description
+	 */
 	public static void main(String[] args) throws SQLException {
 		MySQLHelper helper = MySQLHelper.getInstance();
 		int start = 10000;
@@ -489,7 +617,8 @@ public class MySQLHelper {
 	}
 
 	private static void generateProcesses(MySQLHelper helper, int start, int end) throws SQLException {
-		String propNames = "ProzesseID, Titel, IstTemplate, erstellungsdatum, ProjekteID, MetadatenKonfigurationID,inAuswahllisteAnzeigen, sortHelperStatus";
+		String propNames = "ProzesseID, Titel, IstTemplate, erstellungsdatum, ProjekteID, MetadatenKonfigurationID, "
+				+ "inAuswahllisteAnzeigen, sortHelperStatus";
 		StringBuilder propValues = new StringBuilder();
 		Timestamp datetime = new Timestamp(new Date().getTime());
 		try (Connection connection = helper.getConnection()) {
@@ -532,8 +661,11 @@ public class MySQLHelper {
 	}
 
 	private static void generateSteps(MySQLHelper helper, int start, int end) throws SQLException {
-		String propNames = "SchritteID, Titel, Prioritaet, Reihenfolge, Bearbeitungsstatus, typAutomatisch, typAutomatischScriptpfad, ProzesseID, typScriptStep, scriptName1, homeverzeichnisNutzen, typMetadaten,"
-				+ " typBeimAnnehmenModul, typImagesLesen, typBeimAnnehmenModulUndAbschliessen, typImagesSchreiben, typBeimAbschliessenVerifizieren, typExportDMS, typImportFileUpload, typBeimAnnehmenAbschliessen, typExportRus";
+		String propNames = "SchritteID, Titel, Prioritaet, Reihenfolge, Bearbeitungsstatus, typAutomatisch, "
+				+ "typAutomatischScriptpfad, ProzesseID, typScriptStep, scriptName1, homeverzeichnisNutzen, "
+				+ "typMetadaten, typBeimAnnehmenModul, typImagesLesen, typBeimAnnehmenModulUndAbschliessen, "
+				+ "typImagesSchreiben, typBeimAbschliessenVerifizieren, typExportDMS, typImportFileUpload, "
+				+ "typBeimAnnehmenAbschliessen, typExportRus";
 
 		String userNames = "schritteID, BenutzerID";
 		StringBuilder userProps = new StringBuilder();

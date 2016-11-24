@@ -35,15 +35,16 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.helper.tasks;
+
+import de.sub.goobi.helper.Helper;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.Duration;
-
-import de.sub.goobi.helper.Helper;
 
 /**
  * The class EmptyTask is the base class for worker threads that operate
@@ -218,8 +219,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getDurationDead() returns the duration the task is dead. If
-	 * a time of death has not yet been recorded, null is returned.
+	 * The function getDurationDead() returns the duration the task is dead. If a time of death has not yet been
+	 * recorded, null is returned.
 	 *
 	 * @return the duration since the task died
 	 */
@@ -232,9 +233,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getException() provides access to the exception that
-	 * occurred if the thread died abnormally. If no exception has occurred yet
-	 * or it wasn’t properly recorded, null is returned.
+	 * The function getException() provides access to the exception that occurred if the thread died abnormally. If no
+	 * exception has occurred yet or it wasn’t properly recorded, null is returned.
 	 *
 	 * @return the exception occurred, or null if no exception occurred yet
 	 */
@@ -253,9 +253,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getStateDescription() returns a text string representing the
-	 * state of the current task as read-only property "stateDescription".
-	 *
+	 * The function getStateDescription() returns a text string representing the state of the current task as
+	 * read-only property "stateDescription".
 	 *
 	 * @return a string representing the state of the task
 	 */
@@ -283,23 +282,19 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getTaskState() returns the task state, which can be one of
-	 * the followings:
+	 * The function getTaskState() returns the task state, which can be one of the followings:
 	 *
 	 * <dl>
 	 * <dt><code>CRASHED</code></dt>
-	 * <dd>The thread has terminated abnormally. The field “exception” is
-	 * holding the exception that has occurred.</dd>
+	 * <dd>The thread has terminated abnormally. The field “exception” is holding the exception that has occurred.</dd>
 	 * <dt><code>FINISHED</code></dt>
-	 * <dd>The thread has finished its work without errors and is available for
-	 * clean-up.</dd>
+	 * <dd>The thread has finished its work without errors and is available for clean-up.</dd>
 	 * <dt><code>NEW</code></dt>
 	 * <dd>The thread has not yet been started.</dd>
 	 * <dt><code>STOPPED</code></dt>
 	 * <dd>The thread was stopped by a front end user—resulting in a call to its
 	 * {@link #interrupt(Behaviour)} method with {@link Behaviour}
-	 * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing
-	 * it.</dd>
+	 * .PREPARE_FOR_RESTART— and is able to restart after cloning and replacing it.</dd>
 	 * <dt><code>STOPPING</code></dt>
 	 * <dd>The thread has received a request to interrupt but didn’t stop yet.</dd>
 	 * <dt><code>WORKING</code></dt>
@@ -334,8 +329,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getLongMessage() returns the read-only field "longMessage"
-	 * which will be shown in a pop-up window.
+	 * The function getLongMessage() returns the read-only field "longMessage" which will be shown in a pop-up window.
 	 *
 	 * @return the stack trace of the exception, if any
 	 */
@@ -347,11 +341,9 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function interrupt() interrupts this thread and allows to set a
-	 * behaviour after interruption.
+	 * The function interrupt() interrupts this thread and allows to set a behaviour after interruption.
 	 *
-	 * @param mode
-	 *            how to behave after interruption
+	 * @param mode how to behave after interruption
 	 */
 	public void interrupt(Behaviour mode) {
 		behaviour = mode;
@@ -359,9 +351,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function isStartable() returns wether the start button shall be shown
-	 * as read-only property "startable". A thread can be started as long as it
-	 * has not yet been started.
+	 * The function isStartable() returns wether the start button shall be shown as read-only property "startable".
+	 * A thread can be started as long as it has not yet been started.
 	 *
 	 * @return whether the start button shall show
 	 */
@@ -370,9 +361,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function isStopable() returns wether the stop button shall be shown
-	 * as read-only property "stopable". A thread can be stopped if it is
-	 * working.
+	 * The function isStopable() returns wether the stop button shall be shown as read-only property "stopable".
+	 * A thread can be stopped if it is working.
 	 *
 	 * @return whether the stop button shall show
 	 */
@@ -381,9 +371,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function isDeleteable() returns whether the delete button shall be
-	 * shown as read-only property "deleteable". In our interpretation, a thread
-	 * is deleteable if it is either new or has terminated and is still lounging
+	 * The function isDeleteable() returns whether the delete button shall be shown as read-only property "deleteable".
+	 * In our interpretation, a thread is deleteable if it is either new or has terminated and is still lounging
 	 * around.
 	 *
 	 * @return whether the delete button shall show
@@ -399,9 +388,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * This is a sample implementation of run() which simulates a “long running
-	 * task” but does nothing and just fills up the percentage gauge. It isn’t
-	 * useful for anything but testing or demonstration purposes.
+	 * This is a sample implementation of run() which simulates a “long running task” but does nothing and just fills
+	 * up the percentage gauge. It isn’t useful for anything but testing or demonstration purposes.
 	 *
 	 * @see java.lang.Thread#run()
 	 */
@@ -431,14 +419,11 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The procedure setException can be used to save an exception that occurred
-	 * and show it in the front end. It will only record the first exception
-	 * (which is likely to be the source of all the misery) and it will not
-	 * record an InterruptedException if the thread has already been
-	 * interrupted.
+	 * The procedure setException can be used to save an exception that occurred and show it in the front end. It
+	 * will only record the first exception (which is likely to be the source of all the misery) and it will not
+	 * record an InterruptedException if the thread has already been interrupted.
 	 *
-	 * @param exception
-	 *            exception to save
+	 * @param exception exception to save
 	 */
 	public void setException(Throwable exception) {
 		if (this.exception == null && (!isInterrupted() || !(exception instanceof InterruptedException))) {
@@ -451,17 +436,14 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The procedure setNameDetail() may be used to set the task’s name along
-	 * with a detail that doesn’t require translation and is helpful when being
-	 * shown in the front end (such as the name of the entity the task is based
-	 * on). The name detail should be set once (in the constructor). You may
-	 * pass in null to reset the name and remove the detail.
+	 * The procedure setNameDetail() may be used to set the task’s name along with a detail that doesn’t require
+	 * translation and is helpful when being shown in the front end (such as the name of the entity the task is based
+	 * on). The name detail should be set once (in the constructor). You may pass in null to reset the name and
+	 * remove the detail.
 	 *
-	 * I.e., if your task is about creation of OCR for a process, the detail
-	 * here could be the process title.
+	 * <p>I.e., if your task is about creation of OCR for a process, the detail here could be the process title.</p>
 	 *
-	 * @param detail
-	 *            a name detail, may be null
+	 * @param detail a name detail, may be null
 	 */
 	protected void setNameDetail(String detail) {
 		StringBuilder composer = new StringBuilder(119);
@@ -474,11 +456,9 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The procedure setProgress() may be used to set the task’s progress in
-	 * percent (i.e., from 0 to 100).
+	 * The procedure setProgress() may be used to set the task’s progress in percent (i.e., from 0 to 100).
 	 *
-	 * @param progress
-	 *            the tasks progress
+	 * @param progress the tasks progress
 	 */
 	public void setProgress(int progress) {
 		assert progress < 0 || progress > 100 : "Progress out of range: " + progress;
@@ -504,30 +484,26 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The procedure setWorkDetail() may be used to set some detail information
-	 * that don’t require translation and are helpful when being shown in the
-	 * front end (such as the name of the entity that is currently being
-	 * processed by the task). The name detail should be set every time the
-	 * progress is determined. You may pass in null to remove the detail.
+	 * The procedure setWorkDetail() may be used to set some detail information that don’t require translation and are
+	 * helpful when being shown in the front end (such as the name of the entity that is currently being processed by
+	 * the task). The name detail should be set every time the  progress is determined. You may pass in null to remove
+	 * the detail.
 	 *
-	 * I.e., if your task is about creation of OCR for a process, the detail
-	 * here could be the image file being processed right now.
+	 * <p>I.e., if your task is about creation of OCR for a process, the detail here could be the image file being
+	 * processed right now.</p>
 	 *
-	 * @param detail
-	 *            a work detail, may be null
+	 * @param detail a work detail, may be null
 	 */
 	public void setWorkDetail(String detail) {
 		this.detail = detail;
 	}
 
 	/**
-	 * Causes this thread to begin execution; the Java Virtual Machine will
-	 * create a standalon thread and call the run method of this class. The
-	 * result is that two threads are running concurrently: the current thread
-	 * which returns from the call to the start method, and the other thread
-	 * which executes its run method. In addition, this method override ensures
-	 * that the thread is properly registered in the task manager and that its
-	 * uncaught exception handler has been properly set.
+	 * Causes this thread to begin execution; the Java Virtual Machine will create a standalon thread and call the run
+	 * method of this class. The result is that two threads are running concurrently: the current thread which returns
+	 * from the call to the start method, and the other thread which executes its run method. In addition, this method
+	 * override ensures that the thread is properly registered in the task manager and that its uncaught exception
+	 * handler has been properly set.
 	 *
 	 * @see java.lang.Thread#start()
 	 */

@@ -27,6 +27,14 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,13 +75,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 public class MassImportForm {
 	private static final Logger logger = Logger.getLogger(MassImportForm.class);
@@ -100,6 +101,9 @@ public class MassImportForm {
 
 	private List<Prozess> processList;
 
+	/**
+	 *
+	 */
 	public MassImportForm() {
 		usablePluginsForRecords = PluginLoader.getImportPluginsForType(ImportType.Record);
 		usablePluginsForIDs = PluginLoader.getImportPluginsForType(ImportType.ID);
@@ -107,6 +111,9 @@ public class MassImportForm {
 		usablePluginsForFolder = PluginLoader.getImportPluginsForType(ImportType.FOLDER);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String prepare() {
 		if (this.template.getContainsUnreachableSteps()) {
 			if (this.template.getSchritteList().size() == 0) {
@@ -219,6 +226,9 @@ public class MassImportForm {
 		this.selectedFilenames = selectedFilenames;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
 		if (StringUtils.isEmpty(currentPlugin)) {
@@ -433,6 +443,10 @@ public class MassImportForm {
 		return l;
 	}
 
+	/**
+	 * @param pluginId add description
+	 * @return add description
+	 */
 	public String getHotfolderPathForPlugin(int pluginId) {
 		for (GoobiHotfolder hotfolder : GoobiHotfolder.getInstances()) {
 			if (hotfolder.getTemplate() == pluginId) {
@@ -698,6 +712,9 @@ public class MassImportForm {
 		return this.usablePluginsForFiles;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getHasNextPage() {
 		java.lang.reflect.Method method;
 		try {
@@ -723,6 +740,9 @@ public class MassImportForm {
 		return false;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String nextPage() {
 		if (!testForData()) {
 			Helper.setFehlerMeldung("missingData");
@@ -742,6 +762,9 @@ public class MassImportForm {
 		return "MassImportFormPage2";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ImportProperty> getProperties() {
 
 		if (this.plugin != null) {
@@ -766,6 +789,9 @@ public class MassImportForm {
 		this.usablePluginsForFolder = usablePluginsForFolder;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String downloadDocket() {
 		logger.debug("generate docket for process list");
 		String rootpath = ConfigMain.getParameter("xsltFolder");
@@ -794,6 +820,9 @@ public class MassImportForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<? extends DocstructElement> getDocstructs() {
 		java.lang.reflect.Method method;
 		try {

@@ -27,16 +27,19 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
+	/**
+	 * @param processID add description
+	 */
 	public static void refreshProcess(int processID) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("refreshing process with id " + processID);
@@ -72,6 +75,9 @@ public class RefreshObject {
 		}
 	}
 
+	/**
+	 * @param processID add description
+	 */
 	public static void refreshProcess_GUI(int processID) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("refreshing process with id " + processID);
@@ -102,6 +108,9 @@ public class RefreshObject {
 		}
 	}
 
+	/**
+	 * @param stepID add description
+	 */
 	public static void refreshStep(int stepID) {
 		try {
 

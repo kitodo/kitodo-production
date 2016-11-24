@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
@@ -51,9 +52,8 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * Backing bean for a drop-down style select element to edit a single-select
- * metadatum renderable by JSF.
- * 
+ * Backing bean for a drop-down style select element to edit a single-select metadatum renderable by JSF.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum,
@@ -65,19 +65,14 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	private final Collection<Item> items;
 
 	/**
-	 * Constructor to create a backing bean for a drop-down select element
-	 * renderable by JSF to edit a choose-from kind of metadatum with the option
-	 * to select exactly one value.
-	 * 
-	 * @param metadataType
-	 *            metadata type editable by this drop-down list
-	 * @param binding
-	 *            metadata group whose value shall be updated if the setter on
-	 *            the backing bean is invoked, may be null
-	 * @param container
-	 *            metadata group this drop-down list is showing in
-	 * @param projectName
-	 *            project of the process owning this metadatum
+	 * Constructor to create a backing bean for a drop-down select element renderable by JSF to edit a choose-from
+	 * kind of metadatum with the option to select exactly one value.
+	 *
+	 * @param metadataType metadata type editable by this drop-down list
+	 * @param binding metadata group whose value shall be updated if the setter on the backing bean is invoked,
+	 *                   may be null
+	 * @param container metadata group this drop-down list is showing in
+	 * @param projectName project of the process owning this metadatum
 	 */
 	public RenderableDropDownList(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
 			String projectName) {
@@ -91,11 +86,10 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Adds the data passed from the metadata element as content to the input.
-	 * This will overwrite any previously set value.
-	 * 
-	 * @param data
-	 *            data to add
+	 * Adds the data passed from the metadata element as content to the input. This will overwrite any previously
+	 * set value.
+	 *
+	 * @param data data to add
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
 	 */
 	@Override
@@ -105,7 +99,7 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 
 	/**
 	 * Returns the available items for the the user to choose from.
-	 * 
+	 *
 	 * @return the items to choose from
 	 */
 	public Collection<SelectItem> getItems() {
@@ -117,13 +111,11 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Returns the identifier of the item currently selected in this drop-down
-	 * list. If multiple items are internally marked as selected (which is
-	 * possible if the metadata type under edit was bound to a multi-select list
-	 * box during creation and is later bound to a drop-down list box for
-	 * editing) the first of them will be selected. If no item has been selected
-	 * yet the first available item will be selected.
-	 * 
+	 * Returns the identifier of the item currently selected in this drop-down list. If multiple items are internally
+	 * marked as selected (which is  possible if the metadata type under edit was bound to a multi-select list box
+	 * during creation and is later bound to a drop-down list box for editing) the first of them will be selected. If
+	 * no item has been selected yet the first available item will be selected.
+	 *
 	 * @return the identifier of the selected item
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
@@ -138,13 +130,11 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Uses the passed-in identifier of the item to be selected to find the
-	 * first items in the item list in order to mark it as selected and to mark
-	 * all other items in the item list as not selected.
-	 * 
-	 * @param value
-	 *            identifier of the item to be marked as selected
-	 * 
+	 * Uses the passed-in identifier of the item to be selected to find the first items in the item list in order to
+	 * mark it as selected and to mark all other items in the item list as not selected.
+	 *
+	 * @param value identifier of the item to be marked as selected
+	 *
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
@@ -162,9 +152,8 @@ public class RenderableDropDownList extends RenderableMetadatum implements Rende
 	}
 
 	/**
-	 * Returns a metadata element that contains the value selected in the
-	 * drop-down list.
-	 * 
+	 * Returns a metadata element that contains the value selected in the drop-down list.
+	 *
 	 * @return the selected value as metadata element
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
 	 */

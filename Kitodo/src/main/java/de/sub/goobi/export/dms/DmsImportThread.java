@@ -27,15 +27,15 @@ package de.sub.goobi.export.dms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.BufferedReader;
 import java.io.File;
 
-import org.goobi.io.SafeFile;
-
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
+import org.goobi.io.SafeFile;
 
 public class DmsImportThread extends Thread {
 	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
@@ -50,9 +50,16 @@ public class DmsImportThread extends Thread {
 
 	public boolean stop = false;
 
+	/**
+	 * @param inProzess add description
+	 * @param inAts add description
+	 */
 	public DmsImportThread(Prozess inProzess, String inAts) {
 		setDaemon(true);
-		/* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber in neuem FehlerOrdner */
+		/*
+		* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber in neuem
+		* FehlerOrdner
+		*/
 		if (inProzess.getProjekt().getDmsImportErrorPath() == null
 				|| inProzess.getProjekt().getDmsImportErrorPath().length() == 0) {
 			this.fileError = new SafeFile(inProzess.getProjekt().getDmsImportRootPath(), inAts + ".log");
@@ -83,7 +90,8 @@ public class DmsImportThread extends Thread {
 			try {
 				Thread.sleep(550);
 				if (!this.fileXml.exists() && (this.fileError.exists() || this.fileSuccess.exists())) {
-					if (this.fileError.exists() && this.fileError.getAbsoluteFile().lastModified() > this.timeFileError) {
+					if (this.fileError.exists()
+							&& this.fileError.getAbsoluteFile().lastModified() > this.timeFileError) {
 						this.stop = true;
 						/* die Logdatei mit der Fehlerbeschreibung einlesen */
 						StringBuffer myBuf = new StringBuffer();

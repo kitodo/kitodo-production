@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten.copier;
 
 import java.util.Arrays;
@@ -45,19 +46,17 @@ import java.util.Map;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * The abstract class DataCopyrule defines method signatures to implement a rule
- * which may later be used to modify metadata depending on various conditions,
- * and provides a factory method to create the matching metadata copy rule
+ * The abstract class DataCopyrule defines method signatures to implement a rule which may later be used to modify
+ * metadata depending on various conditions, and provides a factory method to create the matching metadata copy rule
  * implementation from a given command string.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class DataCopyrule {
 
 	/**
-	 * The final Map AVAILABLE_RULES maps the operators of the available
-	 * metadata copyrules to their respective classes. If more metadata
-	 * copyrules are to be added to this implementation, they will have to be
+	 * The final Map AVAILABLE_RULES maps the operators of the available metadata copyrules to their respective
+	 * classes. If more metadata copyrules are to be added to this implementation, they will have to be
 	 * listed named here.
 	 */
 	private static final Map<String, Class<? extends DataCopyrule>> AVAILABLE_RULES = new HashMap<String, Class<? extends DataCopyrule>>(
@@ -71,17 +70,12 @@ public abstract class DataCopyrule {
 	};
 
 	/**
-	 * Factory method to create a class implementing the metadata copy rule
-	 * referenced by a given command string
-	 * 
-	 * @param command
-	 *            A space-separated string constisting of subject (aka.
-	 *            patiens), operator (aka. agens) and (optional) objects
-	 *            (depending on what objects the operator requires).
+	 * Factory method to create a class implementing the metadata copy rule referenced by a given command string
+	 *
+	 * @param command A space-separated string constisting of subject (aka. patiens), operator (aka. agens) and
+	 *                   (optional) objects (depending on what objects the operator requires).
 	 * @return a class implementing the metadata copy rule referenced
-	 * @throws ConfigurationException
-	 *             if the operator cannot be resolved or the number of arguments
-	 *             doesn’t match
+	 * @throws ConfigurationException if the operator cannot be resolved or the number of arguments doesn’t match
 	 */
 	public static DataCopyrule createFor(String command) throws ConfigurationException {
 		List<String> arguments = Arrays.asList(command.split("\\s+"));
@@ -119,48 +113,40 @@ public abstract class DataCopyrule {
 
 	/**
 	 * When called, the rule must be applied to the given fileformat.
-	 * 
-	 * @param data
-	 *            data to apply yourself on
+	 *
+	 * @param data data to apply yourself on
 	 */
 	protected abstract void apply(CopierData data);
 
 	/**
-	 * The function getMinObject must return the maximal number of objects
-	 * required by the rule to work as expected. If it returns 0, the
-	 * setObjects() method will not be called.
-	 * 
+	 * The function getMinObject must return the maximal number of objects required by the rule to work as expected.
+	 * If it returns 0, the setObjects() method will not be called.
+	 *
 	 * @return the maximal number of objects required by the rule
 	 */
 	protected abstract int getMaxObjects();
 
 	/**
-	 * The function getMinObject must return the minimal number of objects
-	 * required by the rule to work as expected.
-	 * 
+	 * The function getMinObject must return the minimal number of objects required by the rule to work as expected.
+	 *
 	 * @return the minimal number of objects required by the rule
 	 */
 	protected abstract int getMinObjects();
 
 	/**
-	 * The method setObjects() is called to pass the rule its objects. The list
-	 * passed is reliable to the restrictions defined by getMinObjects() and
-	 * getMaxObjects().
-	 * 
-	 * @param objects
-	 *            a list of objects to be used by the rule
-	 * @throws ConfigurationException
-	 *             may be thrown if one of the objects cannot be processed
+	 * The method setObjects() is called to pass the rule its objects. The list passed is reliable to the restrictions
+	 * defined by getMinObjects() and getMaxObjects().
+	 *
+	 * @param objects a list of objects to be used by the rule
+	 * @throws ConfigurationException may be thrown if one of the objects cannot be processed
 	 */
 	protected abstract void setObjects(List<String> objects) throws ConfigurationException;
 
 	/**
 	 * The method setSubject() is called to pass the rule its subject.
-	 * 
-	 * @param subject
-	 *            a subject to be used by the rule
-	 * @throws ConfigurationException
-	 *             may be thrown if the subject cannot be processed
+	 *
+	 * @param subject a subject to be used by the rule
+	 * @throws ConfigurationException may be thrown if the subject cannot be processed
 	 */
 	protected abstract void setSubject(String subject) throws ConfigurationException;
 }

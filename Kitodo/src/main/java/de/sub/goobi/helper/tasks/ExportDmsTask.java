@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.beans.Prozess;
@@ -42,11 +43,10 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.Helper;
 
 /**
- * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}
- * for a process and provides the ability to run the export in the background
- * this way. This is especially valuable if the export has a big load of images
+ * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms} for a process and provides the ability
+ * to run the export in the background this way. This is especially valuable if the export has a big load of images
  * to copy.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ExportDmsTask extends EmptyTask {
@@ -57,13 +57,10 @@ public class ExportDmsTask extends EmptyTask {
 
 	/**
 	 * ExportDmsTask constructor. Creates a ExportDmsTask.
-	 * 
-	 * @param exportDms
-	 *            ExportDMS configuration
-	 * @param process
-	 *            the process to export
-	 * @param userHome
-	 *            home directory of the user who started the export
+	 *
+	 * @param exportDms ExportDMS configuration
+	 * @param process the process to export
+	 * @param userHome home directory of the user who started the export
 	 */
 	public ExportDmsTask(ExportDms exportDms, Prozess process, String userHome) {
 		super(process.getTitel());
@@ -73,11 +70,9 @@ public class ExportDmsTask extends EmptyTask {
 	}
 
 	/**
-	 * Clone constructor. Provides the ability to restart an export that was
-	 * previously interrupted by the user.
-	 * 
-	 * @param source
-	 *            terminated thread
+	 * Clone constructor. Provides the ability to restart an export that was previously interrupted by the user.
+	 *
+	 * @param source terminated thread
 	 */
 	private ExportDmsTask(ExportDmsTask source) {
 		super(source);
@@ -88,7 +83,7 @@ public class ExportDmsTask extends EmptyTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -97,10 +92,9 @@ public class ExportDmsTask extends EmptyTask {
 	}
 
 	/**
-	 * If the task is started, it will execute this run() method which will
-	 * start the export on the ExportDms. This task instance is passed in
-	 * addition so that the ExportDms can update the task’s state.
-	 * 
+	 * If the task is started, it will execute this run() method which will start the export on the ExportDms. This
+	 * task instance is passed in addition so that the ExportDms can update the task’s state.
+	 *
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#run()
 	 */
 	@Override
@@ -113,10 +107,9 @@ public class ExportDmsTask extends EmptyTask {
 	}
 
 	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 * 
+	 * Calls the clone constructor to create a not yet executed instance of this thread object. This is necessary
+	 * for threads that have terminated in order to render possible to restart them.
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */

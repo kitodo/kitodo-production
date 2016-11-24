@@ -27,6 +27,14 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,23 +53,20 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierung {
 	List<DocStruct> docStructsOhneSeiten;
 	Prozess myProzess;
 	boolean autoSave = false;
 
+	/**
+	 * @param inProzess add description
+	 * @return add description
+	 */
 	public boolean validate(Prozess inProzess) {
 		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
 		/*
-		 * -------------------------------- Fileformat einlesen --------------------------------
+		 * Fileformat einlesen
 		 */
 		Fileformat gdzfile;
 		try {
@@ -73,6 +78,12 @@ public class MetadatenVerifizierung {
 		return validate(gdzfile, myPrefs, inProzess);
 	}
 
+	/**
+	 * @param gdzfile add description
+	 * @param inPrefs add description
+	 * @param inProzess add description
+	 * @return add description
+	 */
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, Prozess inProzess) {
 		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 		this.myProzess = inProzess;
@@ -176,7 +187,7 @@ public class MetadatenVerifizierung {
 		}
 
 		/*
-		 * -------------------------------- auf mandatory Values der Metadaten prüfen --------------------------------
+		 * auf mandatory Values der Metadaten prüfen
 		 */
 		List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
 				metadataLanguage);
@@ -190,8 +201,7 @@ public class MetadatenVerifizierung {
 		}
 
 		/*
-		 * -------------------------------- auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
-		 * --------------------------------
+		 * auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
 		 */
 		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(),
 				new ArrayList<String>(), inPrefs, metadataLanguage);
@@ -233,7 +243,7 @@ public class MetadatenVerifizierung {
 		}
 
 		/*
-		 * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
+		 * Metadaten ggf. zum Schluss speichern
 		 */
 		try {
 			if (this.autoSave) {
@@ -351,12 +361,12 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
+	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten
 	 */
 	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList,
 			Prefs inPrefs, String language) {
 		/*
-		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
+		 * Konfiguration öffnen und die Validierungsdetails auslesen
 		 */
 		ConfigProjects cp = null;
 		try {
@@ -383,7 +393,8 @@ public class MetadatenVerifizierung {
 						prop_metadatatype);
 			}
 			/*
-			 * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden) übernehmen
+			 * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden)
+			 * übernehmen
 			 */
 			if (prop_doctype != null && prop_doctype.equals("firstchild")) {
 				if (myStruct.getAllChildren() != null && myStruct.getAllChildren().size() > 0) {
@@ -408,8 +419,8 @@ public class MetadatenVerifizierung {
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
 							/*
-							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht existieren, Exception abfangen und
-							 * nicht weiter drauf eingehen
+							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht
+							 * existieren, Exception abfangen und nicht weiter drauf eingehen
 							 */
 						}
 					}
@@ -425,15 +436,15 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
-	 * vorhanden ================================================================
+	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der jeweiligen
+	 * Stelle erlaubt und noch nicht vorhanden
 	 */
 	private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts,
 			DocStruct myStruct, MetadataType mdt, String language) {
 
 		/*
-		 * -------------------------------- existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
-		 * in das neue Element schreiben --------------------------------
+		 * existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
+		 * in das neue Element schreiben
 		 */
 		List<? extends Metadata> createMetadaten = myStruct.getAllMetadataByType(mdt);
 		if (createMetadaten == null || createMetadaten.size() == 0) {
@@ -483,7 +494,7 @@ public class MetadatenVerifizierung {
 		}
 
 		/*
-		 * -------------------------------- alle Kinder durchlaufen --------------------------------
+		 * alle Kinder durchlaufen
 		 */
 		List<DocStruct> children = myStruct.getAllChildren();
 		if (children != null && children.size() > 0) {
@@ -494,7 +505,7 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * Metadatum soll mit bestimmten String beginnen oder enden ================================================================
+	 * Metadatum soll mit bestimmten String beginnen oder enden
 	 */
 	private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith,
 			DocStruct myStruct, MetadataType mdt, String language) {
@@ -547,7 +558,7 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * automatisch speichern lassen, wenn Änderungen nötig waren ================================================================
+	 * automatisch speichern lassen, wenn Änderungen nötig waren
 	 */
 	public boolean isAutoSave() {
 		return this.autoSave;

@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten.copier;
 
 import java.util.List;
@@ -42,9 +43,9 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * Data copy rule that either overwrites the metadatum described by the selector
- * on the left hand side or creates it anew, if it isn’t yet present.
- * 
+ * Data copy rule that either overwrites the metadatum described by the selector on the left hand side or creates it
+ * anew, if it isn’t yet present.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class OverwriteOrCreateRule extends DataCopyrule {
@@ -66,9 +67,8 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 
 	/**
 	 * Applies the rule to the given data object
-	 * 
-	 * @param data
-	 *            data to apply the rule on
+	 *
+	 * @param data data to apply the rule on
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
 	 */
 	@Override
@@ -81,9 +81,8 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 	}
 
 	/**
-	 * Returns the minimal number of objects required by the rule to work as
-	 * expected, that is 1.
-	 * 
+	 * Returns the minimal number of objects required by the rule to work as  expected, that is 1.
+	 *
 	 * @return always 1
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
 	 */
@@ -93,9 +92,8 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 	}
 
 	/**
-	 * Returns the maximal number of objects supported by the rule to work as
-	 * expected, that is 1.
-	 * 
+	 * Returns the maximal number of objects supported by the rule to work as expected, that is 1.
+	 *
 	 * @return always 1
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
 	 */
@@ -106,7 +104,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 
 	/**
 	 * Saves the source object path.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
 	 */
 	@Override
@@ -116,7 +114,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 
 	/**
 	 * Saves the destination object path.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
 	 */
 	@Override
@@ -126,7 +124,7 @@ public class OverwriteOrCreateRule extends DataCopyrule {
 
 	/**
 	 * Returns a string that textually represents this copy rule.
-	 * 
+	 *
 	 * @return a string representation of this copy rule
 	 * @see java.lang.Object#toString()
 	 */

@@ -27,13 +27,13 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.property.IGoobiProperty;
+import de.sub.goobi.helper.enums.PropertyType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.helper.enums.PropertyType;
 
 public class Prozesseigenschaft implements Serializable, IGoobiProperty, Comparable<Prozesseigenschaft> {
 	private static final long serialVersionUID = -2356566712752716107L;
@@ -48,6 +48,9 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	private Date creationDate;
 	private Integer container;
 
+	/**
+	 *
+	 */
 	public Prozesseigenschaft() {
 		this.istObligatorisch = false;
 		this.datentyp = PropertyType.String.getId();
@@ -120,10 +123,8 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	}
 
 	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
+	 * getter for datentyp set to private for hibernate for use in program use getType instead
+	 *
 	 * @return datentyp as integer
 	 */
 	@SuppressWarnings("unused")
@@ -132,10 +133,10 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
-	 * 
-	 * @param datentyp
-	 *            as Integer
+	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType
+	 * instead
+	 *
+	 * @param datentyp as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setDatentyp(Integer datentyp) {
@@ -144,9 +145,8 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	@Override
 	public void setType(PropertyType inType) {
@@ -155,7 +155,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	@Override
@@ -166,6 +166,9 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 		return PropertyType.getById(this.datentyp);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		if (this.valueList == null) {
 			this.valueList = new ArrayList<String>();

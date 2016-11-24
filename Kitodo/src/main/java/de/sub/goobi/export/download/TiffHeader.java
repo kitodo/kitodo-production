@@ -27,6 +27,10 @@ package de.sub.goobi.export.download;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -36,13 +40,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-
 /**
  * Die Klasse TiffHeader dient zur Generierung einer Tiffheaderdatei *.conf
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 12.04.2005
  */
@@ -64,7 +64,8 @@ public class TiffHeader {
 	private String tifHeader_documentname = "";
 
 	/**
-	 * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks bzw. der Scanvorlage
+	 * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks
+	 * bzw. der Scanvorlage
 	 */
 	public TiffHeader(Prozess inProzess) {
 		if (inProzess.getWerkstueckeSize() > 0) {
@@ -104,11 +105,11 @@ public class TiffHeader {
 
 	/**
 	 *  Tiff-Header-Daten als ein grosser String
-	 * 
-	 * @throws NamingException
-	 * @throws SQLException
-	 * @throws NamingException
-	 * @throws SQLException
+	 *
+	 * @throws NamingException add description
+	 * @throws SQLException add description
+	 * @throws NamingException add description
+	 * @throws SQLException add description
 	 */
 	public String getTiffAlles() {
 		String lineBreak = "\r\n";
@@ -125,6 +126,10 @@ public class TiffHeader {
 		return strBuf.toString();
 	}
 
+	/**
+	 *
+	 * @throws IOException add description
+	 */
 	public void ExportStart() throws IOException {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
@@ -136,7 +141,7 @@ public class TiffHeader {
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 			ServletOutputStream out = response.getOutputStream();
 			/*
-			 * -------------------------------- die txt-Datei direkt in den Stream schreiben lassen --------------------------------
+			 * die txt-Datei direkt in den Stream schreiben lassen
 			 */
 			out.print(getTiffAlles());
 

@@ -35,7 +35,11 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
+
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,21 +56,18 @@ import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 /**
- * Specialised RenderableMetadataGroup with fixed fields to edit the internal
- * metadata group type &ldquo;person&rdquo;. A person is a fixed data structure
- * in Goobi with the fields normdata record, first name and last name.
- * 
+ * Specialised RenderableMetadataGroup with fixed fields to edit the internal metadata group type &ldquo;person&rdquo;.
+ * A person is a fixed data structure in Goobi with the fields normdata record, first name and last name.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderablePersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadatum {
 
 	/**
 	 * Holds the fields to show in a RenderablePersonMetadataGroup.
-	 * 
+	 *
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	enum Field {
@@ -77,13 +78,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 		/**
 		 * Field constructor. Creates a Field enum constant.
-		 * 
-		 * @param resourceKey
-		 *            key string to look up the translated labels for the field
-		 *            in the messages file
-		 * @param isIdentifier
-		 *            boolean property telling whether or not the given field is
-		 *            an identifier
+		 *
+		 * @param resourceKey key string to look up the translated labels for the field in the messages file
+		 * @param isIdentifier boolean property telling whether or not the given field is an identifier
 		 */
 		Field(String resourceKey, boolean isIdentifier) {
 			this.isIdentifier = isIdentifier;
@@ -91,9 +88,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 		}
 
 		/**
-		 * Returns a key string to look up the translated labels for the field
-		 * in the messages file.
-		 * 
+		 * Returns a key string to look up the translated labels for the field in the messages file.
+		 *
 		 * @return key string to look up the labels for the field
 		 */
 		private String getResourceKey() {
@@ -102,7 +98,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 		/**
 		 * Returns whether or not the given field is an identifier.
-		 * 
+		 *
 		 * @return whether the given field is an identifier
 		 */
 		private boolean isIdentifier() {
@@ -117,19 +113,12 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	/**
 	 * Creates a RenderablePersonMetadataGroup.
-	 * 
-	 * @param metadataType
-	 *            metadata type editable by this metadata group
-	 * @param binding
-	 *            metadata group this group is showing in
-	 * @param container
-	 *            project of the process owning this metadata group
-	 * @param projectName
-	 *            whether the user is about to create the metadata group anew or
-	 *            edit a previously existing one
-	 * @throws ConfigurationException
-	 *             if one of the sub-fields was configured to display a
-	 *             multi-select metadatum
+	 *
+	 * @param metadataType metadata type editable by this metadata group
+	 * @param binding  metadata group this group is showing in
+	 * @param container  project of the process owning this metadata group
+	 * @param projectName whether the user is about to create the metadata group anew or edit a previously existing one
+	 * @throws ConfigurationException if one of the sub-fields was configured to display a multi-select metadatum
 	 */
 	public RenderablePersonMetadataGroup(MetadataType metadataType, MetadataGroup binding,
 			RenderableMetadataGroup container, String projectName) throws ConfigurationException {
@@ -144,12 +133,10 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Creates a fictitious MetadataGroupType for the given metadata type,
-	 * assuming it is a person. The method is called from the constructor and
-	 * thus should not be overloaded.
-	 * 
-	 * @param type
-	 *            a metadata type which represents a person
+	 * Creates a fictitious MetadataGroupType for the given metadata type, assuming it is a person. The method is
+	 * called from the constructor and thus should not be overloaded.
+	 *
+	 * @param type a metadata type which represents a person
 	 * @return a fictitious MetadataGroupType with the person’s subfields
 	 */
 	private static final MetadataGroupType getGroupTypeFor(MetadataType type) {
@@ -166,14 +153,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Creates a fictitious MetadataType for the given field of the given metadata
-	 * type, assuming that the latter is a person. The method is called from the
-	 * constructor and thus should not be overloaded.
-	 * 
-	 * @param type
-	 *            a metadata type which represents a person
-	 * @param field
-	 *            a field of the person record
+	 * Creates a fictitious MetadataType for the given field of the given metadata type, assuming that the latter is
+	 * a person. The method is called from the constructor and thus should not be overloaded.
+	 *
+	 * @param type a metadata type which represents a person
+	 * @param field a field of the person record
 	 * @return a fictitious MetadataGroupType with the person’s subfields
 	 */
 	private static final MetadataType getMetadataTypeFor(MetadataType type, Field field) {
@@ -189,12 +173,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Checks whether the configuration is consistent, thows a
-	 * ConfigurationException otherwise.
-	 * 
-	 * @throws ConfigurationException
-	 *             if one of the sub-fields was configured to display a
-	 *             multi-select metadatum
+	 * Checks whether the configuration is consistent, throws a ConfigurationException otherwise.
+	 *
+	 * @throws ConfigurationException if one of the sub-fields was configured to display a multi-select metadatum
 	 */
 	private final void checkConfiguration() throws ConfigurationException {
 		for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
@@ -207,11 +188,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 	}
 
 	/**
-	 * Add the data passed from the metadata element as content to the person
-	 * record.
-	 * 
-	 * @param data
-	 *            data to add
+	 * Add the data passed from the metadata element as content to the person record.
+	 *
+	 * @param data data to add
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
 	 */
 	@Override
@@ -238,9 +217,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	/**
 	 * Returns a specific sub-field of the person record.
-	 * 
-	 * @param field
-	 *            field to return
+	 *
+	 * @param field field to return
 	 * @return the field selected
 	 */
 	private SingleValueRenderableMetadatum getField(Field field) {
@@ -250,9 +228,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	/**
 	 * Returns the field type from the fictitious metadata type
-	 * 
-	 * @param fictitiousType
-	 *            fictitious metadata type
+	 *
+	 * @param fictitiousType fictitious metadata type
 	 * @return the field to be edited
 	 */
 	static Field getPersonField(String fictitiousType) {
@@ -265,9 +242,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	/**
 	 * Returns the person metadata type name from the fictitious metadata type
-	 * 
-	 * @param fictitiousType
-	 *            fictitious metadata type
+	 *
+	 * @param fictitiousType fictitious metadata type
 	 * @return the person to be edited
 	 */
 	static String getPersonType(String fictitiousType) {
@@ -280,7 +256,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
 
 	/**
 	 * Returns the value of this person as metadata element
-	 * 
+	 *
 	 * @return a list with one person element with the value of this component
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
 	 */

@@ -37,7 +37,7 @@ public class MD5 {
 
 	/**
 	 * <u>Konstruktor mit &Uuml;bergabe der zu verifizierenden Zeichenkette</u>
-	 * @param text
+	 * @param text add description
 	 */
 	public MD5(String text) {
 		this.text = text;
@@ -57,7 +57,7 @@ public class MD5 {
 
 	/**
 	 * <u>Zur&uuml;ckgabe des MD5-Hashes</u>
-	 * @param text
+	 * @param text add description
 	 * @return MD5 hash string
 	 */
 	public String getMD5(String text) {

@@ -27,6 +27,15 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -36,15 +45,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.ldap.Ldap;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
 
 public class LoginForm {
 	private String login;
@@ -56,6 +56,9 @@ public class LoginForm {
 	private String passwortAendernNeu1;
 	private String passwortAendernNeu2;
 
+	/**
+	 * @return add description
+	 */
 	public String Ausloggen() {
 		if (this.myBenutzer != null) {
 			new MetadatenSperrung().alleBenutzerSperrungenAufheben(this.myBenutzer.getId());
@@ -71,6 +74,9 @@ public class LoginForm {
 		return "newMain";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Einloggen() {
 		AlteBilderAufraeumen();
 		this.myBenutzer = null;
@@ -89,7 +95,8 @@ public class LoginForm {
 			if (treffer != null && treffer.size() > 0) {
 				/* Login vorhanden, nun passwort prüfen */
 				Benutzer b = treffer.get(0);
-				/* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde, jetzt Meldung anzeigen */
+				/* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde, jetzt Meldung
+				anzeigen */
 				if (!b.isIstAktiv()) {
 					Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
 					return "";
@@ -126,6 +133,9 @@ public class LoginForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String NochmalEinloggen() {
 		SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
 		HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -136,6 +146,9 @@ public class LoginForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String EigeneAlteSessionsAufraeumen() {
 		SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
 		HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -147,6 +160,9 @@ public class LoginForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String EinloggenAls() {
 		if (getMaximaleBerechtigung() != 1) {
 			return "newMain";
@@ -256,6 +272,9 @@ public class LoginForm {
 		return this.login;
 	}
 
+	/**
+	 * @param login add description
+	 */
 	public void setLogin(String login) {
 		if (this.login != null && !this.login.equals(login)) {
 			this.schonEingeloggt = false;
@@ -279,6 +298,9 @@ public class LoginForm {
 		this.myBenutzer = myClass;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getMaximaleBerechtigung() {
 		int rueckgabe = 0;
 		if (this.myBenutzer != null) {
@@ -321,21 +343,20 @@ public class LoginForm {
 	}
 
 	/**
-	 * The function getUserHomeDir() returns the home directory of the currently
-	 * logged in user, if any, or the empty string otherwise.
-	 * 
+	 * The function getUserHomeDir() returns the home directory of the currently logged in user, if any, or the empty
+	 * string otherwise.
+	 *
 	 * @return the home directory of the current user
-	 * @throws InterruptedException
-	 *             If the thread running the script is interrupted by another
-	 *             thread while it is waiting, then the wait is ended and an
-	 *             InterruptedException is thrown.
+	 * @throws InterruptedException If the thread running the script is interrupted by another thread while it is
+	 * 								waiting, then the wait is ended and an InterruptedException is thrown.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
 		String result = "";
 		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (loginForm != null)
+		if (loginForm != null) {
 			result = loginForm.getMyBenutzer().getHomeDir();
+		}
 		return result;
 	}
 

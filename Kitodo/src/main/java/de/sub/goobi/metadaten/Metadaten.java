@@ -28,7 +28,19 @@ package de.sub.goobi.metadaten;
  * exception statement from your version.
  */
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FileUtils;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.HelperComparator;
+import de.sub.goobi.helper.Transliteration;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.XmlArtikelZaehlen;
+import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.ProzessDAO;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -46,9 +58,11 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
+
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.io.SafeFile;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
@@ -72,23 +86,11 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.ProzessDAO;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
- * 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
+ * der Schrittdetails
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
  */
@@ -192,7 +194,7 @@ public class Metadaten {
 
 	/**
 	 * die Anzeige der Details ändern (z.B. nur die Metadaten anzeigen, oder nur die Paginierungssequenzen)
-	 * 
+	 *
 	 * @return Navigationsanweisung "null" als String (also gleiche Seite reloaden)
 	 */
 	public String AnsichtAendern() {
@@ -203,6 +205,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Hinzufuegen() {
 		this.modusHinzufuegen = true;
 		Modes.setBindState(BindState.create);
@@ -213,6 +218,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String HinzufuegenPerson() {
 		this.modusHinzufuegenPerson = true;
 		this.tempPersonNachname = "";
@@ -224,6 +232,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Abbrechen() {
 		this.modusHinzufuegen = false;
 		this.modusHinzufuegenPerson = false;
@@ -235,6 +246,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Reload() {
 		if (!SperrungAktualisieren()) {
 			return "SperrungAbgelaufen";
@@ -247,6 +261,9 @@ public class Metadaten {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Kopieren() {
 		Metadata md;
 		try {
@@ -264,6 +281,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String KopierenPerson() {
 		Person per;
 		try {
@@ -285,6 +305,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String ChangeCurrentDocstructType() {
 
 		if (this.myDocStruct != null && this.tempWert != null) {
@@ -316,6 +339,9 @@ public class Metadaten {
 		return "Metadaten3links";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		try {
 			Metadata md = new Metadata(this.myPrefs.getMetadataTypeByName(this.tempTyp));
@@ -350,6 +376,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String loadRightFrame() {
 		this.modusHinzufuegen = false;
 		this.modusHinzufuegenPerson = false;
@@ -357,6 +386,9 @@ public class Metadaten {
 		return "Metadaten2rechts";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String SpeichernPerson() {
 		try {
 			Person per = new Person(this.myPrefs.getMetadataTypeByName(this.tempPersonRolle));
@@ -383,18 +415,15 @@ public class Metadaten {
 	}
 
 	/**
-	 * The function parseAuthorityFileArgs() parses a valueURI (i.e.
-	 * “http://d-nb.info/gnd/117034592”) and returns the three arguments
-	 * authority, authorityURI and valueURI required to call
-	 * {@link ugh.dl.Metadata#setAutorityFile(String, String, String)}. The
-	 * authorityURI may end in # or / otherwise. The authority’s name id must be
-	 * configured in the main configuration file like referencing the
+	 * The function parseAuthorityFileArgs() parses a valueURI (i.e.  “http://d-nb.info/gnd/117034592”) and returns
+	 * the three arguments authority, authorityURI and valueURI required to call
+	 * {@link ugh.dl.Metadata#setAutorityFile(String, String, String)}. The authorityURI may end in # or / otherwise.
+	 * The authority’s name id must be configured in the main configuration file like referencing the
 	 * authorityURI (remember to escape colons):
-	 * 
+	 *
 	 * <code>authority.http\://d-nb.info/gnd/.id=gnd</code>
-	 * 
-	 * @param an
-	 *            URI in an authority file
+	 *
+	 * @param valueURI an URI in an authority file
 	 * @return a String[] with authority, authorityURI and valueURI
 	 */
 	static String[] parseAuthorityFileArgs(String valueURI) {
@@ -417,6 +446,9 @@ public class Metadaten {
 		return new String[] {authority, authorityURI, valueURI };
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		this.myDocStruct.removeMetadata(this.curMetadatum.getMd());
 		MetadatenalsBeanSpeichern(this.myDocStruct);
@@ -426,6 +458,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String LoeschenPerson() {
 		this.myDocStruct.removePerson(this.curPerson.getP());
 		MetadatenalsBeanSpeichern(this.myDocStruct);
@@ -436,12 +471,15 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Rollen zurückgeben ================================================================
+	 * die noch erlaubten Rollen zurückgeben
 	 */
 	public ArrayList<SelectItem> getAddableRollen() {
 		return this.metahelper.getAddablePersonRoles(this.myDocStruct, "");
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getSizeOfRoles() {
 		try {
 			return getAddableRollen().size();
@@ -454,6 +492,9 @@ public class Metadaten {
 		// do nothing, needed for jsp only
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getSizeOfMetadata() {
 		try {
 			return getAddableMetadataTypes().size();
@@ -467,12 +508,12 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Metadaten zurückgeben ================================================================
+	 * die noch erlaubten Metadaten zurückgeben
 	 */
 	public ArrayList<SelectItem> getAddableMetadataTypes() {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
 		/*
-		 * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal alle addierbaren Metadatentypen ermitteln
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 		if (types == null) {
@@ -480,7 +521,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
+		 * alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
 		 */
 		for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
 			if (mdt.getIsPerson()) {
@@ -489,7 +530,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren --------------------------------
+		 * die Metadatentypen sortieren
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
@@ -521,11 +562,11 @@ public class Metadaten {
 	}
 
 	/**
-	 * die MetadatenTypen zurückgeben ================================================================
+	 * die MetadatenTypen zurückgeben
 	 */
 	public SelectItem[] getMetadatenTypen() {
 		/*
-		 * -------------------------------- zuerst mal die addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal die addierbaren Metadatentypen ermitteln
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 
@@ -534,20 +575,20 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren --------------------------------
+		 * die Metadatentypen sortieren
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
 		Collections.sort(types, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
+		 * nun ein Array mit der richtigen Größe anlegen
 		 */
 		int zaehler = types.size();
 		SelectItem myTypen[] = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
+		 * und anschliessend alle Elemente in das Array packen
 		 */
 		zaehler = 0;
 		for (MetadataType mdt : types) {
@@ -558,7 +599,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- alle Typen, die einen Unterstrich haben nochmal rausschmeissen --------------------------------
+		 * alle Typen, die einen Unterstrich haben nochmal rausschmeissen
 		 */
 		SelectItem myTypenOhneUnterstrich[] = new SelectItem[zaehler];
 		for (int i = 0; i < zaehler; i++) {
@@ -568,13 +609,13 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Metadaten lesen und schreiben
-	 * ## ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Metadaten lesen und schreiben
+	 * ## #########################################################################################################
 	 */
 
 	/**
 	 * Metadaten Einlesen
-	 * 
 	 */
 
 	public String XMLlesen() {
@@ -651,14 +692,14 @@ public class Metadaten {
 
 	/**
 	 * Metadaten Einlesen
-	 * 
-	 * @throws ReadException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws PreferencesException ============================================================ == ==
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
+	 *
+	 * @throws ReadException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws PreferencesException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws WriteException add description
 	 */
 
 	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException,
@@ -677,7 +718,7 @@ public class Metadaten {
 		readAllTifFolders();
 
 		/*
-		 * -------------------------------- Dokument einlesen --------------------------------
+		 * Dokument einlesen
 		 */
 		this.gdzfile = this.myProzess.readMetadataFile();
 		this.mydocument = this.gdzfile.getDigitalDocument();
@@ -819,14 +860,13 @@ public class Metadaten {
 
 	/**
 	 * Metadaten Schreiben
-	 * 
-	 * @throws InterruptedException
-	 * @throws IOException
-	 *             ============================================================ == ==
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
-	 * @throws PreferencesException
+	 *
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
 	 */
 	public String XMLschreiben() {
 
@@ -842,6 +882,9 @@ public class Metadaten {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean isCheckForRepresentative() {
 		MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
 		if (mdt != null) {
@@ -852,8 +895,8 @@ public class Metadaten {
 
 	/**
 	 * vom aktuellen Strukturelement alle Metadaten einlesen
-	 * 
-	 * @param inStrukturelement ============================================================== ==
+	 *
+	 * @param inStrukturelement add description
 	 */
 
 	private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
@@ -862,7 +905,7 @@ public class Metadaten {
 		LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
 
 		/*
-		 * -------------------------------- alle Metadaten und die DefaultDisplay-Werte anzeigen --------------------------------
+		 * alle Metadaten und die DefaultDisplay-Werte anzeigen
 		 */
 		List<? extends Metadata> myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, this.myProzess);
@@ -875,7 +918,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- alle Personen und die DefaultDisplay-Werte ermitteln --------------------------------
+		 * alle Personen und die DefaultDisplay-Werte ermitteln
 		 */
 		myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), true, this.myProzess);
@@ -889,14 +932,15 @@ public class Metadaten {
 		this.myPersonen = lsPers;
 
 		/*
-		 * -------------------------------- die zugehörigen Seiten ermitteln --------------------------------
+		 * die zugehörigen Seiten ermitteln
 		 */
 		StructSeitenErmitteln(this.myDocStruct);
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Treeview ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Treeview ##
+	 * #########################################################################################################
 	 */
 
 	@SuppressWarnings("rawtypes")
@@ -906,7 +950,7 @@ public class Metadaten {
 		List<DocStruct> status = new ArrayList<DocStruct>();
 
 		/*
-		 * -------------------------------- den Ausklapp-Zustand aller Knoten erfassen --------------------------------
+		 * den Ausklapp-Zustand aller Knoten erfassen
 		 */
 		if (this.tree3 != null) {
 			for (Iterator iter = this.tree3.getChildrenAsList().iterator(); iter.hasNext();) {
@@ -934,7 +978,7 @@ public class Metadaten {
 		MetadatenalsTree3Einlesen2(this.logicalTopstruct, this.tree3);
 
 		/*
-		 * -------------------------------- den Ausklappzustand nach dem neu-Einlesen wieder herstellen --------------------------------
+		 * den Ausklappzustand nach dem neu-Einlesen wieder herstellen
 		 */
 		for (Iterator iter = this.tree3.getChildrenAsListAlle().iterator(); iter.hasNext();) {
 			map = (HashMap) iter.next();
@@ -957,8 +1001,8 @@ public class Metadaten {
 
 	/**
 	 * Metadaten in Tree3 ausgeben
-	 * 
-	 * @param inStrukturelement ============================================================== ==
+	 *
+	 * @param inStrukturelement add description
 	 */
 	private void MetadatenalsTree3Einlesen2(DocStruct inStrukturelement, TreeNodeStruct3 OberKnoten) {
 		OberKnoten.setMainTitle(MetadatenErmitteln(inStrukturelement, "TitleDocMain"));
@@ -980,7 +1024,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- vom aktuellen Strukturelement alle Kinder in den Tree packen --------------------------------
+		 * vom aktuellen Strukturelement alle Kinder in den Tree packen
 		 */
 		List<DocStruct> meineListe = inStrukturelement.getAllChildren();
 		if (meineListe != null) {
@@ -1000,8 +1044,8 @@ public class Metadaten {
 
 	/**
 	 * Metadaten gezielt zurückgeben
-	 * 
-	 * @param inStrukturelement ============================================================== ==
+	 *
+	 * @param inStrukturelement add description
 	 */
 	private String MetadatenErmitteln(DocStruct inStrukturelement, String inTyp) {
 		String rueckgabe = "";
@@ -1016,6 +1060,9 @@ public class Metadaten {
 		return rueckgabe.trim();
 	}
 
+	/**
+	 * @param inStruct add description
+	 */
 	@SuppressWarnings("rawtypes")
 	public void setMyStrukturelement(DocStruct inStruct) {
 		this.modusHinzufuegen = false;
@@ -1024,7 +1071,7 @@ public class Metadaten {
 		MetadatenalsBeanSpeichern(inStruct);
 
 		/*
-		 * -------------------------------- die Selektion kenntlich machen --------------------------------
+		 * die Selektion kenntlich machen
 		 */
 		for (Iterator iter = this.tree3.getChildrenAsListAlle().iterator(); iter.hasNext();) {
 
@@ -1071,8 +1118,8 @@ public class Metadaten {
 
 	/**
 	 * Knoten zu einer anderen Stelle
-	 * 
-	 * @throws TypeNotAllowedAsChildException ============================================================ == ==
+	 *
+	 * @throws TypeNotAllowedAsChildException add description
 	 */
 	public String KnotenVerschieben() throws TypeNotAllowedAsChildException {
 		this.myDocStruct.getParent().removeChild(this.myDocStruct);
@@ -1085,8 +1132,8 @@ public class Metadaten {
 
 	/**
 	 * Knoten nach oben schieben
-	 * 
-	 * @throws IOException ============================================================ == ==
+	 *
+	 * @throws IOException add description
 	 */
 	public String KnotenDelete() throws IOException {
 		if (this.myDocStruct != null && this.myDocStruct.getParent() != null) {
@@ -1100,23 +1147,23 @@ public class Metadaten {
 
 	/**
 	 * Knoten hinzufügen
-	 * 
-	 * @throws TypeNotAllowedForParentException
-	 * @throws IOException
-	 * @throws TypeNotAllowedForParentException
-	 * @throws TypeNotAllowedAsChildException
-	 * @throws TypeNotAllowedAsChildException ============================================================ == ==
+	 *
+	 * @throws TypeNotAllowedForParentException add description
+	 * @throws IOException add description
+	 * @throws TypeNotAllowedForParentException add description
+	 * @throws TypeNotAllowedAsChildException add description
+	 * @throws TypeNotAllowedAsChildException add description
 	 */
 	public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 
 		/*
-		 * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
-		 * gewählt wird und abschliessend richtig einfügen --------------------------------
+		 * prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
+		 * gewählt wird und abschliessend richtig einfügen
 		 */
 
 		DocStruct ds = null;
 		/*
-		 * -------------------------------- vor das aktuelle Element --------------------------------
+		 * vor das aktuelle Element
 		 */
 		if (this.neuesElementWohin.equals("1")) {
 			if (this.addDocStructType1 == null || this.addDocStructType1.equals("")) {
@@ -1244,22 +1291,23 @@ public class Metadaten {
 	}
 
 	/**
-	 * mögliche Docstructs als Nachbar zurückgeben ================================================================
+	 * mögliche Docstructs als Nachbar zurückgeben
 	 */
 	public SelectItem[] getAddableDocStructTypenAlsNachbar() {
 		return this.metahelper.getAddableDocStructTypen(this.myDocStruct, true);
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Strukturdaten: Seiten ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Strukturdaten: Seiten ##
+	 * ########################################################################################################
 	 */
 
 	/**
-	 * Markus baut eine Seitenstruktur aus den vorhandenen Images ================================================================
-	 * 
-	 * @throws DAOException
-	 * @throws SwapException
+	 * Markus baut eine Seitenstruktur aus den vorhandenen Images
+	 *
+	 * @throws DAOException add description
+	 * @throws SwapException add description
 	 */
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException,
 			SwapException, DAOException {
@@ -1333,7 +1381,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Seiten des aktuellen Strukturelements ermitteln ================================================================
+	 * alle Seiten des aktuellen Strukturelements ermitteln
 	 */
 	private void StructSeitenErmitteln(DocStruct inStrukturelement) {
 		if (inStrukturelement == null) {
@@ -1344,7 +1392,7 @@ public class Metadaten {
 		int imageNr = 0;
 		if (listReferenzen != null) {
 			/*
-			 * -------------------------------- Referenzen sortieren --------------------------------
+			 * Referenzen sortieren
 			 */
 			Collections.sort(listReferenzen, new Comparator<Reference>() {
 				@Override
@@ -1394,7 +1442,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Seiten des aktuellen Strukturelements ermitteln 2 ================================================================
+	 * alle Seiten des aktuellen Strukturelements ermitteln 2
 	 */
 	private void StructSeitenErmitteln2(DocStruct inStrukturelement, int inZaehler) {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
@@ -1411,7 +1459,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * noch für Testzweck zum direkten öffnen der richtigen Startseite 3 ================================================================
+	 * noch für Testzweck zum direkten öffnen der richtigen Startseite 3
 	 */
 	private int StructSeitenErmitteln3(DocStruct inStrukturelement) {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
@@ -1497,7 +1545,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- zum Schluss nochmal alle Seiten neu einlesen --------------------------------
+		 * zum Schluss nochmal alle Seiten neu einlesen
 		 */
 		alleSeitenAuswahl = null;
 		retrieveAllImages();
@@ -1509,7 +1557,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * alle Knoten des Baums expanden oder collapsen ================================================================
+	 * alle Knoten des Baums expanden oder collapsen
 	 */
 	public String TreeExpand() {
 		this.tree3.expandNodes(this.treeProperties.get("fullexpanded"));
@@ -1517,8 +1565,9 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Bilder-Anzeige ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Bilder-Anzeige ##
+	 * #########################################################################################################
 	 */
 
 	public String BildBlaetternVor() {
@@ -1531,6 +1580,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BildBlaettern() {
 		String parameter = Helper.getRequestParameter("Anzahl");
 		if (parameter.equals("")) {
@@ -1541,6 +1593,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 *
+	 */
 	public void rotateLeft() {
 		if (this.myImageRotation < 90) {
 			this.myImageRotation = 360;
@@ -1554,6 +1609,9 @@ public class Metadaten {
 		BildErmitteln(0);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BildGeheZu() {
 		int eingabe;
 		try {
@@ -1566,12 +1624,18 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BildZoomPlus() {
 		this.myBildGroesse += 10;
 		BildErmitteln(0);
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BildZoomMinus() {
 		if (this.myBildGroesse > 10) {
 			this.myBildGroesse -= 10;
@@ -1580,6 +1644,9 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getBild() {
 		BildPruefen();
 		/* Session ermitteln */
@@ -1592,6 +1659,12 @@ public class Metadaten {
 		return this.allTifFolders;
 	}
 
+	/**
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
 		this.allTifFolders = new ArrayList<String>();
 		SafeFile dir = new SafeFile(this.myProzess.getImagesDirectory());
@@ -1626,6 +1699,9 @@ public class Metadaten {
 		}
 	}
 
+	/**
+	 * @param welches add description
+	 */
 	public void BildErmitteln(int welches) {
 		/*
 		 * wenn die Bilder nicht angezeigt werden, brauchen wir auch das Bild nicht neu umrechnen
@@ -1786,8 +1862,9 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Sperrung der Metadaten
-	 * aktualisieren oder prüfen ## ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Sperrung der Metadaten aktualisieren oder prüfen ##
+	 * ########################################################################################################
 	 */
 
 	private boolean SperrungAktualisieren() {
@@ -1811,8 +1888,9 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Navigationsanweisungen ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Navigationsanweisungen ##
+	 * #########################################################################################################
 	 */
 
 	/**
@@ -1831,16 +1909,17 @@ public class Metadaten {
 		return this.zurueck;
 	}
 
-	/*
-	 * ##################################################### ##################################################### ## ## Transliteration bestimmter
-	 * Felder ## ##################################################### ####################################################
+	/**
+	 *Transliteration bestimmter Felder
+	 *
+	 * @return add description
 	 */
 
 	public String Transliterieren() {
 		Metadata md = this.curMetadatum.getMd();
 
 		/*
-		 * -------------------------------- wenn es ein russischer Titel ist, dessen Transliterierungen anzeigen --------------------------------
+		 * wenn es ein russischer Titel ist, dessen Transliterierungen anzeigen
 		 */
 		if (md.getType().getName().equals("RUSMainTitle")) {
 			Transliteration trans = new Transliteration();
@@ -1868,11 +1947,14 @@ public class Metadaten {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String TransliterierenPerson() {
 		Person md = this.curPerson.getP();
 
 		/*
-		 * -------------------------------- wenn es ein russischer Autor ist, dessen Transliterierungen anlegen --------------------------------
+		 * wenn es ein russischer Autor ist, dessen Transliterierungen anlegen
 		 */
 		if (md.getRole().equals("Author")) {
 			Transliteration trans = new Transliteration();
@@ -1906,14 +1988,13 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## aus einer Liste von PPNs
-	 * Strukturelemente aus dem Opac ## holen und dem aktuellen Strukturelement unterordnen ## #####################################################
-	 * ####################################################
+	 * ##########################################################################################################
+	 * aus einer Liste von PPNs trukturelemente aus dem Opac ## holen und dem aktuellen Strukturelement unterordnen
+	 * #########################################################################################################
 	 */
 
 	/**
 	 * mehrere PPNs aus dem Opac abfragen und dem aktuellen Strukturelement unterordnen
-	 * ================================================================
 	 */
 	public String AddAdditionalOpacPpns() {
 		StringTokenizer tokenizer = new StringTokenizer(this.additionalOpacPpns, "\r\n");
@@ -1987,11 +2068,9 @@ public class Metadaten {
 		return "";
 	}
 
-	/*
-	 * ##################################################### ##################################################### ## ## Metadatenvalidierung ##
-	 * ##################################################### ####################################################
+	/**
+	 * Metadatenvalidierung
 	 */
-
 	public void Validate() {
 		MetadatenVerifizierung mv = new MetadatenVerifizierung();
 		mv.validate(this.gdzfile, this.myPrefs, this.myProzess);
@@ -1999,8 +2078,9 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Auswahl der Seiten über Ajax
-	 * ## ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Auswahl der Seiten über Ajax
+	 * ## #########################################################################################################
 	 */
 
 	public String getAjaxSeiteStart() {
@@ -2035,6 +2115,9 @@ public class Metadaten {
 		this.pagesStart = pagesStart;
 	}
 
+	/**
+	 *
+	 */
 	public void CurrentStartpage() {
 		for (int i = 0; i < this.alleSeiten.length; i++) {
 			SelectItem si = this.alleSeiten[i];
@@ -2044,6 +2127,9 @@ public class Metadaten {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void CurrentEndpage() {
 		for (int i = 0; i < this.alleSeiten.length; i++) {
 			SelectItem si = this.alleSeiten[i];
@@ -2067,6 +2153,10 @@ public class Metadaten {
 
 	}
 
+	/**
+	 * @param prefix add description
+	 * @return add description
+	 */
 	public List<String> getAjaxAlleSeiten(String prefix) {
 		myLogger.debug("Ajax-Liste abgefragt");
 		List<String> li = new ArrayList<String>();
@@ -2112,7 +2202,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
 	 */
 	public String SeitenStartUndEndeSetzen() {
 		if (!SperrungAktualisieren()) {
@@ -2135,7 +2225,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
 	 */
 
 	public String SeitenVonChildrenUebernehmen() {
@@ -2169,7 +2259,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
 	 */
 	public String BildErsteSeiteAnzeigen() {
 		myBild = null;
@@ -2178,7 +2268,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen ================================================================
+	 * die erste und die letzte Seite festlegen und alle dazwischen zuweisen
 	 */
 	public String BildLetzteSeiteAnzeigen() {
 		this.bildAnzeigen = true;
@@ -2201,7 +2291,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * ausgewählte Seiten dem aktuellen Strukturelement hinzufügen ================================================================
+	 * ausgewählte Seiten dem aktuellen Strukturelement hinzufügen
 	 */
 	public String SeitenHinzu() {
 		/* alle markierten Seiten durchlaufen */
@@ -2238,7 +2328,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * ausgewählte Seiten aus dem Strukturelement entfernen ================================================================
+	 * ausgewählte Seiten aus dem Strukturelement entfernen
 	 */
 	public String SeitenWeg() {
 		for (int i = 0; i < this.structSeitenAuswahl.length; i++) {
@@ -2254,14 +2344,18 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## OCR ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## OCR ##
+	 * #########################################################################################################
 	 */
 
 	public boolean isShowOcrButton() {
 		return ConfigMain.getBooleanParameter("showOcrButton");
 	}
 
+	/**
+	 *
+	 */
 	public void showOcrResult() {
 		String myOcrUrl = getOcrBasisUrl(this.myBildNummer);
 		HttpClient client = new HttpClient();
@@ -2286,6 +2380,9 @@ public class Metadaten {
 		return this.ocrResult;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getOcrAcdress() {
 		int startseite = -1;
 		int endseite = -1;
@@ -2316,8 +2413,9 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	public int getBildNummer() {
@@ -2339,6 +2437,9 @@ public class Metadaten {
 		this.myBildGroesse = myBildGroesse;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getTempTyp() {
 		if (this.selectedMetadatum == null) {
 			getAddableMetadataTypes();
@@ -2355,6 +2456,9 @@ public class Metadaten {
 		this.selectedMetadatum = newMeta;
 	}
 
+	/**
+	 * @param tempTyp add description
+	 */
 	public void setTempTyp(String tempTyp) {
 		MetadataType mdt = this.myPrefs.getMetadataTypeByName(tempTyp);
 		try {
@@ -2366,6 +2470,9 @@ public class Metadaten {
 		this.tempTyp = tempTyp;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public MetadatumImpl getMetadatum() {
 
 		if (this.selectedMetadatum == null) {
@@ -2451,6 +2558,9 @@ public class Metadaten {
 		return this.alleSeiten;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public SelectItem[] getStructSeiten() {
 		if (this.structSeiten.length > 0 && this.structSeiten[0] == null) {
 			return new SelectItem[0];
@@ -2507,6 +2617,9 @@ public class Metadaten {
 		return this.bildAnzeigen;
 	}
 
+	/**
+	 *
+	 */
 	public void BildAnzeigen() {
 		this.bildAnzeigen = !this.bildAnzeigen;
 		if (this.bildAnzeigen) {
@@ -2559,6 +2672,9 @@ public class Metadaten {
 		this.bildZuStrukturelement = bildZuStrukturelement;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getNeuesElementWohin() {
 		if (this.neuesElementWohin == null || this.neuesElementWohin.isEmpty()) {
 			this.neuesElementWohin = "1";
@@ -2566,6 +2682,9 @@ public class Metadaten {
 		return this.neuesElementWohin;
 	}
 
+	/**
+	 * @param inNeuesElementWohin add description
+	 */
 	public void setNeuesElementWohin(String inNeuesElementWohin) {
 		if (inNeuesElementWohin == null || inNeuesElementWohin.equals("")) {
 			this.neuesElementWohin = "1";
@@ -2590,6 +2709,9 @@ public class Metadaten {
 		this.alleSeitenAuswahl_letzteSeite = alleSeitenAuswahl_letzteSeite;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<HashMap<String, Object>> getStrukturBaum3() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsList();
@@ -2598,6 +2720,9 @@ public class Metadaten {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<HashMap<String, Object>> getStrukturBaum3Alle() {
 		if (this.tree3 != null) {
 			return this.tree3.getChildrenAsListAlle();
@@ -2610,6 +2735,9 @@ public class Metadaten {
 		return this.modusStrukturelementVerschieben;
 	}
 
+	/**
+	 * @param modusStrukturelementVerschieben add description
+	 */
 	public void setModusStrukturelementVerschieben(boolean modusStrukturelementVerschieben) {
 		this.modusStrukturelementVerschieben = modusStrukturelementVerschieben;
 
@@ -2737,6 +2865,10 @@ public class Metadaten {
 		this.currentTifFolder = currentTifFolder;
 	}
 
+	/**
+	 * @param suggest add description
+	 * @return add description
+	 */
 	public List<String> autocomplete(Object suggest) {
 		String pref = (String) suggest;
 		ArrayList<String> result = new ArrayList<String>();
@@ -2755,6 +2887,9 @@ public class Metadaten {
 		return result;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getIsNotRootElement() {
 		if (this.myDocStruct != null) {
 			if (this.myDocStruct.getParent() == null) {
@@ -2788,6 +2923,9 @@ public class Metadaten {
 		secondpage.setImageName(firstFile);
 	}
 
+	/**
+	 *
+	 */
 	public void moveSeltectedPagesUp() {
 		List<Integer> selectedPages = new ArrayList<Integer>();
 		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
@@ -2817,6 +2955,9 @@ public class Metadaten {
 		BildErmitteln(0);
 	}
 
+	/**
+	 *
+	 */
 	public void moveSeltectedPagesDown() {
 		List<Integer> selectedPages = new ArrayList<Integer>();
 		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
@@ -2846,6 +2987,9 @@ public class Metadaten {
 		BildErmitteln(0);
 	}
 
+	/**
+	 *
+	 */
 	public void deleteSeltectedPages() {
 		List<Integer> selectedPages = new ArrayList<Integer>();
 		List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
@@ -2911,6 +3055,9 @@ public class Metadaten {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void reOrderPagination() {
 		String imageDirectory = "";
 		try {
@@ -3069,6 +3216,9 @@ public class Metadaten {
 		return filename;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public FileManipulation getFileManipulation() {
 		if (fileManipulation == null) {
 			fileManipulation = new FileManipulation(this);
@@ -3088,6 +3238,10 @@ public class Metadaten {
 		this.mydocument = document;
 	}
 
+	/**
+	 * @param filename add description
+	 * @return add description
+	 */
 	public static String getFileExtension(String filename) {
 		if (filename == null) {
 			return "";
@@ -3103,13 +3257,11 @@ public class Metadaten {
 	}
 
 	/**
-	 * Saves the input from the subform to create a new metadata group in the
-	 * currently selected docStruct and then toggles the form to show the page
-	 * “Metadata”.
-	 * 
-	 * @return "" to indicate JSF not to navigate anywhere or
-	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
-	 *         time is up and the user must leave the editor and open it anew
+	 * Saves the input from the subform to create a new metadata group in the currently selected docStruct and then
+	 * toggles the form to show the page “Metadata”.
+	 *
+	 * @return "" to indicate JSF not to navigate anywhere or "SperrungAbgelaufen" to make JSF show the message that
+	 * 				the lock time is up and the user must leave the editor and open it anew
 	 */
 	public String addMetadataGroup() throws DocStructHasNoTypeException {
 		try {
@@ -3121,12 +3273,10 @@ public class Metadaten {
 	}
 
 	/**
-	 * Checks whether a given meta-data group type is available for adding. This
-	 * can be used by a RenderableMetadataGroup to find out whether it can be
-	 * copied or not.
-	 * 
-	 * @param type
-	 *            meta-data group type to look for
+	 * Checks whether a given meta-data group type is available for adding. This can be used by
+	 * a RenderableMetadataGroup to find out whether it can be copied or not.
+	 *
+	 * @param type meta-data group type to look for
 	 * @return whether the type is available to add
 	 */
 	boolean canCreate(MetadataGroupType type) {
@@ -3138,13 +3288,10 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns a list with backing beans for all metadata groups available for
-	 * the structural element under edit.
-	 * 
+	 * Returns a list with backing beans for all metadata groups available for the structural element under edit.
+	 *
 	 * @return backing beans for the metadata groups of the current element
-	 * @throws ConfigurationException
-	 *             if a single value metadata field is configured to show a
-	 *             multi-select input
+	 * @throws ConfigurationException if a single value metadata field is configured to show a multi-select input
 	 */
 	public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
 		List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
@@ -3161,9 +3308,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns a backing bean object to display the form to create a new
-	 * metadata group.
-	 * 
+	 * Returns a backing bean object to display the form to create a new metadata group.
+	 *
 	 * @return a bean to create a new metadata group
 	 */
 	public RenderableMetadataGroup getNewMetadataGroup() {
@@ -3173,9 +3319,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns whether the metadata editor is showing the subpage to add a new
-	 * metadata group.
-	 * 
+	 * Returns whether the metadata editor is showing the subpage to add a new metadata group.
+	 *
 	 * @return whether the page to add a new metadata group shows
 	 */
 	public boolean isAddMetadataGroupMode() {
@@ -3183,9 +3328,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns whether the metadata editor is showing a link to open the subpage
-	 * to add a new metadata group.
-	 * 
+	 * Returns whether the metadata editor is showing a link to open the subpage to add a new metadata group.
+	 *
 	 * @return whether the link to add a new metadata group shows
 	 */
 	public boolean isAddNewMetadataGroupLinkShowing() {
@@ -3194,22 +3338,19 @@ public class Metadaten {
 
 	/**
 	 * Deletes the metadata group
-	 * 
-	 * @param metadataGroup
-	 *            metadata group to delete.
+	 *
+	 * @param metadataGroup metadata group to delete.
 	 */
 	void removeMetadataGroupFromCurrentDocStruct(MetadataGroup metadataGroup) {
 		myDocStruct.removeMetadataGroup(metadataGroup);
 	}
 
 	/**
-	 * Toggles the form to show the subpage to add a new metadata group. The
-	 * form is prepared with the values from the metadata group that the copy
-	 * mode was called from.
-	 * 
-	 * @return "" to indicate JSF not to navigate anywhere or
-	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
-	 *         time is up and the user must leave the editor and open it anew
+	 * Toggles the form to show the subpage to add a new metadata group. The form is prepared with the values from
+	 * the metadata group that the copy mode was called from.
+	 *
+	 * @return "" to indicate JSF not to navigate anywhere or "SperrungAbgelaufen" to make JSF show the message that
+	 * 				the lock time is up and the user must leave the editor and open it anew
 	 */
 	String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
 		newMetadataGroup = new RenderableMetadataGroup(master, myDocStruct.getAddableMetadataGroupTypes());
@@ -3221,10 +3362,9 @@ public class Metadaten {
 
 	/**
 	 * Toggles the form to show the subpage to add a new metadata group.
-	 * 
-	 * @return "" to indicate JSF not to navigate anywhere or
-	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
-	 *         time is up and the user must leave the editor and open it anew
+	 *
+	 * @return "" to indicate JSF not to navigate anywhere or "SperrungAbgelaufen" to make JSF show the message that
+	 * 				the lock time is up and the user must leave the editor and open it anew
 	 */
 	public String showAddNewMetadataGroup() {
 		try {
@@ -3242,9 +3382,9 @@ public class Metadaten {
 	}
 
 	/**
-	 * Leaves the subpage to add a new metadata group without saving any input
-	 * and toggles the form to show the page “Metadata”.
-	 * 
+	 * Leaves the subpage to add a new metadata group without saving any input and toggles the form to show
+	 * the page “Metadata”.
+	 *
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
 	 *         time is up and the user must leave the editor and open it anew
@@ -3259,7 +3399,7 @@ public class Metadaten {
 
 	/**
 	 * Returns the ID string of the currently selected separator.
-	 * 
+	 *
 	 * @return the ID of the selected separator
 	 */
 	public String getPaginierungSeparator() {
@@ -3268,19 +3408,17 @@ public class Metadaten {
 
 	/**
 	 * Sets the currently selected separator by its ID.
-	 * 
-	 * @param selected
-	 *            the ID of the separator to select
+	 *
+	 * @param selected the ID of the separator to select
 	 */
 	public void setPaginierungSeparator(String selected) {
 		paginierungSeparators.setSelected(selected);
 	}
 
 	/**
-	 * Returns the List of separators the user can select from. Each element of
-	 * the list must be an object that implements the two functions
-	 * {@code String getId()} and {@code String getLabel()}.
-	 * 
+	 * Returns the List of separators the user can select from. Each element of the list must be an object that
+	 * implements the two functions {@code String getId()} and {@code String getLabel()}.
+	 *
 	 * @return the List of separators
 	 */
 	public Collection<Separator> getPaginierungSeparators() {

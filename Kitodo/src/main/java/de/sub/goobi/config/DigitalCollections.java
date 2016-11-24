@@ -22,6 +22,8 @@
 
 package de.sub.goobi.config;
 
+import de.sub.goobi.beans.Prozess;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,10 +39,14 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
-
 public class DigitalCollections {
 
+	/**
+	 * @param process add description
+	 * @return add description
+	 * @throws JDOMException add description
+	 * @throws IOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<String> possibleDigitalCollectionsForProcess(Prozess process) throws JDOMException, IOException {
 

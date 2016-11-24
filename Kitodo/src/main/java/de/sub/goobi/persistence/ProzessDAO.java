@@ -27,28 +27,42 @@ package de.sub.goobi.persistence;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-import java.util.List;
-
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProzessDAO extends BaseDAO {
 
 	private static final long serialVersionUID = 3538712266212954394L;
 
+	/**
+	 * @param t add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Prozess save(Prozess t) throws DAOException {
 		t.setSortHelperStatus(t.getFortschritt());
 		storeObj(t);
 		return (Prozess) retrieveObj(Prozess.class, t.getId());
 	}
 
+	/**
+	 * @param list add description
+	 * @throws DAOException add description
+	 */
 	public void saveList(List<Prozess> list) throws DAOException {
 		List<Object> l = new ArrayList<Object>();
 		l.addAll(list);
 		storeList(l);
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Prozess get(Integer id) throws DAOException {
 		Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
 		if (rueckgabe == null) {
@@ -57,6 +71,10 @@ public class ProzessDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Prozess t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

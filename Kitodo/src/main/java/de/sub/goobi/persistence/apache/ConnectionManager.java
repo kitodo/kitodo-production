@@ -44,7 +44,6 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 
 /**
- * 
  * @author Robert Sehr
  *
  */
@@ -104,27 +103,19 @@ public class ConnectionManager {
 	}
 
 	/**
-	 * 
-	 * @param connectURI
-	 *            - JDBC Connection URI
-	 * @param username
-	 *            - JDBC Connection username
-	 * @param password
-	 *            - JDBC Connection password
-	 * @param minIdle
-	 *            - Minimum number of idel connection in the connection pool
-	 * @param maxActive
-	 *            - Connection Pool Maximum Capacity (Size)
-	 * @throws Exception
+	 * @param connectURI - JDBC Connection URI
+	 * @param username - JDBC Connection username
+	 * @param password - JDBC Connection password
+	 * @param minIdle - Minimum number of idel connection in the connection pool
+	 * @param maxActive - Connection Pool Maximum Capacity (Size)
+	 * @throws Exception add description
 	 */
 	public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle,
 			int maxActive) {
 		//
-		// First, we'll need a ObjectPool that serves as the
-		// actual pool of connections.
+		// First, we'll need a ObjectPool that serves as the actual pool of connections.
 		//
-		// We'll use a GenericObjectPool instance, although
-		// any ObjectPool implementation will suffice.
+		// We'll use a GenericObjectPool instance, although any ObjectPool implementation will suffice.
 		//
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
 
@@ -157,6 +148,9 @@ public class ConnectionManager {
 		return dataSource;
 	}
 
+	/**
+	 * @throws Exception add description
+	 */
 	public static void printDriverStats() throws Exception {
 		ObjectPool connectionPool = ConnectionManager._pool;
 		if (logger.isDebugEnabled()) {
@@ -166,9 +160,8 @@ public class ConnectionManager {
 	}
 
 	/**
-	 * getNumLockedProcesses - gets the number of currently locked processes on
-	 * the MySQL db
-	 * 
+	 * getNumLockedProcesses - gets the number of currently locked processes on the MySQL db
+	 *
 	 * @return Number of locked processes
 	 */
 	public int getNumLockedProcesses() {

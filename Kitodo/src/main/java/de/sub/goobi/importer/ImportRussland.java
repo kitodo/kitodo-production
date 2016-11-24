@@ -27,6 +27,11 @@ package de.sub.goobi.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.WrongImportFileException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,14 +53,9 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt
- * mit dessen Eigenschaften und erlaubt die Bearbeitung
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
  * der Schrittdetails
  *
  * @author Steffen Hankiewicz
@@ -73,27 +73,27 @@ public class ImportRussland {
 	}
 
 	/**
-	 * @param reader
-	 * @param inProzess
-	 * @throws IOException
-	 * @throws WrongImportFileException
-	 * @throws TypeNotAllowedForParentException
-	 * @throws TypeNotAllowedAsChildException
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws ReadException
-	 * @throws InterruptedException
-	 * @throws PreferencesException
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
+	 * @param reader add description
+	 * @param inProzess add description
+	 * @throws IOException add description
+	 * @throws WrongImportFileException add description
+	 * @throws TypeNotAllowedForParentException add description
+	 * @throws TypeNotAllowedAsChildException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws ReadException add description
+	 * @throws InterruptedException add description
+	 * @throws PreferencesException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws WriteException add description
 	 */
 	protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException, WrongImportFileException,
 			TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException,
 			ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
 
-		/* --------------------------------
+		/*
 		 * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess gehört
-		 * --------------------------------*/
+		 */
 		this.prozess = inProzess;
 		String prozessID = String.valueOf(inProzess.getId().intValue());
 		String line = reader.readLine();
@@ -329,7 +329,8 @@ public class ImportRussland {
 			}
 		} else {
 			throw new WrongImportFileException(
-					"Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten ergänzt werden könnten");
+					"Parsingfehler: Es sind bisher keine Artikel angelegt worden, "
+							+ "zu denen Daten ergänzt werden könnten");
 		}
 	}
 

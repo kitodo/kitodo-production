@@ -57,6 +57,9 @@ public class AdditionalField {
 		return this.initStart;
 	}
 
+	/**
+	 * @param newValue add description
+	 */
 	public void setInitStart(String newValue) {
 		this.initStart = newValue;
 		if (this.initStart == null) {
@@ -69,6 +72,9 @@ public class AdditionalField {
 		return this.initEnd;
 	}
 
+	/**
+	 * @param newValue add description
+	 */
 	public void setInitEnd(String newValue) {
 		this.initEnd = newValue;
 		if (this.initEnd == null) {
@@ -89,6 +95,9 @@ public class AdditionalField {
 		return this.wert;
 	}
 
+	/**
+	 * @param newValue add description
+	 */
 	public void setWert(String newValue) {
 		if (newValue == null || newValue.equals(this.initStart)) {
 			newValue = "";
@@ -104,6 +113,9 @@ public class AdditionalField {
 		return this.from;
 	}
 
+	/**
+	 * @param infrom add description
+	 */
 	public void setFrom(String infrom) {
 		if (infrom != null && infrom.length() != 0) {
 			this.from = infrom;
@@ -138,6 +150,9 @@ public class AdditionalField {
 		return this.docstruct;
 	}
 
+	/**
+	 * @param docstruct add description
+	 */
 	public void setDocstruct(String docstruct) {
 		this.docstruct = docstruct;
 		if (this.docstruct == null) {
@@ -157,6 +172,9 @@ public class AdditionalField {
 		return this.isdoctype;
 	}
 
+	/**
+	 * @param isdoctype add description
+	 */
 	public void setIsdoctype(String isdoctype) {
 		this.isdoctype = isdoctype;
 		if (this.isdoctype == null) {
@@ -168,6 +186,9 @@ public class AdditionalField {
 		return this.isnotdoctype;
 	}
 
+	/**
+	 * @param isnotdoctype add description
+	 */
 	public void setIsnotdoctype(String isnotdoctype) {
 		this.isnotdoctype = isnotdoctype;
 		if (this.isnotdoctype == null) {
@@ -175,6 +196,9 @@ public class AdditionalField {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getShowDependingOnDoctype() {
 
 		/* wenn nix angegeben wurde, dann anzeigen */

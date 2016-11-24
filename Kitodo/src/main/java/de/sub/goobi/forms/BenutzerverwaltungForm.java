@@ -27,6 +27,20 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.beans.LdapGruppe;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.BenutzergruppenDAO;
+import de.sub.goobi.persistence.LdapGruppenDAO;
+import de.sub.goobi.persistence.ProjektDAO;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,20 +68,6 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.LdapGruppe;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.ldap.Ldap;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
-import de.sub.goobi.persistence.LdapGruppenDAO;
-import de.sub.goobi.persistence.ProjektDAO;
-
 public class BenutzerverwaltungForm extends BasisForm {
 	private static final long serialVersionUID = -3635859455444639614L;
 	private Benutzer myClass = new Benutzer();
@@ -75,6 +75,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 	private boolean hideInactiveUsers = true;
 	private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
 
+	/**
+	 * @return add description
+	 */
 	public String Neu() {
 		this.myClass = new Benutzer();
 		this.myClass.setVorname("");
@@ -85,6 +88,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "BenutzerBearbeiten";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		this.filter = null;
 		try {
@@ -144,6 +150,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "BenutzerAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		Session session = Helper.getHibernateSession();
 		session.evict(this.myClass);
@@ -219,6 +228,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "BenutzerAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String AusGruppeLoeschen() {
 		int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
@@ -233,6 +245,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String ZuGruppeHinzufuegen() {
 		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
@@ -250,6 +265,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String AusProjektLoeschen() {
 		int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
 		Set<Projekt> neu = new HashSet<Projekt>();
@@ -263,6 +281,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String ZuProjektHinzufuegen() {
 		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
@@ -288,6 +309,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		return this.myClass;
 	}
 
+	/**
+	 * @param inMyClass add description
+	 */
 	public void setMyClass(Benutzer inMyClass) {
 		Helper.getHibernateSession().flush();
 		Helper.getHibernateSession().clear();
@@ -298,10 +322,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 		}
 	}
 
-	/*
+	/**
 	 * Ldap-Konfiguration
+	 *
+	 * @return add description
 	 */
-
 	public Integer getLdapGruppeAuswahl() {
 		if (this.myClass.getLdapGruppe() != null) {
 			return this.myClass.getLdapGruppe().getId();
@@ -310,6 +335,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @param inAuswahl add description
+	 */
 	public void setLdapGruppeAuswahl(Integer inAuswahl) {
 		if (inAuswahl.intValue() != 0) {
 			try {
@@ -321,6 +349,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
 		List<SelectItem> myLdapGruppen = new ArrayList<SelectItem>();
 		List<LdapGruppe> temp = new LdapGruppenDAO().search("from LdapGruppe ORDER BY titel");

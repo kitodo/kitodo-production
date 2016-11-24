@@ -24,14 +24,14 @@
 
 package de.sub.goobi.metadaten;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
 
 import ugh.dl.RomanNumeral;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Sets new labels to a given set of pages.
@@ -69,8 +69,7 @@ public class Paginator {
 	/**
 	 * Perform pagination.
 	 * 
-	 * @throws IllegalArgumentException
-	 *             Thrown if invalid config parameters have been set.
+	 * @throws IllegalArgumentException Thrown if invalid config parameters have been set.
 	 */
 	public void run() throws IllegalArgumentException {
 
@@ -101,8 +100,7 @@ public class Paginator {
 	 * Throws NumberFormatException if `paginationStartValue` isn’t a valid
 	 * number of the type specified by `paginationType`.
 	 * 
-	 * @throws NumberFormatException
-	 *             if `paginationStartValue` isn’t valid
+	 * @throws NumberFormatException if `paginationStartValue` isn’t valid
 	 */
 	private void assertValidPaginationStartValue() {
 		// arabic numbers
@@ -279,7 +277,7 @@ public class Paginator {
 
 	/**
 	 * Get pages provided with new pagination label.
-	 * 
+	 *
 	 * @return Array of <code>Metadatum</code> instances.
 	 */
 	public Metadatum[] getPagesToPaginate() {
@@ -288,9 +286,8 @@ public class Paginator {
 
 	/**
 	 * Give a list of page numbers to select pages to actually paginate.
-	 * 
-	 * @param selectedPages
-	 *            Array numbers, each pointing to a given page set via <code>setPagesToPaginate</code>
+	 *
+	 * @param selectedPages Array numbers, each pointing to a given page set via <code>setPagesToPaginate</code>
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPageSelection(int[] selectedPages) {
@@ -300,9 +297,8 @@ public class Paginator {
 
 	/**
 	 * Give page objects to apply new page labels on.
-	 * 
-	 * @param newPaginated
-	 *            Array of page objects.
+	 *
+	 * @param newPaginated Array of page objects.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPagesToPaginate(Metadatum[] newPaginated) {
@@ -312,9 +308,8 @@ public class Paginator {
 
 	/**
 	 * Set pagination mode.
-	 * 
-	 * @param paginationMode
-	 *            Mode of counting pages.
+	 *
+	 * @param paginationMode Mode of counting pages.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPaginationMode(Mode paginationMode) {
@@ -324,9 +319,8 @@ public class Paginator {
 
 	/**
 	 * Set scope of pagination.
-	 * 
-	 * @param paginationScope
-	 *            Set which pages from a selection get labeled.
+	 *
+	 * @param paginationScope Set which pages from a selection get labeled.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPaginationScope(Scope paginationScope) {
@@ -336,9 +330,8 @@ public class Paginator {
 
 	/**
 	 * Set separator of pagination.
-	 * 
-	 * @param sep
-	 *            Set the separator to separate pages.
+	 *
+	 * @param sep Set the separator to separate pages.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPaginationSeparator(String sep) {
@@ -348,9 +341,8 @@ public class Paginator {
 
 	/**
 	 * Set start value of pagination. Counting up starts here depending on the pagination mode set.
-	 * 
-	 * @param paginationStartValue
-	 *            May contain arabic or roman number.
+	 *
+	 * @param paginationStartValue May contain arabic or roman number.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPaginationStartValue(String paginationStartValue) {
@@ -360,9 +352,8 @@ public class Paginator {
 
 	/**
 	 * Determine whether arabic or roman numbers should be used when counting.
-	 * 
-	 * @param paginationType
-	 *            Set style of pagination numbers.
+	 *
+	 * @param paginationType Set style of pagination numbers.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setPaginationType(Type paginationType) {
@@ -372,9 +363,8 @@ public class Paginator {
 
 	/**
 	 * Enable or disable fictitious pagination using square bracktes around numbers.
-	 * 
-	 * @param b
-	 *            True, fictitious pagination. False, regular pagination.
+	 *
+	 * @param b True, fictitious pagination. False, regular pagination.
 	 * @return This object for fluent interfacing.
 	 */
 	public Paginator setFictitious(boolean b) {

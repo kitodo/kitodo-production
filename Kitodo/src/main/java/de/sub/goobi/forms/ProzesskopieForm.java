@@ -27,66 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.faces.model.SelectItem;
-import javax.naming.NamingException;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
-import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.constants.FileNames;
-import org.goobi.production.constants.Parameters;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
-import org.goobi.production.plugin.CataloguePlugin.Hit;
-import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.UGHException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -113,8 +53,73 @@ import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.faces.model.SelectItem;
+import javax.naming.NamingException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
+
+import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.constants.FileNames;
+import org.goobi.production.constants.Parameters;
+import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.goobi.production.plugin.CataloguePlugin.Hit;
+import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.goobi.production.plugin.PluginLoader;
+
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.dl.Person;
+import ugh.dl.Prefs;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedAsChildException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.mets.XStream;
 
 public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
@@ -275,6 +280,9 @@ public class ProzesskopieForm {
 	private String tifHeader_imagedescription = "";
 	private String tifHeader_documentname = "";
 
+	/**
+	 * @return add description
+	 */
 	public String prepare() {
 		atstsl = "";
 		Helper.getHibernateSession().refresh(this.prozessVorlage);
@@ -338,14 +346,14 @@ public class ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- die auszublendenden Standard-Felder ermitteln --------------------------------
+		 * die auszublendenden Standard-Felder ermitteln
 		 */
 		for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
 			this.standardFields.put(t, false);
 		}
 
 		/*
-		 * -------------------------------- die einzublendenen (zusätzlichen) Eigenschaften ermitteln --------------------------------
+		 * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
 		 */
 		int count = cp.getParamList("createNewProcess.itemlist.item").size();
 		for (int i = 0; i < count; i++) {
@@ -362,7 +370,7 @@ public class ProzesskopieForm {
 			fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
 
 			/*
-			 * -------------------------------- Bindung an ein Metadatum eines Docstructs --------------------------------
+			 * Bindung an ein Metadatum eines Docstructs
 			 */
 			if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
 				fa.setUghbinding(true);
@@ -374,7 +382,7 @@ public class ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- prüfen, ob das aktuelle Item eine Auswahlliste werden soll --------------------------------
+			 * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
 			 */
 			int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
 			/* Children durchlaufen und SelectItems erzeugen */
@@ -393,6 +401,10 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public List<SelectItem> getProzessTemplates() throws DAOException {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
 		Session session = Helper.getHibernateSession();
@@ -520,9 +532,8 @@ public class ProzesskopieForm {
 	/**
 	 * The method importHit() loads a hit into the display.
 	 *
-	 * @param hit
-	 *            Hit to load
-	 * @throws PreferencesException
+	 * @param hit Hit to load
+	 * @throws PreferencesException add description
 	 */
 	protected void importHit(Hit hit) throws PreferencesException {
 		myRdf = hit.getFileformat();
@@ -536,8 +547,7 @@ public class ProzesskopieForm {
 	 * Creates a DataCopier with the given configuration, lets it process the
 	 * given data and wraps any errors to display in the front end.
 	 *
-	 * @param data
-	 *            data to process
+	 * @param data data to process
 	 */
 	private void applyCopyingRules(CopierData data) {
 		String rules = ConfigMain.getParameter("copyData.onCatalogueQuery");
@@ -557,10 +567,9 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
-	 * füllen
+	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen
 	 *
-	 * @throws PreferencesException
+	 * @throws PreferencesException add description
 	 */
 	private void fillFieldsFromMetadataFile() throws PreferencesException {
 		if (this.myRdf != null) {
@@ -615,16 +624,16 @@ public class ProzesskopieForm {
 						field.setWert(field.getWert().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
-			}// end for
+			} // end for
 		} // end if myrdf==null
 	}
 
 	/**
 	 * Auswahl des Prozesses auswerten
 	 *
-	 * @throws DAOException
-	 * @throws NamingException
-	 * @throws SQLException ============================================================== ==
+	 * @throws DAOException add description
+	 * @throws NamingException add description
+	 * @throws SQLException add description
 	 */
 	public String TemplateAuswahlAuswerten() throws DAOException {
 		/* den ausgewählten Prozess laden */
@@ -736,7 +745,7 @@ public class ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der standard-Eingaben, die angegeben werden müssen
 		 */
 		/* keine Collektion ausgewählt */
 		if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
@@ -746,7 +755,7 @@ public class ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- Prüfung der additional-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der additional-Eingaben, die angegeben werden müssen
 		 */
 		for (AdditionalField field : this.additionalFields) {
 			if ((field.getWert() == null || field.getWert().equals("")) && field.isRequired()
@@ -768,6 +777,9 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	 * @return add description
+	 */
 	public String GoToSeite2() {
 		if (!isContentValid()) {
 			return NAVI_FIRST_PAGE;
@@ -777,11 +789,11 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * Anlegen des Prozesses und Speichern der Metadaten ================================================================
+	 * Anlegen des Prozesses und Speichern der Metadaten
 	 *
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws WriteException add description
 	 */
 	public String NeuenProzessAnlegen() throws ReadException, IOException, InterruptedException, PreferencesException,
 			SwapException, DAOException, WriteException {
@@ -795,7 +807,7 @@ public class ProzesskopieForm {
 
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
-			 * -------------------------------- always save date and user for each step --------------------------------
+			 * always save date and user for each step
 			 */
 			step.setBearbeitungszeitpunkt(this.prozessKopie.getErstellungsdatum());
 			step.setEditTypeEnum(StepEditType.AUTOMATIC);
@@ -805,7 +817,7 @@ public class ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- only if its done, set edit start and end date --------------------------------
+			 * only if its done, set edit start and end date
 			 */
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				step.setBearbeitungsbeginn(this.prozessKopie.getErstellungsdatum());
@@ -920,10 +932,10 @@ public class ProzesskopieForm {
 
 					}
 				} // end if ughbinding
-			}// end for
+			} // end for
 
 			/*
-			 * -------------------------- Metadata inheritance and enrichment --------------------------
+			 * Metadata inheritance and enrichment
 			 */
 			if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
 				DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
@@ -1003,7 +1015,7 @@ public class ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
+			 * Imagepfad hinzufügen (evtl. vorhandene zunächst löschen)
 			 */
 			try {
 				MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
@@ -1028,7 +1040,7 @@ public class ProzesskopieForm {
 				this.prozessKopie.writeMetadataFile(this.myRdf);
 
 				/*
-				 * -------------------------------- soll der Prozess als Vorlage verwendet werden? --------------------------------
+				 * soll der Prozess als Vorlage verwendet werden?
 				 */
 				if (this.useTemplates && this.prozessKopie.isInAuswahllisteAnzeigen()) {
 					this.prozessKopie.writeMetadataAsTemplateFile(this.myRdf);
@@ -1105,7 +1117,7 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * alle Kollektionen eines übergebenen DocStructs entfernen ================================================================
+	 * alle Kollektionen eines übergebenen DocStructs entfernen
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
@@ -1128,6 +1140,9 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	 *
+	 */
 	public void createNewFileformat() {
 		Prefs myPrefs = this.prozessKopie.getRegelsatz().getPreferences();
 		try {
@@ -1254,6 +1269,9 @@ public class ProzesskopieForm {
 		return this.docType;
 	}
 
+	/**
+	 * @param docType add description
+	 */
 	public void setDocType(String docType) {
 		if (this.docType.equals(docType)) {
 			return;
@@ -1405,8 +1423,9 @@ public class ProzesskopieForm {
 
 	}
 
-	/*
-	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use this choice
+	/**
+	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
+	 * this choice
 	 *
 	 * @author Wulf
 	 */
@@ -1499,6 +1518,9 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getAllOpacCatalogues() {
 		try {
 			return ConfigOpac.getAllCatalogueTitles();
@@ -1509,6 +1531,9 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
 			return ConfigOpac.getAllDoctypes();
@@ -1605,6 +1630,11 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @param genericFields add description
+	 * @return add description
+	 * @throws IOException add description
+	 */
 	public String generateTitle(Map<String, String> genericFields) throws IOException {
 		String currentAuthors = "";
 		String currentTitle = "";
@@ -1614,7 +1644,8 @@ public class ProzesskopieForm {
 				field.setWert(String.valueOf(System.currentTimeMillis() + counter));
 				counter++;
 			}
-			if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain") && currentTitle.length() == 0) {
+			if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
+					&& currentTitle.length() == 0) {
 				currentTitle = field.getWert();
 			} else if (field.getMetadata() != null && field.getMetadata().equals("ListOfCreators")
 					&& currentAuthors.length() == 0) {
@@ -1693,7 +1724,8 @@ public class ProzesskopieForm {
 					AdditionalField myField = it2.next();
 
 					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
+					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht
+					 * vorhanden
 					 */
 					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL"))
 							&& myField.getShowDependingOnDoctype()
@@ -1755,6 +1787,9 @@ public class ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	 *
+	 */
 	public void CalcTiffheader() {
 		String tif_definition = "";
 		ConfigProjects cp = null;
@@ -1767,18 +1802,18 @@ public class ProzesskopieForm {
 		tif_definition = cp.getParamString("tifheader." + this.docType, "intranda");
 
 		/*
-		 * -------------------------------- evtuelle Ersetzungen --------------------------------
+		 * evtuelle Ersetzungen
 		 */
 		tif_definition = tif_definition.replaceAll("\\[\\[", "<");
 		tif_definition = tif_definition.replaceAll("\\]\\]", ">");
 
 		/*
-		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
+		 * Documentname ist im allgemeinen = Prozesstitel
 		 */
 		this.tifHeader_documentname = this.prozessKopie.getTitel();
 		this.tifHeader_imagedescription = "";
 		/*
-		 * -------------------------------- Imagedescription --------------------------------
+		 * Imagedescription
 		 */
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
@@ -1807,7 +1842,8 @@ public class ProzesskopieForm {
 						title = myField.getWert();
 					}
 					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
+					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht
+					 * vorhanden
 					 */
 					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL"))
 							&& myField.getShowDependingOnDoctype()
@@ -1862,6 +1898,9 @@ public class ProzesskopieForm {
 		return this.addToWikiField;
 	}
 
+	/**
+	 * @param addToWikiField add description
+	 */
 	public void setAddToWikiField(String addToWikiField) {
 		this.prozessKopie.setWikifield(prozessVorlage.getWikifield());
 		this.addToWikiField = addToWikiField;
@@ -1873,6 +1912,11 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @param title add description
+	 * @param author add description
+	 * @return add description
+	 */
 	public static String createAtstsl(String title, String author) {
 		StringBuilder result = new StringBuilder(8);
 		if (author != null && author.trim().length() > 0) {
@@ -2002,8 +2046,8 @@ public class ProzesskopieForm {
 	public boolean isCalendarButtonShowing() {
 		try {
 			return ConfigOpac.getDoctypeByName(docType).isNewspaper();
-		} catch (NullPointerException e) { // may occur if user continues to interact with the page across a restart of
-											// the servlet container
+		} catch (NullPointerException e) { /* may occur if user continues to interact with the page across a restart of
+			the servlet container*/
 			return false;
 		} catch (FileNotFoundException e) {
 			myLogger.error("Error while reading von opac-config", e);

@@ -35,7 +35,10 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
+
+import de.sub.goobi.helper.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,82 +58,64 @@ import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.helper.Util;
 
 /**
- * Backing bean for a set of backing beans for input elements to edit a metadata
- * group, with the ability to switch the type of metadata group under edit. It
- * provides the currently selected type of metadata group to add, a list of all
- * types to choose from and the members of the chosen type in order to browse
- * and alter their values.
- * 
+ * Backing bean for a set of backing beans for input elements to edit a metadata group, with the ability to switch the
+ * type of metadata group under edit. It provides the currently selected type of metadata group to add, a list of all
+ * types to choose from and the members of the chosen type in order to browse and alter their values.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
 
 	/**
-	 * Holds backing beans for the metadata types that are part of the currently
-	 * selected metadata type. The backing beans are held as values in this map
-	 * with their respective metadata type names as keys.
+	 * Holds backing beans for the metadata types that are part of the currently selected metadata type. The backing
+	 * beans are held as values in this map with their respective metadata type names as keys.
 	 */
 	protected Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
 
 	/**
-	 * Holds all metadata group types that still can be added to the logical
-	 * document structure node currently selected in the metadata editor. The
-	 * metadata group types are held as values in this map with their respective
-	 * metadata group type names as keys. This is done for easily retrieving the
-	 * corresponding metadata group type when {@link #setType(String)} is called
-	 * to circumvent the need to iterate over all available types and compare
+	 * Holds all metadata group types that still can be added to the logical document structure node currently selected
+	 * in the metadata editor. The metadata group types are held as values in this map with their respective
+	 * metadata group type names as keys. This is done for easily retrieving the corresponding metadata group type when
+	 * {@link #setType(String)} is called to circumvent the need to iterate over all available types and compare
 	 * all of their type name strings against the identifier value to set.
 	 */
 	private final Map<String, MetadataGroupType> possibleTypes;
 
 	/**
-	 * Holds the type of metadata group currently under edit in the form backed
-	 * by this RenderableMetadataGroup instance
+	 * Holds the type of metadata group currently under edit in the form backed by this RenderableMetadataGroup instance
 	 */
 	private MetadataGroupType type;
 
 	/**
-	 * Holds the name of the project the act currently under edit in the
-	 * metadata editor belongs to. The project name is needed by backing beans
-	 * for select inputs to retrieve their available options.
+	 * Holds the name of the project the act currently under edit in the metadata editor belongs to. The project name
+	 * is needed by backing beans for select inputs to retrieve their available options.
 	 */
 	private final String projectName;
 
 	/**
-	 * Holds the metadata group data instance represented by this backing bean
-	 * in case that this backing bean represents a metadata group that has
-	 * already been added to a logical document structure node. It is needed to
-	 * delete the metadata group from the logical document structure node if the
-	 * user demands it. If this RenderableMetadataGroup represents a metadata
-	 * group which is currently created and has not yet been added to a logical
-	 * document structure node, the field metadataGroup is null.
+	 * Holds the metadata group data instance represented by this backing bean in case that this backing bean
+	 * represents a metadata group that has already been added to a logical document structure node. It is needed to
+	 * delete the metadata group from the logical document structure node if the user demands it. If this
+	 * RenderableMetadataGroup represents a metadata group which is currently created and has not yet been added to
+	 * a logical document structure node, the field metadataGroup is null.
 	 */
 	private final MetadataGroup metadataGroup;
 
 	/**
-	 * Metadata editor instance this RenderableMetadataGroup is showing in. It
-	 * is needed to forward list operations, like deleting the metadata group
-	 * represented by this instance from the logical document structure node.
+	 * Metadata editor instance this RenderableMetadataGroup is showing in. It is needed to forward list operations,
+	 * like deleting the metadata group represented by this instance from the logical document structure node.
 	 */
 	private final Metadaten container;
 
 	/**
-	 * Creates a RenderableMetadataGroup instance able to add any metadata group
-	 * that still can be added to the currently selected level of the document
-	 * structure hierararchy.
-	 * 
-	 * @param addableTypes
-	 *            all metadata group types available for adding to the current
-	 *            logical document structure node
-	 * @param projectName
-	 *            project that the act whose metadata group is to edit belongs
-	 *            to
-	 * @throws ConfigurationException
-	 *             if a single value metadata field is configured to show a
-	 *             multi-select input
+	 * Creates a RenderableMetadataGroup instance able to add any metadata group that still can be added to the
+	 * currently selected level of the document structure hierararchy.
+	 *
+	 * @param addableTypes all metadata group types available for adding to the current logical document structure node
+	 * @param projectName project that the act whose metadata group is to edit belongs to
+	 * @throws ConfigurationException if a single value metadata field is configured to show a multi-select input
 	 */
 	public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
 			throws ConfigurationException {
@@ -147,28 +132,17 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Creates a new RenderableMetadataGroup instance to display and modify a
-	 * metadata group that has already been assigned to a logical document
-	 * structure node. This constructor configures the backing beans for the
-	 * input elements that represent the fields of the metadata group to
-	 * automatically update the linked metadata group at the moment their
-	 * setters are called and provides the ability to delete the associated
-	 * metadata group from the document structure node. Changing the metadata
-	 * group type is not possible.
-	 * 
-	 * @param data
-	 *            metadata group whose data shall be shown
-	 * @param container
-	 *            metadata editor instance this RenderableMetadataGroup is
-	 *            showing in
-	 * @param language
-	 *            display language to use
-	 * @param projectName
-	 *            project that the process whose metadata group is to edit
-	 *            belongs to
-	 * @throws ConfigurationException
-	 *             if a single value metadata field is configured to show a
-	 *             multi-select input
+	 * Creates a new RenderableMetadataGroup instance to display and modify a metadata group that has already been
+	 * assigned to a logical document structure node. This constructor configures the backing beans for the input
+	 * elements that represent the fields of the metadata group to automatically update the linked metadata group at
+	 * the moment their setters are called and provides the ability to delete the associated metadata group from the
+	 * document structure node. Changing the metadata group type is not possible.
+	 *
+	 * @param data metadata group whose data shall be shown
+	 * @param container metadata editor instance this RenderableMetadataGroup is showing in
+	 * @param language display language to use
+	 * @param projectName project that the process whose metadata group is to edit belongs to
+	 * @throws ConfigurationException if a single value metadata field is configured to show a multi-select input
 	 */
 	public RenderableMetadataGroup(MetadataGroup data, Metadaten container, String language, String projectName)
 			throws ConfigurationException {
@@ -183,23 +157,16 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Protected constructor for classes extending RenderableMetadataGroup,
-	 * creates a new RenderableMetadataGroup with exactly one type.
-	 * 
-	 * @param metadataType
-	 *            metadata type this element is for
-	 * @param binding
-	 *            a metadata group whose value(s) shall be read and updated if
-	 *            as the getters and setters for the bean are called
-	 * @param container
-	 *            metedata group this element belongs to
-	 * @param type
-	 *            group type of the element to create
-	 * @param projectName
-	 *            name of the project the act belongs to
-	 * @throws ConfigurationException
-	 *             if a single value metadata field is configured to show a
-	 *             multi-select input
+	 * Protected constructor for classes extending RenderableMetadataGroup, creates a new RenderableMetadataGroup with
+	 * exactly one type.
+	 *
+	 * @param metadataType metadata type this element is for
+	 * @param binding a metadata group whose value(s) shall be read and updated if as the getters and setters for
+	 *                   the bean are called
+	 * @param container metedata group this element belongs to
+	 * @param type group type of the element to create
+	 * @param projectName name of the project the act belongs to
+	 * @throws ConfigurationException if a single value metadata field is configured to show a multi-select input
 	 */
 	protected RenderableMetadataGroup(MetadataType metadataType, MetadataGroup binding,
 			RenderableMetadataGroup container, MetadataGroupType type, String projectName)
@@ -214,19 +181,15 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Copy constructor, creates a RenderableMetadataGroup initialised with the
-	 * data from an existing metadata group, but still able to add any metadata
-	 * group that still can be added to the currently selected level of the
-	 * document structure hierarchy. Initialises the type to the type of the
-	 * copy master and sets the values of the fields to the values of the copy
-	 * master, but doesn’t bind them to the copy master, so changing the values
+	 * Copy constructor, creates a RenderableMetadataGroup initialised with the data from an existing metadata group,
+	 * but still able to add any metadata group that still can be added to the currently selected level of the
+	 * document structure hierarchy. Initialises the type to the type of the copy master and sets the values of the
+	 * fields to the values of the copy master, but doesn’t bind them to the copy master, so changing the values
 	 * late won’t arm the master object this copy is derived from.
-	 * 
-	 * @param master
-	 *            a metadata group that a copy shall be created of
-	 * @param addableTypes
-	 *            all metadata group types that still can be added to the
-	 *            logical document hierarchy node currently under edit
+	 *
+	 * @param master a metadata group that a copy shall be created of
+	 * @param addableTypes all metadata group types that still can be added to the logical document hierarchy node
+	 *                        currently under edit
 	 */
 	public RenderableMetadataGroup(RenderableMetadataGroup master, Collection<MetadataGroupType> addableTypes) {
 		super(master.labels, null);
@@ -246,21 +209,14 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Creates the members for the metadata group. In update mode, the members
-	 * will be bound tho the metadata group they have been formed from and will
-	 * automatically intialise themselves from it and update it on every change.
-	 * If update is false, they need to be initialised explicitly so that they
-	 * carry a copy of the value. They will not be bound the data object and
-	 * thus can be used to create a copy of the data.
-	 * 
-	 * @param data
-	 *            metadata group whose data shall be shown
-	 * @param autoUpdate
-	 *            whether the data structure shall be updated if the member is
-	 *            edited or not
-	 * @throws ConfigurationException
-	 *             if a single value metadata field is configured to show a
-	 *             multi-select input
+	 * Creates the members for the metadata group. In update mode, the members will be bound tho the metadata group
+	 * they have been formed from and will automatically intialise themselves from it and update it on every change.
+	 * If update is false, they need to be initialised explicitly so that they carry a copy of the value. They will not
+	 * be bound the data object and thus can be used to create a copy of the data.
+	 *
+	 * @param data metadata group whose data shall be shown
+	 * @param autoUpdate whether the data structure shall be updated if the member is edited or not
+	 * @throws ConfigurationException if a single value metadata field is configured to show a multi-select input
 	 */
 	private final void createMembers(MetadataGroup data, boolean autoUpdate) throws ConfigurationException {
 		List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
@@ -285,39 +241,34 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Invokes the metadata editor to show the subpage to add a new metadata
-	 * group, initialised with the values from this instance in order to create
-	 * a copy of this instance.
-	 * 
-	 * This method is provided for the reason that action methods on repeatable
-	 * elements must be implemented as parameterless methods on the backing
-	 * beans of the respective list items in JSF. This method just forwards the
-	 * function call to the component owning the list, which is the more
-	 * convenient way to implement add or remove operations on lists.
+	 * Invokes the metadata editor to show the subpage to add a new metadata group, initialised with the values from
+	 * this instance in order to create a copy of this instance.
+	 *
+	 * <p>This method is provided for the reason that action methods on repeatable elements must be implemented as
+	 * parameterless methods on the backing beans of the respective list items in JSF. This method just forwards the
+	 * function call to the component owning the list, which is the more  convenient way to implement add or remove
+	 * operations on lists.</p>
 	 */
 	public void copy() {
 		container.showAddMetadataGroupAsCopy(this);
 	}
 
 	/**
-	 * Invokes the metadata editor to delete the metadata group under edit in
-	 * this instance from the logical document structure node currently under
-	 * edit.
-	 * 
-	 * This method is provided for the reason that action methods on repeatable
-	 * elements must be implemented as parameterless methods on the backing
-	 * beans of the respective list items in JSF. This method just forwards the
-	 * function call to the component owning the list, which is the more
-	 * convenient way to implement add or remove operations on lists.
+	 * Invokes the metadata editor to delete the metadata group under edit in this instance from the logical document
+	 * structure node currently under edit.
+	 *
+	 * <p>This method is provided for the reason that action methods on repeatable elements must be implemented as
+	 * parameterless methods on the backing beans of the respective list items in JSF. This method just forwards the
+	 * function call to the component owning the list, which is the more convenient way to implement add or remove
+	 * operations on lists.</p>
 	 */
 	public void delete() {
 		container.removeMetadataGroupFromCurrentDocStruct(metadataGroup);
 	}
 
 	/**
-	 * The function getMembers returns the input elements of this metadata
-	 * group.
-	 * 
+	 * The function getMembers returns the input elements of this metadata group.
+	 *
 	 * @return the input elements of this group
 	 */
 	public Collection<RenderableGroupableMetadatum> getMembers() {
@@ -325,9 +276,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Returns the number of elements in the members list, to be used for the
-	 * label cell height in HTML.
-	 * 
+	 * Returns the number of elements in the members list, to be used for the label cell height in HTML.
+	 *
 	 * @return the number of elements in the members list.
 	 */
 	public String getRowspan() {
@@ -343,11 +293,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * The function getPossibleTypes() returns the list of metadata group types
-	 * available for the currently selected document structure element.
-	 * Depending on the rule set, availability means that some elements cannot
-	 * be added more than once and thus may not be available to add any more.
-	 * 
+	 * The function getPossibleTypes() returns the list of metadata group types available for the currently selected
+	 * document structure element. Depending on the rule set, availability means that some elements cannot be added
+	 * more than once and thus may not be available to add any more.
+	 *
 	 * @return the metadata group types available
 	 */
 	public Collection<SelectItem> getPossibleTypes() {
@@ -359,9 +308,8 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * The function getSize() returns the number of elements in this metadata
-	 * group.
-	 * 
+	 * The function getSize() returns the number of elements in this metadata group.
+	 *
 	 * @return the number of elements in this group
 	 */
 	public int getSize() {
@@ -369,12 +317,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Returns the internal name of the metadata group type currently under edit
-	 * to JSF so that it can mark the appropriate option as selected in the
-	 * metadata group type select box. The user will be shown the label returned
-	 * for the corresponding element in getPossibleTypes(), not the internal
-	 * name.
-	 * 
+	 * Returns the internal name of the metadata group type currently under edit to JSF so that it can mark the
+	 * appropriate option as selected in the metadata group type select box. The user will be shown the label returned
+	 * for the corresponding element in getPossibleTypes(), not the internal name.
+	 *
 	 * @return the internal name of the metadata group type
 	 */
 	public String getType() {
@@ -382,11 +328,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Returns whether another instance of the metadata group type under edit in
-	 * this instance can be created on the logical document structure node
-	 * currently under edit in the metadata editor to either render the action
+	 * Returns whether another instance of the metadata group type under edit in this instance can be created on the
+	 * logical document structure node currently under edit in the metadata editor to either render the action
 	 * link to copy this metadata group, or not.
-	 * 
+	 *
 	 * @return the internal name of the metadata group type
 	 */
 	public boolean isCopyable() {
@@ -394,11 +339,10 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * The procedure setLanguage() extends the setter function from
-	 * RenderableMetadatum because if setLanguage() is called for a metadata
-	 * group, both the label display language for the group and for all of its
-	 * members must be set.
-	 * 
+	 * The procedure setLanguage() extends the setter function from  RenderableMetadatum because if setLanguage() is
+	 * called for a metadata group, both the label display language for the group and for all of its members must
+	 * be set.
+	 *
 	 * @see de.sub.goobi.metadaten.RenderableMetadatum#setLanguage(java.lang.String)
 	 */
 	@Override
@@ -410,16 +354,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * The procedure setType() will be called by JSF to pass back in the
-	 * metadata group type the user chose to edit, referenced by its name. If it
-	 * differs from the current one, this renderable metadata group will be
-	 * updated to represent the new type instead.
-	 * 
-	 * @param type
-	 *            name of the metadata group type desired
-	 * @throws ConfigurationException
-	 *             if a metadata field designed for a single value is
-	 *             misconfigured to show a multi-value input element
+	 * The procedure setType() will be called by JSF to pass back in the metadata group type the user chose to edit,
+	 * referenced by its name. If it differs from the current one, this renderable metadata group will be updated to
+	 * represent the new type instead.
+	 *
+	 * @param type name of the metadata group type desired
+	 * @throws ConfigurationException if a metadata field designed for a single value is misconfigured to show
+	 * 				a multi-value input element
 	 */
 	public void setType(String type) throws ConfigurationException {
 		if (possibleTypes.isEmpty()) {
@@ -433,10 +374,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Returs the currently showing metadata group as a
-	 * {@link ugh.dl.MetadataGroup} so that it can be added to some structural
-	 * element.
-	 * 
+	 * Returs the currently showing metadata group as a {@link ugh.dl.MetadataGroup} so that it can be added to some
+	 * structural element.
+	 *
 	 * @return the showing metatdata group as ugh.dl.MetadataGroup
 	 */
 	public MetadataGroup toMetadataGroup() {
@@ -463,17 +403,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * The procedure updateMembers() creates or updates the members of this
-	 * metadata group initially in the constructor and subsequently if the user
-	 * alters the metadata group type he or she wants to create. Members that
+	 * The procedure updateMembers() creates or updates the members of this metadata group initially in the constructor
+	 * and subsequently if the user lters the metadata group type he or she wants to create. Members that
 	 * previously existed will be kept.
-	 * 
-	 * @param newGroupType
-	 *            metadata group type to initialize this renderable metadata
-	 *            group to
-	 * @throws ConfigurationException
-	 *             if a metadata field designed for a single value is
-	 *             misconfigured to show a multi-value input element
+	 *
+	 * @param newGroupType metadata group type to initialize this renderable metadata group to
+	 * @throws ConfigurationException if a metadata field designed for a single value is misconfigured to show
+	 * 				a multi-value input element
 	 */
 	private final void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
 		List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();

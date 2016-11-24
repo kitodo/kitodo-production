@@ -30,9 +30,8 @@ package de.sub.goobi.helper.enums;
 import de.sub.goobi.helper.Helper;
 
 /**
- * Enum for status of steps, each one with integer value for database, with
- * title and images for gui
- * 
+ * Enum for status of steps, each one with integer value for database, with title and images for gui
+ *
  * @author Steffen Hankiewicz
  * @version 17.05.2009
  */
@@ -74,7 +73,7 @@ public enum StepStatus {
 
 	/**
 	 * return integer value for database savings
-	 * 
+	 *
 	 * @return value as integer
 	 */
 	public Integer getValue() {
@@ -83,7 +82,7 @@ public enum StepStatus {
 
 	/**
 	 * get title from status type
-	 * 
+	 *
 	 * @return title as translated string for current locale from standard-jsf-messages
 	 */
 	public String getTitle() {
@@ -92,7 +91,7 @@ public enum StepStatus {
 
 	/**
 	 * get file name for small image
-	 * 
+	 *
 	 * @return file name for small image
 	 */
 	public String getSmallImagePath() {
@@ -101,7 +100,7 @@ public enum StepStatus {
 
 	/**
 	 * get file name for big image
-	 * 
+	 *
 	 * @return file name for big image
 	 */
 	public String getBigImagePath() {
@@ -109,11 +108,10 @@ public enum StepStatus {
 	}
 
 	/**
-	 * retrieve StepStatus by integer value, necessary for database handlings,
-	 * where only integer is saved but not type safe
-	 * 
-	 * @param inValue
-	 *            as integer value
+	 * retrieve StepStatus by integer value, necessary for database handlings, where only integer is saved but not
+	 * type safe
+	 *
+	 * @param inValue as integer value
 	 * @return {@link StepStatus} for given integer
 	 */
 	public static StepStatus getStatusFromValue(Integer inValue) {

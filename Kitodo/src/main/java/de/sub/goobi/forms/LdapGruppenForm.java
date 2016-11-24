@@ -27,16 +27,16 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.LdapGruppenDAO;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 
 public class LdapGruppenForm extends BasisForm {
 	private static final long serialVersionUID = -5644561256582235244L;
@@ -48,6 +48,9 @@ public class LdapGruppenForm extends BasisForm {
 		return "LdapGruppenBearbeiten";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		try {
 			this.dao.save(this.myLdapGruppe);
@@ -58,6 +61,9 @@ public class LdapGruppenForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		try {
 			this.dao.remove(this.myLdapGruppe);
@@ -68,6 +74,9 @@ public class LdapGruppenForm extends BasisForm {
 		return "LdapGruppenAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -88,7 +97,7 @@ public class LdapGruppenForm extends BasisForm {
 	}
 
 	/*
-	 * Getter und Setter     
+	 * Getter und Setter
 	 */
 
 	public LdapGruppe getMyLdapGruppe() {

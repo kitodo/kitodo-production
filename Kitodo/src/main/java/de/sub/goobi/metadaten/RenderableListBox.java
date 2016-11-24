@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
@@ -53,29 +54,24 @@ import ugh.dl.MetadataType;
 /**
  * Backing bean for a select list style input element to edit a metadatum with
  * the option to select one or more predefined values renderable by JSF.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
 
 	/**
-	 * Holds the options to show in the select list, including their selection
-	 * state
+	 * Holds the options to show in the select list, including their selection state
 	 */
 	private final Collection<Item> items;
 
 	/**
 	 * Constructor. Creates a RenderableListBox.
-	 * 
-	 * @param metadataType
-	 *            metadata type editable by this list element
-	 * @param binding
-	 *            a metadata group whose values shall be updated if the setter
-	 *            methods are called (optional, may be null)
-	 * @param container
-	 *            metadata group this list is showing in
-	 * @param projectName
-	 *            project of the process owning this metadatum
+	 *
+	 * @param metadataType metadata type editable by this list element
+	 * @param binding a metadata group whose values shall be updated if the setter methods are called (optional,
+	 *                   may be null)
+	 * @param container metadata group this list is showing in
+	 * @param projectName project of the process owning this metadatum
 	 */
 	public RenderableListBox(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container,
 			String projectName) {
@@ -93,9 +89,8 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
 	/**
 	 * Selects all items whose values are equal to the value to set.
-	 * 
-	 * @param data
-	 *            data to add
+	 *
+	 * @param data data to add
 	 */
 	@Override
 	public void addContent(Metadata data) {
@@ -109,7 +104,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
 	/**
 	 * Returns the available items for the the user to choose from.
-	 * 
+	 *
 	 * @return the items to choose from
 	 */
 	public Collection<SelectItem> getItems() {
@@ -122,7 +117,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
 	/**
 	 * Returns a list of identifiers of the items currently selected.
-	 * 
+	 *
 	 * @return the items currently selected
 	 */
 	public List<String> getSelectedItems() {
@@ -136,11 +131,10 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 	}
 
 	/**
-	 * Uses the passed-in list of identifiers of the items that shall be
-	 * selected to set the selected state on the items.
-	 * 
-	 * @param selected
-	 *            list of identifiers of items to be selected
+	 * Uses the passed-in list of identifiers of the items that shall be selected to set the selected state on
+	 * the items.
+	 *
+	 * @param selected  list of identifiers of items to be selected
 	 */
 	public void setSelectedItems(List<String> selected) {
 		for (Item item : items) {
@@ -151,9 +145,8 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
 
 	/**
 	 * Returns the value of this edit component as metadata elements
-	 * 
-	 * @return a list of metadata elements with the selected values of this
-	 *         input
+	 *
+	 * @return a list of metadata elements with the selected values of this input
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
 	 */
 	@Override

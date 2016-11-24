@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
 
 import java.math.BigInteger;
@@ -46,7 +47,7 @@ import java.util.regex.Pattern;
 
 /**
  * Object representing a separator.
- * 
+ *
  * @author Matthias Ronge
  */
 public class Separator implements Selectable {
@@ -63,9 +64,8 @@ public class Separator implements Selectable {
 
 	/**
 	 * Creates a lot of separator objects from a String array.
-	 * 
-	 * @param data
-	 *            elements to create Separators from
+	 *
+	 * @param data elements to create Separators from
 	 * @return a list of separator objects
 	 */
 	public static List<Separator> factory(String data) {
@@ -88,9 +88,8 @@ public class Separator implements Selectable {
 
 	/**
 	 * Creates a new separator
-	 * 
-	 * @param separator
-	 *            separator String
+	 *
+	 * @param separator separator String
 	 */
 	public Separator(String separator) {
 		for (int i = 0; i < separator.length(); i++) {
@@ -114,8 +113,7 @@ public class Separator implements Selectable {
 	}
 
 	/**
-	 * Returns a visible label for the separator. White spaces are replaced by
-	 * open boxes (␣) to be visible.
+	 * Returns a visible label for the separator. White spaces are replaced by open boxes (␣) to be visible.
 	 */
 	@Override
 	public String getLabel() {
@@ -124,7 +122,7 @@ public class Separator implements Selectable {
 
 	/**
 	 * Return the separator string.
-	 * 
+	 *
 	 * @return the separator string
 	 */
 	public String getSeparatorString() {

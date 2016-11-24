@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten.copier;
 
 import java.util.ArrayList;
@@ -49,9 +50,8 @@ import ugh.dl.MetadataType;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
- * A LocalMetadataSelector provides methods to retrieve or modify metadata on a
- * document structure node.
- * 
+ * A LocalMetadataSelector provides methods to retrieve or modify metadata on a document structure node.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class LocalMetadataSelector extends MetadataSelector {
@@ -64,12 +64,10 @@ public class LocalMetadataSelector extends MetadataSelector {
 
 	/**
 	 * Creates a new LocalMetadataSelector.
-	 * 
-	 * @param path
-	 *            Path to metadatum, must consist of an “@” character followed
-	 *            by a metadata element name, i.e. “@TitleDocMain”
-	 * @throws ConfigurationException
-	 *             if the metadata path doesn’t start with an “@” character
+	 *
+	 * @param path Path to metadatum, must consist of an “@” character followed by a metadata element name,
+	 *                i.e. “@TitleDocMain”
+	 * @throws ConfigurationException if the metadata path doesn’t start with an “@” character
 	 */
 	public LocalMetadataSelector(String path) throws ConfigurationException {
 		if (!path.startsWith(METADATA_SEPARATOR)) {
@@ -80,18 +78,14 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Checks if no metadatum as named by the path is available at that document
-	 * structure node, and only in this case adds a metadatum as named by the
-	 * path with the value passed to the function.
-	 * 
-	 * @param data
-	 *            document to work on, required to access the rule set
-	 * @param logicalNode
-	 *            document structure node to check and enrich
-	 * @param value
-	 *            value to write if no metadatum of this type is available
-	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(de.sub.goobi.metadaten.copier.CopierData,
-	 *      ugh.dl.DocStruct, java.lang.String)
+	 * Checks if no metadatum as named by the path is available at that document structure node, and only in this case
+	 * adds a metadatum as named by the path with the value passed to the function.
+	 *
+	 * @param data document to work on, required to access the rule set
+	 * @param logicalNode document structure node to check and enrich
+	 * @param value value to write if no metadatum of this type is available
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
+	 * de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct, java.lang.String)
 	 */
 	@Override
 	protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
@@ -102,18 +96,14 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Sets the value of the metadatum described by the path to the value passed
-	 * to the function or creates a metadatum as described by the path,
-	 * respectively.
-	 * 
-	 * @param data
-	 *            document to work on, required to access the rule set
-	 * @param logicalNode
-	 *            document structure node to check and enrich
-	 * @param value
-	 *            value to write if no metadatum of this type is available
-	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(de.sub.goobi.metadaten.copier.CopierData,
-	 *      ugh.dl.DocStruct, java.lang.String)
+	 * Sets the value of the metadatum described by the path to the value passed to the function or creates a metadatum
+	 * as described by the path, respectively.
+	 *
+	 * @param data document to work on, required to access the rule set
+	 * @param logicalNode document structure node to check and enrich
+	 * @param value value to write if no metadatum of this type is available
+	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
+	 * de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct, java.lang.String)
 	 */
 
 	@Override
@@ -127,11 +117,9 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Returns all concrete metadata selectors the potentially generic metadata
-	 * selector expression resolves to.
-	 * 
-	 * @param node
-	 *            Node of the logical document structure to work on
+	 * Returns all concrete metadata selectors the potentially generic metadata selector expression resolves to.
+	 *
+	 * @param node Node of the logical document structure to work on
 	 * @return all metadata selectors the expression resolves to
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
 	 */
@@ -151,11 +139,10 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Return the value of the metadatum named by the path used to construct the
-	 * metadata selector, or null if no such metadatum is available here.
-	 * 
-	 * @param node
-	 *            document structure node to examine
+	 * Return the value of the metadatum named by the path used to construct the metadata selector, or null if no such
+	 * metadatum is available here.
+	 *
+	 * @param node document structure node to examine
 	 * @return the value of the metadatum, or null if absent
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
 	 */
@@ -166,11 +153,10 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Returns the metadatum named by the path used to construct the metadata
-	 * selector, or null if no such metadatum is available here.
-	 * 
-	 * @param node
-	 *            document structure node to examine
+	 * Returns the metadatum named by the path used to construct the metadata selector, or null if no such metadatum
+	 * is available here.
+	 *
+	 * @param node document structure node to examine
 	 * @return the metadatum, or null if absent
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
 	 */
@@ -186,7 +172,7 @@ public class LocalMetadataSelector extends MetadataSelector {
 
 	/**
 	 * Returns a string that textually represents this LocalMetadataSelector.
-	 * 
+	 *
 	 * @return a string representation of this LocalMetadataSelector
 	 * @see java.lang.Object#toString()
 	 */
@@ -196,15 +182,12 @@ public class LocalMetadataSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Adds a metadatum as named by the path with the value passed to the
-	 * function. Doesn’t do anything if that isn’t possible.
-	 * 
-	 * @param data
-	 *            document to work on, required to access the rule set
-	 * @param logicalNode
-	 *            document structure node to check and enrich
-	 * @param value
-	 *            value to write if no metadatum of this type is available
+	 * Adds a metadatum as named by the path with the value passed to the function. Doesn’t do anything if that
+	 * isn’t possible.
+	 *
+	 * @param data document to work on, required to access the rule set
+	 * @param logicalNode document structure node to check and enrich
+	 * @param value value to write if no metadatum of this type is available
 	 */
 	private void tryToCreateANewMetadatum(CopierData data, DocStruct logicalNode, String value) {
 		Metadata copy = null;

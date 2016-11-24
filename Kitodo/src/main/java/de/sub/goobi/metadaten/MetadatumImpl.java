@@ -27,6 +27,9 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,12 +44,11 @@ import org.goobi.api.display.enums.BindState;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
- * 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der
+ * Schrittdetails
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
@@ -111,8 +113,9 @@ public class MetadatumImpl implements Metadatum {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	@Override
@@ -135,12 +138,9 @@ public class MetadatumImpl implements Metadatum {
 		this.md = md;
 	}
 
-	/******************************************************
-	 * 
+	/**
 	 * new functions for use of display configuration whithin xml files
-	 * 
-	 *****************************************************/
-
+	 */
 	@Override
 	public String getOutputType() {
 		return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();

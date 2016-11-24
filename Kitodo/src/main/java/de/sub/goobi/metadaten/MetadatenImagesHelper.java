@@ -27,6 +27,17 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
+import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
+import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
+import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
+
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -63,16 +74,6 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
-import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
-import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 public class MetadatenImagesHelper {
 	private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
@@ -86,18 +87,18 @@ public class MetadatenImagesHelper {
 	}
 
 	/**
-	 * Markus baut eine Seitenstruktur aus den vorhandenen Images ---------------- Steps - ---------------- Validation of images compare existing
-	 * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less add new pages to
-	 * physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct --------------------------------
+	 * Markus baut eine Seitenstruktur aus den vorhandenen Images Steps - Validation of images compare existing
+	 * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are less
+	 * add new pages to physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct
 	 *
-	 * @throws TypeNotAllowedForParentException
-	 * @throws TypeNotAllowedForParentException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws DAOException
-	 * @throws SwapException
+	 * @throws TypeNotAllowedForParentException add description
+	 * @throws TypeNotAllowedForParentException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
 	 */
 	public void createPagination(Prozess inProzess, String directory) throws TypeNotAllowedForParentException,
 			IOException, InterruptedException, SwapException, DAOException {
@@ -109,17 +110,16 @@ public class MetadatenImagesHelper {
 			log = log.getAllChildren().get(0);
 		}
 
-		/*--------------------------------
-		 * der physische Baum wird nur
-		 * angelegt, wenn er noch nicht existierte
-		 * --------------------------------*/
+		/*
+		 * der physische Baum wird nur angelegt, wenn er noch nicht existierte
+		 */
 		if (physicaldocstruct == null) {
 			DocStructType dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
 			physicaldocstruct = this.mydocument.createDocStruct(dst);
 
-			/*--------------------------------
+			/*
 			 * Probleme mit dem FilePath
-			 * -------------------------------- */
+			 */
 			MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
 			try {
 				Metadata mdForPath = new Metadata(MDTypeForPath);
@@ -141,9 +141,9 @@ public class MetadatenImagesHelper {
 			checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesDirectory() + directory);
 		}
 
-		/*-------------------------------
+		/*
 		 * retrieve existing pages/images
-		 * -------------------------------*/
+		 */
 		DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
 		List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
 		if (oldPages == null) {
@@ -354,9 +354,9 @@ public class MetadatenImagesHelper {
 	/**
 	 * scale given image file to png using internal embedded content server
 	 *
-	 * @throws ImageManagerException
-	 * @throws IOException
-	 * @throws ImageManipulatorException
+	 * @throws ImageManagerException add description
+	 * @throws IOException add description
+	 * @throws ImageManipulatorException add description
 	 */
 	public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation)
 			throws ImageManagerException, IOException, ImageManipulatorException {
@@ -426,20 +426,19 @@ public class MetadatenImagesHelper {
 	// Add a method to validate the image files
 
 	/**
-	 * die Images eines Prozesses auf Vollständigkeit prüfen ================================================================
+	 * die Images eines Prozesses auf Vollständigkeit prüfen
 	 *
-	 * @throws DAOException
-	 * @throws SwapException
+	 * @throws DAOException add description
+	 * @throws SwapException add description
 	 */
 	public boolean checkIfImagesValid(String title, String folder) throws IOException, InterruptedException,
 			SwapException, DAOException {
 		boolean isValid = true;
 		this.myLastImage = 0;
 
-		/*--------------------------------
-		 * alle Bilder durchlaufen und dafür
-		 * die Seiten anlegen
-		 * --------------------------------*/
+		/*
+		 * alle Bilder durchlaufen und dafür die Seiten anlegen
+		 **/
 		File dir = new File(folder);
 		if (dir.exists()) {
 			String[] dateien = dir.list(Helper.dataFilter);
@@ -508,7 +507,7 @@ public class MetadatenImagesHelper {
 	 *
 	 * @param myProzess current process
 	 * @return sorted list with strings representing images of process
-	 * @throws InvalidImagesException
+	 * @throws InvalidImagesException add description
 	 */
 
 	public ArrayList<String> getImageFiles(Prozess myProzess) throws InvalidImagesException {
@@ -536,6 +535,11 @@ public class MetadatenImagesHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @return add description
+	 * @throws InvalidImagesException add description
+	 */
 	public List<String> getDataFiles(Prozess myProzess) throws InvalidImagesException {
 		File dir;
 		try {
@@ -562,11 +566,10 @@ public class MetadatenImagesHelper {
 	}
 
 	/**
-	 *
 	 * @param myProzess current process
 	 * @param directory current folder
 	 * @return sorted list with strings representing images of process
-	 * @throws InvalidImagesException
+	 * @throws InvalidImagesException add description
 	 */
 
 	public List<String> getImageFiles(Prozess myProzess, String directory) throws InvalidImagesException {
@@ -616,6 +619,10 @@ public class MetadatenImagesHelper {
 		}
 	}
 
+	/**
+	 * @param physical add description
+	 * @return add description
+	 */
 	public List<String> getImageFiles(DocStruct physical) {
 		List<String> orderedFileList = new ArrayList<String>();
 		List<DocStruct> pages = physical.getAllChildren();

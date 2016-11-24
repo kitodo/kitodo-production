@@ -42,11 +42,10 @@ import java.util.LinkedHashMap;
 
 /**
  * A class of elements that one of can be selected.
- * 
+ *
  * @author Matthias Ronge
  *
- * @param <T>
- *            Elements to select from
+ * @param <T> Elements to select from
  */
 public class SelectOne<T extends Selectable> {
 
@@ -62,9 +61,8 @@ public class SelectOne<T extends Selectable> {
 
 	/**
 	 * Creates a new select class.
-	 * 
-	 * @param elements
-	 *            selectable elements
+	 *
+	 * @param elements selectable elements
 	 */
 	public SelectOne(Collection<T> elements) {
 		entries = new LinkedHashMap<String, T>((int) Math.ceil(elements.size() / 0.75));
@@ -76,7 +74,7 @@ public class SelectOne<T extends Selectable> {
 
 	/**
 	 * Returns the selected element’s ID.
-	 * 
+	 *
 	 * @return the selected element’s ID
 	 */
 	public String getSelected() {
@@ -85,7 +83,7 @@ public class SelectOne<T extends Selectable> {
 
 	/**
 	 * Returns the selected object.
-	 * 
+	 *
 	 * @return the selected object
 	 */
 	public T getObject() {
@@ -94,19 +92,19 @@ public class SelectOne<T extends Selectable> {
 
 	/**
 	 * Sets the selected element by its ID
-	 * 
-	 * @param id
-	 *            ID of the element to select.
+	 *
+	 * @param id ID of the element to select.
 	 */
 	public void setSelected(String id) {
 		T found = entries.get(id);
-		if (found != null)
+		if (found != null) {
 			this.selected = found;
+		}
 	}
 
 	/**
 	 * Returns the elements to choose from.
-	 * 
+	 *
 	 * @return elements to choose from
 	 */
 	public Collection<T> getItems() {

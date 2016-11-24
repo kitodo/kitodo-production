@@ -27,6 +27,11 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.persistence.apache.MySQLHelper;
+import de.sub.goobi.persistence.apache.StepManager;
+import de.sub.goobi.persistence.apache.StepObject;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +41,14 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
-import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.persistence.apache.MySQLHelper;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
-
 public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 	private final StepObject step;
 	private static final Logger logger = Logger.getLogger(ScriptThreadWithoutHibernate.class);
 
+	/**
+	 * @param step add description
+	 */
 	public ScriptThreadWithoutHibernate(StepObject step) {
 		super(getNameDetail(step));
 		this.step = step;
@@ -53,11 +56,9 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	}
 
 	/**
-	 * The function getNameDetail() returns a human-readable name for this
-	 * thread.
-	 * 
-	 * @param step
-	 *            StepObject that the name depends on.
+	 * The function getNameDetail() returns a human-readable name for this thread.
+	 *
+	 * @param step StepObject that the name depends on.
 	 * @return a name for this thread
 	 */
 	private final static String getNameDetail(StepObject step) {
@@ -79,12 +80,10 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	}
 
 	/**
-	 * The clone constructor creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
-	 * 
-	 * @param origin
-	 *            copy master to create a clone of
+	 * The clone constructor creates a new instance of this object. This is necessary for Threads that have terminated
+	 * in order to render to run them again possible.
+	 *
+	 * @param origin copy master to create a clone of
 	 */
 	public ScriptThreadWithoutHibernate(ScriptThreadWithoutHibernate origin) {
 		super(origin);
@@ -94,7 +93,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -127,10 +126,9 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	}
 
 	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 * 
+	 * Calls the clone constructor to create a not yet executed instance of this thread object. This is necessary for
+	 * threads that have terminated in order to render possible to restart them.
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */

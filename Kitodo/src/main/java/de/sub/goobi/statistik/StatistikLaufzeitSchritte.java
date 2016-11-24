@@ -27,6 +27,9 @@ package de.sub.goobi.statistik;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,11 +37,11 @@ import java.util.List;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-
 public class StatistikLaufzeitSchritte {
-
+	/**
+	 * @param inProzesse add description
+	 * @return add description
+	 */
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	public static Dataset getDiagramm(List inProzesse) {
 		DefaultCategoryDataset categoryDataSet = new DefaultCategoryDataset();

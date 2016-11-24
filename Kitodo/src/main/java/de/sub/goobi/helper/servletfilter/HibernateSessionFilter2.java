@@ -27,6 +27,9 @@ package de.sub.goobi.helper.servletfilter;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
+import de.sub.goobi.persistence.HibernateSessionLong;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -39,10 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 
-import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
-import de.sub.goobi.persistence.HibernateSessionLong;
-
-// TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 
+// TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because
 // de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work like it should
 public class HibernateSessionFilter2 implements Filter {
 

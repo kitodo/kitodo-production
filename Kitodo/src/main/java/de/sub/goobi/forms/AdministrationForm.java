@@ -27,35 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.flow.jobs.JobManager;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
-import org.kitodo.encryption.DesEncrypter;
-
-import org.quartz.SchedulerException;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -77,6 +48,38 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.flow.jobs.JobManager;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
+import org.kitodo.encryption.DesEncrypter;
+
+import org.quartz.SchedulerException;
+
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
@@ -145,6 +148,9 @@ public class AdministrationForm implements Serializable {
 	public void createIndex() {
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	public void ProzesseDurchlaufen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
@@ -154,6 +160,12 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 */
 	public void AnzahlenErmitteln() throws DAOException, IOException, InterruptedException, SwapException {
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 		ProzessDAO dao = new ProzessDAO();
@@ -175,6 +187,10 @@ public class AdministrationForm implements Serializable {
 	}
 
 	// TODO: Remove this
+
+	/**
+	 * @throws DAOException add description
+	 */
 	public void SiciKorr() throws DAOException {
 		Benutzergruppe gruppe = new BenutzergruppenDAO().get(Integer.valueOf(15));
 		Set<Benutzergruppe> neueGruppen = new HashSet<Benutzergruppe>();
@@ -190,6 +206,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	public void StandardRegelsatzSetzen() throws DAOException {
 		Regelsatz mk = new RegelsatzDAO().get(Integer.valueOf(1));
 
@@ -205,6 +224,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Standard-ruleset successful set");
 	}
 
+	/**
+	 *
+	 */
 	public void PasswoerterVerschluesseln() {
 		try {
 			DesEncrypter encrypter = new DesEncrypter();
@@ -221,6 +243,9 @@ public class AdministrationForm implements Serializable {
 		}
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	public void ProzesseDatumSetzen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
@@ -238,6 +263,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "created date");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void ImagepfadKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
@@ -302,6 +330,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Image paths set");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void PPNsKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
@@ -364,7 +395,8 @@ public class AdministrationForm implements Serializable {
 					List<String> myKollektionenTitel = new ArrayList<String>();
 					MetadataType coltype = UghHelper.getMetadataType(myPrefs, "singleDigCollection");
 					ArrayList<Metadata> myCollections;
-					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
+					if (dsTop.getAllMetadataByType(coltype) != null
+							&& dsTop.getAllMetadataByType(coltype).size() != 0) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
 						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
@@ -420,6 +452,10 @@ public class AdministrationForm implements Serializable {
 	}
 
 	// TODO: Remove this
+
+	/**
+	 *
+	 */
 	@SuppressWarnings("unchecked")
 	public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
 		Session session = Helper.getHibernateSession();
@@ -477,6 +513,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung("PPNs adjusted");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();

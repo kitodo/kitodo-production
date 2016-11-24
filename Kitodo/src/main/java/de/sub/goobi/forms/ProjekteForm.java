@@ -27,6 +27,18 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.results.ChartDraw.ChartType;
+
+import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProjektDAO;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -44,6 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.goobi.production.chart.IProjectTask;
 import org.goobi.production.chart.IProvideProjectTaskList;
 import org.goobi.production.chart.ProjectStatusDataTable;
@@ -55,6 +68,7 @@ import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
 import org.goobi.production.flow.statistics.hibernate.UserProjectFilter;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -62,21 +76,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
-
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProjektDAO;
 
 public class ProjekteForm extends BasisForm {
 	private static final long serialVersionUID = 6735912903249358786L;
@@ -115,8 +119,7 @@ public class ProjekteForm extends BasisForm {
 	/**
 	 * this method deletes filegroups by their id's in the list
 	 *
-	 * @param List
-	 *            <Integer> fileGroups
+	 * @param fileGroups List&lt;Integer&gt;
 	 */
 	private void deleteFileGroups(List<Integer> fileGroups) {
 		for (Integer id : fileGroups) {
@@ -130,7 +133,8 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting, making the removal permanent
+	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting,
+	 * making the removal permanent
 	 */
 	private void commitFileGroups() {
 		// resetting the List of new fileGroups
@@ -162,6 +166,9 @@ public class ProjekteForm extends BasisForm {
 		return "ProjekteBearbeiten";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		// call this to make saving and deleting permanent
 		this.commitFileGroups();
@@ -175,6 +182,9 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Apply() {
 		// call this to make saving and deleting permanent
 		myLogger.trace("Apply wird aufgerufen...");
@@ -189,6 +199,9 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		if (this.myProjekt.getBenutzer().size() > 0) {
 			Helper.setFehlerMeldung("userAssignedError");
@@ -205,6 +218,9 @@ public class ProjekteForm extends BasisForm {
 		return "ProjekteAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -225,6 +241,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupAdd() {
 		this.myFilegroup = new ProjectFileGroup();
 		this.myFilegroup.setProject(this.myProjekt);
@@ -232,6 +251,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupSave() {
 		if (this.myProjekt.getFilegroups() == null) {
 			this.myProjekt.setFilegroups(new HashSet<ProjectFileGroup>());
@@ -247,6 +269,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupDelete() {
 		// to be deleted fileGroups ids are listed
 		// and deleted after a commit
@@ -262,6 +287,9 @@ public class ProjekteForm extends BasisForm {
 		return this.myProjekt;
 	}
 
+	/**
+	 * @param inProjekt add description
+	 */
 	public void setMyProjekt(Projekt inProjekt) {
 		// has to be called if a page back move was done
 		this.Cancel();
@@ -269,8 +297,8 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups marked for delete are not shown
-	 * anymore
+	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups
+	 * marked for delete are not shown anymore
 	 *
 	 * @return modified ArrayList
 	 */
@@ -615,8 +643,8 @@ public class ProjekteForm extends BasisForm {
 	/**
 	 *
 	 * @return string of image file projectStatVolumes
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
 	 */
 
 	public String getProjectStatVolumes() throws IOException, InterruptedException {
@@ -674,6 +702,9 @@ public class ProjekteForm extends BasisForm {
 		return this.myCurrentTable;
 	}
 
+	/**
+	 *
+	 */
 	public void CreateExcel() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
@@ -699,21 +730,20 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for showStatistics
 	 *
 	 * @return the showStatistics
-	 *************************************************************************************/
+	 */
 	public boolean getShowStatistics() {
 		return this.showStatistics;
 	}
 
-	/**************************************************************************************
+	/**
 	 * Setter for showStatistics
 	 *
-	 * @param showStatistics
-	 *            the showStatistics to set
-	 **************************************************************************************/
+	 * @param showStatistics the showStatistics to set
+	 */
 	public void setShowStatistics(boolean showStatistics) {
 		this.showStatistics = showStatistics;
 	}

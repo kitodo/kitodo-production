@@ -28,7 +28,10 @@ package de.sub.goobi.helper;
  * exception statement from your version.
  */
 public class Transliteration {
-
+	/**
+	 * @param inString add description
+	 * @return add description
+	 */
 	public String transliterate_iso(String inString) {
 		String s = "";
 		char[] arr = inString.toCharArray();
@@ -230,6 +233,10 @@ public class Transliteration {
 		return s;
 	}
 
+	/**
+	 * @param inString add description
+	 * @return add description
+	 */
 	public String transliterate_din(String inString) {
 		String s = "";
 		char[] arr = inString.toCharArray();

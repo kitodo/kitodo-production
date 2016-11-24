@@ -27,14 +27,6 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-
 import de.sub.goobi.beans.Docket;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -42,6 +34,14 @@ import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.DocketDAO;
 import de.sub.goobi.persistence.apache.ProcessManager;
+
+import java.io.File;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 
 public class DocketForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
@@ -54,6 +54,9 @@ public class DocketForm extends BasisForm {
 		return "DocketEdit";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		try {
 			if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
@@ -75,6 +78,9 @@ public class DocketForm extends BasisForm {
 		return rulesetFile.exists();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		try {
 			if (hasAssignedProcesses(myDocket)) {
@@ -98,6 +104,9 @@ public class DocketForm extends BasisForm {
 		return false;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		try {
 			// HibernateUtil.clearSession();
@@ -120,8 +129,9 @@ public class DocketForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	public Docket getMyDocket() {

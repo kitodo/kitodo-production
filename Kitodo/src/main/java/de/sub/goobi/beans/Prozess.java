@@ -27,7 +27,20 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
+import de.sub.goobi.beans.Batch.Type;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.DigitalCollections;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.MetadataFormat;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.tasks.ProcessSwapInTask;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.ProzessDAO;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -56,6 +69,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
+import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
@@ -72,25 +86,10 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
 
 @XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML
-// elements. Further XML elements can be added as needed by annotating with
-// @XmlElement, but their respective names should be wisely chosen according to
+// This annotation is to instruct the Jersey API not to generate arbitrary XML  elements. Further XML elements can be
+// added as needed by annotating with @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
 public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
@@ -128,6 +127,9 @@ public class Prozess implements Serializable {
 	private String wikifield = "";
 	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
+	/**
+	 *
+	 */
 	public Prozess() {
 		this.swappedOut = false;
 		this.titel = "";
@@ -159,6 +161,10 @@ public class Prozess implements Serializable {
 		this.sortHelperStatus = sortHelperStatus;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public boolean isIstTemplate() {
 		if (this.istTemplate == null) {
 			this.istTemplate = Boolean.FALSE;
@@ -188,14 +194,13 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The function getHistory() returns the history events for a process or
-	 * some Hibernate proxy object which may be uninitialized if its contents
-	 * have not been accessed yet. However, this function is also called by
-	 * Hibernate itself when its updating the database and in this case it is
-	 * absolutely fine to return a proxy object uninitialized.
+	 * The function getHistory() returns the history events for a process or some Hibernate proxy object which may
+	 * be uninitialized if its contents have not been accessed yet. However, this function is also called by
+	 * Hibernate itself when its updating the database and in this case it is absolutely fine to return a proxy object
+	 * uninitialized.
 	 *
-	 * If you want to get the history and be sure it has been loaded, use
-	 * {@link #getHistoryInitialized()} instead.
+	 * <p>If you want to get the history and be sure it has been loaded, use {@link #getHistoryInitialized()}
+	 * instead.</p>
 	 *
 	 * @return the history field of the process which may be not yet loaded
 	 */
@@ -204,9 +209,8 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The function getHistoryInitialized() returns the history events for a
-	 * process and takes care that the object is initialized from Hibernate
-	 * already and will not be bothered if the Hibernate session ends.
+	 * The function getHistoryInitialized() returns the history events for a process and takes care that the object
+	 * is initialized from Hibernate already and will not be bothered if the Hibernate session ends.
 	 *
 	 * @return the history field of the process which is loaded
 	 */
@@ -245,14 +249,13 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The function getBatches() returns the batches for a process or some
-	 * Hibernate proxy object which may be uninitialized if its contents have
-	 * not been accessed yet. However, this function is also called by Hibernate
-	 * itself when its updating the database and in this case it is absolutely
-	 * fine to return a proxy object uninitialized.
+	 * The function getBatches() returns the batches for a process or some Hibernate proxy object which may be
+	 * uninitialized if its contents have not been accessed yet. However, this function is also called by Hibernate
+	 * itself when its updating the database and in this case it is absolutely fine to return a proxy object
+	 * uninitialized.
 	 *
-	 * If you want to get the history and be sure it has been loaded, use
-	 * {@link #getBatchesInitialized()} instead.
+	 * <p>If you want to get the history and be sure it has been loaded, use {@link #getBatchesInitialized()}
+	 * instead.</p>
 	 *
 	 * @return the batches field of the process which may be not yet loaded
 	 */
@@ -318,15 +321,13 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The function getEigenschaften() returns the descriptive fields
-	 * (“properties”) for a process or some Hibernate proxy object which may be
-	 * uninitialized if its contents have not been accessed yet. However, this
-	 * function is also called by Hibernate itself when its updating the
-	 * database and in this case it is absolutely fine to return a proxy object
-	 * uninitialized.
+	 * The function getEigenschaften() returns the descriptive fields (“properties”) for a process or some Hibernate
+	 * proxy object which may be uninitialized if its contents have not been accessed yet. However, this function is
+	 * also called by Hibernate itself when its updating the database and in this case it is absolutely fine to return
+	 * a proxy object uninitialized.
 	 *
-	 * If you want to get the history and be sure it has been loaded, use
-	 * {@link #getEigenschaftenInitialized()} instead.
+	 * <p>If you want to get the history and be sure it has been loaded, use {@link #getEigenschaftenInitialized()}
+	 * instead.</p>
 	 *
 	 * @return the properties field of the process which may be not yet loaded
 	 */
@@ -335,10 +336,9 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The function getEigenschaftenInitialized() returns the descriptive fields
-	 * (“properties”) for a process and takes care that the object is
-	 * initialized from Hibernate already and will not be bothered if the
-	 * Hibernate session ends.
+	 * The function getEigenschaftenInitialized() returns the descriptive fields (“properties”) for a process and takes
+	 * care that the object is initialized from Hibernate already and will not be bothered if the Hibernate session
+	 * ends.
 	 *
 	 * @return the properties field of the process which is loaded
 	 */
@@ -354,10 +354,9 @@ public class Prozess implements Serializable {
 		this.eigenschaften = eigenschaften;
 	}
 
-	/*
+	/**
 	 * Metadaten-Sperrungen zurückgeben
 	 */
-
 	public Benutzer getBenutzerGesperrt() {
 		Benutzer rueckgabe = null;
 		if (MetadatenSperrung.isLocked(this.id.intValue())) {
@@ -379,7 +378,7 @@ public class Prozess implements Serializable {
 		return this.msp.getLockSekunden(this.id) % 60;
 	}
 
-	/*
+	/**
 	 * Metadaten- und ImagePfad
 	 */
 
@@ -451,7 +450,7 @@ public class Prozess implements Serializable {
 		return rueckgabe;
 	}
 
-	/*
+	/**
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
@@ -477,6 +476,15 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @param useFallBack add description
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public String getImagesOrigDirectory(boolean useFallBack) throws IOException, InterruptedException, SwapException,
 			DAOException {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
@@ -541,12 +549,28 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public String getImagesDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
 		FilesystemHelper.createDirectory(pfad);
 		return pfad;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public String getSourceDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
@@ -569,6 +593,14 @@ public class Prozess implements Serializable {
 		return sourceFolder.getAbsolutePath();
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public String getProcessDataDirectory() throws IOException, InterruptedException, SwapException, DAOException {
 		String pfad = getProcessDataDirectoryIgnoreSwapping();
 
@@ -614,6 +646,14 @@ public class Prozess implements Serializable {
 		return getProcessDataDirectory() + "import" + File.separator;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public String getProcessDataDirectoryIgnoreSwapping() throws IOException, InterruptedException, SwapException,
 			DAOException {
 		String pfad = this.help.getGoobiDataDirectory() + this.id.intValue() + File.separator;
@@ -662,6 +702,10 @@ public class Prozess implements Serializable {
 		this.regelsatz = regelsatz;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getSchritteSize() {
 		try {
 			Hibernate.initialize(this.schritte);
@@ -674,6 +718,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Schritt> getSchritteList() {
 		try {
 			Hibernate.initialize(this.schritte);
@@ -686,6 +734,10 @@ public class Prozess implements Serializable {
 		return temp;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getHistorySize() {
 		try {
 			Hibernate.initialize(this.history);
@@ -698,6 +750,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<HistoryEvent> getHistoryList() {
 		try {
 			Hibernate.initialize(this.history);
@@ -710,6 +766,10 @@ public class Prozess implements Serializable {
 		return temp;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getEigenschaftenSize() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
@@ -722,6 +782,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Prozesseigenschaft> getEigenschaftenList() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
@@ -734,6 +798,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getWerkstueckeSize() {
 		try {
 			Hibernate.initialize(this.werkstuecke);
@@ -746,6 +814,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Werkstueck> getWerkstueckeList() {
 		try {
 			Hibernate.initialize(this.werkstuecke);
@@ -758,6 +830,10 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getVorlagenSize() {
 		try {
 			Hibernate.initialize(this.vorlagen);
@@ -769,6 +845,10 @@ public class Prozess implements Serializable {
 		return this.vorlagen.size();
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Vorlage> getVorlagenList() {
 		try {
 			Hibernate.initialize(this.vorlagen);
@@ -780,6 +860,10 @@ public class Prozess implements Serializable {
 		return new ArrayList<Vorlage>(this.vorlagen);
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Integer getSortHelperArticles() {
 		if (this.sortHelperArticles == null) {
 			this.sortHelperArticles = 0;
@@ -791,6 +875,10 @@ public class Prozess implements Serializable {
 		this.sortHelperArticles = sortHelperArticles;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Integer getSortHelperImages() {
 		if (this.sortHelperImages == null) {
 			this.sortHelperImages = 0;
@@ -802,6 +890,10 @@ public class Prozess implements Serializable {
 		this.sortHelperImages = sortHelperImages;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Integer getSortHelperMetadata() {
 		if (this.sortHelperMetadata == null) {
 			this.sortHelperMetadata = 0;
@@ -813,6 +905,10 @@ public class Prozess implements Serializable {
 		this.sortHelperMetadata = sortHelperMetadata;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Integer getSortHelperDocstructs() {
 		if (this.sortHelperDocstructs == null) {
 			this.sortHelperDocstructs = 0;
@@ -840,6 +936,10 @@ public class Prozess implements Serializable {
 		this.panelAusgeklappt = panelAusgeklappt;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Schritt getAktuellerSchritt() {
 		for (Schritt step : getSchritteList()) {
 			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN
@@ -870,10 +970,9 @@ public class Prozess implements Serializable {
 		return Helper.getDateAsFormattedString(this.erstellungsdatum);
 	}
 
-	/*
+	/**
 	 * Auswertung des Fortschritts
 	 */
-
 	public String getFortschritt() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -904,6 +1003,10 @@ public class Prozess implements Serializable {
 		return df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getFortschritt1() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -924,6 +1027,10 @@ public class Prozess implements Serializable {
 		return (offen * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getFortschritt2() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -944,6 +1051,10 @@ public class Prozess implements Serializable {
 		return (inBearbeitung * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getFortschritt3() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -983,6 +1094,16 @@ public class Prozess implements Serializable {
 		return getProcessDataDirectory() + "fulltext.xml";
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws ReadException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws PreferencesException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public Fileformat readMetadataFile() throws ReadException, IOException, InterruptedException, PreferencesException,
 			SwapException, DAOException {
 		if (!checkForMetadataFile()) {
@@ -1072,6 +1193,16 @@ public class Prozess implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @param gdzfile add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
+	 */
 	public void writeMetadataFile(Fileformat gdzfile) throws IOException, InterruptedException, SwapException,
 			DAOException, WriteException, PreferencesException {
 		boolean backupCondition;
@@ -1117,6 +1248,16 @@ public class Prozess implements Serializable {
 		inFile.write(getTemplateFilePath());
 	}
 
+	/**
+	 *
+	 * @return add description
+	 * @throws ReadException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws PreferencesException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public Fileformat readMetadataAsTemplateFile() throws ReadException, IOException, InterruptedException,
 			PreferencesException, SwapException, DAOException {
 		Hibernate.initialize(getRegelsatz());
@@ -1170,7 +1311,7 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * get user of task in edit mode with rights to write to image folder ================================================================
+	 * get user of task in edit mode with rights to write to image folder
 	 */
 	public Benutzer getImageFolderInUseUser() {
 		for (Schritt s : getSchritteList()) {
@@ -1182,8 +1323,8 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null Values (thats why Boolean) and
-	 * MyFaces seams not to like Boolean (thats why boolean for the GUI) ================================================================
+	 * here differet Getters and Setters for the same value, because Hibernate does not like bit-Fields with null
+	 * Values (thats why Boolean) and MyFaces seams not to like Boolean (thats why boolean for the GUI)
 	 */
 	public Boolean isSwappedOutHibernate() {
 		return this.swappedOut;
@@ -1193,6 +1334,10 @@ public class Prozess implements Serializable {
 		this.swappedOut = inSwappedOut;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public boolean isSwappedOutGui() {
 		if (this.swappedOut == null) {
 			this.swappedOut = false;
@@ -1212,6 +1357,10 @@ public class Prozess implements Serializable {
 		this.wikifield = wikifield;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public String downloadDocket() {
 
 		if (myLogger.isDebugEnabled()) {
@@ -1251,6 +1400,10 @@ public class Prozess implements Serializable {
 		return "";
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Schritt getFirstOpenStep() {
 
 		for (Schritt s : getSchritteList()) {
@@ -1262,6 +1415,11 @@ public class Prozess implements Serializable {
 		return null;
 	}
 
+	/**
+	 *
+	 * @param methodName add description
+	 * @return add description
+	 */
 	public String getMethodFromName(String methodName) {
 		java.lang.reflect.Method method;
 		try {
@@ -1376,11 +1534,12 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws DAOException
-	 * @throws SwapException
+	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within
+	 * goobi_config.properties
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
 	 */
 	public void createProcessDirs() throws SwapException, DAOException, IOException, InterruptedException {
 

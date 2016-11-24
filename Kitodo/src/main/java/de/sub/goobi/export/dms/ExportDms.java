@@ -27,27 +27,6 @@ package de.sub.goobi.export.dms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
@@ -65,6 +44,29 @@ import de.sub.goobi.helper.tasks.TaskSitter;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+
+import org.hibernate.Hibernate;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.excel.RDFFile;
+import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportDms extends ExportMets {
 	private static final Logger myLogger = Logger.getLogger(ExportDms.class);
@@ -95,15 +97,15 @@ public class ExportDms extends ExportMets {
 	/**
 	 * DMS-Export an eine gewünschte Stelle
 	 *
-	 * @param myProzess
-	 * @param inZielVerzeichnis
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws WriteException
-	 * @throws PreferencesException
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws TypeNotAllowedForParentException
+	 * @param myProzess add description
+	 * @param inZielVerzeichnis add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws TypeNotAllowedForParentException add description
 	 */
 	@Override
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException,
@@ -128,36 +130,23 @@ public class ExportDms extends ExportMets {
 	 * in, the progress in it will be updated during processing and occurring
 	 * errors will be passed to it to be visible in the task manager screen.
 	 *
-	 * @param myProzess
-	 *            process to export
-	 * @param inZielVerzeichnis
-	 *            work directory of the user who triggered the export
-	 * @param exportDmsTask
-	 *            ExportDmsTask object to submit progress updates and errors
+	 * @param myProzess process to export
+	 * @param inZielVerzeichnis work directory of the user who triggered the export
+	 * @param exportDmsTask ExportDmsTask object to submit progress updates and errors
 	 * @return false if an error condition was caught, true otherwise
-	 * @throws IOException
-	 *             if “goobi_projects.xml” could not be read
-	 * @throws InterruptedException
-	 *             if the thread running the script to create a directory is
-	 *             interrupted by another thread while it is waiting
-	 * @throws WriteException
-	 *             if a FileNotFoundException occurs when opening the
-	 *             FileOutputStream to write the METS/MODS object
-	 * @throws PreferencesException
-	 *             if the file format selected for DMS export in the project of
-	 *             the process to export that implements
-	 *             {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
-	 * @throws SwapException
-	 *             if after swapping a process back in neither a file system
-	 *             entry "images" nor "meta.xml" exists
-	 * @throws DAOException
-	 *             if saving the fact that a process has been swapped back in to
-	 *             the database fails
-	 * @throws TypeNotAllowedForParentException
-	 *             declared in
+	 * @throws IOException if “goobi_projects.xml” could not be read
+	 * @throws InterruptedException if the thread running the script to create a directory is interrupted by another
+	 * 								thread while it is waiting
+	 * @throws WriteException if a FileNotFoundException occurs when opening theFileOutputStream to write
+	 * 						the METS/MODS object
+	 * @throws PreferencesException if the file format selected for DMS export in the project ofthe process to export
+	 * 								that implements {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
+	 * @throws SwapException if after swapping a process back in neither a file system entry "images" nor "meta.xml"
+	 * 						exists
+	 * @throws DAOException if saving the fact that a process has been swapped back in to the database fails
+	 * @throws TypeNotAllowedForParentException declared in
 	 *             {@link ugh.dl.DigitalDocument#createDocStruct(DocStructType)}
-	 *             but never thrown, see
-	 *             https://github.com/kitodo/kitodo-ugh/issues/2
+	 *             but never thrown, see  https://github.com/kitodo/kitodo-ugh/issues/2
 	 */
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
 			throws IOException, InterruptedException, WriteException, PreferencesException, SwapException,
@@ -177,6 +166,19 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inZielVerzeichnis add description
+	 * @param newfile add description
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 * @throws TypeNotAllowedForParentException add description
+	 */
 	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, DigitalDocument newfile)
 			throws IOException, InterruptedException, WriteException, PreferencesException, SwapException,
 			DAOException, TypeNotAllowedForParentException {
@@ -186,8 +188,7 @@ public class ExportDms extends ExportMets {
 		String atsPpnBand = myProzess.getTitel();
 
 		/*
-		 * -------------------------------- Dokument einlesen
-		 * --------------------------------
+		 * Dokument einlesen
 		 */
 		Fileformat gdzfile;
 		try {
@@ -238,8 +239,7 @@ public class ExportDms extends ExportMets {
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
 		/*
-		 * -------------------------------- Metadaten validieren
-		 * --------------------------------
+		 * Metadaten validieren
 		 */
 
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
@@ -250,8 +250,7 @@ public class ExportDms extends ExportMets {
 		}
 
 		/*
-		 * -------------------------------- Speicherort vorbereiten und
-		 * downloaden --------------------------------
+		 * Speicherort vorbereiten und downloaden
 		 */
 		String zielVerzeichnis;
 		SafeFile benutzerHome;
@@ -306,8 +305,7 @@ public class ExportDms extends ExportMets {
 		}
 
 		/*
-		 * -------------------------------- der eigentliche Download der Images
-		 * --------------------------------
+		 * der eigentliche Download der Images
 		 */
 		try {
 			if (this.exportWithImages) {
@@ -329,16 +327,15 @@ public class ExportDms extends ExportMets {
 		}
 
 		/*
-		 * -------------------------------- zum Schluss Datei an gewünschten Ort
-		 * exportieren entweder direkt in den Import-Ordner oder ins
+		 * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
 		 * Benutzerhome anschliessend den Import-Thread starten
-		 * --------------------------------
 		 */
 		if (myProzess.getProjekt().isUseDmsImport()) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
 			}
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
+			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport())
+					== MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
 				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
 			} else {
@@ -347,7 +344,8 @@ public class ExportDms extends ExportMets {
 			}
 
 			/* ggf. sollen im Export mets und rdf geschrieben werden */
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport())
+					== MetadataFormat.METS_AND_RDF) {
 				writeMetsFile(myProzess, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
 			}
 
@@ -395,7 +393,8 @@ public class ExportDms extends ExportMets {
 			}
 		} else {
 			/* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
+			if (MetadataFormat.findFileFormatsHelperByName(myProzess.getProjekt().getFileFormatDmsExport())
+					== MetadataFormat.METS) {
 				writeMetsFile(myProzess, zielVerzeichnis + atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
@@ -410,8 +409,7 @@ public class ExportDms extends ExportMets {
 	 * Setter method to pass in a task thread to whom progress and error
 	 * messages shall be reported.
 	 *
-	 * @param task
-	 *            task implementation
+	 * @param task task implementation
 	 */
 	public void setExportDmsTask(EmptyTask task) {
 		this.exportDmsTask = task;
@@ -439,6 +437,16 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param benutzerHome add description
+	 * @param atsPpnBand add description
+	 * @param ordnerEndung add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 */
 	public void fulltextDownload(Prozess myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung)
 			throws IOException, InterruptedException, SwapException, DAOException {
 
@@ -489,18 +497,26 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
+	/**
+	 * @param myProzess ad description
+	 * @param benutzerHome ad description
+	 * @param atsPpnBand ad description
+	 * @param ordnerEndung ad description
+	 * @throws IOException ad description
+	 * @throws InterruptedException ad description
+	 * @throws SwapException ad description
+	 * @throws DAOException ad description
+	 */
 	public void imageDownload(Prozess myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung)
 			throws IOException, InterruptedException, SwapException, DAOException {
 
 		/*
-		 * -------------------------------- dann den Ausgangspfad ermitteln
-		 * --------------------------------
+		 * dann den Ausgangspfad ermitteln
 		 */
 		SafeFile tifOrdner = new SafeFile(myProzess.getImagesTifDirectory(true));
 
 		/*
-		 * -------------------------------- jetzt die Ausgangsordner in die
-		 * Zielordner kopieren --------------------------------
+		 * jetzt die Ausgangsordner in die Zielordner kopieren
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
 			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
@@ -564,10 +580,10 @@ public class ExportDms extends ExportMets {
 	 *
 	 * @param myProzess the process object
 	 * @param zielVerzeichnis the destination directory
-	 * @throws SwapException
-	 * @throws DAOException
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws SwapException ad description
+	 * @throws DAOException ad description
+	 * @throws IOException ad description
+	 * @throws InterruptedException ad description
 	 *
 	 */
 	private void directoryDownload(Prozess myProzess, String zielVerzeichnis) throws SwapException, DAOException,

@@ -27,6 +27,15 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.Property;
+import de.sub.goobi.persistence.apache.StepObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +52,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.Property;
-import de.sub.goobi.persistence.apache.StepObject;
 
 public class VariableReplacerWithoutHibernate {
 
@@ -73,6 +74,12 @@ public class VariableReplacerWithoutHibernate {
 	private VariableReplacerWithoutHibernate() {
 	}
 
+	/**
+	 * @param inDigitalDocument add description
+	 * @param inPrefs add description
+	 * @param p add description
+	 * @param s add description
+	 */
 	public VariableReplacerWithoutHibernate(DigitalDocument inDigitalDocument, Prefs inPrefs, ProcessObject p,
 			StepObject s) {
 		this.dd = inDigitalDocument;
@@ -82,8 +89,8 @@ public class VariableReplacerWithoutHibernate {
 	}
 
 	/**
-	 * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die Variablen durchlaufen und aus dem Digital Document holen
-	 * ================================================================
+	 * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die Variablen durchlaufen und aus dem
+	 * Digital Document holen
 	 */
 	public String replace(String inString) {
 		if (inString == null) {

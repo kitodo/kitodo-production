@@ -53,7 +53,6 @@ public class NavigationForm {
 	}
 
 	/**
-	* 
 	* @return true if show_taskmanager in file goobi_config.properties is =true
 	*/
 	public Boolean getShowTaskManager() {

@@ -23,6 +23,12 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,11 +51,6 @@ import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.io.SafeFile;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -324,6 +325,9 @@ public class FileManipulation {
 		this.imageSelection = imageSelection;
 	}
 
+	/**
+	 *
+	 */
 	public void downloadFile() {
 		SafeFile downloadFile = null;
 
@@ -545,6 +549,9 @@ public class FileManipulation {
 		}
 	};
 
+	/**
+	 *
+	 */
 	public void importFiles() {
 
 		if (selectedFiles == null || selectedFiles.isEmpty()) {
@@ -610,9 +617,7 @@ public class FileManipulation {
 										object.copyFileToDirectory(directory);
 									}
 
-								}
-
-								catch (IOException e) {
+								} catch (IOException e) {
 									logger.error(e);
 								} catch (SwapException e) {
 									logger.error(e);
@@ -637,7 +642,8 @@ public class FileManipulation {
 							Collections.sort(sortedList);
 							for (SafeFile object : sortedList) {
 								try {
-									if (currentProcess.getImagesTifDirectory(false).equals(folderName + File.separator)) {
+									if (currentProcess.getImagesTifDirectory(false).equals(folderName
+											+ File.separator)) {
 										importedFilenames.add(object.getName());
 									}
 									object.copyFileToDirectory(directory);

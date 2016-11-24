@@ -27,9 +27,9 @@ package de.sub.goobi.beans.property;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.Date;
-
 import de.sub.goobi.helper.enums.PropertyType;
+
+import java.util.Date;
 
 public interface IGoobiProperty {
 
@@ -59,15 +59,14 @@ public interface IGoobiProperty {
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	public void setType(PropertyType inType);
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	public PropertyType getType();

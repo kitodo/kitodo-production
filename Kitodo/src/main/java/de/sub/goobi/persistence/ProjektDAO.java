@@ -27,15 +27,15 @@ package de.sub.goobi.persistence;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.List;
-
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class ProjektDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -9050627256118458325L;
 
@@ -44,6 +44,11 @@ public class ProjektDAO extends BaseDAO {
 		return (Projekt) retrieveObj(Projekt.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Projekt get(Integer id) throws DAOException {
 		Projekt rueckgabe = (Projekt) retrieveObj(Projekt.class, id);
 		if (rueckgabe == null) {
@@ -52,12 +57,20 @@ public class ProjektDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Projekt t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);
 		}
 	}
 
+	/**
+	 * @param id add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Integer id) throws DAOException {
 		if (id != null) {
 			removeObj(Projekt.class, id);

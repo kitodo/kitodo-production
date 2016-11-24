@@ -37,8 +37,8 @@ public enum MetadataFormat {
 	 *
 	 */
 
-	RDF("Rdf", true, RDFFile.class), METS("Mets", true, MetsMods.class), XSTREAM("XStream", true, XStream.class), METS_AND_RDF(
-			"Mets & Rdf", false, null);
+	RDF("Rdf", true, RDFFile.class), METS("Mets", true, MetsMods.class), XSTREAM("XStream", true, XStream.class),
+	METS_AND_RDF( "Mets & Rdf", false, null);
 
 	private final String name;
 	private final boolean usableForInternal;
@@ -58,6 +58,10 @@ public enum MetadataFormat {
 		return this.usableForInternal;
 	}
 
+	/**
+	 * @param inName add description
+	 * @return add description
+	 */
 	public static MetadataFormat findFileFormatsHelperByName(String inName) {
 		for (MetadataFormat s : MetadataFormat.values()) {
 			if (s.getName().equals(inName)) {

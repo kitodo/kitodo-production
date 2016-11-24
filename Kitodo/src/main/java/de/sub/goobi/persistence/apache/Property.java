@@ -40,6 +40,16 @@ public class Property {
 	private Date creationDate;
 	private int container;
 
+	/**
+	 * @param id add description
+	 * @param title add description
+	 * @param value add description
+	 * @param istObligatorisch add description
+	 * @param datentypenID add description
+	 * @param auswahl add description
+	 * @param creationDate add description
+	 * @param container add description
+	 */
 	public Property(int id, String title, String value, boolean istObligatorisch, int datentypenID, String auswahl,
 			Date creationDate, int container) {
 		this.id = id;

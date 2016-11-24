@@ -27,11 +27,12 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.TreeNode;
+
 import java.util.ArrayList;
 
 import ugh.dl.DocStruct;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {
 
@@ -53,6 +54,11 @@ public class TreeNodeStruct3 extends TreeNode {
 
 	/* =============================================================== */
 
+	/**
+	 * @param expanded add description
+	 * @param label add description
+	 * @param id add description
+	 */
 	public TreeNodeStruct3(boolean expanded, String label, String id) {
 		this.expanded = expanded;
 		this.label = label;
@@ -78,6 +84,9 @@ public class TreeNodeStruct3 extends TreeNode {
 		this.identifier = identifier;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getMainTitle() {
 
 		int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);

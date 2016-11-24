@@ -27,6 +27,10 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.enums.StepStatus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,11 +46,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.enums.StepStatus;
-
 public class ProjectHelper {
 
 	/**
@@ -54,14 +53,13 @@ public class ProjectHelper {
 	 *
 	 * @param project
 	 * @return a GoobiCollection of the following structure:
-	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
-	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
-	 *
-	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The
-	 *                  workflow order is returned according to the average order returen by a grouping by step titel
-	 *
-	 *                  consider workflow structure to be a prototype, it would probably make things easier, to either assemble the underlying
-	 *                  construction in separate classes or to create a new class with these properties
+	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle, stepOrder,
+	 *  stepCount,stepImageCount, totalProcessCount, totalImageCount which can get extracted by the IGoobiCollection
+	 *  Inteface using the getItem(&lt;name&gt;) method standard workflow of the project according to the definition that
+	 *  only steps shared by all processes are returned. The workflow order is returned according to the average order
+	 *  returen by a grouping by step titel consider workflow structure to be a prototype, it would probably make
+	 *  things easier, to either assemble the underlying construction in separate classes or to create a new class with
+	 *  these properties
 	 */
 
 	@SuppressWarnings("unchecked")

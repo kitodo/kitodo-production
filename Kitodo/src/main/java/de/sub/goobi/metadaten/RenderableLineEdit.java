@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
@@ -48,9 +49,8 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * Backing bean for a (multi-line) text input element to edit metadatum
- * renderable by JSF.
- * 
+ * Backing bean for a (multi-line) text input element to edit metadatum renderable by JSF.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
@@ -72,14 +72,11 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 
 	/**
 	 * Constructor. Creates a RenderableLineEdit.
-	 * 
-	 * @param metadataType
-	 *            metadata type editable by this drop-down list
-	 * @param binding
-	 *            a metadata group whose corresponding metadata element shall be
-	 *            updated if the setter method is called
-	 * @param container
-	 *            metadata group this drop-down list is showing in
+	 *
+	 * @param metadataType metadata type editable by this drop-down list
+	 * @param binding a metadata group whose corresponding metadata element shall be updated if the setter method
+	 *                   is called
+	 * @param container metadata group this drop-down list is showing in
 	 */
 	public RenderableLineEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
 		super(metadataType, binding, container);
@@ -91,12 +88,10 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 	}
 
 	/**
-	 * Adds the data passed from the metadata element as content to the input.
-	 * If there is data already (shouldn’t be, but however) it is appended for
-	 * not being lost.
-	 * 
-	 * @param data
-	 *            data to add
+	 * Adds the data passed from the metadata element as content to the input. If there is data already (shouldn’t be,
+	 * but however) it is appended for not being lost.
+	 *
+	 * @param data data to add
 	 */
 	@Override
 	public void addContent(Metadata data) {
@@ -109,7 +104,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 
 	/**
 	 * Returns the edit field value.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
 	@Override
@@ -123,7 +118,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 
 	/**
 	 * Saves the value entered by the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
@@ -134,7 +129,7 @@ public class RenderableLineEdit extends RenderableMetadatum implements Renderabl
 
 	/**
 	 * Returns the value of this edit component as metadata element
-	 * 
+	 *
 	 * @return a list with one metadata element with the value of this component
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
 	 */

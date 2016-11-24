@@ -27,13 +27,14 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.config.ConfigMain;
 
 public class Regelsatz implements Serializable {
 	private static final long serialVersionUID = -6663371963274685060L;
@@ -43,13 +44,11 @@ public class Regelsatz implements Serializable {
 	private Boolean orderMetadataByRuleset = false;
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*##########################################################################################################
+	 ##
+	 ##	Getter und Setter
+	 ##
+	 #########################################################################################################*/
 
 	public String getDatei() {
 		return this.datei;
@@ -75,6 +74,10 @@ public class Regelsatz implements Serializable {
 		this.titel = titel;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Prefs getPreferences() {
 		Prefs mypreferences = new Prefs();
 		try {
@@ -93,6 +96,10 @@ public class Regelsatz implements Serializable {
 		this.orderMetadataByRuleset = orderMetadataByRuleset;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Boolean isOrderMetadataByRulesetHibernate() {
 		if (this.orderMetadataByRuleset == null) {
 			this.orderMetadataByRuleset = false;

@@ -27,31 +27,6 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.faces.model.SelectItem;
-import javax.naming.AuthenticationException;
-
-import org.apache.log4j.Logger;
-import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-import org.goobi.production.properties.AccessCondition;
-import org.goobi.production.properties.ProcessProperty;
-import org.goobi.production.properties.PropertyParser;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.HistoryEvent;
 import de.sub.goobi.beans.Prozess;
@@ -71,6 +46,33 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.faces.model.SelectItem;
+import javax.naming.AuthenticationException;
+
+import org.apache.log4j.Logger;
+
+import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
+import org.goobi.production.properties.AccessCondition;
+import org.goobi.production.properties.ProcessProperty;
+import org.goobi.production.properties.PropertyParser;
+
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 public class BatchStepHelper {
 
@@ -94,6 +96,9 @@ public class BatchStepHelper {
 	private final WebDav myDav = new WebDav();
 	private List<String> processNameList = new ArrayList<String>();
 
+	/**
+	 * @param steps add description
+	 */
 	public BatchStepHelper(List<Schritt> steps) {
 		this.steps = steps;
 		for (Schritt s : steps) {
@@ -155,6 +160,9 @@ public class BatchStepHelper {
 		return this.processName;
 	}
 
+	/**
+	 * @param processName add description
+	 */
 	public void setProcessName(String processName) {
 		this.processName = processName;
 		for (Schritt s : this.steps) {
@@ -166,6 +174,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void saveCurrentProperty() {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
@@ -204,6 +215,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void saveCurrentPropertyForAll() {
 		boolean error = false;
 		List<ProcessProperty> ppList = getContainerProperties();
@@ -319,6 +333,9 @@ public class BatchStepHelper {
 		return this.containers;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getContainersSize() {
 		if (this.containers == null) {
 			return 0;
@@ -326,12 +343,18 @@ public class BatchStepHelper {
 		return this.containers.size();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ProcessProperty> getSortedProperties() {
 		Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
 		Collections.sort(this.processPropertyList, comp);
 		return this.processPropertyList;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ProcessProperty> getContainerlessProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
 		for (ProcessProperty pp : this.processPropertyList) {
@@ -346,6 +369,9 @@ public class BatchStepHelper {
 		return this.container;
 	}
 
+	/**
+	 * @param container add description
+	 */
 	public void setContainer(Integer container) {
 		this.container = container;
 		if (container != null && container > 0) {
@@ -353,6 +379,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ProcessProperty> getContainerProperties() {
 		List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
 
@@ -369,6 +398,9 @@ public class BatchStepHelper {
 		return answer;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String duplicateContainerForSingle() {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
@@ -418,6 +450,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String duplicateContainerForAll() {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
@@ -451,10 +486,11 @@ public class BatchStepHelper {
 		return "";
 	}
 
-	/*
+	/**
 	 * Error management
+	 *
+	 * @return add description
 	 */
-
 	public String ReportProblemForSingle() {
 
 		this.myDav.UploadFromHome(this.currentStep.getProzess());
@@ -466,6 +502,11 @@ public class BatchStepHelper {
 		return asf.FilterAlleStart();
 	}
 
+	/**
+	 * Error management
+	 *
+	 * @return add description
+	 */
 	public String ReportProblemForAll() {
 		for (Schritt s : this.steps) {
 			this.currentStep = s;
@@ -544,6 +585,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getPreviousStepsForProblemReporting() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
@@ -557,6 +601,9 @@ public class BatchStepHelper {
 		return answer;
 	}
 
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getNextStepsForProblemSolution() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
@@ -570,6 +617,9 @@ public class BatchStepHelper {
 		return answer;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String SolveProblemForSingle() {
 		try {
 			solveProblem();
@@ -585,6 +635,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String SolveProblemForAll() {
 		try {
 			for (Schritt s : this.steps) {
@@ -703,7 +756,7 @@ public class BatchStepHelper {
 	/**
 	 * sets new value for wiki field
 	 * 
-	 * @param inString
+	 * @param inString add description
 	 */
 
 	public void setWikiField(String inString) {
@@ -722,6 +775,9 @@ public class BatchStepHelper {
 		this.addToWikiField = addToWikiField;
 	}
 
+	/**
+	 *
+	 */
 	public void addToWikiField() {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -738,6 +794,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void addToWikiFieldForAll() {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -767,6 +826,9 @@ public class BatchStepHelper {
 		this.script = script;
 	}
 
+	/**
+	 *
+	 */
 	public void executeScript() {
 		for (Schritt step : this.steps) {
 
@@ -781,6 +843,9 @@ public class BatchStepHelper {
 
 	}
 
+	/**
+	 *
+	 */
 	public void ExportDMS() {
 		for (Schritt step : this.steps) {
 			ExportDms export = new ExportDms();
@@ -793,6 +858,9 @@ public class BatchStepHelper {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BatchDurchBenutzerZurueckgeben() {
 
 		for (Schritt s : this.steps) {
@@ -818,6 +886,9 @@ public class BatchStepHelper {
 		return asf.FilterAlleStart();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String BatchDurchBenutzerAbschliessen() {
 
 		// for (ProcessProperty pp : this.processPropertyList) {
@@ -899,6 +970,9 @@ public class BatchStepHelper {
 		return asf.FilterAlleStart();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getScriptnames() {
 		List<String> answer = new ArrayList<String>();
 		answer.addAll(getCurrentStep().getAllScripts().keySet());

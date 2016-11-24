@@ -27,6 +27,9 @@ package de.sub.goobi.config;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -40,9 +43,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 import org.joda.time.Duration;
-
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
 
 public class ConfigMain {
 	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
@@ -74,14 +74,14 @@ public class ConfigMain {
 	}
 
 	/**
-	 * den Pfad für die temporären Images zur Darstellung zurückgeben ================================================================
+	 * @return den Pfad für die temporären Images zur Darstellung zurückgeben
 	 */
 	public static String getTempImagesPath() {
 		return "/pages/imagesTemp/";
 	}
 
 	/**
-	 * den absoluten Pfad für die temporären Images zurückgeben ================================================================
+	 * @return den absoluten Pfad für die temporären Images zurückgeben
 	 */
 	public static String getTempImagesPathAsCompleteDirectory() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -109,7 +109,7 @@ public class ConfigMain {
 
 	/**
 	 * Request selected parameter from configuration
-	 * 
+	 *
 	 * @return Parameter as String
 	 */
 	public static String getParameter(String inParameter) {
@@ -123,7 +123,7 @@ public class ConfigMain {
 
 	/**
 	 * Request selected parameter with given default value from configuration
-	 * 
+	 *
 	 * @return Parameter as String
 	 */
 	public static String getParameter(String inParameter, String inDefaultIfNull) {
@@ -137,7 +137,7 @@ public class ConfigMain {
 
 	/**
 	 * Request boolean parameter from configuration, default if missing: false
-	 * 
+	 *
 	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter) {
@@ -146,7 +146,7 @@ public class ConfigMain {
 
 	/**
 	 * Request boolean parameter from configuration
-	 * 
+	 *
 	 * @return Parameter as String
 	 */
 	public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
@@ -155,7 +155,7 @@ public class ConfigMain {
 
 	/**
 	 * Request long parameter from configuration
-	 * 
+	 *
 	 * @return Parameter as Long
 	 */
 	public static long getLongParameter(String inParameter, long inDefault) {
@@ -164,7 +164,7 @@ public class ConfigMain {
 
 	/**
 	 * Request Duration parameter from configuration
-	 * 
+	 *
 	 * @return Parameter as Duration
 	 */
 	public static Duration getDurationParameter(String inParameter, TimeUnit timeUnit, long inDefault) {
@@ -174,7 +174,7 @@ public class ConfigMain {
 
 	/**
 	 * Request int-parameter from Configuration
-	 * 
+	 *
 	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter) {
@@ -183,7 +183,7 @@ public class ConfigMain {
 
 	/**
 	 * Request int-parameter from Configuration with default-value
-	 * 
+	 *
 	 * @return Parameter as Int
 	 */
 	public static int getIntParameter(String inParameter, int inDefault) {
@@ -196,8 +196,8 @@ public class ConfigMain {
 
 	/**
 	 * Request String[]-parameter from Configuration
-	 * 
-	 * @return Parameter as String[] 
+	 *
+	 * @return Parameter as String[]
 	 */
 	public static String[] getStringArrayParameter(String inParameter) {
 

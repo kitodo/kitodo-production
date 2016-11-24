@@ -35,6 +35,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package de.sub.goobi.metadaten.copier;
 
 import java.util.Iterator;
@@ -48,9 +49,9 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * Data copy rule that either overwrites the metadatum described by the selector
- * on the left hand side or creates it anew, if it isn’t yet present.
- * 
+ * Data copy rule that either overwrites the metadatum described by the selector on the left hand side or creates it
+ * anew, if it isn’t yet present.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ComposeFormattedRule extends DataCopyrule {
@@ -67,17 +68,13 @@ public class ComposeFormattedRule extends DataCopyrule {
 	protected static final String OPERATOR = "=format";
 
 	/**
-	 * The function typecast() converts the String arguments so that they can be
-	 * used by {@link String#format(String, Object...)}. Only arguments that are
-	 * referenced by number can be typecasted. If the format String contains
-	 * “%2$02d”, the function will convert the second list object to long, if
-	 * the format String contains “%02d” the function cannot tell which argument
-	 * is meant and thus doesn’t do anything for it.
-	 * 
-	 * @param format
-	 *            format String, to get the desired types from
-	 * @param elements
-	 *            arguments
+	 * The function typecast() converts the String arguments so that they can be used by
+	 * {@link String#format(String, Object...)}. Only arguments that are referenced by number can be typecasted. If
+	 * the format String contains “%2$02d”, the function will convert the second list object to long, if the format
+	 * String contains “%02d” the function cannot tell which argument is meant and thus doesn’t do anything for it.
+	 *
+	 * @param format format String, to get the desired types from
+	 * @param elements arguments
 	 * @return the objects for the format command
 	 */
 	private static Object[] typecast(String format, List<String> elements) {
@@ -126,7 +123,7 @@ public class ComposeFormattedRule extends DataCopyrule {
 					case 'x':
 						result[i] = Long.parseLong(elements.get(i));
 				}
-			} catch (RuntimeException e) {// ArrayIndexOutOfBoundsException, ClassCastException, NumberFormatException
+			} catch (RuntimeException e) { // ArrayIndexOutOfBoundsException, ClassCastException, NumberFormatException
 				continue;
 			}
 		}
@@ -150,9 +147,8 @@ public class ComposeFormattedRule extends DataCopyrule {
 
 	/**
 	 * Applies the rule to the given data object
-	 * 
-	 * @param data
-	 *            data to apply the rule on
+	 *
+	 * @param data data to apply the rule on
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
 	 */
 	@Override
@@ -177,9 +173,8 @@ public class ComposeFormattedRule extends DataCopyrule {
 	}
 
 	/**
-	 * Returns the maximal number of objects supported by the rule to work as
-	 * expected, that is unlimited.
-	 * 
+	 * Returns the maximal number of objects supported by the rule to work as expected, that is unlimited.
+	 *
 	 * @return Integer.MAX_VALUE
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
 	 */
@@ -189,9 +184,8 @@ public class ComposeFormattedRule extends DataCopyrule {
 	}
 
 	/**
-	 * Returns the minimal number of objects required by the rule to work as
-	 * expected, that is 2.
-	 * 
+	 * Returns the minimal number of objects required by the rule to work as expected, that is 2.
+	 *
 	 * @return always 2
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
 	 */
@@ -202,7 +196,7 @@ public class ComposeFormattedRule extends DataCopyrule {
 
 	/**
 	 * Saves the source object path.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
 	 */
 	@Override
@@ -211,12 +205,13 @@ public class ComposeFormattedRule extends DataCopyrule {
 		format = DataSelector.create(listOfObjects.next());
 		do {
 			source.add(DataSelector.create(listOfObjects.next()));
-		} while (listOfObjects.hasNext());
+		}
+		while (listOfObjects.hasNext());
 	}
 
 	/**
 	 * Saves the destination object path.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
 	 */
 	@Override
@@ -226,7 +221,7 @@ public class ComposeFormattedRule extends DataCopyrule {
 
 	/**
 	 * Returns a string that textually represents this copy rule.
-	 * 
+	 *
 	 * @return a string representation of this copy rule
 	 * @see java.lang.Object#toString()
 	 */

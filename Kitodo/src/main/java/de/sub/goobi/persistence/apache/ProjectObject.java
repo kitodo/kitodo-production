@@ -60,6 +60,36 @@ public class ProjectObject {
 	private int numberOfVolumes;
 	private boolean projectIsArchived;
 
+	/**
+	 * @param projekteID add description
+	 * @param titel add description
+	 * @param useDmsImport add description
+	 * @param dmsImportTimeOut add description
+	 * @param dmsImportRootPath add description
+	 * @param dmsImportImagesPath add description
+	 * @param dmsImportSuccessPath add description
+	 * @param dmsImportErrorPath add description
+	 * @param dmsImportCreateProcessFolder add description
+	 * @param fileFormatInternal add description
+	 * @param fileFormatDmsExport add description
+	 * @param metsRightsOwner add description
+	 * @param metsRightsOwnerLogo add description
+	 * @param metsRightsOwnerSite add description
+	 * @param metsDigiprovReference add description
+	 * @param metsDigiprovPresentation add description
+	 * @param metsPointerPath add description
+	 * @param metsPointerPathAnchor add description
+	 * @param metsDigiprovReferenceAnchor add description
+	 * @param metsDigiprovPresentationAnchor add description
+	 * @param metsPurl add description
+	 * @param metsContentIDs add description
+	 * @param metsRightsOwnerMail add description
+	 * @param startDate add description
+	 * @param endDate add description
+	 * @param numberOfPages add description
+	 * @param numberOfVolumes add description
+	 * @param projectIsArchived add description
+	 */
 	public ProjectObject(int projekteID, String titel, boolean useDmsImport, int dmsImportTimeOut,
 			String dmsImportRootPath, String dmsImportImagesPath, String dmsImportSuccessPath,
 			String dmsImportErrorPath, boolean dmsImportCreateProcessFolder, String fileFormatInternal,

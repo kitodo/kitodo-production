@@ -27,6 +27,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,11 +40,9 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import de.sub.goobi.beans.Benutzer;
-
 /**
  * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 16.01.2005
  */
@@ -53,6 +53,9 @@ public class SessionForm {
 	private String aktuelleZeit = this.formatter.format(new Date());
 	private String bitteAusloggen = "";
 
+	/**
+	 * @return add description
+	 */
 	public int getAktiveSessions() {
 		if (this.alleSessions == null) {
 			return 0;
@@ -65,6 +68,9 @@ public class SessionForm {
 		return this.aktuelleZeit;
 	}
 
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("rawtypes")
 	public List getAlleSessions() {
 		try {
@@ -134,6 +140,9 @@ public class SessionForm {
 		}
 	}
 
+	/**
+	 * @param insession add description
+	 */
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void sessionAktualisieren(HttpSession insession) {
 		boolean gefunden = false;
@@ -153,6 +162,10 @@ public class SessionForm {
 		sessionsAufraeumen(insession.getMaxInactiveInterval());
 	}
 
+	/**
+	 * @param insession add description
+	 * @param inBenutzer add description
+	 */
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
 		// logger.debug("sessionBenutzerAktualisieren-start");
@@ -173,7 +186,12 @@ public class SessionForm {
 		}
 	}
 
-	/* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
+	/** prüfen, ob der Benutzer in einer anderen Session aktiv ist
+	 *
+	 * @param insession add description
+	 * @param inBenutzer add description
+	 * @return add description
+	 */
 	@SuppressWarnings("rawtypes")
 	public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
 		boolean rueckgabe = false;
@@ -189,6 +207,10 @@ public class SessionForm {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param inSession add description
+	 * @param inBenutzer add description
+	 */
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
 		List alleSessionKopie = new ArrayList(this.alleSessions);

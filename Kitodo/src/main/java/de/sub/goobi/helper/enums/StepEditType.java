@@ -31,14 +31,13 @@ import de.sub.goobi.helper.Helper;
 
 /**
  * Enum for edit type of task steps each one has an integer value, and a title
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 17.05.2009
  */
 public enum StepEditType {
 	/**
-	 * default type is unknown for all steps, which still don't have a specific
-	 * type
+	 * default type is unknown for all steps, which still don't have a specific type
 	 */
 	UNNOWKN(0, "unbekannt"),
 
@@ -46,8 +45,7 @@ public enum StepEditType {
 	MANUAL_SINGLE(1, "manuellSingleWorkflow"),
 
 	/**
-	 * manual multi workflow for lots of data like image processing with pages
-	 * of steps
+	 * manual multi workflow for lots of data like image processing with pages of steps
 	 */
 	MANUAL_MULTI(2, "manuellMultiWorkflow"),
 
@@ -70,7 +68,7 @@ public enum StepEditType {
 
 	/**
 	 * return integer value for database savings
-	 * 
+	 *
 	 * @return value as integer
 	 */
 	public Integer getValue() {
@@ -79,7 +77,7 @@ public enum StepEditType {
 
 	/**
 	 * get title from editType
-	 * 
+	 *
 	 * @return title as translated string for current locale
 	 */
 	public String getTitle() {
@@ -87,11 +85,10 @@ public enum StepEditType {
 	}
 
 	/**
-	 * retrieve editType by integer value, necessary for database handlings,
-	 * where only integer is saved but not type safe
-	 * 
-	 * @param editType
-	 *            as integer value
+	 * retrieve editType by integer value, necessary for database handlings, where only integer is saved but not type
+	 * safe
+	 *
+	 * @param editType as integer value
 	 * @return {@link StepEditType} for given integer
 	 */
 	public static StepEditType getTypeFromValue(Integer editType) {

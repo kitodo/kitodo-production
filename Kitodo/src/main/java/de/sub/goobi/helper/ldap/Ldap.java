@@ -27,6 +27,12 @@ package de.sub.goobi.helper.ldap;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,15 +63,8 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
 
 public class Ldap {
 	private static final Logger myLogger = Logger.getLogger(Ldap.class);
@@ -88,12 +87,12 @@ public class Ldap {
 	/**
 	 * create new user in LDAP-directory
 	 *
-	 * @param inBenutzer
-	 * @param inPasswort
-	 * @throws NamingException
-	 * @throws NoSuchAlgorithmException
-	 * @throws InterruptedException
-	 * @throws IOException
+	 * @param inBenutzer add description
+	 * @param inPasswort add description
+	 * @throws NamingException add description
+	 * @throws NoSuchAlgorithmException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
 	 */
 	public void createNewUser(Benutzer inBenutzer, String inPasswort) throws NamingException, NoSuchAlgorithmException,
 			IOException, InterruptedException {
@@ -130,8 +129,8 @@ public class Ldap {
 	/**
 	 * Check if connection with login and password possible
 	 *
-	 * @param inBenutzer
-	 * @param inPasswort
+	 * @param inBenutzer add description
+	 * @param inPasswort add description
 	 * @return Login correct or not
 	 */
 	public boolean isUserPasswordCorrect(Benutzer inBenutzer, String inPasswort) {
@@ -237,7 +236,7 @@ public class Ldap {
 	/**
 	 * retrieve home directory of given user
 	 *
-	 * @param inBenutzer
+	 * @param inBenutzer add description
 	 * @return path as string
 	 */
 	public String getUserHomeDirectory(Benutzer inBenutzer) {
@@ -323,7 +322,7 @@ public class Ldap {
 	/**
 	 * check if User already exists on system
 	 *
-	 * @param inLogin
+	 * @param inLogin add description
 	 * @return path as string
 	 */
 	public boolean isUserAlreadyExists(String inLogin) {
@@ -394,7 +393,7 @@ public class Ldap {
 	 * Get next free uidNumber
 	 *
 	 * @return next free uidNumber
-	 * @throws NamingException
+	 * @throws NamingException add description
 	 */
 	private String getNextUidNumber() {
 		Hashtable<String, String> env = LdapConnectionSettings();
@@ -418,7 +417,7 @@ public class Ldap {
 	/**
 	 * Set next free uidNumber
 	 *
-	 * @throws NamingException
+	 * @throws NamingException add description
 	 */
 	private void setNextUidNumber() {
 		Hashtable<String, String> env = LdapConnectionSettings();
@@ -448,11 +447,11 @@ public class Ldap {
 	/**
 	 * change password of given user, needs old password for authentification
 	 *
-	 * @param inUser
-	 * @param inOldPassword
-	 * @param inNewPassword
+	 * @param inUser add description
+	 * @param inOldPassword add description
+	 * @param inNewPassword add description
 	 * @return boolean about result of change
-	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchAlgorithmException add description
 	 */
 	public boolean changeUserPassword(Benutzer inUser, String inOldPassword, String inNewPassword)
 			throws NoSuchAlgorithmException {
@@ -465,7 +464,7 @@ public class Ldap {
 				DirContext ctx = new InitialDirContext(env);
 
 				/*
-				 * -------------------------------- Encryption of password and Base64-Encoding --------------------------------
+				 * Encryption of password and Base64-Encoding
 				 */
 				MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
 				md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
@@ -473,13 +472,13 @@ public class Ldap {
 				ModificationItem[] mods = new ModificationItem[4];
 
 				/*
-				 * -------------------------------- UserPasswort-Attribut ändern --------------------------------
+				 * UserPasswort-Attribut ändern
 				 */
 				BasicAttribute userpassword = new BasicAttribute("userPassword", "{"
 						+ ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 
 				/*
-				 * -------------------------------- LanMgr-Passwort-Attribut ändern --------------------------------
+				 * LanMgr-Passwort-Attribut ändern
 				 */
 				BasicAttribute lanmgrpassword = null;
 				try {
@@ -550,7 +549,7 @@ public class Ldap {
 		File myPfad = new File(path);
 		if (!myPfad.exists()) {
 			try (FileOutputStream ksos = new FileOutputStream(path);
-			// TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
+					// TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
 					FileInputStream cacertFile = new FileInputStream(ConfigMain.getParameter("ldap_cert_root"));
 					FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))) {
 

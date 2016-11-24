@@ -27,8 +27,11 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.TiffHeader;
 
-import org.goobi.io.SafeFile;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,10 +46,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.download.TiffHeader;
+import org.goobi.io.SafeFile;
 
 public class WebDav implements Serializable {
 
@@ -65,7 +65,6 @@ public class WebDav implements Serializable {
 
 	/**
 	 * Retrieve all folders from one directory
-	 * ================================================================
 	 */
 
 	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
@@ -128,6 +127,9 @@ public class WebDav implements Serializable {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 */
 	public void UploadFromHome(Prozess myProzess) {
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
 		if (aktuellerBenutzer != null) {
@@ -135,6 +137,10 @@ public class WebDav implements Serializable {
 		}
 	}
 
+	/**
+	 * @param inBenutzer add description
+	 * @param myProzess add description
+	 */
 	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
 		String nach = "";
 
@@ -167,6 +173,11 @@ public class WebDav implements Serializable {
 		FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inSchrittID add description
+	 * @param inNurLesen add description
+	 */
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
 		saveTiffHeader(myProzess);
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
@@ -260,6 +271,10 @@ public class WebDav implements Serializable {
 		}
 	}
 
+	/**
+	 * @param inVerzeichnis add description
+	 * @return add description
+	 */
 	public int getAnzahlBaende(String inVerzeichnis) {
 		try {
 			Benutzer aktuellerBenutzer = Helper.getCurrentUser();

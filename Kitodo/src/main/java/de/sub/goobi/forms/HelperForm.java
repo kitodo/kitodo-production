@@ -27,7 +27,14 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
+import de.sub.goobi.beans.Docket;
+import de.sub.goobi.beans.Regelsatz;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.MetadataFormat;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.DocketDAO;
+import de.sub.goobi.persistence.RegelsatzDAO;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -41,18 +48,10 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.goobi.io.SafeFile;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
-
-import de.sub.goobi.beans.Docket;
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.DocketDAO;
-import de.sub.goobi.persistence.RegelsatzDAO;
 
 /**
  * @author Wulf Riebensahm
@@ -71,6 +70,9 @@ public class HelperForm {
 		return GoobiVersion.getBuildversion();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getApplicationLogo() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
 		logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
@@ -78,6 +80,9 @@ public class HelperForm {
 		return logo;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getApplicationHeaderBackground() {
 		String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
 		logo += ConfigMain.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
@@ -99,6 +104,9 @@ public class HelperForm {
 		return rueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getApplicationTitleStyle() {
 		String rueck = ConfigMain.getParameter("ApplicationTitleStyle",
 				"font-size:17; font-family:verdana; color: black;");
@@ -138,6 +146,10 @@ public class HelperForm {
 		return ConfigMain.getBooleanParameter("anonymize");
 	}
 
+	/**
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public List<SelectItem> getRegelsaetze() throws DAOException {
 		List<SelectItem> myPrefs = new ArrayList<SelectItem>();
 		List<Regelsatz> temp = new RegelsatzDAO().search("from Regelsatz ORDER BY titel");
@@ -148,6 +160,9 @@ public class HelperForm {
 		return myPrefs;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<SelectItem> getDockets() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		try {
@@ -162,6 +177,9 @@ public class HelperForm {
 		return answer;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getFileFormats() {
 		ArrayList<String> ffs = new ArrayList<String>();
 		for (MetadataFormat ffh : MetadataFormat.values()) {
@@ -172,6 +190,9 @@ public class HelperForm {
 		return ffs;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getFileFormatsInternalOnly() {
 		ArrayList<String> ffs = new ArrayList<String>();
 		for (MetadataFormat ffh : MetadataFormat.values()) {
@@ -189,6 +210,9 @@ public class HelperForm {
 		return context.getExternalContext().getRequestContextPath() + "/";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getServletPathWithHostAsUrl() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -204,6 +228,9 @@ public class HelperForm {
 		return FacesContext.getCurrentInstance().getMessages().hasNext();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<SelectItem> getCssFiles() {
 		List<SelectItem> myList = new ArrayList<SelectItem>();
 
@@ -226,11 +253,10 @@ public class HelperForm {
 	}
 
 	/**
-	 * method returns a valid css file, which is the suggestion unless
-	 * suggestion is not available if not available default.css is returned
-	 * 
+	 * method returns a valid css file, which is the suggestion unless suggestion is not available if not available
+	 * default.css is returned
+	 *
 	 * @param cssFileName suggested css file
-	 * 
 	 * @return valid css file
 	 */
 	public String getCssLinkIfExists(String cssFileName) {
@@ -262,6 +288,9 @@ public class HelperForm {
 		return getServletPathWithHostAsUrl() + "/newpages/images/template/kitodo-homepage-logo.svg";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getMassImportAllowed() {
 		boolean value = false;
 		if (ConfigMain.getBooleanParameter("massImportAllowed", false)) {
@@ -270,6 +299,9 @@ public class HelperForm {
 		return value;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getIsIE() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -280,6 +312,9 @@ public class HelperForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getUserAgent() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();

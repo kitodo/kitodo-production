@@ -31,7 +31,7 @@ import de.sub.goobi.helper.Helper;
 
 /**
  * Enum of all history event types for all history events for processes
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
@@ -90,8 +90,8 @@ public enum HistoryEventType {
 	private String groupingExpression;
 
 	/**
-	 * private constructor, initializes integer value, title and sets boolean, 
-	 * if EventType contains string and/or numeric content
+	 * private constructor, initializes integer value, title and sets boolean, if EventType contains string and/or
+	 * numeric content
 	 */
 	private HistoryEventType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
 			String groupingExpression) {
@@ -104,7 +104,7 @@ public enum HistoryEventType {
 
 	/**
 	 * return integer value for database savings
-	 * 
+	 *
 	 * @return value as integer
 	 */
 	public Integer getValue() {
@@ -113,7 +113,7 @@ public enum HistoryEventType {
 
 	/**
 	 * get title from type
-	 * 
+	 *
 	 * @return title as translated string for current locale from standard-jsf-messages
 	 */
 	public String getTitle() {
@@ -122,7 +122,7 @@ public enum HistoryEventType {
 
 	/**
 	 * return if type contains numeric content
-	 * 
+	 *
 	 * @return isNumeric as {@link Boolean}
 	 */
 
@@ -132,7 +132,7 @@ public enum HistoryEventType {
 
 	/**
 	 * return if type contains string content
-	 * 
+	 *
 	 * @return isNumeric as {@link String}
 	 */
 	public Boolean isString() {
@@ -141,7 +141,7 @@ public enum HistoryEventType {
 
 	/**
 	 * return grouping function if needed
-	 * 
+	 *
 	 * @return groupingExpression as{@link String}
 	 */
 	public String getGroupingFunction() {
@@ -149,11 +149,10 @@ public enum HistoryEventType {
 	}
 
 	/**
-	 * retrieve history event type by integer value, necessary for database handlings,
-	 * where only integer is saved but not type safe
-	 * 
-	 * @param inType
-	 *            as integer value
+	 * retrieve history event type by integer value, necessary for database handlings, where only integer is saved
+	 * but not type safe
+	 *
+	 * @param inType  as integer value
 	 * @return {@link HistoryEventType} for given integer
 	 */
 	public static HistoryEventType getTypeFromValue(Integer inType) {

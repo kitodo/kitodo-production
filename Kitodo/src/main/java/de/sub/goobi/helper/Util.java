@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 
 /**
  * Collection of simple utility methods.
- * 
+ *
  * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -61,7 +61,7 @@ public final class Util {
 	   Utility method to create a <code>Date</code> class
 	   from <code>dateString</code>.
 
-	   @param dateString
+	   @param dateString add description
 	   @return Date
 	   @throws RuntimeException is dateString is invalid
 	*/
@@ -75,10 +75,10 @@ public final class Util {
 	}
 
 	/**
-	   Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
-
-	   @return ResourceBundle
-	*/
+	 * Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
+	 *
+	 * @return ResourceBundle
+	 */
 	private static ResourceBundle getResourceBundle() {
 		if (bundle == null) {
 			bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH, Thread.currentThread()
@@ -91,13 +91,10 @@ public final class Util {
 	public static final String RESOURCE_BUNDLE = "example_app";
 
 	/**
-	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
-	 * that is to be populated with the given collection and isn’t intended to
-	 * grow any further.
-	 * 
-	 * @param collection
-	 *            collection whose size shall be used to determine the initial
-	 *            capacity for a HashMap
+	 * Calculates the optimal initial capacity for a HashMap or HashSet instance that is to be populated with the
+	 * given collection and isn’t intended to grow any further.
+	 *
+	 * @param collection collection whose size shall be used to determine the initial capacity for a HashMap
 	 * @return the appropriate capacity
 	 */
 	public static int hashCapacityFor(Collection<?> collection) {

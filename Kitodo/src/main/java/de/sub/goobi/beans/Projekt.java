@@ -27,6 +27,10 @@ package de.sub.goobi.beans;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.helper.ProjectHelper;
+import de.sub.goobi.helper.enums.MetadataFormat;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,9 +50,6 @@ import org.goobi.webapi.beans.Field;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
-import de.sub.goobi.helper.ProjectHelper;
-import de.sub.goobi.helper.enums.MetadataFormat;
-
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
 // elements. Further XML elements can be added as needed by annotating with
@@ -64,11 +65,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
 
 	/**
-	 * The constant ANCHOR_SEPARATOR holds the character U+00A6
-	 * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
-	 * if several of them are needed in one project. The anchors must then be
-	 * listed the hierarchical order they have to be applied, that is the
-	 * topmost anchor in first place, followed by the second one and so on.
+	 * The constant ANCHOR_SEPARATOR holds the character U+00A6 (&ldquo;&brvbar;&rdquo;) which can be used to separate
+	 * multiple anchors, if several of them are needed in one project. The anchors must then be listed the hierarchical
+	 * order they have to be applied, that is the topmost anchor in first place, followed by the second one and so on.
 	 */
 	public static final String ANCHOR_SEPARATOR = "\u00A6";
 	private Integer id;
@@ -109,10 +108,16 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	private Boolean projectIsArchived = false;
 
 	@XmlElement(name = "template")
-	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when
-									// calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within
-									// a project as XML child nodes of the respective project.
+	/**
+	 * The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling
+	 * ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child nodes of
+	 * the respective project.
+	 */
+	public List<Prozess> template;
 
+	/**
+	 *
+	 */
 	public Projekt() {
 		this.prozesse = new HashSet<Prozess>();
 		this.benutzer = new HashSet<Benutzer>();
@@ -127,10 +132,9 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Getter und
-	 * Setter ## #####################################################
-	 * ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * ##################################################### ####################################################
 	 */
 
 	public Integer getId() {
@@ -251,6 +255,10 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.filegroups = filegroups;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public ArrayList<ProjectFileGroup> getFilegroupsList() {
 		try {
 			Hibernate.initialize(this.filegroups);
@@ -419,11 +427,11 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.numberOfVolumes = numberOfVolumes;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for numberOfPages
 	 *
 	 * @return the number of pages
-	 *************************************************************************************/
+	 */
 	public Integer getNumberOfPages() {
 		if (this.numberOfPages == null) {
 			this.numberOfPages = 0;
@@ -431,21 +439,21 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.numberOfPages;
 	}
 
-	/**************************************************************************************
+	/**
 	 * Setter for numberOfPages
 	 *
 	 * @param numberOfPages
 	 *            the number of pages to set
-	 **************************************************************************************/
+	 */
 	public void setNumberOfPages(Integer numberOfPages) {
 		this.numberOfPages = numberOfPages;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for startDate
 	 *
 	 * @return the start date
-	 *************************************************************************************/
+	 */
 	public Date getStartDate() {
 		if (this.startDate == null) {
 			this.startDate = new Date();
@@ -453,21 +461,20 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.startDate;
 	}
 
-	/**************************************************************************************
+	/**
 	 * Setter for startDate
 	 *
-	 * @param startDate
-	 *            the start date to set
-	 **************************************************************************************/
+	 * @param startDate the start date to set
+	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for endDate
 	 *
 	 * @return the end date
-	 *************************************************************************************/
+	 */
 	public Date getEndDate() {
 		if (this.endDate == null) {
 			this.endDate = new Date();
@@ -475,16 +482,19 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.endDate;
 	}
 
-	/**************************************************************************************
+	/**
 	 * Setter for endDate
 	 *
-	 * @param endDate
-	 *            the end date to set
-	 **************************************************************************************/
+	 * @param endDate the end date to set
+	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
+	/**
+	 *
+	 * @param projectIsArchived add description
+	 */
 	public void setProjectIsArchived(Boolean projectIsArchived) {
 		if (projectIsArchived == null) {
 			projectIsArchived = false;

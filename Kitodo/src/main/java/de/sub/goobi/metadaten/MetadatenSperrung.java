@@ -27,11 +27,11 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import de.sub.goobi.config.ConfigMain;
 
 /**
  * Bean für die Sperrung der Metadaten
@@ -40,8 +40,7 @@ public class MetadatenSperrung implements Serializable {
 	private static final long serialVersionUID = -8248209179063050307L;
 	private static HashMap<Integer, HashMap<String, String>> sperrungen = new HashMap<Integer, HashMap<String, String>>();
 	/*
-	 * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
-	 * behalten (30 min)
+	 * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu behalten (30 min)
 	 */
 	private static final long sperrzeit = ConfigMain.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000);
 
@@ -97,6 +96,9 @@ public class MetadatenSperrung implements Serializable {
 
 	/* =============================================================== */
 
+	/**
+	 * @param inBenutzerID add description
+	 */
 	public void alleBenutzerSperrungenAufheben(Integer inBenutzerID) {
 		String inBenutzerString = String.valueOf(inBenutzerID.intValue());
 		HashMap<Integer, HashMap<String, String>> temp = new HashMap<Integer, HashMap<String, String>>(sperrungen);
@@ -128,7 +130,7 @@ public class MetadatenSperrung implements Serializable {
 
 	/**
 	 * Remove lock for process.
-	 * 
+	 *
 	 * @param ProzessID
 	 *            Id of process to unlock
 	 */

@@ -34,10 +34,8 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
 /**
- * This class provides the tools it takes to generate a configurable Error
- * message for Errors which are unexpected An example for the area in
- * GoobiProperties.config is given after the class declaration in the source
- * code.
+ * This class provides the tools it takes to generate a configurable Error message for Errors which are unexpected An
+ * example for the area in GoobiProperties.config is given after the class declaration in the source code.
  *
  * Besides building up the information in the constructor the other important
  * method is getLocalizedMessage(), which provides the build up message in html
@@ -148,7 +146,8 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes it into html format for display in browsers
+	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes
+	 * it into html format for display in browsers
 	 */
 	@Override
 	public String getLocalizedMessage() {
@@ -190,7 +189,6 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 *
 	 * @return collected addresses as a string to be used after <a href="mailto:"
 	 */
 	private String getAddresses() {
@@ -203,7 +201,7 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 *
-	 * @param aThrowable
+	 * @param stackTrace add description
 	 * @return stack trace as String
 	 */
 	private String getStackTrace(StackTraceElement[] stackTrace) {
