@@ -3,6 +3,7 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
+<%@ page pageEncoding="UTF-8" %>
 <%-- 
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -52,11 +53,24 @@
 	</h:commandLink>
 	<%-- aus dem Opac auswaehlen --%>
 	<h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
-		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
 
-		<h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px">
+		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
+		<h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px"
+			onchange="
+				var katalogauswahl = document.forms['pageform1'].elements['pageform1:katalogauswahl'];
+				var einrichtungsauswahl = document.forms['pageform1'].elements['pageform1:einrichtungsauswahl'];
+				if(katalogauswahl.value == 'Kalliope'){
+					einrichtungsauswahl.style['display'] = 'inline';
+					einrichtungsauswahl.previousSibling.style['display'] = 'inline';
+				}
+				else {
+					einrichtungsauswahl.style['display'] = 'none';
+					einrichtungsauswahl.previousSibling.style['display'] = 'none';
+				}
+			">
 			<si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 		</h:selectOneMenu>
+
 		<h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px" />
 		<h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}" style="display:inline; margin-left:10px">
 			<f:selectItem itemLabel="Identifier" itemValue="12" />
@@ -66,6 +80,16 @@
 			<f:selectItem itemLabel="ISSN" itemValue="8" />
 			<f:selectItem itemLabel="Title" itemValue="4" />
 			<f:selectItem itemLabel="ZDB-ID" itemValue="8506" />
+		</h:selectOneMenu>
+
+		<h:outputText value="#{msgs.einrichtungFiltern}" style="display:inline; margin-left: 15px" />
+		<h:selectOneMenu id="einrichtungsauswahl" value="#{ProzesskopieForm.institution}" style="display:inline; margin-left:7px">
+			<f:selectItem itemLabel="Alle" itemValue="-" />
+			<f:selectItem itemLabel="Deutsche Nationalbibliothek" itemValue="Deutsche Nationalbibliothek" />
+			<f:selectItem itemLabel="Bauhaus-Archiv <Berlin>" itemValue="Bauhaus-Archiv <Berlin>" />
+			<f:selectItem itemLabel="Hauptstaatsarchiv <Stuttgart>" itemValue="Hauptstaatsarchiv <Stuttgart>" />
+			<f:selectItem itemLabel="Universitätsbibliothek <Leipzig>" itemValue="Universitätsbibliothek <Leipzig>" />
+			<f:selectItem itemLabel="Sächsische Landesbibliothek - Staats- und Universitätsbibliothek <Dresden>" itemValue="Sächsische Landesbibliothek - Staats- und Universitätsbibliothek <Dresden>" />
 		</h:selectOneMenu>
 
 	</h:panelGroup>

@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -270,6 +271,7 @@ public class ProzesskopieForm {
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
+	private String institution;
 	private List<String> possibleDigitalCollection;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
@@ -453,6 +455,10 @@ public class ProzesskopieForm {
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
 			
+			if (!Objects.equals(institution, "-")) {
+				query = query +  "&&&" + institution;
+			}
+
 			hitlist = importCatalogue.find(query, timeout);
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 			switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
@@ -1609,6 +1615,14 @@ public class ProzesskopieForm {
 
 	public void setOpacSuchbegriff(String opacSuchbegriff) {
 		this.opacSuchbegriff = opacSuchbegriff;
+	}
+
+	public String getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 
 	/*

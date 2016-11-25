@@ -264,7 +264,16 @@ public class ModsPlugin implements Plugin {
 	 */
 	public Object find(String query, long timeout) {
 		try {
+			String[] queryParts = query.split("&&&");
+			query = queryParts[0];
 			Query queryObject = new Query(query);
+
+			String filterInstitution = "";
+			if(queryParts.length == 2) {
+				filterInstitution = queryParts[1];
+				queryObject.addQuery("AND", filterInstitution, "20");
+			}
+
 			int hits = client.getNumberOfHits(queryObject, timeout);
 			if (hits > 0) {
 				return new FindResult(queryObject, hits);

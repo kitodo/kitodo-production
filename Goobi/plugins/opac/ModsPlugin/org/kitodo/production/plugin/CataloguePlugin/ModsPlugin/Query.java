@@ -53,6 +53,7 @@ class Query {
 	{
 		fieldMappings.put("4", "ead.title");
 		fieldMappings.put("12", "ead.id");
+		fieldMappings.put("20", "ead.repository");
 	}
 
 	// Example: Kalliope-URL returning the mods data for a given ead.id
@@ -173,13 +174,13 @@ class Query {
 	}
 
 	//operation must be Query.AND, .OR, .NOT
-	private void addQuery(String operation, String query, String fieldNumber) {
+	void addQuery(String operation, String query, String fieldNumber) {
 		 try{
 			 if(fieldMappings.containsKey(fieldNumber)){
 				 if(!Objects.equals(this.queryUrl, "&query=")){
-					 this.queryUrl += "&";
+					 this.queryUrl += "+"+operation+"+";
 				 }
-				 this.queryUrl += fieldMappings.get(fieldNumber) + "=" + URLEncoder.encode(query, CharEncoding.ISO_8859_1);
+				 this.queryUrl += fieldMappings.get(fieldNumber) + "=%22" + URLEncoder.encode(query, CharEncoding.ISO_8859_1) + "%22";
 			 }
 		 }catch (UnsupportedEncodingException e) {
 			 e.printStackTrace();
@@ -189,5 +190,4 @@ class Query {
 	String getQueryUrl() {
 		 return this.queryUrl;
 	 }
-
 }

@@ -22,9 +22,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * The package PicaPlugin contains the classes required to access a PICA
- * library catalogue system. The main class implementing the plugin is
- * PicaPlugin. It provides the public methods
+ * The package ModsPlugin contains the classes required to access the Kalliope
+ * MODS catalogue system. The main class implementing the plugin is
+ * ModsPlugin. It provides the public methods
  *
  *    void    configure(Map) [*]
  *    Object  find(String, long)
