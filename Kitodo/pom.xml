@@ -477,13 +477,6 @@
             <systemPath>${local.lib.dir}/saxon9-dom.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.objectweb.asm</groupId>
-            <artifactId>com.springsource.org.objectweb.asm</artifactId>
-            <version>3.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/asm-3.1.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0-oracle-thin-extras</artifactId>
             <version>0.9.5.2</version>
